@@ -8,6 +8,7 @@ bin/
 dist/
 modules-dev/
 /pkg/
+vendor/
 website/.vagrant
 website/.bundle
 website/build
@@ -33,3 +34,4 @@ website/vendor
 
 # Keep windows files with windows line endings
 *.winfile eol=crlf
+

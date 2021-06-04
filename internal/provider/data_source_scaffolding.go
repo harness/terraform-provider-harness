@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/micahlmartin/terraform-provider-harness/internal/client"
 )
 
 func dataSourceScaffolding() *schema.Resource {
@@ -27,7 +28,7 @@ func dataSourceScaffolding() *schema.Resource {
 
 func dataSourceScaffoldingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	// client := meta.(*apiClient)
+	client := meta.(*client.ApiClient)
 
 	idFromAPI := "my-id"
 	d.SetId(idFromAPI)

@@ -1,5 +1,5 @@
 ---
-page_title: "scaffolding_data_source Data Source - terraform-provider-scaffolding"
+page_title: "scaffolding_data_source Data Source - terraform-provider-harness"
 subcategory: ""
 description: |-
   Sample data source in the Terraform provider scaffolding.
