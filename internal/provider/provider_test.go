@@ -79,11 +79,12 @@ func testAccPreCheck(t *testing.T) {
 }
 
 func testProvider() string {
-	return fmt.Sprintf(`
+	f := fmt.Sprintf(`
 provider "harness" {
-  endpoint 		= %[1]q
-  api_key    	= %[2]q
-  account_id 	= %[3]q
+  endpoint 		= %s
+  api_key    	= %s
+  account_id 	= %s
 }
 `, os.Getenv(envvar.HarnessEndpoint), os.Getenv(envvar.HarnessApiKey), os.Getenv(envvar.HarnessAccountId))
+	return f
 }
