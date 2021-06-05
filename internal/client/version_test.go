@@ -3,18 +3,18 @@ package client
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestApiVersionRequest(t *testing.T) {
 
+	// Setup
 	client := getClient()
 
+	// Execute
 	resp, err := client.GetAPIVersion()
 
-	if err != nil {
-		t.Error(err)
-	}
-
-	assert.True(t, resp.Resource.RuntimeInfo.Primary)
+	// Verify
+	require.NoError(t, err)
+	require.True(t, resp.Resource.RuntimeInfo.Primary)
 }

@@ -10,40 +10,8 @@ import (
 	"net/http"
 
 	"github.com/machinebox/graphql"
-	"github.com/micahlmartin/terraform-provider-harness/internal/common"
+	"github.com/micahlmartin/terraform-provider-harness/internal/httphelpers"
 )
-
-type GraphQLResponse struct {
-	Data             GraphQLResponseData      `json:"data"`
-	Metadata         interface{}              `json:"metadata"`
-	Resource         string                   `json:"resource"`
-	ResponseMessages []GraphQLResponseMessage `json:"responseMessages"`
-	Errors           []GraphQLError           `json:"errors"`
-}
-
-type GraphQLError struct {
-	Message   string `json:"message"`
-	Locations []struct {
-		Line   int      `json:"line"`
-		Column int      `json:"column"`
-		Path   []string `json:"path"`
-	} `json:"column"`
-}
-
-type GraphQLResponseMessage struct {
-	Code         string   `json:"code"`
-	Level        string   `json:"level"`
-	Message      string   `json:"message"`
-	Exception    string   `json:"exception"`
-	FailureTypes []string `json:"failureTypes"`
-}
-
-type GraphQLResponseData struct {
-	Application       *Application              `json:"application"`
-	ApplicationByName *Application              `json:"applicationByName"`
-	CreateApplication *CreateApplicationPayload `json:"createApplication"`
-	DeleteApplication *DeleteApplicationPayload `json:"deleteApplication"`
-}
 
 type GraphQLQuery struct {
 	Query     string                 `json:"query"`
@@ -60,7 +28,7 @@ func (m *GraphQLError) ToError() error {
 
 // Creates a new client for interacting with the GraphQL API
 func (client *ApiClient) GraphQL() *graphql.Client {
-	url := fmt.Sprintf("%s%s?accountId=%s", client.Endpoint, common.DEFAULT_GRAPHQL_API_URL, client.AccountId)
+	url := fmt.Sprintf("%s%s?%s=%s", client.Endpoint, DefaultGraphQLApiUrl, AccountIdQueryParam, client.AccountId)
 	return graphql.NewClient(url)
 }
 
@@ -73,7 +41,7 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*http.Request, 
 		return nil, err
 	}
 
-	fmt.Println(requestBody.String())
+	log.Printf("[DEBUG] GraphQL Query: %s", requestBody.String())
 
 	req, err := http.NewRequest(http.MethodPost, getGraphQLUrl(), &requestBody)
 
@@ -83,15 +51,14 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*http.Request, 
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
-	q.Add(common.ACCOUNT_ID_QUERY_PARAM, client.AccountId)
+	q.Add(AccountIdQueryParam, client.AccountId)
 	req.URL.RawQuery = q.Encode()
 
 	// Configure additional headers
-	req.Header.Set(common.HTTP_HEADER_X_API_KEY, client.APIKey)
-	req.Header.Set(common.HTTP_HEADER_CONTENT_TYPE, common.HTTP_HEADER_APPLICATION_JSON)
-	req.Header.Set(common.HTTP_HEADER_ACCEPT, common.HTTP_HEADER_APPLICATION_JSON)
+	req.Header.Set(httphelpers.HeaderApiKey, client.APIKey)
+	req.Header.Set(httphelpers.HeaderContentType, httphelpers.HeaderApplicationJson)
+	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
 
-	fmt.Println(req.URL)
 	return req, nil
 }
 
@@ -117,7 +84,7 @@ func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery) (*GraphQLRespo
 		return nil, fmt.Errorf("error reading body: %s", err)
 	}
 
-	log.Println(buf.String())
+	log.Printf("[DEBUG] GraphQL response: %s", buf.String())
 
 	var responseObj GraphQLResponse
 
@@ -140,5 +107,5 @@ func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery) (*GraphQLRespo
 
 // Returns fully qualified path to the GraphQL Api
 func getGraphQLUrl() string {
-	return fmt.Sprintf("%s%s", common.DEFAULT_API_URL, common.DEFAULT_GRAPHQL_API_URL)
+	return fmt.Sprintf("%s%s", DefaultApiUrl, DefaultGraphQLApiUrl)
 }

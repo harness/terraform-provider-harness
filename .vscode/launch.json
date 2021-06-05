@@ -13,6 +13,10 @@
             "program": "${fileDirname}",
             "env": {
                 "TF_ACC": "1",
+                "TF_LOG": "TRACE",
+                "HARNESS_API_KEY": "VUtoNVl0czdUSFNNQWJjY0czSHJMQTo6R0dERHRQNTNZWXNSWUVBWGFNSDV3ZUdmaFhuSWhLWVNXamY5YzZOMGRlcmZVMVpFM3hmQzdLVENjdFNOVHlUUXRlbnpKMUtQVFpmcGxEekk=",
+                "HARNESS_ACCOUNT_ID": "UKh5Yts7THSMAbccG3HrLA",
+                "HARNESS_ENDPOINT": "https://app.harness.io"
             },
             "args": [],
         },

@@ -1,26 +1,42 @@
 package client
 
-type ApplicationClient struct {
-	APIClient *ApiClient
-}
+import "fmt"
 
+const (
+	standardApplicationFields = `
+	id
+	name
+	description
+	createdBy {
+		id
+		name
+		email
+	}
+	gitSyncConfig {
+		branch
+		gitConnector {
+			id
+			name
+			branch
+		}
+		repositoryName
+		syncEnabled
+	}
+	tags {
+		name
+		value
+	}	
+	`
+)
+
+// CRUD
 func (ac *ApplicationClient) GetApplicationById(id string) (*Application, error) {
 	query := &GraphQLQuery{
-		Query: `query($applicationId: String!) {
+		Query: fmt.Sprintf(`query($applicationId: String!) {
 			application(applicationId: $applicationId) {
-				id
-      	name
-				createdBy {
-					id
-					name
-					email
-				}
-      	tags {
-        	name
-        	value
-      	}	
+				%s
 			}
-		}`,
+		}`, standardApplicationFields),
 		Variables: map[string]interface{}{
 			"applicationId": id,
 		},
@@ -37,21 +53,11 @@ func (ac *ApplicationClient) GetApplicationById(id string) (*Application, error)
 
 func (ac *ApplicationClient) GetApplicationByName(name string) (*Application, error) {
 	query := &GraphQLQuery{
-		Query: `query($name: String!) {
+		Query: fmt.Sprintf(`query($name: String!) {
 			applicationByName(name: $name) {
-				id
-      	name
-				createdBy {
-					id
-					name
-					email
-				}
-      	tags {
-        	name
-        	value
-      	}	
+				%s	
 			}
-		}`,
+		}`, standardApplicationFields),
 		Variables: map[string]interface{}{
 			"name": name,
 		},
@@ -73,8 +79,9 @@ func (ac *ApplicationClient) CreateApplication(input *CreateApplicationInput) (*
 			createApplication(input: $app) {
 				clientMutationId
 				application {
-					name
 					id
+					name
+					description
 				}
 			}
 		}`,
@@ -117,4 +124,29 @@ func (c *ApiClient) Applications() *ApplicationClient {
 	return &ApplicationClient{
 		APIClient: c,
 	}
+}
+
+func (ac *ApplicationClient) UpdateApplication(input *UpdateApplicationInput) (*Application, error) {
+
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`mutation updateapp($app: UpdateApplicationInput!) {
+			updateApplication(input: $app) {
+				clientMutationId
+				application {
+					%s
+				}
+			}
+		}`, standardApplicationFields),
+		Variables: map[string]interface{}{
+			"app": &input,
+		},
+	}
+
+	res, err := ac.APIClient.ExecuteGraphQLQuery(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data.UpdateApplication.Application, nil
 }

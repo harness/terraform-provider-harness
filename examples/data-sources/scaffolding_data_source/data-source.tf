@@ -1,3 +1,3 @@
-data "scaffolding_data_source" "example" {
-  sample_attribute = "foo"
+data "harness_application" "example" {
+  id = "foo"
 }

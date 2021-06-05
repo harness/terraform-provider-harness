@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/common"
+	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
 )
 
 func init() {
@@ -31,22 +31,27 @@ func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
-				"endpoint": &schema.Schema{
+				"endpoint": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("HARNESS_ENDPOINT", common.DEFAULT_API_URL),
+					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessEndpoint, client.DefaultApiUrl),
 				},
-				"account_id": &schema.Schema{
-					Type: schema.TypeString,
-					Optional: false,
-					DefaultFunc: schema.EnvDefaultFunc("HARNESS_ACCOUNT_ID", nil),
-				}
+				"account_id": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessAccountId, nil),
+				},
+				"api_key": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessApiKey, nil),
+				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"scaffolding_data_source": dataSourceScaffolding(),
+				"harness_application": dataSourceApplication(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"scaffolding_resource": resourceScaffolding(),
+				"harness_application": resourceApplication(),
 			},
 		}
 
@@ -63,6 +68,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			UserAgent: p.UserAgent("terraform-provider-harness", version),
 			Endpoint:  d.Get("endpoint").(string),
 			AccountId: d.Get("account_id").(string),
+			APIKey:    d.Get("api_key").(string),
 			HTTPClient: &http.Client{
 				Timeout: 10 * time.Second,
 			},

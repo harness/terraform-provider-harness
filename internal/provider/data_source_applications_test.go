@@ -1,0 +1,32 @@
+package provider
+
+import (
+	"regexp"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+)
+
+func TestAccDataSourceApplication(t *testing.T) {
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceApplication("GEHhvKUCTiiY_MWsUfbRLA"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr("data.harness_application.foo", "name", regexp.MustCompile("changed")),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceApplication(appId string) string {
+	return `
+		data "harness_application" "foo" {
+			id = "GEHhvKUCTiiY_MWsUfbRLA"
+		}
+	`
+}

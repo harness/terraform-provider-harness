@@ -4,45 +4,66 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/micahlmartin/terraform-provider-harness/internal/common"
-	"github.com/stretchr/testify/assert"
+	"github.com/micahlmartin/terraform-provider-harness/internal/httphelpers"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewGraphQLRequest(t *testing.T) {
+
+	// Setup
 	client := getUnauthorizedClient()
 
 	query := &GraphQLQuery{
 		Query: `{}`,
 	}
+
+	// Execute
 	req, err := client.NewGraphQLRequest(query)
 
-	assert.Nil(t, err)
-	assert.Equal(t, fmt.Sprintf("accountId=%s", client.AccountId), req.URL.RawQuery)
-	assert.Equal(t, client.Endpoint, fmt.Sprintf("%s://%s", req.URL.Scheme, req.Host))
-	assert.Equal(t, client.APIKey, req.Header.Get(common.HTTP_HEADER_X_API_KEY))
-	assert.Equal(t, common.HTTP_HEADER_APPLICATION_JSON, req.Header.Get(common.HTTP_HEADER_CONTENT_TYPE))
-	assert.Equal(t, common.HTTP_HEADER_APPLICATION_JSON, req.Header.Get(common.HTTP_HEADER_ACCEPT))
+	// Validate
+	require.NoError(t, err)
+	require.Equal(t, fmt.Sprintf("accountId=%s", client.AccountId), req.URL.RawQuery)
+	require.Equal(t, client.Endpoint, fmt.Sprintf("%s://%s", req.URL.Scheme, req.Host))
+	require.Equal(t, client.APIKey, req.Header.Get(httphelpers.HeaderApiKey))
+	require.Equal(t, httphelpers.HeaderApplicationJson, req.Header.Get(httphelpers.HeaderContentType))
+	require.Equal(t, httphelpers.HeaderApplicationJson, req.Header.Get(httphelpers.HeaderAccept))
 }
 
 func TestExecuteGraphQLQuery(t *testing.T) {
+
+	// Setup
 	client := getClient()
 	query := &GraphQLQuery{
-		Query: `{}`,
+		Query: `{
+			applications(limit: 1) {
+				nodes {
+					id
+					name
+				}
+			}
+		}`,
 	}
 
+	// Execute query
 	res, err := client.ExecuteGraphQLQuery(query)
 
-	assert.Nil(t, err)
-	assert.Len(t, res.ResponseMessages, 0)
+	// Validate
+	require.NoError(t, err)
+	require.Len(t, res.ResponseMessages, 0)
 }
 
 func TestUnauthorizedGraphQLQuery(t *testing.T) {
+	// Setup
 	client := getUnauthorizedClient()
 	query := &GraphQLQuery{
-		Query: `{}`,
+		Query: `query {}`,
 	}
+
+	// Execute query
 	res, err := client.ExecuteGraphQLQuery(query)
 
-	assert.Nil(t, res)
-	assert.EqualError(t, err, "ERROR INVALID_TOKEN: Token is not valid.")
+	// Validate
+	require.Error(t, err)
+	require.Nil(t, res)
+	require.EqualError(t, err, "ERROR INVALID_TOKEN: Token is not valid.")
 }

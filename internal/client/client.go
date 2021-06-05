@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/micahlmartin/terraform-provider-harness/internal/common"
+	"github.com/micahlmartin/terraform-provider-harness/internal/httphelpers"
 )
 
 type ApiClient struct {
@@ -24,7 +24,7 @@ func (client *ApiClient) NewRequest(path string) (*http.Request, error) {
 		return nil, err
 	}
 
-	req.Header.Set(common.HTTP_HEADER_USER_AGENT, client.UserAgent)
+	req.Header.Set(httphelpers.HeaderUserAgent, client.UserAgent)
 	return req, err
 }
 
@@ -36,7 +36,7 @@ func (client *ApiClient) NewAuthorizedRequestWithBearerToken(path string) (*http
 		return nil, err
 	}
 
-	req.Header.Set(common.AUTHORIZATION_HEADER_FIELD, fmt.Sprintf("Bearer %s", client.ApiToken))
+	req.Header.Set(httphelpers.HeaderAuthorization, fmt.Sprintf("Bearer %s", client.ApiToken))
 	return req, nil
 }
 
@@ -48,6 +48,6 @@ func (client *ApiClient) NewAuthorizedRequestWithApiKey(path string) (*http.Requ
 		return nil, err
 	}
 
-	req.Header.Set(common.HTTP_HEADER_X_API_KEY, client.APIKey)
+	req.Header.Set(httphelpers.HeaderApiKey, client.APIKey)
 	return req, nil
 }
