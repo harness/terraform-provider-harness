@@ -27,7 +27,7 @@ website/node_modules
 *.iml
 .envrc
 .vscode
-
+*debug*
 website/vendor
 
 # Test exclusions

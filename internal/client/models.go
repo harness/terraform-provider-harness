@@ -125,7 +125,7 @@ type User struct {
 
 type GitSyncConfig struct {
 	Branch         string
-	GitConnector   GitConnector
+	GitConnector   *GitConnector
 	RepositoryName string
 	SyncEnabled    bool
 }
@@ -134,8 +134,8 @@ type GitConnector struct {
 	Url                 string
 	Branch              string
 	CreatedAt           string
-	CreatedBy           User
-	CustomCommitDetails CustomCommitDetails
+	CreatedBy           *User
+	CustomCommitDetails *CustomCommitDetails
 	DelegateSelectors   []string
 	Description         string
 	GenerateWebhookUrl  bool
@@ -144,7 +144,7 @@ type GitConnector struct {
 	PasswordSecretId    string
 	SshSettingId        string
 	UrlType             string
-	UsageScope          UsageScope
+	UsageScope          *UsageScope
 	UserName            string
 	WebhookUrl          string
 }

@@ -25,10 +25,6 @@ func TestAccDataSourceApplication(t *testing.T) {
 }
 
 func testAccDataSourceApplication(appId string) string {
-	f := testProvider()
-	if f != "" {
-		fmt.Println("here")
-	}
 	return fmt.Sprintf(`
 		data "harness_application" "foo" {
 			id = "%s"

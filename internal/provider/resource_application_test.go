@@ -8,8 +8,6 @@ import (
 )
 
 func TestAccResourceApplication(t *testing.T) {
-	t.Skip("resource not yet implemented, remove this once you add your own code")
-
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -27,6 +25,7 @@ func TestAccResourceApplication(t *testing.T) {
 
 const testAccResourceApplication = `
 resource "harness_application" "foo" {
-  sample_attribute = "fss"
+  name = "my_app"
+	description = "some app description here"
 }
 `
