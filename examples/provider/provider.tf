@@ -6,13 +6,13 @@ terraform {
   }
 }
 provider "harness" {
-  api_key = "VUtoNVl0czdUSFNNQWJjY0czSHJMQTo6R0dERHRQNTNZWXNSWUVBWGFNSDV3ZUdmaFhuSWhLWVNXamY5YzZOMGRlcmZVMVpFM3hmQzdLVENjdFNOVHlUUXRlbnpKMUtQVFpmcGxEekk="
-  account_id = "UKh5Yts7THSMAbccG3HrLA"
+  api_key = ""
+  account_id = ""
   # example configuration here
 }
 
 data "harness_application" "foo" {
-  id = "GEHhvKUCTiiY_MWsUfbRLA"
+  id = ""
   # name = "changed"
 }
 
