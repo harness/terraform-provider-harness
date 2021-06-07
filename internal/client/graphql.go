@@ -13,11 +13,6 @@ import (
 	"github.com/micahlmartin/terraform-provider-harness/internal/httphelpers"
 )
 
-type GraphQLQuery struct {
-	Query     string                 `json:"query"`
-	Variables map[string]interface{} `json:"variables"`
-}
-
 func (m *GraphQLResponseMessage) ToError() error {
 	return fmt.Errorf("%s %s: %s", m.Level, m.Code, m.Message)
 }
@@ -63,17 +58,17 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*http.Request, 
 }
 
 // Executes a GraphQL query
-func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery) (*GraphQLResponse, error) {
+func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj interface{}) error {
 	req, err := client.NewGraphQLRequest(query)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	res, err := client.HTTPClient.Do(req)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	defer res.Body.Close()
@@ -81,28 +76,34 @@ func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery) (*GraphQLRespo
 	// Make sure we can parse the body properly
 	var buf bytes.Buffer
 	if _, err := io.Copy(&buf, res.Body); err != nil {
-		return nil, fmt.Errorf("error reading body: %s", err)
+		return fmt.Errorf("error reading body: %s", err)
 	}
 
 	log.Printf("[DEBUG] GraphQL response: %s", buf.String())
 
-	var responseObj GraphQLResponse
+	gqlResponse := &GraphQLStandardResponse{}
 
 	// Unmarshal into our response object
-	if err := json.NewDecoder(&buf).Decode(&responseObj); err != nil {
-		return nil, fmt.Errorf("error decoding response: %s", err)
+	if err := json.NewDecoder(&buf).Decode(&gqlResponse); err != nil {
+		return fmt.Errorf("error decoding response: %s", err)
 	}
 
 	// Check if there are any errors
-	if responseObj.ResponseMessages != nil {
-		return nil, responseObj.ResponseMessages[0].ToError()
+	if gqlResponse.ResponseMessages != nil {
+		return gqlResponse.ResponseMessages[0].ToError()
 	}
 
-	if responseObj.Errors != nil && len(responseObj.Errors) > 0 {
-		return nil, responseObj.Errors[0].ToError()
+	if gqlResponse.Errors != nil && len(gqlResponse.Errors) > 0 {
+		return gqlResponse.Errors[0].ToError()
 	}
 
-	return &responseObj, nil
+	// Unmarshal into designated response object
+	err = json.Unmarshal(*gqlResponse.Data, responseObj)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Returns fully qualified path to the GraphQL Api

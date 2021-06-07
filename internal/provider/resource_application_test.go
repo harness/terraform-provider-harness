@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"regexp"
 	"testing"
 
@@ -13,19 +14,28 @@ func TestAccResourceApplication(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceApplication,
+				Config: testAccResourceApplication(t.Name()),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr(
-						"harness_application.foo", "sample_attribute", regexp.MustCompile("^ba")),
+					resource.TestMatchResourceAttr("harness_application.foo", "name", regexp.MustCompile(fmt.Sprintf("^%s", t.Name()))),
+					resource.TestMatchResourceAttr("harness_application.foo", "description", regexp.MustCompile("^some")),
+				),
+			},
+			{
+				Config: testAccResourceApplication(t.Name() + "-updated"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr("harness_application.foo", "name", regexp.MustCompile(fmt.Sprintf("^%s-updated", t.Name()))),
+					resource.TestMatchResourceAttr("harness_application.foo", "description", regexp.MustCompile("^some")),
 				),
 			},
 		},
 	})
 }
 
-const testAccResourceApplication = `
-resource "harness_application" "foo" {
-  name = "my_app"
-	description = "some app description here"
+func testAccResourceApplication(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_application" "foo" {
+			name = "%s"
+			description = "some app description here"
+		}
+`, name)
 }
-`

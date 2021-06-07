@@ -44,12 +44,15 @@ func TestExecuteGraphQLQuery(t *testing.T) {
 		}`,
 	}
 
+	res := &struct {
+		Applications Applications
+	}{}
 	// Execute query
-	res, err := client.ExecuteGraphQLQuery(query)
+	err := client.ExecuteGraphQLQuery(query, &res)
 
 	// Validate
 	require.NoError(t, err)
-	require.Len(t, res.ResponseMessages, 0)
+	require.Len(t, res.Applications, 1)
 }
 
 func TestUnauthorizedGraphQLQuery(t *testing.T) {
@@ -59,8 +62,9 @@ func TestUnauthorizedGraphQLQuery(t *testing.T) {
 		Query: `query {}`,
 	}
 
+	res := &struct{}{}
 	// Execute query
-	res, err := client.ExecuteGraphQLQuery(query)
+	err := client.ExecuteGraphQLQuery(query, res)
 
 	// Validate
 	require.Error(t, err)

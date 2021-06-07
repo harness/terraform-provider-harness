@@ -42,13 +42,16 @@ func (ac *ApplicationClient) GetApplicationById(id string) (*Application, error)
 		},
 	}
 
-	res, err := ac.APIClient.ExecuteGraphQLQuery(query)
+	res := struct {
+		Application Application
+	}{}
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Data.Application, nil
+	return &res.Application, nil
 }
 
 func (ac *ApplicationClient) GetApplicationByName(name string) (*Application, error) {
@@ -63,13 +66,16 @@ func (ac *ApplicationClient) GetApplicationByName(name string) (*Application, er
 		},
 	}
 
-	res, err := ac.APIClient.ExecuteGraphQLQuery(query)
+	res := &struct {
+		ApplicationByName Application
+	}{}
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Data.ApplicationByName, nil
+	return &res.ApplicationByName, nil
 }
 
 func (ac *ApplicationClient) CreateApplication(input *CreateApplicationInput) (*Application, error) {
@@ -90,13 +96,16 @@ func (ac *ApplicationClient) CreateApplication(input *CreateApplicationInput) (*
 		},
 	}
 
-	res, err := ac.APIClient.ExecuteGraphQLQuery(query)
+	res := &struct {
+		CreateApplication CreateApplicationPayload
+	}{}
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Data.CreateApplication.Application, nil
+	return res.CreateApplication.Application, nil
 }
 
 func (ac *ApplicationClient) DeleteApplication(id string) error {
@@ -114,7 +123,7 @@ func (ac *ApplicationClient) DeleteApplication(id string) error {
 		},
 	}
 
-	_, err := ac.APIClient.ExecuteGraphQLQuery(query)
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &struct{}{})
 
 	return err
 }
@@ -142,11 +151,15 @@ func (ac *ApplicationClient) UpdateApplication(input *UpdateApplicationInput) (*
 		},
 	}
 
-	res, err := ac.APIClient.ExecuteGraphQLQuery(query)
+	res := struct {
+		UpdateApplication UpdateApplicationPayload
+	}{}
+
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return res.Data.UpdateApplication.Application, nil
+	return res.UpdateApplication.Application, nil
 }

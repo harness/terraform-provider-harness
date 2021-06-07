@@ -14,6 +14,11 @@ type Application struct {
 	Workflows                 *WorkflowConnection
 }
 
+type Applications struct {
+	PageInfo `json:"pageInfo"`
+	Nodes    []Application `json:"nodes"`
+}
+
 type UpdateApplicationInput struct {
 	ApplicationId             string `json:"applicationId"`
 	ClientMutationId          string `json:"clientMutationId"`

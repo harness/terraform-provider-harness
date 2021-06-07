@@ -1,7 +1,16 @@
 package client
 
-type GraphQLResponse struct {
-	Data             GraphQLResponseData      `json:"data"`
+import (
+	"encoding/json"
+)
+
+type GraphQLQuery struct {
+	Query     string                 `json:"query"`
+	Variables map[string]interface{} `json:"variables"`
+}
+
+type GraphQLStandardResponse struct {
+	Data             *json.RawMessage
 	Metadata         interface{}              `json:"metadata"`
 	Resource         string                   `json:"resource"`
 	ResponseMessages []GraphQLResponseMessage `json:"responseMessages"`
@@ -23,12 +32,4 @@ type GraphQLResponseMessage struct {
 	Message      string   `json:"message"`
 	Exception    string   `json:"exception"`
 	FailureTypes []string `json:"failureTypes"`
-}
-
-type GraphQLResponseData struct {
-	Application       *Application              `json:"application"`
-	ApplicationByName *Application              `json:"applicationByName"`
-	CreateApplication *CreateApplicationPayload `json:"createApplication"`
-	DeleteApplication *DeleteApplicationPayload `json:"deleteApplication"`
-	UpdateApplication *UpdateApplicationPayload `json:"updateApplication"`
 }
