@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     harness = {
-      source  = "micahlmartin/harness"
+      source = "micahlmartin/harness"
     }
   }
 }

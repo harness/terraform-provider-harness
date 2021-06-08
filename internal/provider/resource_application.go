@@ -68,10 +68,6 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	d.SetId(app.Id)
-	d.Set("name", app.Name)
-	d.Set("description", app.Description)
-	d.Set("is_manual_trigger_authorized", app.IsManualTriggerAuthorized)
-	d.Set("git_sync_enabled", false)
 
 	return nil
 }

@@ -8,7 +8,9 @@ terraform {
 
 provider "harness" {}
 
+
 resource "harness_application" "my_app" {
   name = "my_app"
-  description = "my description goes here"
+  description = "updated"
 }
+

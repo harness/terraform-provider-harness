@@ -52,7 +52,7 @@ func TestExecuteGraphQLQuery(t *testing.T) {
 
 	// Validate
 	require.NoError(t, err)
-	require.Len(t, res.Applications, 1)
+	require.Len(t, res.Applications.Nodes, 1)
 }
 
 func TestUnauthorizedGraphQLQuery(t *testing.T) {
@@ -62,12 +62,10 @@ func TestUnauthorizedGraphQLQuery(t *testing.T) {
 		Query: `query {}`,
 	}
 
-	res := &struct{}{}
 	// Execute query
-	err := client.ExecuteGraphQLQuery(query, res)
+	err := client.ExecuteGraphQLQuery(query, nil)
 
 	// Validate
 	require.Error(t, err)
-	require.Nil(t, res)
 	require.EqualError(t, err, "ERROR INVALID_TOKEN: Token is not valid.")
 }

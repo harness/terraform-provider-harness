@@ -156,20 +156,20 @@ type CustomCommitDetails struct {
 }
 
 type UsageScope struct {
-	AppEnvScopes []AppEnvScope
+	AppEnvScopes []*AppEnvScope `json:"appEnvScopes,omitempty"`
 }
 
 type AppEnvScope struct {
-	Application AppScopeFilter
-	Environment EnvScopeFilter
+	Application *AppScopeFilter `json:"application,omitempty"`
+	Environment *EnvScopeFilter `json:"environment,omitempty"`
 }
 
 type AppScopeFilter struct {
-	AppId      string
-	FilterType string
+	AppId      string `json:"appId,omitempty"`
+	FilterType string `json:"filterType,omitempty"`
 }
 
 type EnvScopeFilter struct {
-	EnvId      string
-	FilterType string
+	EnvId      string `json:"envId,omitempty"`
+	FilterType string `json:"filterType,omitempty"`
 }

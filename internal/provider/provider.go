@@ -48,10 +48,12 @@ func New(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"harness_application": dataSourceApplication(),
+				"harness_application":    dataSourceApplication(),
+				"harness_encrypted_text": dataSourceEncryptedText(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"harness_application": resourceApplication(),
+				"harness_application":    resourceApplication(),
+				"harness_encrypted_text": resourceEncryptedText(),
 			},
 		}
 
