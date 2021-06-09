@@ -105,7 +105,7 @@ type GitConnector struct {
 	Url                 string               `json:"url,omitempty"`
 	Branch              string               `json:"branch,omitempty"`
 	CustomCommitDetails *CustomCommitDetails `json:"customCommitDetails,omitempty"`
-	DelegateSelectors   []string             `json:"delegateSelectors,omitempty"`
+	DelegateSelectors   []string             `json:"delegateSelectors"`
 	GenerateWebhookUrl  bool                 `json:"generateWebhookUrl,omitempty"`
 	PasswordSecretId    string               `json:"passwordSecretId,omitempty"`
 	SSHSettingId        string               `json:"sshSettingId,omitempty"`
@@ -118,8 +118,8 @@ type GitConnector struct {
 type GitConnectorInput struct {
 	Url                 string               `json:"URL,omitempty"`
 	Branch              string               `json:"branch,omitempty"`
-	CustomCommitDetails *CustomCommitDetails `json:"customCommitDetails,omitempty"`
-	DelegateSelectors   []string             `json:"delegateSelectors,omitempty"`
+	CustomCommitDetails *CustomCommitDetails `json:"customCommitDetails"`
+	DelegateSelectors   []string             `json:"delegateSelectors"`
 	GenerateWebhookUrl  bool                 `json:"generateWebhookUrl,omitempty"`
 	Name                string               `json:"name,omitempty"`
 	PasswordSecretId    string               `json:"passwordSecretId,omitempty"`

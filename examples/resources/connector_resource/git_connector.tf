@@ -11,4 +11,12 @@ resource "harness_git_connector" "test" {
 	password_secret_id = harness_encrypted_text.test.id
 	url_type = "REPO"
 	username = "someuser"
+
+	commit_details {
+		author_email_id = "user@example.com"
+		author_name = "test user"
+		message = "custom commit message here"
+	}
+
+	delegate_selectors = ["primary"]
 }	

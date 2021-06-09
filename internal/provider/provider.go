@@ -56,6 +56,7 @@ func New(version string) func() *schema.Provider {
 				"harness_application":    resourceApplication(),
 				"harness_encrypted_text": resourceEncryptedText(),
 				"harness_git_connector":  resourceGitConnector(),
+				"harness_ssh_credential": resourceSSHCredential(),
 			},
 		}
 

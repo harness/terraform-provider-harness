@@ -2,22 +2,19 @@ package provider
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
 )
 
-func resourceEncryptedText() *schema.Resource {
+func resourceSSHCredential() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for creating an encrypted text secret",
-		CreateContext: resourceEncryptedTextCreate,
-		ReadContext:   resourceEncryptedTextRead,
-		UpdateContext: resourceEncryptedTextUpdate,
-		DeleteContext: resourceEncryptedTextDelete,
+		CreateContext: resourceSSHCredentialCreate,
+		ReadContext:   resourceSSHCredentialRead,
+		UpdateContext: resourceSSHCredentialUpdate,
+		DeleteContext: resourceSSHCredentialDelete,
 
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -30,42 +27,46 @@ func resourceEncryptedText() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"inherit_scopes_from_secret_manager": {
-				Description: "Boolean that indicates whether or not to inherit the usage scopes from the secret manager",
-				Type:        schema.TypeBool,
+			"kerberos_authentication": {
+				Description: "Kerberos authentication for SSH. Cannot be used if ssh_authentication is specified",
+				Type:        schema.TypeSet,
 				Optional:    true,
-				Default:     false,
-			},
-			"scoped_to_account": {
-				Description: "Boolean that indicates whether or not the secret is scoped to the account",
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-			},
-			"secret_manager_id": {
-				Description: fmt.Sprintf("The id of the secret manager to associate the secret with. Defaults to the value of %s", envvar.HarnessAccountId),
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: func() (interface{}, error) {
-					if v := os.Getenv(envvar.HarnessAccountId); v != "" {
-						return v, nil
-					}
-
-					return "", nil
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"port": {
+							Description: "Port to use for Kerberos authentication",
+							Type:        schema.TypeInt,
+							Required:    true,
+						},
+						"principal": {
+							Description: "Name of the principal for authentication",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"realm": {
+							Description: "Realm associated with the Kerberos authentication",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"tgt_generation_method": {
+							Description: "TGT generation method",
+							Type:        schema.TypeSet,
+							Optional:    true,
+							MaxItems:    1,
+							Elem:        &schema.Resource{
+								// Schema: ,
+							},
+						},
+					},
 				},
-			},
-			"value": {
-				Description: "The value of the secret",
-				Type:        schema.TypeString,
-				Sensitive:   true,
-				Required:    true,
 			},
 			"usage_scope": usageScopeSchema(),
 		},
 	}
 }
 
-func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
 
 	secretId := d.Get("id").(string)
@@ -88,7 +89,7 @@ func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
 
 	input := &client.CreateSecretInput{
@@ -124,7 +125,7 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSSHCredentialUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
 
 	// Validation
@@ -162,7 +163,7 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
 
 	err := c.Secrets().DeleteSecret(d.Get("id").(string), client.SecretTypes.EncryptedText)

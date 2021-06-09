@@ -3,7 +3,10 @@ package client
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"time"
 
+	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
 	"github.com/micahlmartin/terraform-provider-harness/internal/httphelpers"
 )
 
@@ -14,6 +17,18 @@ type ApiClient struct {
 	APIKey     string
 	ApiToken   string
 	AccountId  string
+}
+
+func New() *ApiClient {
+	return &ApiClient{
+		UserAgent: "micahlmartin-harness-go-sdk-0.0.1",
+		Endpoint:  DefaultApiUrl,
+		AccountId: os.Getenv(envvar.HarnessAccountId),
+		APIKey:    os.Getenv(envvar.HarnessApiKey),
+		HTTPClient: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+	}
 }
 
 // Creates a new unauthenticated HTTP request

@@ -2,10 +2,9 @@ package provider
 
 import (
 	"context"
-	"net/http"
 	"os"
+	"sync"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -74,22 +73,21 @@ func TestProvider_configure_url_env(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
-	// about the appropriate environment variables being set are common to see in a pre-check
-	// function.
+	testAccProviderConfigure.Do(func() {
+		testAccProvider = New("dev")()
+
+		config := map[string]interface{}{
+			"endpoint":   os.Getenv(envvar.HarnessEndpoint),
+			"account_id": os.Getenv(envvar.HarnessAccountId),
+			"api_key":    os.Getenv(envvar.HarnessApiKey),
+		}
+
+		testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))
+	})
 }
 
-func getClient() *client.ApiClient {
-	return &client.ApiClient{
-		UserAgent: "micahlmartin-harness-go-sdk-0.0.1",
-		Endpoint:  client.DefaultApiUrl,
-		AccountId: os.Getenv(envvar.HarnessAccountId),
-		APIKey:    os.Getenv(envvar.HarnessApiKey),
-		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
-		},
-	}
-}
+var testAccProvider *schema.Provider
+var testAccProviderConfigure sync.Once
 
 // func testProvider() string {
 // 	f := fmt.Sprintf(`

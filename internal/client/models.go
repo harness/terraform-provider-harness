@@ -131,9 +131,9 @@ type GitSyncConfig struct {
 }
 
 type CustomCommitDetails struct {
-	AuthorEmailId string `json:"authorEmailId,omitempty"`
-	AuthorName    string `json:"authorName,omitempty"`
-	CommitMessage string `json:"commitMessage,omitempty"`
+	AuthorEmailId string `json:"authorEmailId"`
+	AuthorName    string `json:"authorName"`
+	CommitMessage string `json:"commitMessage"`
 }
 
 type UsageScope struct {

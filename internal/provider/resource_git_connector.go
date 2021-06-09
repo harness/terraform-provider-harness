@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/zclconf/go-cty/cty"
 )
 
 func resourceGitConnector() *schema.Resource {
@@ -62,7 +61,7 @@ func resourceGitConnector() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
-						"commit_message": {
+						"message": {
 							Description: "Commit message",
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -100,10 +99,10 @@ func resourceGitConnector() *schema.Resource {
 				Optional:    true,
 			},
 			"url_type": {
-				Description: fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
-				Type:        schema.TypeString,
-				Optional:    true,
-				// ValidateDiagFunc: validateUrlType,
+				Description:  fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateUrlType,
 			},
 			"username": {
 				Description: "The name of the user used to connect to the git repository",
@@ -112,6 +111,33 @@ func resourceGitConnector() *schema.Resource {
 			},
 		},
 	}
+}
+
+func validateGitConnectorSecret(sshVal string, passVal string) error {
+	if sshVal == "" && passVal == "" {
+		return fmt.Errorf("must set either ssh_setting_id or password_secret_id")
+	}
+
+	if sshVal != "" && passVal != "" {
+		return fmt.Errorf("cannot set both ssh_setting_id and password_secret_id")
+	}
+
+	return nil
+}
+
+func validateUrlType(val interface{}, key string) (warn []string, errs []error) {
+	v := val.(string)
+
+	rx, err := regexp.Compile(fmt.Sprintf("%s|%s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
+	if err != nil {
+		errs = append(errs, err)
+	}
+
+	if !rx.MatchString(v) {
+		errs = append(errs, fmt.Errorf("invalid value %s. Must be one of %s or %s", v, client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
+	}
+
+	return warn, errs
 }
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -134,14 +160,19 @@ func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta 
 	d.Set("url_type", conn.UrlType)
 	d.Set("username", conn.UserName)
 
-	// TODO: commit details
-	// TODO: delegate selectors
+	d.Set("commit_details", flattenCommitDetails(conn.CustomCommitDetails))
+	d.Set("delegate_selectors", flattenDelgateSelectors(conn.DelegateSelectors))
 
 	return nil
 }
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
+
+	// Validation
+	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
+		return diag.FromErr(err)
+	}
 
 	connInput := &client.GitConnectorInput{}
 	connInput.Name = d.Get("name").(string)
@@ -152,9 +183,8 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 	connInput.PasswordSecretId = d.Get("password_secret_id").(string)
 	connInput.SSHSettingId = d.Get("ssh_setting_id").(string)
 	connInput.UrlType = d.Get("url_type").(string)
-
-	// TODO: custom commit details
-	// TODO: delegate selectors
+	connInput.DelegateSelectors = expandDelegateSelectors(d.Get("delegate_selectors").([]interface{}))
+	connInput.CustomCommitDetails = expandCommitDetails(d.Get("commit_details").(*schema.Set).List())
 
 	conn, err := c.Connectors().CreateGitConnector(connInput)
 
@@ -182,6 +212,10 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 		}
 	}
 
+	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
+		return diag.FromErr(err)
+	}
+
 	if d.HasChange("url_type") {
 		return diag.Diagnostics{
 			diag.Diagnostic{
@@ -200,8 +234,8 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 	connInput.PasswordSecretId = d.Get("password_secret_id").(string)
 	connInput.SSHSettingId = d.Get("ssh_setting_id").(string)
 	connInput.GenerateWebhookUrl = d.Get("generate_webhook_url").(bool)
-	// TODO: custom commit details
-	// TODO: delegate selectors
+	connInput.DelegateSelectors = expandDelegateSelectors(d.Get("delegate_selectors").([]interface{}))
+	connInput.CustomCommitDetails = expandCommitDetails(d.Get("commit_details").(*schema.Set).List())
 
 	conn, err := c.Connectors().UpdateGitConnector(id, connInput)
 
@@ -229,23 +263,90 @@ func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, met
 	return nil
 }
 
-func validateUrlType(i interface{}, path cty.Path) diag.Diagnostics {
-	v, ok := i.(string)
-	if !ok {
-		return diag.Errorf("expected type to be string")
+// func validateUrlType() schema.SchemaValidateDiagFunc {
+// 	return func(i interface{}, path cty.Path) diag.Diagnostics {
+// 		return nil
+// 	}
+// }
+
+// func validateUrlType(i interface{}, path cty.Path) diag.Diagnostics {
+// 	v, ok := i.(string)
+// 	if !ok {
+// 		return diag.Errorf("expected type to be string")
+// 	}
+
+// 	rx := regexp.MustCompile(fmt.Sprintf("%s|%s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
+
+// 	if !rx.MatchString(v) {
+// 		return diag.Diagnostics{
+// 			diag.Diagnostic{
+// 				Severity: diag.Error,
+// 				Summary:  "invalid url_type",
+// 				Detail:   fmt.Sprintf("value must be either %s or %s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
+// 			},
+// 		}
+// 	}
+
+// 	return nil
+// }
+
+func expandDelegateSelectors(ds []interface{}) []string {
+	selectors := make([]string, 0)
+
+	for _, v := range ds {
+		selectors = append(selectors, v.(string))
 	}
 
-	rx := regexp.MustCompile(fmt.Sprintf("%s|%s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
+	return selectors
+}
 
-	if !rx.MatchString(v) {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "invalid url_type",
-				Detail:   fmt.Sprintf("value must be either %s or %s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
-			},
+func flattenDelgateSelectors(ds []string) []interface{} {
+	selectors := make([]interface{}, 0)
+
+	for _, v := range ds {
+		selectors = append(selectors, v)
+	}
+
+	return selectors
+}
+
+func flattenCommitDetails(details *client.CustomCommitDetails) []interface{} {
+	cd := make([]interface{}, 1)
+
+	if details == nil {
+		// Create an empty commit details to remove it
+		cd[0] = &client.CustomCommitDetails{}
+	} else {
+		cd[0] = map[string]string{
+			"author_email_id": details.AuthorEmailId,
+			"author_name":     details.AuthorName,
+			"message":         details.CommitMessage,
 		}
 	}
 
-	return nil
+	return cd
+}
+
+func expandCommitDetails(i []interface{}) *client.CustomCommitDetails {
+	if len(i) <= 0 {
+		return &client.CustomCommitDetails{}
+	}
+
+	cd := i[0].(map[string]interface{})
+
+	commitDetails := &client.CustomCommitDetails{}
+
+	if attr, ok := cd["author_email_id"]; ok && attr != "" {
+		commitDetails.AuthorEmailId = attr.(string)
+	}
+
+	if attr, ok := cd["author_name"]; ok && attr != "" {
+		commitDetails.AuthorName = attr.(string)
+	}
+
+	if attr, ok := cd["message"]; ok && attr != "" {
+		commitDetails.CommitMessage = attr.(string)
+	}
+
+	return commitDetails
 }
