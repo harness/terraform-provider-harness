@@ -141,28 +141,28 @@ type UpdateWinRMCredential struct {
 }
 
 type SSHCredentialInput struct {
-	SSHAuthenticationScheme string                 `json:"-"`
-	KerberosAuthentication  KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
-	Name                    string                 `json:"name,omitempty"`
-	SSHAuthentication       SSHAuthenticationInput `json:"sshAuthentication,omitempty"`
-	UsageScope              UsageScope             `json:"usageScope,omitempty"`
+	AuthenticationScheme   string                  `json:"authenticationScheme,omitempty"`
+	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
+	Name                   string                  `json:"name,omitempty"`
+	SSHAuthentication      *SSHAuthenticationInput `json:"sshAuthentication,omitempty"`
+	UsageScope             *UsageScope             `json:"usageScope,omitempty"`
 }
 type SSHAuthenticationInput struct {
-	Port                    int                     `json:"port,omitempty"`
-	SSHAuthenticationMethod SSHAuthenticationMethod `json:"sshAuthenticationMethod,omitempty"`
-	Username                string                  `json:"username,omitempty"`
+	Port                    int                      `json:"port,omitempty"`
+	SSHAuthenticationMethod *SSHAuthenticationMethod `json:"sshAuthenticationMethod,omitempty"`
+	Username                string                   `json:"userName,omitempty"`
 }
 
 type SSHAuthenticationMethod struct {
-	InlineSSHKey      InlineSSHKey `json:"inlineSSHKey,omitempty"`
-	ServerPassword    SSHPassword  `json:"serverPassword,omitempty"`
-	SSHCredentialType string       `json:"sshCredentialType,omitempty"`
-	SSHKeyFile        SSHKeyFile   `json:"sshKeyFile,omitempty"`
+	InlineSSHKey      *InlineSSHKey `json:"inlineSSHKey,omitempty"`
+	ServerPassword    *SSHPassword  `json:"serverPassword,omitempty"`
+	SSHCredentialType string        `json:"sshCredentialType,omitempty"`
+	SSHKeyFile        *SSHKeyFile   `json:"sshKeyFile,omitempty"`
 }
 
 type InlineSSHKey struct {
 	PassphraseSecretId string `json:"passphraseSecretId,omitempty"`
-	SSHKeySecretFileId string `json:"sshKeySecretField,omitempty"`
+	SSHKeySecretFileId string `json:"sshKeySecretFileId,omitempty"`
 }
 
 type SSHPassword struct {
@@ -187,15 +187,15 @@ var SSHCredentialTypes = &sshCredentialType{
 }
 
 type KerberosAuthentication struct {
-	Port                int                 `json:"port,omitempty"`
-	Principal           string              `json:"principal,omitempty"`
-	Realm               string              `json:"realm,omitempty"`
-	TGTGenerationMethod TGTGenerationMethod `json:"tgtGenerationMethod,omitempty"`
+	Port                int                  `json:"port,omitempty"`
+	Principal           string               `json:"principal,omitempty"`
+	Realm               string               `json:"realm,omitempty"`
+	TGTGenerationMethod *TGTGenerationMethod `json:"tgtGenerationMethod,omitempty"`
 }
 type TGTGenerationMethod struct {
-	KerberosPassword   KerberosPassword `json:"kerberosPassword,omitempty"`
-	KeyTabFile         KeyTabFile       `json:"keyTabFile,omitempty"`
-	TGTGenerationUsing string           `json:"tgtGenerationUsing,omitempty"`
+	KerberosPassword   *KerberosPassword `json:"kerberosPassword,omitempty"`
+	KeyTabFile         *KeyTabFile       `json:"keyTabFile,omitempty"`
+	TGTGenerationUsing string            `json:"tgtGenerationUsing,omitempty"`
 }
 
 type tgtGenerationUsingOption struct {
@@ -242,6 +242,16 @@ var ApplicationFilterTypes = &applicationFilterType{
 var EnvironmentFilterTypes = &environmentFilterType{
 	NonProduction: "NON_PRODUCTION_ENVIRONMENTS",
 	Production:    "PRODUCTION_ENVIRONMENTS",
+}
+
+type sshAuthenticationScheme struct {
+	Kerberos string
+	SSH      string
+}
+
+var SSHAuthenticationSchemes = &sshAuthenticationScheme{
+	Kerberos: "KERBEROS",
+	SSH:      "SSH",
 }
 
 type DeleteSecretInput struct {
