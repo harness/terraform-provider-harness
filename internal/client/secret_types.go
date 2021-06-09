@@ -4,13 +4,6 @@ type SecretClient struct {
 	APIClient *ApiClient
 }
 
-// Get the client for interacting with Harness Applications
-func (c *ApiClient) Secrets() *SecretClient {
-	return &SecretClient{
-		APIClient: c,
-	}
-}
-
 type sshCredentialAuthenticationType struct {
 	SSHAuthentication      string
 	KerberosAuthentication string

@@ -124,33 +124,6 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func expandUsageScopeObject(scope interface{}) *client.AppEnvScope {
-	sc := scope.(map[string]interface{})
-
-	opts := &client.AppEnvScope{
-		Application: &client.AppScopeFilter{},
-		Environment: &client.EnvScopeFilter{},
-	}
-
-	if attr, ok := sc["application_id"]; ok && attr != "" {
-		opts.Application.AppId = attr.(string)
-	}
-
-	if attr, ok := sc["application_filter_type"]; ok && attr != "" {
-		opts.Application.FilterType = attr.(string)
-	}
-
-	if attr, ok := sc["environment_id"]; ok && attr != "" {
-		opts.Environment.EnvId = attr.(string)
-	}
-
-	if attr, ok := sc["environment_filter_type"]; ok && attr != "" {
-		opts.Environment.FilterType = attr.(string)
-	}
-
-	return opts
-}
-
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
 

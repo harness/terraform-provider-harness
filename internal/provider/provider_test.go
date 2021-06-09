@@ -2,9 +2,10 @@ package provider
 
 import (
 	"context"
-	"fmt"
+	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -78,13 +79,25 @@ func testAccPreCheck(t *testing.T) {
 	// function.
 }
 
-func testProvider() string {
-	f := fmt.Sprintf(`
-provider "harness" {
-  endpoint 		= %s
-  api_key    	= %s
-  account_id 	= %s
+func getClient() *client.ApiClient {
+	return &client.ApiClient{
+		UserAgent: "micahlmartin-harness-go-sdk-0.0.1",
+		Endpoint:  client.DefaultApiUrl,
+		AccountId: os.Getenv(envvar.HarnessAccountId),
+		APIKey:    os.Getenv(envvar.HarnessApiKey),
+		HTTPClient: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+	}
 }
-`, os.Getenv(envvar.HarnessEndpoint), os.Getenv(envvar.HarnessApiKey), os.Getenv(envvar.HarnessAccountId))
-	return f
-}
+
+// func testProvider() string {
+// 	f := fmt.Sprintf(`
+// provider "harness" {
+//   endpoint 		= %s
+//   api_key    	= %s
+//   account_id 	= %s
+// }
+// `, os.Getenv(envvar.HarnessEndpoint), os.Getenv(envvar.HarnessApiKey), os.Getenv(envvar.HarnessAccountId))
+// 	return f
+// }

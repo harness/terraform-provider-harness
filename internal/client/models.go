@@ -113,14 +113,14 @@ type Tag struct {
 }
 
 type User struct {
-	Email                            string
-	Id                               string
-	IsEmailVerified                  bool
-	IsImportedFromIdentityProvider   bool
-	IsPasswordExpired                bool
-	IsTwoFactorAuthenticationEnabled bool
-	IsUserLocked                     bool
-	Name                             string
+	Email                            string `json:"email,omitempty"`
+	Id                               string `json:"id,omitempty"`
+	IsEmailVerified                  bool   `json:"isEmailVerified,omitempty"`
+	IsImportedFromIdentityProvider   bool   `json:"isImportedFromIdentityProvider,omitempty"`
+	IsPasswordExpired                bool   `json:"isPasswordExpired,omitempty"`
+	IsTwoFactorAuthenticationEnabled bool   `json:"isTwoFactorAuthenticationEnabled,omitempty"`
+	IsUserLocked                     bool   `json:"isUserLocked,omitempty"`
+	Name                             string `json:"name,omitempty"`
 }
 
 type GitSyncConfig struct {
@@ -130,29 +130,10 @@ type GitSyncConfig struct {
 	SyncEnabled    bool
 }
 
-type GitConnector struct {
-	Url                 string
-	Branch              string
-	CreatedAt           string
-	CreatedBy           *User
-	CustomCommitDetails *CustomCommitDetails
-	DelegateSelectors   []string
-	Description         string
-	GenerateWebhookUrl  bool
-	Id                  string
-	Name                string
-	PasswordSecretId    string
-	SshSettingId        string
-	UrlType             string
-	UsageScope          *UsageScope
-	UserName            string
-	WebhookUrl          string
-}
-
 type CustomCommitDetails struct {
-	AuthorEmailId string
-	AuthorName    string
-	CommitMessage string
+	AuthorEmailId string `json:"authorEmailId,omitempty"`
+	AuthorName    string `json:"authorName,omitempty"`
+	CommitMessage string `json:"commitMessage,omitempty"`
 }
 
 type UsageScope struct {

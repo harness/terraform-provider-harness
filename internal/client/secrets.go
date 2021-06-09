@@ -84,6 +84,13 @@ const winRMCredentialFields = `
 	userName
 `
 
+// Get the client for interacting with Harness Applications
+func (c *ApiClient) Secrets() *SecretClient {
+	return &SecretClient{
+		APIClient: c,
+	}
+}
+
 func (c *SecretClient) GetEncryptedTextByName(name string) (*EncryptedText, error) {
 	query := &GraphQLQuery{
 		Query: fmt.Sprintf(`query($name: String!) {
