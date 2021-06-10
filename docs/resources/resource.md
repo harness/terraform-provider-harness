@@ -1,5 +1,5 @@
 ---
-page_title: "scaffolding_resource Resource - terraform-provider-scaffolding"
+page_title: "scaffolding_resource Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
   Sample resource in the Terraform provider scaffolding.
