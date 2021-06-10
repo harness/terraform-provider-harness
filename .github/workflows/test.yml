@@ -17,11 +17,7 @@ on:
   #   - cron: '0 13 * * *'
 jobs:
   # ensure the code builds...
-  build:
-    env:
-      HARNESS_API_KEY: ${{ secrets.HARNESS_API_KEY }}
-      HARNESS_ACCOUNT_ID: ${{ secrets.HARNESS_ACCOUNT_ID }}
-      HARNESS_ENDPOINT: ${{ secrets.HARNESS_ENDPOINT }}
+  build:      
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -78,6 +74,9 @@ jobs:
       env:
         TF_ACC: "1"
         TF_ACC_TERRAFORM_VERSION: ${{ matrix.terraform }}
+        HARNESS_API_KEY: ${{ secrets.HARNESS_API_KEY }}
+        HARNESS_ACCOUNT_ID: ${{ secrets.HARNESS_ACCOUNT_ID }}
+        HARNESS_ENDPOINT: ${{ secrets.HARNESS_ENDPOINT }}
 
         # Set whatever additional acceptance test env vars here. You can
         # optionally use data from your repository secrets using the
