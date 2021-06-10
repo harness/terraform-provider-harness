@@ -2,47 +2,54 @@ package provider
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
+	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
 )
 
 func TestAccDataSourceGitConnector(t *testing.T) {
 
-	// var (
-	// 	expectedName            = "somesecret"
-	// 	expectedId              = "MPuZFELfRO-q6rqTcLwFLg"
-	// 	expectedSecretManagerId = os.Getenv(envvar.HarnessAccountId)
-	// )
-
-	resourceName := "data.harness_encrypted_text.secret_by_name"
+	var (
+		expectedName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		resourceName = "data.harness_git_connector.test"
+	)
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceEncryptedTextByName(expectedName),
+				Config: testAccDataSourceGitConnector(expectedName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr(resourceName, "id", regexp.MustCompile(expectedId)),
-					resource.TestMatchResourceAttr(resourceName, "name", regexp.MustCompile(expectedName)),
-					resource.TestMatchResourceAttr(resourceName, "secret_manager_id", regexp.MustCompile(expectedSecretManagerId)),
-					resource.TestCheckResourceAttr(resourceName, "usage_scopes.0.application_filter_type", client.ApplicationFilterTypes.All),
-					resource.TestCheckResourceAttr(resourceName, "usage_scopes.0.application_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "usage_scopes.0.environment_filter_type", client.EnvironmentFilterTypes.NonProduction),
-					resource.TestCheckResourceAttr(resourceName, "usage_scopes.0.environment_id", ""),
+					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
+					resource.TestCheckResourceAttr(resourceName, "branch", "master"),
+					resource.TestCheckResourceAttr(resourceName, "url_type", "REPO"),
+					resource.TestCheckResourceAttr(resourceName, "username", "someuser"),
 				),
 			},
 		},
 	})
 }
 
-func testAccDataSourceGitConnector(id string) string {
+func testAccDataSourceGitConnector(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_encrypted_text" "test" {
+		name = "%[1]s"
+		value = "foo"
+	}
+
+	resource "harness_git_connector" "test" {
+		name = "%[1]s"
+		url = "https://github.com/micahlmartin/harness-demo"
+		branch = "master"
+		password_secret_id = harness_encrypted_text.test.id
+		url_type = "REPO"
+		username = "someuser"
+	}	
+
 		data "harness_git_connector" "test" {
-			id = "%s"
+			id = harness_git_connector.test.id
 		}
-`, id)
+`, name)
 }

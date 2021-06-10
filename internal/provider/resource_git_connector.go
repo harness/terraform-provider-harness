@@ -159,7 +159,6 @@ func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta 
 	d.Set("webhook_url", conn.WebhookUrl)
 	d.Set("url_type", conn.UrlType)
 	d.Set("username", conn.UserName)
-
 	d.Set("commit_details", flattenCommitDetails(conn.CustomCommitDetails))
 	d.Set("delegate_selectors", flattenDelgateSelectors(conn.DelegateSelectors))
 
