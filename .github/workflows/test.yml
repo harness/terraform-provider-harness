@@ -18,6 +18,10 @@ on:
 jobs:
   # ensure the code builds...
   build:
+    env:
+      HARNESS_API_KEY: ${{ secrets.HARNESS_API_KEY }}
+      HARNESS_ACCOUNT_ID: ${{ secrets.HARNESS_ACCOUNT_ID }}
+      HARNESS_ENDPOINT: ${{ secrets.HARNESS_ENDPOINT }}
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
