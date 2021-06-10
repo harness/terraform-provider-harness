@@ -12,43 +12,30 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// func TestStuff(t *testing.T) {
-// 	wtf(nil, nil)
-// 	fmt.Println(me)
-// }
-
 func TestAccResourceGitConnector(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		updatedName  = fmt.Sprintf("%s_updated", name)
 		resourceName = "harness_git_connector.test"
-		connector    client.GitConnector
 	)
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccGitConnectorDestroy,
+		CheckDestroy:      testAccGitConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitConnector(name, false),
+				Config: testAccResourceGitConnector(name, true, true, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://github.com/micahlmartin/harness-demo"),
-					resource.TestCheckResourceAttr(resourceName, "branch", "master"),
-					resource.TestCheckResourceAttr(resourceName, "webhook_url", ""),
-					resource.TestCheckResourceAttr(resourceName, "url_type", client.GitUrlTypes.Repo),
-					testAccCheckGitConnectorExists(t, resourceName, &connector),
+					resource.TestCheckResourceAttrSet(resourceName, "webhook_url"),
+					testAccCheckGitConnectorExists(t, resourceName, name),
 				),
 			},
 			{
-				Config: testAccResourceGitConnector(name, true),
+				Config: testAccResourceGitConnector(updatedName, true, false, false),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://github.com/micahlmartin/harness-demo"),
-					resource.TestCheckResourceAttr(resourceName, "branch", "master"),
-					resource.TestCheckResourceAttrSet(resourceName, "webhook_url"),
-					resource.TestCheckResourceAttr(resourceName, "url_type", client.GitUrlTypes.Repo),
+					testAccCheckGitConnectorUpdated(t, resourceName, updatedName),
 				),
 			},
 		},
@@ -64,7 +51,6 @@ func TestAccResourceGitConnector_invalid_urltype(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccGitConnectorDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config:      testAccResourceGitConnector_invalid_urltype(name),
@@ -74,47 +60,84 @@ func TestAccResourceGitConnector_invalid_urltype(t *testing.T) {
 	})
 }
 
-func testAccCheckGitConnectorExists(t *testing.T, name string, connector *client.GitConnector) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		require.True(t, ok)
-		require.NotEmpty(t, rs.Primary.ID)
+func testAccGetGitConnector(resourceName string, state *terraform.State) (*client.GitConnector, error) {
+	r := testAccGetResource(resourceName, state)
+	c := testAccGetApiClientFromProvider()
+	id := r.Primary.ID
 
-		p := testAccProvider
+	return c.Connectors().GetGitConnectorById(id)
+}
 
-		client := p.Meta().(*client.ApiClient)
-
-		conn, err := client.Connectors().GetGitConnectorById(rs.Primary.ID)
+func testAccCheckGitConnectorExists(t *testing.T, resourceName string, connectorName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		conn, err := testAccGetGitConnector(resourceName, state)
 		require.NoError(t, err)
+		require.Equal(t, connectorName, conn.Name)
+		require.Equal(t, "https://github.com/micahlmartin/harness-demo", conn.Url)
+		require.Equal(t, "master", conn.Branch)
+		require.Equal(t, client.GitUrlTypes.Repo, conn.UrlType)
 		require.NotNil(t, conn.CustomCommitDetails)
 		require.Len(t, conn.DelegateSelectors, 1)
+		return nil
+	}
+}
+
+func testAccCheckGitConnectorUpdated(t *testing.T, resourceName string, connectorName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		conn, err := testAccGetGitConnector(resourceName, state)
+		require.NoError(t, err)
+		require.Equal(t, connectorName, conn.Name)
+		require.NotNil(t, conn.CustomCommitDetails)
+		require.Empty(t, conn.CustomCommitDetails.AuthorEmailId)
+		require.Empty(t, conn.CustomCommitDetails.AuthorName)
+		require.Empty(t, conn.CustomCommitDetails.CommitMessage)
+		require.Nil(t, conn.DelegateSelectors)
+		return nil
+	}
+}
+
+func testAccGitConnectorDestroy(resourceName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		conn, _ := testAccGetGitConnector(resourceName, state)
+		if conn != nil {
+			return fmt.Errorf("Found git connector: %s", conn.Id)
+		}
 
 		return nil
 	}
 }
 
-func testAccGitConnectorDestroy(s *terraform.State) error {
-	p := testAccProvider
-	client := p.Meta().(*client.ApiClient)
-
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "harness_git_connector" {
-			continue
-		}
-
-		// Try to find the resource
-		conn, err := client.Connectors().GetGitConnectorById(rs.Primary.ID)
-		if err == nil {
-			if conn != nil {
-				return fmt.Errorf("Found git connector: %s", rs.Primary.ID)
-			}
-		}
-	}
-
-	return nil
+func testAccGetDefaultDelegeteSelectors() string {
+	return `
+		delegate_selectors = ["primary"]
+	`
 }
 
-func testAccResourceGitConnector(name string, generateWebhook bool) string {
+func testAccGetCommitDetails() string {
+	return `
+		commit_details {
+			author_email_id = "user@example.com"
+			author_name = "some user"
+			message = "commit message here"
+		}
+	`
+}
+
+func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDetails bool, withDelegateSelectors bool) string {
+
+	var (
+		delegateSelectors string
+		commitDetails     string
+	)
+
+	if withDelegateSelectors {
+		delegateSelectors = testAccGetDefaultDelegeteSelectors()
+	}
+
+	if withCommitDetails {
+		commitDetails = testAccGetCommitDetails()
+	}
+
 	return fmt.Sprintf(`
 		resource "harness_encrypted_text" "test" {
 			name = "%[1]s"
@@ -130,15 +153,11 @@ func testAccResourceGitConnector(name string, generateWebhook bool) string {
 			url_type = "REPO"
 			username = "someuser"
 
-			commit_details {
-				author_email_id = "user@example.com"
-				author_name = "some user"
-				message = "commit message here"
-			}
+			%[3]s
 
-			delegate_selectors = ["primary"]
+			%[4]s
 		}	
-`, name, generateWebhook)
+`, name, generateWebhook, commitDetails, delegateSelectors)
 }
 
 func testAccResourceGitConnector_invalid_urltype(name string) string {

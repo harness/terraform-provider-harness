@@ -129,6 +129,12 @@ type GitConnectorInput struct {
 	UserName            string               `json:"userName,omitempty"`
 }
 
+type CustomCommitDetails struct {
+	AuthorEmailId string `json:"authorEmailId"`
+	AuthorName    string `json:"authorName"`
+	CommitMessage string `json:"commitMessage"`
+}
+
 type CreateConnectorInput struct {
 	ClientMutationId string                `json:"clientMutationId,omitempty"`
 	ConnectorType    string                `json:"connectorType,omitempty"`

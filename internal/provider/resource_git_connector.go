@@ -311,6 +311,11 @@ func flattenDelgateSelectors(ds []string) []interface{} {
 }
 
 func flattenCommitDetails(details *client.CustomCommitDetails) []interface{} {
+
+	if details.IsEmpty() {
+		return nil
+	}
+
 	cd := make([]interface{}, 1)
 
 	if details == nil {

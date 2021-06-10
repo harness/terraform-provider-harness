@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (c *SecretClient) CreateSSHCredential(sshInput *SSHCredentialInput) (*SSHCredential, error) {
+func (c *SecretClient) CreateSSHCredential(sshInput *SSHCredential) (*SSHCredential, error) {
 
 	// Set defaults
 	input := &CreateSecretInput{
@@ -43,9 +43,10 @@ func (c *SecretClient) CreateSSHCredential(sshInput *SSHCredentialInput) (*SSHCr
 	return &res.CreateSecret.Secret, nil
 }
 
-func (c *SecretClient) UpdateSSHCredential(cred *UpdateSSHCredential) (*SSHCredential, error) {
+func (c *SecretClient) UpdateSSHCredential(id string, cred *SSHCredential) (*SSHCredential, error) {
 
 	input := &UpdateSecretInput{
+		SecretId:      id,
 		SecretType:    SecretTypes.SSHCredential,
 		SSHCredential: cred,
 	}
@@ -53,7 +54,9 @@ func (c *SecretClient) UpdateSSHCredential(cred *UpdateSSHCredential) (*SSHCrede
 	query := &GraphQLQuery{
 		Query: fmt.Sprintf(`mutation($secret: UpdateSecretInput!) {
 			updateSecret(input: $secret) {
-				%s
+				secret {
+					%s
+				}
 			}
 		}`, sshCredentialFields),
 		Variables: map[string]interface{}{

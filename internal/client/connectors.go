@@ -181,3 +181,11 @@ func (c *ConnectorClient) DeleteConnector(id string) error {
 
 	return nil
 }
+
+func (d *CustomCommitDetails) IsEmpty() bool {
+	if d == nil {
+		return true
+	}
+
+	return (d.AuthorEmailId + d.AuthorName + d.CommitMessage) == ""
+}

@@ -37,50 +37,105 @@ func usageScopeSchema() *schema.Schema {
 	}
 }
 
-func flattenAppEnvScopes(appEnvScopes []*client.AppEnvScope) []interface{} {
-	if appEnvScopes == nil {
-		return make([]interface{}, 0)
-	}
+func expandUsageScope(d []interface{}) (*client.UsageScope, error) {
 
-	scopes := make([]interface{}, len(appEnvScopes))
+	us := &client.UsageScope{}
+	scopes := make([]*client.AppEnvScope, 0)
 
-	for i, scope := range appEnvScopes {
-		s := map[string]string{
-			"application_filter_type": scope.Application.FilterType,
-			"application_id":          scope.Application.AppId,
-			"environment_filter_type": scope.Environment.FilterType,
-			"environment_id":          scope.Environment.EnvId,
+	for _, appScope := range d {
+		scopeData := appScope.(map[string]interface{})
+		scope := &client.AppEnvScope{
+			Application: &client.AppScopeFilter{},
+			Environment: &client.EnvScopeFilter{},
 		}
 
-		scopes[i] = s
+		if attr, ok := scopeData["application_filter_type"]; ok && attr != "" {
+			scope.Application.FilterType = attr.(string)
+		}
+
+		if attr, ok := scopeData["application_id"]; ok && attr != "" {
+			scope.Application.AppId = attr.(string)
+		}
+
+		if attr, ok := scopeData["environment_filter_type"]; ok && attr != "" {
+			scope.Environment.FilterType = attr.(string)
+		}
+
+		if attr, ok := scopeData["environment_id"]; ok && attr != "" {
+			scope.Environment.EnvId = attr.(string)
+		}
+
+		scopes = append(scopes, scope)
 	}
 
-	return scopes
+	us.AppEnvScopes = scopes
+
+	return us, nil
 }
 
-func expandUsageScopeObject(scope interface{}) *client.AppEnvScope {
-	sc := scope.(map[string]interface{})
-
-	opts := &client.AppEnvScope{
-		Application: &client.AppScopeFilter{},
-		Environment: &client.EnvScopeFilter{},
+func flattenUsageScope(uc *client.UsageScope) []map[string]interface{} {
+	if uc == nil {
+		return make([]map[string]interface{}, 0)
 	}
 
-	if attr, ok := sc["application_id"]; ok && attr != "" {
-		opts.Application.AppId = attr.(string)
+	results := make([]map[string]interface{}, len(uc.AppEnvScopes))
+
+	for i, scope := range uc.AppEnvScopes {
+		results[i] = map[string]interface{}{
+			"application_id":          scope.Application.AppId,
+			"application_filter_type": scope.Application.FilterType,
+			"environment_id":          scope.Environment.EnvId,
+			"environment_filter_type": scope.Environment.FilterType,
+		}
 	}
 
-	if attr, ok := sc["application_filter_type"]; ok && attr != "" {
-		opts.Application.FilterType = attr.(string)
-	}
-
-	if attr, ok := sc["environment_id"]; ok && attr != "" {
-		opts.Environment.EnvId = attr.(string)
-	}
-
-	if attr, ok := sc["environment_filter_type"]; ok && attr != "" {
-		opts.Environment.FilterType = attr.(string)
-	}
-
-	return opts
+	return results
 }
+
+// func flattenAppEnvScopes(appEnvScopes []*client.AppEnvScope) []interface{} {
+// 	if appEnvScopes == nil {
+// 		return make([]interface{}, 0)
+// 	}
+
+// 	scopes := make([]interface{}, len(appEnvScopes))
+
+// 	for i, scope := range appEnvScopes {
+// 		s := map[string]string{
+// 			"application_filter_type": scope.Application.FilterType,
+// 			"application_id":          scope.Application.AppId,
+// 			"environment_filter_type": scope.Environment.FilterType,
+// 			"environment_id":          scope.Environment.EnvId,
+// 		}
+
+// 		scopes[i] = s
+// 	}
+
+// 	return scopes
+// }
+
+// func expandUsageScopeObject(scope interface{}) *client.AppEnvScope {
+// 	sc := scope.(map[string]interface{})
+
+// 	opts := &client.AppEnvScope{
+// 		Application: &client.AppScopeFilter{},
+// 		Environment: &client.EnvScopeFilter{},
+// 	}
+
+// 	if attr, ok := sc["application_id"]; ok && attr != "" {
+// 		opts.Application.AppId = attr.(string)
+// 	}
+
+// 	if attr, ok := sc["application_filter_type"]; ok && attr != "" {
+// 		opts.Application.FilterType = attr.(string)
+// 	}
+
+// 	if attr, ok := sc["environment_id"]; ok && attr != "" {
+// 		opts.Environment.EnvId = attr.(string)
+// 	}
+
+// 	if attr, ok := sc["environment_filter_type"]; ok && attr != "" {
+// 		opts.Environment.FilterType = attr.(string)
+// 	}
+
+// 	return opts
+// }

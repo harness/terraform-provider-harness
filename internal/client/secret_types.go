@@ -23,17 +23,12 @@ var WinRMAuthenticationTypes = &winRMAuthenticationType{
 	NTLM: "NTLM",
 }
 
-type SSHAuthentication struct {
-	Port     int    `json:"port,omitempty"`
-	Username string `json:"username,omitempty"`
-}
-
-type SSHCredential struct {
-	Secret
-	AuthenticationType     string
-	KerberosAuthentication *KerberosAuthentication
-	SSHAuthentication      *SSHAuthentication
-}
+// type SSHCredential struct {
+// 	Secret
+// 	AuthenticationType     string                  `json:"authenticationType,omitempty"`
+// 	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
+// 	SSHAuthentication      *SSHAuthentication      `json:"sshAuthentication,omitempty"`
+// }
 
 type secretType struct {
 	EncryptedFile   string
@@ -74,7 +69,7 @@ type CreateSecretInput struct {
 	ClientMutationId string                `json:"clientMutationId,omitempty"`
 	EncryptedText    *EncryptedTextInput   `json:"encryptedText,omitempty"`
 	SecretType       string                `json:"secretType,omitempty"`
-	SSHCredential    *SSHCredentialInput   `json:"sshCredential,omitempty"`
+	SSHCredential    *SSHCredential        `json:"sshCredential,omitempty"`
 	WinRMCredential  *WinRMCredentialInput `json:"winRMCredential,omitempty"`
 }
 
@@ -83,7 +78,7 @@ type UpdateSecretInput struct {
 	EncryptedText    *UpdateEncryptedText   `json:"encryptedText,omitempty"`
 	SecretId         string                 `json:"secretId,omitempty"`
 	SecretType       string                 `json:"secretType,omitempty"`
-	SSHCredential    *UpdateSSHCredential   `json:"sshCredential,omitempty"`
+	SSHCredential    *SSHCredential         `json:"sshCredential,omitempty"`
 	WinRMCredential  *UpdateWinRMCredential `json:"winRMCredential,omitempty"`
 }
 
@@ -120,14 +115,6 @@ type UpdateEncryptedText struct {
 	Value               string      `json:"value,omitempty"`
 }
 
-type UpdateSSHCredential struct {
-	AuthenticationScheme   string                  `json:"authenticationScheme,omitempty"`
-	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
-	Name                   string                  `json:"name,omitempty"`
-	SSHAuthentication      *SSHAuthenticationInput `json:"sshAuthentication,omitempty"`
-	UsageScope             *UsageScope             `json:"usageScope,omitempty"`
-}
-
 type UpdateWinRMCredential struct {
 	AuthenticationScheme string      `json:"authenticationScheme,omitempty"`
 	Domain               string      `json:"domain,omitempty"`
@@ -140,14 +127,17 @@ type UpdateWinRMCredential struct {
 	Username             string      `json:"username,omitempty"`
 }
 
-type SSHCredentialInput struct {
+type SSHCredential struct {
+	Secret
 	AuthenticationScheme   string                  `json:"authenticationScheme,omitempty"`
 	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
 	Name                   string                  `json:"name,omitempty"`
-	SSHAuthentication      *SSHAuthenticationInput `json:"sshAuthentication,omitempty"`
+	SSHAuthentication      *SSHAuthentication      `json:"sshAuthentication,omitempty"`
 	UsageScope             *UsageScope             `json:"usageScope,omitempty"`
+	AuthenticationType     string                  `json:"authenticationType,omitempty"`
 }
-type SSHAuthenticationInput struct {
+
+type SSHAuthentication struct {
 	Port                    int                      `json:"port,omitempty"`
 	SSHAuthenticationMethod *SSHAuthenticationMethod `json:"sshAuthenticationMethod,omitempty"`
 	Username                string                   `json:"userName,omitempty"`

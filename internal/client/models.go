@@ -130,12 +130,6 @@ type GitSyncConfig struct {
 	SyncEnabled    bool
 }
 
-type CustomCommitDetails struct {
-	AuthorEmailId string `json:"authorEmailId"`
-	AuthorName    string `json:"authorName"`
-	CommitMessage string `json:"commitMessage"`
-}
-
 type UsageScope struct {
 	AppEnvScopes []*AppEnvScope `json:"appEnvScopes,omitempty"`
 }

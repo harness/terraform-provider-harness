@@ -79,11 +79,7 @@ func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta
 	d.Set("inherit_scopes_from_secret_manager", secret.InheritScopesFromSM)
 	d.Set("scoped_to_account", secret.ScopedToAccount)
 	d.Set("secret_manager_id", secret.SecretManagerId)
-
-	if secret.UsageScope != nil {
-		scopes := flattenAppEnvScopes(secret.UsageScope.AppEnvScopes)
-		d.Set("usage_scope", scopes)
-	}
+	d.Set("usage_scope", flattenUsageScope(secret.UsageScope))
 
 	return nil
 }
@@ -101,17 +97,11 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 		},
 	}
 
-	scopes := d.Get("usage_scope").(*schema.Set)
-	var usageScopes []*client.AppEnvScope
-	for _, sc := range scopes.List() {
-		usageScopes = append(usageScopes, expandUsageScopeObject(sc))
+	usageScope, err := expandUsageScope(d.Get("usage_scope").(*schema.Set).List())
+	if err != nil {
+		return diag.FromErr(err)
 	}
-
-	if len(usageScopes) > 0 {
-		input.EncryptedText.UsageScope = &client.UsageScope{
-			AppEnvScopes: usageScopes,
-		}
-	}
+	input.EncryptedText.UsageScope = usageScope
 
 	secret, err := c.Secrets().CreateEncryptedText(input)
 
@@ -142,19 +132,13 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 		},
 	}
 
-	scopes := d.Get("usage_scope").(*schema.Set)
-	var usageScopes []*client.AppEnvScope
-	for _, sc := range scopes.List() {
-		usageScopes = append(usageScopes, expandUsageScopeObject(sc))
+	usageScope, err := expandUsageScope(d.Get("usage_scope").(*schema.Set).List())
+	if err != nil {
+		return diag.FromErr(err)
 	}
+	input.EncryptedText.UsageScope = usageScope
 
-	if len(usageScopes) > 0 {
-		input.EncryptedText.UsageScope = &client.UsageScope{
-			AppEnvScopes: usageScopes,
-		}
-	}
-
-	_, err := c.Secrets().UpdateEncryptedText(input)
+	_, err = c.Secrets().UpdateEncryptedText(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}

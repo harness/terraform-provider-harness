@@ -31,7 +31,7 @@ func dataSourceEncryptedText() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"usage_scopes": usageScopeSchema(),
+			"usage_scope": usageScopeSchema(),
 		},
 	}
 }
@@ -64,13 +64,7 @@ func dataSourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, me
 	d.SetId(secret.Id)
 	d.Set("name", secret.Name)
 	d.Set("secret_manager_id", secret.SecretManagerId)
-
-	if secret.UsageScope != nil {
-		usageScopes := flattenAppEnvScopes(secret.UsageScope.AppEnvScopes)
-		if err := d.Set("usage_scopes", usageScopes); err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	d.Set("usage_scope", flattenUsageScope(secret.UsageScope))
 
 	return nil
 }

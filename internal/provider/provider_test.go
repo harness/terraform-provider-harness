@@ -13,6 +13,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	testAccSecretFileId = "2WnPVgLGSZW6KbApZuxeaw"
+)
+
 // providerFactories are used to instantiate a provider during acceptance testing.
 // The factory function will be invoked for every Terraform CLI command executed
 // to create a provider server to which the CLI can reattach.
@@ -89,13 +93,11 @@ func testAccPreCheck(t *testing.T) {
 var testAccProvider *schema.Provider
 var testAccProviderConfigure sync.Once
 
-// func testProvider() string {
-// 	f := fmt.Sprintf(`
-// provider "harness" {
-//   endpoint 		= %s
-//   api_key    	= %s
-//   account_id 	= %s
-// }
-// `, os.Getenv(envvar.HarnessEndpoint), os.Getenv(envvar.HarnessApiKey), os.Getenv(envvar.HarnessAccountId))
-// 	return f
-// }
+func testAccGetResource(resourceName string, state *terraform.State) *terraform.ResourceState {
+	rm := state.RootModule()
+	return rm.Resources[resourceName]
+}
+
+func testAccGetApiClientFromProvider() *client.ApiClient {
+	return testAccProvider.Meta().(*client.ApiClient)
+}

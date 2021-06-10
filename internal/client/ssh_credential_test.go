@@ -20,10 +20,10 @@ func TestCreateSSHCredential_SSHAuthentication_inlinesshkey(t *testing.T) {
 	passphraseSecret, err := createEncryptedTextSecret(passphraseSecretName, "foo")
 	require.NoError(t, err)
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.SSH,
 		Name:                 expectedName,
-		SSHAuthentication: &SSHAuthenticationInput{
+		SSHAuthentication: &SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
 			SSHAuthenticationMethod: &SSHAuthenticationMethod{
@@ -67,10 +67,10 @@ func TestCreateSSHCredential_SSHAuthentication_serverpassword(t *testing.T) {
 	passphraseSecret, err := createEncryptedTextSecret(passphraseSecretName, "foo")
 	require.NoError(t, err)
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.SSH,
 		Name:                 expectedName,
-		SSHAuthentication: &SSHAuthenticationInput{
+		SSHAuthentication: &SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
 			SSHAuthenticationMethod: &SSHAuthenticationMethod{
@@ -113,10 +113,10 @@ func TestCreateSSHCredential_SSHAuthentication_keyfile(t *testing.T) {
 	passphraseSecret, err := createEncryptedTextSecret(passphraseSecretName, "foo")
 	require.NoError(t, err)
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.SSH,
 		Name:                 expectedName,
-		SSHAuthentication: &SSHAuthenticationInput{
+		SSHAuthentication: &SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
 			SSHAuthenticationMethod: &SSHAuthenticationMethod{
@@ -160,7 +160,7 @@ func TestCreateSSHCredential_KerberosAuth_password(t *testing.T) {
 	passphraseSecret, err := createEncryptedTextSecret(passphraseSecretName, "foo")
 	require.NoError(t, err)
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.Kerberos,
 		Name:                 expectedName,
 		KerberosAuthentication: &KerberosAuthentication{
@@ -203,7 +203,7 @@ func TestCreateSSHCredential_KerberosAuth_keytabfile(t *testing.T) {
 		expectedName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
 	)
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.Kerberos,
 		Name:                 expectedName,
 		KerberosAuthentication: &KerberosAuthentication{
@@ -252,11 +252,11 @@ func TestUpdateSSHCredential(t *testing.T) {
 
 	// Update secret
 	client := getClient()
-	input := &UpdateSSHCredential{
+	input := &SSHCredential{
 		Name: updatedName,
 	}
 
-	updatedSecret, err := client.Secrets().UpdateSSHCredential(input)
+	updatedSecret, err := client.Secrets().UpdateSSHCredential(expectedSecret.Id, input)
 
 	// Verify
 	require.NoError(t, err)
@@ -340,10 +340,10 @@ func createSSHCredential_sshAuth(name string) (*SSHCredential, error) {
 		return nil, err
 	}
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.SSH,
 		Name:                 name,
-		SSHAuthentication: &SSHAuthenticationInput{
+		SSHAuthentication: &SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
 			SSHAuthenticationMethod: &SSHAuthenticationMethod{
@@ -372,7 +372,7 @@ func createSSHCredential_kerberosAuth(name string) (*SSHCredential, error) {
 		return nil, err
 	}
 
-	input := &SSHCredentialInput{
+	input := &SSHCredential{
 		AuthenticationScheme: SSHAuthenticationSchemes.Kerberos,
 		Name:                 name,
 		KerberosAuthentication: &KerberosAuthentication{

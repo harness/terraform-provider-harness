@@ -42,20 +42,7 @@ func dataSourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	d.Set("name", conn.Name)
-
-	if conn.UsageScope != nil {
-		usageScopes := flattenAppEnvScopes(conn.UsageScope.AppEnvScopes)
-		if err := d.Set("usage_scopes", usageScopes); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if conn.UsageScope != nil {
-		usageScopes := flattenAppEnvScopes(conn.UsageScope.AppEnvScopes)
-		if err := d.Set("usage_scopes", usageScopes); err != nil {
-			return diag.FromErr(err)
-		}
-	}
+	d.Set("usage_scopes", flattenUsageScope(conn.UsageScope))
 
 	return nil
 }
