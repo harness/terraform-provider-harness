@@ -77,11 +77,5 @@ jobs:
         HARNESS_API_KEY: ${{ secrets.HARNESS_API_KEY }}
         HARNESS_ACCOUNT_ID: ${{ secrets.HARNESS_ACCOUNT_ID }}
         HARNESS_ENDPOINT: ${{ secrets.HARNESS_ENDPOINT }}
-
-        # Set whatever additional acceptance test env vars here. You can
-        # optionally use data from your repository secrets using the
-        # following syntax:
-        # SOME_VAR: ${{ secrets.SOME_VAR }}
-
       run: |
         go test -v -cover ./internal/provider/

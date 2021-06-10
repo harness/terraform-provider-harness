@@ -1,7 +1,5 @@
 package provider
 
-import "github.com/micahlmartin/terraform-provider-harness/internal/client"
-
 const testAccDefaultUsageScope = `
 	usage_scope {
 		application_filter_type = "ALL"
@@ -9,15 +7,15 @@ const testAccDefaultUsageScope = `
 	}
 `
 
-var testAccDefaultUsageScopeObj = &client.UsageScope{
-	AppEnvScopes: []*client.AppEnvScope{
-		{
-			Application: &client.AppScopeFilter{
-				FilterType: client.ApplicationFilterTypes.All,
-			},
-			Environment: &client.EnvScopeFilter{
-				FilterType: client.EnvironmentFilterTypes.NonProduction,
-			},
-		},
-	},
-}
+// var testAccDefaultUsageScopeObj = &client.UsageScope{
+// 	AppEnvScopes: []*client.AppEnvScope{
+// 		{
+// 			Application: &client.AppScopeFilter{
+// 				FilterType: client.ApplicationFilterTypes.All,
+// 			},
+// 			Environment: &client.EnvScopeFilter{
+// 				FilterType: client.EnvironmentFilterTypes.NonProduction,
+// 			},
+// 		},
+// 	},
+// }
