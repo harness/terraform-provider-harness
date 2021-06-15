@@ -1,6 +1,9 @@
 package client
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 type APIVersionResponse struct {
 	Metadata map[string]string `json:"metaData"`
@@ -25,7 +28,7 @@ type APIVersionResponse struct {
 
 // Returns the version of Harness that we're connecting to
 func (client *ApiClient) GetAPIVersion() (*APIVersionResponse, error) {
-	req, err := client.NewRequest("api/version")
+	req, err := client.NewHTTPRequest(http.MethodGet, "api/version")
 
 	if err != nil {
 		return nil, err

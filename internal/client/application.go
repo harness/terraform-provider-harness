@@ -78,7 +78,7 @@ func (ac *ApplicationClient) GetApplicationByName(name string) (*Application, er
 	return &res.ApplicationByName, nil
 }
 
-func (ac *ApplicationClient) CreateApplication(input *CreateApplicationInput) (*Application, error) {
+func (ac *ApplicationClient) CreateApplication(input *Application) (*Application, error) {
 
 	query := &GraphQLQuery{
 		Query: `mutation createapp($app: CreateApplicationInput!) {

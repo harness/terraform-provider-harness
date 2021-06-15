@@ -3,12 +3,12 @@ package client
 import "time"
 
 type CommonMetadata struct {
-	CreatedAt   time.Time
-	CreatedBy   User
-	Id          string
-	Name        string
-	Description string
-	Tags        []Tag
+	CreatedAt   *Time  `json:"createdAt,omitempty"`
+	CreatedBy   *User  `json:"createdBy,omitempty"`
+	Id          string `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Tags        []Tag  `json:"tags,omitempty"`
 }
 
 type WorkflowConnection struct {

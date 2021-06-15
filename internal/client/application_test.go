@@ -13,7 +13,7 @@ import (
 func createApplication(namePrefix string) (*Application, error) {
 	client := getClient()
 	name := fmt.Sprintf("%s-%s", namePrefix, utils.RandStringBytes(12))
-	input := &CreateApplicationInput{
+	input := &Application{
 		ClientMutationId: time.Now().String(),
 		Name:             name,
 		Description:      "Test application description",
@@ -65,7 +65,7 @@ func TestCreateApplication(t *testing.T) {
 	// Create application
 	client := getClient()
 	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(12))
-	input := &CreateApplicationInput{
+	input := &Application{
 		ClientMutationId: time.Now().String(),
 		Name:             name,
 		Description:      "Test application description",

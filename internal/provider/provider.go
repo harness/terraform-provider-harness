@@ -46,6 +46,11 @@ func New(version string) func() *schema.Provider {
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessApiKey, nil),
 				},
+				"bearer_token": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessBearerToken, nil),
+				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"harness_application":    dataSourceApplication(),
@@ -70,10 +75,11 @@ func New(version string) func() *schema.Provider {
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return &client.ApiClient{
-			UserAgent: p.UserAgent("terraform-provider-harness", version),
-			Endpoint:  d.Get("endpoint").(string),
-			AccountId: d.Get("account_id").(string),
-			APIKey:    d.Get("api_key").(string),
+			UserAgent:   p.UserAgent("terraform-provider-harness", version),
+			Endpoint:    d.Get("endpoint").(string),
+			AccountId:   d.Get("account_id").(string),
+			APIKey:      d.Get("api_key").(string),
+			BearerToken: d.Get("bearer_token").(string),
 			HTTPClient: &http.Client{
 				Timeout: 10 * time.Second,
 			},

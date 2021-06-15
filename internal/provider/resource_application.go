@@ -56,7 +56,7 @@ func resourceApplication() *schema.Resource {
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*client.ApiClient)
 
-	input := &client.CreateApplicationInput{
+	input := &client.Application{
 		Name:                      d.Get("name").(string),
 		Description:               d.Get("description").(string),
 		IsManualTriggerAuthorized: d.Get("is_manual_trigger_authorized").(bool),

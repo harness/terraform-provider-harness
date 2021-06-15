@@ -81,9 +81,10 @@ func testAccPreCheck(t *testing.T) {
 		testAccProvider = New("dev")()
 
 		config := map[string]interface{}{
-			"endpoint":   os.Getenv(envvar.HarnessEndpoint),
-			"account_id": os.Getenv(envvar.HarnessAccountId),
-			"api_key":    os.Getenv(envvar.HarnessApiKey),
+			"endpoint":     os.Getenv(envvar.HarnessEndpoint),
+			"account_id":   os.Getenv(envvar.HarnessAccountId),
+			"api_key":      os.Getenv(envvar.HarnessApiKey),
+			"bearer_token": os.Getenv(envvar.HarnessBearerToken),
 		}
 
 		testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))

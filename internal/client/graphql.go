@@ -23,7 +23,7 @@ func (m *GraphQLError) ToError() error {
 
 // Creates a new client for interacting with the GraphQL API
 func (client *ApiClient) GraphQL() *graphql.Client {
-	url := fmt.Sprintf("%s%s?%s=%s", client.Endpoint, DefaultGraphQLApiUrl, AccountIdQueryParam, client.AccountId)
+	url := fmt.Sprintf("%s%s?%s=%s", client.Endpoint, DefaultGraphQLApiUrl, QueryParamAccountId, client.AccountId)
 	return graphql.NewClient(url)
 }
 
@@ -46,7 +46,7 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*http.Request, 
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
-	q.Add(AccountIdQueryParam, client.AccountId)
+	q.Add(QueryParamAccountId, client.AccountId)
 	req.URL.RawQuery = q.Encode()
 
 	// Configure additional headers
