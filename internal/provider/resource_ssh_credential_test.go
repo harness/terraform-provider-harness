@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
 	"github.com/stretchr/testify/require"
 )
@@ -23,18 +23,18 @@ func TestAccResourceSSHCredential(t *testing.T) {
 		CheckDestroy:      testAccSSHCredentialDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSSHCredential(name, true, client.SSHAuthenticationTypes.SSHAuthentication),
+				Config: testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.port", "22"),
 					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.username", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", client.EnvironmentFilterTypes.NonProduction),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", client.ApplicationFilterTypes.All),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", graphql.EnvironmentFilterTypes.NonProduction),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", graphql.ApplicationFilterTypes.All),
 					testAccSShCredentialCreation(t, resourceName),
 				),
 			},
 			{
-				Config: testAccResourceSSHCredential(updatedName, false, client.SSHAuthenticationTypes.SSHAuthentication),
+				Config: testAccResourceSSHCredential(updatedName, false, graphql.SSHAuthenticationTypes.SSHAuthentication),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.port", "22"),
@@ -47,7 +47,7 @@ func TestAccResourceSSHCredential(t *testing.T) {
 	})
 }
 
-func testAccGetSSHCredential(resourceName string, state *terraform.State) (*client.SSHCredential, error) {
+func testAccGetSSHCredential(resourceName string, state *terraform.State) (*graphql.SSHCredential, error) {
 	r := testAccGetResource(resourceName, state)
 	c := testAccGetApiClientFromProvider()
 	id := r.Primary.ID
@@ -63,7 +63,7 @@ func testAccSShCredentialCreation(t *testing.T, resourceName string) resource.Te
 		require.NotNil(t, cred.UsageScope)
 		require.Len(t, cred.UsageScope.AppEnvScopes, 1)
 		require.NotNil(t, cred.SSHAuthentication)
-		require.Equal(t, cred.AuthenticationType, client.SSHAuthenticationTypes.SSHAuthentication)
+		require.Equal(t, cred.AuthenticationType, graphql.SSHAuthenticationTypes.SSHAuthentication)
 
 		return nil
 	}
@@ -119,7 +119,7 @@ func testAccResourceSSHCredential(name string, withUsageScope bool, authType str
 	}
 
 	switch authType {
-	case client.SSHAuthenticationTypes.SSHAuthentication:
+	case graphql.SSHAuthenticationTypes.SSHAuthentication:
 		authenticationType = testAccSSHAuthenticationInlineSSH(testAccSecretFileId)
 	}
 

@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func resourceEncryptedText() *schema.Resource {
@@ -66,7 +66,7 @@ func resourceEncryptedText() *schema.Resource {
 }
 
 func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
 	secretId := d.Get("id").(string)
 
@@ -85,10 +85,10 @@ func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	input := &client.CreateSecretInput{
-		EncryptedText: &client.EncryptedTextInput{
+	input := &graphql.CreateSecretInput{
+		EncryptedText: &graphql.EncryptedTextInput{
 			InheritScopesFromSM: d.Get("inherit_scopes_from_secret_manager").(bool),
 			Name:                d.Get("name").(string),
 			ScopedToAccount:     d.Get("scoped_to_account").(bool),
@@ -115,16 +115,16 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
 	// Validation
 	if d.HasChange("secret_manager_id") {
 		return diag.Errorf("secret_manager_id is immutable and cannot be changed once set")
 	}
 
-	input := &client.UpdateSecretInput{
+	input := &graphql.UpdateSecretInput{
 		SecretId: d.Get("id").(string),
-		EncryptedText: &client.UpdateEncryptedText{
+		EncryptedText: &graphql.UpdateEncryptedText{
 			InheritScopesFromSM: d.Get("inherit_scopes_from_secret_manager").(bool),
 			Name:                d.Get("name").(string),
 			ScopedToAccount:     d.Get("scoped_to_account").(bool),
@@ -147,9 +147,9 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	err := c.Secrets().DeleteSecret(d.Get("id").(string), client.SecretTypes.EncryptedText)
+	err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
 
 	if err != nil {
 		return diag.FromErr(err)

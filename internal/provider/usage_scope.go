@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func usageScopeSchema() *schema.Schema {
@@ -37,16 +37,16 @@ func usageScopeSchema() *schema.Schema {
 	}
 }
 
-func expandUsageScope(d []interface{}) (*client.UsageScope, error) {
+func expandUsageScope(d []interface{}) (*graphql.UsageScope, error) {
 
-	us := &client.UsageScope{}
-	scopes := make([]*client.AppEnvScope, 0)
+	us := &graphql.UsageScope{}
+	scopes := make([]*graphql.AppEnvScope, 0)
 
 	for _, appScope := range d {
 		scopeData := appScope.(map[string]interface{})
-		scope := &client.AppEnvScope{
-			Application: &client.AppScopeFilter{},
-			Environment: &client.EnvScopeFilter{},
+		scope := &graphql.AppEnvScope{
+			Application: &graphql.AppScopeFilter{},
+			Environment: &graphql.EnvScopeFilter{},
 		}
 
 		if attr, ok := scopeData["application_filter_type"]; ok && attr != "" {
@@ -73,7 +73,7 @@ func expandUsageScope(d []interface{}) (*client.UsageScope, error) {
 	return us, nil
 }
 
-func flattenUsageScope(uc *client.UsageScope) []map[string]interface{} {
+func flattenUsageScope(uc *graphql.UsageScope) []map[string]interface{} {
 	if uc == nil {
 		return make([]map[string]interface{}, 0)
 	}

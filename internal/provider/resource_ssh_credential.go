@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func resourceSSHCredential() *schema.Resource {
@@ -152,9 +152,9 @@ func resourceSSHCredential() *schema.Resource {
 }
 
 func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	input := &client.SSHCredential{
+	input := &graphql.SSHCredential{
 		Name: d.Get("name").(string),
 	}
 
@@ -181,7 +181,7 @@ func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
 	credId := d.Get("id").(string)
 
@@ -199,9 +199,9 @@ func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceSSHCredentialUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	input := &client.SSHCredential{
+	input := &graphql.SSHCredential{
 		Name: d.Get("name").(string),
 	}
 
@@ -224,9 +224,9 @@ func resourceSSHCredentialUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	err := c.Secrets().DeleteSecret(d.Get("id").(string), client.SecretTypes.SSHCredential)
+	err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.SSHCredential)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -235,7 +235,7 @@ func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func flattenKerberosAuthentication(cred *client.KerberosAuthentication) []interface{} {
+func flattenKerberosAuthentication(cred *graphql.KerberosAuthentication) []interface{} {
 	response := make([]interface{}, 0)
 
 	if cred == nil {
@@ -251,7 +251,7 @@ func flattenKerberosAuthentication(cred *client.KerberosAuthentication) []interf
 	return response
 }
 
-func flattenTGTGenerationMethod(tgt *client.TGTGenerationMethod) []interface{} {
+func flattenTGTGenerationMethod(tgt *graphql.TGTGenerationMethod) []interface{} {
 	response := make([]interface{}, 0)
 
 	if tgt == nil {
@@ -270,7 +270,7 @@ func flattenTGTGenerationMethod(tgt *client.TGTGenerationMethod) []interface{} {
 	return response
 }
 
-func flattenSSHAuthentication(cred *client.SSHAuthentication) []interface{} {
+func flattenSSHAuthentication(cred *graphql.SSHAuthentication) []interface{} {
 	response := make([]interface{}, 0)
 
 	if cred == nil {
@@ -283,11 +283,11 @@ func flattenSSHAuthentication(cred *client.SSHAuthentication) []interface{} {
 
 	if cred.SSHAuthenticationMethod != nil {
 		switch cred.SSHAuthenticationMethod.SSHCredentialType {
-		case client.SSHCredentialTypes.Password:
+		case graphql.SSHCredentialTypes.Password:
 			data["server_password"] = flattenSSHServerPasswordConfig(cred.SSHAuthenticationMethod.ServerPassword)
-		case client.SSHCredentialTypes.SSHKeyFilePath:
+		case graphql.SSHCredentialTypes.SSHKeyFilePath:
 			data["ssh_key_file"] = flattenSSHKeyFileConfig(cred.SSHAuthenticationMethod.SSHKeyFile)
-		case client.SSHCredentialTypes.SSHKey:
+		case graphql.SSHCredentialTypes.SSHKey:
 			data["inline_ssh"] = flattenInlineSSHConfig(cred.SSHAuthenticationMethod.InlineSSHKey)
 		}
 	}
@@ -295,7 +295,7 @@ func flattenSSHAuthentication(cred *client.SSHAuthentication) []interface{} {
 	return append(response, data)
 }
 
-func flattenInlineSSHConfig(cred *client.InlineSSHKey) []interface{} {
+func flattenInlineSSHConfig(cred *graphql.InlineSSHKey) []interface{} {
 	response := make([]interface{}, 0)
 	if cred == nil {
 		return response
@@ -308,7 +308,7 @@ func flattenInlineSSHConfig(cred *client.InlineSSHKey) []interface{} {
 	return append(response, data)
 }
 
-func flattenSSHKeyFileConfig(cred *client.SSHKeyFile) []interface{} {
+func flattenSSHKeyFileConfig(cred *graphql.SSHKeyFile) []interface{} {
 	response := make([]interface{}, 0)
 	if cred == nil {
 		return response
@@ -321,7 +321,7 @@ func flattenSSHKeyFileConfig(cred *client.SSHKeyFile) []interface{} {
 	return append(response, data)
 }
 
-func flattenSSHServerPasswordConfig(cred *client.SSHPassword) []interface{} {
+func flattenSSHServerPasswordConfig(cred *graphql.SSHPassword) []interface{} {
 
 	response := make([]interface{}, 0)
 	if cred == nil {
@@ -334,7 +334,7 @@ func flattenSSHServerPasswordConfig(cred *client.SSHPassword) []interface{} {
 	return append(response, data)
 }
 
-func expandAuthenticationScheme(d *schema.ResourceData, cred *client.SSHCredential) error {
+func expandAuthenticationScheme(d *schema.ResourceData, cred *graphql.SSHCredential) error {
 	k := d.Get("kerberos_authentication").(*schema.Set).List()
 	s := d.Get("ssh_authentication").(*schema.Set).List()
 
@@ -356,7 +356,7 @@ func expandAuthenticationScheme(d *schema.ResourceData, cred *client.SSHCredenti
 	return nil
 }
 
-func expandSSHAuthentication(d []interface{}, cred *client.SSHCredential) error {
+func expandSSHAuthentication(d []interface{}, cred *graphql.SSHCredential) error {
 
 	if len(d) <= 0 {
 		cred.SSHAuthentication = nil
@@ -379,8 +379,8 @@ func expandSSHAuthentication(d []interface{}, cred *client.SSHCredential) error 
 		return nil
 	}
 
-	auth := &client.SSHAuthentication{
-		SSHAuthenticationMethod: &client.SSHAuthenticationMethod{},
+	auth := &graphql.SSHAuthentication{
+		SSHAuthenticationMethod: &graphql.SSHAuthenticationMethod{},
 	}
 
 	if attr, ok := data["port"]; ok {
@@ -395,36 +395,36 @@ func expandSSHAuthentication(d []interface{}, cred *client.SSHCredential) error 
 	expandSSHKeyFileConfig(keyFileConfig, auth)
 	expandServerPasswordConfig(serverPassConfig, auth)
 
-	cred.AuthenticationScheme = client.SSHAuthenticationSchemes.SSH
+	cred.AuthenticationScheme = graphql.SSHAuthenticationSchemes.SSH
 	cred.SSHAuthentication = auth
 
 	return nil
 }
 
-func expandServerPasswordConfig(d []interface{}, auth *client.SSHAuthentication) {
+func expandServerPasswordConfig(d []interface{}, auth *graphql.SSHAuthentication) {
 	if len(d) <= 0 {
 		auth.SSHAuthenticationMethod.ServerPassword = nil
 		return
 	}
 
-	serverPasswordConfig := &client.SSHPassword{}
+	serverPasswordConfig := &graphql.SSHPassword{}
 	data := d[0].(map[string]interface{})
 
 	if attr, ok := data["password_secret_id"]; ok && attr != "" {
 		serverPasswordConfig.PasswordSecretId = attr.(string)
 	}
 
-	auth.SSHAuthenticationMethod.SSHCredentialType = client.SSHCredentialTypes.Password
+	auth.SSHAuthenticationMethod.SSHCredentialType = graphql.SSHCredentialTypes.Password
 	auth.SSHAuthenticationMethod.ServerPassword = serverPasswordConfig
 }
 
-func expandSSHKeyFileConfig(d []interface{}, auth *client.SSHAuthentication) {
+func expandSSHKeyFileConfig(d []interface{}, auth *graphql.SSHAuthentication) {
 	if len(d) <= 0 {
 		auth.SSHAuthenticationMethod.SSHKeyFile = nil
 		return
 	}
 
-	sshKeyConfig := &client.SSHKeyFile{}
+	sshKeyConfig := &graphql.SSHKeyFile{}
 	data := d[0].(map[string]interface{})
 
 	if attr, ok := data["passphrase_secret_id"]; ok && attr != "" {
@@ -435,17 +435,17 @@ func expandSSHKeyFileConfig(d []interface{}, auth *client.SSHAuthentication) {
 		sshKeyConfig.Path = attr.(string)
 	}
 
-	auth.SSHAuthenticationMethod.SSHCredentialType = client.SSHCredentialTypes.SSHKeyFilePath
+	auth.SSHAuthenticationMethod.SSHCredentialType = graphql.SSHCredentialTypes.SSHKeyFilePath
 	auth.SSHAuthenticationMethod.SSHKeyFile = sshKeyConfig
 }
 
-func expandInlineSSHConfig(d []interface{}, auth *client.SSHAuthentication) {
+func expandInlineSSHConfig(d []interface{}, auth *graphql.SSHAuthentication) {
 	if len(d) <= 0 {
 		auth.SSHAuthenticationMethod.InlineSSHKey = nil
 		return
 	}
 
-	inlineConfig := &client.InlineSSHKey{}
+	inlineConfig := &graphql.InlineSSHKey{}
 	data := d[0].(map[string]interface{})
 
 	if attr, ok := data["passphrase_secret_id"]; ok && attr != "" {
@@ -456,11 +456,11 @@ func expandInlineSSHConfig(d []interface{}, auth *client.SSHAuthentication) {
 		inlineConfig.SSHKeySecretFileId = attr.(string)
 	}
 
-	auth.SSHAuthenticationMethod.SSHCredentialType = client.SSHCredentialTypes.SSHKey
+	auth.SSHAuthenticationMethod.SSHCredentialType = graphql.SSHCredentialTypes.SSHKey
 	auth.SSHAuthenticationMethod.InlineSSHKey = inlineConfig
 }
 
-func expandKerberosAuthentication(d []interface{}, cred *client.SSHCredential) error {
+func expandKerberosAuthentication(d []interface{}, cred *graphql.SSHCredential) error {
 
 	if len(d) <= 0 {
 		cred.KerberosAuthentication = nil
@@ -468,7 +468,7 @@ func expandKerberosAuthentication(d []interface{}, cred *client.SSHCredential) e
 	}
 
 	data := d[0].(map[string]interface{})
-	auth := &client.KerberosAuthentication{}
+	auth := &graphql.KerberosAuthentication{}
 
 	if attr, ok := data["port"]; ok {
 		auth.Port = attr.(int)
@@ -487,31 +487,31 @@ func expandKerberosAuthentication(d []interface{}, cred *client.SSHCredential) e
 		return errors.New("must set only one of `kerberos_password_id` or `key_tab_file_path` for tgt_generation_method")
 	}
 
-	cred.AuthenticationScheme = client.SSHAuthenticationSchemes.Kerberos
+	cred.AuthenticationScheme = graphql.SSHAuthenticationSchemes.Kerberos
 	cred.KerberosAuthentication = auth
 
 	return nil
 }
 
-func expandTGTGenerationMethod(d []interface{}, auth *client.KerberosAuthentication) {
+func expandTGTGenerationMethod(d []interface{}, auth *graphql.KerberosAuthentication) {
 	if len(d) <= 0 {
 		auth.TGTGenerationMethod = nil
 		return
 	}
 
-	details := &client.TGTGenerationMethod{}
+	details := &graphql.TGTGenerationMethod{}
 	data := d[0].(map[string]interface{})
 
 	if attr, ok := data["kerberos_password_id"]; ok && attr != "" {
-		details.TGTGenerationUsing = client.TGTGenerationUsingOptions.Password
-		details.KerberosPassword = &client.KerberosPassword{
+		details.TGTGenerationUsing = graphql.TGTGenerationUsingOptions.Password
+		details.KerberosPassword = &graphql.KerberosPassword{
 			PasswordSecretId: attr.(string),
 		}
 	}
 
 	if attr, ok := data["key_tab_file_path"]; ok && attr != "" {
-		details.TGTGenerationUsing = client.TGTGenerationUsingOptions.KeyTabFile
-		details.KeyTabFile = &client.KeyTabFile{
+		details.TGTGenerationUsing = graphql.TGTGenerationUsingOptions.KeyTabFile
+		details.KeyTabFile = &graphql.KeyTabFile{
 			FilePath: attr.(string),
 		}
 	}

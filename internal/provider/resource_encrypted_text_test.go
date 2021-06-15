@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
 )
 
@@ -82,18 +82,18 @@ func TestAccResourceEncryptedText_UsageScopes(t *testing.T) {
 				Config: testAccResourceEncryptedText_UsageScopes(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.1.application_filter_type", client.ApplicationFilterTypes.All),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.1.environment_filter_type", client.EnvironmentFilterTypes.Production),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", client.ApplicationFilterTypes.All),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", client.EnvironmentFilterTypes.NonProduction),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.1.application_filter_type", graphql.ApplicationFilterTypes.All),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.1.environment_filter_type", graphql.EnvironmentFilterTypes.Production),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", graphql.ApplicationFilterTypes.All),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", graphql.EnvironmentFilterTypes.NonProduction),
 				),
 			},
 			{
 				Config: testAccResourceEncryptedText_usageScopes_update(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", client.ApplicationFilterTypes.All),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", client.EnvironmentFilterTypes.Production),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", graphql.ApplicationFilterTypes.All),
+					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", graphql.EnvironmentFilterTypes.Production),
 					resource.TestCheckNoResourceAttr(resourceName, "usage_scope.1"),
 				),
 			},

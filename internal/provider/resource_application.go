@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func resourceApplication() *schema.Resource {
@@ -54,9 +54,9 @@ func resourceApplication() *schema.Resource {
 }
 
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	input := &client.Application{
+	input := &graphql.Application{
 		Name:                      d.Get("name").(string),
 		Description:               d.Get("description").(string),
 		IsManualTriggerAuthorized: d.Get("is_manual_trigger_authorized").(bool),
@@ -73,7 +73,7 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
 	appId := d.Get("id").(string)
 
@@ -98,9 +98,9 @@ func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
-	input := &client.UpdateApplicationInput{
+	input := &graphql.UpdateApplicationInput{
 		ApplicationId:             d.Id(),
 		Description:               d.Get("description").(string),
 		IsManualTriggerAuthorized: d.Get("is_manual_trigger_authorized").(bool),
@@ -116,7 +116,7 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*graphql.ApiClient)
 
 	if err := c.Applications().DeleteApplication(d.Id()); err != nil {
 		return diag.FromErr(err)

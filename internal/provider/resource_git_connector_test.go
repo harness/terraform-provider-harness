@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
 	"github.com/stretchr/testify/require"
 )
@@ -60,7 +60,7 @@ func TestAccResourceGitConnector_invalid_urltype(t *testing.T) {
 	})
 }
 
-func testAccGetGitConnector(resourceName string, state *terraform.State) (*client.GitConnector, error) {
+func testAccGetGitConnector(resourceName string, state *terraform.State) (*graphql.GitConnector, error) {
 	r := testAccGetResource(resourceName, state)
 	c := testAccGetApiClientFromProvider()
 	id := r.Primary.ID
@@ -75,7 +75,7 @@ func testAccCheckGitConnectorExists(t *testing.T, resourceName string, connector
 		require.Equal(t, connectorName, conn.Name)
 		require.Equal(t, "https://github.com/micahlmartin/harness-demo", conn.Url)
 		require.Equal(t, "master", conn.Branch)
-		require.Equal(t, client.GitUrlTypes.Repo, conn.UrlType)
+		require.Equal(t, graphql.GitUrlTypes.Repo, conn.UrlType)
 		require.NotNil(t, conn.CustomCommitDetails)
 		require.Len(t, conn.DelegateSelectors, 1)
 		return nil

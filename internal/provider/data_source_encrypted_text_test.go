@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
 	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
 )
 

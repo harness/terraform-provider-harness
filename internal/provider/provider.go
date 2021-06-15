@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
+	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func init() {
@@ -34,7 +34,7 @@ func New(version string) func() *schema.Provider {
 				"endpoint": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessEndpoint, client.DefaultApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessEndpoint, graphql.DefaultApiUrl),
 				},
 				"account_id": {
 					Type:        schema.TypeString,
@@ -74,7 +74,7 @@ func New(version string) func() *schema.Provider {
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		return &client.ApiClient{
+		return &graphql.ApiClient{
 			UserAgent:   p.UserAgent("terraform-provider-harness", version),
 			Endpoint:    d.Get("endpoint").(string),
 			AccountId:   d.Get("account_id").(string),
