@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/machinebox/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/harness/httphelpers"
 )
@@ -28,7 +29,7 @@ func (client *ApiClient) GraphQL() *graphql.Client {
 }
 
 // Create new request for making GraphQL Api calls
-func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*http.Request, error) {
+func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.Request, error) {
 	var requestBody bytes.Buffer
 
 	// JSON encode our body payload
@@ -38,7 +39,7 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*http.Request, 
 
 	log.Printf("[DEBUG] GraphQL Query: %s", requestBody.String())
 
-	req, err := http.NewRequest(http.MethodPost, getGraphQLUrl(), &requestBody)
+	req, err := retryablehttp.NewRequest(http.MethodPost, getGraphQLUrl(), &requestBody)
 
 	if err != nil {
 		return nil, err
@@ -64,6 +65,12 @@ func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj in
 	if err != nil {
 		return err
 	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println(r)
+		}
+	}()
 
 	res, err := client.HTTPClient.Do(req)
 

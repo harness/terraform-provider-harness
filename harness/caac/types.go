@@ -94,6 +94,7 @@ type Service struct {
 	Name              string       `yaml:"-"`
 	Tags              []*Tag       `yaml:"tags,omitempty"`
 	HelmVersion       string       `yaml:"helmVersion,omitempty"`
+	ApplicationId     string       `yaml:"-"`
 }
 
 var APIV1 = "1.0"
@@ -125,12 +126,13 @@ var APIV1 = "1.0"
 // 	}
 // }
 
-func ServiceFactory(name string, deploymentType string, artifactType string) (*Service, error) {
+func ServiceFactory(applicationId, name string, deploymentType string, artifactType string) (*Service, error) {
 	svc := &Service{
 		HarnessApiVersion: APIV1,
 		Type:              ObjectTypes.Service,
 		Name:              name,
 		DeploymentType:    deploymentType,
+		ApplicationId:     applicationId,
 	}
 
 	switch deploymentType {

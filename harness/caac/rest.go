@@ -13,14 +13,24 @@ import (
 	"regexp"
 	"strings"
 
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/harness/httphelpers"
 	"gopkg.in/yaml.v3"
 )
 
-func GetServiceById(applicationId string, serviceId string) *Service {
+func (c *ConfigAsCodeClient) GetServiceById(applicationId string, serviceId string) (*Service, error) {
+	item, err := c.GetDirectoryItemContent("services", serviceId, applicationId)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	obj, err := item.ParseYamlContent()
+	if err != nil {
+		return nil, err
+	}
+
+	return obj.(*Service), nil
 }
 
 func FindConfigAsCodeItemByPath(rootItem *ConfigAsCodeItem, path string) *ConfigAsCodeItem {
@@ -75,7 +85,7 @@ func (i *ConfigAsCodeItem) ParseYamlContent() (interface{}, error) {
 func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid string, applicationId string) (*ConfigAsCodeItem, error) {
 	path := fmt.Sprintf("/gateway/api/setup-as-code/yaml/%s/%s", restName, uuid)
 
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, path), nil)
+	req, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, path), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +111,7 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*ConfigAsCodeItem, error) {
 	path := "/gateway/api/setup-as-code/yaml/directory"
 
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, path), nil)
+	req, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, path), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -123,11 +133,6 @@ func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*ConfigAsCo
 	}
 
 	return item, nil
-}
-
-func (c *ConfigAsCodeClient) UpsertService(applicationName string, serviceName string, service interface{}) (*ConfigAsCodeItem, error) {
-	filePath := fmt.Sprintf("Setup/Applications/%s/Services/%s/Index.yaml", applicationName, serviceName)
-	return c.UpsertEntity(filePath, service)
 }
 
 func (c *ConfigAsCodeClient) UpsertEntity(filePath string, entity interface{}) (*ConfigAsCodeItem, error) {
@@ -154,7 +159,7 @@ func (c *ConfigAsCodeClient) UpsertEntity(filePath string, entity interface{}) (
 
 	log.Printf("[DEBUG] HTTP Request Body: %s", string(payload))
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, "/gateway/api/setup-as-code/yaml/upsert-entity"), &b)
+	req, err := retryablehttp.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, "/gateway/api/setup-as-code/yaml/upsert-entity"), &b)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +183,7 @@ func (c *ConfigAsCodeClient) UpsertEntity(filePath string, entity interface{}) (
 	return item, nil
 }
 
-func (c *ConfigAsCodeClient) ExecuteRequest(request *http.Request) (*ConfigAsCodeItem, error) {
+func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*ConfigAsCodeItem, error) {
 
 	log.Printf("[DEBUG] Request url: %s", request.URL)
 
@@ -197,7 +202,7 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *http.Request) (*ConfigAsCod
 
 	// Check for request throttling
 	responseString := buf.String()
-	log.Printf("[DEBUG] HTTP response: %s", responseString)
+	log.Printf("[DEBUG] HTTP response: %d - %s", res.StatusCode, responseString)
 
 	if throttledRegex.MatchString(responseString) {
 		return nil, errors.New(responseString)

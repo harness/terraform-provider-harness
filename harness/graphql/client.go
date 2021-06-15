@@ -6,12 +6,13 @@ import (
 	"os"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
 	"github.com/micahlmartin/terraform-provider-harness/harness/httphelpers"
 )
 
 type ApiClient struct {
-	HTTPClient  *http.Client
+	HTTPClient  *retryablehttp.Client
 	Endpoint    string
 	UserAgent   string
 	APIKey      string
@@ -27,8 +28,15 @@ func New() *ApiClient {
 		AccountId:   os.Getenv(envvar.HarnessAccountId),
 		APIKey:      os.Getenv(envvar.HarnessApiKey),
 		BearerToken: os.Getenv(envvar.HarnessBearerToken),
-		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
+		HTTPClient: &retryablehttp.Client{
+			RetryMax:     10,
+			RetryWaitMin: 5 * time.Second,
+			RetryWaitMax: 10 * time.Second,
+			HTTPClient: &http.Client{
+				Timeout: 10 * time.Second,
+			},
+			Backoff:    retryablehttp.DefaultBackoff,
+			CheckRetry: retryablehttp.DefaultRetryPolicy,
 		},
 	}
 }
@@ -38,8 +46,8 @@ func New() *ApiClient {
 // 	return client.NewHTTPRequest(http.MethodGet, path)
 // }
 
-func (client *ApiClient) NewHTTPRequest(method string, path string) (*http.Request, error) {
-	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", client.Endpoint, path), nil)
+func (client *ApiClient) NewHTTPRequest(method string, path string) (*retryablehttp.Request, error) {
+	req, err := retryablehttp.NewRequest(method, fmt.Sprintf("%s/%s", client.Endpoint, path), nil)
 
 	if err != nil {
 		return nil, err
@@ -55,7 +63,7 @@ func (client *ApiClient) NewHTTPRequest(method string, path string) (*http.Reque
 // }
 
 // Creates an HTTP request using the bearer Token for authentication
-func (client *ApiClient) NewAuthorizedRequestWithBearerToken(path string) (*http.Request, error) {
+func (client *ApiClient) NewAuthorizedRequestWithBearerToken(path string) (*retryablehttp.Request, error) {
 	req, err := client.NewHTTPRequest(http.MethodGet, path)
 
 	if err != nil {
@@ -67,7 +75,7 @@ func (client *ApiClient) NewAuthorizedRequestWithBearerToken(path string) (*http
 }
 
 // Creates an HTTP request using an API key for authentication
-func (client *ApiClient) NewAuthorizedRequestWithApiKey(path string) (*http.Request, error) {
+func (client *ApiClient) NewAuthorizedRequestWithApiKey(path string) (*retryablehttp.Request, error) {
 	req, err := client.NewHTTPRequest(http.MethodGet, path)
 
 	if err != nil {

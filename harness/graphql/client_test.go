@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
 	"github.com/micahlmartin/terraform-provider-harness/harness/httphelpers"
 	"github.com/stretchr/testify/require"
@@ -28,8 +29,15 @@ func getClient() *ApiClient {
 		AccountId:   os.Getenv(envvar.HarnessAccountId),
 		APIKey:      os.Getenv(envvar.HarnessApiKey),
 		BearerToken: os.Getenv(envvar.HarnessBearerToken),
-		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
+		HTTPClient: &retryablehttp.Client{
+			RetryMax:     10,
+			RetryWaitMin: 5 * time.Second,
+			RetryWaitMax: 10 * time.Second,
+			HTTPClient: &http.Client{
+				Timeout: 10 * time.Second,
+			},
+			Backoff:    retryablehttp.DefaultBackoff,
+			CheckRetry: retryablehttp.DefaultRetryPolicy,
 		},
 	}
 }
@@ -40,8 +48,15 @@ func getUnauthorizedClient() *ApiClient {
 		Endpoint:  DefaultApiUrl,
 		AccountId: os.Getenv(envvar.HarnessAccountId),
 		APIKey:    "BAD_KEY",
-		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
+		HTTPClient: &retryablehttp.Client{
+			RetryMax:     10,
+			RetryWaitMin: 5 * time.Second,
+			RetryWaitMax: 10 * time.Second,
+			HTTPClient: &http.Client{
+				Timeout: 10 * time.Second,
+			},
+			Backoff:    retryablehttp.DefaultBackoff,
+			CheckRetry: retryablehttp.DefaultRetryPolicy,
 		},
 	}
 }
