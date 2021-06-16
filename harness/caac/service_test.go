@@ -90,10 +90,6 @@ func TestServiceSerialization(t *testing.T) {
 		require.Equal(t, HelmVersions.V2, svc.HelmVersion)
 	}))
 
-	// t.Run("custom", testServiceSerialization(app.Id, app.Name, DeploymentTypes.Custom, ArtifactTypes.Tar))
-
-	// Cleanup
-
 }
 
 func testServiceSerialization(applicationId string, applicationName string, deploymentType string, artifactType string) func(t *testing.T) {

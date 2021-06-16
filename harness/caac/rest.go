@@ -10,7 +10,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
@@ -192,6 +191,10 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*Co
 		return nil, err
 	}
 
+	if ok, err := checkStatusCode(res.StatusCode); !ok {
+		return nil, err
+	}
+
 	defer res.Body.Close()
 
 	// Make sure we can parse the body properly
@@ -203,10 +206,6 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*Co
 	// Check for request throttling
 	responseString := buf.String()
 	log.Printf("[DEBUG] HTTP response: %d - %s", res.StatusCode, responseString)
-
-	if throttledRegex.MatchString(responseString) {
-		return nil, errors.New(responseString)
-	}
 
 	responseObj := &Response{}
 
@@ -252,6 +251,10 @@ const (
 	statusSuccess = "SUCCESS"
 )
 
-var (
-	throttledRegex = regexp.MustCompile("(?i).*throttled.*qps.*")
-)
+func checkStatusCode(statusCode int) (bool, error) {
+	if statusCode < 300 {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("received http status code '%d'", statusCode)
+}

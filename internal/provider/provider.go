@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
@@ -80,8 +81,15 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			AccountId:   d.Get("account_id").(string),
 			APIKey:      d.Get("api_key").(string),
 			BearerToken: d.Get("bearer_token").(string),
-			HTTPClient: &http.Client{
-				Timeout: 10 * time.Second,
+			HTTPClient: &retryablehttp.Client{
+				RetryMax:     125,
+				RetryWaitMin: 5 * time.Second,
+				RetryWaitMax: 30 * time.Second,
+				HTTPClient: &http.Client{
+					Timeout: 30 * time.Second,
+				},
+				Backoff:    retryablehttp.DefaultBackoff,
+				CheckRetry: retryablehttp.DefaultRetryPolicy,
 			},
 		}, nil
 	}
