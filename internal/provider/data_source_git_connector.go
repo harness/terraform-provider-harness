@@ -6,7 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
 
 func dataSourceGitConnector() *schema.Resource {
@@ -110,7 +111,7 @@ func dataSourceGitConnector() *schema.Resource {
 
 func dataSourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	id := d.Get("id").(string)
 	conn, err := c.Connectors().GetGitConnectorById(id)

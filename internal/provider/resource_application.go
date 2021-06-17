@@ -5,7 +5,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
 
 func resourceApplication() *schema.Resource {
@@ -54,7 +55,7 @@ func resourceApplication() *schema.Resource {
 }
 
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	input := &graphql.Application{
 		Name:                      d.Get("name").(string),
@@ -73,7 +74,7 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	appId := d.Get("id").(string)
 
@@ -98,7 +99,7 @@ func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	input := &graphql.UpdateApplicationInput{
 		ApplicationId:             d.Id(),
@@ -116,7 +117,7 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	if err := c.Applications().DeleteApplication(d.Id()); err != nil {
 		return diag.FromErr(err)

@@ -7,8 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
-	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
+	"github.com/micahlmartin/terraform-provider-harness/harness/utils"
 	"github.com/stretchr/testify/require"
 )
 

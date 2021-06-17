@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
-	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
+	"github.com/micahlmartin/terraform-provider-harness/harness/utils"
 )
 
 func TestAccResourceEncryptedText(t *testing.T) {

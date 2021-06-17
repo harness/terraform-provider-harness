@@ -7,8 +7,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func resourceEncryptedText() *schema.Resource {
@@ -66,7 +67,7 @@ func resourceEncryptedText() *schema.Resource {
 }
 
 func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	secretId := d.Get("id").(string)
 
@@ -85,7 +86,7 @@ func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	input := &graphql.CreateSecretInput{
 		EncryptedText: &graphql.EncryptedTextInput{
@@ -115,7 +116,7 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	// Validation
 	if d.HasChange("secret_manager_id") {
@@ -147,7 +148,7 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
 

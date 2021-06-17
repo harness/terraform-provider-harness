@@ -8,8 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,7 +47,7 @@ func TestProvider_configure_url(t *testing.T) {
 	// Verify
 	require.False(t, diags.HasError())
 	require.NoError(t, p.InternalValidate())
-	c := p.Meta().(*graphql.ApiClient)
+	c := p.Meta().(*api.Client)
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }
 
@@ -72,7 +72,7 @@ func TestProvider_configure_url_env(t *testing.T) {
 	// Verify
 	require.False(t, diags.HasError())
 	require.NoError(t, p.InternalValidate())
-	c := p.Meta().(*graphql.ApiClient)
+	c := p.Meta().(*api.Client)
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }
 
@@ -99,6 +99,6 @@ func testAccGetResource(resourceName string, state *terraform.State) *terraform.
 	return rm.Resources[resourceName]
 }
 
-func testAccGetApiClientFromProvider() *graphql.ApiClient {
-	return testAccProvider.Meta().(*graphql.ApiClient)
+func testAccGetApiClientFromProvider() *api.Client {
+	return testAccProvider.Meta().(*api.Client)
 }

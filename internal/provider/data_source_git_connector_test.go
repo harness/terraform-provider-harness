@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
+	"github.com/micahlmartin/terraform-provider-harness/harness/utils"
 )
 
 func TestAccDataSourceGitConnector(t *testing.T) {

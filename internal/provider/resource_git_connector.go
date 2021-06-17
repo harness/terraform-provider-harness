@@ -7,7 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
 
 func resourceGitConnector() *schema.Resource {
@@ -141,7 +142,7 @@ func validateUrlType(val interface{}, key string) (warn []string, errs []error) 
 }
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	connId := d.Get("id").(string)
 
@@ -166,7 +167,7 @@ func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	// Validation
 	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
@@ -198,7 +199,7 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	// Validation
 	if d.HasChange("generate_webhook_url") && !d.Get("generate_webhook_url").(bool) {
@@ -249,7 +250,7 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	id := d.Get("id").(string)
 

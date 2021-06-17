@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
 	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
 )
 
 func init() {
@@ -35,7 +35,7 @@ func New(version string) func() *schema.Provider {
 				"endpoint": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessEndpoint, graphql.DefaultApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessEndpoint, api.DefaultApiUrl),
 				},
 				"account_id": {
 					Type:        schema.TypeString,
@@ -63,6 +63,7 @@ func New(version string) func() *schema.Provider {
 				"harness_encrypted_text": resourceEncryptedText(),
 				"harness_git_connector":  resourceGitConnector(),
 				"harness_ssh_credential": resourceSSHCredential(),
+				// "harness_service_kubernetes": resourceServiceKubernetes(),
 			},
 		}
 
@@ -72,25 +73,33 @@ func New(version string) func() *schema.Provider {
 	}
 }
 
+type HarnessClient struct {
+	GraphQLClient *api.Client
+	CaacClient    *api.ConfigAsCodeClient
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		return &graphql.ApiClient{
+
+		httpClient := &retryablehttp.Client{
+			RetryMax:     125,
+			RetryWaitMin: 5 * time.Second,
+			RetryWaitMax: 30 * time.Second,
+			HTTPClient: &http.Client{
+				Timeout: 30 * time.Second,
+			},
+			Backoff:    retryablehttp.DefaultBackoff,
+			CheckRetry: retryablehttp.DefaultRetryPolicy,
+		}
+
+		return &api.Client{
 			UserAgent:   p.UserAgent("terraform-provider-harness", version),
 			Endpoint:    d.Get("endpoint").(string),
 			AccountId:   d.Get("account_id").(string),
 			APIKey:      d.Get("api_key").(string),
 			BearerToken: d.Get("bearer_token").(string),
-			HTTPClient: &retryablehttp.Client{
-				RetryMax:     125,
-				RetryWaitMin: 5 * time.Second,
-				RetryWaitMax: 30 * time.Second,
-				HTTPClient: &http.Client{
-					Timeout: 30 * time.Second,
-				},
-				Backoff:    retryablehttp.DefaultBackoff,
-				CheckRetry: retryablehttp.DefaultRetryPolicy,
-			},
+			HTTPClient:  httpClient,
 		}, nil
 	}
 }

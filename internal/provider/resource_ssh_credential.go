@@ -6,7 +6,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
 
 func resourceSSHCredential() *schema.Resource {
@@ -152,7 +153,7 @@ func resourceSSHCredential() *schema.Resource {
 }
 
 func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	input := &graphql.SSHCredential{
 		Name: d.Get("name").(string),
@@ -181,7 +182,7 @@ func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	credId := d.Get("id").(string)
 
@@ -199,7 +200,7 @@ func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceSSHCredentialUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	input := &graphql.SSHCredential{
 		Name: d.Get("name").(string),
@@ -224,7 +225,7 @@ func resourceSSHCredentialUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*graphql.ApiClient)
+	c := meta.(*api.Client)
 
 	err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.SSHCredential)
 

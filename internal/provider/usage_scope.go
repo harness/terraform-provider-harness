@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/graphql"
+	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
 
 func usageScopeSchema() *schema.Schema {
