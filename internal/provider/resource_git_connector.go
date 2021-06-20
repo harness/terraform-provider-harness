@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
 
 func resourceGitConnector() *schema.Resource {

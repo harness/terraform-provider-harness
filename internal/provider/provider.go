@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/envvar"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api"
-	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
 )
 
 func init() {
@@ -59,11 +59,19 @@ func New(version string) func() *schema.Provider {
 				"harness_git_connector":  dataSourceGitConnector(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"harness_application":    resourceApplication(),
-				"harness_encrypted_text": resourceEncryptedText(),
-				"harness_git_connector":  resourceGitConnector(),
-				"harness_ssh_credential": resourceSSHCredential(),
-				// "harness_service_kubernetes": resourceServiceKubernetes(),
+				"harness_application":            resourceApplication(),
+				"harness_encrypted_text":         resourceEncryptedText(),
+				"harness_git_connector":          resourceGitConnector(),
+				"harness_ssh_credential":         resourceSSHCredential(),
+				"harness_service_kubernetes":     resourceKubernetesService(),
+				"harness_service_ami":            resourceAMIService(),
+				"harness_service_ecs":            resourceECSService(),
+				"harness_service_aws_codedeploy": resourceAWSCodeDeployService(),
+				"harness_service_aws_lambda":     resourceAWSLambdaService(),
+				"harness_service_pcf":            resourcePCFService(),
+				"harness_service_helm":           resourceHelmService(),
+				"harness_service_ssh":            resourceSSHService(),
+				"harness_service_winrm":          resourceWinRMService(),
 			},
 		}
 

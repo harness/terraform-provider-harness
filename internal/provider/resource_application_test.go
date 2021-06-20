@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
-	"github.com/micahlmartin/terraform-provider-harness/harness/utils"
 	"github.com/stretchr/testify/require"
 )
 

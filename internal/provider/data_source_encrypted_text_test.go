@@ -2,12 +2,10 @@ package provider
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
-	"github.com/micahlmartin/terraform-provider-harness/harness/utils"
 )
 
 func TestAccDataSourceEncryptedTextByName(t *testing.T) {
@@ -26,7 +24,7 @@ func TestAccDataSourceEncryptedTextByName(t *testing.T) {
 				Config: testAccDataSourceEncryptedTextByName(expectedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
-					resource.TestCheckResourceAttr(resourceName, "secret_manager_id", os.Getenv(envvar.HarnessAccountId)),
+					resource.TestCheckResourceAttrSet(resourceName, "secret_manager_id"),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", "ALL"),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", "NON_PRODUCTION_ENVIRONMENTS"),
 				),
@@ -44,6 +42,10 @@ func testAccDataSourceEncryptedTextByName(name string) string {
 			usage_scope {
 				application_filter_type = "ALL"
 				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+
+			lifecycle {
+				ignore_changes = [secret_manager_id]
 			}
 		}
 

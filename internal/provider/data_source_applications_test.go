@@ -2,32 +2,40 @@ package provider
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceApplication(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "data.harness_application.test"
+	)
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceApplication("GEHhvKUCTiiY_MWsUfbRLA"),
+				Config: testAccDataSourceApplication(name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr("data.harness_application.foo", "name", regexp.MustCompile("changed")),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 		},
 	})
 }
 
-func testAccDataSourceApplication(appId string) string {
+func testAccDataSourceApplication(name string) string {
 	return fmt.Sprintf(`
-		data "harness_application" "foo" {
-			id = "%s"
+		resource "harness_application" "test" {
+			name = "%[1]s"
 		}
-	`, appId)
+		data "harness_application" "test" {
+			id = harness_application.test.id
+		}
+	`, name)
 }

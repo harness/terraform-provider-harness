@@ -3,12 +3,29 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
 )
+
+var validAuthenticationMethods = []string{
+	"ssh_authentication",
+	"kerberos_authentication",
+}
+
+var validSSHAuthenticationTypes = []string{
+	"ssh_authentication.0.inline_ssh",
+	"ssh_authentication.0.ssh_key_file",
+	"ssh_authentication.0.server_password",
+}
+
+var validTGTGenerationMethods = []string{
+	"kerberos_authentication.0.tgt_generation_method.0.kerberos_password_id",
+	"kerberos_authentication.0.tgt_generation_method.0.key_tab_file_path",
+}
 
 func resourceSSHCredential() *schema.Resource {
 	return &schema.Resource{
@@ -30,10 +47,12 @@ func resourceSSHCredential() *schema.Resource {
 				Required:    true,
 			},
 			"ssh_authentication": {
-				Description: "Authentication method for SSH. Cannot be used if kerberos_authentication is specified. Only one of `inline_ssh`, `server_password`, or `ssh_key_file` should be set",
-				Type:        schema.TypeSet,
-				Optional:    true,
-				MaxItems:    1,
+				Description:  "Authentication method for SSH. Cannot be used if kerberos_authentication is specified. Only one of `inline_ssh`, `server_password`, or `ssh_key_file` should be set",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: validAuthenticationMethods,
+				ForceNew:     true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"port": {
@@ -47,9 +66,12 @@ func resourceSSHCredential() *schema.Resource {
 							Required:    true,
 						},
 						"inline_ssh": {
-							Description: "Inline SSH authentication configuration. Only ond of `passphrase_secret_id` or `ssh_key_file_id` should be used",
-							Type:        schema.TypeSet,
-							Optional:    true,
+							Description:  "Inline SSH authentication configuration. Only ond of `passphrase_secret_id` or `ssh_key_file_id` should be used",
+							Type:         schema.TypeList,
+							Optional:     true,
+							MaxItems:     1,
+							ExactlyOneOf: validSSHAuthenticationTypes,
+							// ForceNew:     true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"passphrase_secret_id": {
@@ -66,9 +88,12 @@ func resourceSSHCredential() *schema.Resource {
 							},
 						},
 						"ssh_key_file": {
-							Description: "Use ssh key file for authentication",
-							Type:        schema.TypeSet,
-							Optional:    true,
+							Description:  "Use ssh key file for authentication",
+							Type:         schema.TypeList,
+							Optional:     true,
+							MaxItems:     1,
+							ExactlyOneOf: validSSHAuthenticationTypes,
+							// ForceNew:     true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"path": {
@@ -85,10 +110,12 @@ func resourceSSHCredential() *schema.Resource {
 							},
 						},
 						"server_password": {
-							Description: "Server password authentication configuration",
-							Type:        schema.TypeSet,
-							Optional:    true,
-							MaxItems:    1,
+							Description:  "Server password authentication configuration",
+							Type:         schema.TypeList,
+							Optional:     true,
+							MaxItems:     1,
+							ExactlyOneOf: validSSHAuthenticationTypes,
+							// ForceNew:     true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"password_secret_id": {
@@ -103,43 +130,53 @@ func resourceSSHCredential() *schema.Resource {
 				},
 			},
 			"kerberos_authentication": {
-				Description: "Kerberos authentication for SSH. Cannot be used if ssh_authentication is specified",
-				Type:        schema.TypeSet,
-				Optional:    true,
-				MaxItems:    1,
+				Description:  "Kerberos authentication for SSH. Cannot be used if ssh_authentication is specified",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: validAuthenticationMethods,
+				ForceNew:     true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"port": {
 							Description: "Port to use for Kerberos authentication",
 							Type:        schema.TypeInt,
 							Required:    true,
+							ForceNew:    true,
 						},
 						"principal": {
 							Description: "Name of the principal for authentication",
 							Type:        schema.TypeString,
 							Required:    true,
+							ForceNew:    true,
 						},
 						"realm": {
 							Description: "Realm associated with the Kerberos authentication",
 							Type:        schema.TypeString,
 							Required:    true,
+							ForceNew:    true,
 						},
 						"tgt_generation_method": {
 							Description: "TGT generation method",
-							Type:        schema.TypeSet,
+							Type:        schema.TypeList,
 							Optional:    true,
 							MaxItems:    1,
+							ForceNew:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"kerberos_password_id": {
-										Description: "The id of the encrypted text secret",
-										Type:        schema.TypeString,
-										Optional:    true,
+										Description:  "The id of the encrypted text secret",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ForceNew:     true,
+										ExactlyOneOf: validTGTGenerationMethods,
 									},
 									"key_tab_file_path": {
-										Description: "The path to the key tab file",
-										Type:        schema.TypeString,
-										Optional:    true,
+										Description:  "The path to the key tab file",
+										Type:         schema.TypeString,
+										Optional:     true,
+										ForceNew:     true,
+										ExactlyOneOf: validTGTGenerationMethods,
 									},
 								},
 							},
@@ -192,8 +229,8 @@ func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	d.Set("name", cred.Name)
-	d.Set("ssh_authentication", flattenSSHAuthentication(cred.SSHAuthentication))
-	d.Set("kerberos_authentication", flattenKerberosAuthentication(cred.KerberosAuthentication))
+	// d.Set("ssh_authentication", flattenSSHAuthentication(cred.SSHAuthentication))
+	// d.Set("kerberos_authentication", flattenKerberosAuthentication(cred.KerberosAuthentication))
 	d.Set("usage_scope", flattenUsageScope(cred.UsageScope))
 
 	return nil
@@ -236,116 +273,109 @@ func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func flattenKerberosAuthentication(cred *graphql.KerberosAuthentication) []interface{} {
-	response := make([]interface{}, 0)
+// func flattenKerberosAuthentication(cred *graphql.KerberosAuthentication) []interface{} {
+// 	response := make([]interface{}, 0)
 
-	if cred == nil {
-		return response
-	}
+// 	if cred == nil {
+// 		return response
+// 	}
 
-	data := map[string]interface{}{}
-	data["port"] = cred.Port
-	data["principal"] = cred.Principal
-	data["realm"] = cred.Realm
-	data["tgt_generation_method"] = flattenTGTGenerationMethod(cred.TGTGenerationMethod)
+// 	data := map[string]interface{}{}
+// 	data["port"] = cred.Port
+// 	data["principal"] = cred.Principal
+// 	data["realm"] = cred.Realm
+// 	data["tgt_generation_method"] = flattenTGTGenerationMethod(cred.TGTGenerationMethod)
 
-	return response
-}
+// 	return response
+// }
 
-func flattenTGTGenerationMethod(tgt *graphql.TGTGenerationMethod) []interface{} {
-	response := make([]interface{}, 0)
+// func flattenTGTGenerationMethod(tgt *graphql.TGTGenerationMethod) []interface{} {
+// 	response := make([]interface{}, 0)
 
-	if tgt == nil {
-		return response
-	}
+// 	if tgt == nil {
+// 		return response
+// 	}
 
-	data := map[string]interface{}{}
-	if tgt.KeyTabFile != nil {
-		data["key_tab_file_path"] = tgt.KeyTabFile.FilePath
-	}
+// 	data := map[string]interface{}{}
+// 	if tgt.KeyTabFile != nil {
+// 		data["key_tab_file_path"] = tgt.KeyTabFile.FilePath
+// 	}
 
-	if tgt.KerberosPassword != nil {
-		data["kerberos_password_id"] = tgt.KerberosPassword.PasswordSecretId
-	}
+// 	if tgt.KerberosPassword != nil {
+// 		data["kerberos_password_id"] = tgt.KerberosPassword.PasswordSecretId
+// 	}
 
-	return response
-}
+// 	return response
+// }
 
-func flattenSSHAuthentication(cred *graphql.SSHAuthentication) []interface{} {
-	response := make([]interface{}, 0)
+// func flattenSSHAuthentication(cred *graphql.SSHAuthentication) []interface{} {
+// 	response := make([]interface{}, 0)
 
-	if cred == nil {
-		return response
-	}
+// 	if cred == nil {
+// 		return response
+// 	}
 
-	data := map[string]interface{}{}
-	data["port"] = cred.Port
-	data["username"] = cred.Username
+// 	data := map[string]interface{}{}
+// 	data["port"] = cred.Port
+// 	data["username"] = cred.Username
 
-	if cred.SSHAuthenticationMethod != nil {
-		switch cred.SSHAuthenticationMethod.SSHCredentialType {
-		case graphql.SSHCredentialTypes.Password:
-			data["server_password"] = flattenSSHServerPasswordConfig(cred.SSHAuthenticationMethod.ServerPassword)
-		case graphql.SSHCredentialTypes.SSHKeyFilePath:
-			data["ssh_key_file"] = flattenSSHKeyFileConfig(cred.SSHAuthenticationMethod.SSHKeyFile)
-		case graphql.SSHCredentialTypes.SSHKey:
-			data["inline_ssh"] = flattenInlineSSHConfig(cred.SSHAuthenticationMethod.InlineSSHKey)
-		}
-	}
+// 	if cred.SSHAuthenticationMethod != nil {
+// 		switch cred.SSHAuthenticationMethod.SSHCredentialType {
+// 		case graphql.SSHCredentialTypes.Password:
+// 			data["server_password"] = flattenSSHServerPasswordConfig(cred.SSHAuthenticationMethod.ServerPassword)
+// 		case graphql.SSHCredentialTypes.SSHKeyFilePath:
+// 			data["ssh_key_file"] = flattenSSHKeyFileConfig(cred.SSHAuthenticationMethod.SSHKeyFile)
+// 		case graphql.SSHCredentialTypes.SSHKey:
+// 			data["inline_ssh"] = flattenInlineSSHConfig(cred.SSHAuthenticationMethod.InlineSSHKey)
+// 		}
+// 	}
 
-	return append(response, data)
-}
+// 	return append(response, data)
+// }
 
-func flattenInlineSSHConfig(cred *graphql.InlineSSHKey) []interface{} {
-	response := make([]interface{}, 0)
-	if cred == nil {
-		return response
-	}
+// func flattenInlineSSHConfig(cred *graphql.InlineSSHKey) []interface{} {
+// 	response := make([]interface{}, 0)
+// 	if cred == nil {
+// 		return response
+// 	}
 
-	data := map[string]interface{}{}
-	data["passphrase_secret_id"] = cred.PassphraseSecretId
-	data["ssh_key_file_id"] = cred.SSHKeySecretFileId
+// 	data := map[string]interface{}{}
+// 	data["passphrase_secret_id"] = cred.PassphraseSecretId
+// 	data["ssh_key_file_id"] = cred.SSHKeySecretFileId
 
-	return append(response, data)
-}
+// 	return append(response, data)
+// }
 
-func flattenSSHKeyFileConfig(cred *graphql.SSHKeyFile) []interface{} {
-	response := make([]interface{}, 0)
-	if cred == nil {
-		return response
-	}
+// func flattenSSHKeyFileConfig(cred *graphql.SSHKeyFile) []interface{} {
+// 	response := make([]interface{}, 0)
+// 	if cred == nil {
+// 		return response
+// 	}
 
-	data := map[string]interface{}{}
-	data["path"] = cred.Path
-	data["passphrase_secret_id"] = cred.PassphraseSecretId
+// 	data := map[string]interface{}{}
+// 	data["path"] = cred.Path
+// 	data["passphrase_secret_id"] = cred.PassphraseSecretId
 
-	return append(response, data)
-}
+// 	return append(response, data)
+// }
 
-func flattenSSHServerPasswordConfig(cred *graphql.SSHPassword) []interface{} {
+// func flattenSSHServerPasswordConfig(cred *graphql.SSHPassword) []interface{} {
 
-	response := make([]interface{}, 0)
-	if cred == nil {
-		return response
-	}
+// 	response := make([]interface{}, 0)
+// 	if cred == nil {
+// 		return response
+// 	}
 
-	data := map[string]interface{}{}
-	data["password_secret_id"] = cred.PasswordSecretId
+// 	data := map[string]interface{}{}
+// 	data["password_secret_id"] = cred.PasswordSecretId
 
-	return append(response, data)
-}
+// 	return append(response, data)
+// }
 
 func expandAuthenticationScheme(d *schema.ResourceData, cred *graphql.SSHCredential) error {
-	k := d.Get("kerberos_authentication").(*schema.Set).List()
-	s := d.Get("ssh_authentication").(*schema.Set).List()
-
-	hasKerberos := len(k) > 0
-	hasSSHAuth := len(s) > 0
-
-	if (hasKerberos && hasSSHAuth) || (!hasKerberos && !hasSSHAuth) {
-		return errors.New("must specify only one of either `kerberos_authentication` or `ssh_authentication`")
-	}
-
+	k := d.Get("kerberos_authentication").([]interface{})
+	s := d.Get("ssh_authentication").([]interface{})
+	fmt.Println(k)
 	if err := expandSSHAuthentication(s, cred); err != nil {
 		return err
 	}
@@ -366,19 +396,9 @@ func expandSSHAuthentication(d []interface{}, cred *graphql.SSHCredential) error
 
 	data := d[0].(map[string]interface{})
 
-	inlineSSHConfig := data["inline_ssh"].(*schema.Set).List()
-	keyFileConfig := data["ssh_key_file"].(*schema.Set).List()
-	serverPassConfig := data["server_password"].(*schema.Set).List()
-
-	totalConfigs := len(inlineSSHConfig) + len(keyFileConfig) + len(serverPassConfig)
-	if totalConfigs > 1 {
-		return errors.New("only one of `inline_ssh`, `ssh_key_file`, or `server_password` must be specified")
-	} else if totalConfigs == 0 {
-		// BUG: https://harness.atlassian.net/browse/SWAT-4653
-		// lifecycle { ignore_changes = [ssh_authentication] } must be set
-		// GraphQL doesn't send proper response
-		return nil
-	}
+	inlineSSHConfig := data["inline_ssh"].([]interface{})
+	keyFileConfig := data["ssh_key_file"].([]interface{})
+	serverPassConfig := data["server_password"].([]interface{})
 
 	auth := &graphql.SSHAuthentication{
 		SSHAuthenticationMethod: &graphql.SSHAuthenticationMethod{},
@@ -480,12 +500,14 @@ func expandKerberosAuthentication(d []interface{}, cred *graphql.SSHCredential) 
 	}
 
 	if attr, ok := data["realm"]; ok && attr != "" {
-		auth.Principal = attr.(string)
+		auth.Realm = attr.(string)
 	}
 
-	expandTGTGenerationMethod(data["tgt_generation_method"].(*schema.Set).List(), auth)
-	if auth.TGTGenerationMethod.KerberosPassword != nil && auth.TGTGenerationMethod.KeyTabFile != nil {
-		return errors.New("must set only one of `kerberos_password_id` or `key_tab_file_path` for tgt_generation_method")
+	expandTGTGenerationMethod(data["tgt_generation_method"].([]interface{}), auth)
+	if auth.TGTGenerationMethod != nil {
+		if auth.TGTGenerationMethod.KerberosPassword != nil && auth.TGTGenerationMethod.KeyTabFile != nil {
+			return errors.New("must set only one of `kerberos_password_id` or `key_tab_file_path` for tgt_generation_method")
+		}
 	}
 
 	cred.AuthenticationScheme = graphql.SSHAuthenticationSchemes.Kerberos

@@ -2,14 +2,11 @@ package provider
 
 import (
 	"context"
-	"fmt"
-	"os"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
-	"github.com/micahlmartin/terraform-provider-harness/harness/envvar"
 )
 
 func resourceEncryptedText() *schema.Resource {
@@ -44,16 +41,9 @@ func resourceEncryptedText() *schema.Resource {
 				Default:     false,
 			},
 			"secret_manager_id": {
-				Description: fmt.Sprintf("The id of the secret manager to associate the secret with. Defaults to the value of %s", envvar.HarnessAccountId),
+				Description: "The id of the secret manager to associate the secret with",
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: func() (interface{}, error) {
-					if v := os.Getenv(envvar.HarnessAccountId); v != "" {
-						return v, nil
-					}
-
-					return "", nil
-				},
+				Optional:    true,
 			},
 			"value": {
 				Description: "The value of the secret",
@@ -111,6 +101,7 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	d.SetId(secret.Id)
+	d.Set("secret_manager_id", secret.SecretManagerId)
 
 	return nil
 }
@@ -143,6 +134,8 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	// d.Set("secret_manager_id", secret.SecretManagerId)
 
 	return nil
 }

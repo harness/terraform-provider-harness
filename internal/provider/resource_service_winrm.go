@@ -11,28 +11,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceKubernetesService() *schema.Resource {
+func resourceWinRMService() *schema.Resource {
 
-	k8sSchema := commonServiceSchema()
-	k8sSchema["helm_version"] = &schema.Schema{
-		Description:  "The version of Helm to use. Options are `V2` and `V3`. Defaults to 'V2'. Only used when `type` is `KUBERNETES` or `HELM`.",
+	sshSchema := commonServiceSchema()
+	sshSchema["artifact_type"] = &schema.Schema{
+		Description:  "The type of artifact to deploy.",
 		Type:         schema.TypeString,
-		Optional:     true,
-		ValidateFunc: validation.StringInSlice([]string{cac.HelmVersions.V2, cac.HelmVersions.V3}, false),
-		Default:      cac.HelmVersions.V2,
+		Required:     true,
+		ValidateFunc: validation.StringInSlice(cac.WinRMArtifactTypesSlice, false),
 	}
 
 	return &schema.Resource{
-		Description:   "Resource for creating a Kubernetes service",
-		CreateContext: resourceKubernetesServiceCreate,
-		ReadContext:   resourceKubernetesServiceKubernetesRead,
-		UpdateContext: resourceKubernetesServiceUpdate,
+		Description:   "Resource for creating an WinRM service",
+		CreateContext: resourceWinRMServiceCreate,
+		ReadContext:   resourceWinRMServiceRead,
+		UpdateContext: resourceWinRMServiceUpdate,
 		DeleteContext: resourceServiceDelete,
-		Schema:        k8sSchema,
+		Schema:        sshSchema,
 	}
 }
 
-func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceWinRMServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	svcId := d.Get("id").(string)
@@ -45,20 +44,19 @@ func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.Reso
 
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
-	d.Set("helm_version", svc.HelmVersion)
 	d.Set("description", svc.Description)
+
 	return nil
 }
 
-func resourceKubernetesServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceWinRMServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	// Setup the object to be created
 	svcInput := &cac.Service{
 		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactTypes.Docker,
-		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    d.Get("helm_version").(string),
+		ArtifactType:   d.Get("artifact_type").(string),
+		DeploymentType: cac.DeploymentTypes.WinRM,
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}
@@ -74,19 +72,22 @@ func resourceKubernetesServiceCreate(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func resourceKubernetesServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceWinRMServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	if d.HasChange("app_id") {
 		return diag.FromErr(errors.New("app_id cannot be changed"))
 	}
 
+	if d.HasChange("artifact_type") {
+		return diag.FromErr(errors.New("artifact_type cannot be changed"))
+	}
+
 	// Setup the object to create
 	svcInput := &cac.Service{
 		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactTypes.Docker,
-		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    d.Get("helm_version").(string),
+		ArtifactType:   d.Get("artifact_type").(string),
+		DeploymentType: cac.DeploymentTypes.WinRM,
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}

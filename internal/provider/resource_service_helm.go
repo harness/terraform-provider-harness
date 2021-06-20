@@ -8,31 +8,20 @@ import (
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceKubernetesService() *schema.Resource {
-
-	k8sSchema := commonServiceSchema()
-	k8sSchema["helm_version"] = &schema.Schema{
-		Description:  "The version of Helm to use. Options are `V2` and `V3`. Defaults to 'V2'. Only used when `type` is `KUBERNETES` or `HELM`.",
-		Type:         schema.TypeString,
-		Optional:     true,
-		ValidateFunc: validation.StringInSlice([]string{cac.HelmVersions.V2, cac.HelmVersions.V3}, false),
-		Default:      cac.HelmVersions.V2,
-	}
-
+func resourceHelmService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating a Kubernetes service",
-		CreateContext: resourceKubernetesServiceCreate,
-		ReadContext:   resourceKubernetesServiceKubernetesRead,
-		UpdateContext: resourceKubernetesServiceUpdate,
+		Description:   "Resource for creating an AWS Helm service",
+		CreateContext: resourceHelmServiceCreate,
+		ReadContext:   resourceHelmServiceRead,
+		UpdateContext: resourceHelmServiceUpdate,
 		DeleteContext: resourceServiceDelete,
-		Schema:        k8sSchema,
+		Schema:        commonServiceSchema(),
 	}
 }
 
-func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceHelmServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	svcId := d.Get("id").(string)
@@ -45,20 +34,19 @@ func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.Reso
 
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
-	d.Set("helm_version", svc.HelmVersion)
 	d.Set("description", svc.Description)
+
 	return nil
 }
 
-func resourceKubernetesServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceHelmServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	// Setup the object to be created
 	svcInput := &cac.Service{
 		Name:           d.Get("name").(string),
 		ArtifactType:   cac.ArtifactTypes.Docker,
-		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    d.Get("helm_version").(string),
+		DeploymentType: cac.DeploymentTypes.Helm,
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}
@@ -74,7 +62,7 @@ func resourceKubernetesServiceCreate(ctx context.Context, d *schema.ResourceData
 	return nil
 }
 
-func resourceKubernetesServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceHelmServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	if d.HasChange("app_id") {
@@ -85,8 +73,7 @@ func resourceKubernetesServiceUpdate(ctx context.Context, d *schema.ResourceData
 	svcInput := &cac.Service{
 		Name:           d.Get("name").(string),
 		ArtifactType:   cac.ArtifactTypes.Docker,
-		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    d.Get("helm_version").(string),
+		DeploymentType: cac.DeploymentTypes.Helm,
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}

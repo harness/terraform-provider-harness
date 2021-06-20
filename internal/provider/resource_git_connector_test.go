@@ -5,10 +5,10 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/harness/api/graphql"
-	"github.com/micahlmartin/terraform-provider-harness/harness/utils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -142,6 +142,10 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 		resource "harness_encrypted_text" "test" {
 			name = "%[1]s"
 			value = "foo"
+
+			lifecycle {
+				ignore_changes = [secret_manager_id]
+			}
 		}
 
 		resource "harness_git_connector" "test" {
