@@ -37,6 +37,10 @@ func testAccDataSourceGitConnector(name string) string {
 	resource "harness_encrypted_text" "test" {
 		name = "%[1]s"
 		value = "foo"
+
+		lifecycle {
+			ignore_changes = [secret_manager_id]
+		}
 	}
 
 	resource "harness_git_connector" "test" {
