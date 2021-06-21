@@ -234,3 +234,29 @@ func ServiceFactory(applicationId, name string, deploymentType string, artifactT
 
 	return svc, nil
 }
+
+func (c *ConfigAsCodeClient) DeleteEntities(filePaths []string) error {
+
+	req, err := retryablehttp.NewRequest(http.MethodDelete, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, "/gateway/api/setup-as-code/yaml/delete-entities"), nil)
+	if err != nil {
+		return err
+	}
+
+	// Configure additional headers
+	req.Header.Set(httphelpers.HeaderApiKey, c.ApiClient.APIKey)
+	req.Header.Set(httphelpers.HeaderAuthorization, fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
+	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
+
+	// Add the account ID to the query string
+	q := req.URL.Query()
+	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
+	q.Add(QueryParamFilePaths, strings.Join(filePaths, ","))
+	req.URL.RawQuery = q.Encode()
+
+	_, err = c.ExecuteRequest(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

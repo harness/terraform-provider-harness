@@ -18,19 +18,6 @@ var HelmVersions helmVersion = helmVersion{
 	V3: "V3",
 }
 
-// type KubernetesService struct {
-// 	HarnessApiVersion string      `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-// 	Type              string      `yaml:"type" json:"type"`
-// 	ArtifactType      string      `yaml:"artifactType,omitempty"`
-// 	CreatedAt         Time `yaml:"createdAt,omitempty"`
-// 	CreatedBy         User `yaml:"createdBy,omitempty"`
-// 	DeploymentType    string      `yaml:"deploymentType,omitempty"`
-// 	Description       string      `yaml:"description,omitempty"`
-// 	Id                string      `yaml:"id,omitempty"`
-// 	Name              string      `yaml:"name,omitempty"`
-// 	Tags              []*Tag      `yaml:"tags,omitempty"`
-// }
-
 type deploymentType struct {
 	AMI           string
 	AWSCodeDeploy string
@@ -55,6 +42,18 @@ var DeploymentTypes deploymentType = deploymentType{
 	PCF:           "PCF",
 	SSH:           "SSH",
 	WinRM:         "WINRM",
+}
+
+var DeploymenTypesSlice []string = []string{
+	DeploymentTypes.AMI,
+	DeploymentTypes.AWSCodeDeploy,
+	DeploymentTypes.AWSLambda,
+	DeploymentTypes.Custom,
+	DeploymentTypes.Kubernetes,
+	DeploymentTypes.Helm,
+	ArtifactTypes.PCF,
+	DeploymentTypes.SSH,
+	DeploymentTypes.WinRM,
 }
 
 type artifactType struct {
@@ -89,6 +88,23 @@ var ArtifactTypes artifactType = artifactType{
 	IISApp:              "IIS_APP",
 	IISWebsite:          "IIS",
 	Zip:                 "ZIP",
+}
+
+var SSHArtifactTypes []string = []string{
+	ArtifactTypes.Docker,
+	ArtifactTypes.Jar,
+	ArtifactTypes.Other,
+	ArtifactTypes.Tar,
+	ArtifactTypes.War,
+	ArtifactTypes.Zip,
+}
+
+var WinRMArtifactTypesSlice []string = []string{
+	ArtifactTypes.Docker,
+	ArtifactTypes.IISApp,
+	ArtifactTypes.IISVirtualDirectory,
+	ArtifactTypes.IISWebsite,
+	ArtifactTypes.Other,
 }
 
 type Tag struct {
@@ -169,14 +185,15 @@ type ResponseMessage struct {
 }
 
 type Service struct {
-	HarnessApiVersion string `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Type              string `yaml:"type" json:"type"`
-	ArtifactType      string `yaml:"artifactType,omitempty"`
-	DeploymentType    string `yaml:"deploymentType,omitempty"`
-	Description       string `yaml:"description,omitempty"`
-	Id                string `yaml:"id,omitempty"`
-	Name              string `yaml:"-"`
-	Tags              []*Tag `yaml:"tags,omitempty"`
-	HelmVersion       string `yaml:"helmVersion,omitempty"`
-	ApplicationId     string `yaml:"-"`
+	HarnessApiVersion         string            `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type                      string            `yaml:"type" json:"type"`
+	ArtifactType              string            `yaml:"artifactType,omitempty"`
+	DeploymentType            string            `yaml:"deploymentType,omitempty"`
+	Description               string            `yaml:"description,omitempty"`
+	Id                        string            `yaml:"id,omitempty"`
+	Name                      string            `yaml:"-"`
+	Tags                      map[string]string `yaml:"tags,omitempty"`
+	HelmVersion               string            `yaml:"helmVersion,omitempty"`
+	ApplicationId             string            `yaml:"-"`
+	DeploymentTypeTemplateUri string            `yaml:"deploymentTypeTemplateUri,omitempty"`
 }

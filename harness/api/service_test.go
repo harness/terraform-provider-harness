@@ -94,6 +94,32 @@ func TestServiceSerialization(t *testing.T) {
 
 }
 
+func TestDeleteService(t *testing.T) {
+	c := getClient()
+	expectedName := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(4))
+	app, err := createApplication(expectedName)
+	require.NoError(t, err)
+
+	defer func() {
+		c.Applications().DeleteApplication(app.Id)
+	}()
+
+	svc, err := createService(app.Id, expectedName, cac.DeploymentTypes.Kubernetes, cac.ArtifactTypes.Docker)
+	require.NoError(t, err)
+	require.NotNil(t, svc)
+
+	svcLookup, err := c.Services().GetServiceById(app.Id, svc.Id)
+	require.NoError(t, err)
+	require.NotNil(t, svcLookup)
+
+	err = c.Services().DeleteService(app.Id, svc.Id)
+	require.NoError(t, err)
+
+	svcLookup, err = c.Services().GetServiceById(app.Id, svc.Id)
+	require.Error(t, err, "received http status code '403'")
+	require.Nil(t, svcLookup)
+}
+
 func testServiceSerialization(applicationId string, applicationName string, deploymentType string, artifactType string) func(t *testing.T) {
 	return testServiceSerializationWithAdditionalTests(applicationId, applicationName, deploymentType, artifactType, nil)
 }

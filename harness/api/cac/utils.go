@@ -61,3 +61,33 @@ func (r *Response) IsEmpty() bool {
 func (m *ResponseMessage) ToError() error {
 	return fmt.Errorf("%s: %s", m.Code, m.Message)
 }
+
+func GetDefaultArtifactType(deploymentType string, fallbackArtifactType string) (string, error) {
+
+	var artifactType string
+
+	switch deploymentType {
+	case DeploymentTypes.Kubernetes:
+		artifactType = ArtifactTypes.Docker
+	case DeploymentTypes.SSH:
+		artifactType = fallbackArtifactType
+	case DeploymentTypes.AMI:
+		artifactType = ArtifactTypes.AMI
+	case DeploymentTypes.AWSCodeDeploy:
+		artifactType = ArtifactTypes.AWSCodeDeploy
+	case DeploymentTypes.AWSLambda:
+		artifactType = ArtifactTypes.AWSLambda
+	case DeploymentTypes.ECS:
+		artifactType = ArtifactTypes.Docker
+	case DeploymentTypes.PCF:
+		artifactType = ArtifactTypes.PCF
+	case DeploymentTypes.Helm:
+		artifactType = ArtifactTypes.Docker
+	case DeploymentTypes.WinRM:
+		artifactType = fallbackArtifactType
+	default:
+		return "", fmt.Errorf("no default artifact type for '%s' deployments", deploymentType)
+	}
+
+	return artifactType, nil
+}

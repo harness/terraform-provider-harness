@@ -5,6 +5,7 @@ const (
 	DefaultGraphQLApiUrl         = "/gateway/api/graphql"
 	GraphQLInvalidTokenErrorCode = "INVALID_TOKEN"
 	QueryParamAccountId          = "accountId"
-	QueryParamYamlFilePath       = "yamlFilePath"
 	QueryParamApplicationId      = "appId"
+	QueryParamFilePaths          = "filePaths"
+	QueryParamYamlFilePath       = "yamlFilePath"
 )

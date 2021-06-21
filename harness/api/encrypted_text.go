@@ -10,9 +10,6 @@ func (c *SecretClient) CreateEncryptedText(input *graphql.CreateSecretInput) (*g
 
 	// Set defaults
 	input.SecretType = graphql.SecretTypes.EncryptedText
-	if input.EncryptedText.SecretManagerId == "" {
-		input.EncryptedText.SecretManagerId = c.APIClient.AccountId
-	}
 
 	query := &GraphQLQuery{
 		Query: fmt.Sprintf(`mutation($secret: CreateSecretInput!) {

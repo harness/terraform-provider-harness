@@ -7,13 +7,19 @@ import (
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 )
 
-func (c *Client) Services() *ConfigAsCodeClient {
-	return &ConfigAsCodeClient{
-		ApiClient: c,
+type ServiceClient struct {
+	ConfigAsCodeClient *ConfigAsCodeClient
+}
+
+func (c *Client) Services() *ServiceClient {
+	return &ServiceClient{
+		ConfigAsCodeClient: &ConfigAsCodeClient{
+			ApiClient: c,
+		},
 	}
 }
 
-func (c *ConfigAsCodeClient) UpsertService(serviceInput *cac.Service) (*cac.Service, error) {
+func (c *ServiceClient) UpsertService(serviceInput *cac.Service) (*cac.Service, error) {
 	if serviceInput == nil {
 		return nil, errors.New("service is nil")
 	}
@@ -22,7 +28,7 @@ func (c *ConfigAsCodeClient) UpsertService(serviceInput *cac.Service) (*cac.Serv
 		return nil, err
 	}
 
-	app, err := c.ApiClient.Applications().GetApplicationById(serviceInput.ApplicationId)
+	app, err := c.ConfigAsCodeClient.ApiClient.Applications().GetApplicationById(serviceInput.ApplicationId)
 	if err != nil {
 		return nil, err
 	}
@@ -33,12 +39,12 @@ func (c *ConfigAsCodeClient) UpsertService(serviceInput *cac.Service) (*cac.Serv
 
 	filePath := fmt.Sprintf("Setup/Applications/%s/Services/%s/Index.yaml", app.Name, serviceInput.Name)
 
-	item, err := c.UpsertEntity(filePath, serviceInput)
+	item, err := c.ConfigAsCodeClient.UpsertEntity(filePath, serviceInput)
 	if err != nil {
 		return nil, err
 	}
 
-	rootItem, err := c.GetDirectoryTree(app.Id)
+	rootItem, err := c.ConfigAsCodeClient.GetDirectoryTree(app.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +54,7 @@ func (c *ConfigAsCodeClient) UpsertService(serviceInput *cac.Service) (*cac.Serv
 		return nil, fmt.Errorf("unable to find service '%s'", serviceInput.Name)
 	}
 
-	itemContent, err := c.GetDirectoryItemContent(svcItem.RestName, svcItem.UUID, serviceInput.ApplicationId)
+	itemContent, err := c.ConfigAsCodeClient.GetDirectoryItemContent(svcItem.RestName, svcItem.UUID, serviceInput.ApplicationId)
 	if err != nil {
 		return nil, err
 	}
@@ -65,10 +71,15 @@ func (c *ConfigAsCodeClient) UpsertService(serviceInput *cac.Service) (*cac.Serv
 	return svc, nil
 }
 
-func (c *ConfigAsCodeClient) GetServiceById(applicationId string, serviceId string) (*cac.Service, error) {
-	item, err := c.GetDirectoryItemContent("services", serviceId, applicationId)
+func (c *ServiceClient) GetServiceById(applicationId string, serviceId string) (*cac.Service, error) {
+	item, err := c.ConfigAsCodeClient.GetDirectoryItemContent("services", serviceId, applicationId)
 	if err != nil {
 		return nil, err
+	}
+
+	// Item not found
+	if item == nil {
+		return nil, nil
 	}
 
 	obj, err := item.ParseYamlContent()
@@ -76,5 +87,29 @@ func (c *ConfigAsCodeClient) GetServiceById(applicationId string, serviceId stri
 		return nil, err
 	}
 
-	return obj.(*cac.Service), nil
+	svc := obj.(*cac.Service)
+	svc.ApplicationId = applicationId
+
+	return svc, nil
+}
+
+func (c *ServiceClient) DeleteService(applicationId string, serviceId string) error {
+
+	app, err := c.ConfigAsCodeClient.ApiClient.Applications().GetApplicationById(applicationId)
+	if err != nil {
+		return err
+	}
+
+	if app == nil {
+		return fmt.Errorf("could not find application by id: '%s'", applicationId)
+	}
+
+	svc, err := c.GetServiceById(applicationId, serviceId)
+	if err != nil {
+		return err
+	}
+
+	filePath := fmt.Sprintf("Setup/Applications/%s/Services/%s/Index.yaml", app.Name, svc.Name)
+
+	return c.ConfigAsCodeClient.DeleteEntities([]string{filePath})
 }
