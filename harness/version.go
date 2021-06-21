@@ -1,4 +1,6 @@
 package harness
 
-const SDKName = "harness-go-sdk"
-const SDKVersion = "0.0.1"
+const (
+	SDKName    = "harness-go-sdk"
+	SDKVersion = "0.0.1"
+)
