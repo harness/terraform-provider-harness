@@ -182,6 +182,12 @@ github.com/googleapis/gax-go/v2 v2.0.5 h1:sjZBwGj9Jlw33ImPtvFviGYvseOtDM7hkSKB7+
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/graph-gophers/graphql-go v0.0.0-20201112095111-7a585a01e04c/go.mod h1:9CQHMSxwO4MprSdzoIEobiHpoLtHm77vfxsvsIN5Vuc=
+github.com/harness-io/harness-go-sdk v0.0.0-20210621150237-10f031cf3180 h1:8AMaBMKEYVcEFf5ZbWKuNKK/2dKe5oo51MwNWnes6ZA=
+github.com/harness-io/harness-go-sdk v0.0.0-20210621150237-10f031cf3180/go.mod h1:j0wBq1pO8w277Hjv8gZSf6M6CCgHzAuTIio/daOIhEI=
+github.com/harness-io/harness-go-sdk v0.0.0-20210622035326-a8656fb76d15 h1:im4CQk7jtdtQCQ8IJL+IcKvdK8f7/KeWq1fLpAMeMa8=
+github.com/harness-io/harness-go-sdk v0.0.0-20210622035326-a8656fb76d15/go.mod h1:j0wBq1pO8w277Hjv8gZSf6M6CCgHzAuTIio/daOIhEI=
+github.com/harness-io/harness-go-sdk v0.0.1 h1:Qhm0O7GXP/Xz7J5HpEh4RBlHeDwKMQ87WQCgxkfTxyE=
+github.com/harness-io/harness-go-sdk v0.0.1/go.mod h1:j0wBq1pO8w277Hjv8gZSf6M6CCgHzAuTIio/daOIhEI=
 github.com/hashicorp/errwrap v1.0.0 h1:hLrqtEDnRye3+sgx6z4qVLNuviH3MR5aQ0ykNJa/UYA=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
 github.com/hashicorp/go-checkpoint v0.5.0 h1:MFYpPZCnQqQTE18jFwSII6eUQrD/oxMFp3mlgcqk5mU=
