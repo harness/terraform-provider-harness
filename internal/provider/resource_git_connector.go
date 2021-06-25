@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
 )
 
 func resourceGitConnector() *schema.Resource {
@@ -99,7 +100,7 @@ func resourceGitConnector() *schema.Resource {
 				Optional:    true,
 			},
 			"url_type": {
-				Description:  fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
+				Description:  fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo),
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validateUrlType,
@@ -128,20 +129,20 @@ func validateGitConnectorSecret(sshVal string, passVal string) error {
 func validateUrlType(val interface{}, key string) (warn []string, errs []error) {
 	v := val.(string)
 
-	rx, err := regexp.Compile(fmt.Sprintf("%s|%s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
+	rx, err := regexp.Compile(fmt.Sprintf("%s|%s", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo))
 	if err != nil {
 		errs = append(errs, err)
 	}
 
 	if !rx.MatchString(v) {
-		errs = append(errs, fmt.Errorf("invalid value %s. Must be one of %s or %s", v, client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
+		errs = append(errs, fmt.Errorf("invalid value %s. Must be one of %s or %s", v, graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo))
 	}
 
 	return warn, errs
 }
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*api.Client)
 
 	connId := d.Get("id").(string)
 
@@ -166,14 +167,14 @@ func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*api.Client)
 
 	// Validation
 	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
 		return diag.FromErr(err)
 	}
 
-	connInput := &client.GitConnectorInput{}
+	connInput := &graphql.GitConnectorInput{}
 	connInput.Name = d.Get("name").(string)
 	connInput.Url = d.Get("url").(string)
 	connInput.Branch = d.Get("branch").(string)
@@ -198,7 +199,7 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*api.Client)
 
 	// Validation
 	if d.HasChange("generate_webhook_url") && !d.Get("generate_webhook_url").(bool) {
@@ -225,7 +226,7 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	id := d.Get("id").(string)
-	connInput := &client.GitConnectorInput{}
+	connInput := &graphql.GitConnectorInput{}
 	connInput.Name = d.Get("name").(string)
 	connInput.Url = d.Get("url").(string)
 	connInput.Branch = d.Get("branch").(string)
@@ -249,7 +250,7 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*client.ApiClient)
+	c := meta.(*api.Client)
 
 	id := d.Get("id").(string)
 
@@ -309,7 +310,7 @@ func flattenDelgateSelectors(ds []string) []interface{} {
 	return selectors
 }
 
-func flattenCommitDetails(details *client.CustomCommitDetails) []interface{} {
+func flattenCommitDetails(details *graphql.CustomCommitDetails) []interface{} {
 
 	if details.IsEmpty() {
 		return nil
@@ -319,7 +320,7 @@ func flattenCommitDetails(details *client.CustomCommitDetails) []interface{} {
 
 	if details == nil {
 		// Create an empty commit details to remove it
-		cd[0] = &client.CustomCommitDetails{}
+		cd[0] = &graphql.CustomCommitDetails{}
 	} else {
 		cd[0] = map[string]string{
 			"author_email_id": details.AuthorEmailId,
@@ -331,14 +332,14 @@ func flattenCommitDetails(details *client.CustomCommitDetails) []interface{} {
 	return cd
 }
 
-func expandCommitDetails(i []interface{}) *client.CustomCommitDetails {
+func expandCommitDetails(i []interface{}) *graphql.CustomCommitDetails {
 	if len(i) <= 0 {
-		return &client.CustomCommitDetails{}
+		return &graphql.CustomCommitDetails{}
 	}
 
 	cd := i[0].(map[string]interface{})
 
-	commitDetails := &client.CustomCommitDetails{}
+	commitDetails := &graphql.CustomCommitDetails{}
 
 	if attr, ok := cd["author_email_id"]; ok && attr != "" {
 		commitDetails.AuthorEmailId = attr.(string)

@@ -6,10 +6,10 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/envvar"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/envvar"
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,7 +47,7 @@ func TestProvider_configure_url(t *testing.T) {
 	// Verify
 	require.False(t, diags.HasError())
 	require.NoError(t, p.InternalValidate())
-	c := p.Meta().(*client.ApiClient)
+	c := p.Meta().(*api.Client)
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }
 
@@ -72,7 +72,7 @@ func TestProvider_configure_url_env(t *testing.T) {
 	// Verify
 	require.False(t, diags.HasError())
 	require.NoError(t, p.InternalValidate())
-	c := p.Meta().(*client.ApiClient)
+	c := p.Meta().(*api.Client)
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }
 
@@ -81,9 +81,10 @@ func testAccPreCheck(t *testing.T) {
 		testAccProvider = New("dev")()
 
 		config := map[string]interface{}{
-			"endpoint":   os.Getenv(envvar.HarnessEndpoint),
-			"account_id": os.Getenv(envvar.HarnessAccountId),
-			"api_key":    os.Getenv(envvar.HarnessApiKey),
+			"endpoint":     os.Getenv(envvar.HarnessEndpoint),
+			"account_id":   os.Getenv(envvar.HarnessAccountId),
+			"api_key":      os.Getenv(envvar.HarnessApiKey),
+			"bearer_token": os.Getenv(envvar.HarnessBearerToken),
 		}
 
 		testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))
@@ -98,6 +99,6 @@ func testAccGetResource(resourceName string, state *terraform.State) *terraform.
 	return rm.Resources[resourceName]
 }
 
-func testAccGetApiClientFromProvider() *client.ApiClient {
-	return testAccProvider.Meta().(*client.ApiClient)
+func testAccGetApiClientFromProvider() *api.Client {
+	return testAccProvider.Meta().(*api.Client)
 }

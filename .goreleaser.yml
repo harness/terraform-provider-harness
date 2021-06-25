@@ -51,4 +51,12 @@ release:
   # If you want to manually examine the release before its live, uncomment this line:
   # draft: true
 changelog:
-  skip: true
+  skip: false
+  # Commit messages matching the regexp listed here will be removed from
+  # the changelog
+  # Default is empty
+  filters:
+    exclude:
+      - '^docs:'
+      - typo
+      - (?i)foo

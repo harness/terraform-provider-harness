@@ -3,9 +3,10 @@ package provider
 import (
 	"context"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
 )
 
 func dataSourceEncryptedText() *schema.Resource {
@@ -38,9 +39,9 @@ func dataSourceEncryptedText() *schema.Resource {
 
 func dataSourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*client.ApiClient)
+	c := meta.(*api.Client)
 
-	var secret *client.EncryptedText
+	var secret *graphql.EncryptedText
 	var err error
 
 	if id := d.Get("id").(string); id != "" {

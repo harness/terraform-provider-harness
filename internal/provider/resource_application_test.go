@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
-	"github.com/micahlmartin/terraform-provider-harness/internal/utils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -53,7 +53,7 @@ func testAccApplicationCreation(t *testing.T, resourceName string, appName strin
 	}
 }
 
-func testAccGetApplication(resourceName string, state *terraform.State) (*client.Application, error) {
+func testAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
 	r := testAccGetResource(resourceName, state)
 	c := testAccGetApiClientFromProvider()
 	id := r.Primary.ID

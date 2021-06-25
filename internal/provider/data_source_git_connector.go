@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/micahlmartin/terraform-provider-harness/internal/client"
 )
 
 func dataSourceGitConnector() *schema.Resource {
@@ -95,7 +96,7 @@ func dataSourceGitConnector() *schema.Resource {
 				Computed:    true,
 			},
 			"url_type": {
-				Description: fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
+				Description: fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo),
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -110,7 +111,7 @@ func dataSourceGitConnector() *schema.Resource {
 
 func dataSourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*client.ApiClient)
+	c := meta.(*api.Client)
 
 	id := d.Get("id").(string)
 	conn, err := c.Connectors().GetGitConnectorById(id)
