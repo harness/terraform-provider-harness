@@ -55,7 +55,8 @@ changelog:
   # Commit messages matching the regexp listed here will be removed from
   # the changelog
   # Default is empty
-  exclude:
-    - '^docs:'
-    - typo
-    - (?i)foo
+  filters:
+    exclude:
+      - '^docs:'
+      - typo
+      - (?i)foo
