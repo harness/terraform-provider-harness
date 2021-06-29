@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/google/uuid v1.2.0 // indirect
-	github.com/harness-io/harness-go-sdk v0.0.1
+	github.com/harness-io/harness-go-sdk v0.0.2
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/hashicorp/terraform-plugin-docs v0.4.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1
