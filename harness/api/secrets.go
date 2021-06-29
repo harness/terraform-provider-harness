@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -18,111 +19,54 @@ func (c *Client) Secrets() *SecretClient {
 	}
 }
 
-func (c *SecretClient) GetEncryptedFileByName(name string) (*graphql.EncryptedFile, error) {
+func (c *SecretClient) getSecretByName(name string, secretType graphql.SecretType, fields string, respObj interface{}) error {
 	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query($name: String!) {
-			secretByName(name: $name, secretType: %s) {
-				... on EncryptedFile {
-					%s
-				}
+		Query: fmt.Sprintf(`{
+			secretByName(name: "%[1]s", secretType: %[2]s) {
+				%[3]s
 			}
-		}`, graphql.SecretTypes.EncryptedFile, encryptedSecretFields),
-		Variables: map[string]interface{}{
-			"name": name,
-		},
+		}`, name, secretType, fields),
 	}
 
 	res := &struct {
-		SecretByName graphql.EncryptedFile
-	}{}
-
-	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
-
-	if err != nil {
-		return nil, err
+		SecretByName interface{}
+	}{
+		SecretByName: respObj,
 	}
 
-	return &res.SecretByName, nil
+	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (c *SecretClient) GetEncryptedFileById(id string) (*graphql.EncryptedFile, error) {
+func (c *SecretClient) getSecretById(id string, secretType graphql.SecretType, fields string, respObj interface{}) error {
 	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query($id: String!) {
-			secret(secretId: $id, secretType: %s) {
-				... on EncryptedFile {
-					%s
-				}
+		Query: fmt.Sprintf(`{
+			secret(secretId: "%[1]s", secretType: %[2]s) {
+				%[3]s
 			}
-		}`, graphql.SecretTypes.EncryptedFile, encryptedSecretFields),
-		Variables: map[string]interface{}{
-			"id": id,
-		},
+		}`, id, secretType, fields),
 	}
 
 	res := &struct {
-		Secret graphql.EncryptedFile
-	}{}
-
-	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &res.Secret, nil
-}
-
-func (c *SecretClient) GetWinRMCredentialByName(name string) (*graphql.WinRMCredential, error) {
-	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query($name: String!) {
-			secretByName(name: $name, secretType: %s) {
-				... on WinRMCredential {
-					%s
-				}
-			}
-		}`, graphql.SecretTypes.WinRMCredential, winRMCredentialFields),
-		Variables: map[string]interface{}{
-			"name": name,
-		},
-	}
-
-	res := &struct {
-		SecretByName graphql.WinRMCredential
+		Secret *json.RawMessage
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
-		return nil, err
+		return err
 	}
 
-	return &res.SecretByName, nil
+	err := json.Unmarshal(*res.Secret, respObj)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (c *SecretClient) GetWinRMCredentialById(id string) (*graphql.WinRMCredential, error) {
-	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query($id: String!) {
-			secret(secretId: $id, secretType: %s) {
-				... on WinRMCredential {
-					%s
-				}
-			}
-		}`, graphql.SecretTypes.WinRMCredential, winRMCredentialFields),
-		Variables: map[string]interface{}{
-			"id": id,
-		},
-	}
-
-	res := &struct {
-		Secret graphql.WinRMCredential
-	}{}
-
-	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
-		return nil, err
-	}
-
-	return &res.Secret, nil
-}
-
-func (c *SecretClient) DeleteSecret(secretId string, secretType string) error {
+func (c *SecretClient) DeleteSecret(secretId string, secretType graphql.SecretType) error {
 
 	query := &GraphQLQuery{
 		Query: `mutation($secret: DeleteSecretInput!) {
@@ -162,28 +106,21 @@ func (c *SecretClient) DeleteSecretObj(secret *graphql.Secret) error {
 }
 
 const (
-	winRMCredentialFields = `
-	id
-	authenticationScheme
-	domain
-	id
-	name
-	port
-	secretType
-	skipCertCheck
-	usageScope {
-		appEnvScopes {
-			application {
-				filterType
-				appId
-			}
-			environment {
-				filterType
-				envId
+	commonSecretFields = `
+		id
+		name
+		secretType
+		usageScope {
+			appEnvScopes {
+				application {
+					filterType
+					appId
+				}
+				environment {
+					filterType
+					envId
+				}
 			}
 		}
-	}
-	useSSL
-	userName
-`
+	`
 )

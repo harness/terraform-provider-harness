@@ -15,12 +15,10 @@ func (c *SecretClient) CreateEncryptedText(input *graphql.CreateSecretInput) (*g
 		Query: fmt.Sprintf(`mutation($secret: CreateSecretInput!) {
 			createSecret(input: $secret) {
 				secret {
-				... on EncryptedText {
-						%s
-					}
+					%[1]s
 				}
 			}
-		}`, encryptedSecretFields),
+		}`, getEncryptedTextFields()),
 		Variables: map[string]interface{}{
 			"secret": &input,
 		},
@@ -49,12 +47,10 @@ func (c *SecretClient) UpdateEncryptedText(input *graphql.UpdateSecretInput) (*g
 		Query: fmt.Sprintf(`mutation($secret: UpdateSecretInput!) {
 			updateSecret(input: $secret) {
 				secret {
-				... on EncryptedText {
-						%s
-					}
+					%[1]s
 				}
 			}
-		}`, encryptedSecretFields),
+		}`, getEncryptedTextFields()),
 		Variables: map[string]interface{}{
 			"secret": &input,
 		},
@@ -76,76 +72,31 @@ func (c *SecretClient) UpdateEncryptedText(input *graphql.UpdateSecretInput) (*g
 }
 
 func (c *SecretClient) GetEncryptedTextByName(name string) (*graphql.EncryptedText, error) {
-	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query($name: String!) {
-			secretByName(name: $name, secretType: %s) {
-				... on EncryptedText {
-					%s
-				}
-			}
-		}`, graphql.SecretTypes.EncryptedText, encryptedSecretFields),
-		Variables: map[string]interface{}{
-			"name": name,
-		},
-	}
-
-	res := &struct {
-		SecretByName graphql.EncryptedText
-	}{}
-
-	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
-
+	resp := &graphql.EncryptedText{}
+	err := c.getSecretByName(name, graphql.SecretTypes.EncryptedText, getEncryptedTextFields(), resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &res.SecretByName, nil
+	return resp, nil
 }
 
 func (c *SecretClient) GetEncryptedTextById(id string) (*graphql.EncryptedText, error) {
-	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query($id: String!) {
-			secret(secretId: $id, secretType: %s) {
-				... on EncryptedText {
-					%s
-				}
-			}
-		}`, graphql.SecretTypes.EncryptedText, encryptedSecretFields),
-		Variables: map[string]interface{}{
-			"id": id,
-		},
-	}
-
-	res := &struct {
-		Secret graphql.EncryptedText
-	}{}
-
-	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
-
+	resp := &graphql.EncryptedText{}
+	err := c.getSecretById(id, graphql.SecretTypes.EncryptedText, getEncryptedTextFields(), resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &res.Secret, nil
+	return resp, nil
 }
 
-const encryptedSecretFields = `
-id
-name
-secretManagerId
-secretType
-usageScope {
-	appEnvScopes {
-		application {
-			filterType
-			appId
-		}
-		environment {
-			filterType
-			envId
-		}
-	}
+func getEncryptedTextFields() string {
+	return fmt.Sprintf(`
+		%[1]s
+		... on EncryptedText {
+			inheritScopesFromSM
+			scopedToAccount
+			secretManagerId
+	}`, commonSecretFields)
 }
-inheritScopesFromSM
-scopedToAccount
-`

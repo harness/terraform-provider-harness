@@ -220,14 +220,14 @@ var WinRMAuthenticationTypes = &winRMAuthenticationType{
 // 	SSHAuthentication      *SSHAuthentication      `json:"sshAuthentication,omitempty"`
 // }
 
-type secretType struct {
-	EncryptedFile   string
-	EncryptedText   string
-	SSHCredential   string
-	WinRMCredential string
-}
+type SecretType string
 
-var SecretTypes *secretType = &secretType{
+var SecretTypes = struct {
+	EncryptedFile   SecretType
+	EncryptedText   SecretType
+	SSHCredential   SecretType
+	WinRMCredential SecretType
+}{
 	EncryptedFile:   "ENCRYPTED_FILE",
 	EncryptedText:   "ENCRYPTED_TEXT",
 	SSHCredential:   "SSH_CREDENTIAL",
@@ -258,7 +258,7 @@ type WinRMCredential struct {
 type CreateSecretInput struct {
 	ClientMutationId string                `json:"clientMutationId,omitempty"`
 	EncryptedText    *EncryptedTextInput   `json:"encryptedText,omitempty"`
-	SecretType       string                `json:"secretType,omitempty"`
+	SecretType       SecretType            `json:"secretType,omitempty"`
 	SSHCredential    *SSHCredential        `json:"sshCredential,omitempty"`
 	WinRMCredential  *WinRMCredentialInput `json:"winRMCredential,omitempty"`
 }
@@ -267,7 +267,7 @@ type UpdateSecretInput struct {
 	ClientMutationId string                 `json:"clientMutationId,omitempty"`
 	EncryptedText    *UpdateEncryptedText   `json:"encryptedText,omitempty"`
 	SecretId         string                 `json:"secretId,omitempty"`
-	SecretType       string                 `json:"secretType,omitempty"`
+	SecretType       SecretType             `json:"secretType,omitempty"`
 	SSHCredential    *SSHCredential         `json:"sshCredential,omitempty"`
 	WinRMCredential  *UpdateWinRMCredential `json:"winRMCredential,omitempty"`
 }
@@ -275,7 +275,7 @@ type UpdateSecretInput struct {
 type Secret struct {
 	Id         string      `json:"id,omitempty"`
 	Name       string      `json:"name,omitempty"`
-	SecretType string      `json:"secretType,omitempty"`
+	SecretType SecretType  `json:"secretType,omitempty"`
 	UsageScope *UsageScope `json:"usageScope,omitempty"`
 }
 
@@ -435,8 +435,8 @@ var SSHAuthenticationSchemes = &sshAuthenticationScheme{
 }
 
 type DeleteSecretInput struct {
-	SecretId   string `json:"secretId,omitempty"`
-	SecretType string `json:"secretType,omitempty"`
+	SecretId   string     `json:"secretId,omitempty"`
+	SecretType SecretType `json:"secretType,omitempty"`
 }
 
 type connectorType struct {
@@ -645,4 +645,218 @@ type DockerConnectorInput struct {
 type Tag struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+type CloudProvider struct {
+	CreatedAt                     *time.Time `json:"createdAt,omitempty"`
+	CreatedBy                     *User      `json:"createdBy,omitempty"`
+	Description                   string     `json:"description,omitempty"`
+	Id                            string     `json:"id,omitempty"`
+	IsContinuousEfficiencyEnabled bool       `json:"isContinuousEfficiencyEnabled,omitempty"`
+	Name                          string     `json:"name,omitempty"`
+	Type                          string     `json:"type,omitempty"`
+}
+
+type AwsCloudProvider struct {
+	CloudProvider
+	CEHealthStatus         *CEHealthStatus            `json:"ceHealthStatus,omitempty"`
+	CredentialsType        awsCredentialsType         `json:"credentialsType,omitempty"`
+	CrossAccountAttributes *AwsCrossAccountAttributes `json:"awsCrossAccountAttributes,omitempty"`
+	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
+	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
+	ManualCredentials      *AwsManualCredentials      `json:"manualCredentials,omitempty"`
+}
+
+type Ec2IamCredentials struct {
+	DelegateSelector string      `json:"delegateSelector"`
+	UsageScope       *UsageScope `json:"usageScope,omitempty"`
+}
+
+type AwsManualCredentials struct {
+	AccessKey         string `json:"accessKey,omitempty"`
+	AccessKeySecretId string `json:"accessKeySecretId,omitempty"`
+	SecretKeySecretId string `json:"secretKeySecretId,omitempty"`
+}
+
+type AwsCrossAccountAttributes struct {
+	AssumeCrossAccountRole bool   `json:"assumeCrossAccountRole,omitempty"`
+	CrossAccountRoleArm    string `json:"crossAccountRoleArn,omitempty"`
+	ExternalId             string `json:"externalId,omitempty"`
+}
+
+type awsCredentialsType string
+
+var AwsCredentialsTypes = struct {
+	Ec2Iam awsCredentialsType
+	Manual awsCredentialsType
+}{
+	Ec2Iam: "EC2_IAM",
+	Manual: "MANUAL",
+}
+
+type AzureCloudProvider struct {
+	CloudProvider
+	ClientId    string `json:"clientId,omitempty"`
+	KeySecretId string `json:"keySecretId,omitempty"`
+	TenantId    string `json:"tenantId,omitempty"`
+}
+
+type GcpCloudProvider struct {
+	CloudProvider
+	DelegateSelector          string   `json:"delegateSelector,omitempty"`
+	DelegateSelectors         []string `json:"delegateSelectors,omitempty"`
+	Description               string   `json:"description,omitempty"`
+	ServiceAccountKeySecretId string   `json:"serviceAccountKeySecretId,omitempty"`
+	SkipValidation            bool     `json:"skipValidation,omitempty"`
+	UseDelegate               bool     `json:"useDelegate,omitempty"`
+	UseDelegateSelectors      bool     `json:"useDelegateSelectors,omitempty"`
+}
+
+type KubernetesCloudProvider struct {
+	CloudProvider
+	CEHealthStatus         *CEHealthStatus        `json:"ceHealthStatus,omitempty"`
+	SkipK8sEventCollection bool                   `json:"skipK8sEventCollection,omitempty"`
+	ClusterDetailsType     clusterDetailsType     `json:"clusterDetailsType,omitempty"`
+	InheritClusterDetails  *InheritClusterDetails `json:"inheritClusterDetails,omitempty"`
+	ManualClusterDetails   *ManualClusterDetails  `json:"manualClusterDetails,omitempty"`
+	SkipValidation         bool                   `json:"skipValidation,omitempty"`
+}
+
+type clusterDetailsType string
+
+var ClusterDetailsTypes = struct {
+	InheritClusterDetails clusterDetailsType
+	ManualClusterDetails  clusterDetailsType
+}{
+	InheritClusterDetails: "INHERIT_CLUSTER_DETAILS",
+	ManualClusterDetails:  "MANUAL_CLUSTER_DETAILS",
+}
+
+type InheritClusterDetails struct {
+	DelegateName      string      `json:"delegateName,omitempty"`
+	DelegateSelectors []string    `json:"delegateSelectors,omitempty"`
+	UsageScope        *UsageScope `json:"usageScope,omitempty"`
+}
+
+type ManualClusterDetails struct {
+	MasterUrl           string                                 `json:"masterUrl,omitempty"`
+	None                *None                                  `json:"none,omitempty"`
+	OIDCToken           *OIDCToken                             `json:"oidcToken,omitempty"`
+	ServiceAccountToken *ServiceAccountToken                   `json:"serviceAccountToken,omitempty"`
+	Type                manualClusterDetailsAuthenticationType `json:"type,omitempty"`
+	UsernameAndPassword *UsernameAndPasswordAuthentication     `json:"usernameAndPassword,omitempty"`
+}
+
+type UsernameAndPasswordAuthentication struct {
+	PasswordSecretId string `json:"passwordSecretId,omitempty"`
+	UserName         string `json:"userName,omitempty"`
+	UserNameSecretId string `json:"userNameSecretId,omitempty"`
+}
+
+type manualClusterDetailsAuthenticationType string
+
+var ManualClusterDetailsAuthenticationTypes = struct {
+	ClientKeyAndCertificate manualClusterDetailsAuthenticationType
+	Custom                  manualClusterDetailsAuthenticationType
+	OIDCToken               manualClusterDetailsAuthenticationType
+	ServiceAccountToken     manualClusterDetailsAuthenticationType
+	UsernameAndPassword     manualClusterDetailsAuthenticationType
+}{
+	ClientKeyAndCertificate: "CLIENT_KEY_AND_CERTIFICATE",
+	Custom:                  "CUSTOM",
+	OIDCToken:               "OIDC_TOKEN",
+	ServiceAccountToken:     "SERVICE_ACCOUNT_TOKEN",
+	UsernameAndPassword:     "USERNAME_AND_PASSWORD",
+}
+
+type ServiceAccountToken struct {
+	ServiceAccountTokenSecretId string `json:"serviceAccountTokenSecretId,omitempty"`
+}
+
+type OIDCToken struct {
+	ClientIdSecretId     string `json:"clientIdSecretId,omitempty"`
+	ClientSecretSecretId string `json:"clientSecretSecretId,omitempty"`
+	IdentityProviderUrl  string `json:"identityProviderUrl,omitempty"`
+	PasswordSecretId     string `json:"passwordSecretId,omitempty"`
+	Scopes               string `json:"scopes,omitempty"`
+	UserName             string `json:"userName,omitempty"`
+}
+
+type None struct {
+	CaCertificateSecretId       string      `json:"caCertificateSecretId,omitempty"`
+	ClientCertificateSecretId   string      `json:"clientCertificateSecretId,omitempty"`
+	ClientKeyAlgorithm          string      `json:"clientKeyAlgorithm,omitempty"`
+	ClientKeyPassphraseSecretId string      `json:"clientKeyPassphraseSecretId,omitempty"`
+	ClientKeySecretId           string      `json:"clientKeySecretId,omitempty"`
+	PasswordSecretId            string      `json:"passwordSecretId,omitempty"`
+	ServiceAccountTokenSecretId string      `json:"serviceAccountTokenSecretId,omitempty"`
+	UsageScope                  *UsageScope `json:"usageScope,omitempty"`
+	Username                    string      `json:"username,omitempty"`
+}
+
+type PcfCloudProvider struct {
+	CloudProvider
+	EndpointUrl      string `json:"endpointUrl,omitempty"`
+	PasswordSecretId string `json:"passwordSecretId,omitempty"`
+	SkipValidation   bool   `json:"skipValidation,omitempty"`
+	UserName         string `json:"userName,omitempty"`
+	UserNameSecretId string `json:"userNameSecretId,omitempty"`
+}
+
+type PhysicalDataCenterCloudProvider struct {
+	CloudProvider
+	UsageScope *UsageScope `json:"usageScope,omitempty"`
+}
+
+type SpotInstCloudProvider struct {
+	CloudProvider
+	AccountId     string `json:"accountId,omitempty"`
+	TokenSecretId string `json:"tokenSecretId,omitempty"`
+}
+
+type CreateCloudProviderInput struct {
+	AwsCloudProvider                *AwsCloudProvider                `json:"awsCloudProvider,omitempty"`
+	AzureCloudProvider              *AzureCloudProvider              `json:"azureCloudProvider,omitempty"`
+	ClientMutationId                string                           `json:"clientMutationId,omitempty"`
+	CloudProviderType               CloudProviderType                `json:"cloudProviderType,omitempty"`
+	GCPCloudProvider                *GcpCloudProvider                `json:"gcpCloudProvider,omitempty"`
+	K8sCloudProvider                *KubernetesCloudProvider         `json:"k8sCloudProvider,omitempty"`
+	PcfCloudProvider                *PcfCloudProvider                `json:"pcfCloudProvider,omitempty"`
+	PhysicalDataCenterCloudProvider *PhysicalDataCenterCloudProvider `json:"physicalDataCenterCloudProvider,omitempty"`
+	SpotInstCloudProvider           *SpotInstCloudProvider           `json:"spotInstCloudProvider,omitempty"`
+}
+
+type CloudProviderType string
+
+var CloudProviderTypes = struct {
+	Aws                CloudProviderType
+	Azure              CloudProviderType
+	Gcp                CloudProviderType
+	KubernetesCluster  CloudProviderType
+	Pcf                CloudProviderType
+	PhysicalDataCenter CloudProviderType
+	SpotInst           CloudProviderType
+}{
+	Aws:                "AWS",
+	Azure:              "AZURE",
+	Gcp:                "GCP",
+	KubernetesCluster:  "KUBERNETES_CLUSTER",
+	Pcf:                "PCF",
+	PhysicalDataCenter: "PHYSICAL_DATA_CENTER",
+	SpotInst:           "SPOT_INST",
+}
+
+type CEHealthStatus struct {
+	ClusterHealthStatusList []*CEClusterHealth `json:"ClusterHealthStatusList,omitempty"`
+	IsCEConnector           bool               `json:"isCEConnector,omitempty"`
+	IsHealthy               bool               `json:"isHealthy,omitempty"`
+	Messages                []string           `json:"messages,omitempty"`
+}
+
+type CEClusterHealth struct {
+	ClusterId          string   `json:"clusterId,omitempty"`
+	ClusterName        string   `json:"clusterName,omitempty"`
+	Errors             []string `json:"errors,omitempty"`
+	LastEventTimestamp float64  `json:"lastEventTimestamp,omitempty"`
+	Messages           []string `json:"messages"`
 }
