@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/7f3b995434a7083e0f44a778ff0f14d818d82135...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.1...HEAD)
 
 **Merged pull requests:**
 
+- CloudProvider functionality [\#22](https://github.com/harness-io/harness-go-sdk/pull/22) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.1](https://github.com/harness-io/harness-go-sdk/tree/v0.0.1) (2021-06-22)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/7f3b995434a7083e0f44a778ff0f14d818d82135...v0.0.1)
+
+**Merged pull requests:**
+
+- Release version 0.0.1 06-22-2021 [\#21](https://github.com/harness-io/harness-go-sdk/pull/21) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Release version 0.1.1 06-22-2021 [\#20](https://github.com/harness-io/harness-go-sdk/pull/20) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - initial build automation setup [\#4](https://github.com/harness-io/harness-go-sdk/pull/4) ([micahlmartin](https://github.com/micahlmartin))
 
