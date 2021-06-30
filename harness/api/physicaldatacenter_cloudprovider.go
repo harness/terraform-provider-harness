@@ -41,6 +41,21 @@ func (c *CloudProviderClient) CreatePhysicalDataCenterCloudProvider(provider *gr
 	return resp, nil
 }
 
+func (c *CloudProviderClient) UpdatePhysicalDataCenterCloudProvider(id string, cp *graphql.UpdatePhysicalDataCenterCloudProviderInput) (*graphql.PhysicalDataCenterCloudProvider, error) {
+	input := &graphql.UpdateCloudProvider{
+		PhysicalDataCenterCloudProvider: cp,
+		CloudProviderType:               &graphql.CloudProviderTypes.PhysicalDataCenter,
+		CloudProviderId:                 id,
+	}
+	resp := &graphql.PhysicalDataCenterCloudProvider{}
+	err := c.updateCloudProvider(input, getPhyisicalDataCenterCloudProviderFields(), resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func getPhyisicalDataCenterCloudProviderFields() string {
 	return fmt.Sprintf(`
 	... on PhysicalDataCenterCloudProvider {

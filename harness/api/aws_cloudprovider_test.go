@@ -54,6 +54,27 @@ func TestCreateAwsCloudProvider(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUpdateAwsCloudProvider(t *testing.T) {
+	c := getClient()
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+
+	cp, err := createAwsCloudProvider(expectedName)
+	require.NoError(t, err)
+	require.NotNil(t, cp)
+
+	input := graphql.UpdateAwsCloudProviderInput{
+		Name: updatedName,
+	}
+	updatedCP, err := c.CloudProviders().UpdateAwsCloudProvider(cp.Id, &input)
+	require.NoError(t, err)
+	require.NotNil(t, updatedCP)
+	require.Equal(t, updatedName, updatedCP.Name)
+
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+	require.NoError(t, err)
+}
+
 func createAwsCloudProvider(name string) (*graphql.AwsCloudProvider, error) {
 
 	c := getClient()

@@ -54,6 +54,32 @@ func TestCreateKubernetesCloudProvider(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUpdateKubernetesCloudProvider(t *testing.T) {
+	c := getClient()
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+	cp, err := createKubernetesCloudProvider(expectedName)
+	require.NoError(t, err)
+	require.NotNil(t, cp)
+
+	input := &graphql.UpdateKubernetesCloudProviderInput{
+		Name:               updatedName,
+		ClusterDetailsType: graphql.ClusterDetailsTypes.InheritClusterDetails,
+		InheritClusterDetails: &graphql.InheritClusterDetails{
+			DelegateSelectors: []string{"Primary"},
+		},
+		SkipValidation: true,
+	}
+
+	updatedCP, err := c.CloudProviders().UpdateKubernetesCloudProvider(cp.Id, input)
+	require.NoError(t, err)
+	require.NotNil(t, updatedCP)
+	require.Equal(t, updatedName, updatedCP.Name)
+
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+	require.NoError(t, err)
+}
+
 func createKubernetesCloudProvider(name string) (*graphql.KubernetesCloudProvider, error) {
 	c := getClient()
 

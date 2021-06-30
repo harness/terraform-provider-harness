@@ -41,6 +41,22 @@ func (c *CloudProviderClient) CreateAzureCloudProvider(provider *graphql.AzureCl
 	return resp, nil
 }
 
+func (c *CloudProviderClient) UpdateAzureCloudProvider(id string, cp *graphql.UpdateAzureCloudProviderInput) (*graphql.AzureCloudProvider, error) {
+	input := &graphql.UpdateCloudProvider{
+		AzureCloudProvider: cp,
+		CloudProviderType:  &graphql.CloudProviderTypes.Azure,
+		CloudProviderId:    id,
+	}
+
+	resp := &graphql.AzureCloudProvider{}
+	err := c.updateCloudProvider(input, getAzureCloudProviderFields(), resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func getAzureCloudProviderFields() string {
 	return fmt.Sprintf(`
 		%[1]s

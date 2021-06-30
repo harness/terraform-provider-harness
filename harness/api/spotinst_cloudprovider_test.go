@@ -13,7 +13,7 @@ func TestGetSpotInstCloudProviderById(t *testing.T) {
 	c := getClient()
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
-	cp, err := createSpotInstCloudProvider(expectedName)
+	cp, secret, err := createSpotInstCloudProvider(expectedName)
 	require.NoError(t, err)
 
 	foundCP, err := c.CloudProviders().GetSpotInstCloudProviderById(cp.Id)
@@ -23,13 +23,16 @@ func TestGetSpotInstCloudProviderById(t *testing.T) {
 
 	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
 	require.NoError(t, err)
+
+	err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+	require.NoError(t, err)
 }
 
 func TestGetSpotInstCloudProviderByName(t *testing.T) {
 	c := getClient()
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
-	cp, err := createSpotInstCloudProvider(expectedName)
+	cp, secret, err := createSpotInstCloudProvider(expectedName)
 	require.NoError(t, err)
 
 	foundCP, err := c.CloudProviders().GetSpotInstCloudProviderByName(expectedName)
@@ -39,13 +42,16 @@ func TestGetSpotInstCloudProviderByName(t *testing.T) {
 
 	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
 	require.NoError(t, err)
+
+	err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+	require.NoError(t, err)
 }
 
 func TestCreateSpotInstCloudProvider(t *testing.T) {
 	c := getClient()
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
-	cp, err := createSpotInstCloudProvider(expectedName)
+	cp, secret, err := createSpotInstCloudProvider(expectedName)
 	require.NoError(t, err)
 	require.NotNil(t, cp)
 	require.Equal(t, expectedName, cp.Name)
@@ -53,17 +59,44 @@ func TestCreateSpotInstCloudProvider(t *testing.T) {
 	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
 	require.NoError(t, err)
 
-	secret, err := c.Secrets().GetEncryptedTextByName(expectedName)
+	err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
 	require.NoError(t, err)
-	c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
 }
 
-func createSpotInstCloudProvider(name string) (*graphql.SpotInstCloudProvider, error) {
+func TestUpdateSpotInstCloudProvider(t *testing.T) {
+	c := getClient()
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+
+	cp, secret, err := createSpotInstCloudProvider(expectedName)
+	require.NoError(t, err)
+	require.NotNil(t, cp)
+	require.Equal(t, expectedName, cp.Name)
+
+	input := &graphql.UpdateSpotInstCloudProviderInst{
+		AccountId:     TestEnvVars.SpotInstAccountId.Get(),
+		TokenSecretId: secret.Id,
+		Name:          updatedName,
+	}
+
+	updatedCP, err := c.CloudProviders().UpdateSpotInstCloudProvider(cp.Id, input)
+	require.NoError(t, err)
+	require.NotNil(t, updatedCP)
+	require.Equal(t, updatedName, updatedCP.Name)
+
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+	require.NoError(t, err)
+
+	err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+	require.NoError(t, err)
+}
+
+func createSpotInstCloudProvider(name string) (*graphql.SpotInstCloudProvider, *graphql.EncryptedText, error) {
 	c := getClient()
 
 	secret, err := createEncryptedTextSecret(name, TestEnvVars.SpotInstToken.Get())
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	input := &graphql.SpotInstCloudProvider{}
@@ -73,8 +106,8 @@ func createSpotInstCloudProvider(name string) (*graphql.SpotInstCloudProvider, e
 
 	cp, err := c.CloudProviders().CreateSpotInstCloudProvider(input)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return cp, nil
+	return cp, secret, nil
 }

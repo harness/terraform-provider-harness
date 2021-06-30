@@ -100,6 +100,39 @@ func (c *CloudProviderClient) getCloudProviderById(id string, fields string, res
 	return nil
 }
 
+func (c *CloudProviderClient) updateCloudProvider(input interface{}, fields string, respObj interface{}) error {
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`mutation($provider: UpdateCloudProviderInput!) {
+			updateCloudProvider(input: $provider) {
+				cloudProvider {
+					%[1]s
+				}
+			}
+		}`, fields),
+		Variables: map[string]interface{}{
+			"provider": &input,
+		},
+	}
+
+	res := &struct {
+		UpdateCloudProvider struct {
+			CloudProvider *json.RawMessage
+		}
+	}{}
+
+	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(*res.UpdateCloudProvider.CloudProvider, respObj)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *CloudProviderClient) getCloudProviderByName(name string, fields string, respObj interface{}) error {
 
 	query := &GraphQLQuery{

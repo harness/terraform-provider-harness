@@ -41,6 +41,22 @@ func (c *CloudProviderClient) CreateGcpCloudProvider(provider *graphql.GcpCloudP
 	return resp, nil
 }
 
+func (c *CloudProviderClient) UpdateGcpCloudProvider(id string, cp *graphql.UpdateGcpCloudProviderInput) (*graphql.GcpCloudProvider, error) {
+	input := &graphql.UpdateCloudProvider{
+		GcpCloudProvider:  cp,
+		CloudProviderType: &graphql.CloudProviderTypes.Gcp,
+		CloudProviderId:   id,
+	}
+
+	resp := &graphql.GcpCloudProvider{}
+	err := c.updateCloudProvider(input, getGcpCloudProviderFields(), resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func getGcpCloudProviderFields() string {
 	return fmt.Sprintf(`
 		%[1]s

@@ -41,6 +41,22 @@ func (c *CloudProviderClient) CreateSpotInstCloudProvider(provider *graphql.Spot
 	return resp, nil
 }
 
+func (c *CloudProviderClient) UpdateSpotInstCloudProvider(id string, cp *graphql.UpdateSpotInstCloudProviderInst) (*graphql.SpotInstCloudProvider, error) {
+	input := &graphql.UpdateCloudProvider{
+		SpotInstCloudProvider: cp,
+		CloudProviderType:     &graphql.CloudProviderTypes.SpotInst,
+		CloudProviderId:       id,
+	}
+
+	resp := &graphql.SpotInstCloudProvider{}
+	err := c.updateCloudProvider(input, getSpotInstCloudProviderFields(), resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func getSpotInstCloudProviderFields() string {
 	return fmt.Sprintf(`
 	... on SpotInstCloudProvider {

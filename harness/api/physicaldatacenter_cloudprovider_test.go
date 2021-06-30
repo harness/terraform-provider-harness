@@ -55,6 +55,28 @@ func TestGetPhysicalDatacenterCloudProviderByName(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUpdatePhysicalDataCenterCloudProvider(t *testing.T) {
+	c := getClient()
+
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	updatedname := fmt.Sprintf("%s_updated", expectedName)
+	cp, err := createPhysicalDataCenterCloudProvider(expectedName)
+	require.NoError(t, err)
+	require.NotNil(t, cp)
+
+	updateInput := &graphql.UpdatePhysicalDataCenterCloudProviderInput{
+		Name: updatedname,
+	}
+
+	updatedCP, err := c.CloudProviders().UpdatePhysicalDataCenterCloudProvider(cp.Id, updateInput)
+	require.NoError(t, err)
+	require.NotNil(t, updatedCP)
+	require.Equal(t, updatedname, updatedCP.Name)
+
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+	require.NoError(t, err)
+}
+
 func createPhysicalDataCenterCloudProvider(name string) (*graphql.PhysicalDataCenterCloudProvider, error) {
 	c := getClient()
 

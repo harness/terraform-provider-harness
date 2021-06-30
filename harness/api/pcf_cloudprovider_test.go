@@ -55,6 +55,31 @@ func TestCreatesPcfCloudProvider(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUpdatePcfCloudProvider(t *testing.T) {
+	c := getClient()
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+	cp, err := createPcfCloudProvider(expectedName)
+	require.NoError(t, err)
+	require.NotNil(t, cp)
+
+	input := &graphql.UpdatePcfCloudProviderInput{
+		EndpointUrl:      "https://example.com",
+		Name:             updatedName,
+		PasswordSecretId: "abc123",
+		SkipValidation:   true,
+		UserName:         "foo123",
+	}
+
+	updatedCP, err := c.CloudProviders().UpdatePcfCloudProvider(cp.Id, input)
+	require.NoError(t, err)
+	require.NotNil(t, updatedCP)
+	require.Equal(t, updatedName, updatedCP.Name)
+
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+	require.NoError(t, err)
+}
+
 func createPcfCloudProvider(name string) (*graphql.PcfCloudProvider, error) {
 	c := getClient()
 

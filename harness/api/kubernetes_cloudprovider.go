@@ -41,6 +41,22 @@ func (c *CloudProviderClient) CreateKubernetesCloudProvider(provider *graphql.Ku
 	return resp, nil
 }
 
+func (c *CloudProviderClient) UpdateKubernetesCloudProvider(id string, cp *graphql.UpdateKubernetesCloudProviderInput) (*graphql.KubernetesCloudProvider, error) {
+	input := &graphql.UpdateCloudProvider{
+		K8sCloudProvider:  cp,
+		CloudProviderType: &graphql.CloudProviderTypes.KubernetesCluster,
+		CloudProviderId:   id,
+	}
+
+	resp := &graphql.KubernetesCloudProvider{}
+	err := c.updateCloudProvider(input, getKubernetesCloudProviderFields(), resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func getKubernetesCloudProviderFields() string {
 	return fmt.Sprintf(`
 		%[1]s

@@ -133,13 +133,13 @@ type AppEnvScope struct {
 }
 
 type AppScopeFilter struct {
-	AppId      string `json:"appId,omitempty"`
-	FilterType string `json:"filterType,omitempty"`
+	AppId      string                `json:"appId,omitempty"`
+	FilterType ApplicationFilterType `json:"filterType,omitempty"`
 }
 
 type EnvScopeFilter struct {
-	EnvId      string `json:"envId,omitempty"`
-	FilterType string `json:"filterType,omitempty"`
+	EnvId      string                `json:"envId,omitempty"`
+	FilterType EnvironmentFilterType `json:"filterType,omitempty"`
 }
 
 type Application struct {
@@ -406,22 +406,22 @@ type WinRMCredentialInput struct {
 	Username             string      `json:"username,omitempty"`
 }
 
-type environmentFilterType struct {
-	NonProduction string
-	Production    string
-}
+type EnvironmentFilterType string
 
-type applicationFilterType struct {
-	All string
-}
-
-var ApplicationFilterTypes = &applicationFilterType{
-	All: "ALL",
-}
-
-var EnvironmentFilterTypes = &environmentFilterType{
+var EnvironmentFilterTypes = &struct {
+	NonProduction EnvironmentFilterType
+	Production    EnvironmentFilterType
+}{
 	NonProduction: "NON_PRODUCTION_ENVIRONMENTS",
 	Production:    "PRODUCTION_ENVIRONMENTS",
+}
+
+type ApplicationFilterType string
+
+var ApplicationFilterTypes = &struct {
+	All ApplicationFilterType
+}{
+	All: "ALL",
 }
 
 type sshAuthenticationScheme struct {
@@ -667,6 +667,15 @@ type AwsCloudProvider struct {
 	ManualCredentials      *AwsManualCredentials      `json:"manualCredentials,omitempty"`
 }
 
+type UpdateAwsCloudProviderInput struct {
+	CredentialsType        awsCredentialsType         `json:"credentialsType,omitempty"`
+	CrossAccountAttributes *AwsCrossAccountAttributes `json:"crossAccountAttributes,omitempty"`
+	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
+	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
+	ManualCredentials      *AwsManualCredentials      `json:"manualCredentials,omitempty"`
+	Name                   string                     `json:"name,omitempty"`
+}
+
 type Ec2IamCredentials struct {
 	DelegateSelector string      `json:"delegateSelector"`
 	UsageScope       *UsageScope `json:"usageScope,omitempty"`
@@ -701,6 +710,13 @@ type AzureCloudProvider struct {
 	TenantId    string `json:"tenantId,omitempty"`
 }
 
+type UpdateAzureCloudProviderInput struct {
+	ClientId    string `json:"clientId,omitempty"`
+	KeySecretId string `json:"keySecretId,omitempty"`
+	Name        string `json:"name,omitempty"`
+	TenantID    string `json:"tenantId,omitempty"`
+}
+
 type GcpCloudProvider struct {
 	CloudProvider
 	DelegateSelector          string   `json:"delegateSelector,omitempty"`
@@ -712,21 +728,39 @@ type GcpCloudProvider struct {
 	UseDelegateSelectors      bool     `json:"useDelegateSelectors,omitempty"`
 }
 
+type UpdateGcpCloudProviderInput struct {
+	DelegateSelector          string   `json:"delegateSelector,omitempty"`
+	DelegateSelectors         []string `json:"delegateSelectors,omitempty"`
+	Name                      string   `json:"name,omitempty"`
+	ServiceAccountKeySecretId string   `json:"serviceAccountKeySecretId,omitempty"`
+	SkipValidation            bool     `json:"skipValidation,omitempty"`
+	UseDelegate               bool     `json:"useDelgate,omitempty"`
+	UseDelegateSelectors      bool     `json:"useDelegateSelectors,omitempty"`
+}
+
 type KubernetesCloudProvider struct {
 	CloudProvider
 	CEHealthStatus         *CEHealthStatus        `json:"ceHealthStatus,omitempty"`
 	SkipK8sEventCollection bool                   `json:"skipK8sEventCollection,omitempty"`
-	ClusterDetailsType     clusterDetailsType     `json:"clusterDetailsType,omitempty"`
+	ClusterDetailsType     ClusterDetailsType     `json:"clusterDetailsType,omitempty"`
 	InheritClusterDetails  *InheritClusterDetails `json:"inheritClusterDetails,omitempty"`
 	ManualClusterDetails   *ManualClusterDetails  `json:"manualClusterDetails,omitempty"`
 	SkipValidation         bool                   `json:"skipValidation,omitempty"`
 }
 
-type clusterDetailsType string
+type UpdateKubernetesCloudProviderInput struct {
+	ClusterDetailsType    ClusterDetailsType     `json:"clusterDetailsType,omitempty"`
+	InheritClusterDetails *InheritClusterDetails `json:"inheritClusterDetails,omitempty"`
+	ManualClusterDetails  *ManualClusterDetails  `json:"manualClusterDetails,omitempty"`
+	Name                  string                 `json:"name,omitempty"`
+	SkipValidation        bool                   `json:"skipValidation,omitempty"`
+}
+
+type ClusterDetailsType string
 
 var ClusterDetailsTypes = struct {
-	InheritClusterDetails clusterDetailsType
-	ManualClusterDetails  clusterDetailsType
+	InheritClusterDetails ClusterDetailsType
+	ManualClusterDetails  ClusterDetailsType
 }{
 	InheritClusterDetails: "INHERIT_CLUSTER_DETAILS",
 	ManualClusterDetails:  "MANUAL_CLUSTER_DETAILS",
@@ -794,6 +828,19 @@ type None struct {
 	Username                    string      `json:"username,omitempty"`
 }
 
+type UpdateCloudProvider struct {
+	AwsCloudProvider                *UpdateAwsCloudProviderInput                `json:"awsCloudProvider,omitempty"`
+	AzureCloudProvider              *UpdateAzureCloudProviderInput              `json:"azureCloudProvider,omitempty"`
+	ClientMutationID                string                                      `json:"clientMutationId,omitempty"`
+	CloudProviderId                 string                                      `json:"cloudProviderId,omitempty"`
+	CloudProviderType               *CloudProviderType                          `json:"cloudProviderType,omitempty"`
+	GcpCloudProvider                *UpdateGcpCloudProviderInput                `json:"gcpCloudProvider,omitempty"`
+	K8sCloudProvider                *UpdateKubernetesCloudProviderInput         `json:"k8sCloudProvider,omitempty"`
+	PcfCloudProvider                *UpdatePcfCloudProviderInput                `json:"pcfCloudProvider,omitempty"`
+	PhysicalDataCenterCloudProvider *UpdatePhysicalDataCenterCloudProviderInput `json:"physicalDataCenterCloudProvider,omitempty"`
+	SpotInstCloudProvider           *UpdateSpotInstCloudProviderInst            `json:"spotInstCloudProvider,omitempty"`
+}
+
 type PcfCloudProvider struct {
 	CloudProvider
 	EndpointUrl      string `json:"endpointUrl,omitempty"`
@@ -803,15 +850,34 @@ type PcfCloudProvider struct {
 	UserNameSecretId string `json:"userNameSecretId,omitempty"`
 }
 
+type UpdatePcfCloudProviderInput struct {
+	EndpointUrl      string `json:"endpointUrl,omitempty"`
+	Name             string `json:"name,omitempty"`
+	PasswordSecretId string `json:"passwordSecretId,omitempty"`
+	SkipValidation   bool   `json:"skipValidation,omitempty"`
+	UserName         string `json:"userName,omitempty"`
+	UserNameSecretId string `json:"userNameSecretId,omitempty"`
+}
 type PhysicalDataCenterCloudProvider struct {
 	CloudProvider
 	UsageScope *UsageScope `json:"usageScope,omitempty"`
+}
+
+type UpdatePhysicalDataCenterCloudProviderInput struct {
+	Name       string      `json:"name,omitempty"`
+	UsageScope *UsageScope `json:"usageScope"`
 }
 
 type SpotInstCloudProvider struct {
 	CloudProvider
 	AccountId     string `json:"accountId,omitempty"`
 	TokenSecretId string `json:"tokenSecretId,omitempty"`
+}
+
+type UpdateSpotInstCloudProviderInst struct {
+	AccountId     string `json:"accountId,omitempty"`
+	Name          string `json:"name,omitempty"`
+	TokenSecretId string `json:"tokenSecretId"`
 }
 
 type CreateCloudProviderInput struct {

@@ -1,6 +1,8 @@
 package graphql
 
-import "errors"
+import (
+	"errors"
+)
 
 func (d *CustomCommitDetails) IsEmpty() bool {
 	if d == nil {

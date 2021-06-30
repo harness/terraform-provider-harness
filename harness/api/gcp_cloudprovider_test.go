@@ -55,6 +55,29 @@ func TestCreateGcpCloudProvider(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUpdateGcpCloudProvider(t *testing.T) {
+	c := getClient()
+
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+
+	cp, err := createGcpCloudProvider(expectedName)
+	require.NoError(t, err)
+	require.NotNil(t, cp)
+
+	input := &graphql.UpdateGcpCloudProviderInput{
+		Name: updatedName,
+	}
+
+	updatedCP, err := c.CloudProviders().UpdateGcpCloudProvider(cp.Id, input)
+	require.NoError(t, err)
+	require.NotNil(t, updatedCP)
+	require.Equal(t, updatedName, updatedCP.Name)
+
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+	require.NoError(t, err)
+}
+
 func createGcpCloudProvider(name string) (*graphql.GcpCloudProvider, error) {
 	c := getClient()
 
