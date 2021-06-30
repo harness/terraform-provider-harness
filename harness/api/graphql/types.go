@@ -2,7 +2,7 @@ package graphql
 
 import "github.com/harness-io/harness-go-sdk/harness/time"
 
-// import "time"
+type Enum string
 
 type CommonMetadata struct {
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
@@ -194,33 +194,25 @@ type DeleteApplicationPayload struct {
 	ClientMutationId string `json:"clientMutationId"`
 }
 
-type sshCredentialAuthenticationType struct {
-	SSHAuthentication      string
-	KerberosAuthentication string
-}
+type SSHAuthenticationType Enum
 
-var SSHAuthenticationTypes = &sshCredentialAuthenticationType{
+var SSHAuthenticationTypes = &struct {
+	SSHAuthentication      SSHAuthenticationType
+	KerberosAuthentication SSHAuthenticationType
+}{
 	SSHAuthentication:      "SSH_AUTHENTICATION",
 	KerberosAuthentication: "KERBEROS_AUTHENTICATION",
 }
 
-type winRMAuthenticationType struct {
-	NTLM string
-	// Kerberos string
-}
+type WinRMAuthenticationScheme Enum
 
-var WinRMAuthenticationTypes = &winRMAuthenticationType{
+var WinRMAuthenticationSchemes = &struct {
+	NTLM WinRMAuthenticationScheme
+}{
 	NTLM: "NTLM",
 }
 
-// type SSHCredential struct {
-// 	Secret
-// 	AuthenticationType     string                  `json:"authenticationType,omitempty"`
-// 	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
-// 	SSHAuthentication      *SSHAuthentication      `json:"sshAuthentication,omitempty"`
-// }
-
-type SecretType string
+type SecretType Enum
 
 var SecretTypes = struct {
 	EncryptedFile   SecretType
@@ -247,12 +239,12 @@ type EncryptedFile struct {
 
 type WinRMCredential struct {
 	Secret
-	Domain               string `json:"domain,omitempty"`
-	Port                 int    `json:"port,omitempty"`
-	SkipCertCheck        bool   `json:"skipCertCheck,omitempty"`
-	UseSSL               bool   `json:"useSSL,omitempty"`
-	UserName             string `json:"username,omitempty"`
-	AuthenticationScheme string `json:"authenticationScheme,omitempty"`
+	Domain               string                    `json:"domain,omitempty"`
+	Port                 int                       `json:"port,omitempty"`
+	SkipCertCheck        bool                      `json:"skipCertCheck,omitempty"`
+	UseSSL               bool                      `json:"useSSL,omitempty"`
+	UserName             string                    `json:"username,omitempty"`
+	AuthenticationScheme WinRMAuthenticationScheme `json:"authenticationScheme,omitempty"`
 }
 
 type CreateSecretInput struct {
@@ -319,12 +311,12 @@ type UpdateWinRMCredential struct {
 
 type SSHCredential struct {
 	Secret
-	AuthenticationScheme   string                  `json:"authenticationScheme,omitempty"`
+	AuthenticationScheme   SSHAuthenticationScheme `json:"authenticationScheme,omitempty"`
 	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
 	Name                   string                  `json:"name,omitempty"`
 	SSHAuthentication      *SSHAuthentication      `json:"sshAuthentication,omitempty"`
 	UsageScope             *UsageScope             `json:"usageScope,omitempty"`
-	AuthenticationType     string                  `json:"authenticationType,omitempty"`
+	AuthenticationType     SSHAuthenticationType   `json:"authenticationType,omitempty"`
 }
 
 type SSHAuthentication struct {
@@ -334,10 +326,10 @@ type SSHAuthentication struct {
 }
 
 type SSHAuthenticationMethod struct {
-	InlineSSHKey      *InlineSSHKey `json:"inlineSSHKey,omitempty"`
-	ServerPassword    *SSHPassword  `json:"serverPassword,omitempty"`
-	SSHCredentialType string        `json:"sshCredentialType,omitempty"`
-	SSHKeyFile        *SSHKeyFile   `json:"sshKeyFile,omitempty"`
+	InlineSSHKey      *InlineSSHKey     `json:"inlineSSHKey,omitempty"`
+	ServerPassword    *SSHPassword      `json:"serverPassword,omitempty"`
+	SSHCredentialType SSHCredentialType `json:"sshCredentialType,omitempty"`
+	SSHKeyFile        *SSHKeyFile       `json:"sshKeyFile,omitempty"`
 }
 
 type InlineSSHKey struct {
@@ -354,13 +346,13 @@ type SSHKeyFile struct {
 	Path               string `json:"path,omitempty"`
 }
 
-type sshCredentialType struct {
-	Password       string
-	SSHKey         string
-	SSHKeyFilePath string
-}
+type SSHCredentialType Enum
 
-var SSHCredentialTypes = &sshCredentialType{
+var SSHCredentialTypes = &struct {
+	Password       SSHCredentialType
+	SSHKey         SSHCredentialType
+	SSHKeyFilePath SSHCredentialType
+}{
 	Password:       "PASSWORD",
 	SSHKey:         "SSH_KEY",
 	SSHKeyFilePath: "SSH_KEY_FILE_PATH",
@@ -373,17 +365,17 @@ type KerberosAuthentication struct {
 	TGTGenerationMethod *TGTGenerationMethod `json:"tgtGenerationMethod,omitempty"`
 }
 type TGTGenerationMethod struct {
-	KerberosPassword   *KerberosPassword `json:"kerberosPassword,omitempty"`
-	KeyTabFile         *KeyTabFile       `json:"keyTabFile,omitempty"`
-	TGTGenerationUsing string            `json:"tgtGenerationUsing,omitempty"`
+	KerberosPassword   *KerberosPassword        `json:"kerberosPassword,omitempty"`
+	KeyTabFile         *KeyTabFile              `json:"keyTabFile,omitempty"`
+	TGTGenerationUsing TGTGenerationUsingOption `json:"tgtGenerationUsing,omitempty"`
 }
 
-type tgtGenerationUsingOption struct {
-	KeyTabFile string
-	Password   string
-}
+type TGTGenerationUsingOption Enum
 
-var TGTGenerationUsingOptions = &tgtGenerationUsingOption{
+var TGTGenerationUsingOptions = &struct {
+	KeyTabFile TGTGenerationUsingOption
+	Password   TGTGenerationUsingOption
+}{
 	KeyTabFile: "KEY_TAB_FILE",
 	Password:   "PASSWORD",
 }
@@ -406,7 +398,7 @@ type WinRMCredentialInput struct {
 	Username             string      `json:"username,omitempty"`
 }
 
-type EnvironmentFilterType string
+type EnvironmentFilterType Enum
 
 var EnvironmentFilterTypes = &struct {
 	NonProduction EnvironmentFilterType
@@ -416,7 +408,7 @@ var EnvironmentFilterTypes = &struct {
 	Production:    "PRODUCTION_ENVIRONMENTS",
 }
 
-type ApplicationFilterType string
+type ApplicationFilterType Enum
 
 var ApplicationFilterTypes = &struct {
 	All ApplicationFilterType
@@ -424,12 +416,12 @@ var ApplicationFilterTypes = &struct {
 	All: "ALL",
 }
 
-type sshAuthenticationScheme struct {
-	Kerberos string
-	SSH      string
-}
+type SSHAuthenticationScheme Enum
 
-var SSHAuthenticationSchemes = &sshAuthenticationScheme{
+var SSHAuthenticationSchemes = &struct {
+	Kerberos SSHAuthenticationScheme
+	SSH      SSHAuthenticationScheme
+}{
 	Kerberos: "KERBEROS",
 	SSH:      "SSH",
 }
@@ -439,41 +431,41 @@ type DeleteSecretInput struct {
 	SecretType SecretType `json:"secretType,omitempty"`
 }
 
-type connectorType struct {
-	AmazonS3         string
-	AmazonS3HelmRepo string
-	APMVerification  string
-	AppDynamics      string
-	Artifactory      string
-	Bamboo           string
-	BugSnag          string
-	DataDog          string
-	Docker           string
-	DynaTrace        string
-	ECR              string
-	ELB              string
-	ELK              string
-	GCR              string
-	GCS              string
-	GCSHelmRepo      string
-	Git              string
-	HTTPHelpRepo     string
-	Jenkins          string
-	Jira             string
-	Logz             string
-	NewRelic         string
-	Nexus            string
-	Prometheus       string
-	ServiceNow       string
-	SFTP             string
-	Slack            string
-	SMB              string
-	SMTP             string
-	Splunk           string
-	Sumo             string
-}
+type ConnectorType Enum
 
-var ConnectorTypes = &connectorType{
+var ConnectorTypes = &struct {
+	AmazonS3         ConnectorType
+	AmazonS3HelmRepo ConnectorType
+	APMVerification  ConnectorType
+	AppDynamics      ConnectorType
+	Artifactory      ConnectorType
+	Bamboo           ConnectorType
+	BugSnag          ConnectorType
+	DataDog          ConnectorType
+	Docker           ConnectorType
+	DynaTrace        ConnectorType
+	ECR              ConnectorType
+	ELB              ConnectorType
+	ELK              ConnectorType
+	GCR              ConnectorType
+	GCS              ConnectorType
+	GCSHelmRepo      ConnectorType
+	Git              ConnectorType
+	HTTPHelpRepo     ConnectorType
+	Jenkins          ConnectorType
+	Jira             ConnectorType
+	Logz             ConnectorType
+	NewRelic         ConnectorType
+	Nexus            ConnectorType
+	Prometheus       ConnectorType
+	ServiceNow       ConnectorType
+	SFTP             ConnectorType
+	Slack            ConnectorType
+	SMB              ConnectorType
+	SMTP             ConnectorType
+	Splunk           ConnectorType
+	Sumo             ConnectorType
+}{
 	AmazonS3:         "AMAZON_S3",
 	AmazonS3HelmRepo: "AMAZON_S3_HELM_REPO",
 	APMVerification:  "APM_VERIFICATION",
@@ -507,22 +499,22 @@ var ConnectorTypes = &connectorType{
 	Sumo:             "SUMO",
 }
 
-type nexusVersion struct {
-	V2 string
-	v3 string
-}
+type NexusVersion Enum
 
-var NexusVersions = &nexusVersion{
+var NexusVersions = &struct {
+	V2 NexusVersion
+	v3 NexusVersion
+}{
 	V2: "V2",
 	v3: "V3",
 }
 
-type gitUrlType struct {
-	Account string
-	Repo    string
-}
+type GitUrlType Enum
 
-var GitUrlTypes = &gitUrlType{
+var GitUrlTypes = &struct {
+	Account GitUrlType
+	Repo    GitUrlType
+}{
 	Account: "ACCOUNT",
 	Repo:    "REPO",
 }
@@ -559,7 +551,7 @@ type GitConnectorInput struct {
 	Name                string               `json:"name,omitempty"`
 	PasswordSecretId    string               `json:"passwordSecretId,omitempty"`
 	SSHSettingId        string               `json:"sshSettingId,omitempty"`
-	UrlType             string               `json:"urlType,omitempty"`
+	UrlType             GitUrlType           `json:"urlType,omitempty"`
 	UsageScope          *UsageScope          `json:"usageScope,omitempty"`
 	UserName            string               `json:"userName,omitempty"`
 }
@@ -572,7 +564,7 @@ type CustomCommitDetails struct {
 
 type CreateConnectorInput struct {
 	ClientMutationId string                `json:"clientMutationId,omitempty"`
-	ConnectorType    string                `json:"connectorType,omitempty"`
+	ConnectorType    ConnectorType         `json:"connectorType,omitempty"`
 	DockerConnector  *DockerConnectorInput `json:"dockerConnector,omitempty"`
 	GitConnector     *GitConnectorInput    `json:"gitConnector,omitempty"`
 	HelmConnector    *HelmConnectorInput   `json:"helmConnector,omitempty"`
@@ -660,7 +652,7 @@ type CloudProvider struct {
 type AwsCloudProvider struct {
 	CloudProvider
 	CEHealthStatus         *CEHealthStatus            `json:"ceHealthStatus,omitempty"`
-	CredentialsType        awsCredentialsType         `json:"credentialsType,omitempty"`
+	CredentialsType        AwsCredentialsType         `json:"credentialsType,omitempty"`
 	CrossAccountAttributes *AwsCrossAccountAttributes `json:"awsCrossAccountAttributes,omitempty"`
 	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
 	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
@@ -668,7 +660,7 @@ type AwsCloudProvider struct {
 }
 
 type UpdateAwsCloudProviderInput struct {
-	CredentialsType        awsCredentialsType         `json:"credentialsType,omitempty"`
+	CredentialsType        AwsCredentialsType         `json:"credentialsType,omitempty"`
 	CrossAccountAttributes *AwsCrossAccountAttributes `json:"crossAccountAttributes,omitempty"`
 	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
 	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
@@ -693,11 +685,11 @@ type AwsCrossAccountAttributes struct {
 	ExternalId             string `json:"externalId,omitempty"`
 }
 
-type awsCredentialsType string
+type AwsCredentialsType Enum
 
 var AwsCredentialsTypes = struct {
-	Ec2Iam awsCredentialsType
-	Manual awsCredentialsType
+	Ec2Iam AwsCredentialsType
+	Manual AwsCredentialsType
 }{
 	Ec2Iam: "EC2_IAM",
 	Manual: "MANUAL",
@@ -756,7 +748,7 @@ type UpdateKubernetesCloudProviderInput struct {
 	SkipValidation        bool                   `json:"skipValidation,omitempty"`
 }
 
-type ClusterDetailsType string
+type ClusterDetailsType Enum
 
 var ClusterDetailsTypes = struct {
 	InheritClusterDetails ClusterDetailsType
@@ -777,7 +769,7 @@ type ManualClusterDetails struct {
 	None                *None                                  `json:"none,omitempty"`
 	OIDCToken           *OIDCToken                             `json:"oidcToken,omitempty"`
 	ServiceAccountToken *ServiceAccountToken                   `json:"serviceAccountToken,omitempty"`
-	Type                manualClusterDetailsAuthenticationType `json:"type,omitempty"`
+	Type                ManualClusterDetailsAuthenticationType `json:"type,omitempty"`
 	UsernameAndPassword *UsernameAndPasswordAuthentication     `json:"usernameAndPassword,omitempty"`
 }
 
@@ -787,14 +779,14 @@ type UsernameAndPasswordAuthentication struct {
 	UserNameSecretId string `json:"userNameSecretId,omitempty"`
 }
 
-type manualClusterDetailsAuthenticationType string
+type ManualClusterDetailsAuthenticationType Enum
 
 var ManualClusterDetailsAuthenticationTypes = struct {
-	ClientKeyAndCertificate manualClusterDetailsAuthenticationType
-	Custom                  manualClusterDetailsAuthenticationType
-	OIDCToken               manualClusterDetailsAuthenticationType
-	ServiceAccountToken     manualClusterDetailsAuthenticationType
-	UsernameAndPassword     manualClusterDetailsAuthenticationType
+	ClientKeyAndCertificate ManualClusterDetailsAuthenticationType
+	Custom                  ManualClusterDetailsAuthenticationType
+	OIDCToken               ManualClusterDetailsAuthenticationType
+	ServiceAccountToken     ManualClusterDetailsAuthenticationType
+	UsernameAndPassword     ManualClusterDetailsAuthenticationType
 }{
 	ClientKeyAndCertificate: "CLIENT_KEY_AND_CERTIFICATE",
 	Custom:                  "CUSTOM",
@@ -892,7 +884,7 @@ type CreateCloudProviderInput struct {
 	SpotInstCloudProvider           *SpotInstCloudProvider           `json:"spotInstCloudProvider,omitempty"`
 }
 
-type CloudProviderType string
+type CloudProviderType Enum
 
 var CloudProviderTypes = struct {
 	Aws                CloudProviderType
