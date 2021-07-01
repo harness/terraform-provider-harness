@@ -21,7 +21,8 @@ func TestCreateService(t *testing.T) {
 
 	// Cleanup
 	defer func() {
-		c.Applications().DeleteApplication(app.Id)
+		err = c.Applications().DeleteApplication(app.Id)
+		require.Nil(t, err, "Failed to delete application: %s", err)
 	}()
 
 	// Verify
@@ -53,7 +54,8 @@ func TestGetServiceById(t *testing.T) {
 	require.NotNil(t, svc)
 
 	defer func() {
-		c.Applications().DeleteApplication(app.Id)
+		err = c.Applications().DeleteApplication(app.Id)
+		require.Nil(t, err, "Failed to delete application: %s", err)
 	}()
 
 	// Find service by id
@@ -75,7 +77,8 @@ func TestServiceSerialization(t *testing.T) {
 	require.NoError(t, err)
 
 	defer func() {
-		c.Applications().DeleteApplication(app.Id)
+		err = c.Applications().DeleteApplication(app.Id)
+		require.Nil(t, err, "Failed to delete application: %s", err)
 	}()
 
 	t.Run("ssh_service", testServiceSerialization(app.Id, app.Name, cac.DeploymentTypes.SSH, cac.ArtifactTypes.Tar))
@@ -101,7 +104,8 @@ func TestDeleteService(t *testing.T) {
 	require.NoError(t, err)
 
 	defer func() {
-		c.Applications().DeleteApplication(app.Id)
+		err = c.Applications().DeleteApplication(app.Id)
+		require.Nil(t, err, "Failed to delete application: %s", err)
 	}()
 
 	svc, err := createService(app.Id, expectedName, cac.DeploymentTypes.Kubernetes, cac.ArtifactTypes.Docker)

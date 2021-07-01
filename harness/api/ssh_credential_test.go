@@ -53,7 +53,8 @@ func TestCreateSSHCredential_SSHAuthentication_inlinesshkey(t *testing.T) {
 	require.Equal(t, graphql.EnvironmentFilterTypes.NonProduction, s.UsageScope.AppEnvScopes[0].Environment.FilterType)
 
 	// Cleanup
-	client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	err = client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	require.NoError(t, err)
 }
 
 func TestCreateSSHCredential_SSHAuthentication_serverpassword(t *testing.T) {
@@ -99,7 +100,8 @@ func TestCreateSSHCredential_SSHAuthentication_serverpassword(t *testing.T) {
 	require.Equal(t, graphql.EnvironmentFilterTypes.NonProduction, s.UsageScope.AppEnvScopes[0].Environment.FilterType)
 
 	// Cleanup
-	client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	err = client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	require.NoError(t, err)
 }
 
 func TestCreateSSHCredential_SSHAuthentication_keyfile(t *testing.T) {
@@ -146,7 +148,8 @@ func TestCreateSSHCredential_SSHAuthentication_keyfile(t *testing.T) {
 	require.Equal(t, graphql.EnvironmentFilterTypes.NonProduction, s.UsageScope.AppEnvScopes[0].Environment.FilterType)
 
 	// Cleanup
-	client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	err = client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	require.NoError(t, err)
 }
 
 func TestCreateSSHCredential_KerberosAuth_password(t *testing.T) {
@@ -194,7 +197,8 @@ func TestCreateSSHCredential_KerberosAuth_password(t *testing.T) {
 	require.Equal(t, graphql.EnvironmentFilterTypes.NonProduction, s.UsageScope.AppEnvScopes[0].Environment.FilterType)
 
 	// Cleanup
-	client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	err = client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	require.NoError(t, err)
 }
 
 func TestCreateSSHCredential_KerberosAuth_keytabfile(t *testing.T) {
@@ -237,7 +241,8 @@ func TestCreateSSHCredential_KerberosAuth_keytabfile(t *testing.T) {
 	require.Equal(t, graphql.EnvironmentFilterTypes.NonProduction, s.UsageScope.AppEnvScopes[0].Environment.FilterType)
 
 	// Cleanup
-	client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	err = client.Secrets().DeleteSecret(s.Id, s.SecretType)
+	require.NoError(t, err)
 }
 
 func TestUpdateSSHCredential(t *testing.T) {
@@ -265,7 +270,8 @@ func TestUpdateSSHCredential(t *testing.T) {
 	require.Equal(t, updatedName, updatedSecret.Name)
 
 	// Cleanup
-	deleteSecret(updatedSecret.Id, updatedSecret.SecretType)
+	err = deleteSecret(updatedSecret.Id, updatedSecret.SecretType)
+	require.NoError(t, err)
 }
 
 func TestGetSSHCredentialById_SSHAuth(t *testing.T) {

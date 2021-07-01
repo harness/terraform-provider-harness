@@ -94,7 +94,8 @@ func TestGetEncryptedTextByName(t *testing.T) {
 	require.Nil(t, testSecret.UsageScope)
 
 	// Cleanup
-	deleteSecret(testSecret.Id, testSecret.SecretType)
+	err = deleteSecret(testSecret.Id, testSecret.SecretType)
+	require.NoError(t, err)
 }
 
 func TestGetEncryptedTextById(t *testing.T) {
@@ -118,7 +119,8 @@ func TestGetEncryptedTextById(t *testing.T) {
 	require.Equal(t, expectedSecret.Id, testSecret.Id)
 
 	// Cleanup
-	deleteSecret(testSecret.Id, testSecret.SecretType)
+	err = deleteSecret(testSecret.Id, testSecret.SecretType)
+	require.NoError(t, err)
 }
 
 func TestUpdateEncryptedTextSecret(t *testing.T) {
@@ -149,7 +151,8 @@ func TestUpdateEncryptedTextSecret(t *testing.T) {
 	require.Equal(t, updatedName, updatedSecret.Name)
 
 	// Cleanup
-	deleteSecret(updatedSecret.Id, updatedSecret.SecretType)
+	err = deleteSecret(updatedSecret.Id, updatedSecret.SecretType)
+	require.NoError(t, err)
 }
 
 func createEncryptedTextSecret(name string, value string) (*graphql.EncryptedText, error) {

@@ -1,10 +1,8 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
 default: testacc
 
-
 build:
 	go build -o ${BINARY}
-	
 
 test: 
 	go test $(TEST) || exit 1                                                   

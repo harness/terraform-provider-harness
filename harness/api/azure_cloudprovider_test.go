@@ -56,7 +56,8 @@ func TestCreateAzureCloudProvider(t *testing.T) {
 
 	secret, err := c.Secrets().GetEncryptedTextByName(expectedName)
 	require.NoError(t, err)
-	c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+	err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+	require.NoError(t, err)
 }
 
 func TestUpdateAzureCloudProvider(t *testing.T) {

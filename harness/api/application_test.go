@@ -28,7 +28,8 @@ func TestGetApplicationById(t *testing.T) {
 	require.Equal(t, newApp.Description, app.Description, "Test application description")
 
 	// cleanup
-	client.Applications().DeleteApplication(newApp.Id)
+	err = client.Applications().DeleteApplication(newApp.Id)
+	require.Nil(t, err, "Failed to delete application: %s", err)
 }
 
 func TestGetApplicationByName(t *testing.T) {
@@ -45,7 +46,8 @@ func TestGetApplicationByName(t *testing.T) {
 	require.Equal(t, newApp.Name, app.Name, "App name doesn't match")
 
 	// cleanup
-	client.Applications().DeleteApplication(newApp.Id)
+	err = client.Applications().DeleteApplication(newApp.Id)
+	require.Nil(t, err, "Failed to delete application: %s", err)
 }
 
 func TestCreateApplication(t *testing.T) {
@@ -67,7 +69,8 @@ func TestCreateApplication(t *testing.T) {
 	require.Equal(t, input.Name, app.Name, "Application name doesn't match")
 
 	// Cleanup
-	client.Applications().DeleteApplication(app.Id)
+	err = client.Applications().DeleteApplication(app.Id)
+	require.Nil(t, err, "Failed to delete application: %s", err)
 }
 
 func TestGetDeleteApplication(t *testing.T) {
@@ -79,7 +82,8 @@ func TestGetDeleteApplication(t *testing.T) {
 	client := getClient()
 
 	// Delete application
-	client.Applications().DeleteApplication(newApp.Id)
+	err = client.Applications().DeleteApplication(newApp.Id)
+	require.Nil(t, err, "Failed to delete application: %s", err)
 
 	// Verify
 	app, err := client.Applications().GetApplicationById(newApp.Id)
@@ -113,7 +117,8 @@ func TestUpdateApplication(t *testing.T) {
 	require.Equal(t, expectedName, updatedApp.Name)
 
 	// Cleanup
-	client.Applications().DeleteApplication(updatedApp.Id)
+	err = client.Applications().DeleteApplication(updatedApp.Id)
+	require.Nil(t, err, "Failed to delete application: %s", err)
 }
 
 // Helper function for creating application

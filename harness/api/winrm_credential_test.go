@@ -13,7 +13,7 @@ func TestGetWinRMCredentialById(t *testing.T) {
 	s, err := client.Secrets().GetWinRMCredentialById(expectedId)
 	require.NoError(t, err)
 	require.Equal(t, expectedId, s.Id)
-	require.Equal(t, graphql.WinRMAuthenticationTypes.NTLM, s.AuthenticationScheme)
+	require.Equal(t, graphql.WinRMAuthenticationSchemes.NTLM, s.AuthenticationScheme)
 }
 
 func TestGetWinRMCredentialByName(t *testing.T) {
@@ -22,5 +22,5 @@ func TestGetWinRMCredentialByName(t *testing.T) {
 	s, err := client.Secrets().GetWinRMCredentialByName(expectedName)
 	require.NoError(t, err)
 	require.Equal(t, expectedName, s.Name)
-	require.Equal(t, graphql.WinRMAuthenticationTypes.NTLM, s.AuthenticationScheme)
+	require.Equal(t, graphql.WinRMAuthenticationSchemes.NTLM, s.AuthenticationScheme)
 }
