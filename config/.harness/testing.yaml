@@ -41,7 +41,7 @@ pipeline:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
                                     command: |-
-                                        ls -la vendor
+                                        ls -la vendor || true
 
                                         go mod vendor
                                     privileged: false
