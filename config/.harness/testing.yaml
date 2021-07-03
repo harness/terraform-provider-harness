@@ -1,5 +1,5 @@
 pipeline:
-    name: testing
+    name: ci
     identifier: testing
     projectIdentifier: harness_gos_dk
     orgIdentifier: Micahs_Projects
