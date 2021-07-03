@@ -54,7 +54,7 @@ pipeline:
                                     bucket: harness-micah-test
                                     key: harness-go-sdk-{{ checksum "go.mod" }}
                                     sourcePaths:
-                                        - vendor
+                                        - ./vendor
                                     archiveFormat: Tar
                           - step:
                                 type: Run
