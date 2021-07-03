@@ -28,7 +28,7 @@ pipeline:
                                     connectorRef: org.gcp
                                     bucket: harness-micah-test
                                     key: harness-gpo-sdk-{{ checksum "go.mod" }}
-                                    archiveFormat: Tar
+                                    archiveFormat: Gzip
                                     resources:
                                         limits:
                                             memory: 1Gi
@@ -55,7 +55,7 @@ pipeline:
                                     key: harness-go-sdk-{{ checksum "go.mod" }}
                                     sourcePaths:
                                         - ./vendor
-                                    archiveFormat: Tar
+                                    archiveFormat: Gzip
                           - step:
                                 type: Run
                                 name: Test
