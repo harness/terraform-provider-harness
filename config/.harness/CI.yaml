@@ -114,5 +114,5 @@ pipeline:
         ci:
             codebase:
                 connectorRef: org.githubharnessio
-                repoName: harness-go-sdk
+                repoName: micah-demo
                 build: <+input>
