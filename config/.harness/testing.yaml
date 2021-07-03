@@ -40,7 +40,10 @@ pipeline:
                                 spec:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    command: go mod vendor
+                                    command: |-
+                                        ls -la vendor
+
+                                        go mod vendor
                                     privileged: false
                           - step:
                                 type: SaveCacheGCS
