@@ -4,12 +4,6 @@ pipeline:
     projectIdentifier: harnessgosdk
     orgIdentifier: Micahs_Projects
     tags: {}
-    properties:
-        ci:
-            codebase:
-                connectorRef: org.githubharnessio
-                repoName: harness-go-sdk
-                build: <+input>
     stages:
         - stage:
               name: Build
@@ -80,7 +74,7 @@ pipeline:
                   infrastructure:
                       type: KubernetesDirect
                       spec:
-                          connectorRef: account.cidemocluster
+                          connectorRef: account.micahsprojects
                           namespace: harness-delegate
               variables:
                   - name: HARNESS_API_KEY
@@ -116,3 +110,9 @@ pipeline:
                   - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
                     type: Secret
                     value: aws_secret_access_key
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.githubharnessio
+                repoName: harness-go-sdk
+                build: <+input>
