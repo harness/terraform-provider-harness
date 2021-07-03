@@ -21,14 +21,57 @@ pipeline:
                   execution:
                       steps:
                           - step:
-                                type: Run
-                                name: test
-                                identifier: test
+                                type: RestoreCacheGCS
+                                name: Restore from cache
+                                identifier: Restore_from_cache
                                 spec:
-                                    connectorRef: account.harnessImage
-                                    image: busybox:latest
-                                    command: ls -la
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
+                                    key: harness-gpo-sdk-{{ checksum "go.mod" }}
+                                    archiveFormat: Tar
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
+                          - step:
+                                type: Run
+                                name: Download modules
+                                identifier: Download_modules
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    command: go mod vendor
                                     privileged: false
+                          - step:
+                                type: SaveCacheGCS
+                                name: Save cache
+                                identifier: Save_cache
+                                spec:
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
+                                    key: harness-go-sdk-{{ checksum "go.mod" }}
+                                    sourcePaths:
+                                        - vendor
+                                    archiveFormat: Tar
+                          - step:
+                                type: Run
+                                name: Test
+                                identifier: Test
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    command: |
+                                        gotestsum --junitfile junit.xml --format testname
+                                    privileged: false
+                                    reports:
+                                        type: JUnit
+                                        spec:
+                                            paths:
+                                                - junit.xml
+                                    resources:
+                                        limits:
+                                            memory: 2Gi
+                                            cpu: "2"
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
