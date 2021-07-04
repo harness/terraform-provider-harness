@@ -12,9 +12,8 @@ pipeline:
                 build: <+input>
     stages:
         - stage:
-              name: CI
-              identifier: CI
-              description: ""
+              name: Build
+              identifier: build
               type: CI
               spec:
                   cloneCodebase: true
@@ -22,16 +21,156 @@ pipeline:
                       steps:
                           - step:
                                 type: Run
-                                name: test
-                                identifier: test
+                                name: Install Dependencies
+                                identifier: installdependencies
                                 spec:
-                                    connectorRef: account.harnessImage
-                                    image: busybox:latest
-                                    command: ls -la
+                                    connectorRef: gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    command: go mod download -x
                                     privileged: false
+                          - step:
+                                type: Run
+                                name: Build
+                                identifier: build
+                                spec:
+                                    connectorRef: gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    command: go build -v
+                                    privileged: false
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      name: Test Terraform v1-0-0
+                                      identifier: Test_Terraform_v100
+                                      spec:
+                                          connectorRef: gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
+                                          privileged: false
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          envVariables:
+                                              TF_ACC: "1"
+                                              TF_ACC_TERRAFORM_VERSION: 1.0.0
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
+                                      timeout: 10m
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
+                                - step:
+                                      type: Run
+                                      name: Test Terraform v0-15-5
+                                      identifier: Test_Terraform_v0155
+                                      spec:
+                                          connectorRef: gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
+                                          privileged: false
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          envVariables:
+                                              TF_ACC: "1"
+                                              TF_ACC_TERRAFORM_VERSION: 0.15.5
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
+                                      timeout: 10m
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
+                                - step:
+                                      type: Run
+                                      name: Test Terraform v0-14-11
+                                      identifier: Test_Terraform_v01411
+                                      spec:
+                                          connectorRef: gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
+                                          privileged: false
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          envVariables:
+                                              TF_ACC: "1"
+                                              TF_ACC_TERRAFORM_VERSION: 0.14.11
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
+                                      timeout: 10m
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
+                                - step:
+                                      type: Run
+                                      name: Test Terraform v0-13-7
+                                      identifier: Test_Terraform_v0137
+                                      spec:
+                                          connectorRef: gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
+                                          privileged: false
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          envVariables:
+                                              TF_ACC: "1"
+                                              TF_ACC_TERRAFORM_VERSION: 0.13.7
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
+                                      timeout: 10m
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
                       spec:
-                          connectorRef: account.micahsprojects
-                          namespace: micahs-projects
+                          connectorRef: account.cidemocluster
+                          namespace: harness-delegate
+                  sharedPaths:
+                      - /goroot
+              variables:
+                  - name: HARNESS_API_KEY
+                    type: Secret
+                    value: harness_api_key
+                  - name: HARNESS_ACCOUNT_ID
+                    type: Secret
+                    value: harness_account_id
+                  - name: HARNESS_ENDPOINT
+                    type: String
+                    value: https://app.harness.io
+                  - name: HARNESS_BEARER_TOKEN
+                    type: Secret
+                    value: harness_bearer_token
+                  - name: GOPATH
+                    type: String
+                    value: /goroot
