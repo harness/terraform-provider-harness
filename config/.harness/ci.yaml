@@ -114,4 +114,4 @@ pipeline:
                     value: org.aws_access_key_id
                   - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
                     type: Secret
-                    value: orgaws_secret_access_key
+                    value: org.aws_secret_access_key
