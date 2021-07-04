@@ -161,16 +161,16 @@ pipeline:
               variables:
                   - name: HARNESS_API_KEY
                     type: Secret
-                    value: harness_api_key
+                    value: org.harness_api_key
                   - name: HARNESS_ACCOUNT_ID
                     type: Secret
-                    value: harness_account_id
+                    value: org.harness_account_id
                   - name: HARNESS_ENDPOINT
                     type: String
                     value: https://app.harness.io
                   - name: HARNESS_BEARER_TOKEN
                     type: Secret
-                    value: harness_bearer_token
+                    value: org.harness_bearer_token
                   - name: GOPATH
                     type: String
                     value: /goroot
