@@ -22,13 +22,63 @@ pipeline:
                       steps:
                           - step:
                                 type: Run
-                                name: test
-                                identifier: test
+                                name: Git clone
+                                identifier: gitclone
                                 spec:
-                                    connectorRef: account.harnessImage
-                                    image: busybox:latest
-                                    command: ls -la
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    shell: Bash
+                                    command: git clone https://${GITHUB_TOKEN}@github.com/harness-io/terraform-provider-harness.git .
                                     privileged: false
+                          - step:
+                                type: Run
+                                name: Create tag
+                                identifier: createtag
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    shell: Bash
+                                    command: |
+                                        git tag ${VERSION}
+                                        git push --tags
+                                    privileged: false
+                                when:
+                                    stageStatus: Success
+                          - step:
+                                type: Run
+                                name: Create Release
+                                identifier: Import_GPG_Key
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    shell: Bash
+                                    command: |
+                                        #!/bin/bash
+
+                                        # Start gpg-agent
+                                        gpg-agent --daemon --default-cache-ttl 7200
+
+                                        # Import the gpg key
+                                        echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --import --batch --no-tty
+
+                                        # Test signature
+                                        echo "hello world" > /tmp/temp.txt
+                                        gpg --detach-sig --yes -v --output=/dev/null --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" /tmp/temp.txt
+                                        rm /tmp/temp.txt
+
+                                        # Create release
+                                        export GPG_FINGERPRINT=$(gpg --with-colons --list-keys | awk -F: '/^pub/ { print $5 }')
+                                        export GPG_TTY=$(tty)
+                                        export GORELEASER_CURRENT_TAG=${VERSION}
+                                        goreleaser release --rm-dist
+
+                                        # Stop gpg-agent
+                                        gpgconf --kill gpg-agent
+                                    privileged: true
+                                    resources:
+                                        limits:
+                                            memory: 8Gi
+                                            cpu: "4"
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
