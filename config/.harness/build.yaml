@@ -154,8 +154,8 @@ pipeline:
                   infrastructure:
                       type: KubernetesDirect
                       spec:
-                          connectorRef: account.cidemocluster
-                          namespace: harness-delegate
+                          connectorRef: account.micahsprojects
+                          namespace: micahs-projects
                   sharedPaths:
                       - /goroot
               variables:
