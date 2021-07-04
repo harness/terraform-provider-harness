@@ -1,0 +1,37 @@
+pipeline:
+    name: ci
+    identifier: build
+    projectIdentifier: terraform_provider_harness
+    orgIdentifier: Micahs_Projects
+    tags: {}
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.githubharnessio
+                repoName: terraform-provider-harness
+                build: <+input>
+    stages:
+        - stage:
+              name: CI
+              identifier: CI
+              description: ""
+              type: CI
+              spec:
+                  cloneCodebase: true
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: test
+                                identifier: test
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: busybox:latest
+                                    command: ls -la
+                                    privileged: false
+                  serviceDependencies: []
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: account.micahsprojects
+                          namespace: micahs-projects
