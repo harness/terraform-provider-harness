@@ -61,7 +61,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.gcp
                                           image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          command: go mod vendor
+                                          command: golangci-lint run
                                           privileged: false
                                 - step:
                                       type: Run
