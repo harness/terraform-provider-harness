@@ -39,11 +39,8 @@ pipeline:
                                 identifier: Download_modules
                                 spec:
                                     connectorRef: org.gcp
-                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    command: |-
-                                        ls -la vendor || true
-
-                                        go mod vendor
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                    command: go mod vendor
                                     privileged: false
                           - step:
                                 type: SaveCacheGCS
@@ -56,25 +53,35 @@ pipeline:
                                     sourcePaths:
                                         - ./vendor
                                     archiveFormat: Gzip
-                          - step:
-                                type: Run
-                                name: Test
-                                identifier: Test
-                                spec:
-                                    connectorRef: org.gcp
-                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    command: |
-                                        gotestsum --junitfile junit.xml --format testname
-                                    privileged: false
-                                    reports:
-                                        type: JUnit
-                                        spec:
-                                            paths:
-                                                - junit.xml
-                                    resources:
-                                        limits:
-                                            memory: 2Gi
-                                            cpu: "2"
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      name: Lint
+                                      identifier: lint
+                                      spec:
+                                          connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          command: go mod vendor
+                                          privileged: false
+                                - step:
+                                      type: Run
+                                      name: Test
+                                      identifier: Test
+                                      spec:
+                                          connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          command: |
+                                              gotestsum --junitfile junit.xml --format testname
+                                          privileged: false
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          resources:
+                                              limits:
+                                                  memory: 2Gi
+                                                  cpu: "2"
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
