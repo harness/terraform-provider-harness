@@ -1,8 +1,8 @@
 package graphql
 
-import "github.com/harness-io/harness-go-sdk/harness/time"
-
-type Enum string
+import (
+	"github.com/harness-io/harness-go-sdk/harness/time"
+)
 
 type CommonMetadata struct {
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
@@ -194,38 +194,6 @@ type DeleteApplicationPayload struct {
 	ClientMutationId string `json:"clientMutationId"`
 }
 
-type SSHAuthenticationType Enum
-
-var SSHAuthenticationTypes = &struct {
-	SSHAuthentication      SSHAuthenticationType
-	KerberosAuthentication SSHAuthenticationType
-}{
-	SSHAuthentication:      "SSH_AUTHENTICATION",
-	KerberosAuthentication: "KERBEROS_AUTHENTICATION",
-}
-
-type WinRMAuthenticationScheme Enum
-
-var WinRMAuthenticationSchemes = &struct {
-	NTLM WinRMAuthenticationScheme
-}{
-	NTLM: "NTLM",
-}
-
-type SecretType Enum
-
-var SecretTypes = struct {
-	EncryptedFile   SecretType
-	EncryptedText   SecretType
-	SSHCredential   SecretType
-	WinRMCredential SecretType
-}{
-	EncryptedFile:   "ENCRYPTED_FILE",
-	EncryptedText:   "ENCRYPTED_TEXT",
-	SSHCredential:   "SSH_CREDENTIAL",
-	WinRMCredential: "WINRM_CREDENTIAL",
-}
-
 type SecretManager struct {
 	Id         string
 	Name       string
@@ -346,18 +314,6 @@ type SSHKeyFile struct {
 	Path               string `json:"path,omitempty"`
 }
 
-type SSHCredentialType Enum
-
-var SSHCredentialTypes = &struct {
-	Password       SSHCredentialType
-	SSHKey         SSHCredentialType
-	SSHKeyFilePath SSHCredentialType
-}{
-	Password:       "PASSWORD",
-	SSHKey:         "SSH_KEY",
-	SSHKeyFilePath: "SSH_KEY_FILE_PATH",
-}
-
 type KerberosAuthentication struct {
 	Port                int                  `json:"port,omitempty"`
 	Principal           string               `json:"principal,omitempty"`
@@ -368,16 +324,6 @@ type TGTGenerationMethod struct {
 	KerberosPassword   *KerberosPassword        `json:"kerberosPassword,omitempty"`
 	KeyTabFile         *KeyTabFile              `json:"keyTabFile,omitempty"`
 	TGTGenerationUsing TGTGenerationUsingOption `json:"tgtGenerationUsing,omitempty"`
-}
-
-type TGTGenerationUsingOption Enum
-
-var TGTGenerationUsingOptions = &struct {
-	KeyTabFile TGTGenerationUsingOption
-	Password   TGTGenerationUsingOption
-}{
-	KeyTabFile: "KEY_TAB_FILE",
-	Password:   "PASSWORD",
 }
 
 type KeyTabFile struct {
@@ -398,125 +344,9 @@ type WinRMCredentialInput struct {
 	Username             string      `json:"username,omitempty"`
 }
 
-type EnvironmentFilterType Enum
-
-var EnvironmentFilterTypes = &struct {
-	NonProduction EnvironmentFilterType
-	Production    EnvironmentFilterType
-}{
-	NonProduction: "NON_PRODUCTION_ENVIRONMENTS",
-	Production:    "PRODUCTION_ENVIRONMENTS",
-}
-
-type ApplicationFilterType Enum
-
-var ApplicationFilterTypes = &struct {
-	All ApplicationFilterType
-}{
-	All: "ALL",
-}
-
-type SSHAuthenticationScheme Enum
-
-var SSHAuthenticationSchemes = &struct {
-	Kerberos SSHAuthenticationScheme
-	SSH      SSHAuthenticationScheme
-}{
-	Kerberos: "KERBEROS",
-	SSH:      "SSH",
-}
-
 type DeleteSecretInput struct {
 	SecretId   string     `json:"secretId,omitempty"`
 	SecretType SecretType `json:"secretType,omitempty"`
-}
-
-type ConnectorType Enum
-
-var ConnectorTypes = &struct {
-	AmazonS3         ConnectorType
-	AmazonS3HelmRepo ConnectorType
-	APMVerification  ConnectorType
-	AppDynamics      ConnectorType
-	Artifactory      ConnectorType
-	Bamboo           ConnectorType
-	BugSnag          ConnectorType
-	DataDog          ConnectorType
-	Docker           ConnectorType
-	DynaTrace        ConnectorType
-	ECR              ConnectorType
-	ELB              ConnectorType
-	ELK              ConnectorType
-	GCR              ConnectorType
-	GCS              ConnectorType
-	GCSHelmRepo      ConnectorType
-	Git              ConnectorType
-	HTTPHelpRepo     ConnectorType
-	Jenkins          ConnectorType
-	Jira             ConnectorType
-	Logz             ConnectorType
-	NewRelic         ConnectorType
-	Nexus            ConnectorType
-	Prometheus       ConnectorType
-	ServiceNow       ConnectorType
-	SFTP             ConnectorType
-	Slack            ConnectorType
-	SMB              ConnectorType
-	SMTP             ConnectorType
-	Splunk           ConnectorType
-	Sumo             ConnectorType
-}{
-	AmazonS3:         "AMAZON_S3",
-	AmazonS3HelmRepo: "AMAZON_S3_HELM_REPO",
-	APMVerification:  "APM_VERIFICATION",
-	AppDynamics:      "APP_DYNAMICS",
-	Artifactory:      "ARTIFACTORY",
-	Bamboo:           "BAMBOO",
-	BugSnag:          "BUG_SNAG",
-	DataDog:          "DATA_DOG",
-	Docker:           "DOCKER",
-	DynaTrace:        "DYNA_TRACE",
-	ECR:              "ECR",
-	ELB:              "ELB",
-	ELK:              "ELK",
-	GCR:              "GCR",
-	GCS:              "GCS",
-	GCSHelmRepo:      "GCS_HELM_REPO",
-	Git:              "GIT",
-	HTTPHelpRepo:     "HTTP_HELM_REPO",
-	Jenkins:          "JENKINS",
-	Jira:             "JIRA",
-	Logz:             "LOGZ",
-	NewRelic:         "NEW_RELIC",
-	Nexus:            "NEXUS",
-	Prometheus:       "PROMETHEUS",
-	ServiceNow:       "SERVICENOW",
-	SFTP:             "SFTP",
-	Slack:            "SLACK",
-	SMB:              "SMB",
-	SMTP:             "SMTP",
-	Splunk:           "SPLUNK",
-	Sumo:             "SUMO",
-}
-
-type NexusVersion Enum
-
-var NexusVersions = &struct {
-	V2 NexusVersion
-	v3 NexusVersion
-}{
-	V2: "V2",
-	v3: "V3",
-}
-
-type GitUrlType Enum
-
-var GitUrlTypes = &struct {
-	Account GitUrlType
-	Repo    GitUrlType
-}{
-	Account: "ACCOUNT",
-	Repo:    "REPO",
 }
 
 type Connector struct {
@@ -685,16 +515,6 @@ type AwsCrossAccountAttributes struct {
 	ExternalId             string `json:"externalId,omitempty"`
 }
 
-type AwsCredentialsType Enum
-
-var AwsCredentialsTypes = struct {
-	Ec2Iam AwsCredentialsType
-	Manual AwsCredentialsType
-}{
-	Ec2Iam: "EC2_IAM",
-	Manual: "MANUAL",
-}
-
 type AzureCloudProvider struct {
 	CloudProvider
 	ClientId    string `json:"clientId,omitempty"`
@@ -748,16 +568,6 @@ type UpdateKubernetesCloudProviderInput struct {
 	SkipValidation        bool                   `json:"skipValidation,omitempty"`
 }
 
-type ClusterDetailsType Enum
-
-var ClusterDetailsTypes = struct {
-	InheritClusterDetails ClusterDetailsType
-	ManualClusterDetails  ClusterDetailsType
-}{
-	InheritClusterDetails: "INHERIT_CLUSTER_DETAILS",
-	ManualClusterDetails:  "MANUAL_CLUSTER_DETAILS",
-}
-
 type InheritClusterDetails struct {
 	DelegateName      string      `json:"delegateName,omitempty"`
 	DelegateSelectors []string    `json:"delegateSelectors,omitempty"`
@@ -777,22 +587,6 @@ type UsernameAndPasswordAuthentication struct {
 	PasswordSecretId string `json:"passwordSecretId,omitempty"`
 	UserName         string `json:"userName,omitempty"`
 	UserNameSecretId string `json:"userNameSecretId,omitempty"`
-}
-
-type ManualClusterDetailsAuthenticationType Enum
-
-var ManualClusterDetailsAuthenticationTypes = struct {
-	ClientKeyAndCertificate ManualClusterDetailsAuthenticationType
-	Custom                  ManualClusterDetailsAuthenticationType
-	OIDCToken               ManualClusterDetailsAuthenticationType
-	ServiceAccountToken     ManualClusterDetailsAuthenticationType
-	UsernameAndPassword     ManualClusterDetailsAuthenticationType
-}{
-	ClientKeyAndCertificate: "CLIENT_KEY_AND_CERTIFICATE",
-	Custom:                  "CUSTOM",
-	OIDCToken:               "OIDC_TOKEN",
-	ServiceAccountToken:     "SERVICE_ACCOUNT_TOKEN",
-	UsernameAndPassword:     "USERNAME_AND_PASSWORD",
 }
 
 type ServiceAccountToken struct {
@@ -882,26 +676,6 @@ type CreateCloudProviderInput struct {
 	PcfCloudProvider                *PcfCloudProvider                `json:"pcfCloudProvider,omitempty"`
 	PhysicalDataCenterCloudProvider *PhysicalDataCenterCloudProvider `json:"physicalDataCenterCloudProvider,omitempty"`
 	SpotInstCloudProvider           *SpotInstCloudProvider           `json:"spotInstCloudProvider,omitempty"`
-}
-
-type CloudProviderType Enum
-
-var CloudProviderTypes = struct {
-	Aws                CloudProviderType
-	Azure              CloudProviderType
-	Gcp                CloudProviderType
-	KubernetesCluster  CloudProviderType
-	Pcf                CloudProviderType
-	PhysicalDataCenter CloudProviderType
-	SpotInst           CloudProviderType
-}{
-	Aws:                "AWS",
-	Azure:              "AZURE",
-	Gcp:                "GCP",
-	KubernetesCluster:  "KUBERNETES_CLUSTER",
-	Pcf:                "PCF",
-	PhysicalDataCenter: "PHYSICAL_DATA_CENTER",
-	SpotInst:           "SPOT_INST",
 }
 
 type CEHealthStatus struct {

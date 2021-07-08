@@ -26,30 +26,41 @@ func TestCreateService(t *testing.T) {
 	}()
 
 	// Verify
-	svc, _ := ServiceFactory(app.Id, serviceName, cac.DeploymentTypes.Kubernetes, cac.ArtifactTypes.Docker)
+	svc, _ := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	svc.Name = serviceName
 	svc.ApplicationId = app.Id
-	newService, err := c.Services().UpsertService(svc)
+	svc.DeploymentType = cac.DeploymentTypes.Kubernetes
+	svc.ArtifactType = cac.ArtifactTypes.Docker
+
+	newService := &cac.Service{}
+	err = c.ConfigAsCode().UpsertObject(svc, cac.GetServiceYamlPath(app.Name, serviceName), newService)
 	require.NoError(t, err)
 	require.NotEmpty(t, newService.Id)
 	require.Equal(t, app.Id, newService.ApplicationId)
 }
 
-func TestGetServiceById(t *testing.T) {
+func TestGetService(t *testing.T) {
 
 	// Create application
 	c := getClient()
-	appName := fmt.Sprintf("app-%s-%s", t.Name(), utils.RandStringBytes(5))
+	appName := fmt.Sprintf("app_%s_%s", t.Name(), utils.RandStringBytes(4))
 	app, err := createApplication(appName)
 	require.NotNil(t, app)
 	require.NoError(t, err)
 
 	// Create service
-	serviceName := fmt.Sprintf("%s-%s", getSafeTestName(t.Name()), utils.RandStringBytes(4))
-	svcInput, err := ServiceFactory(app.Id, serviceName, cac.DeploymentTypes.Kubernetes, cac.ArtifactTypes.Docker)
+	serviceName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	svcInput := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	svcInput.Name = serviceName
+	svcInput.ApplicationId = app.Id
+	svcInput.DeploymentType = cac.DeploymentTypes.Kubernetes
+	svcInput.ArtifactType = cac.ArtifactTypes.Docker
+
 	require.NoError(t, err)
 	require.NotNil(t, svcInput)
 
-	svc, err := c.Services().UpsertService(svcInput)
+	svc := &cac.Service{}
+	err = c.ConfigAsCode().UpsertObject(svcInput, cac.GetServiceYamlPath(app.Name, serviceName), svc)
 	require.NoError(t, err)
 	require.NotNil(t, svc)
 
@@ -59,7 +70,8 @@ func TestGetServiceById(t *testing.T) {
 	}()
 
 	// Find service by id
-	svcLookup, err := c.Services().GetServiceById(app.Id, svc.Id)
+	svcLookup := &cac.Service{}
+	err = c.ConfigAsCode().FindObject(app.Id, cac.GetServiceYamlPath(app.Name, serviceName), svcLookup)
 	require.NoError(t, err)
 	require.NotNil(t, svcLookup)
 	require.Equal(t, cac.ArtifactTypes.Docker, svcLookup.ArtifactType)
@@ -68,6 +80,41 @@ func TestGetServiceById(t *testing.T) {
 	require.Equal(t, cac.HelmVersions.V2, svcLookup.HelmVersion)
 }
 
+func TestGetServiceById(t *testing.T) {
+
+	// Create application
+	c := getClient()
+	appName := fmt.Sprintf("app_%s_%s", t.Name(), utils.RandStringBytes(4))
+	app, err := createApplication(appName)
+	require.NotNil(t, app)
+	require.NoError(t, err)
+
+	// Create service
+	serviceName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	svcInput := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	svcInput.Name = serviceName
+	svcInput.ApplicationId = app.Id
+	svcInput.DeploymentType = cac.DeploymentTypes.Kubernetes
+	svcInput.ArtifactType = cac.ArtifactTypes.Docker
+
+	require.NoError(t, err)
+	require.NotNil(t, svcInput)
+
+	svc := &cac.Service{}
+	err = c.ConfigAsCode().UpsertObject(svcInput, cac.GetServiceYamlPath(app.Name, serviceName), svc)
+	require.NoError(t, err)
+	require.NotNil(t, svc)
+
+	defer func() {
+		err := c.Applications().DeleteApplication(app.Id)
+		require.NoError(t, err)
+	}()
+
+	// Find service by id
+	svcLookup, err := c.ConfigAsCode().GetServiceById(app.Id, svc.Id)
+	require.NoError(t, err)
+	require.Equal(t, svc, svcLookup)
+}
 func TestServiceSerialization(t *testing.T) {
 	// Setup
 	c := getClient()
@@ -108,31 +155,35 @@ func TestDeleteService(t *testing.T) {
 		require.Nil(t, err, "Failed to delete application: %s", err)
 	}()
 
-	svc, err := createService(app.Id, expectedName, cac.DeploymentTypes.Kubernetes, cac.ArtifactTypes.Docker)
+	svc, err := createService(app.Id, app.Name, expectedName, cac.DeploymentTypes.Kubernetes, cac.ArtifactTypes.Docker)
 	require.NoError(t, err)
 	require.NotNil(t, svc)
 
-	svcLookup, err := c.Services().GetServiceById(app.Id, svc.Id)
+	svcYamlPath := cac.GetServiceYamlPath(app.Name, svc.Name)
+
+	svcLookup := &cac.Service{}
+	err = c.ConfigAsCode().FindObject(app.Id, svcYamlPath, svcLookup)
 	require.NoError(t, err)
 	require.NotNil(t, svcLookup)
 
-	err = c.Services().DeleteService(app.Id, svc.Id)
+	err = c.ConfigAsCode().DeleteEntity(svcYamlPath)
 	require.NoError(t, err)
 
-	svcLookup, err = c.Services().GetServiceById(app.Id, svc.Id)
+	svcLookup = &cac.Service{}
+	err = c.ConfigAsCode().FindObject(app.Id, cac.GetServiceYamlPath(app.Name, svc.Name), svcLookup)
 	require.Error(t, err, "received http status code '403'")
-	require.Nil(t, svcLookup)
 }
 
-func testServiceSerialization(applicationId string, applicationName string, deploymentType string, artifactType string) func(t *testing.T) {
+func testServiceSerialization(applicationId string, applicationName string, deploymentType cac.DeploymentType, artifactType cac.ArtifactType) func(t *testing.T) {
 	return testServiceSerializationWithAdditionalTests(applicationId, applicationName, deploymentType, artifactType, nil)
 }
 
-func testServiceSerializationWithAdditionalTests(applicationId string, applicationName string, deploymentType string, artifactType string, additionalTests func(t *testing.T, serviceUnderTest *cac.Service)) func(t *testing.T) {
+func testServiceSerializationWithAdditionalTests(applicationId string, applicationName string, deploymentType cac.DeploymentType, artifactType cac.ArtifactType, additionalTests func(t *testing.T, serviceUnderTest *cac.Service)) func(t *testing.T) {
 	return func(t *testing.T) {
 		// Create service
 		serviceName := fmt.Sprintf("%s-%s", getSafeTestName(t.Name()), utils.RandStringBytes(4))
-		svc, err := createService(applicationId, serviceName, deploymentType, artifactType)
+
+		svc, err := createService(applicationId, applicationName, serviceName, deploymentType, artifactType)
 		require.NoError(t, err)
 		require.NotNil(t, svc)
 
@@ -150,16 +201,22 @@ func testServiceSerializationWithAdditionalTests(applicationId string, applicati
 
 }
 
-func createService(applicationId string, serviceName string, deploymentType string, artifactType string) (*cac.Service, error) {
-	serviceInput, err := ServiceFactory(applicationId, serviceName, deploymentType, artifactType)
+func createService(applicationId string, applicationName string, serviceName string, deploymentType cac.DeploymentType, artifactType cac.ArtifactType) (*cac.Service, error) {
+	serviceInput := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	serviceInput.Name = serviceName
+	serviceInput.DeploymentType = deploymentType
+	serviceInput.ArtifactType = artifactType
+	serviceInput.ApplicationId = applicationId
+
+	serviceInput.Description = "some description"
+	svc := &cac.Service{}
+	filePath := cac.GetServiceYamlPath(applicationName, serviceName)
+	err := getClient().ConfigAsCode().UpsertObject(serviceInput, filePath, svc)
 	if err != nil {
 		return nil, err
 	}
 
-	serviceInput.ApplicationId = applicationId
-
-	serviceInput.Description = "some description"
-	return getClient().Services().UpsertService(serviceInput)
+	return svc, nil
 }
 
 var safeTestNameRx = regexp.MustCompile("/")

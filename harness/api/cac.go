@@ -13,13 +13,20 @@ import (
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/harness-go-sdk/harness/httphelpers"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"gopkg.in/yaml.v3"
 )
 
-func FindConfigAsCodeItemByPath(rootItem *cac.ConfigAsCodeItem, path string) *cac.ConfigAsCodeItem {
+func (c *Client) ConfigAsCode() *ConfigAsCodeClient {
+	return &ConfigAsCodeClient{
+		ApiClient: c,
+	}
+}
 
-	if rootItem.DirectoryPath != nil && rootItem.DirectoryPath.Path == path {
+func FindConfigAsCodeItemByPath(rootItem *cac.ConfigAsCodeItem, path cac.YamlPath) *cac.ConfigAsCodeItem {
+
+	if rootItem.DirectoryPath != nil && rootItem.DirectoryPath.Path == string(path) {
 		return rootItem
 	}
 
@@ -47,7 +54,10 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 	// Set query parameters
 	q := req.URL.Query()
 	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
-	q.Add(QueryParamApplicationId, applicationId)
+
+	if applicationId != "" {
+		q.Add(QueryParamApplicationId, applicationId)
+	}
 	req.URL.RawQuery = q.Encode()
 
 	item, err := c.ExecuteRequest(req)
@@ -74,7 +84,11 @@ func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.Config
 	// Set query parameters
 	q := req.URL.Query()
 	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
-	q.Add(QueryParamApplicationId, applicationId)
+
+	if applicationId != "" {
+		q.Add(QueryParamApplicationId, applicationId)
+	}
+
 	req.URL.RawQuery = q.Encode()
 
 	item, err := c.ExecuteRequest(req)
@@ -85,7 +99,7 @@ func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.Config
 	return item, nil
 }
 
-func (c *ConfigAsCodeClient) UpsertEntity(filePath string, entity interface{}) (*cac.ConfigAsCodeItem, error) {
+func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity interface{}) (*cac.ConfigAsCodeItem, error) {
 
 	payload, err := yaml.Marshal(&entity)
 	if err != nil {
@@ -122,7 +136,7 @@ func (c *ConfigAsCodeClient) UpsertEntity(filePath string, entity interface{}) (
 	// Add the account ID to the query string
 	q := req.URL.Query()
 	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
-	q.Add(QueryParamYamlFilePath, filePath)
+	q.Add(QueryParamYamlFilePath, string(filePath))
 	req.URL.RawQuery = q.Encode()
 
 	item, err := c.ExecuteRequest(req)
@@ -196,46 +210,7 @@ type ConfigAsCodeClient struct {
 	ApiClient *Client
 }
 
-var APIV1 = "1.0"
-
-func ServiceFactory(applicationId, name string, deploymentType string, artifactType string) (*cac.Service, error) {
-	svc := &cac.Service{
-		HarnessApiVersion: APIV1,
-		Type:              cac.ObjectTypes.Service,
-		Name:              name,
-		DeploymentType:    deploymentType,
-		ApplicationId:     applicationId,
-	}
-
-	switch deploymentType {
-	case cac.DeploymentTypes.Kubernetes:
-		svc.HelmVersion = cac.HelmVersions.V2
-		svc.ArtifactType = cac.ArtifactTypes.Docker
-	case cac.DeploymentTypes.SSH:
-		svc.ArtifactType = artifactType
-	case cac.DeploymentTypes.AMI:
-		svc.ArtifactType = cac.ArtifactTypes.AMI
-	case cac.DeploymentTypes.AWSCodeDeploy:
-		svc.ArtifactType = cac.ArtifactTypes.AWSCodeDeploy
-	case cac.DeploymentTypes.AWSLambda:
-		svc.ArtifactType = cac.ArtifactTypes.AWSLambda
-	case cac.DeploymentTypes.ECS:
-		svc.ArtifactType = cac.ArtifactTypes.Docker
-	case cac.DeploymentTypes.PCF:
-		svc.ArtifactType = cac.ArtifactTypes.PCF
-	case cac.DeploymentTypes.Helm:
-		svc.ArtifactType = cac.ArtifactTypes.Docker
-	case cac.DeploymentTypes.WinRM:
-		svc.ArtifactType = artifactType
-
-	default:
-		return nil, fmt.Errorf("could not create service of type '%s'", deploymentType)
-	}
-
-	return svc, nil
-}
-
-func (c *ConfigAsCodeClient) DeleteEntities(filePaths []string) error {
+func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
 
 	req, err := retryablehttp.NewRequest(http.MethodDelete, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, "/gateway/api/setup-as-code/yaml/delete-entities"), nil)
 	if err != nil {
@@ -250,12 +225,89 @@ func (c *ConfigAsCodeClient) DeleteEntities(filePaths []string) error {
 	// Add the account ID to the query string
 	q := req.URL.Query()
 	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
-	q.Add(QueryParamFilePaths, strings.Join(filePaths, ","))
+	q.Add(QueryParamFilePaths, string(filePath))
 	req.URL.RawQuery = q.Encode()
 
 	_, err = c.ExecuteRequest(req)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPath, responseObj interface{}) error {
+	if input == nil {
+		return errors.New("object to upsert is nil")
+	}
+
+	if ok, err := utils.RequiredFieldsCheck(input, []string{"Name", "Id"}); !ok {
+		return err
+	}
+
+	// If the object implements the Validation interface then check it
+	if v, ok := input.(cac.Validation); ok {
+		if ok, err := v.Validate(); !ok {
+			return err
+		}
+	}
+
+	// Upsert the yaml document
+	_, err := c.UpsertYamlEntity(filePath, input)
+	if err != nil {
+		return err
+	}
+
+	appId, ok := utils.TryGetFieldValue(input, "ApplicationId")
+	if !ok {
+		appId = ""
+	}
+
+	err = c.FindObject(appId.(string), filePath, responseObj)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// This function is used when the Id of the object is unknown and we need to look it up.
+// Typically this is needed just after an Upsert command. The Upsert API unfortunately does not
+// return the Id of the newly created object.
+func (c *ConfigAsCodeClient) FindObject(applicationId string, filePath cac.YamlPath, obj interface{}) error {
+	rootItem, err := c.GetDirectoryTree(applicationId)
+	if err != nil {
+		return err
+	}
+
+	item := FindConfigAsCodeItemByPath(rootItem, filePath)
+	if item == nil {
+		return fmt.Errorf("unable to item at `%s`", filePath)
+	}
+
+	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
+	if err != nil {
+		return err
+	}
+
+	// Parse the new entity
+	err = itemContent.ParseYamlContent(obj)
+	if err != nil {
+		return err
+	}
+
+	// Parse the new entity
+	err = itemContent.ParseYamlContent(obj)
+	if err != nil {
+		return err
+	}
+
+	// Set the required fields for all entities
+	utils.MustSetField(obj, "Name", cac.GetEntityNameFromPath(filePath))
+	utils.MustSetField(obj, "Id", item.UUID)
+
+	if applicationId != "" && utils.HasField(obj, "ApplicationId") {
+		utils.MustSetField(obj, "ApplicationId", applicationId)
 	}
 
 	return nil

@@ -122,9 +122,8 @@ func TestUpdateApplication(t *testing.T) {
 }
 
 // Helper function for creating application
-func createApplication(namePrefix string) (*graphql.Application, error) {
+func createApplication(name string) (*graphql.Application, error) {
 	client := getClient()
-	name := fmt.Sprintf("%s-%s", namePrefix, utils.RandStringBytes(12))
 	input := &graphql.Application{
 		ClientMutationId: time.Now().String(),
 		Name:             name,

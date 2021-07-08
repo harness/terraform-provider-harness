@@ -1,112 +1,19 @@
 package cac
 
-type objectType struct {
-	Service string
+type Validation interface {
+	Validate() (bool, error)
 }
 
-var ObjectTypes objectType = objectType{
-	Service: "SERVICE",
-}
+// type Entity interface {
+// 	GetPath() (string, error)
+// }
 
-type helmVersion struct {
-	V2 string
-	V3 string
+type Application struct {
+	HarnessApiVersion HarnessApiVersion `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type              ObjectType        `yaml:"type" json:"type"`
+	Id                string            `json:"-"`
+	Name              string            `json:"-"`
 }
-
-var HelmVersions helmVersion = helmVersion{
-	V2: "V2",
-	V3: "V3",
-}
-
-type deploymentType struct {
-	AMI           string
-	AWSCodeDeploy string
-	AWSLambda     string
-	ECS           string
-	Custom        string
-	SSH           string
-	Kubernetes    string
-	Helm          string
-	PCF           string
-	WinRM         string
-}
-
-var DeploymentTypes deploymentType = deploymentType{
-	AMI:           "AMI",
-	ECS:           "ECS",
-	AWSCodeDeploy: "AWS_CODEDEPLOY",
-	AWSLambda:     "AWS_LAMBDA",
-	Custom:        "Custom",
-	Kubernetes:    "KUBERNETES",
-	Helm:          "HELM",
-	PCF:           "PCF",
-	SSH:           "SSH",
-	WinRM:         "WINRM",
-}
-
-var DeploymenTypesSlice []string = []string{
-	DeploymentTypes.AMI,
-	DeploymentTypes.AWSCodeDeploy,
-	DeploymentTypes.AWSLambda,
-	DeploymentTypes.Custom,
-	DeploymentTypes.Kubernetes,
-	DeploymentTypes.Helm,
-	ArtifactTypes.PCF,
-	DeploymentTypes.SSH,
-	DeploymentTypes.WinRM,
-}
-
-type artifactType struct {
-	AMI                 string
-	AWSCodeDeploy       string
-	AWSLambda           string
-	Docker              string
-	Jar                 string
-	Other               string
-	PCF                 string
-	Tar                 string
-	War                 string
-	RPM                 string
-	IISVirtualDirectory string
-	IISApp              string
-	IISWebsite          string
-	Zip                 string
-}
-
-var ArtifactTypes artifactType = artifactType{
-	AMI:                 "AMI",
-	AWSCodeDeploy:       "AWS_CODEDEPLOY",
-	AWSLambda:           "AWS_LAMBDA",
-	Docker:              "DOCKER",
-	Jar:                 "JAR",
-	Other:               "OTHER",
-	PCF:                 "PCF",
-	RPM:                 "RPM",
-	Tar:                 "TAR",
-	War:                 "WAR",
-	IISVirtualDirectory: "IIS_VirtualDirectory",
-	IISApp:              "IIS_APP",
-	IISWebsite:          "IIS",
-	Zip:                 "ZIP",
-}
-
-var SSHArtifactTypes []string = []string{
-	ArtifactTypes.Docker,
-	ArtifactTypes.Jar,
-	ArtifactTypes.Other,
-	ArtifactTypes.Tar,
-	ArtifactTypes.War,
-	ArtifactTypes.Zip,
-}
-
-var WinRMArtifactTypesSlice []string = []string{
-	ArtifactTypes.Docker,
-	ArtifactTypes.IISApp,
-	ArtifactTypes.IISVirtualDirectory,
-	ArtifactTypes.IISWebsite,
-	ArtifactTypes.Other,
-}
-
 type Tag struct {
 	Name  string `yaml:"name,omitempty"`
 	Value string `yaml:"value,omitempty"`
@@ -138,40 +45,6 @@ type ConfigAsCodeItem struct {
 	Yaml            string              `json:"yaml"`
 }
 
-type classType struct {
-	Account                   string
-	Application               string
-	ArtifactStream            string
-	ConfigFile                string
-	Defaults                  string
-	Environment               string
-	InfrastructureProvisioner string
-	NotificationGroup         string
-	Pipeline                  string
-	Service                   string
-	SettingAttribute          string
-	Tags                      string
-	Template                  string
-	Workflow                  string
-}
-
-var ClassTypes classType = classType{
-	Account:                   "Account",
-	Application:               "Application",
-	ArtifactStream:            "ArtifactStream",
-	ConfigFile:                "ConfigFile",
-	Defaults:                  "Defaults",
-	Environment:               "Environment",
-	InfrastructureProvisioner: "InfrastructureProvisioner",
-	NotificationGroup:         "NotificationGroup",
-	Pipeline:                  "Pipeline",
-	Service:                   "Service",
-	SettingAttribute:          "SettingAttribute",
-	Tags:                      "HarnessTag",
-	Template:                  "Template",
-	Workflow:                  "Workflow",
-}
-
 type DirectoryPath struct {
 	Path string `json:"path,omitempty"`
 }
@@ -185,15 +58,152 @@ type ResponseMessage struct {
 }
 
 type Service struct {
-	HarnessApiVersion         string            `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Type                      string            `yaml:"type" json:"type"`
-	ArtifactType              string            `yaml:"artifactType,omitempty"`
-	DeploymentType            string            `yaml:"deploymentType,omitempty"`
+	HarnessApiVersion         HarnessApiVersion `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type                      ObjectType        `yaml:"type" json:"type"`
+	ArtifactType              ArtifactType      `yaml:"artifactType,omitempty"`
+	DeploymentType            DeploymentType    `yaml:"deploymentType,omitempty"`
 	Description               string            `yaml:"description,omitempty"`
-	Id                        string            `yaml:"id,omitempty"`
+	Id                        string            `yaml:"-"`
 	Name                      string            `yaml:"-"`
 	Tags                      map[string]string `yaml:"tags,omitempty"`
-	HelmVersion               string            `yaml:"helmVersion,omitempty"`
+	HelmVersion               HelmVersion       `yaml:"helmVersion,omitempty"`
 	ApplicationId             string            `yaml:"-"`
 	DeploymentTypeTemplateUri string            `yaml:"deploymentTypeTemplateUri,omitempty"`
 }
+
+type AwsCloudProvider struct {
+	HarnessApiVersion      HarnessApiVersion          `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type                   ObjectType                 `yaml:"type" json:"type"`
+	Id                     string                     `yaml:"-"`
+	Name                   string                     `yaml:"-"`
+	AccessKey              string                     `yaml:"accessKey,omitempty"`
+	AccessKeySecretId      *SecretRef                 `yaml:"AccessKeySecretId,omitempty"`
+	AssumeCrossAccountRole bool                       `yaml:"assumeCrossAccountRole,omitempty"`
+	CrossAccountAttributes *AwsCrossAccountAttributes `yaml:"crossAccountAttributes,omitempty"`
+	SecretKey              *SecretRef                 `yaml:"secretKey,omitempty"`
+	UseIRSA                bool                       `yaml:"useIRSA,omitempty"`
+	UseEc2IamCredentials   bool                       `yaml:"useEc2IamCredentials,omitempty"`
+	UsageRestrictions      *UsageRestrictions         `yaml:"usageRestrictions,omitempty"`
+	DelegateSelector       string                     `yaml:"tag,omitempty"`
+}
+
+type AwsCrossAccountAttributes struct {
+	CrossAccountRoleArn string `yaml:"crossAccountRoleArn,omitempty"`
+	ExternalId          string `yaml:"externalId,omitempty"`
+}
+
+type PcfCloudProvider struct {
+	HarnessApiVersion HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type              ObjectType         `yaml:"type" json:"type"`
+	Id                string             `yaml:"-"`
+	Name              string             `yaml:"-"`
+	EndpointUrl       string             `yaml:"endpointUrl,omitempty"`
+	Password          *SecretRef         `yaml:"password,omitempty"`
+	SkipValidation    bool               `yaml:"skipValidation,omitempty"`
+	Username          string             `yaml:"username,omitempty"`
+	UsernameSecretId  string             `yaml:"usernam	eSecretId,omitempty"`
+	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+type PhysicalDatacenterCloudProvider struct {
+	HarnessApiVersion HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type              ObjectType         `yaml:"type" json:"type"`
+	Name              string             `json:"-"`
+	Id                string             `json:"-"`
+	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+type AzureCloudProvider struct {
+	HarnessApiVersion    HarnessApiVersion    `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Id                   string               `yaml:"id,omitempty"`
+	Name                 string               `yaml:"-"`
+	Type                 ObjectType           `yaml:"type,omitempty"`
+	AzureEnvironmentType AzureEnvironmentType `yaml:"azureEnvironmentType,omitempty"`
+	ClientId             string               `yaml:"clientId,omitempty"`
+	TenantId             string               `yaml:"tenantId,omitempty"`
+	Key                  *SecretRef           `yaml:"key,omitempty"`
+	UsageRestrictions    *UsageRestrictions   `yaml:"usageRestrictions,omitempty"`
+}
+
+type GcpCloudProvider struct {
+	HarnessApiVersion            HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Id                           string             `yaml:"id,omitempty"`
+	Name                         string             `yaml:"-"`
+	Type                         ObjectType         `yaml:"type,omitempty"`
+	DelegateSelectors            []string           `yaml:"delegateSelectors,omitempty"`
+	SkipValidation               bool               `yaml:"skipValidation,omitempty"`
+	ServiceAccountKeyFileContent *SecretRef         `yaml:"serviceAccountKeyFileContent,omitempty"`
+	UseDelegate                  bool               `yaml:"useDelegate,omitempty"`
+	UseDelegateSelectors         bool               `yaml:"useDelegateSelectors,omitempty"`
+	UsageRestrictions            *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+type KubernetesCloudProvider struct {
+	HarnessApiVersion          HarnessApiVersion           `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Id                         string                      `yaml:"id,omitempty"`
+	Name                       string                      `yaml:"-"`
+	Type                       ObjectType                  `yaml:"type,omitempty"`
+	AuthType                   KubernetesAuthType          `yaml:"authType,omitempty"`
+	CACert                     string                      `yaml:"cacert,omitempty"`
+	ClientCert                 string                      `yaml:"clientCert,omitempty"`
+	ClientKey                  string                      `yaml:"clientKey,omitempty"`
+	ClientKeyAlgorithm         string                      `yaml:"clientKeyAlgorithm,omitempty"`
+	ClientKeyPassPhrase        string                      `yaml:"clientKeyPassPhrase,omitempty"`
+	DelegateSelectors          []string                    `yaml:"delegateSelectors,omitempty"`
+	Username                   string                      `yaml:"username,omitempty"`
+	UsernameSecretId           *SecretRef                  `yaml:"usernameSecretId,omitempty"`
+	ContinuousEfficiencyConfig *ContinuousEfficiencyConfig `yaml:"continuousEfficiencyConfig,omitempty"`
+	MasterUrl                  string                      `yaml:"masterUrl,omitempty"`
+	ServiceAccountToken        *SecretRef                  `yaml:"serviceAccountToken,omitempty"`
+	SkipValidation             bool                        `yaml:"skipValidation,omitempty"`
+	UseKubernetesDelegate      bool                        `yaml:"useKubernetesDelegate,omitempty"`
+	UseEncryptedUsername       bool                        `yaml:"useEncryptedUsername,omitempty"`
+	Password                   *SecretRef                  `yaml:"password,omitempty"`
+	OIDCClientId               *SecretRef                  `yaml:"oidcClientId,omitempty"`
+	OIDCIdentityProviderUrl    string                      `yaml:"oidcIdentityProviderUrl,omitempty"`
+	OIDCPassword               *SecretRef                  `yaml:"oidcPassword,omitempty"`
+	OIDCSecret                 *SecretRef                  `yaml:"oidcSecret,omitempty"`
+	OIDCScopes                 string                      `yaml:"oidcScopes,omitempty"`
+	OIDCUsername               string                      `yaml:"oidcUsername,omitempty"`
+	UsageRestrictions          *UsageRestrictions          `yaml:"usageRestrictions,omitempty"`
+}
+
+type ContinuousEfficiencyConfig struct {
+	ContinuousEfficiencyEnabled bool `json:"continuousEfficiencyEnabled,omitempty"`
+}
+
+type SpotInstCloudProvider struct {
+	HarnessApiVersion HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Id                string             `yaml:"id,omitempty"`
+	Name              string             `yaml:"-"`
+	Type              ObjectType         `yaml:"type,omitempty"`
+	AccountId         string             `yaml:"spotInstAccountId,omitempty"`
+	Token             *SecretRef         `yaml:"spotInstToken,omitempty"`
+	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+type UsageRestrictions struct {
+	AppEnvRestrictions []*AppEnvRestriction `yaml:"appEnvRestrictions,omitempty"`
+}
+
+type AppEnvRestriction struct {
+	AppFilter *AppFilter `yaml:"appFilter,omitempty"`
+	EnvFilter *EnvFilter `yaml:"envFilter,omitempty"`
+}
+
+type AppFilter struct {
+	FilterType  ApplicationFilterType `yaml:"filterType,omitempty"`
+	EntityNames []string              `yaml:"entityNames,omitempty"`
+}
+
+type EnvFilter struct {
+	FilterTypes []EnvironmentFilterType `yaml:"filterTypes,omitempty"`
+	EntityNames []string                `yaml:"entityNames,omitempty"`
+}
+
+type SecretRef struct {
+	SecretManagerType SecretManagerType
+	SecretId          string
+}
+
+type YamlPath string
