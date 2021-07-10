@@ -76,7 +76,7 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 	appId := d.Get("app_id").(string)
 	svcId := d.Get("id").(string)
 
-	svc, err := c.Services().GetServiceById(appId, svcId)
+	svc, err := c.ConfigAsCode().GetServiceById(appId, svcId)
 	if err != nil {
 		return diag.FromErr(err)
 	}

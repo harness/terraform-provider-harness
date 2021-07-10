@@ -1,6 +1,10 @@
 package provider
 
 import (
+	"errors"
+
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -50,7 +54,7 @@ func expandUsageScope(d []interface{}) (*graphql.UsageScope, error) {
 		}
 
 		if attr, ok := scopeData["application_filter_type"]; ok && attr != "" {
-			scope.Application.FilterType = attr.(string)
+			scope.Application.FilterType = graphql.ApplicationFilterType(attr.(string))
 		}
 
 		if attr, ok := scopeData["application_id"]; ok && attr != "" {
@@ -58,7 +62,7 @@ func expandUsageScope(d []interface{}) (*graphql.UsageScope, error) {
 		}
 
 		if attr, ok := scopeData["environment_filter_type"]; ok && attr != "" {
-			scope.Environment.FilterType = attr.(string)
+			scope.Environment.FilterType = graphql.EnvironmentFilterType(attr.(string))
 		}
 
 		if attr, ok := scopeData["environment_id"]; ok && attr != "" {
@@ -71,6 +75,65 @@ func expandUsageScope(d []interface{}) (*graphql.UsageScope, error) {
 	us.AppEnvScopes = scopes
 
 	return us, nil
+}
+
+func expandUsageRestrictions(c *api.Client, d []interface{}) (*cac.UsageRestrictions, error) {
+	if len(d) == 0 {
+		return nil, nil
+	}
+
+	ur := &cac.UsageRestrictions{}
+	restrictions := make([]*cac.AppEnvRestriction, 0)
+
+	for _, appScope := range d {
+		scopeData := appScope.(map[string]interface{})
+		scope := &cac.AppEnvRestriction{
+			AppFilter: &cac.AppFilter{},
+			EnvFilter: &cac.EnvFilter{},
+		}
+
+		if attr, ok := scopeData["application_filter_type"]; ok && attr != "" {
+			if graphql.ApplicationFilterType(attr.(string)) == graphql.ApplicationFilterTypes.All {
+				scope.AppFilter.FilterType = cac.ApplicationFilterTypes.All
+			} else {
+				scope.AppFilter.FilterType = cac.ApplicationFilterTypes.Selected
+			}
+		}
+
+		var app *cac.Application
+		if attr, ok := scopeData["application_id"]; ok && attr != "" {
+			app, err := c.Applications().GetApplicationById(attr.(string))
+			if err != nil {
+				return nil, err
+			}
+			scope.AppFilter.EntityNames = []string{app.Name}
+		}
+
+		if attr, ok := scopeData["environment_filter_type"]; ok && attr != "" {
+			switch graphql.EnvironmentFilterType(attr.(string)) {
+			case graphql.EnvironmentFilterTypes.NonProduction:
+				scope.EnvFilter.FilterTypes = []cac.EnvironmentFilterType{cac.EnvironmentFilterTypes.NonProd}
+			case graphql.EnvironmentFilterTypes.Production:
+				scope.EnvFilter.FilterTypes = []cac.EnvironmentFilterType{cac.EnvironmentFilterTypes.Prod}
+			default:
+				return nil, errors.New("could not parse environment_filter_type '" + attr.(string) + "'")
+			}
+
+			if attr, ok := scopeData["environment_id"]; ok && attr != "" {
+				env, err := c.ConfigAsCode().GetEnvironmentById(app.Id, attr.(string))
+				if err != nil {
+					return nil, err
+				}
+				scope.EnvFilter.EntityNames = []string{env.Name}
+			}
+		}
+
+		restrictions = append(restrictions, scope)
+	}
+
+	ur.AppEnvRestrictions = restrictions
+
+	return ur, nil
 }
 
 func flattenUsageScope(uc *graphql.UsageScope) []map[string]interface{} {
@@ -92,50 +155,79 @@ func flattenUsageScope(uc *graphql.UsageScope) []map[string]interface{} {
 	return results
 }
 
-// func flattenAppEnvScopes(appEnvScopes []*client.AppEnvScope) []interface{} {
-// 	if appEnvScopes == nil {
-// 		return make([]interface{}, 0)
-// 	}
+func flattenUsageRestrictions(c *api.Client, ur *cac.UsageRestrictions) ([]map[string]interface{}, error) {
+	if ur == nil {
+		return make([]map[string]interface{}, 0), nil
+	}
 
-// 	scopes := make([]interface{}, len(appEnvScopes))
+	results := make([]map[string]interface{}, len(ur.AppEnvRestrictions))
 
-// 	for i, scope := range appEnvScopes {
-// 		s := map[string]string{
-// 			"application_filter_type": scope.Application.FilterType,
-// 			"application_id":          scope.Application.AppId,
-// 			"environment_filter_type": scope.Environment.FilterType,
-// 			"environment_id":          scope.Environment.EnvId,
-// 		}
+	for i, scope := range ur.AppEnvRestrictions {
+		appId, err := flattenAppFilterEntityName(c, scope.AppFilter)
+		if err != nil {
+			return nil, err
+		}
 
-// 		scopes[i] = s
-// 	}
+		envId, err := flattenEnvFilterEntityName(c, scope.EnvFilter, appId)
+		if err != nil {
+			return nil, err
+		}
 
-// 	return scopes
-// }
+		results[i] = map[string]interface{}{
+			"application_id":          appId,
+			"application_filter_type": flattenAppFilterType(scope.AppFilter),
+			"environment_id":          envId,
+			"environment_filter_type": flattenEnvFilterTypes(scope.EnvFilter),
+		}
+	}
 
-// func expandUsageScopeObject(scope interface{}) *client.AppEnvScope {
-// 	sc := scope.(map[string]interface{})
+	return results, nil
+}
 
-// 	opts := &client.AppEnvScope{
-// 		Application: &client.AppScopeFilter{},
-// 		Environment: &client.EnvScopeFilter{},
-// 	}
+func flattenAppFilterEntityName(c *api.Client, filter *cac.AppFilter) (string, error) {
+	if len(filter.EntityNames) == 0 {
+		return "", nil
+	}
 
-// 	if attr, ok := sc["application_id"]; ok && attr != "" {
-// 		opts.Application.AppId = attr.(string)
-// 	}
+	name := filter.EntityNames[0]
+	app, err := c.Applications().GetApplicationByName(name)
+	if err != nil {
+		return "", err
+	}
+	return app.Id, nil
+}
 
-// 	if attr, ok := sc["application_filter_type"]; ok && attr != "" {
-// 		opts.Application.FilterType = attr.(string)
-// 	}
+func flattenAppFilterType(filter *cac.AppFilter) string {
+	switch filter.FilterType {
+	case cac.ApplicationFilterTypes.All:
+		return string(graphql.ApplicationFilterTypes.All)
+	default:
+		return ""
+	}
+}
 
-// 	if attr, ok := sc["environment_id"]; ok && attr != "" {
-// 		opts.Environment.EnvId = attr.(string)
-// 	}
+func flattenEnvFilterEntityName(c *api.Client, filter *cac.EnvFilter, applicationId string) (string, error) {
+	if len(filter.EntityNames) == 0 {
+		return "", nil
+	}
 
-// 	if attr, ok := sc["environment_filter_type"]; ok && attr != "" {
-// 		opts.Environment.FilterType = attr.(string)
-// 	}
+	name := filter.EntityNames[0]
+	env, err := c.ConfigAsCode().GetEnvironmentByName(applicationId, name)
+	if err != nil {
+		return "", err
+	}
+	return env.Id, nil
+}
 
-// 	return opts
-// }
+func flattenEnvFilterTypes(filter *cac.EnvFilter) string {
+	switch filter.FilterTypes[0] {
+	case cac.EnvironmentFilterTypes.Prod:
+		return string(graphql.EnvironmentFilterTypes.Production)
+	case cac.EnvironmentFilterTypes.NonProd:
+		return string(graphql.EnvironmentFilterTypes.NonProduction)
+	case cac.EnvironmentFilterTypes.Selected:
+		return ""
+	default:
+		panic("Unknown environment filter type")
+	}
+}

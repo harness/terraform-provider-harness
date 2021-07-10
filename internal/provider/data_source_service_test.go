@@ -34,7 +34,7 @@ func testAccDataSourceService(name string) string {
 		resource "harness_application" "test" {
 			name = "%[1]s"
 		}
-		
+
 		resource "harness_service_kubernetes" "test" {
 			name = "%[1]s"
 			app_id = harness_application.test.id

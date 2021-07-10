@@ -76,7 +76,7 @@ func TestProvider_configure_url_env(t *testing.T) {
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }
 
-func testAccPreCheck(t *testing.T) {
+func testAccConfigureProvider() {
 	testAccProviderConfigure.Do(func() {
 		testAccProvider = New("dev")()
 
@@ -89,6 +89,10 @@ func testAccPreCheck(t *testing.T) {
 
 		testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))
 	})
+}
+
+func testAccPreCheck(t *testing.T) {
+	testAccConfigureProvider()
 }
 
 var testAccProvider *schema.Provider

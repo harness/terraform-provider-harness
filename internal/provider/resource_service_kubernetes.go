@@ -18,7 +18,7 @@ func resourceKubernetesService() *schema.Resource {
 		Description:  "The version of Helm to use. Options are `V2` and `V3`. Defaults to 'V2'. Only used when `type` is `KUBERNETES` or `HELM`.",
 		Type:         schema.TypeString,
 		Optional:     true,
-		ValidateFunc: validation.StringInSlice([]string{cac.HelmVersions.V2, cac.HelmVersions.V3}, false),
+		ValidateFunc: validation.StringInSlice([]string{string(cac.HelmVersions.V2), string(cac.HelmVersions.V3)}, false),
 		Default:      cac.HelmVersions.V2,
 	}
 
@@ -38,7 +38,7 @@ func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.Reso
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	svc, err := c.Services().GetServiceById(appId, svcId)
+	svc, err := c.ConfigAsCode().GetServiceById(appId, svcId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -47,6 +47,11 @@ func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.Reso
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("helm_version", svc.HelmVersion)
 	d.Set("description", svc.Description)
+
+	if vars := flattenServiceVariables(svc.ConfigVariables); len(vars) > 0 {
+		d.Set("variable", vars)
+	}
+
 	return nil
 }
 
@@ -58,13 +63,17 @@ func resourceKubernetesServiceCreate(ctx context.Context, d *schema.ResourceData
 		Name:           d.Get("name").(string),
 		ArtifactType:   cac.ArtifactTypes.Docker,
 		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    d.Get("helm_version").(string),
+		HelmVersion:    cac.HelmVersion(d.Get("helm_version").(string)),
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}
 
+	if vars := d.Get("variable"); vars != nil {
+		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+	}
+
 	// Create Service
-	newSvc, err := c.Services().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -86,13 +95,17 @@ func resourceKubernetesServiceUpdate(ctx context.Context, d *schema.ResourceData
 		Name:           d.Get("name").(string),
 		ArtifactType:   cac.ArtifactTypes.Docker,
 		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    d.Get("helm_version").(string),
+		HelmVersion:    cac.HelmVersion(d.Get("helm_version").(string)),
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}
 
+	if vars := d.Get("variable"); vars != nil {
+		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+	}
+
 	// Create Service
-	newSvc, err := c.Services().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}

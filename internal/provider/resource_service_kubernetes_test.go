@@ -29,7 +29,7 @@ func TestAccResourceKubernetesService(t *testing.T) {
 				Config: testAccResourceKubernetesService(name, description),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "helm_version", cac.HelmVersions.V2),
+					resource.TestCheckResourceAttr(resourceName, "helm_version", string(cac.HelmVersions.V2)),
 					testAccCheckKubernetesServiceExists(t, resourceName, name, description),
 				),
 			},
@@ -37,7 +37,7 @@ func TestAccResourceKubernetesService(t *testing.T) {
 				Config: testAccResourceKubernetesService(name, updatedDescription),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "helm_version", cac.HelmVersions.V2),
+					resource.TestCheckResourceAttr(resourceName, "helm_version", string(cac.HelmVersions.V2)),
 					testAccCheckKubernetesServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
@@ -55,6 +55,7 @@ func testAccCheckKubernetesServiceExists(t *testing.T, resourceName string, name
 		require.Equal(t, cac.ArtifactTypes.Docker, svc.ArtifactType)
 		require.Equal(t, cac.DeploymentTypes.Kubernetes, svc.DeploymentType)
 		require.Equal(t, description, svc.Description)
+		require.Len(t, svc.ConfigVariables, 2)
 
 		return nil
 	}
@@ -71,7 +72,25 @@ func testAccResourceKubernetesService(name string, description string) string {
 			name = "%[1]s"
 			helm_version = "V2"
 			description = "%[2]s"
+			
+			variable {
+				name = "test"
+				value = "test_value"
+				type = "TEXT"
+			}
+
+			variable {
+				name = "test2"
+				value = "test_value2"
+				type = "TEXT"
+			}
 		}
 
 `, name, description)
+}
+
+type Variable struct {
+	Name  string
+	Value string
+	Type  string
 }

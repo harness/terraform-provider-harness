@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
@@ -11,6 +12,42 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )
+
+func init() {
+	resource.AddTestSweepers("harness_git_connector", &resource.Sweeper{
+		Name: "harness_git_connector",
+		F:    testSweepGitConnectors,
+	})
+}
+
+func testSweepGitConnectors(r string) error {
+	c := testAccGetApiClientFromProvider()
+
+	limit := 100
+	offset := 0
+	hasMore := true
+
+	for hasMore {
+
+		connectors, pagination, err := c.Connectors().ListGitConnectors(limit, offset)
+		if err != nil {
+			return err
+		}
+
+		for _, conn := range connectors {
+			if strings.HasPrefix(conn.Name, "test_") {
+				if err = c.Connectors().DeleteConnector(conn.Id); err != nil {
+					return err
+				}
+			}
+		}
+
+		hasMore = pagination.HasMore
+		offset += 1
+	}
+
+	return nil
+}
 
 func TestAccResourceGitConnector(t *testing.T) {
 

@@ -1,4 +1,7 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
+SWEEP_DIR?=./internal/provider
+SWEEP?=all
+SWEEP_ARGS?=
 HOSTNAME=hashicorp.com
 NAMESPACE=micahlmartin
 NAME=harness
@@ -23,3 +26,7 @@ test:
 # test: 
 # 	go test $(TEST) || exit 1                                                   
 # 	echo $(TEST) | xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4    
+
+sweep:
+	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
+	go test $(SWEEP_DIR) -v -sweep=$(SWEEP) $(SWEEPARGS) -timeout 60m

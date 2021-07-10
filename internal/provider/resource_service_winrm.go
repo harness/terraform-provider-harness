@@ -37,7 +37,7 @@ func resourceWinRMServiceRead(ctx context.Context, d *schema.ResourceData, meta 
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	svc, err := c.Services().GetServiceById(appId, svcId)
+	svc, err := c.ConfigAsCode().GetServiceById(appId, svcId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -45,6 +45,10 @@ func resourceWinRMServiceRead(ctx context.Context, d *schema.ResourceData, meta 
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("description", svc.Description)
+
+	if vars := flattenServiceVariables(svc.ConfigVariables); len(vars) > 0 {
+		d.Set("variable", vars)
+	}
 
 	return nil
 }
@@ -55,14 +59,18 @@ func resourceWinRMServiceCreate(ctx context.Context, d *schema.ResourceData, met
 	// Setup the object to be created
 	svcInput := &cac.Service{
 		Name:           d.Get("name").(string),
-		ArtifactType:   d.Get("artifact_type").(string),
+		ArtifactType:   cac.ArtifactType(d.Get("artifact_type").(string)),
 		DeploymentType: cac.DeploymentTypes.WinRM,
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}
 
+	if vars := d.Get("variable"); vars != nil {
+		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+	}
+
 	// Create Service
-	newSvc, err := c.Services().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -86,14 +94,18 @@ func resourceWinRMServiceUpdate(ctx context.Context, d *schema.ResourceData, met
 	// Setup the object to create
 	svcInput := &cac.Service{
 		Name:           d.Get("name").(string),
-		ArtifactType:   d.Get("artifact_type").(string),
+		ArtifactType:   cac.ArtifactType(d.Get("artifact_type").(string)),
 		DeploymentType: cac.DeploymentTypes.WinRM,
 		ApplicationId:  d.Get("app_id").(string),
 		Description:    d.Get("description").(string),
 	}
 
+	if vars := d.Get("variable"); vars != nil {
+		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+	}
+
 	// Create Service
-	newSvc, err := c.Services().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}
