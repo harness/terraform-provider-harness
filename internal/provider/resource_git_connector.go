@@ -182,7 +182,7 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 	connInput.GenerateWebhookUrl = d.Get("generate_webhook_url").(bool)
 	connInput.PasswordSecretId = d.Get("password_secret_id").(string)
 	connInput.SSHSettingId = d.Get("ssh_setting_id").(string)
-	connInput.UrlType = d.Get("url_type").(string)
+	connInput.UrlType = graphql.GitUrlType(d.Get("url_type").(string))
 	connInput.DelegateSelectors = expandDelegateSelectors(d.Get("delegate_selectors").([]interface{}))
 	connInput.CustomCommitDetails = expandCommitDetails(d.Get("commit_details").(*schema.Set).List())
 
@@ -289,26 +289,6 @@ func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, met
 
 // 	return nil
 // }
-
-func expandDelegateSelectors(ds []interface{}) []string {
-	selectors := make([]string, 0)
-
-	for _, v := range ds {
-		selectors = append(selectors, v.(string))
-	}
-
-	return selectors
-}
-
-func flattenDelgateSelectors(ds []string) []interface{} {
-	selectors := make([]interface{}, 0)
-
-	for _, v := range ds {
-		selectors = append(selectors, v)
-	}
-
-	return selectors
-}
 
 func flattenCommitDetails(details *graphql.CustomCommitDetails) []interface{} {
 

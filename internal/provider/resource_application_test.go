@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
@@ -10,6 +11,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )
+
+func init() {
+	resource.AddTestSweepers("harness_application", &resource.Sweeper{
+		Name: "harness_application",
+		F:    testSweepApplications,
+	})
+}
 
 func TestAccResourceApplication(t *testing.T) {
 
@@ -79,4 +87,34 @@ func testAccResourceApplication(name string) string {
 			description = "my description"
 		}
 `, name)
+}
+
+func testSweepApplications(r string) error {
+	c := testAccGetApiClientFromProvider()
+
+	limit := 100
+	offset := 0
+	hasMore := true
+
+	for hasMore {
+
+		apps, pagination, err := c.Applications().ListApplications(limit, offset)
+		if err != nil {
+			return err
+		}
+
+		for _, app := range apps {
+			// Only delete applications that start with 'Test'
+			if strings.HasPrefix(app.Name, "Test") {
+				if err = c.Applications().DeleteApplication(app.Id); err != nil {
+					return err
+				}
+			}
+		}
+
+		hasMore = pagination.HasMore
+		offset += 1
+	}
+
+	return nil
 }

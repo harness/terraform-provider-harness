@@ -14,14 +14,14 @@ func testAccGetService(resourceName string, state *terraform.State) (*cac.Servic
 	svcId := r.Primary.ID
 	appId := r.Primary.Attributes["app_id"]
 
-	return c.Services().GetServiceById(appId, svcId)
+	return c.ConfigAsCode().GetServiceById(appId, svcId)
 }
 
 func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		conn, _ := testAccGetService(resourceName, state)
 		if conn != nil {
-			return fmt.Errorf("Found git connector: %s", conn.Id)
+			return fmt.Errorf("Found service: %s", conn.Id)
 		}
 
 		return nil

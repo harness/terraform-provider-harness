@@ -27,7 +27,7 @@ func resourceECSServiceRead(ctx context.Context, d *schema.ResourceData, meta in
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	svc, err := c.Services().GetServiceById(appId, svcId)
+	svc, err := c.ConfigAsCode().GetServiceById(appId, svcId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -35,6 +35,10 @@ func resourceECSServiceRead(ctx context.Context, d *schema.ResourceData, meta in
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("description", svc.Description)
+
+	if vars := flattenServiceVariables(svc.ConfigVariables); len(vars) > 0 {
+		d.Set("variable", vars)
+	}
 
 	return nil
 }
@@ -51,8 +55,12 @@ func resourceECSServiceCreate(ctx context.Context, d *schema.ResourceData, meta 
 		Description:    d.Get("description").(string),
 	}
 
+	if vars := d.Get("variable"); vars != nil {
+		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+	}
+
 	// Create Service
-	newSvc, err := c.Services().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -78,8 +86,12 @@ func resourceECSServiceUpdate(ctx context.Context, d *schema.ResourceData, meta 
 		Description:    d.Get("description").(string),
 	}
 
+	if vars := d.Get("variable"); vars != nil {
+		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+	}
+
 	// Create Service
-	newSvc, err := c.Services().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}

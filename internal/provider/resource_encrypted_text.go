@@ -41,9 +41,9 @@ func resourceEncryptedText() *schema.Resource {
 				Default:     false,
 			},
 			"secret_manager_id": {
-				Description: "The id of the secret manager to associate the secret with",
+				Description: "The id of the secret manager to associate the secret with. Once set, this field cannot be changed.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"value": {
 				Description: "The value of the secret",
@@ -101,7 +101,6 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	d.SetId(secret.Id)
-	d.Set("secret_manager_id", secret.SecretManagerId)
 
 	return nil
 }
@@ -141,13 +140,13 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	// c := meta.(*api.Client)
 
-	err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
+	// err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
 
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
 
 	return nil
 }

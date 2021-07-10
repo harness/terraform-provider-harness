@@ -1,5 +1,6 @@
 *.dll
 *.exe
+.env
 .DS_Store
 example.tf
 terraform.tfplan
@@ -25,7 +26,6 @@ website/node_modules
 *.iml
 *.test
 *.iml
-.envrc
 .vscode
 *debug*
 website/vendor
