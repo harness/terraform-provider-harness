@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
-	"github.com/harness-io/harness-go-sdk/harness/httphelpers"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,9 +25,9 @@ func TestNewGraphQLRequest(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, fmt.Sprintf("accountId=%s", client.AccountId), req.URL.RawQuery)
 	require.Equal(t, client.Endpoint, fmt.Sprintf("%s://%s", req.URL.Scheme, req.Host))
-	require.Equal(t, client.APIKey, req.Header.Get(httphelpers.HeaderApiKey))
-	require.Equal(t, httphelpers.HeaderApplicationJson, req.Header.Get(httphelpers.HeaderContentType))
-	require.Equal(t, httphelpers.HeaderApplicationJson, req.Header.Get(httphelpers.HeaderAccept))
+	require.Equal(t, client.APIKey, req.Header.Get(helpers.HTTPHeaders.ApiKey.String()))
+	require.Equal(t, helpers.HTTPHeaders.ApplicationJson.String(), req.Header.Get(helpers.HTTPHeaders.ContentType.String()))
+	require.Equal(t, helpers.HTTPHeaders.ApplicationJson.String(), req.Header.Get(helpers.HTTPHeaders.Accept.String()))
 }
 
 func TestExecuteGraphQLQuery(t *testing.T) {

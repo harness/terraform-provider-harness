@@ -3,6 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 )
 
 type CloudProviderClient struct {
@@ -131,6 +133,34 @@ func (c *CloudProviderClient) updateCloudProvider(input interface{}, fields stri
 	}
 
 	return nil
+}
+
+func (ac *CloudProviderClient) ListCloudProviders(limit int, offset int) ([]*graphql.CloudProvider, *graphql.PageInfo, error) {
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`query {
+			cloudProviders(limit: %[3]d, offset: %[4]d) {
+				nodes {
+					%[1]s
+				}
+				%[2]s
+			}
+		}`, commonCloudProviderFields, paginationFields, limit, offset),
+	}
+
+	res := struct {
+		CloudProviders struct {
+			Nodes    []*graphql.CloudProvider
+			PageInfo *graphql.PageInfo
+		}
+	}{}
+
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return res.CloudProviders.Nodes, res.CloudProviders.PageInfo, nil
 }
 
 func (c *CloudProviderClient) getCloudProviderByName(name string, fields string, respObj interface{}) error {

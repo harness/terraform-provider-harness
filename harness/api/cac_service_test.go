@@ -71,7 +71,7 @@ func TestGetService(t *testing.T) {
 
 	// Find service by id
 	svcLookup := &cac.Service{}
-	err = c.ConfigAsCode().FindObject(app.Id, cac.GetServiceYamlPath(app.Name, serviceName), svcLookup)
+	err = c.ConfigAsCode().FindObjectByPath(app.Id, cac.GetServiceYamlPath(app.Name, serviceName), svcLookup)
 	require.NoError(t, err)
 	require.NotNil(t, svcLookup)
 	require.Equal(t, cac.ArtifactTypes.Docker, svcLookup.ArtifactType)
@@ -162,7 +162,7 @@ func TestDeleteService(t *testing.T) {
 	svcYamlPath := cac.GetServiceYamlPath(app.Name, svc.Name)
 
 	svcLookup := &cac.Service{}
-	err = c.ConfigAsCode().FindObject(app.Id, svcYamlPath, svcLookup)
+	err = c.ConfigAsCode().FindObjectByPath(app.Id, svcYamlPath, svcLookup)
 	require.NoError(t, err)
 	require.NotNil(t, svcLookup)
 
@@ -170,7 +170,7 @@ func TestDeleteService(t *testing.T) {
 	require.NoError(t, err)
 
 	svcLookup = &cac.Service{}
-	err = c.ConfigAsCode().FindObject(app.Id, cac.GetServiceYamlPath(app.Name, svc.Name), svcLookup)
+	err = c.ConfigAsCode().FindObjectByPath(app.Id, cac.GetServiceYamlPath(app.Name, svc.Name), svcLookup)
 	require.Error(t, err, "received http status code '403'")
 }
 

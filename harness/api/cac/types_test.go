@@ -8,19 +8,44 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func TestEnvironmentSerialization(t *testing.T) {
+	testObj := NewEntity(ObjectTypes.Environment).(*Environment)
+	testObj.EnvironmentType = EnvironmentTypes.Prod
+	testObj.VariableOverrides = []*VariableOverride{{
+		ServiceName: "servicename",
+		Value:       "gcpkms:secret_name",
+		ValueType:   VariableOverrideValueTypes.EncryptedText,
+	}}
+
+	expectedObjYaml := `
+harnessApiVersion: "1.0"
+type: ENVIRONMENT
+environmentType: PROD
+variableOverrides:
+  - serviceName: servicename
+    value: gcpkms:secret_name
+    valueType: ENCRYPTED_TEXT
+`
+
+	expectedObj := &Environment{}
+	err := yaml.Unmarshal([]byte(expectedObjYaml), expectedObj)
+	require.NoError(t, err)
+	require.Equal(t, expectedObj, testObj)
+}
+
 func TestSpotInstCloudProviderSerialization(t *testing.T) {
 	testObj := NewEntity(ObjectTypes.SpotInstCloudProvider).(*SpotInstCloudProvider)
 	testObj.AccountId = "accountId"
 	testObj.Token = &SecretRef{
 		SecretManagerType: SecretManagerTypes.GcpKMS,
-		SecretId:          "secretId",
+		Name:              "secret_name",
 	}
 
 	expectedObjYaml := `
 harnessApiVersion: "1.0"
 type: SPOT_INST
 spotInstAccountId: accountId
-spotInstToken: gcpkms:secretId
+spotInstToken: gcpkms:secret_name
 `
 
 	expectedObj := &SpotInstCloudProvider{}
@@ -32,29 +57,37 @@ spotInstToken: gcpkms:secretId
 func TestKubernetesCLoudProviderSerialization(t *testing.T) {
 	testObj := NewEntity(ObjectTypes.KubernetesCloudProvider).(*KubernetesCloudProvider)
 	testObj.AuthType = KubernetesAuthTypes.UsernameAndPassword
-	testObj.CACert = "cert"
-	testObj.ClientCert = "clientCert"
-	testObj.ClientKey = "clientKey"
+	testObj.CACert = &SecretRef{
+		Name: "cert",
+	}
+	testObj.ClientCert = &SecretRef{
+		Name: "clientCert",
+	}
+	testObj.ClientKey = &SecretRef{
+		Name: "clientKey",
+	}
 	testObj.ClientKeyAlgorithm = "algorithm"
-	testObj.ClientKeyPassPhrase = "passphrase"
+	testObj.ClientKeyPassPhrase = &SecretRef{
+		Name: "passphrase",
+	}
 	testObj.ContinuousEfficiencyConfig = &ContinuousEfficiencyConfig{
 		ContinuousEfficiencyEnabled: true,
 	}
 	testObj.MasterUrl = "masterurl"
 	testObj.OIDCClientId = &SecretRef{
 		SecretManagerType: SecretManagerTypes.GcpKMS,
-		SecretId:          "secretId",
+		Name:              "secret_name",
 	}
 	testObj.OIDCIdentityProviderUrl = "providerUrl"
 	testObj.OIDCPassword = &SecretRef{
 		SecretManagerType: SecretManagerTypes.GcpKMS,
-		SecretId:          "secretId",
+		Name:              "secret_name",
 	}
 	testObj.OIDCScopes = "scope1 scope2"
 	testObj.OIDCUsername = "username"
 	testObj.ServiceAccountToken = &SecretRef{
 		SecretManagerType: SecretManagerTypes.GcpKMS,
-		SecretId:          "token",
+		Name:              "token",
 	}
 	testObj.SkipValidation = true
 	testObj.UseEncryptedUsername = true
@@ -81,9 +114,9 @@ serviceAccountToken: gcpkms:token
 skipValidation: true
 useKubernetesDelegate: true
 useEncryptedUsername: true
-oidcClientId: gcpkms:secretId
+oidcClientId: gcpkms:secret_name
 oidcIdentityProviderUrl: providerUrl
-oidcPassword: gcpkms:secretId
+oidcPassword: gcpkms:secret_name
 oidcScopes: scope1 scope2
 oidcUsername: username
 `
@@ -104,7 +137,7 @@ func TestAwsCloudProviderSerialization(t *testing.T) {
 	}
 	testObj.SecretKey = &SecretRef{
 		SecretManagerType: SecretManagerTypes.GcpKMS,
-		SecretId:          "secretId",
+		Name:              "secret_name",
 	}
 	testObj.UseEc2IamCredentials = true
 	testObj.UseIRSA = true
@@ -115,7 +148,7 @@ harnessApiVersion: "1.0"
 type: AWS
 accessKey: accessKey
 assumeCrossAccountRole: true
-secretKey: gcpkms:secretId
+secretKey: gcpkms:secret_name
 useEc2IamCredentials: true
 useIRSA: true
 tag: selector
@@ -135,7 +168,7 @@ func TestAzureCloudProviderSerialization(t *testing.T) {
 	testObj.ClientId = "clientId"
 	testObj.Key = &SecretRef{
 		SecretManagerType: SecretManagerTypes.GcpKMS,
-		SecretId:          "secretId",
+		Name:              "secret_name",
 	}
 	testObj.TenantId = "tenantId"
 	testObj.AzureEnvironmentType = AzureEnvironmentTypes.AzureGlobal
@@ -146,7 +179,7 @@ harnessApiVersion: "1.0"
 type: AZURE
 azureEnvironmentType: AZURE
 clientId: clientId
-key: gcpkms:secretId
+key: gcpkms:secret_name
 tenantId: tenantId
 `
 
@@ -161,7 +194,7 @@ func TestPcfCloudProviderSerialization(t *testing.T) {
 	testObj.EndpointUrl = "http://endpoint.com"
 	testObj.Password = &SecretRef{
 		SecretManagerType: SecretManagerTypes.AwsKMS,
-		SecretId:          "secretId",
+		Name:              "secret_name",
 	}
 	testObj.SkipValidation = true
 	testObj.Username = "username"
@@ -170,7 +203,7 @@ func TestPcfCloudProviderSerialization(t *testing.T) {
 harnessApiVersion: "1.0"
 type: PCF
 endpointUrl: http://endpoint.com
-password: amazonkms:secretId
+password: amazonkms:secret_name
 skipValidation: true
 username: username
 `
@@ -202,7 +235,7 @@ func TestGcpCloudProviderSerialization(t *testing.T) {
 		SkipValidation:    true,
 		ServiceAccountKeyFileContent: &SecretRef{
 			SecretManagerType: SecretManagerTypes.AwsKMS,
-			SecretId:          "abc123",
+			Name:              "abc123",
 		},
 		UsageRestrictions: &UsageRestrictions{
 			AppEnvRestrictions: []*AppEnvRestriction{
@@ -269,7 +302,7 @@ func TestSecretRefMarshalYaml(t *testing.T) {
 	testStruct := &TestSecretRefMarshal{
 		SecretKeyId: &SecretRef{
 			SecretManagerType: SecretManagerTypes.AwsKMS,
-			SecretId:          "abc123",
+			Name:              "abc123",
 		},
 	}
 
@@ -282,6 +315,6 @@ func TestSecretRefMarshalYaml(t *testing.T) {
 	err = yaml.Unmarshal(bytes, newStruct)
 	require.NoError(t, err)
 	require.Equal(t, testStruct.SecretKeyId.SecretManagerType, newStruct.SecretKeyId.SecretManagerType)
-	require.Equal(t, testStruct.SecretKeyId.SecretId, newStruct.SecretKeyId.SecretId)
+	require.Equal(t, testStruct.SecretKeyId.Name, newStruct.SecretKeyId.Name)
 
 }

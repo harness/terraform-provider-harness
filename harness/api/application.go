@@ -146,6 +146,34 @@ func (ac *ApplicationClient) UpdateApplication(input *graphql.UpdateApplicationI
 	return res.UpdateApplication.Application, nil
 }
 
+func (ac *ApplicationClient) ListApplications(limit int, offset int) ([]*graphql.Application, *graphql.PageInfo, error) {
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`query {
+			applications(limit: %[3]d, offset: %[4]d) {
+				nodes {
+					%[1]s
+				}
+				%[2]s
+			}
+		}`, standardApplicationFields, paginationFields, limit, offset),
+	}
+
+	res := struct {
+		Applications struct {
+			Nodes    []*graphql.Application
+			PageInfo *graphql.PageInfo
+		}
+	}{}
+
+	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return res.Applications.Nodes, res.Applications.PageInfo, nil
+}
+
 const (
 	standardApplicationFields = `
 	id

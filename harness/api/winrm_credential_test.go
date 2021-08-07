@@ -24,3 +24,10 @@ func TestGetWinRMCredentialByName(t *testing.T) {
 	require.Equal(t, expectedName, s.Name)
 	require.Equal(t, graphql.WinRMAuthenticationSchemes.NTLM, s.AuthenticationScheme)
 }
+
+// func TestListWinrmCredentials(t *testing.T) {
+// 	client := getClient()
+// 	creds, err := client.Secrets().ListWinRMCredentials()
+// 	require.NoError(t, err)
+// 	require.NotEmpty(t, creds)
+// }

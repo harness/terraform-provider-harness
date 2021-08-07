@@ -26,3 +26,17 @@ func TestGetSecretManagerByName_NoManagerFound(t *testing.T) {
 	require.Error(t, err)
 	require.Nil(t, sm)
 }
+
+func TestListSecretManagers(t *testing.T) {
+	client := getClient()
+	managers, err := client.Secrets().ListSecretManagers()
+	require.NoError(t, err)
+	require.NotEmpty(t, managers)
+}
+
+func TestGetDefaultSecretManager(t *testing.T) {
+	client := getClient()
+	smId, err := client.Secrets().GetDefaultSecretManagerId()
+	require.NoError(t, err)
+	require.NotEmpty(t, smId)
+}

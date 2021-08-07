@@ -2,6 +2,10 @@ package graphql
 
 type SSHAuthenticationType string
 
+func (s SSHAuthenticationType) String() string {
+	return string(s)
+}
+
 var SSHAuthenticationTypes = &struct {
 	SSHAuthentication      SSHAuthenticationType
 	KerberosAuthentication SSHAuthenticationType
@@ -12,6 +16,10 @@ var SSHAuthenticationTypes = &struct {
 
 type WinRMAuthenticationScheme string
 
+func (s WinRMAuthenticationScheme) String() string {
+	return string(s)
+}
+
 var WinRMAuthenticationSchemes = &struct {
 	NTLM WinRMAuthenticationScheme
 }{
@@ -19,6 +27,10 @@ var WinRMAuthenticationSchemes = &struct {
 }
 
 type SecretType string
+
+func (s SecretType) String() string {
+	return string(s)
+}
 
 var SecretTypes = struct {
 	EncryptedFile   SecretType
@@ -34,6 +46,10 @@ var SecretTypes = struct {
 
 type SSHCredentialType string
 
+func (s SSHCredentialType) String() string {
+	return string(s)
+}
+
 var SSHCredentialTypes = &struct {
 	Password       SSHCredentialType
 	SSHKey         SSHCredentialType
@@ -46,6 +62,10 @@ var SSHCredentialTypes = &struct {
 
 type TGTGenerationUsingOption string
 
+func (s TGTGenerationUsingOption) String() string {
+	return string(s)
+}
+
 var TGTGenerationUsingOptions = &struct {
 	KeyTabFile TGTGenerationUsingOption
 	Password   TGTGenerationUsingOption
@@ -55,6 +75,10 @@ var TGTGenerationUsingOptions = &struct {
 }
 
 type EnvironmentFilterType string
+
+func (s EnvironmentFilterType) String() string {
+	return string(s)
+}
 
 var EnvironmentFilterTypes = &struct {
 	NonProduction EnvironmentFilterType
@@ -66,6 +90,10 @@ var EnvironmentFilterTypes = &struct {
 
 type ApplicationFilterType string
 
+func (s ApplicationFilterType) String() string {
+	return string(s)
+}
+
 var ApplicationFilterTypes = &struct {
 	All ApplicationFilterType
 }{
@@ -73,6 +101,10 @@ var ApplicationFilterTypes = &struct {
 }
 
 type SSHAuthenticationScheme string
+
+func (s SSHAuthenticationScheme) String() string {
+	return string(s)
+}
 
 var SSHAuthenticationSchemes = &struct {
 	Kerberos SSHAuthenticationScheme
@@ -83,6 +115,10 @@ var SSHAuthenticationSchemes = &struct {
 }
 
 type ConnectorType string
+
+func (s ConnectorType) String() string {
+	return string(s)
+}
 
 var ConnectorTypes = &struct {
 	AmazonS3         ConnectorType
@@ -152,6 +188,10 @@ var ConnectorTypes = &struct {
 
 type NexusVersion string
 
+func (s NexusVersion) String() string {
+	return string(s)
+}
+
 var NexusVersions = &struct {
 	V2 NexusVersion
 	v3 NexusVersion
@@ -161,6 +201,10 @@ var NexusVersions = &struct {
 }
 
 type GitUrlType string
+
+func (s GitUrlType) String() string {
+	return string(s)
+}
 
 var GitUrlTypes = &struct {
 	Account GitUrlType
@@ -172,6 +216,10 @@ var GitUrlTypes = &struct {
 
 type AwsCredentialsType string
 
+func (s AwsCredentialsType) String() string {
+	return string(s)
+}
+
 var AwsCredentialsTypes = struct {
 	Ec2Iam AwsCredentialsType
 	Manual AwsCredentialsType
@@ -182,6 +230,10 @@ var AwsCredentialsTypes = struct {
 
 type ClusterDetailsType string
 
+func (s ClusterDetailsType) String() string {
+	return string(s)
+}
+
 var ClusterDetailsTypes = struct {
 	InheritClusterDetails ClusterDetailsType
 	ManualClusterDetails  ClusterDetailsType
@@ -191,6 +243,10 @@ var ClusterDetailsTypes = struct {
 }
 
 type ManualClusterDetailsAuthenticationType string
+
+func (s ManualClusterDetailsAuthenticationType) String() string {
+	return string(s)
+}
 
 var ManualClusterDetailsAuthenticationTypes = struct {
 	ClientKeyAndCertificate ManualClusterDetailsAuthenticationType
@@ -207,6 +263,10 @@ var ManualClusterDetailsAuthenticationTypes = struct {
 }
 
 type CloudProviderType string
+
+func (s CloudProviderType) String() string {
+	return string(s)
+}
 
 var CloudProviderTypes = struct {
 	Aws                CloudProviderType

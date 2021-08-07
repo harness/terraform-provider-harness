@@ -1,9 +1,13 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/api/unpublished"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 )
 
 func (c *SecretClient) CreateSSHCredential(sshInput *graphql.SSHCredential) (*graphql.SSHCredential, error) {
@@ -134,6 +138,49 @@ func (c *SecretClient) GetSSHCredentialByName(name string) (*graphql.SSHCredenti
 	}
 
 	return &res.SecretByName, nil
+}
+
+func (c *SecretClient) ListSSHCredentials() ([]*unpublished.Credential, error) {
+	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-values")
+	if err != nil {
+		return nil, err
+	}
+
+	query := req.URL.Query()
+	query.Add(helpers.QueryParameters.AccountId.String(), c.APIClient.AccountId)
+	req.URL.RawQuery = query.Encode()
+
+	log.Printf("[DEBUG] url: %s", req.URL)
+
+	resp, err := c.APIClient.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	responsePackage := &unpublished.Package{}
+	err = json.NewDecoder(resp.Body).Decode(responsePackage)
+
+	if err != nil {
+		return nil, err
+	}
+
+	credentials := []*unpublished.Credential{}
+	err = json.Unmarshal(*responsePackage.Resource, &credentials)
+	if err != nil {
+		return nil, err
+	}
+
+	sshCreds := []*unpublished.Credential{}
+	for _, cred := range credentials {
+
+		if cred.Value.Type == "HOST_CONNECTION_ATTRIBUTES" {
+			sshCreds = append(sshCreds, cred)
+		}
+	}
+
+	return sshCreds, nil
 }
 
 // Determines which SSH authentication type is used

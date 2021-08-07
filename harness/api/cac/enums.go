@@ -2,6 +2,10 @@ package cac
 
 type HarnessApiVersion string
 
+func (v HarnessApiVersion) String() string {
+	return string(v)
+}
+
 var HarnessApiVersions = &struct {
 	V1 HarnessApiVersion
 }{
@@ -10,10 +14,15 @@ var HarnessApiVersions = &struct {
 
 type ObjectType string
 
+func (v ObjectType) String() string {
+	return string(v)
+}
+
 var ObjectTypes = &struct {
 	Application                     ObjectType
 	AwsCloudProvider                ObjectType
 	AzureCloudProvider              ObjectType
+	Environment                     ObjectType
 	GcpCloudProvider                ObjectType
 	KubernetesCloudProvider         ObjectType
 	PcfCloudProvider                ObjectType
@@ -24,6 +33,7 @@ var ObjectTypes = &struct {
 	Application:                     "APPLICATION",
 	AwsCloudProvider:                "AWS",
 	AzureCloudProvider:              "AZURE",
+	Environment:                     "ENVIRONMENT",
 	GcpCloudProvider:                "GCP",
 	KubernetesCloudProvider:         "KUBERNETES_CLUSTER",
 	PcfCloudProvider:                "PCF",
@@ -34,6 +44,10 @@ var ObjectTypes = &struct {
 
 type AzureEnvironmentType string
 
+func (v AzureEnvironmentType) String() string {
+	return string(v)
+}
+
 var AzureEnvironmentTypes = struct {
 	AzureGlobal  AzureEnvironmentType
 	USGovernment AzureEnvironmentType
@@ -42,7 +56,16 @@ var AzureEnvironmentTypes = struct {
 	USGovernment: "AZURE_US_GOVERNMENT",
 }
 
+var AzureEnvironmentTypesSlice = []string{
+	AzureEnvironmentTypes.AzureGlobal.String(),
+	AzureEnvironmentTypes.USGovernment.String(),
+}
+
 type HelmVersion string
+
+func (v HelmVersion) String() string {
+	return string(v)
+}
 
 var HelmVersions = &struct {
 	V2 HelmVersion
@@ -53,6 +76,10 @@ var HelmVersions = &struct {
 }
 
 type DeploymentType string
+
+func (v DeploymentType) String() string {
+	return string(v)
+}
 
 var DeploymentTypes = &struct {
 	AMI           DeploymentType
@@ -92,17 +119,27 @@ var DeploymenTypesSlice = &[]DeploymentType{
 
 type KubernetesAuthType string
 
+func (v KubernetesAuthType) String() string {
+	return string(v)
+}
+
 var KubernetesAuthTypes = struct {
 	ServiceAccount      KubernetesAuthType
 	UsernameAndPassword KubernetesAuthType
 	Custom              KubernetesAuthType
+	OIDC                KubernetesAuthType
 }{
 	ServiceAccount:      "SERVICE_ACCOUNT",
 	UsernameAndPassword: "USER_PASSWORD",
 	Custom:              "NONE",
+	OIDC:                "OIDC",
 }
 
 type ArtifactType string
+
+func (v ArtifactType) String() string {
+	return string(v)
+}
 
 var ArtifactTypes = &struct {
 	AMI                 ArtifactType
@@ -136,24 +173,28 @@ var ArtifactTypes = &struct {
 	Zip:                 "ZIP",
 }
 
-var SSHArtifactTypes []ArtifactType = []ArtifactType{
-	ArtifactTypes.Docker,
-	ArtifactTypes.Jar,
-	ArtifactTypes.Other,
-	ArtifactTypes.Tar,
-	ArtifactTypes.War,
-	ArtifactTypes.Zip,
+var SSHArtifactTypes = []string{
+	string(ArtifactTypes.Docker),
+	string(ArtifactTypes.Jar),
+	string(ArtifactTypes.Other),
+	string(ArtifactTypes.Tar),
+	string(ArtifactTypes.War),
+	string(ArtifactTypes.Zip),
 }
 
-var WinRMArtifactTypesSlice []ArtifactType = []ArtifactType{
-	ArtifactTypes.Docker,
-	ArtifactTypes.IISApp,
-	ArtifactTypes.IISVirtualDirectory,
-	ArtifactTypes.IISWebsite,
-	ArtifactTypes.Other,
+var WinRMArtifactTypesSlice = []string{
+	string(ArtifactTypes.Docker),
+	string(ArtifactTypes.IISApp),
+	string(ArtifactTypes.IISVirtualDirectory),
+	string(ArtifactTypes.IISWebsite),
+	string(ArtifactTypes.Other),
 }
 
 type ClassType string
+
+func (v ClassType) String() string {
+	return string(v)
+}
 
 var ClassTypes = &struct {
 	Account                   ClassType
@@ -189,6 +230,10 @@ var ClassTypes = &struct {
 
 type ApplicationFilterType string
 
+func (v ApplicationFilterType) String() string {
+	return string(v)
+}
+
 var ApplicationFilterTypes = &struct {
 	All      ApplicationFilterType
 	Selected ApplicationFilterType
@@ -198,6 +243,10 @@ var ApplicationFilterTypes = &struct {
 }
 
 type EnvironmentFilterType string
+
+func (v EnvironmentFilterType) String() string {
+	return string(v)
+}
 
 var EnvironmentFilterTypes = &struct {
 	Prod     EnvironmentFilterType
@@ -210,6 +259,10 @@ var EnvironmentFilterTypes = &struct {
 }
 
 type SecretManagerType string
+
+func (v SecretManagerType) String() string {
+	return string(v)
+}
 
 var SecretManagerTypes = &struct {
 	GcpKMS            SecretManagerType
@@ -225,4 +278,50 @@ var SecretManagerTypes = &struct {
 	AzureKeyVault:     "azurekeyvault",
 	CyberArk:          "cyberark",
 	HashicorpVault:    "hashicorpvault",
+}
+
+type EnvironmentType string
+
+func (v EnvironmentType) String() string {
+	return string(v)
+}
+
+var EnvironmentTypes = struct {
+	NonProd EnvironmentType
+	Prod    EnvironmentType
+}{
+	NonProd: "NON_PROD",
+	Prod:    "PROD",
+}
+
+type VariableValueType string
+
+func (v VariableValueType) String() string {
+	return string(v)
+}
+
+var VariableOverrideValueTypes = struct {
+	EncryptedText VariableValueType
+	Text          VariableValueType
+}{
+	EncryptedText: "ENCRYPTED_TEXT",
+	Text:          "TEXT",
+}
+
+type RestName string
+
+func (v RestName) String() string {
+	return string(v)
+}
+
+var RestNames = struct {
+	Settings RestName
+	Services RestName
+	Tags     RestName
+	Folders  RestName
+}{
+	Settings: "settings",
+	Services: "services",
+	Tags:     "tags",
+	Folders:  "folders",
 }

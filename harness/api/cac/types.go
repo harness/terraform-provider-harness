@@ -11,8 +11,8 @@ type Validation interface {
 type Application struct {
 	HarnessApiVersion HarnessApiVersion `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Type              ObjectType        `yaml:"type" json:"type"`
-	Id                string            `json:"-"`
-	Name              string            `json:"-"`
+	Id                string            `yaml:"-"`
+	Name              string            `yaml:"-"`
 }
 type Tag struct {
 	Name  string `yaml:"name,omitempty"`
@@ -58,17 +58,24 @@ type ResponseMessage struct {
 }
 
 type Service struct {
-	HarnessApiVersion         HarnessApiVersion `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Type                      ObjectType        `yaml:"type" json:"type"`
-	ArtifactType              ArtifactType      `yaml:"artifactType,omitempty"`
-	DeploymentType            DeploymentType    `yaml:"deploymentType,omitempty"`
-	Description               string            `yaml:"description,omitempty"`
-	Id                        string            `yaml:"-"`
-	Name                      string            `yaml:"-"`
-	Tags                      map[string]string `yaml:"tags,omitempty"`
-	HelmVersion               HelmVersion       `yaml:"helmVersion,omitempty"`
-	ApplicationId             string            `yaml:"-"`
-	DeploymentTypeTemplateUri string            `yaml:"deploymentTypeTemplateUri,omitempty"`
+	HarnessApiVersion         HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type                      ObjectType         `yaml:"type" json:"type"`
+	Id                        string             `yaml:"-"`
+	Name                      string             `yaml:"-"`
+	ArtifactType              ArtifactType       `yaml:"artifactType,omitempty"`
+	DeploymentType            DeploymentType     `yaml:"deploymentType,omitempty"`
+	Description               string             `yaml:"description,omitempty"`
+	Tags                      map[string]string  `yaml:"tags,omitempty"`
+	HelmVersion               HelmVersion        `yaml:"helmVersion,omitempty"`
+	ApplicationId             string             `yaml:"-"`
+	DeploymentTypeTemplateUri string             `yaml:"deploymentTypeTemplateUri,omitempty"`
+	ConfigVariables           []*ServiceVariable `yaml:"configVariables,omitempty"`
+}
+
+type ServiceVariable struct {
+	Name      string            `yaml:"name,omitempty"`
+	Value     string            `yaml:"value,omitempty"`
+	ValueType VariableValueType `yaml:"valueType,omitempty"`
 }
 
 type AwsCloudProvider struct {
@@ -101,21 +108,21 @@ type PcfCloudProvider struct {
 	Password          *SecretRef         `yaml:"password,omitempty"`
 	SkipValidation    bool               `yaml:"skipValidation,omitempty"`
 	Username          string             `yaml:"username,omitempty"`
-	UsernameSecretId  string             `yaml:"usernam	eSecretId,omitempty"`
+	UsernameSecretId  *SecretRef         `yaml:"usernameSecretId,omitempty"`
 	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
 }
 
 type PhysicalDatacenterCloudProvider struct {
 	HarnessApiVersion HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Type              ObjectType         `yaml:"type" json:"type"`
-	Name              string             `json:"-"`
-	Id                string             `json:"-"`
+	Name              string             `yaml:"-"`
+	Id                string             `yaml:"-"`
 	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
 }
 
 type AzureCloudProvider struct {
 	HarnessApiVersion    HarnessApiVersion    `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Id                   string               `yaml:"id,omitempty"`
+	Id                   string               `yaml:"-"`
 	Name                 string               `yaml:"-"`
 	Type                 ObjectType           `yaml:"type,omitempty"`
 	AzureEnvironmentType AzureEnvironmentType `yaml:"azureEnvironmentType,omitempty"`
@@ -127,9 +134,10 @@ type AzureCloudProvider struct {
 
 type GcpCloudProvider struct {
 	HarnessApiVersion            HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Id                           string             `yaml:"id,omitempty"`
+	Id                           string             `yaml:"-"`
 	Name                         string             `yaml:"-"`
 	Type                         ObjectType         `yaml:"type,omitempty"`
+	CertValidationRequired       bool               `yaml:"certValidationRequired,omitempty"`
 	DelegateSelectors            []string           `yaml:"delegateSelectors,omitempty"`
 	SkipValidation               bool               `yaml:"skipValidation,omitempty"`
 	ServiceAccountKeyFileContent *SecretRef         `yaml:"serviceAccountKeyFileContent,omitempty"`
@@ -140,15 +148,15 @@ type GcpCloudProvider struct {
 
 type KubernetesCloudProvider struct {
 	HarnessApiVersion          HarnessApiVersion           `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Id                         string                      `yaml:"id,omitempty"`
+	Id                         string                      `yaml:"-"`
 	Name                       string                      `yaml:"-"`
 	Type                       ObjectType                  `yaml:"type,omitempty"`
 	AuthType                   KubernetesAuthType          `yaml:"authType,omitempty"`
-	CACert                     string                      `yaml:"cacert,omitempty"`
-	ClientCert                 string                      `yaml:"clientCert,omitempty"`
-	ClientKey                  string                      `yaml:"clientKey,omitempty"`
+	CACert                     *SecretRef                  `yaml:"caCert,omitempty"`
+	ClientCert                 *SecretRef                  `yaml:"clientCert,omitempty"`
+	ClientKey                  *SecretRef                  `yaml:"clientKey,omitempty"`
 	ClientKeyAlgorithm         string                      `yaml:"clientKeyAlgorithm,omitempty"`
-	ClientKeyPassPhrase        string                      `yaml:"clientKeyPassPhrase,omitempty"`
+	ClientKeyPassPhrase        *SecretRef                  `yaml:"clientKeyPassPhrase,omitempty"`
 	DelegateSelectors          []string                    `yaml:"delegateSelectors,omitempty"`
 	Username                   string                      `yaml:"username,omitempty"`
 	UsernameSecretId           *SecretRef                  `yaml:"usernameSecretId,omitempty"`
@@ -203,7 +211,25 @@ type EnvFilter struct {
 
 type SecretRef struct {
 	SecretManagerType SecretManagerType
-	SecretId          string
+	Name              string
 }
 
 type YamlPath string
+
+type Environment struct {
+	HarnessApiVersion                  HarnessApiVersion       `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type                               ObjectType              `yaml:"type" json:"type"`
+	Id                                 string                  `yaml:"-"`
+	Name                               string                  `yaml:"-"`
+	ConfigMapYamlByServiceTemplateName *map[string]interface{} `yaml:"configMapYamlByServiceTemplateName,omitempty"`
+	EnvironmentType                    EnvironmentType         `yaml:"environmentType,omitempty"`
+	VariableOverrides                  []*VariableOverride     `yaml:"variableOverrides,omitempty"`
+	ApplicationId                      string                  `yaml:"-"`
+}
+
+type VariableOverride struct {
+	Name        string            `yaml:"name,omitempty"`
+	ServiceName string            `yaml:"serviceName,omitempty"`
+	Value       string            `yaml:"value,omitempty"`
+	ValueType   VariableValueType `yaml:"valueType,omitempty"`
+}

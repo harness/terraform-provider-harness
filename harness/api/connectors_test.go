@@ -109,3 +109,20 @@ func TestUpdateGitConnector(t *testing.T) {
 	err = client.Connectors().DeleteConnector(conn.Id)
 	require.NoError(t, err)
 }
+
+func TestListGitConnectors(t *testing.T) {
+	client := getClient()
+	limit := 10
+	offset := 0
+	hasMore := true
+
+	for hasMore {
+		connectors, pagination, err := client.Connectors().ListGitConnectors(limit, offset)
+		require.NoError(t, err, "Failed to list git connectors: %s", err)
+		require.NotEmpty(t, connectors, "No git connectors found")
+		require.NotNil(t, pagination, "Pagination should not be nil")
+
+		hasMore = pagination.HasMore
+		offset += 1
+	}
+}

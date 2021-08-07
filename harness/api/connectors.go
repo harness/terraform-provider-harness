@@ -119,6 +119,41 @@ func (c *ConnectorClient) UpdateGitConnector(id string, connector *graphql.GitCo
 	return &res.UpdateConnector.Connector, nil
 }
 
+func (c *ConnectorClient) ListGitConnectors(limit int, offset int) ([]*graphql.GitConnector, *graphql.PageInfo, error) {
+
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`query($limit: Int!, $offset: Int) {
+			connectors(limit: $limit, offset: $offset) {
+				nodes {
+					... on GitConnector {
+						%[1]s
+					}
+				}
+				%[2]s
+			}
+		}`, gitConnectorFields, paginationFields),
+		Variables: map[string]interface{}{
+			"limit":  limit,
+			"offset": offset,
+		},
+	}
+
+	res := struct {
+		Connectors struct {
+			Nodes    []*graphql.GitConnector
+			PageInfo *graphql.PageInfo
+		}
+	}{}
+
+	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return res.Connectors.Nodes, res.Connectors.PageInfo, nil
+}
+
 func (c *ConnectorClient) DeleteConnector(id string) error {
 
 	query := &GraphQLQuery{

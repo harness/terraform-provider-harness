@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
-	"github.com/harness-io/harness-go-sdk/harness/httphelpers"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"gopkg.in/yaml.v3"
@@ -39,6 +39,20 @@ func FindConfigAsCodeItemByPath(rootItem *cac.ConfigAsCodeItem, path cac.YamlPat
 	return nil
 }
 
+func FindConfigAsCodeItemByUUID(rootItem *cac.ConfigAsCodeItem, uuid string) *cac.ConfigAsCodeItem {
+	if rootItem.DirectoryPath != nil && rootItem.UUID == uuid {
+		return rootItem
+	}
+
+	for _, item := range rootItem.Children {
+		if matchingItem := FindConfigAsCodeItemByUUID(item, uuid); matchingItem != nil {
+			return matchingItem
+		}
+	}
+
+	return nil
+}
+
 func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid string, applicationId string) (*cac.ConfigAsCodeItem, error) {
 	path := fmt.Sprintf("/gateway/api/setup-as-code/yaml/%s/%s", restName, uuid)
 
@@ -48,15 +62,15 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 	}
 
 	// Configure additional headers
-	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
-	req.Header.Set(httphelpers.HeaderAuthorization, fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
+	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
+	req.Header.Set(helpers.HTTPHeaders.Authorization.String(), fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
 
 	// Set query parameters
 	q := req.URL.Query()
-	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
+	q.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.AccountId)
 
 	if applicationId != "" {
-		q.Add(QueryParamApplicationId, applicationId)
+		q.Add(helpers.QueryParameters.ApplicationId.String(), applicationId)
 	}
 	req.URL.RawQuery = q.Encode()
 
@@ -77,16 +91,16 @@ func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.Config
 	}
 
 	// Configure additional headers
-	req.Header.Set(httphelpers.HeaderApiKey, c.ApiClient.APIKey)
-	req.Header.Set(httphelpers.HeaderContentType, httphelpers.HeaderApplicationJson)
-	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
+	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), c.ApiClient.APIKey)
+	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), helpers.HTTPHeaders.ApplicationJson.String())
+	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	// Set query parameters
 	q := req.URL.Query()
-	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
+	q.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.AccountId)
 
 	if applicationId != "" {
-		q.Add(QueryParamApplicationId, applicationId)
+		q.Add(helpers.QueryParameters.ApplicationId.String(), applicationId)
 	}
 
 	req.URL.RawQuery = q.Encode()
@@ -129,14 +143,14 @@ func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity inte
 	}
 
 	// Configure additional headers
-	req.Header.Set(httphelpers.HeaderApiKey, c.ApiClient.APIKey)
-	req.Header.Set(httphelpers.HeaderContentType, w.FormDataContentType())
-	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
+	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), c.ApiClient.APIKey)
+	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), w.FormDataContentType())
+	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
-	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
-	q.Add(QueryParamYamlFilePath, string(filePath))
+	q.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.AccountId)
+	q.Add(helpers.QueryParameters.YamlFilePath.String(), string(filePath))
 	req.URL.RawQuery = q.Encode()
 
 	item, err := c.ExecuteRequest(req)
@@ -218,20 +232,25 @@ func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
 	}
 
 	// Configure additional headers
-	req.Header.Set(httphelpers.HeaderApiKey, c.ApiClient.APIKey)
-	req.Header.Set(httphelpers.HeaderAuthorization, fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
-	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
+	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), c.ApiClient.APIKey)
+	req.Header.Set(helpers.HTTPHeaders.Authorization.String(), fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
+	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
-	q.Add(QueryParamAccountId, c.ApiClient.AccountId)
-	q.Add(QueryParamFilePaths, string(filePath))
+	q.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.AccountId)
+	q.Add(helpers.QueryParameters.FilePaths.String(), string(filePath))
 	req.URL.RawQuery = q.Encode()
 
-	_, err = c.ExecuteRequest(req)
+	log.Printf("[DEBUG] Url: %s", req.URL)
+	log.Printf("[DEBUG] Headers: %s", req.Header)
+
+	resp, err := c.ExecuteRequest(req)
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(resp)
 
 	return nil
 }
@@ -263,7 +282,7 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 		appId = ""
 	}
 
-	err = c.FindObject(appId.(string), filePath, responseObj)
+	err = c.FindObjectByPath(appId.(string), filePath, responseObj)
 	if err != nil {
 		return err
 	}
@@ -274,7 +293,7 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 // This function is used when the Id of the object is unknown and we need to look it up.
 // Typically this is needed just after an Upsert command. The Upsert API unfortunately does not
 // return the Id of the newly created object.
-func (c *ConfigAsCodeClient) FindObject(applicationId string, filePath cac.YamlPath, obj interface{}) error {
+func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac.YamlPath, obj interface{}) error {
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return err
@@ -285,13 +304,25 @@ func (c *ConfigAsCodeClient) FindObject(applicationId string, filePath cac.YamlP
 		return fmt.Errorf("unable to item at `%s`", filePath)
 	}
 
-	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
+	return c.ParseObject(item, filePath, applicationId, obj)
+}
+
+func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId string, out interface{}) error {
+	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return err
 	}
 
-	// Parse the new entity
-	err = itemContent.ParseYamlContent(obj)
+	i := FindConfigAsCodeItemByUUID(rootItem, objectId)
+	if i == nil {
+		return errors.New("cannot find obj with id: " + objectId)
+	}
+
+	return c.ParseObject(i, cac.YamlPath(i.DirectoryPath.Path), applicationId, out)
+}
+
+func (c *ConfigAsCodeClient) ParseObject(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string, obj interface{}) error {
+	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
 	if err != nil {
 		return err
 	}

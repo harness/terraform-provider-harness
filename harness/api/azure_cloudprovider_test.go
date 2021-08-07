@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
@@ -87,16 +88,16 @@ func createAzureCloudProvider(name string) (*graphql.AzureCloudProvider, error) 
 	c := getClient()
 	expectedName := name
 
-	secret, err := createEncryptedTextSecret(expectedName, TestEnvVars.AzureClientSecret.Get())
+	secret, err := createEncryptedTextSecret(expectedName, helpers.TestEnvVars.AzureClientSecret.Get())
 	if err != nil {
 		return nil, err
 	}
 
 	input := &graphql.AzureCloudProvider{}
 	input.Name = expectedName
-	input.ClientId = TestEnvVars.AzureClientId.Get()
+	input.ClientId = helpers.TestEnvVars.AzureClientId.Get()
 	input.KeySecretId = secret.Id
-	input.TenantId = TestEnvVars.AzureTenantId.Get()
+	input.TenantId = helpers.TestEnvVars.AzureTenantId.Get()
 
 	return c.CloudProviders().CreateAzureCloudProvider(input)
 }

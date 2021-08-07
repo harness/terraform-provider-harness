@@ -155,6 +155,15 @@ func TestUpdateEncryptedTextSecret(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestListEncryptedText(t *testing.T) {
+	c := getClient()
+
+	secrets, pageInfo, err := c.Secrets().ListEncryptedTextSecrets(10, 0)
+	require.NoError(t, err)
+	require.NotNil(t, pageInfo)
+	require.Len(t, secrets, 10)
+}
+
 func createEncryptedTextSecret(name string, value string) (*graphql.EncryptedText, error) {
 	client := getClient()
 

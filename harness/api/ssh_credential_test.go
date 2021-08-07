@@ -60,13 +60,12 @@ func TestCreateSSHCredential_SSHAuthentication_inlinesshkey(t *testing.T) {
 func TestCreateSSHCredential_SSHAuthentication_serverpassword(t *testing.T) {
 
 	var (
-		client               = getClient()
-		expectedName         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-		passphraseSecretName = fmt.Sprintf("inlinesshkey_%s", utils.RandStringBytes(12))
+		client       = getClient()
+		expectedName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	)
 
 	// Create secret for ssh password
-	passphraseSecret, err := createEncryptedTextSecret(passphraseSecretName, "foo")
+	passphraseSecret, err := createEncryptedTextSecret(expectedName, "foo")
 	require.NoError(t, err)
 
 	input := &graphql.SSHCredential{
@@ -155,13 +154,12 @@ func TestCreateSSHCredential_SSHAuthentication_keyfile(t *testing.T) {
 func TestCreateSSHCredential_KerberosAuth_password(t *testing.T) {
 
 	var (
-		client               = getClient()
-		expectedName         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-		passphraseSecretName = fmt.Sprintf("inlinesshkey_%s", utils.RandStringBytes(12))
+		client       = getClient()
+		expectedName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
 	)
 
 	// Create secret for ssh password
-	passphraseSecret, err := createEncryptedTextSecret(passphraseSecretName, "foo")
+	passphraseSecret, err := createEncryptedTextSecret(expectedName, "foo")
 	require.NoError(t, err)
 
 	input := &graphql.SSHCredential{
@@ -338,6 +336,13 @@ func TestGetSSHCredentialByName_KerberosAuth(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, cred.Id, s.Id)
 	require.Equal(t, graphql.SSHAuthenticationTypes.KerberosAuthentication, s.AuthenticationType)
+}
+
+func TestListSSHCredentials(t *testing.T) {
+	client := getClient()
+	creds, err := client.Secrets().ListSSHCredentials()
+	require.NoError(t, err)
+	require.NotEmpty(t, creds)
 }
 
 func createSSHCredential_sshAuth(name string) (*graphql.SSHCredential, error) {

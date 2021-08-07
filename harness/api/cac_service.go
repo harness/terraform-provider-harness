@@ -4,30 +4,14 @@ import (
 	"fmt"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
 )
 
 func (c *ConfigAsCodeClient) GetServiceById(applicationId string, serviceId string) (*cac.Service, error) {
-	item, err := c.GetDirectoryItemContent("services", serviceId, applicationId)
-	if err != nil {
-		return nil, err
-	}
-
-	// Item not found
-	if item == nil {
-		return nil, nil
-	}
-
 	svc := &cac.Service{}
-	err = item.ParseYamlContent(svc)
+	err := c.FindObjectById(applicationId, serviceId, svc)
 	if err != nil {
 		return nil, err
 	}
-
-	// // Set the required fields for all entities
-	svc.Name = utils.TrimFileExtension(item.Name)
-	svc.Id = serviceId
-	svc.ApplicationId = applicationId
 
 	return svc, nil
 }

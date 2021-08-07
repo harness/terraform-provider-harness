@@ -5,22 +5,68 @@ import (
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
+
+func TestGetCloudProviderById(t *testing.T) {
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	cpInput := cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
+	cpInput.Name = expectedName
+
+	c := getClient()
+
+	cp, err := c.ConfigAsCode().UpsertPhysicalDataCenterCloudProvider(cpInput)
+	require.NoError(t, err)
+
+	testCP := &cac.PhysicalDatacenterCloudProvider{}
+	err = c.ConfigAsCode().GetCloudProviderById(cp.Id, testCP)
+	require.NoError(t, err)
+
+	require.Equal(t, cp, testCP)
+
+	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	require.NoError(t, err)
+}
+
+func TestDeleteCloudProvider(t *testing.T) {
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	cpInput := cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
+	cpInput.Name = expectedName
+
+	c := getClient()
+
+	cp, err := c.ConfigAsCode().UpsertPhysicalDataCenterCloudProvider(cpInput)
+	require.NoError(t, err)
+
+	testCP := &cac.PhysicalDatacenterCloudProvider{}
+	err = c.ConfigAsCode().GetCloudProviderById(cp.Id, testCP)
+	require.NoError(t, err)
+
+	require.Equal(t, cp, testCP)
+
+	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	require.NoError(t, err)
+
+	foundCP := &cac.PhysicalDatacenterCloudProvider{}
+	err = c.ConfigAsCode().GetCloudProviderById(cp.Id, foundCP)
+	require.NoError(t, err)
+	require.Equal(t, &cac.PhysicalDatacenterCloudProvider{}, foundCP)
+}
 
 func TestCacSpotInstCloudProvider(t *testing.T) {
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	cpInput := cac.NewEntity(cac.ObjectTypes.SpotInstCloudProvider).(*cac.SpotInstCloudProvider)
 
-	secret, err := createEncryptedTextSecret(expectedName, TestEnvVars.SpotInstToken.Get())
+	secret, err := createEncryptedTextSecret(expectedName, helpers.TestEnvVars.SpotInstToken.Get())
 	require.NoError(t, err)
 
 	cpInput.Name = expectedName
-	cpInput.AccountId = TestEnvVars.SpotInstAccountId.Get()
+	cpInput.AccountId = helpers.TestEnvVars.SpotInstAccountId.Get()
 	cpInput.Token = &cac.SecretRef{
 		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		SecretId:          secret.Id,
+		Name:              secret.Name,
 	}
 
 	c := getClient()
@@ -49,7 +95,7 @@ func TestCacPcfCloudProvider(t *testing.T) {
 	cpInput.Username = "username"
 	cpInput.Password = &cac.SecretRef{
 		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		SecretId:          secret.Id,
+		Name:              secret.Name,
 	}
 
 	c := getClient()
@@ -69,7 +115,7 @@ func TestCacKubernetesCloudProvider(t *testing.T) {
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	cpInput := cac.NewEntity(cac.ObjectTypes.KubernetesCloudProvider).(*cac.KubernetesCloudProvider)
 
-	secret, err := createEncryptedTextSecret(expectedName, TestEnvVars.AzureClientSecret.Get())
+	secret, err := createEncryptedTextSecret(expectedName, helpers.TestEnvVars.AzureClientSecret.Get())
 	require.NoError(t, err)
 
 	cpInput.Name = expectedName
@@ -77,7 +123,7 @@ func TestCacKubernetesCloudProvider(t *testing.T) {
 	cpInput.MasterUrl = "https://example.com"
 	cpInput.ServiceAccountToken = &cac.SecretRef{
 		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		SecretId:          secret.Id,
+		Name:              secret.Name,
 	}
 
 	c := getClient()
@@ -97,16 +143,16 @@ func TestCacUpsertAzureCloudProvider(t *testing.T) {
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	cpInput := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.AzureCloudProvider)
 
-	secret, err := createEncryptedTextSecret(expectedName, TestEnvVars.AzureClientSecret.Get())
+	secret, err := createEncryptedTextSecret(expectedName, helpers.TestEnvVars.AzureClientSecret.Get())
 	require.NoError(t, err)
 
 	cpInput.Name = expectedName
 	cpInput.AzureEnvironmentType = cac.AzureEnvironmentTypes.AzureGlobal
-	cpInput.ClientId = TestEnvVars.AzureClientId.Get()
-	cpInput.TenantId = TestEnvVars.AzureTenantId.Get()
+	cpInput.ClientId = helpers.TestEnvVars.AzureClientId.Get()
+	cpInput.TenantId = helpers.TestEnvVars.AzureTenantId.Get()
 	cpInput.Key = &cac.SecretRef{
 		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		SecretId:          secret.Id,
+		Name:              secret.Name,
 	}
 
 	c := getClient()
@@ -162,15 +208,15 @@ func TestUpsertPhysicalDataCenterCloudProvider(t *testing.T) {
 func TestUpsertAwsCloudProvider(t *testing.T) {
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
-	secret, err := createEncryptedTextSecret(expectedName, TestEnvVars.AwsSecretAccessKey.Get())
+	secret, err := createEncryptedTextSecret(expectedName, helpers.TestEnvVars.AwsSecretAccessKey.Get())
 	require.NoError(t, err)
 
 	cpInput := cac.NewEntity(cac.ObjectTypes.AwsCloudProvider).(*cac.AwsCloudProvider)
 	cpInput.Name = expectedName
-	cpInput.AccessKey = TestEnvVars.AwsAccessKeyId.Get()
+	cpInput.AccessKey = helpers.TestEnvVars.AwsAccessKeyId.Get()
 	cpInput.SecretKey = &cac.SecretRef{
 		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		SecretId:          secret.Id,
+		Name:              secret.Name,
 	}
 
 	c := getClient()
@@ -184,4 +230,21 @@ func TestUpsertAwsCloudProvider(t *testing.T) {
 
 	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
 	require.NoError(t, err)
+}
+
+func TestListCloudProviders(t *testing.T) {
+	client := getClient()
+	limit := 10
+	offset := 0
+	hasMore := true
+
+	for hasMore {
+		cps, pagination, err := client.CloudProviders().ListCloudProviders(limit, offset)
+		require.NoError(t, err, "Failed to list cloud providers: %s", err)
+		require.NotEmpty(t, cps, "No cloud providers found")
+		require.NotNil(t, pagination, "Pagination should not be nil")
+
+		hasMore = pagination.HasMore
+		offset += 1
+	}
 }

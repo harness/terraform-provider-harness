@@ -9,7 +9,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/harness-io/harness-go-sdk/harness/httphelpers"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/go-retryablehttp"
 )
 
@@ -40,13 +40,13 @@ func (client *Client) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.Req
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
-	q.Add(QueryParamAccountId, client.AccountId)
+	q.Add(helpers.QueryParameters.AccountId.String(), client.AccountId)
 	req.URL.RawQuery = q.Encode()
 
 	// Configure additional headers
-	req.Header.Set(httphelpers.HeaderApiKey, client.APIKey)
-	req.Header.Set(httphelpers.HeaderContentType, httphelpers.HeaderApplicationJson)
-	req.Header.Set(httphelpers.HeaderAccept, httphelpers.HeaderApplicationJson)
+	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), client.APIKey)
+	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), helpers.HTTPHeaders.ApplicationJson.String())
+	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	return req, nil
 }
@@ -110,3 +110,12 @@ func (client *Client) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj inter
 func getGraphQLUrl() string {
 	return fmt.Sprintf("%s%s", DefaultApiUrl, DefaultGraphQLApiUrl)
 }
+
+const paginationFields = `
+pageInfo {
+	limit
+	offset
+	total
+	hasMore
+}
+`

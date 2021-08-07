@@ -1,9 +1,12 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/api/unpublished"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 )
 
 func (c *SecretClient) GetWinRMCredentialById(id string) (*graphql.WinRMCredential, error) {
@@ -41,3 +44,46 @@ func getWinRMCredentialFields() string {
 		}
 	`, commonSecretFields)
 }
+
+func (c *SecretClient) ListWinRMCredentials() ([]*unpublished.Credential, error) {
+	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-values")
+	if err != nil {
+		return nil, err
+	}
+
+	query := req.URL.Query()
+	query.Add(helpers.QueryParameters.AccountId.String(), c.APIClient.AccountId)
+	req.URL.RawQuery = query.Encode()
+
+	resp, err := c.APIClient.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	responsePackage := &unpublished.Package{}
+	err = json.NewDecoder(resp.Body).Decode(responsePackage)
+
+	if err != nil {
+		return nil, err
+	}
+
+	credentials := []*unpublished.Credential{}
+	err = json.Unmarshal(*responsePackage.Resource, &credentials)
+	if err != nil {
+		return nil, err
+	}
+
+	winrmCreds := []*unpublished.Credential{}
+	for _, cred := range credentials {
+
+		if cred.Value.Type == "WINRM_CONNECTION_ATTRIBUTES" {
+			winrmCreds = append(winrmCreds, cred)
+		}
+	}
+
+	return winrmCreds, nil
+}
+
+// https://app.harness.io/gateway/api/secrets/list-values?accountId=UKh5Yts7THSMAbccG3HrLA

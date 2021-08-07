@@ -96,9 +96,23 @@ func (c *ConfigAsCodeClient) UpsertCloudProvider(input interface{}, output inter
 	return nil
 }
 
+func (c *ConfigAsCodeClient) GetCloudProviderById(providerId string, out interface{}) error {
+	rootItem, err := c.GetDirectoryTree("")
+	if err != nil {
+		return err
+	}
+
+	i := FindConfigAsCodeItemByUUID(rootItem, providerId)
+	if i == nil {
+		return errors.New("cannot find cloud provider with id: " + providerId)
+	}
+
+	return c.ParseObject(i, cac.YamlPath(i.DirectoryPath.Path), "", out)
+}
+
 func (c *ConfigAsCodeClient) GetCloudProviderByName(name string, obj interface{}) error {
 	filePath := cac.GetCloudProviderYamlPath(name)
-	return c.FindObject("", filePath, obj)
+	return c.FindObjectByPath("", filePath, obj)
 }
 
 func (c *ConfigAsCodeClient) DeleteCloudProvider(name string) error {

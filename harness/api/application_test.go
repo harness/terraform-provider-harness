@@ -132,3 +132,22 @@ func createApplication(name string) (*graphql.Application, error) {
 
 	return client.Applications().CreateApplication(input)
 }
+
+func TestListApplications(t *testing.T) {
+	client := getClient()
+	limit := 10
+	offset := 0
+	apps, pagination, err := client.Applications().ListApplications(limit, offset)
+
+	require.NoError(t, err, "Failed to list applications: %s", err)
+	require.NotEmpty(t, apps, "No applications found")
+	require.NotNil(t, pagination, "Pagination should not be nil")
+
+	for pagination.HasMore {
+		offset += 1
+		apps, pagination, err = client.Applications().ListApplications(limit, offset)
+		require.NoError(t, err, "Failed to list applications: %s", err)
+		require.NotEmpty(t, apps, "No applications found")
+		require.NotNil(t, pagination, "Pagination should not be nil")
+	}
+}

@@ -366,7 +366,7 @@ type GitConnector struct {
 	GenerateWebhookUrl  bool                 `json:"generateWebhookUrl,omitempty"`
 	PasswordSecretId    string               `json:"passwordSecretId,omitempty"`
 	SSHSettingId        string               `json:"sshSettingId,omitempty"`
-	UrlType             string               `json:"urlType,omitempty"`
+	UrlType             GitUrlType           `json:"urlType,omitempty"`
 	UsageScope          *UsageScope          `json:"usageScope,omitempty"`
 	UserName            string               `json:"userName,omitempty"`
 	WebhookUrl          string               `json:"webhookUrl,omitempty"`

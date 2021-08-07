@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
@@ -74,7 +75,7 @@ func TestUpdateSpotInstCloudProvider(t *testing.T) {
 	require.Equal(t, expectedName, cp.Name)
 
 	input := &graphql.UpdateSpotInstCloudProviderInst{
-		AccountId:     TestEnvVars.SpotInstAccountId.Get(),
+		AccountId:     helpers.TestEnvVars.SpotInstAccountId.Get(),
 		TokenSecretId: secret.Id,
 		Name:          updatedName,
 	}
@@ -94,14 +95,14 @@ func TestUpdateSpotInstCloudProvider(t *testing.T) {
 func createSpotInstCloudProvider(name string) (*graphql.SpotInstCloudProvider, *graphql.EncryptedText, error) {
 	c := getClient()
 
-	secret, err := createEncryptedTextSecret(name, TestEnvVars.SpotInstToken.Get())
+	secret, err := createEncryptedTextSecret(name, helpers.TestEnvVars.SpotInstToken.Get())
 	if err != nil {
 		return nil, nil, err
 	}
 
 	input := &graphql.SpotInstCloudProvider{}
 	input.Name = name
-	input.AccountId = TestEnvVars.SpotInstAccountId.Get()
+	input.AccountId = helpers.TestEnvVars.SpotInstAccountId.Get()
 	input.TokenSecretId = secret.Id
 
 	cp, err := c.CloudProviders().CreateSpotInstCloudProvider(input)

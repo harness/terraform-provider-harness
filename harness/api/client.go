@@ -2,13 +2,14 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness"
 	"github.com/harness-io/harness-go-sdk/harness/envvar"
-	"github.com/harness-io/harness-go-sdk/harness/httphelpers"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/go-retryablehttp"
 )
@@ -37,6 +38,7 @@ func NewClient() *Client {
 			HTTPClient: &http.Client{
 				Timeout: 10 * time.Second,
 			},
+			Logger:     log.New(os.Stderr, "", log.LstdFlags),
 			Backoff:    retryablehttp.DefaultBackoff,
 			CheckRetry: retryablehttp.DefaultRetryPolicy,
 		},
@@ -50,7 +52,7 @@ func (client *Client) NewHTTPRequest(method string, path string) (*retryablehttp
 		return nil, err
 	}
 
-	req.Header.Set(httphelpers.HeaderUserAgent, client.UserAgent)
+	req.Header.Set(helpers.HTTPHeaders.UserAgent.String(), client.UserAgent)
 	return req, err
 }
 
@@ -62,7 +64,7 @@ func (client *Client) NewAuthorizedRequestWithBearerToken(path string) (*retryab
 		return nil, err
 	}
 
-	req.Header.Set(httphelpers.HeaderAuthorization, fmt.Sprintf("Bearer %s", client.ApiToken))
+	req.Header.Set(helpers.HTTPHeaders.Authorization.String(), fmt.Sprintf("Bearer %s", client.BearerToken))
 	return req, nil
 }
 
@@ -73,8 +75,7 @@ func (client *Client) NewAuthorizedRequestWithApiKey(path string) (*retryablehtt
 	if err != nil {
 		return nil, err
 	}
-
-	req.Header.Set(httphelpers.HeaderApiKey, client.APIKey)
+	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), client.APIKey)
 	return req, nil
 }
 

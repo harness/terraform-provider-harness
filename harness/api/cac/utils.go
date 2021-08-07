@@ -32,6 +32,10 @@ func (s *Service) Validate() (bool, error) {
 	return true, nil
 }
 
+func (e *Environment) Validate() (bool, error) {
+	return utils.RequiredStringFieldsSet(e, []string{"Name", "EnvironmentType", "ApplicationId"})
+}
+
 func (cp *GcpCloudProvider) Validate() (bool, error) {
 	return utils.RequiredStringFieldsSet(cp, []string{"Name"})
 }
@@ -100,6 +104,7 @@ var objectTypeMap = map[ObjectType]reflect.Type{
 	ObjectTypes.Application:                     reflect.TypeOf(Application{}),
 	ObjectTypes.AwsCloudProvider:                reflect.TypeOf(AwsCloudProvider{}),
 	ObjectTypes.AzureCloudProvider:              reflect.TypeOf(AzureCloudProvider{}),
+	ObjectTypes.Environment:                     reflect.TypeOf(Environment{}),
 	ObjectTypes.GcpCloudProvider:                reflect.TypeOf(GcpCloudProvider{}),
 	ObjectTypes.KubernetesCloudProvider:         reflect.TypeOf(KubernetesCloudProvider{}),
 	ObjectTypes.PcfCloudProvider:                reflect.TypeOf(PcfCloudProvider{}),
@@ -114,19 +119,15 @@ func (r *SecretRef) MarshalYAML() (interface{}, error) {
 		return []byte{}, nil
 	}
 
-	if r.SecretId == "" {
-		return nil, errors.New("SecretId must be set")
+	if r.Name == "" {
+		return nil, errors.New("name must be set")
 	}
-
-	// if r.SecretManagerType == "" {
-	// 	return nil, errors.New("SecretManagerType must be set")
-	// }
 
 	if r.SecretManagerType == "" {
-		return r.SecretId, nil
+		return r.Name, nil
 	}
 
-	return fmt.Sprintf("%s:%s", r.SecretManagerType, r.SecretId), nil
+	return fmt.Sprintf("%s:%s", r.SecretManagerType, r.Name), nil
 }
 
 func (r *SecretRef) UnmarshalYAML(unmarshal func(interface{}) error) error {
@@ -141,7 +142,7 @@ func (r *SecretRef) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 	parts := strings.Split(value, ":")
 	r.SecretManagerType = SecretManagerType(parts[0])
-	r.SecretId = parts[1]
+	r.Name = parts[1]
 
 	return nil
 }
@@ -168,4 +169,8 @@ func GetCloudProviderYamlPath(cloudProviderName string) YamlPath {
 
 func GetApplicationYamlPath(applicationName string) YamlPath {
 	return YamlPath(fmt.Sprintf("Setup/Applications/%s/index.yaml", applicationName))
+}
+
+func GetEnvironmentYamlPath(applicationName string, environmentName string) YamlPath {
+	return YamlPath(fmt.Sprintf("Setup/Applications/%s/Environments/%s/Index.yaml", applicationName, environmentName))
 }

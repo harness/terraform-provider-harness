@@ -1,9 +1,13 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/api/unpublished"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 )
 
 func (c *SecretClient) CreateEncryptedText(input *graphql.CreateSecretInput) (*graphql.EncryptedText, error) {
@@ -89,6 +93,50 @@ func (c *SecretClient) GetEncryptedTextById(id string) (*graphql.EncryptedText, 
 	}
 
 	return resp, nil
+}
+
+func (c *SecretClient) ListEncryptedTextSecrets(limit int, offset int) ([]*unpublished.EncryptedText, *graphql.PageInfo, error) {
+	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-secrets-page")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	query := req.URL.Query()
+	query.Add(helpers.QueryParameters.AccountId.String(), c.APIClient.AccountId)
+	query.Add(helpers.QueryParameters.Type.String(), "SECRET_TEXT")
+	query.Add(helpers.QueryParameters.Limit.String(), strconv.Itoa(limit))
+	query.Add(helpers.QueryParameters.Offset.String(), strconv.Itoa(offset))
+	req.URL.RawQuery = query.Encode()
+
+	resp, err := c.APIClient.HTTPClient.Do(req)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer resp.Body.Close()
+
+	responsePackage := &unpublished.Package{}
+	err = json.NewDecoder(resp.Body).Decode(responsePackage)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	resource := &unpublished.EncryptedTextResource{}
+	err = json.Unmarshal(*responsePackage.Resource, resource)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	pageInfo := &graphql.PageInfo{}
+
+	offset, _ = strconv.Atoi(resource.Offset)
+	pageInfo.Offset = offset
+
+	limit, _ = strconv.Atoi(resource.Limit)
+	pageInfo.Limit = limit
+
+	return resource.Secrets, pageInfo, nil
 }
 
 func getEncryptedTextFields() string {

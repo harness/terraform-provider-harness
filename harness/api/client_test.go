@@ -2,13 +2,14 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness/envvar"
-	"github.com/harness-io/harness-go-sdk/harness/httphelpers"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +20,7 @@ func TestNewRequest(t *testing.T) {
 
 	require.NoError(t, err)
 	require.Equal(t, fmt.Sprintf("%s/some/path", DefaultApiUrl), fmt.Sprintf("%s://%s%s", req.URL.Scheme, req.URL.Host, req.URL.Path))
-	require.Equal(t, client.UserAgent, req.Header.Get(httphelpers.HeaderUserAgent))
+	require.Equal(t, client.UserAgent, req.Header.Get(helpers.HTTPHeaders.UserAgent.String()))
 }
 
 func getClient() *Client {
@@ -36,6 +37,7 @@ func getClient() *Client {
 			HTTPClient: &http.Client{
 				Timeout: 10 * time.Second,
 			},
+			Logger:     log.New(os.Stderr, "", log.LstdFlags),
 			Backoff:    retryablehttp.DefaultBackoff,
 			CheckRetry: retryablehttp.DefaultRetryPolicy,
 		},
