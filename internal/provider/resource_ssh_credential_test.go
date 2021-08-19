@@ -24,8 +24,6 @@ func testAccResourceSSHCredentialSweep(r string) error {
 	c := testAccGetApiClientFromProvider()
 
 	creds, err := c.Secrets().ListSSHCredentials()
-	fmt.Println(creds)
-	fmt.Println(err)
 	if err != nil {
 		return fmt.Errorf("error retrieving SSH credentials: %s", err)
 	}

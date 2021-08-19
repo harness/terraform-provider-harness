@@ -98,7 +98,7 @@ func testSweepApplications(r string) error {
 
 	for hasMore {
 
-		apps, pagination, err := c.Applications().ListApplications(limit, offset)
+		apps, _, err := c.Applications().ListApplications(limit, offset)
 		if err != nil {
 			return err
 		}
@@ -112,8 +112,7 @@ func testSweepApplications(r string) error {
 			}
 		}
 
-		hasMore = pagination.HasMore
-		offset += 1
+		hasMore = len(apps) == limit
 	}
 
 	return nil

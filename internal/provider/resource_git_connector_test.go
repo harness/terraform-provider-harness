@@ -29,7 +29,7 @@ func testSweepGitConnectors(r string) error {
 
 	for hasMore {
 
-		connectors, pagination, err := c.Connectors().ListGitConnectors(limit, offset)
+		connectors, _, err := c.Connectors().ListGitConnectors(limit, offset)
 		if err != nil {
 			return err
 		}
@@ -42,8 +42,7 @@ func testSweepGitConnectors(r string) error {
 			}
 		}
 
-		hasMore = pagination.HasMore
-		offset += 1
+		hasMore = len(connectors) == limit
 	}
 
 	return nil

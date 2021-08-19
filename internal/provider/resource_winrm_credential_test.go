@@ -1,10 +1,6 @@
 package provider
 
 import (
-	"fmt"
-	"strings"
-
-	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -16,22 +12,20 @@ func init() {
 }
 
 func testAccResourceWinRMCredentialSweep(r string) error {
-	c := testAccGetApiClientFromProvider()
+	// c := testAccGetApiClientFromProvider()
 
-	creds, err := c.Secrets().ListWinRMCredentials()
-	fmt.Println(creds)
-	fmt.Println(err)
-	if err != nil {
-		return fmt.Errorf("error retrieving WinRM credentials: %s", err)
-	}
+	// creds, err := c.Secrets().ListWinRMCredentials()
+	// if err != nil {
+	// 	return fmt.Errorf("error retrieving WinRM credentials: %s", err)
+	// }
 
-	for _, cred := range creds {
-		if strings.HasPrefix(cred.Name, "Test") {
-			if err = c.Secrets().DeleteSecret(cred.UUID, graphql.SecretTypes.WinRMCredential); err != nil {
-				return err
-			}
-		}
-	}
+	// for _, cred := range creds {
+	// 	if strings.HasPrefix(cred.Name, "Test") {
+	// 		if err = c.Secrets().DeleteSecret(cred.UUID, graphql.SecretTypes.WinRMCredential); err != nil {
+	// 			return err
+	// 		}
+	// 	}
+	// }
 
 	return nil
 }

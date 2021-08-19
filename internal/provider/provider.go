@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
-	"github.com/harness-io/harness-go-sdk/harness/envvar"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -35,22 +35,22 @@ func New(version string) func() *schema.Provider {
 				"endpoint": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessEndpoint, api.DefaultApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessEndpoint.String(), api.DefaultApiUrl),
 				},
 				"account_id": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessAccountId, nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessAccountId.String(), nil),
 				},
 				"api_key": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessApiKey, nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessApiKey.String(), nil),
 				},
 				"bearer_token": {
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(envvar.HarnessBearerToken, nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessBearerToken.String(), nil),
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
@@ -60,6 +60,8 @@ func New(version string) func() *schema.Provider {
 				"harness_git_connector":  dataSourceGitConnector(),
 				"harness_service":        dataSourceService(),
 				"harness_environment":    dataSourceEnvironment(),
+				"harness_sso_provider":   dataSourceSSOProvider(),
+				"harness_user":           dataSourceUser(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_application":              resourceApplication(),
@@ -83,6 +85,9 @@ func New(version string) func() *schema.Provider {
 				"harness_cloudprovider_gcp":        resourceCloudProviderGcp(),
 				"harness_cloudprovider_kubernetes": resourceCloudProviderK8s(),
 				"harness_cloudprovider_spot":       resourceCloudProviderSpot(),
+				"harness_user":                     resourceUser(),
+				"harness_user_group":               resourceUserGroup(),
+				"harness_add_user_to_group":        resourceAddUserToGroup(),
 			},
 		}
 

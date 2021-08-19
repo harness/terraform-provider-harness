@@ -11,7 +11,7 @@ func testSweepCloudProviders(r string) error {
 
 	for hasMore {
 
-		cloudProviders, pagination, err := c.CloudProviders().ListCloudProviders(limit, offset)
+		cloudProviders, _, err := c.CloudProviders().ListCloudProviders(limit, offset)
 		if err != nil {
 			return err
 		}
@@ -24,8 +24,7 @@ func testSweepCloudProviders(r string) error {
 			}
 		}
 
-		hasMore = pagination.HasMore
-		offset += 1
+		hasMore = len(cloudProviders) == limit
 	}
 
 	return nil

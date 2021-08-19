@@ -1,0 +1,105 @@
+package provider
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"log"
+
+	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+func resourceAddUserToGroup() *schema.Resource {
+	return &schema.Resource{
+		// This description is used by the documentation generator and the language server.
+		Description: "Resource for adding a user to a group.",
+
+		CreateContext: resourceAddUserToGroupCreate,
+		ReadContext:   resourceAddUserToGroupRead,
+		DeleteContext: resourceAddUserToGroupDelete,
+
+		Schema: map[string]*schema.Schema{
+			"user_id": {
+				Description: "Unique identifier of the user.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+			},
+			"group_id": {
+				Description: "The name of the user.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+			},
+		},
+	}
+}
+
+func resourceAddUserToGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*api.Client)
+
+	userId := d.Get("user_id").(string)
+	groupId := d.Get("group_id").(string)
+
+	log.Printf("[DEBUG] Check if user is already in group")
+	ok, err := c.Users().IsUserInGroup(userId, groupId)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !ok {
+		log.Printf("[DEBUG] User is not in group, adding user to group")
+		ok, err := c.Users().AddUserToGroup(userId, groupId)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		if !ok {
+			return diag.FromErr(errors.New("failed to add user to group"))
+		}
+	}
+
+	d.SetId(fmt.Sprintf("%s:%s", userId, groupId))
+
+	return nil
+}
+
+func resourceAddUserToGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*api.Client)
+
+	userId := d.Get("user_id").(string)
+	groupId := d.Get("group_id").(string)
+
+	ok, err := c.Users().IsUserInGroup(userId, groupId)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !ok {
+		log.Printf("[WARN] Removing from state because user %s is no longer in group %s", userId, groupId)
+		d.SetId("")
+		return nil
+	}
+
+	d.SetId(fmt.Sprintf("%s:%s", userId, groupId))
+
+	return nil
+}
+
+func resourceAddUserToGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*api.Client)
+
+	userId := d.Get("user_id").(string)
+	groupId := d.Get("group_id").(string)
+
+	ok, err := c.Users().RemoveUserFromGroup(userId, groupId)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if !ok {
+		return diag.FromErr(errors.New("failed to remove user from group"))
+	}
+
+	d.SetId("")
+
+	return nil
+}
