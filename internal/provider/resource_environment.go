@@ -192,9 +192,15 @@ func expandVariableOverrides(d []interface{}) []*cac.VariableOverride {
 func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	id := d.Get("id").(string)
+	envName := d.Get("name").(string)
+	appId := d.Get("app_id").(string)
 
-	err := c.ConfigAsCode().DeleteCloudProvider(id)
+	app, err := c.Applications().GetApplicationById(appId)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	err = c.ConfigAsCode().DeleteEnvironment(app.Name, envName)
 	if err != nil {
 		return diag.FromErr(err)
 	}

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
-	"github.com/harness-io/harness-go-sdk/harness/envvar"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
@@ -58,11 +58,11 @@ func TestProvider_configure_url_env(t *testing.T) {
 
 	// Cleanup function
 	defer func() {
-		os.Unsetenv(envvar.HarnessEndpoint)
+		os.Unsetenv(helpers.EnvVars.HarnessEndpoint.String())
 	}()
 
 	// Configure environment
-	os.Setenv(envvar.HarnessEndpoint, expectedEndpoint)
+	os.Setenv(helpers.EnvVars.HarnessEndpoint.String(), expectedEndpoint)
 
 	// Create provider
 	rc := terraform.NewResourceConfigRaw(map[string]interface{}{})
@@ -81,10 +81,10 @@ func testAccConfigureProvider() {
 		testAccProvider = New("dev")()
 
 		config := map[string]interface{}{
-			"endpoint":     os.Getenv(envvar.HarnessEndpoint),
-			"account_id":   os.Getenv(envvar.HarnessAccountId),
-			"api_key":      os.Getenv(envvar.HarnessApiKey),
-			"bearer_token": os.Getenv(envvar.HarnessBearerToken),
+			"endpoint":     os.Getenv(helpers.EnvVars.HarnessEndpoint.String()),
+			"account_id":   os.Getenv(helpers.EnvVars.HarnessAccountId.String()),
+			"api_key":      os.Getenv(helpers.EnvVars.HarnessApiKey.String()),
+			"bearer_token": os.Getenv(helpers.EnvVars.HarnessBearerToken.String()),
 		}
 
 		testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))

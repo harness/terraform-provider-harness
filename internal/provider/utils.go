@@ -19,3 +19,15 @@ func flattenDelgateSelectors(ds []string) []interface{} {
 
 	return selectors
 }
+
+func InterfaceSliceToStringSlice(slice []interface{}) []string {
+	ss := make([]string, 0)
+
+	for _, v := range slice {
+		ss = append(ss, v.(string))
+	}
+
+	return ss
+}
+
+// func ActionSliceToStringSlice
