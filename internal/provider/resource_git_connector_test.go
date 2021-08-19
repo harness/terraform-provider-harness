@@ -175,9 +175,14 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 	}
 
 	return fmt.Sprintf(`
+		data "harness_secret_manager" "test" {
+			default = true
+		}
+
 		resource "harness_encrypted_text" "test" {
-			name = "%[1]s"
-			value = "foo"
+			name 							= "%[1]s"
+			value 					  = "foo"
+			secret_manager_id = data.harness_secret_manager.test.id
 
 			lifecycle {
 				ignore_changes = [secret_manager_id]
@@ -202,9 +207,14 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 
 func testAccResourceGitConnector_invalid_urltype(name string) string {
 	return fmt.Sprintf(`
+		data "harness_secret_manager" "test" {
+			default = true 
+		}
+
 		resource "harness_encrypted_text" "test" {
-			name = "%[1]s"
-			value = "foo"
+			name              = "%[1]s"
+			value 					  = "foo"
+			secret_manager_id = data.harness_secret_manager.test.id
 		}
 
 		resource "harness_git_connector" "test" {

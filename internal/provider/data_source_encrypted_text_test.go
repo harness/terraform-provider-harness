@@ -35,10 +35,15 @@ func TestAccDataSourceEncryptedTextByName(t *testing.T) {
 
 func testAccDataSourceEncryptedTextByName(name string) string {
 	return fmt.Sprintf(`
+		data "harness_secret_manager" "test" {
+			default = true
+		}
+
 		resource "harness_encrypted_text" "test" {
 			name              = "%[1]s"
 			value             = "foo"
-		
+			secret_manager_id = data.harness_secret_manager.test.id
+			
 			usage_scope {
 				application_filter_type = "ALL"
 				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"

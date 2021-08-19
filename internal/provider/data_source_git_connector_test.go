@@ -34,9 +34,14 @@ func TestAccDataSourceGitConnector(t *testing.T) {
 
 func testAccDataSourceGitConnector(name string) string {
 	return fmt.Sprintf(`
+	data "harness_secret_manager" "test" {
+		default = true
+	}
+
 	resource "harness_encrypted_text" "test" {
-		name = "%[1]s"
-		value = "foo"
+		name 							= "%[1]s"
+		value 					  = "foo"
+		secret_manager_id = data.harness_secret_manager.test.id
 
 		lifecycle {
 			ignore_changes = [secret_manager_id]
