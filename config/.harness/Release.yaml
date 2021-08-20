@@ -4,12 +4,6 @@ pipeline:
     projectIdentifier: terraform_provider_harness
     orgIdentifier: Micahs_Projects
     tags: {}
-    properties:
-        ci:
-            codebase:
-                connectorRef: org.githubharnessio
-                repoName: terraform-provider-harness
-                build: <+input>
     stages:
         - stage:
               name: Release
