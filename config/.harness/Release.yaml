@@ -39,11 +39,11 @@ pipeline:
                                 spec:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    shell: Bash
                                     command: |
                                         git tag ${VERSION}
                                         git push --tags
                                     privileged: false
+                                    shell: Bash
                                 when:
                                     stageStatus: Success
                           - step:
@@ -87,3 +87,7 @@ pipeline:
                       spec:
                           connectorRef: account.micahsprojects
                           namespace: micahs-projects
+              variables:
+                  - name: GITHUB_TOKEN
+                    type: Secret
+                    value: org.githubciautomationtoken
