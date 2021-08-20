@@ -77,9 +77,6 @@ pipeline:
                                         limits:
                                             memory: 8Gi
                                             cpu: "4"
-                                when:
-                                    stageStatus: Success
-                                    condition: "false"
                                 failureStrategies: []
                           - step:
                                 type: Plugin
@@ -92,6 +89,9 @@ pipeline:
                                     settings:
                                         key: <+Release.variables.GPG_PRIVATE_KEY>
                                         passphrase: <+Release.variables.GPG_PASSPHRASE>
+                                when:
+                                    stageStatus: Success
+                                    condition: "false"
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
