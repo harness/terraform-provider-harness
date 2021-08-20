@@ -40,7 +40,7 @@ pipeline:
                                     privileged: false
                                     settings:
                                         remote_name: origin
-                                        branch: <+generate_docs.variables.BRANCH>
+                                        branch: <+PR_Build.variables.BRANCH>
                                         commit: "true"
                                         author_name: Harness CI
                                         author_email: harness-ci-automation@harness.io
