@@ -39,8 +39,8 @@ pipeline:
                                     image: naorlivne/drone-github-changelog-generator
                                     privileged: false
                                     settings:
-                                        github_user: <+Create_Release.variables.GITHUB_OWNER>
-                                        github_project: <+Create_Release.variables.GITHUB_REPO>
+                                        github_user: <+Release.variables.GITHUB_OWNER>
+                                        github_project: <+Release.variables.GITHUB_REPO>
                           - step:
                                 type: Plugin
                                 name: Push changes
@@ -55,7 +55,7 @@ pipeline:
                                         commit: "true"
                                         author_name: Harness CI
                                         author_email: harness-ci-automation@harness.io
-                                        commit_message: Release v<+pipeline.stages.Create_Release.variables.VERSION>
+                                        commit_message: Release v<+pipeline.stages.Release.variables.VERSION>
                                         force: "true"
                           - step:
                                 type: Run
@@ -101,7 +101,7 @@ pipeline:
                                           }"
                                     privileged: false
                                     envVariables:
-                                        GITHUB_TOKEN: <+Create_Release.variables.CHANGELOG_GITHUB_TOKEN>
+                                        GITHUB_TOKEN: <+Release.variables.CHANGELOG_GITHUB_TOKEN>
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
