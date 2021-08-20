@@ -108,3 +108,6 @@ pipeline:
                   - name: GPG_PRIVATE_KEY
                     type: Secret
                     value: gpgprivatekey
+                  - name: VERSION
+                    type: String
+                    value: <+input>
