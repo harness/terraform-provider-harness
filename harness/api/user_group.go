@@ -11,7 +11,9 @@ func (c *UserClient) CreateUserGroup(user *graphql.UserGroup) (*graphql.UserGrou
 
 	input := &graphql.CreateUserGroupInput{}
 
-	copier.Copy(input, user)
+	if err := copier.Copy(input, user); err != nil {
+		return nil, err
+	}
 
 	if user.SAMLSettings != nil {
 		input.SSOSetting = &graphql.SSOSettingInput{
@@ -56,7 +58,10 @@ func (c *UserClient) CreateUserGroup(user *graphql.UserGroup) (*graphql.UserGrou
 func (c *UserClient) UpdateUserGroup(user *graphql.UserGroup) (*graphql.UserGroup, error) {
 
 	input := &graphql.UpdateUserGroupInput{}
-	copier.Copy(input, user)
+
+	if err := copier.Copy(input, user); err != nil {
+		return nil, err
+	}
 
 	query := &GraphQLQuery{
 		Query: fmt.Sprintf(`mutation($input: UpdateUserGroupInput!) {
