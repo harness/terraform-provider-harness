@@ -47,7 +47,6 @@ pipeline:
                                 spec:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    shell: Bash
                                     command: |
                                         #!/bin/bash
 
@@ -73,10 +72,26 @@ pipeline:
                                         # Stop gpg-agent
                                         gpgconf --kill gpg-agent
                                     privileged: true
+                                    shell: Bash
                                     resources:
                                         limits:
                                             memory: 8Gi
                                             cpu: "4"
+                                when:
+                                    stageStatus: Success
+                                    condition: "false"
+                                failureStrategies: []
+                          - step:
+                                type: Plugin
+                                name: Sign Release
+                                identifier: Sign_Release
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: plugins/gpgsign
+                                    privileged: false
+                                    settings:
+                                        key: <+Release.variables.GPG_PRIVATE_KEY>
+                                        passphrase: <+Release.variables.GPG_PASSPHRASE>
                   serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
@@ -87,3 +102,9 @@ pipeline:
                   - name: GITHUB_TOKEN
                     type: Secret
                     value: org.githubciautomationtoken
+                  - name: GPG_PASSPHRASE
+                    type: Secret
+                    value: gpgpassphrase
+                  - name: GPG_PRIVATE_KEY
+                    type: Secret
+                    value: gpgprivatekey
