@@ -27,9 +27,13 @@ pipeline:
                                 spec:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    shell: Bash
                                     command: git clone https://${GITHUB_TOKEN}@github.com/harness-io/terraform-provider-harness.git .
                                     privileged: false
+                                    shell: Bash
+                                when:
+                                    stageStatus: Success
+                                    condition: "false"
+                                failureStrategies: []
                           - step:
                                 type: Run
                                 name: Create tag
@@ -85,3 +89,4 @@ pipeline:
                       spec:
                           connectorRef: account.micahsprojects
                           namespace: micahs-projects
+              variables: []
