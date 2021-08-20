@@ -2,10 +2,23 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.2...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.3...HEAD)
 
 **Merged pull requests:**
 
+- Fixed tests and linting issues [\#30](https://github.com/harness-io/harness-go-sdk/pull/30) ([micahlmartin](https://github.com/micahlmartin))
+- Add support for Users and User Groups [\#29](https://github.com/harness-io/harness-go-sdk/pull/29) ([micahlmartin](https://github.com/micahlmartin))
+- Config as code environments [\#28](https://github.com/harness-io/harness-go-sdk/pull/28) ([micahlmartin](https://github.com/micahlmartin))
+- Config-as-Code Cloud Provider Implementation [\#27](https://github.com/harness-io/harness-go-sdk/pull/27) ([micahlmartin](https://github.com/micahlmartin))
+- Format Files + add golangci-lint [\#26](https://github.com/harness-io/harness-go-sdk/pull/26) ([vyas-n](https://github.com/vyas-n))
+
+## [v0.0.3](https://github.com/harness-io/harness-go-sdk/tree/v0.0.3) (2021-06-30)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.2...v0.0.3)
+
+**Merged pull requests:**
+
+- Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness-io/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Added Update functions for Cloud Providers [\#24](https://github.com/harness-io/harness-go-sdk/pull/24) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.2](https://github.com/harness-io/harness-go-sdk/tree/v0.0.2) (2021-06-29)
