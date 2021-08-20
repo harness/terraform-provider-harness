@@ -62,7 +62,7 @@ pipeline:
                                 name: Create release
                                 identifier: Create_release
                                 spec:
-                                    connectorRef: gcp
+                                    connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch
                                     command: |
                                         #!/bin/bash
