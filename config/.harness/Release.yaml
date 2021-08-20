@@ -14,10 +14,9 @@ pipeline:
         - stage:
               name: Release
               identifier: Release
-              description: ""
               type: CI
               spec:
-                  cloneCodebase: true
+                  cloneCodebase: false
                   execution:
                       steps:
                           - step:
@@ -32,7 +31,6 @@ pipeline:
                                     shell: Bash
                                 when:
                                     stageStatus: Success
-                                    condition: "false"
                                 failureStrategies: []
                           - step:
                                 type: Run
@@ -89,4 +87,3 @@ pipeline:
                       spec:
                           connectorRef: account.micahsprojects
                           namespace: micahs-projects
-              variables: []
