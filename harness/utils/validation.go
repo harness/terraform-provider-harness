@@ -1,6 +1,8 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func CheckRequiredParameters(param string, badValue interface{}) (bool, error) {
 	if param == badValue {

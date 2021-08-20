@@ -14,7 +14,7 @@ func TestCreateSSHCredential_SSHAuthentication_inlinesshkey(t *testing.T) {
 	var (
 		client               = getClient()
 		expectedName         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-		passphraseSecretName = fmt.Sprintf("inlinesshkey_%s", utils.RandStringBytes(12))
+		passphraseSecretName = fmt.Sprintf("%s_inlinesshkey_%s", t.Name(), utils.RandStringBytes(12))
 	)
 
 	// Create secret for ssh password

@@ -26,11 +26,12 @@ func TestGetCloudProviderById(t *testing.T) {
 
 	require.Equal(t, cp, testCP)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cp.Id)
 	require.NoError(t, err)
 }
 
 func TestDeleteCloudProvider(t *testing.T) {
+	t.Skip("Currently blocked by https://harness.atlassian.net/browse/SWAT-5060")
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	cpInput := cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
 	cpInput.Name = expectedName
@@ -46,11 +47,11 @@ func TestDeleteCloudProvider(t *testing.T) {
 
 	require.Equal(t, cp, testCP)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 
 	foundCP := &cac.PhysicalDatacenterCloudProvider{}
-	err = c.ConfigAsCode().GetCloudProviderById(cp.Id, foundCP)
+	err = c.ConfigAsCode().GetCloudProviderByName(cpInput.Name, foundCP)
 	require.NoError(t, err)
 	require.Equal(t, &cac.PhysicalDatacenterCloudProvider{}, foundCP)
 }
@@ -78,7 +79,7 @@ func TestCacSpotInstCloudProvider(t *testing.T) {
 	cp.Token.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
@@ -107,7 +108,7 @@ func TestCacPcfCloudProvider(t *testing.T) {
 	cp.Password.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
@@ -135,7 +136,7 @@ func TestCacKubernetesCloudProvider(t *testing.T) {
 	cp.ServiceAccountToken.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
@@ -164,7 +165,7 @@ func TestCacUpsertAzureCloudProvider(t *testing.T) {
 	cp.Key.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
@@ -184,7 +185,7 @@ func TestCacUpsertGcpCloudProvider(t *testing.T) {
 	cpInput.Id = cp.Id
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
@@ -201,7 +202,7 @@ func TestUpsertPhysicalDataCenterCloudProvider(t *testing.T) {
 	cpInput.Id = cp.Id
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
@@ -228,13 +229,13 @@ func TestUpsertAwsCloudProvider(t *testing.T) {
 	cp.SecretKey.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
-	err = c.ConfigAsCode().DeleteCloudProvider(cpInput.Name)
+	err = c.CloudProviders().DeleteCloudProvider(cpInput.Id)
 	require.NoError(t, err)
 }
 
 func TestListCloudProviders(t *testing.T) {
 	client := getClient()
-	limit := 10
+	limit := 100
 	offset := 0
 	hasMore := true
 
@@ -244,7 +245,7 @@ func TestListCloudProviders(t *testing.T) {
 		require.NotEmpty(t, cps, "No cloud providers found")
 		require.NotNil(t, pagination, "Pagination should not be nil")
 
-		hasMore = pagination.HasMore
-		offset += 1
+		hasMore = len(cps) == limit
+		offset += limit
 	}
 }

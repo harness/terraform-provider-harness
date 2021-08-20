@@ -141,8 +141,13 @@ func (r *SecretRef) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	value := val.(string)
 
 	parts := strings.Split(value, ":")
-	r.SecretManagerType = SecretManagerType(parts[0])
-	r.Name = parts[1]
+
+	if len(parts) == 1 {
+		r.Name = parts[0]
+	} else if len(parts) == 2 {
+		r.SecretManagerType = SecretManagerType(parts[0])
+		r.Name = parts[1]
+	}
 
 	return nil
 }

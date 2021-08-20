@@ -12,8 +12,8 @@ import (
 
 func TestGetApplicationById(t *testing.T) {
 
-	// Create a new app
-	newApp, err := createApplication(t.Name())
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
+	newApp, err := createApplication(name)
 	require.Nil(t, err, "Failed to create application: %s", err)
 
 	// Lookup newly created app by ID
@@ -34,7 +34,8 @@ func TestGetApplicationById(t *testing.T) {
 
 func TestGetApplicationByName(t *testing.T) {
 	// Create a new app
-	newApp, err := createApplication(t.Name())
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
+	newApp, err := createApplication(name)
 	require.NoError(t, err, "Failed to create application: %s", err)
 
 	client := getClient()
@@ -54,7 +55,7 @@ func TestCreateApplication(t *testing.T) {
 
 	// Create application
 	client := getClient()
-	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(12))
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
 	input := &graphql.Application{
 		ClientMutationId: time.Now().String(),
 		Name:             name,
@@ -76,7 +77,8 @@ func TestCreateApplication(t *testing.T) {
 func TestGetDeleteApplication(t *testing.T) {
 
 	// Create a new app
-	newApp, err := createApplication(t.Name())
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
+	newApp, err := createApplication(name)
 	require.NoError(t, err, "Failed to create application: %s", err)
 
 	client := getClient()
@@ -96,12 +98,13 @@ func TestGetDeleteApplication(t *testing.T) {
 func TestUpdateApplication(t *testing.T) {
 
 	// Setup
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
 	expectedName := "test_name_change"
 
 	// Create a new app
-	newApp, err := createApplication(t.Name())
+	newApp, err := createApplication(name)
 	require.NoError(t, err, "Failed to create application: %s", err)
-	require.NotEqual(t, expectedName, newApp.Name)
+	require.Equal(t, name, newApp.Name)
 
 	client := getClient()
 
@@ -135,19 +138,17 @@ func createApplication(name string) (*graphql.Application, error) {
 
 func TestListApplications(t *testing.T) {
 	client := getClient()
-	limit := 10
+	limit := 100
 	offset := 0
-	apps, pagination, err := client.Applications().ListApplications(limit, offset)
+	hasMore := true
 
-	require.NoError(t, err, "Failed to list applications: %s", err)
-	require.NotEmpty(t, apps, "No applications found")
-	require.NotNil(t, pagination, "Pagination should not be nil")
-
-	for pagination.HasMore {
-		offset += 1
-		apps, pagination, err = client.Applications().ListApplications(limit, offset)
+	for hasMore {
+		apps, pagination, err := client.Applications().ListApplications(limit, offset)
 		require.NoError(t, err, "Failed to list applications: %s", err)
 		require.NotEmpty(t, apps, "No applications found")
 		require.NotNil(t, pagination, "Pagination should not be nil")
+
+		hasMore = len(apps) == limit
+		offset += limit
 	}
 }

@@ -96,7 +96,7 @@ func (c *SecretClient) GetEncryptedTextById(id string) (*graphql.EncryptedText, 
 }
 
 func (c *SecretClient) ListEncryptedTextSecrets(limit int, offset int) ([]*unpublished.EncryptedText, *graphql.PageInfo, error) {
-	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-secrets-page")
+	req, err := c.APIClient.NewAuthorizedGetRequest("/gateway/api/secrets/list-secrets-page")
 	if err != nil {
 		return nil, nil, err
 	}

@@ -285,3 +285,242 @@ var CloudProviderTypes = struct {
 	PhysicalDataCenter: "PHYSICAL_DATA_CENTER",
 	SpotInst:           "SPOT_INST",
 }
+
+type AccountPermissionType string
+
+var AccountPermissionTypes = struct {
+	// ADMINISTER_CE                            AccountPermissionType
+	ADMINISTER_OTHER_ACCOUNT_FUNCTIONS       AccountPermissionType
+	CREATE_AND_DELETE_APPLICATION            AccountPermissionType
+	CREATE_CUSTOM_DASHBOARDS                 AccountPermissionType
+	MANAGE_ALERT_NOTIFICATION_RULES          AccountPermissionType
+	MANAGE_API_KEYS                          AccountPermissionType
+	MANAGE_APPLICATION_STACKS                AccountPermissionType
+	MANAGE_AUTHENTICATION_SETTINGS           AccountPermissionType
+	MANAGE_CLOUD_PROVIDERS                   AccountPermissionType
+	MANAGE_CONFIG_AS_CODE                    AccountPermissionType
+	MANAGE_CONNECTORS                        AccountPermissionType
+	MANAGE_CUSTOM_DASHBOARDS                 AccountPermissionType
+	MANAGE_DELEGATE_PROFILES                 AccountPermissionType
+	MANAGE_DELEGATES                         AccountPermissionType
+	MANAGE_DEPLOYMENT_FREEZES                AccountPermissionType
+	MANAGE_IP_WHITELIST                      AccountPermissionType
+	MANAGE_PIPELINE_GOVERNANCE_STANDARDS     AccountPermissionType
+	MANAGE_RESTRICTED_ACCESS                 AccountPermissionType
+	MANAGE_SECRET_MANAGERS                   AccountPermissionType
+	MANAGE_SECRETS                           AccountPermissionType
+	MANAGE_SSH_AND_WINRM                     AccountPermissionType
+	MANAGE_TAGS                              AccountPermissionType
+	MANAGE_TEMPLATE_LIBRARY                  AccountPermissionType
+	MANAGE_USER_AND_USER_GROUPS_AND_API_KEYS AccountPermissionType
+	MANAGE_USERS_AND_GROUPS                  AccountPermissionType
+	READ_USERS_AND_GROUPS                    AccountPermissionType
+	VIEW_AUDITS                              AccountPermissionType
+	VIEW_CE                                  AccountPermissionType
+	VIEW_USER_AND_USER_GROUPS_AND_API_KEYS   AccountPermissionType
+}{
+	// ADMINISTER_CE:                            "ADMINISTER_CE",
+	ADMINISTER_OTHER_ACCOUNT_FUNCTIONS:       "ADMINISTER_OTHER_ACCOUNT_FUNCTIONS",
+	CREATE_AND_DELETE_APPLICATION:            "CREATE_AND_DELETE_APPLICATION",
+	CREATE_CUSTOM_DASHBOARDS:                 "CREATE_CUSTOM_DASHBOARDS",
+	MANAGE_ALERT_NOTIFICATION_RULES:          "MANAGE_ALERT_NOTIFICATION_RULES",
+	MANAGE_API_KEYS:                          "MANAGE_API_KEYS",
+	MANAGE_APPLICATION_STACKS:                "MANAGE_APPLICATION_STACKS",
+	MANAGE_AUTHENTICATION_SETTINGS:           "MANAGE_AUTHENTICATION_SETTINGS",
+	MANAGE_CLOUD_PROVIDERS:                   "MANAGE_CLOUD_PROVIDERS",
+	MANAGE_CONFIG_AS_CODE:                    "MANAGE_CONFIG_AS_CODE",
+	MANAGE_CONNECTORS:                        "MANAGE_CONNECTORS",
+	MANAGE_CUSTOM_DASHBOARDS:                 "MANAGE_CUSTOM_DASHBOARDS",
+	MANAGE_DELEGATE_PROFILES:                 "MANAGE_DELEGATE_PROFILES",
+	MANAGE_DELEGATES:                         "MANAGE_DELEGATES",
+	MANAGE_DEPLOYMENT_FREEZES:                "MANAGE_DEPLOYMENT_FREEZES",
+	MANAGE_IP_WHITELIST:                      "MANAGE_IP_WHITELIST",
+	MANAGE_PIPELINE_GOVERNANCE_STANDARDS:     "MANAGE_PIPELINE_GOVERNANCE_STANDARDS",
+	MANAGE_RESTRICTED_ACCESS:                 "MANAGE_RESTRICTED_ACCESS",
+	MANAGE_SECRET_MANAGERS:                   "MANAGE_SECRET_MANAGERS",
+	MANAGE_SECRETS:                           "MANAGE_SECRETS",
+	MANAGE_SSH_AND_WINRM:                     "MANAGE_SSH_AND_WINRM",
+	MANAGE_TAGS:                              "MANAGE_TAGS",
+	MANAGE_TEMPLATE_LIBRARY:                  "MANAGE_TEMPLATE_LIBRARY",
+	MANAGE_USER_AND_USER_GROUPS_AND_API_KEYS: "MANAGE_USER_AND_USER_GROUPS_AND_API_KEYS",
+	MANAGE_USERS_AND_GROUPS:                  "MANAGE_USERS_AND_GROUPS",
+	READ_USERS_AND_GROUPS:                    "READ_USERS_AND_GROUPS",
+	VIEW_AUDITS:                              "VIEW_AUDITS",
+	VIEW_CE:                                  "VIEW_CE",
+	VIEW_USER_AND_USER_GROUPS_AND_API_KEYS:   "VIEW_USER_AND_USER_GROUPS_AND_API_KEYS",
+}
+
+var AccountPermissionTypeValues = []string{
+	"ADMINISTER_OTHER_ACCOUNT_FUNCTIONS",
+	"CREATE_AND_DELETE_APPLICATION",
+	"CREATE_CUSTOM_DASHBOARDS",
+	"MANAGE_ALERT_NOTIFICATION_RULES",
+	"MANAGE_API_KEYS",
+	"MANAGE_APPLICATION_STACKS",
+	"MANAGE_AUTHENTICATION_SETTINGS",
+	"MANAGE_CLOUD_PROVIDERS",
+	"MANAGE_CONFIG_AS_CODE",
+	"MANAGE_CONNECTORS",
+	"MANAGE_CUSTOM_DASHBOARDS",
+	"MANAGE_DELEGATE_PROFILES",
+	"MANAGE_DELEGATES",
+	"MANAGE_DEPLOYMENT_FREEZES",
+	"MANAGE_IP_WHITELIST",
+	"MANAGE_PIPELINE_GOVERNANCE_STANDARDS",
+	"MANAGE_RESTRICTED_ACCESS",
+	"MANAGE_SECRET_MANAGERS",
+	"MANAGE_SECRETS",
+	"MANAGE_SSH_AND_WINRM",
+	"MANAGE_TAGS",
+	"MANAGE_TEMPLATE_LIBRARY",
+	"MANAGE_USER_AND_USER_GROUPS_AND_API_KEYS",
+	"MANAGE_USERS_AND_GROUPS",
+	"READ_USERS_AND_GROUPS",
+	"VIEW_AUDITS",
+	"VIEW_USER_AND_USER_GROUPS_AND_API_KEYS",
+	// "ADMINISTER_CE",
+	// "VIEW_CE",
+}
+
+func (p AccountPermissionType) String() string {
+	return string(p)
+}
+
+type Action string
+
+var Actions = struct {
+	CREATE            Action
+	DELETE            Action
+	EXECUTE           Action
+	EXECUTE_PIPELINE  Action
+	EXECUTE_WORKFLOW  Action
+	READ              Action
+	ROLLBACK_WORKFLOW Action
+	UPDATE            Action
+}{
+	CREATE:            "CREATE",
+	DELETE:            "DELETE",
+	EXECUTE:           "EXECUTE",
+	EXECUTE_PIPELINE:  "EXECUTE_PIPELINE",
+	EXECUTE_WORKFLOW:  "EXECUTE_WORKFLOW",
+	READ:              "READ",
+	ROLLBACK_WORKFLOW: "ROLLBACK_WORKFLOW",
+	UPDATE:            "UPDATE",
+}
+
+type FilterType string
+
+var FilterTypes = struct {
+	All FilterType
+}{
+	All: "ALL",
+}
+
+type DeploymentPermissionFilterType string
+
+var DeploymentPermissionFilterTypes = struct {
+	NonProductionEnvironments DeploymentPermissionFilterType
+	ProductionEnvironments    DeploymentPermissionFilterType
+}{
+	NonProductionEnvironments: "NON_PRODUCTION_ENVIRONMENTS",
+	ProductionEnvironments:    "PRODUCTION_ENVIRONMENTS",
+}
+
+var DeploymentPermissionFiltersSlice = []string{
+	"NON_PRODUCTION_ENVIRONMENTS",
+	"PRODUCTION_ENVIRONMENTS",
+}
+
+func (f DeploymentPermissionFilterType) String() string {
+	return string(f)
+}
+
+type EnvFilterType string
+
+var EnvFilterTypes = struct {
+	NonProductionEnvironments EnvFilterType
+	ProductionEnvironments    EnvFilterType
+}{
+	NonProductionEnvironments: "NON_PRODUCTION_ENVIRONMENTS",
+	ProductionEnvironments:    "PRODUCTION_ENVIRONMENTS",
+}
+
+func (f EnvFilterType) String() string {
+	return string(f)
+}
+
+var EnvFiltersSlice = []string{
+	"NON_PRODUCTION_ENVIRONMENTS",
+	"PRODUCTION_ENVIRONMENTS",
+}
+
+type AppPermissionType string
+
+var AppPermissionTypes = struct {
+	All         AppPermissionType
+	Deployment  AppPermissionType
+	Env         AppPermissionType
+	Pipeline    AppPermissionType
+	Provisioner AppPermissionType
+	Service     AppPermissionType
+	Workflow    AppPermissionType
+}{
+	All:         "ALL",
+	Deployment:  "DEPLOYMENT",
+	Env:         "ENV",
+	Pipeline:    "PIPELINE",
+	Provisioner: "PROVISIONER",
+	Service:     "SERVICE",
+	Workflow:    "WORKFLOW",
+}
+
+type PipelinePermissionFilterType string
+
+var PipelinePermissionFilterTypes = struct {
+	NonProductionPipelines PipelinePermissionFilterType
+	ProductionPipelines    PipelinePermissionFilterType
+}{
+	NonProductionPipelines: "NON_PRODUCTION_PIPELINES",
+	ProductionPipelines:    "PRODUCTION_PIPELINES",
+}
+
+func (f PipelinePermissionFilterType) String() string {
+	return string(f)
+}
+
+var PipelinePermissionFiltersSlice = []string{
+	"NON_PRODUCTION_PIPELINES",
+	"PRODUCTION_PIPELINES",
+}
+
+type WorkflowPermissionFilterType string
+
+var WorkflowPermissionFilterTypes = struct {
+	NonProductionWorkflows WorkflowPermissionFilterType
+	ProductionWorkflows    WorkflowPermissionFilterType
+	WorkflowTemplates      WorkflowPermissionFilterType
+}{
+	NonProductionWorkflows: "NON_PRODUCTION_WORKFLOWS",
+	ProductionWorkflows:    "PRODUCTION_WORKFLOWS",
+	WorkflowTemplates:      "WORKFLOW_TEMPLATES",
+}
+
+var WorkflowPermissionFiltersSlice = []string{
+	"NON_PRODUCTION_WORKFLOWS",
+	"PRODUCTION_WORKFLOWS",
+	"WORKFLOW_TEMPLATES",
+}
+
+func (f WorkflowPermissionFilterType) String() string {
+	return string(f)
+}
+
+type SSOType string
+
+var SSOTypes = struct {
+	LDAP SSOType
+	SAML SSOType
+}{
+	LDAP: "LDAP",
+	SAML: "SAML",
+}

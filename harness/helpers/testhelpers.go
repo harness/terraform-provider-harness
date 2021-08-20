@@ -1,11 +1,5 @@
 package helpers
 
-import (
-	"os"
-)
-
-type EnvVar string
-
 var TestEnvVars = struct {
 	AwsAccessKeyId     EnvVar
 	AwsSecretAccessKey EnvVar
@@ -22,8 +16,4 @@ var TestEnvVars = struct {
 	AzureTenantId:      "HARNESS_TEST_AZURE_TENANT_ID",
 	SpotInstAccountId:  "HARNESS_TEST_SPOT_ACCT_ID",
 	SpotInstToken:      "HARNESS_TEST_SPOT_TOKEN",
-}
-
-func (e EnvVar) Get() string {
-	return os.Getenv(string(e))
 }

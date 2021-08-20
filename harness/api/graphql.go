@@ -32,7 +32,7 @@ func (client *Client) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.Req
 
 	log.Printf("[DEBUG] GraphQL Query: %s", requestBody.String())
 
-	req, err := retryablehttp.NewRequest(http.MethodPost, getGraphQLUrl(), &requestBody)
+	req, err := client.NewAuthorizedPostRequest(DefaultGraphQLApiUrl, &requestBody)
 
 	if err != nil {
 		return nil, err
@@ -42,11 +42,6 @@ func (client *Client) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.Req
 	q := req.URL.Query()
 	q.Add(helpers.QueryParameters.AccountId.String(), client.AccountId)
 	req.URL.RawQuery = q.Encode()
-
-	// Configure additional headers
-	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), client.APIKey)
-	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), helpers.HTTPHeaders.ApplicationJson.String())
-	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	return req, nil
 }
@@ -69,6 +64,10 @@ func (client *Client) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj inter
 
 	if err != nil {
 		return err
+	}
+
+	if res.StatusCode == http.StatusUnauthorized {
+		return errors.New("unauthorized")
 	}
 
 	defer res.Body.Close()
@@ -107,9 +106,9 @@ func (client *Client) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj inter
 }
 
 // Returns fully qualified path to the GraphQL Api
-func getGraphQLUrl() string {
-	return fmt.Sprintf("%s%s", DefaultApiUrl, DefaultGraphQLApiUrl)
-}
+// func getGraphQLUrl() string {
+// 	return fmt.Sprintf("%s%s", DefaultApiUrl, DefaultGraphQLApiUrl)
+// }
 
 const paginationFields = `
 pageInfo {

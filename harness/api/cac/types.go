@@ -43,6 +43,7 @@ type ConfigAsCodeItem struct {
 	Status          string              `json:"status,omitempty"`
 	ErrorMessage    string              `json:"errorMssg,omitempty"`
 	Yaml            string              `json:"yaml"`
+	EntityId        string              `json:"entityId,omitempty"`
 }
 
 type DirectoryPath struct {

@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"mime/multipart"
-	"net/http"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -55,15 +54,11 @@ func FindConfigAsCodeItemByUUID(rootItem *cac.ConfigAsCodeItem, uuid string) *ca
 
 func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid string, applicationId string) (*cac.ConfigAsCodeItem, error) {
 	path := fmt.Sprintf("/gateway/api/setup-as-code/yaml/%s/%s", restName, uuid)
+	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
 
-	req, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, path), nil)
 	if err != nil {
 		return nil, err
 	}
-
-	// Configure additional headers
-	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
-	req.Header.Set(helpers.HTTPHeaders.Authorization.String(), fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
 
 	// Set query parameters
 	q := req.URL.Query()
@@ -84,16 +79,11 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 
 func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.ConfigAsCodeItem, error) {
 	path := "/gateway/api/setup-as-code/yaml/directory"
+	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
 
-	req, err := retryablehttp.NewRequest(http.MethodGet, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, path), nil)
 	if err != nil {
 		return nil, err
 	}
-
-	// Configure additional headers
-	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), c.ApiClient.APIKey)
-	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), helpers.HTTPHeaders.ApplicationJson.String())
-	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	// Set query parameters
 	q := req.URL.Query()
@@ -137,15 +127,14 @@ func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity inte
 
 	log.Printf("[DEBUG] HTTP Request Body: %s", string(payload))
 
-	req, err := retryablehttp.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, "/gateway/api/setup-as-code/yaml/upsert-entity"), &b)
+	req, err := c.ApiClient.NewAuthorizedPostRequest("/gateway/api/setup-as-code/yaml/upsert-entity", &b)
+
+	// Set proper content header
+	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), w.FormDataContentType())
+
 	if err != nil {
 		return nil, err
 	}
-
-	// Configure additional headers
-	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), c.ApiClient.APIKey)
-	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), w.FormDataContentType())
-	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
@@ -225,16 +214,11 @@ type ConfigAsCodeClient struct {
 }
 
 func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
+	req, err := c.ApiClient.NewAuthorizedDeleteRequest("/gateway/api/setup-as-code/yaml/delete-entities")
 
-	req, err := retryablehttp.NewRequest(http.MethodDelete, fmt.Sprintf("%s%s", c.ApiClient.Endpoint, "/gateway/api/setup-as-code/yaml/delete-entities"), nil)
 	if err != nil {
 		return err
 	}
-
-	// Configure additional headers
-	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), c.ApiClient.APIKey)
-	req.Header.Set(helpers.HTTPHeaders.Authorization.String(), fmt.Sprintf("Bearer %s", c.ApiClient.BearerToken))
-	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
 
 	// Add the account ID to the query string
 	q := req.URL.Query()

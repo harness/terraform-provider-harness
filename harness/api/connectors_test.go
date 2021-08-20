@@ -122,7 +122,7 @@ func TestListGitConnectors(t *testing.T) {
 		require.NotEmpty(t, connectors, "No git connectors found")
 		require.NotNil(t, pagination, "Pagination should not be nil")
 
-		hasMore = pagination.HasMore
-		offset += 1
+		hasMore = len(connectors) == limit
+		offset += limit
 	}
 }

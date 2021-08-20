@@ -100,7 +100,7 @@ func TestKubernetesCLoudProviderSerialization(t *testing.T) {
 harnessApiVersion: "1.0"
 type: KUBERNETES_CLUSTER
 authType: USER_PASSWORD
-cacert: cert
+caCert: cert
 clientCert: clientCert
 clientKey: clientKey
 clientKeyAlgorithm: algorithm

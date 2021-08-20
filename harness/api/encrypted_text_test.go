@@ -2,11 +2,10 @@ package api
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
-	"github.com/harness-io/harness-go-sdk/harness/envvar"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +18,7 @@ func TestCreateEncryptedText(t *testing.T) {
 	input := &graphql.CreateSecretInput{
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            expectedName,
-			SecretManagerId: os.Getenv(envvar.HarnessAccountId),
+			SecretManagerId: helpers.EnvVars.HarnessAccountId.Get(),
 			Value:           "someval",
 			UsageScope:      getExampleUsageScopes(),
 		},
@@ -48,7 +47,7 @@ func TestDeleteSecret_EncryptedText(t *testing.T) {
 		SecretType: graphql.SecretTypes.EncryptedText,
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            expectedName,
-			SecretManagerId: os.Getenv(envvar.HarnessAccountId),
+			SecretManagerId: helpers.EnvVars.HarnessAccountId.Get(),
 			Value:           "someval",
 		},
 	}
@@ -156,12 +155,20 @@ func TestUpdateEncryptedTextSecret(t *testing.T) {
 }
 
 func TestListEncryptedText(t *testing.T) {
-	c := getClient()
+	client := getClient()
+	limit := 10
+	offset := 0
+	hasMore := true
 
-	secrets, pageInfo, err := c.Secrets().ListEncryptedTextSecrets(10, 0)
-	require.NoError(t, err)
-	require.NotNil(t, pageInfo)
-	require.Len(t, secrets, 10)
+	for hasMore {
+		apps, pagination, err := client.Secrets().ListEncryptedTextSecrets(limit, offset)
+		require.NoError(t, err, "Failed to list applications: %s", err)
+		require.NotEmpty(t, apps, "No applications found")
+		require.NotNil(t, pagination, "Pagination should not be nil")
+
+		hasMore = len(apps) == limit
+		offset += limit
+	}
 }
 
 func createEncryptedTextSecret(name string, value string) (*graphql.EncryptedText, error) {
@@ -171,7 +178,7 @@ func createEncryptedTextSecret(name string, value string) (*graphql.EncryptedTex
 		SecretType: graphql.SecretTypes.EncryptedText,
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            name,
-			SecretManagerId: os.Getenv(envvar.HarnessAccountId),
+			SecretManagerId: helpers.EnvVars.HarnessAccountId.Get(),
 			Value:           value,
 		},
 	}

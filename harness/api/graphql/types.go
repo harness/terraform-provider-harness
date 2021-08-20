@@ -116,6 +116,156 @@ type User struct {
 	Name                             string `json:"name,omitempty"`
 }
 
+type CreateUserInput struct {
+	ClientMutationID string   `json:"clientMutationId,omitempty"`
+	Email            string   `json:"email,omitempty"`
+	Name             string   `json:"name,omitempty"`
+	UserGroupIds     []string `json:"userGroupIds,omitempty"`
+}
+
+type UserGroup struct {
+	Id                   string                `json:"id,omitempty"`
+	Name                 string                `json:"name,omitempty"`
+	Description          string                `json:"description,omitempty"`
+	ImportedBySCIM       bool                  `json:"importedByScim,omitempty"`
+	IsSSOLinked          bool                  `json:"isSSOLinked,omitempty"`
+	NotificationSettings *NotificationSettings `json:"notificationSettings,omitempty"`
+	Permissions          *UserGroupPermissions `json:"permissions,omitempty"`
+	LDAPSettings         *LDAPSettings         `json:"ldapSettings,omitempty"`
+	SAMLSettings         *SAMLSettings         `json:"samlSettings,omitempty"`
+}
+
+type CreateUserGroupInput struct {
+	Name                 string                `json:"name,omitempty"`
+	Description          string                `json:"description,omitempty"`
+	ImportedBySCIM       bool                  `json:"importedByScim,omitempty"`
+	IsSSOLinked          bool                  `json:"isSSOLinked,omitempty"`
+	NotificationSettings *NotificationSettings `json:"notificationSettings,omitempty"`
+	Permissions          *UserGroupPermissions `json:"permissions,omitempty"`
+	SSOSetting           *SSOSettingInput      `json:"ssoSetting,omitempty"`
+}
+
+type UpdateUserGroupInput struct {
+	Id                   string                `json:"userGroupId,omitempty"`
+	Name                 string                `json:"name,omitempty"`
+	Description          string                `json:"description,omitempty"`
+	ImportedBySCIM       bool                  `json:"importedByScim,omitempty"`
+	IsSSOLinked          bool                  `json:"isSSOLinked,omitempty"`
+	NotificationSettings *NotificationSettings `json:"notificationSettings,omitempty"`
+	Permissions          *UserGroupPermissions `json:"permissions,omitempty"`
+	SSOSetting           *SSOSettingInput      `json:"ssoSetting,omitempty"`
+}
+
+type SSOSettingInput struct {
+	LDAPSettings *LDAPSettings `json:"ldapSettings,omitempty"`
+	SAMLSettings *SAMLSettings `json:"samlSettings,omitempty"`
+}
+
+type LDAPSettings struct {
+	GroupDN       string `json:"groupDN,omitempty"`
+	GroupName     string `json:"groupName,omitempty"`
+	SSOProviderId string `json:"ssoProviderId,omitempty"`
+}
+
+type SAMLSettings struct {
+	GroupName     string `json:"groupName,omitempty"`
+	SSOProviderId string `json:"ssoProviderId,omitempty"`
+}
+
+type LinkedSSOSettings struct {
+	GroupDN       string `json:"groupDN,omitempty"`
+	GroupName     string `json:"groupName,omitempty"`
+	SsoProviderId string `json:"ssoProviderId,omitempty"`
+}
+
+type SSOProvider struct {
+	Id      string  `json:"id,omitempty"`
+	Name    string  `json:"name,omitempty"`
+	SSOType SSOType `json:"ssoType,omitempty"`
+}
+
+type NotificationSettings struct {
+	GroupEmailAddresses       []string                  `json:"groupEmailAddresses,omitempty"`
+	MicrosoftTeamsWebhookUrl  string                    `json:"microsoftTeamsWebhookUrl,omitempty"`
+	SendMailToNewMembers      bool                      `json:"sendMailToNewMembers,omitempty"`
+	SendNotificationToMembers bool                      `json:"sendNotificationToMembers,omitempty"`
+	SlackNotificationSetting  *SlackNotificationSetting `json:"slackNotificationSetting,omitempty"`
+	// PagerDutyIntegrationKey   string                    `json:"pagerDutyIntegrationKey,omitempty"`
+}
+
+type UserGroupPermissions struct {
+	AccountPermissions *AccountPermissions `json:"accountPermissions,omitempty"`
+	AppPermissions     []*AppPermission    `json:"appPermissions,omitempty"`
+}
+
+type AppPermission struct {
+	Actions        []Action                     `json:"actions,omitempty"`
+	Applications   *AppFilter                   `json:"applications,omitempty"`
+	Deployments    *DeploymentPermissionFilter  `json:"deployments,omitempty"`
+	Environments   *EnvPermissionFilter         `json:"environments,omitempty"`
+	PermissionType AppPermissionType            `json:"permissionType,omitempty"`
+	Pipelines      *PipelinePermissionFilter    `json:"pipelines,omitempty"`
+	Provisioners   *ProvisionerPermissionFilter `json:"provisioners,omitempty"`
+	Services       *ServicePermissionFilter     `json:"services,omitempty"`
+	Workflows      *WorkflowPermissionFilter    `json:"workflows,omitempty"`
+}
+
+type WorkflowPermissionFilter struct {
+	EnvIds      []string                       `json:"envIds,omitempty"`
+	FilterTypes []WorkflowPermissionFilterType `json:"filterTypes,omitempty"`
+}
+
+type AddUserToUserGroupInput struct {
+	ClientMutationId string `json:"clientMutationId,omitempty"`
+	UserGroupId      string `json:"userGroupId,omitempty"`
+	UserId           string `json:"userId,omitempty"`
+}
+
+type ServicePermissionFilter struct {
+	FilterType FilterType `json:"filterType,omitempty"`
+	ServiceIds []string   `json:"serviceIds,omitempty"`
+}
+
+type ProvisionerPermissionFilter struct {
+	FilterType     FilterType `json:"filterType,omitempty"`
+	ProvisionerIds []string   `json:"provisionerIds,omitempty"`
+}
+
+type PipelinePermissionFilter struct {
+	EnvIds      []string                       `json:"envIds,omitempty"`
+	FilterTypes []PipelinePermissionFilterType `json:"filterTypes,omitempty"`
+}
+
+type AppFilter struct {
+	AppIds     []string   `json:"appIds,omitempty"`
+	FilterType FilterType `json:"filterType,omitempty"`
+}
+
+type DeploymentPermissionFilter struct {
+	EnvIds      []string                         `json:"envIds,omitempty"`
+	FilterTypes []DeploymentPermissionFilterType `json:"filterTypes,omitempty"`
+}
+
+type EnvPermissionFilter struct {
+	EnvIds      []string        `json:"envIds,omitempty"`
+	FilterTypes []EnvFilterType `json:"filterTypes,omitempty"`
+}
+
+type AccountPermissions struct {
+	AccountPermissionTypes []AccountPermissionType `json:"accountPermissionTypes,omitempty"`
+}
+
+type SlackNotificationSetting struct {
+	SlackChannelName string `json:"slackChannelName,omitempty"`
+	SlackWebhookUrl  string `json:"slackWebhookURL,omitempty"`
+}
+
+type UpdateUserInput struct {
+	ClientMutationID string `json:"clientMutationId,omitempty"`
+	Id               string `json:"id,omitempty"`
+	Name             string `json:"name,omitempty"`
+}
+
 type GitSyncConfig struct {
 	Branch         string
 	GitConnector   *GitConnector

@@ -115,7 +115,7 @@ func (c *ConfigAsCodeClient) GetCloudProviderByName(name string, obj interface{}
 	return c.FindObjectByPath("", filePath, obj)
 }
 
-func (c *ConfigAsCodeClient) DeleteCloudProvider(name string) error {
-	filePath := cac.GetCloudProviderYamlPath(name)
-	return c.DeleteEntity(filePath)
-}
+// func (c *ConfigAsCodeClient) DeleteCloudProvider(name string) error {
+// 	filePath := cac.GetCloudProviderYamlPath(name)
+// 	return c.DeleteEntity(filePath)
+// }

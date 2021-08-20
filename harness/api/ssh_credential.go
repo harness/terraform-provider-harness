@@ -141,7 +141,7 @@ func (c *SecretClient) GetSSHCredentialByName(name string) (*graphql.SSHCredenti
 }
 
 func (c *SecretClient) ListSSHCredentials() ([]*unpublished.Credential, error) {
-	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-values")
+	req, err := c.APIClient.NewAuthorizedGetRequest("/gateway/api/secrets/list-values")
 	if err != nil {
 		return nil, err
 	}

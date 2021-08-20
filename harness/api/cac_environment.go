@@ -73,3 +73,7 @@ func (c *ConfigAsCodeClient) GetEnvironmentById(applicationId string, environmen
 
 	return env, nil
 }
+
+func (c *ConfigAsCodeClient) DeleteEnvironment(appName string, envName string) error {
+	return c.DeleteEntity(cac.GetEnvironmentYamlPath(appName, envName))
+}

@@ -11,8 +11,8 @@ import (
 
 func TestUpsertEnvironment(t *testing.T) {
 	c := getClient()
-	appName := fmt.Sprintf("app-%s-%s", t.Name(), utils.RandStringBytes(5))
-	envName := fmt.Sprintf("svc-%s-%s", t.Name(), utils.RandStringBytes(5))
+	appName := fmt.Sprintf("%s-%s-app", t.Name(), utils.RandStringBytes(5))
+	envName := fmt.Sprintf("%s-%s-svc", t.Name(), utils.RandStringBytes(5))
 
 	app, err := createApplication(appName)
 	require.NoError(t, err)
@@ -24,15 +24,15 @@ func TestUpsertEnvironment(t *testing.T) {
 	require.Equal(t, env.Name, envName)
 	require.Equal(t, env.ApplicationId, app.Id)
 
-	err = c.ConfigAsCode().DeleteEntity(cac.GetEnvironmentYamlPath(app.Name, envName))
+	err = c.ConfigAsCode().DeleteEnvironment(app.Name, envName)
 	require.NoError(t, err)
 }
 
 func TestGetEnvironmentById(t *testing.T) {
 	c := getClient()
 
-	appName := fmt.Sprintf("app-%s-%s", t.Name(), utils.RandStringBytes(5))
-	envName := fmt.Sprintf("svc-%s-%s", t.Name(), utils.RandStringBytes(5))
+	appName := fmt.Sprintf("%s-%s-apps", t.Name(), utils.RandStringBytes(5))
+	envName := fmt.Sprintf("%s-%s-svc", t.Name(), utils.RandStringBytes(5))
 
 	app, err := createApplication(appName)
 	require.NoError(t, err)
@@ -50,8 +50,8 @@ func TestGetEnvironmentById(t *testing.T) {
 func TestGetEnvironmentByName(t *testing.T) {
 	c := getClient()
 
-	appName := fmt.Sprintf("app-%s-%s", t.Name(), utils.RandStringBytes(5))
-	envName := fmt.Sprintf("svc-%s-%s", t.Name(), utils.RandStringBytes(5))
+	appName := fmt.Sprintf("%s-%s-app", t.Name(), utils.RandStringBytes(5))
+	envName := fmt.Sprintf("%s-%s-app", t.Name(), utils.RandStringBytes(5))
 
 	app, err := createApplication(appName)
 	require.NoError(t, err)

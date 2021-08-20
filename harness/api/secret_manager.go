@@ -69,7 +69,7 @@ func (ac *SecretClient) GetSecretManagerByName(name string) (*graphql.SecretMana
 }
 
 func (c *SecretClient) ListSecretManagers() ([]*unpublished.SecretManager, error) {
-	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-configs")
+	req, err := c.APIClient.NewAuthorizedGetRequest("/gateway/api/secrets/list-configs")
 	if err != nil {
 		return nil, err
 	}

@@ -1,8 +1,11 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/api/unpublished"
@@ -46,7 +49,7 @@ func getWinRMCredentialFields() string {
 }
 
 func (c *SecretClient) ListWinRMCredentials() ([]*unpublished.Credential, error) {
-	req, err := c.APIClient.NewAuthorizedRequestWithBearerToken("gateway/api/secrets/list-values")
+	req, err := c.APIClient.NewAuthorizedGetRequest("gateway/api/secrets/list-values")
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +64,13 @@ func (c *SecretClient) ListWinRMCredentials() ([]*unpublished.Credential, error)
 	}
 
 	defer resp.Body.Close()
+
+	// Make sure we can parse the body properly
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, resp.Body); err != nil {
+		return nil, fmt.Errorf("error reading body: %s", err)
+	}
+	log.Printf("[DEBUG] GraphQL response: %s", buf.String())
 
 	responsePackage := &unpublished.Package{}
 	err = json.NewDecoder(resp.Body).Decode(responsePackage)
