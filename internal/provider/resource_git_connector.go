@@ -83,6 +83,7 @@ func resourceGitConnector() *schema.Resource {
 				Default:     true,
 				Type:        schema.TypeBool,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"webhook_url": {
 				Description: "The generated webhook url",
@@ -104,6 +105,7 @@ func resourceGitConnector() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validateUrlType,
+				ForceNew:     true,
 			},
 			"username": {
 				Description: "The name of the user used to connect to the git repository",
@@ -201,28 +203,8 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	// Validation
-	if d.HasChange("generate_webhook_url") && !d.Get("generate_webhook_url").(bool) {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "generate_webhook_url cannot be changed",
-				Detail:   "When generate_webhook_url is initially set to true it cannot be reversed. You can update it from `false` to `true` but not the other way around.",
-			},
-		}
-	}
-
 	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
 		return diag.FromErr(err)
-	}
-
-	if d.HasChange("url_type") {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "url_type cannot be changed",
-			},
-		}
 	}
 
 	id := d.Get("id").(string)

@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -100,11 +99,7 @@ func resourceCloudProviderSpotCreate(ctx context.Context, d *schema.ResourceData
 func resourceCloudProviderSpotUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	if d.HasChange("name") {
-		return diag.FromErr(errors.New("name is immutable"))
-	}
-
-	cp := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.SpotInstCloudProvider)
+	cp := cac.NewEntity(cac.ObjectTypes.SpotInstCloudProvider).(*cac.SpotInstCloudProvider)
 	cp.Name = d.Get("name").(string)
 	cp.AccountId = d.Get("account_id").(string)
 

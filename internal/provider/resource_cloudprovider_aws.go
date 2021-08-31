@@ -2,15 +2,12 @@ package provider
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"gopkg.in/yaml.v3"
 )
 
 func resourceCloudProviderAws() *schema.Resource {
@@ -167,11 +164,7 @@ func resourceCloudProviderAwsCreate(ctx context.Context, d *schema.ResourceData,
 
 	expandAwsCloudProviderCredentials(d.Get("credentials").([]interface{}), input)
 
-	b, err := yaml.Marshal(input)
-	fmt.Println(err)
-	fmt.Println(string(b))
 	cp, err := c.ConfigAsCode().UpsertAwsCloudProvider(input)
-
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -183,10 +176,6 @@ func resourceCloudProviderAwsCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudProviderAwsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if d.HasChange("name") {
-		return diag.FromErr(errors.New("name is immutable"))
-	}
 
 	cp := cac.NewEntity(cac.ObjectTypes.AwsCloudProvider).(*cac.AwsCloudProvider)
 	cp.Name = d.Get("name").(string)
@@ -266,6 +255,7 @@ func expandAwsCloudProviderDelegateConfig(d []interface{}, input *cac.AwsCloudPr
 
 	if attr, ok := config["selector"]; ok && attr != "" {
 		input.DelegateSelector = attr.(string)
+		input.UseEc2IamCredentials = true
 	}
 }
 

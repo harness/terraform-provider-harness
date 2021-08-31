@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -10,13 +9,13 @@ import (
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceSpotCloudProviderConnector(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		updatedName  = fmt.Sprintf("%s_updated", name)
 		resourceName = "harness_cloudprovider_spot.test"
 	)
 
@@ -31,13 +30,6 @@ func TestAccResourceSpotCloudProviderConnector(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckSpotCloudProviderExists(t, resourceName, name),
 				),
-			},
-			{
-				Config: testAccResourceSpotCloudProvider(updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckSpotCloudProviderExists(t, resourceName, name),
-				),
-				ExpectError: regexp.MustCompile("name is immutable"),
 			},
 		},
 	})
@@ -67,9 +59,16 @@ func testAccCheckSpotCloudProviderExists(t *testing.T, resourceName, cloudProvid
 	return func(state *terraform.State) error {
 		cp := &cac.SpotInstCloudProvider{}
 		err := testAccGetCloudProvider(resourceName, state, cp)
-		if err != nil {
-			return err
-		}
+
+		r := testAccGetResource(resourceName, state)
+		name := r.Primary.Attributes["name"]
+
+		require.NoError(t, err)
+		require.Equal(t, cac.ObjectTypes.SpotInstCloudProvider, cp.Type)
+		require.Equal(t, cloudProviderName, cp.Name)
+		require.Equal(t, helpers.TestEnvVars.SpotInstAccountId.Get(), cp.AccountId)
+		require.Equal(t, name, cp.Token.Name)
+
 		return nil
 	}
 }

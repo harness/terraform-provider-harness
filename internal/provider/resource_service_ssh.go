@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -18,6 +17,7 @@ func resourceSSHService() *schema.Resource {
 		Description:  "The type of artifact to deploy.",
 		Type:         schema.TypeString,
 		Required:     true,
+		ForceNew:     true,
 		ValidateFunc: validation.StringInSlice(cac.SSHArtifactTypes, false),
 	}
 
@@ -82,14 +82,6 @@ func resourceSSHServiceCreate(ctx context.Context, d *schema.ResourceData, meta 
 
 func resourceSSHServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if d.HasChange("app_id") {
-		return diag.FromErr(errors.New("app_id cannot be changed"))
-	}
-
-	if d.HasChange("artifact_type") {
-		return diag.FromErr(errors.New("artifact_type cannot be changed"))
-	}
 
 	// Setup the object to create
 	svcInput := &cac.Service{

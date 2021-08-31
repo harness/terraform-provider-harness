@@ -34,6 +34,7 @@ func commonServiceSchema() map[string]*schema.Schema {
 			Description: "The id of the application the service belongs to",
 			Type:        schema.TypeString,
 			Required:    true,
+			ForceNew:    true,
 		},
 		"name": {
 			Description: "Name of the service",
