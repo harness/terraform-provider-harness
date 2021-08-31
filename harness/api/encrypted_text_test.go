@@ -155,6 +155,7 @@ func TestUpdateEncryptedTextSecret(t *testing.T) {
 }
 
 func TestListEncryptedText(t *testing.T) {
+	t.Skip("This endpoint requires a bearer token.")
 	client := getClient()
 	limit := 10
 	offset := 0

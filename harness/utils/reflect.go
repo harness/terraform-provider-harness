@@ -76,6 +76,56 @@ func RequiredStringFieldsSet(obj interface{}, fields []string) (bool, error) {
 	return true, nil
 }
 
+func RequiredValuesSet(obj interface{}, fieldValues map[string]interface{}) (bool, error) {
+	for fieldName, expectedValue := range fieldValues {
+		if val, ok := TryGetFieldValue(obj, fieldName); !ok || val != expectedValue {
+			return false, fmt.Errorf("expected %s to be set to %s", fieldName, expectedValue)
+		}
+	}
+
+	return true, nil
+}
+
+func RequiredValueOptionsSet(obj interface{}, fieldValuesMap map[string][]interface{}) (bool, error) {
+	for fieldName, expectedValue := range fieldValuesMap {
+		if val, ok := TryGetFieldValue(obj, fieldName); !ok {
+			valueMatch := false
+			for v := range expectedValue {
+				if v == val {
+					valueMatch = true
+					break
+				}
+			}
+
+			if !valueMatch {
+				return false, fmt.Errorf("expected %s to be one of %s", fieldName, expectedValue)
+			}
+		}
+	}
+
+	return true, nil
+}
+
+// func RequiredFieldsSet(obj interface{}, fields []string) (bool, error) {
+// 	for _, fieldName := range fields {
+// 		if val, ok := TryGetFieldValue(obj, fieldName); !ok || val == nil {
+// 			return false, fmt.Errorf("expected %s to be set", fieldName)
+// 		}
+// 	}
+
+// 	return true, nil
+// }
+
+// func RequiredSliceFieldsSet(obj interface{}, fields []string) (bool, error) {
+// 	for _, fieldName := range fields {
+// 		if val, ok := TryGetFieldValue(obj, fieldName); !ok || val == nil {
+// 			return false, fmt.Errorf("expected %s to be set", fieldName)
+// 		}
+// 	}
+
+// 	return true, nil
+// }
+
 func RequiredFieldsCheck(obj interface{}, fields []string) (bool, error) {
 	for _, fieldName := range fields {
 		if !HasField(obj, fieldName) {

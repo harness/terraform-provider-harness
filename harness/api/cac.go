@@ -256,10 +256,13 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 	}
 
 	// Upsert the yaml document
-	_, err := c.UpsertYamlEntity(filePath, input)
+	resp, err := c.UpsertYamlEntity(filePath, input)
 	if err != nil {
 		return err
 	}
+
+	log.Printf("[DEBUG] UUID: %s", resp.UUID)
+	log.Printf("[DEBUG] EntityId: %s", resp.EntityId)
 
 	appId, ok := utils.TryGetFieldValue(input, "ApplicationId")
 	if !ok {

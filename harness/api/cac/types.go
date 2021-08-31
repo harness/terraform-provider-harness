@@ -234,3 +234,208 @@ type VariableOverride struct {
 	Value       string            `yaml:"value,omitempty"`
 	ValueType   VariableValueType `yaml:"valueType,omitempty"`
 }
+
+type InfrastructureDefinition struct {
+	HarnessApiVersion         HarnessApiVersion       `yaml:"harnessApiVersion" json:"harnessApiVersion"`
+	Type                      ObjectType              `yaml:"type" json:"type"`
+	Id                        string                  `yaml:"-"`
+	Name                      string                  `yaml:"-"`
+	ApplicationId             string                  `yaml:"-"`
+	EnvironmentId             string                  `yaml:"-"`
+	CloudProviderType         CloudProviderType       `yaml:"cloudProviderType,omitempty"`
+	DeploymentType            DeploymentType          `yaml:"deploymentType,omitempty"`
+	InfrastructureDetail      []*InfrastructureDetail `yaml:"infrastructure,omitempty"`
+	Provisioner               string                  `yaml:"provisioner,omitempty"`
+	DeploymentTypeTemplateUri string                  `yaml:"deploymentTypeTemplateUri,omitempty"`
+	ScopedServices            []string                `yaml:"scopedServices,omitempty"`
+}
+
+type InfrastructureDetail struct {
+	Type                          InfrastructureType `yaml:"type,omitempty"`
+	AmiDeploymentType             AmiDeploymentType  `yaml:"amiDeploymentType,omitempty"`
+	ASGIdentifiesWorkload         bool               `yaml:"asgIdentifiesWorkload,omitempty"`
+	AssignPublicIp                bool               `yaml:"assignPublicIp,omitempty"`
+	AutoscalingGroupName          string             `yaml:"autoScalingGroupName,omitempty"`
+	AwsInstanceFilter             *AwsInstanceFilter `yaml:"awsInstanceFilter,omitempty"`
+	BaseVMSSName                  string             `yaml:"baseVMSSName,omitempty"`
+	ClassicLoadBalancers          []string           `yaml:"classicLoadBalancers,omitempty"`
+	CloudProviderName             string             `yaml:"cloudProviderName,omitempty"`
+	ClusterName                   string             `yaml:"clusterName,omitempty"`
+	DesiredCapacity               int                `yaml:"desiredCapacity,omitempty"`
+	ExecutionRole                 string             `yaml:"executionRole,omitempty"`
+	Expressions                   map[string]string  `yaml:"expressions,omitempty"`
+	HostConnectionAttrs           string             `yaml:"hostConnectionAttrs,omitempty"`
+	HostConnectionAttrsName       string             `yaml:"hostConnectionAttrsName,omitempty"`
+	HostConnectionType            string             `yaml:"hostConnectionType,omitempty"`
+	HostNameConvention            string             `yaml:"hostNameConvention,omitempty"`
+	HostNames                     []string           `yaml:"hostNames,omitempty"`
+	InfraVariables                *InfraVariable     `yaml:"infraVariables,omitempty"`
+	LaunchType                    string             `yaml:"launchType,omitempty"`
+	Namespace                     string             `yaml:"namespace,omitempty"`
+	Organization                  string             `yaml:"organization,omitempty"`
+	Region                        string             `yaml:"region,omitempty"`
+	ReleaseName                   string             `yaml:"releaseName,omitempty"`
+	ResourceGroup                 string             `yaml:"resourceGroup,omitempty"`
+	ResourceGroupName             string             `yaml:"resourceGroupName,omitempty"`
+	SecurityGroupIds              []string           `yaml:"securityGroupIds,omitempty"`
+	SetDesiredCapacity            bool               `yaml:"setDesiredCapacity,omitempty"`
+	Space                         string             `yaml:"space,omitempty"`
+	SpotinstCloudProviderName     string             `yaml:"spotinstCloudProviderName,omitempty"`
+	SpotinstElastiGroupJson       string             `yaml:"spotinstElastiGroupJson,omitempty"`
+	StageClassicLoadBalancers     []string           `yaml:"stageClassicLoadBalancers,omitempty"`
+	StageTargetGroupArns          []string           `yaml:"stageTargetGroupArns,omitempty"`
+	SubnetIds                     []string           `yaml:"subnetIds,omitempty"`
+	SubscriptionId                string             `yaml:"subscriptionId,omitempty"`
+	TargetGroupArns               []string           `yaml:"targetGroupArns,omitempty"`
+	UseAutoScalingGroup           bool               `yaml:"useAutoScalingGroup,omitempty"`
+	UsePublicDns                  bool               `yaml:"usePublicDns,omitempty"`
+	Username                      string             `yaml:"username,omitempty"`
+	UseTrafficShift               bool               `yaml:"useTrafficShift,omitempty"`
+	VmssAuthType                  VmssAuthType       `yaml:"vmssAuthType,omitempty"`
+	VmssDeploymentType            VmssDeploymentType `yaml:"vmssDeploymentType,omitempty"`
+	VpcId                         string             `yaml:"vpcId,omitempty"`
+	WinRmConnectionAttributesName string             `yaml:"winRmConnectionAttributesName,omitempty"`
+}
+
+type InfrastructureAwsSSH struct {
+	AwsInstanceFilter       *AwsInstanceFilter `yaml:"awsInstanceFilter,omitempty"`
+	CloudProviderName       string             `yaml:"cloudProviderName,omitempty"`
+	AutoscalingGroupName    string             `yaml:"autoScalingGroupName,omitempty"`
+	DesiredCapacity         int                `yaml:"desiredCapacity,omitempty"`
+	HostConnectionAttrsName string             `yaml:"hostConnectionAttrsName,omitempty"`
+	HostConnectionType      HostConnectionType `yaml:"hostConnectionType,omitempty"`
+	LoadBalancerName        string             `yaml:"loadBalancerName,omitempty"`
+	HostNameConvention      string             `yaml:"hostNameConvention,omitempty"`
+	Region                  string             `yaml:"region,omitempty"`
+	SetDesiredCapacity      bool               `yaml:"setDesiredCapacity,omitempty"`
+	UseAutoScalingGroup     bool               `yaml:"useAutoScalingGroup,omitempty"`
+	UsePublicDns            bool               `yaml:"usePublicDns,omitempty"`
+	Expressions             AwsSSHExpressions  `yaml:"expressions,omitempty"`
+}
+
+type AwsSSHExpressions struct {
+	LoadBalancerId       string `yaml:"loadBalancerId,omitempty"`
+	AutoscalingGroupName string `yaml:"autoScalingGroupName,omitempty"`
+	VpcIds               string `yaml:"vpcIds,omitempty"`
+	Region               string `yaml:"region,omitempty"`
+	Tags                 string `yaml:"tags,omitempty"`
+}
+
+type AwsInstanceFilter struct {
+	Tags   []*AwsTag `yaml:"tags,omitempty"`
+	VpcIds []string  `yaml:"vpcIds,omitempty"`
+}
+
+type AwsTag struct {
+	Key   string `yaml:"key,omitempty"`
+	Value string `yaml:"value,omitempty"`
+}
+
+type InfrastructureAwsAmi struct {
+	AmiDeploymentType         AmiDeploymentType `yaml:"amiDeploymentType,omitempty"`
+	ASGIdentifiesWorkload     bool              `yaml:"asgIdentifiesWorkload,omitempty"`
+	AutoscalingGroupName      string            `yaml:"autoScalingGroupName,omitempty"`
+	ClassicLoadBalancers      []string          `yaml:"classicLoadBalancers,omitempty"`
+	CloudProviderName         string            `yaml:"cloudProviderName,omitempty"`
+	HostNameConvention        string            `yaml:"hostNameConvention,omitempty"`
+	Region                    string            `yaml:"region,omitempty"`
+	SpotinstCloudProviderName string            `yaml:"spotinstCloudProviderName,omitempty"`
+	SpotinstElastiGroupJson   string            `yaml:"spotinstElastiGroupJson,omitempty"`
+	StageClassicLoadBalancers []string          `yaml:"stageClassicLoadBalancers,omitempty"`
+	StageTargetGroupArns      []string          `yaml:"stageTargetGroupArns,omitempty"`
+	TargetGroupArns           []string          `yaml:"targetGroupArns,omitempty"`
+	UseTrafficShift           bool              `yaml:"useTrafficShift,omitempty"`
+}
+
+type InfrastructureKubernetesDirect struct {
+	CloudProviderName string `yaml:"cloudProviderName,omitempty"`
+	Namespace         string `yaml:"namespace,omitempty"`
+	ReleaseName       string `yaml:"releaseName,omitempty"`
+}
+
+type InfrastructureKubernetesGcp struct {
+	CloudProviderName string `yaml:"cloudProviderName,omitempty"`
+	ClusterName       string `yaml:"clusterName,omitempty"`
+	Namespace         string `yaml:"namespace,omitempty"`
+	ReleaseName       string `yaml:"releaseName,omitempty"`
+}
+
+type InfrastructureAzureVmss struct {
+	BaseVMSSName        string             `yaml:"baseVMSSName,omitempty"`
+	CloudProviderName   string             `yaml:"cloudProviderName,omitempty"`
+	HostConnectionAttrs string             `yaml:"hostConnectionAttrs,omitempty"`
+	ResourceGroupName   string             `yaml:"resourceGroupName,omitempty"`
+	SubscriptionId      string             `yaml:"subscriptionId,omitempty"`
+	Username            string             `yaml:"username,omitempty"`
+	VmssAuthType        VmssAuthType       `yaml:"vmssAuthType,omitempty"`
+	VmssDeploymentType  VmssDeploymentType `yaml:"vmssDeploymentType,omitempty"`
+}
+
+type InfrastructureAzureWebApp struct {
+	CloudProviderName string `yaml:"cloudProviderName,omitempty"`
+	ResourceGroup     string `yaml:"resourceGroup,omitempty"`
+	SubscriptionId    string `yaml:"subscriptionId,omitempty"`
+}
+
+type InfrastructureTanzu struct {
+	CloudProviderName string `yaml:"cloudProviderName,omitempty"`
+	Organization      string `yaml:"organization,omitempty"`
+	Space             string `yaml:"space,omitempty"`
+}
+
+type InfrastructureAwsEcs struct {
+	AssignPublicIp    bool             `yaml:"assignPublicIp,omitempty"`
+	CloudProviderName string           `yaml:"cloudProviderName,omitempty"`
+	ClusterName       string           `yaml:"clusterName,omitempty"`
+	ExecutionRole     string           `yaml:"executionRole,omitempty"`
+	LaunchType        AwsEcsLaunchType `yaml:"launchType,omitempty"`
+	Region            string           `yaml:"region,omitempty"`
+	SecurityGroupIds  []string         `yaml:"securityGroupIds,omitempty"`
+	SubnetIds         []string         `yaml:"subnetIds,omitempty"`
+	VpcId             string           `yaml:"vpcId,omitempty"`
+}
+
+type InfrastructureDataCenterWinRM struct {
+	CloudProviderName             string   `yaml:"cloudProviderName,omitempty"`
+	HostNames                     []string `yaml:"hostNames,omitempty"`
+	WinRmConnectionAttributesName string   `yaml:"winRmConnectionAttributesName,omitempty"`
+}
+
+type InfrastructureDataCenterSSH struct {
+	CloudProviderName       string   `yaml:"cloudProviderName,omitempty"`
+	HostConnectionAttrsName string   `yaml:"hostConnectionAttrsName,omitempty"`
+	HostNames               []string `yaml:"hostNames,omitempty"`
+}
+
+type InfrastructureAwsLambda struct {
+	CloudProviderName string            `yaml:"cloudProviderName,omitempty"`
+	IamRole           string            `yaml:"iamRole,omitempty"`
+	Region            string            `yaml:"region,omitempty"`
+	SecurityGroupIds  []string          `yaml:"securityGroupIds,omitempty"`
+	SubnetIds         []string          `yaml:"subnetIds,omitempty"`
+	VpcId             string            `yaml:"vpcId,omitempty"`
+	Expressions       map[string]string `yaml:"expressions,omitempty"`
+}
+
+type InfrastructureAwsWinRM struct {
+	AutoscalingGroupName    string             `yaml:"autoScalingGroupName,omitempty"`
+	CloudProviderName       string             `yaml:"cloudProviderName,omitempty"`
+	DesiredCapacity         int                `yaml:"desiredCapacity,omitempty"`
+	HostConnectionAttrsName string             `yaml:"hostConnectionAttrsName,omitempty"`
+	HostConnectionType      HostConnectionType `yaml:"hostConnectionType,omitempty"`
+	HostNameConvention      string             `yaml:"hostNameConvention,omitempty"`
+	LoadBalancerName        string             `yaml:"loadBalancerName,omitempty"`
+	Region                  string             `yaml:"region,omitempty"`
+	SetDesiredCapacity      bool               `yaml:"setDesiredCapacity,omitempty"`
+	UseAutoScalingGroup     bool               `yaml:"useAutoScalingGroup,omitempty"`
+	UsePublicDns            bool               `yaml:"usePublicDns,omitempty"`
+}
+
+type InfrastructureCustom struct {
+	InfraVariables *InfraVariable `yaml:"infraVariables,omitempty"`
+}
+
+type InfraVariable struct {
+	Name  string `yaml:"name,omitempty"`
+	Value string `yaml:"value,omitempty"`
+}

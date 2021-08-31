@@ -28,6 +28,7 @@ func TestGetSecretManagerByName_NoManagerFound(t *testing.T) {
 }
 
 func TestListSecretManagers(t *testing.T) {
+	t.Skip("This endpoint requires the use of a bearer token.")
 	client := getClient()
 	managers, err := client.Secrets().ListSecretManagers()
 	require.NoError(t, err)

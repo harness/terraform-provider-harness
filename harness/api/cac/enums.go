@@ -24,6 +24,7 @@ var ObjectTypes = &struct {
 	AzureCloudProvider              ObjectType
 	Environment                     ObjectType
 	GcpCloudProvider                ObjectType
+	InfrastructureDefinition        ObjectType
 	KubernetesCloudProvider         ObjectType
 	PcfCloudProvider                ObjectType
 	PhysicalDataCenterCloudProvider ObjectType
@@ -35,6 +36,7 @@ var ObjectTypes = &struct {
 	AzureCloudProvider:              "AZURE",
 	Environment:                     "ENVIRONMENT",
 	GcpCloudProvider:                "GCP",
+	InfrastructureDefinition:        "INFRA_DEFINITION",
 	KubernetesCloudProvider:         "KUBERNETES_CLUSTER",
 	PcfCloudProvider:                "PCF",
 	PhysicalDataCenterCloudProvider: "PHYSICAL_DATA_CENTER",
@@ -83,38 +85,45 @@ func (v DeploymentType) String() string {
 
 var DeploymentTypes = &struct {
 	AMI           DeploymentType
-	ECS           DeploymentType
 	AWSCodeDeploy DeploymentType
 	AWSLambda     DeploymentType
+	AzureVMSS     DeploymentType
+	AzureWebApp   DeploymentType
 	Custom        DeploymentType
-	Kubernetes    DeploymentType
+	ECS           DeploymentType
 	Helm          DeploymentType
+	Kubernetes    DeploymentType
 	PCF           DeploymentType
 	SSH           DeploymentType
 	WinRM         DeploymentType
 }{
 	AMI:           "AMI",
-	ECS:           "ECS",
 	AWSCodeDeploy: "AWS_CODEDEPLOY",
 	AWSLambda:     "AWS_LAMBDA",
+	AzureVMSS:     "AZURE_VMSS",
+	AzureWebApp:   "AZURE_WEBAPP",
 	Custom:        "Custom",
-	Kubernetes:    "KUBERNETES",
+	ECS:           "ECS",
 	Helm:          "HELM",
+	Kubernetes:    "KUBERNETES",
 	PCF:           "PCF",
 	SSH:           "SSH",
 	WinRM:         "WINRM",
 }
 
-var DeploymenTypesSlice = &[]DeploymentType{
-	DeploymentTypes.AMI,
-	DeploymentTypes.AWSCodeDeploy,
-	DeploymentTypes.AWSLambda,
-	DeploymentTypes.Custom,
-	DeploymentTypes.Kubernetes,
-	DeploymentTypes.Helm,
-	DeploymentTypes.PCF,
-	DeploymentTypes.SSH,
-	DeploymentTypes.WinRM,
+var DeploymenTypesSlice = []string{
+	"AMI",
+	"AWS_CODEDEPLOY",
+	"AWS_LAMBDA",
+	"AZURE_VMSS",
+	"AZURE_WEBAPP",
+	"Custom",
+	"ECS",
+	"HELM",
+	"KUBERNETES",
+	"PCF",
+	"SSH",
+	"WINRM",
 }
 
 type KubernetesAuthType string
@@ -324,4 +333,170 @@ var RestNames = struct {
 	Services: "services",
 	Tags:     "tags",
 	Folders:  "folders",
+}
+
+type CloudProviderType string
+
+var CloudProviderTypes = struct {
+	Aws               CloudProviderType
+	Azure             CloudProviderType
+	Custom            CloudProviderType
+	DataCenter        CloudProviderType
+	KubernetesCluster CloudProviderType
+	Pcf               CloudProviderType
+	Spot              CloudProviderType
+}{
+	Aws:               "AWS",
+	Azure:             "AZURE",
+	Custom:            "CUSTOM",
+	DataCenter:        "PHYSICAL_DATA_CENTER",
+	KubernetesCluster: "KUBERNETES_CLUSTER",
+	Pcf:               "PCF",
+	Spot:              "SPOT_INST",
+}
+
+var CloudProviderTypesSlice = []string{
+	"AWS",
+	"AZURE",
+	"CUSTOM",
+	"PHYSICAL_DATA_CENTER",
+	"KUBERNETES_CLUSTER",
+	"PCF",
+	"SPOT_INST",
+}
+
+func (v CloudProviderType) String() string {
+	return string(v)
+}
+
+type InfrastructureType string
+
+var InfrastructureTypes = struct {
+	AwsAmi           InfrastructureType
+	AwsEcs           InfrastructureType
+	AwsLambda        InfrastructureType
+	AwsSSH           InfrastructureType
+	AzureVmss        InfrastructureType
+	AzureWebApp      InfrastructureType
+	Custom           InfrastructureType
+	DataCenterSSH    InfrastructureType
+	DataCenterWinRM  InfrastructureType
+	KubernetesDirect InfrastructureType
+	KubernetesGcp    InfrastructureType
+	Pcf              InfrastructureType
+}{
+	AwsAmi:           "AWS_AMI",
+	AwsEcs:           "AWS_ECS",
+	AwsLambda:        "AWS_LAMBDA",
+	AwsSSH:           "AWS_SSH",
+	AzureVmss:        "AZURE_VMSS",
+	AzureWebApp:      "AZURE_WEBAPP",
+	Custom:           "CUSTOM",
+	DataCenterSSH:    "PHYSICAL_DATA_CENTER_SSH",
+	DataCenterWinRM:  "PHYSICAL_DATA_CENTER_WINRM",
+	KubernetesDirect: "DIRECT_KUBERNETES",
+	KubernetesGcp:    "KUBERNETES_GCP",
+	Pcf:              "PCF_PCF",
+}
+
+func (v InfrastructureType) String() string {
+	return string(v)
+}
+
+type LaunchType string
+
+var LaunchTypes = struct {
+	EC2     LaunchType
+	Fargate LaunchType
+}{
+	EC2:     "EC2",
+	Fargate: "FARGATE",
+}
+
+type VmssAuthType string
+
+var VmssAuthTypes = struct {
+	SSHPublicKey VmssAuthType
+}{
+	SSHPublicKey: "SSH_PUBLIC_KEY",
+}
+
+var VmssAuthTypesSlice = []string{
+	"SSH_PUBLIC_KEY",
+}
+
+func (v VmssAuthType) String() string {
+	return string(v)
+}
+
+type VmssDeploymentType string
+
+var VmssDeploymentTypes = struct {
+	NativeVmss VmssDeploymentType
+}{
+	NativeVmss: "NATIVE_VMSS",
+}
+
+var VmssDeploymentTypesSlice = []string{
+	"NATIVE_VMSS",
+}
+
+func (v VmssDeploymentType) String() string {
+	return string(v)
+}
+
+type AmiDeploymentType string
+
+var AmiDeploymentTypes = struct {
+	ASG      AmiDeploymentType
+	SpotInst AmiDeploymentType
+}{
+	ASG:      "AWS_ASG",
+	SpotInst: "SPOTINST",
+}
+
+var AmiDeploymentTypesSlice = []string{
+	"AWS_ASG",
+	"SPOTINST",
+}
+
+func (v AmiDeploymentType) String() string {
+	return string(v)
+}
+
+type AwsEcsLaunchType string
+
+var AwsEcsLaunchTypes = struct {
+	Fargate AwsEcsLaunchType
+}{
+	Fargate: "FARGATE",
+}
+
+var AwsEcsLaunchTypesSlice = []string{
+	"FARGATE",
+}
+
+type HostConnectionType string
+
+var HostConnectionTypes = struct {
+	PrivateDns HostConnectionType
+	PublicDns  HostConnectionType
+	PrivateIp  HostConnectionType
+	PublicIp   HostConnectionType
+}{
+	PrivateDns: "PRIVATE_DNS",
+	PublicDns:  "PUBLIC_DNS",
+	PrivateIp:  "PRIVATE_IP",
+	PublicIp:   "PUBLIC_IP",
+}
+
+var HostConnectionTypesSlice = []string{
+	"PRIVATE_DNS",
+	"PUBLIC_DNS",
+	"PRIVATE_IP",
+	"PUBLIC_IP",
+}
+
+func (v HostConnectionType) String() string {
+	return string(v)
 }

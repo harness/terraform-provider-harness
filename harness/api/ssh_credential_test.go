@@ -339,6 +339,7 @@ func TestGetSSHCredentialByName_KerberosAuth(t *testing.T) {
 }
 
 func TestListSSHCredentials(t *testing.T) {
+	t.Skip("This endpoint requires the use of a bearer token.")
 	client := getClient()
 	creds, err := client.Secrets().ListSSHCredentials()
 	require.NoError(t, err)
