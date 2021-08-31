@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -71,10 +70,6 @@ func resourcePCFServiceCreate(ctx context.Context, d *schema.ResourceData, meta 
 
 func resourcePCFServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if d.HasChange("app_id") {
-		return diag.FromErr(errors.New("app_id cannot be changed"))
-	}
 
 	// Setup the object to create
 	svcInput := &cac.Service{

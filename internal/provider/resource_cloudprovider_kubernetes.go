@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
@@ -287,10 +286,6 @@ func resourceCloudProviderK8sCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudProviderK8sUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if d.HasChange("name") {
-		return diag.FromErr(errors.New("name is immutable"))
-	}
 
 	cp := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.KubernetesCloudProvider)
 	cp.Name = d.Get("name").(string)

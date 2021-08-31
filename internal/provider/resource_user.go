@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
@@ -36,6 +35,7 @@ func resourceUser() *schema.Resource {
 				Description: "The email of the user.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return strings.EqualFold(old, new)
 				},
@@ -111,10 +111,6 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if d.HasChange("email") {
-		return diag.FromErr(errors.New("email is immutable"))
-	}
 
 	input := &graphql.UpdateUserInput{
 		Name: d.Get("name").(string),

@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"errors"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -28,11 +27,13 @@ func resourceEnvironment() *schema.Resource {
 				Description: "The id of the application.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"name": {
 				Description: "The name of the environment.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"type": {
 				Description:  "The type of the environment. Valid values are `PROD` and `NON_PROD`",
@@ -120,14 +121,6 @@ func resourceEnvironmentCreate(ctx context.Context, d *schema.ResourceData, meta
 
 func resourceEnvironmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if d.HasChange("app_id") {
-		return diag.FromErr(errors.New("app_id cannot be changed"))
-	}
-
-	if d.HasChange("name") {
-		return diag.FromErr(errors.New("name cannot be changed"))
-	}
 
 	envInput := cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
 	envInput.Name = d.Get("name").(string)

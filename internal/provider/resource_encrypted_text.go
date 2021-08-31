@@ -44,6 +44,7 @@ func resourceEncryptedText() *schema.Resource {
 				Description: "The id of the secret manager to associate the secret with. Once set, this field cannot be changed.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"value": {
 				Description: "The value of the secret",
@@ -107,11 +108,6 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	// Validation
-	if d.HasChange("secret_manager_id") {
-		return diag.Errorf("secret_manager_id is immutable and cannot be changed once set")
-	}
 
 	input := &graphql.UpdateSecretInput{
 		SecretId: d.Get("id").(string),
