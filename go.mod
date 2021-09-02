@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
-	github.com/harness-io/harness-go-sdk v0.0.4
+	github.com/harness-io/harness-go-sdk v0.0.5
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-hclog v0.16.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
@@ -39,4 +39,3 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
-
