@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.3...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.4...HEAD)
 
 **Merged pull requests:**
 
+- Added support for Infrastructure Definitions [\#32](https://github.com/harness-io/harness-go-sdk/pull/32) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.4](https://github.com/harness-io/harness-go-sdk/tree/v0.0.4) (2021-08-20)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.3...v0.0.4)
+
+**Merged pull requests:**
+
+- Release version 0.0.4 08-20-2021 [\#31](https://github.com/harness-io/harness-go-sdk/pull/31) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed tests and linting issues [\#30](https://github.com/harness-io/harness-go-sdk/pull/30) ([micahlmartin](https://github.com/micahlmartin))
 - Add support for Users and User Groups [\#29](https://github.com/harness-io/harness-go-sdk/pull/29) ([micahlmartin](https://github.com/micahlmartin))
 - Config as code environments [\#28](https://github.com/harness-io/harness-go-sdk/pull/28) ([micahlmartin](https://github.com/micahlmartin))
