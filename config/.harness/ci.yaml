@@ -98,9 +98,6 @@ pipeline:
                   - name: HARNESS_ENDPOINT
                     type: String
                     value: https://app.harness.io
-                  - name: HARNESS_BEARER_TOKEN
-                    type: Secret
-                    value: org.harness_bearer_token
                   - name: HARNESS_TEST_SPOT_ACCT_ID
                     type: Secret
                     value: org.spotinst_account_id
