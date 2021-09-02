@@ -272,7 +272,10 @@ func (d *InfrastructureDetail) ToAwsAmi() *InfrastructureAwsAmi {
 	}
 
 	i := &InfrastructureAwsAmi{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -280,7 +283,11 @@ func (i *InfrastructureAwsAmi) ToInfrastructureDetail() []*InfrastructureDetail 
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AwsAmi,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -290,7 +297,10 @@ func (d *InfrastructureDetail) ToAwsEcs() *InfrastructureAwsEcs {
 	}
 
 	i := &InfrastructureAwsEcs{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -298,7 +308,11 @@ func (i *InfrastructureAwsEcs) ToInfrastructureDetail() []*InfrastructureDetail 
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AwsEcs,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -308,7 +322,10 @@ func (d *InfrastructureDetail) ToAwsLambda() *InfrastructureAwsLambda {
 	}
 
 	i := &InfrastructureAwsLambda{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -316,7 +333,11 @@ func (i *InfrastructureAwsLambda) ToInfrastructureDetail() []*InfrastructureDeta
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AwsLambda,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -326,7 +347,10 @@ func (d *InfrastructureDetail) ToAwsWinRm() *InfrastructureAwsWinRM {
 	}
 
 	i := &InfrastructureAwsWinRM{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -334,7 +358,11 @@ func (i *InfrastructureAwsWinRM) ToInfrastructureDetail() []*InfrastructureDetai
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AwsSSH,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -344,7 +372,10 @@ func (d *InfrastructureDetail) ToAwsSSH() *InfrastructureAwsSSH {
 	}
 
 	i := &InfrastructureAwsSSH{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -352,7 +383,11 @@ func (i *InfrastructureAwsSSH) ToInfrastructureDetail() []*InfrastructureDetail 
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AwsSSH,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -362,7 +397,10 @@ func (d *InfrastructureDetail) ToAzureVmss() *InfrastructureAzureVmss {
 	}
 
 	i := &InfrastructureAzureVmss{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -370,7 +408,11 @@ func (i *InfrastructureAzureVmss) ToInfrastructureDetail() []*InfrastructureDeta
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AzureVmss,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -380,7 +422,10 @@ func (d *InfrastructureDetail) ToAzureWebApp() *InfrastructureAzureWebApp {
 	}
 
 	i := &InfrastructureAzureWebApp{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -388,7 +433,11 @@ func (i *InfrastructureAzureWebApp) ToInfrastructureDetail() []*InfrastructureDe
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.AzureWebApp,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -398,7 +447,10 @@ func (d *InfrastructureDetail) ToCustom() *InfrastructureCustom {
 	}
 
 	i := &InfrastructureCustom{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -406,7 +458,11 @@ func (i *InfrastructureCustom) ToInfrastructureDetail() []*InfrastructureDetail 
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.Custom,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -416,7 +472,10 @@ func (d *InfrastructureDetail) ToDataCenterSSH() *InfrastructureDataCenterSSH {
 	}
 
 	i := &InfrastructureDataCenterSSH{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -424,7 +483,11 @@ func (i *InfrastructureDataCenterSSH) ToInfrastructureDetail() []*Infrastructure
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.DataCenterSSH,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -434,7 +497,10 @@ func (d *InfrastructureDetail) ToDataCenterWinRM() *InfrastructureDataCenterWinR
 	}
 
 	i := &InfrastructureDataCenterWinRM{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -442,7 +508,11 @@ func (i *InfrastructureDataCenterWinRM) ToInfrastructureDetail() []*Infrastructu
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.DataCenterWinRM,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -452,7 +522,10 @@ func (d *InfrastructureDetail) ToKubernetesDirect() *InfrastructureKubernetesDir
 	}
 
 	i := &InfrastructureKubernetesDirect{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -460,7 +533,11 @@ func (i *InfrastructureKubernetesDirect) ToInfrastructureDetail() []*Infrastruct
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.KubernetesDirect,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -470,7 +547,10 @@ func (d *InfrastructureDetail) ToKubernetesGcp() *InfrastructureKubernetesGcp {
 	}
 
 	i := &InfrastructureKubernetesGcp{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -478,7 +558,11 @@ func (i *InfrastructureKubernetesGcp) ToInfrastructureDetail() []*Infrastructure
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.KubernetesGcp,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }
 
@@ -488,7 +572,10 @@ func (d *InfrastructureDetail) ToPcf() *InfrastructureTanzu {
 	}
 
 	i := &InfrastructureTanzu{}
-	copier.Copy(i, d)
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return i
 }
 
@@ -496,6 +583,10 @@ func (i *InfrastructureTanzu) ToInfrastructureDetail() []*InfrastructureDetail {
 	d := &InfrastructureDetail{
 		Type: InfrastructureTypes.Pcf,
 	}
-	copier.Copy(d, i)
+
+	if err := copier.Copy(i, d); err != nil {
+		panic(err)
+	}
+
 	return []*InfrastructureDetail{d}
 }

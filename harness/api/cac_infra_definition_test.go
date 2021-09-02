@@ -10,36 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createInfraDefinitionK8sDirect(appId string, envId string, name string) (*cac.InfrastructureDefinition, error) {
-	c := getClient()
-
-	input := &graphql.KubernetesCloudProvider{}
-	input.Name = name
-	input.ClusterDetailsType = graphql.ClusterDetailsTypes.InheritClusterDetails
-	input.InheritClusterDetails = &graphql.InheritClusterDetails{
-		DelegateSelectors: []string{"k8s"},
-	}
-
-	cp, err := c.CloudProviders().CreateKubernetesCloudProvider(input)
-	if err != nil {
-		return nil, err
-	}
-
-	infraDef := cac.NewEntity(cac.ObjectTypes.InfrastructureDefinition).(*cac.InfrastructureDefinition)
-	infraDef.Name = name
-	infraDef.ApplicationId = appId
-	infraDef.EnvironmentId = envId
-	infraDef.CloudProviderType = cac.CloudProviderTypes.KubernetesCluster
-	infraDef.DeploymentType = cac.DeploymentTypes.Kubernetes
-	infraDef.InfrastructureDetail = (&cac.InfrastructureKubernetesDirect{
-		CloudProviderName: cp.Name,
-		Namespace:         "default",
-		ReleaseName:       "test",
-	}).ToInfrastructureDetail()
-
-	return c.ConfigAsCode().UpsertInfraDefinition(infraDef)
-}
-
 func TestCreateInfraDefinition_KubernetesDirect_KubernetesManifests(t *testing.T) {
 	c := getClient()
 
