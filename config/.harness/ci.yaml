@@ -1,121 +1,118 @@
 pipeline:
-    name: ci
-    identifier: ci
-    projectIdentifier: harness_gos_dk
-    orgIdentifier: Micahs_Projects
-    tags: {}
-    properties:
-        ci:
-            codebase:
-                connectorRef: org.githubharnessio
-                repoName: harness-go-sdk
-                build: <+input>
     stages:
         - stage:
-              name: Build
-              identifier: Build
-              description: ""
+              variables:
+                  - value: org.harness_api_key
+                    type: Secret
+                    name: HARNESS_API_KEY
+                  - value: org.harness_account_id
+                    type: Secret
+                    name: HARNESS_ACCOUNT_ID
+                  - value: https://app.harness.io
+                    type: String
+                    name: HARNESS_ENDPOINT
+                  - value: org.spotinst_account_id
+                    type: Secret
+                    name: HARNESS_TEST_SPOT_ACCT_ID
+                  - value: org.spotinst_token
+                    type: Secret
+                    name: HARNESS_TEST_SPOT_TOKEN
+                  - value: org.azure_client_id
+                    type: Secret
+                    name: HARNESS_TEST_AZURE_CLIENT_ID
+                  - value: org.azure_client_secret
+                    type: Secret
+                    name: HARNESS_TEST_AZURE_CLIENT_SECRET
+                  - value: org.azure_tenant_id
+                    type: Secret
+                    name: HARNESS_TEST_AZURE_TENANT_ID
+                  - value: org.aws_access_key_id
+                    type: Secret
+                    name: HARNESS_TEST_AWS_ACCESS_KEY_ID
+                  - value: org.aws_secret_access_key
+                    type: Secret
+                    name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
               type: CI
               spec:
-                  cloneCodebase: true
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          namespace: micahs-projects
+                          connectorRef: account.micahsprojects
                   execution:
                       steps:
                           - step:
                                 type: RestoreCacheGCS
-                                name: Restore from cache
-                                identifier: Restore_from_cache
                                 spec:
-                                    connectorRef: org.gcp
-                                    bucket: harness-micah-test
-                                    key: harness-gpo-sdk-{{ checksum "go.mod" }}
-                                    archiveFormat: Gzip
                                     resources:
                                         limits:
                                             memory: 1Gi
                                             cpu: "1"
-                          - step:
-                                type: Run
-                                name: Download modules
-                                identifier: Download_modules
-                                spec:
-                                    connectorRef: org.gcp
-                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                    command: go mod vendor
-                                    privileged: false
-                          - step:
-                                type: SaveCacheGCS
-                                name: Save cache
-                                identifier: Save_cache
-                                spec:
+                                    key: harness-gpo-sdk-{{ checksum "go.mod" }}
                                     connectorRef: org.gcp
                                     bucket: harness-micah-test
-                                    key: harness-go-sdk-{{ checksum "go.mod" }}
+                                    archiveFormat: Gzip
+                                name: Restore from cache
+                                identifier: Restore_from_cache
+                          - step:
+                                type: Run
+                                spec:
+                                    privileged: false
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                    connectorRef: org.gcp
+                                    command: go mod vendor
+                                name: Download modules
+                                identifier: Download_modules
+                          - step:
+                                type: SaveCacheGCS
+                                spec:
                                     sourcePaths:
                                         - ./vendor
+                                    key: harness-go-sdk-{{ checksum "go.mod" }}
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
                                     archiveFormat: Gzip
+                                name: Save cache
+                                identifier: Save_cache
                           - parallel:
                                 - step:
                                       type: Run
+                                      spec:
+                                          privileged: false
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          connectorRef: org.gcp
+                                          command: golangci-lint run -v
                                       name: Lint
                                       identifier: lint
-                                      spec:
-                                          connectorRef: org.gcp
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          command: golangci-lint run -v
-                                          privileged: false
                                 - step:
                                       type: Run
-                                      name: Test
-                                      identifier: Test
                                       spec:
-                                          connectorRef: org.gcp
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          command: |
-                                              gotestsum --junitfile junit.xml --format testname
-                                          privileged: false
+                                          resources:
+                                              limits:
+                                                  memory: 2Gi
+                                                  cpu: "2"
                                           reports:
                                               type: JUnit
                                               spec:
                                                   paths:
                                                       - junit.xml
-                                          resources:
-                                              limits:
-                                                  memory: 2Gi
-                                                  cpu: "2"
-                  serviceDependencies: []
-                  infrastructure:
-                      type: KubernetesDirect
-                      spec:
-                          connectorRef: account.micahsprojects
-                          namespace: micahs-projects
-              variables:
-                  - name: HARNESS_API_KEY
-                    type: Secret
-                    value: org.harness_api_key
-                  - name: HARNESS_ACCOUNT_ID
-                    type: Secret
-                    value: org.harness_account_id
-                  - name: HARNESS_ENDPOINT
-                    type: String
-                    value: https://app.harness.io
-                  - name: HARNESS_TEST_SPOT_ACCT_ID
-                    type: Secret
-                    value: org.spotinst_account_id
-                  - name: HARNESS_TEST_SPOT_TOKEN
-                    type: Secret
-                    value: org.spotinst_token
-                  - name: HARNESS_TEST_AZURE_CLIENT_ID
-                    type: Secret
-                    value: org.azure_client_id
-                  - name: HARNESS_TEST_AZURE_CLIENT_SECRET
-                    type: Secret
-                    value: org.azure_client_secret
-                  - name: HARNESS_TEST_AZURE_TENANT_ID
-                    type: Secret
-                    value: org.azure_tenant_id
-                  - name: HARNESS_TEST_AWS_ACCESS_KEY_ID
-                    type: Secret
-                    value: org.aws_access_key_id
-                  - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
-                    type: Secret
-                    value: org.aws_secret_access_key
+                                          privileged: false
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          connectorRef: org.gcp
+                                          command: |
+                                              gotestsum --junitfile junit.xml --format testname
+                                      name: Test
+                                      identifier: Test
+                  cloneCodebase: true
+              name: Build
+              identifier: Build
+    properties:
+        ci:
+            codebase:
+                repoName: harness-go-sdk
+                connectorRef: org.githubharnessio
+                build: <+input>
+    projectIdentifier: harness_gos_dk
+    orgIdentifier: Micahs_Projects
+    name: ci
+    identifier: ci
