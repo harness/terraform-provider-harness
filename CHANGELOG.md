@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.4...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.5...HEAD)
 
 **Merged pull requests:**
 
+- Added better handling for when entities do not exist [\#34](https://github.com/harness-io/harness-go-sdk/pull/34) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.5](https://github.com/harness-io/harness-go-sdk/tree/v0.0.5) (2021-09-02)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.4...v0.0.5)
+
+**Merged pull requests:**
+
+- Release version 0.0.5 09-02-2021 [\#33](https://github.com/harness-io/harness-go-sdk/pull/33) ([micahlmartin](https://github.com/micahlmartin))
 - Added support for Infrastructure Definitions [\#32](https://github.com/harness-io/harness-go-sdk/pull/32) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.4](https://github.com/harness-io/harness-go-sdk/tree/v0.0.4) (2021-08-20)
