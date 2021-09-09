@@ -168,9 +168,6 @@ pipeline:
                   - name: HARNESS_ENDPOINT
                     type: String
                     value: https://app.harness.io
-                  - name: HARNESS_BEARER_TOKEN
-                    type: Secret
-                    value: org.harness_bearer_token
                   - name: GOPATH
                     type: String
                     value: /goroot
