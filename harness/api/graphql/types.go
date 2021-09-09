@@ -365,6 +365,10 @@ type WinRMCredential struct {
 	AuthenticationScheme WinRMAuthenticationScheme `json:"authenticationScheme,omitempty"`
 }
 
+func (c *WinRMCredential) IsEmpty() bool {
+	return c.Id == ""
+}
+
 type CreateSecretInput struct {
 	ClientMutationId string                `json:"clientMutationId,omitempty"`
 	EncryptedText    *EncryptedTextInput   `json:"encryptedText,omitempty"`
@@ -387,6 +391,10 @@ type Secret struct {
 	Name       string      `json:"name,omitempty"`
 	SecretType SecretType  `json:"secretType,omitempty"`
 	UsageScope *UsageScope `json:"usageScope,omitempty"`
+}
+
+func (s *Secret) IsEmpty() bool {
+	return s.Id == "" && s.Name == ""
 }
 
 type EncryptedText struct {

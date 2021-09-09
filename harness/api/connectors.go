@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 )
@@ -38,6 +39,9 @@ func (c *ConnectorClient) GetGitConnectorById(id string) (*graphql.GitConnector,
 	err := c.APIClient.ExecuteGraphQLQuery(query, &res)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "Connector does not exist") {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -117,6 +121,30 @@ func (c *ConnectorClient) UpdateGitConnector(id string, connector *graphql.GitCo
 	}
 
 	return &res.UpdateConnector.Connector, nil
+}
+
+func (c *ConnectorClient) GetGitConnectorByName(name string) (*graphql.GitConnector, error) {
+	limit := 10
+	offset := 0
+	hasMore := true
+
+	for hasMore {
+		connectors, _, err := c.ListGitConnectors(limit, offset)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, connector := range connectors {
+			if connector.Name == name {
+				return connector, nil
+			}
+		}
+
+		hasMore = len(connectors) == limit
+		offset += limit
+	}
+
+	return nil, nil
 }
 
 func (c *ConnectorClient) ListGitConnectors(limit int, offset int) ([]*graphql.GitConnector, *graphql.PageInfo, error) {

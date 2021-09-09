@@ -387,7 +387,7 @@ var InfrastructureTypes = struct {
 }{
 	AwsAmi:           "AWS_AMI",
 	AwsEcs:           "AWS_ECS",
-	AwsLambda:        "AWS_LAMBDA",
+	AwsLambda:        "AWS_AWS_LAMBDA",
 	AwsSSH:           "AWS_SSH",
 	AzureVmss:        "AZURE_VMSS",
 	AzureWebApp:      "AZURE_WEBAPP",

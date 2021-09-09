@@ -20,6 +20,10 @@ func (c *SecretClient) GetWinRMCredentialById(id string) (*graphql.WinRMCredenti
 		return nil, err
 	}
 
+	if resp.IsEmpty() {
+		return nil, nil
+	}
+
 	return resp, nil
 }
 
@@ -29,6 +33,10 @@ func (c *SecretClient) GetWinRMCredentialByName(name string) (*graphql.WinRMCred
 	err := c.getSecretByName(name, graphql.SecretTypes.WinRMCredential, getWinRMCredentialFields(), resp)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.IsEmpty() {
+		return nil, nil
 	}
 
 	return resp, nil

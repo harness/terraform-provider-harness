@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 )
@@ -36,7 +37,15 @@ func (ac *ApplicationClient) GetApplicationById(id string) (*graphql.Application
 	}{}
 	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
 
+	// Need to fix https://harness.atlassian.net/browse/PL-19934
 	if err != nil {
+		if strings.Contains(err.Error(), "User not authorized") {
+			if cacApp, err := ac.APIClient.ConfigAsCode().GetApplicationById(id); err != nil {
+				return nil, err
+			} else if cacApp.IsEmpty() {
+				return nil, nil
+			}
+		}
 		return nil, err
 	}
 
@@ -60,7 +69,15 @@ func (ac *ApplicationClient) GetApplicationByName(name string) (*graphql.Applica
 	}{}
 	err := ac.APIClient.ExecuteGraphQLQuery(query, &res)
 
+	// Need to fix https://harness.atlassian.net/browse/PL-19934
 	if err != nil {
+		// if strings.Contains(err.Error(), "User not authorized") {
+		// 	if cacApp, err := ac.APIClient.ConfigAsCode().GetApplicationByName(name); err != nil {
+		// 		return nil, err
+		// 	} else if cacApp == nil {
+		// 		return nil, nil
+		// 	}
+		// }
 		return nil, err
 	}
 

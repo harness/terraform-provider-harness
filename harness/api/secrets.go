@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 )
@@ -35,7 +36,9 @@ func (c *SecretClient) getSecretByName(name string, secretType graphql.SecretTyp
 	}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
-		return err
+		if strings.Contains(err.Error(), "No secret exists") {
+			return nil
+		}
 	}
 
 	return nil
@@ -55,7 +58,9 @@ func (c *SecretClient) getSecretById(id string, secretType graphql.SecretType, f
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
-		return err
+		if strings.Contains(err.Error(), "No secret exists") {
+			return nil
+		}
 	}
 
 	err := json.Unmarshal(*res.Secret, respObj)

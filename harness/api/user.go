@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 )
 
 type UserClient struct {
@@ -124,6 +125,9 @@ func (c *UserClient) GetUserByName(name string) (*graphql.User, error) {
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.USER_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -144,6 +148,9 @@ func (c *UserClient) GetUserByEmail(email string) (*graphql.User, error) {
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.USER_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -164,6 +171,9 @@ func (c *UserClient) GetUserById(id string) (*graphql.User, error) {
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.USER_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

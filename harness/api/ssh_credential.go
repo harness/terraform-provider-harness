@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/api/unpublished"
@@ -101,6 +102,9 @@ func (c *SecretClient) GetSSHCredentialById(id string) (*graphql.SSHCredential, 
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.SECRET_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -130,6 +134,9 @@ func (c *SecretClient) GetSSHCredentialByName(name string) (*graphql.SSHCredenti
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.SECRET_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

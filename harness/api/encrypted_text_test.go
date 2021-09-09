@@ -65,7 +65,7 @@ func TestDeleteSecret_EncryptedText(t *testing.T) {
 	require.NoError(t, err)
 
 	s, err = client.Secrets().GetEncryptedTextById(s.Id)
-	require.Error(t, err)
+	require.NoError(t, err)
 	require.Nil(t, s)
 
 }
@@ -95,6 +95,20 @@ func TestGetEncryptedTextByName(t *testing.T) {
 	// Cleanup
 	err = deleteSecret(testSecret.Id, testSecret.SecretType)
 	require.NoError(t, err)
+}
+
+func TestGetEncryptedTextByName_SecretDoesNotExist(t *testing.T) {
+	client := getClient()
+	testSecret, err := client.Secrets().GetEncryptedTextByName("nonexistentsecret")
+	require.NoError(t, err)
+	require.Nil(t, testSecret)
+}
+
+func TestGetEncryptedTextById_SecretDoesNotExist(t *testing.T) {
+	client := getClient()
+	testSecret, err := client.Secrets().GetEncryptedTextById("nonexistentsecret")
+	require.NoError(t, err)
+	require.Nil(t, testSecret)
 }
 
 func TestGetEncryptedTextById(t *testing.T) {

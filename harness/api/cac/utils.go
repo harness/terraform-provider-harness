@@ -25,106 +25,6 @@ func (i *ConfigAsCodeItem) ParseYamlContent(respObj interface{}) error {
 	return nil
 }
 
-func (s *Service) Validate() (bool, error) {
-	return utils.RequiredStringFieldsSet(s, []string{"ApplicationId"})
-}
-
-func (e *Environment) Validate() (bool, error) {
-	return utils.RequiredStringFieldsSet(e, []string{"Name", "EnvironmentType", "ApplicationId"})
-}
-
-func (cp *GcpCloudProvider) Validate() (bool, error) {
-	return utils.RequiredStringFieldsSet(cp, []string{"Name"})
-}
-
-func (cp *PhysicalDatacenterCloudProvider) Validate() (bool, error) {
-	return utils.RequiredStringFieldsSet(cp, []string{"Name"})
-}
-
-func (i *InfrastructureDefinition) Validate() (bool, error) {
-	if _, err := utils.RequiredStringFieldsSet(i, []string{"ApplicationId", "EnvironmentId"}); err != nil {
-		return false, err
-	}
-
-	if len(i.InfrastructureDetail) != 1 {
-		return false, errors.New("expect one infrastructure detail to be set")
-	}
-
-	// detail := i.InfrastructureDetail[0]
-
-	// switch i.CloudProviderType {
-	// case CloudProviderTypes.DataCenter:
-	// 	switch i.DeploymentType {
-	// 	case DeploymentTypes.SSH:
-	// 		return detail.ToDataCenterSSH().Validate()
-	// 	case DeploymentTypes.WinRM:
-	// 		return detail.ToDataCenterWinRM().Validate()
-	// 	default:
-	// 		return false, fmt.Errorf("unsupported deployment type '%s' for '%s' cloud provider", i.DeploymentType, i.CloudProviderType)
-	// 	}
-	// case CloudProviderTypes.KubernetesCluster:
-	// 	switch i.DeploymentType {
-	// 	case DeploymentTypes.Kubernetes:
-	// 		return detail.ToKubernetesDirect().Validate()
-	// 	case DeploymentTypes.Helm:
-	// 		return detail.ToKubernetesDirect().Validate()
-	// 	default:
-	// 		return false, fmt.Errorf("unsupported deployment type '%s' for '%s' cloud provider", i.DeploymentType, i.CloudProviderType)
-	// 	}
-	// case CloudProviderTypes.Aws:
-	// 	switch i.DeploymentType {
-	// 	case DeploymentTypes.AMI:
-	// 		return detail.ToAwsAmi().Validate()
-	// 	}
-	// default:
-	// 	return false, fmt.Errorf("unknown cloud provider type '%s'", i.CloudProviderType)
-	// }
-
-	return true, nil
-}
-
-// func (i *InfrastructureAwsAmi) Validate() (bool, error) {
-// 	if _, err := utils.RequiredValueOptionsSet(i, map[string][]interface{}{
-// 		"AmiDeploymentType": {AmiDeploymentTypes.ASG},
-// 	}); err != nil {
-// 		return false, err
-// 	}
-
-// 	if len(i.HostNames) == 0 {
-// 		return false, errors.New("host names must be set")
-// 	}
-
-// 	return true, nil
-// }
-
-func (i *InfrastructureDataCenterSSH) Validate() (bool, error) {
-	if _, err := utils.RequiredStringFieldsSet(i, []string{"CloudProviderName", "HostConnectionAttrsName"}); err != nil {
-		return false, err
-	}
-
-	if len(i.HostNames) == 0 {
-		return false, errors.New("host names must be set")
-	}
-
-	return true, nil
-}
-
-func (i *InfrastructureDataCenterWinRM) Validate() (bool, error) {
-	if _, err := utils.RequiredStringFieldsSet(i, []string{"CloudProviderName", "WinRmConnectionAttributesName"}); err != nil {
-		return false, err
-	}
-
-	if len(i.HostNames) == 0 {
-		return false, errors.New("host names must be set")
-	}
-
-	return true, nil
-}
-
-func (i *InfrastructureKubernetesDirect) Validate() (bool, error) {
-	return utils.RequiredStringFieldsSet(i, []string{"CloudProviderName", "Namespace", "ReleaseName"})
-}
-
 func (i *ConfigAsCodeItem) IsEmpty() bool {
 	return i == &ConfigAsCodeItem{}
 }
@@ -266,17 +166,17 @@ func GetInfraDefinitionYamlPath(applicationName string, environmentName string, 
 	return YamlPath(fmt.Sprintf("Setup/Applications/%s/Environments/%s/Infrastructure Definitions/%s.yaml", applicationName, environmentName, infraName))
 }
 
-func (d *InfrastructureDetail) ToAwsAmi() *InfrastructureAwsAmi {
-	if d.Type != InfrastructureTypes.AwsAmi {
+func (i *InfrastructureDetail) ToAwsAmi() *InfrastructureAwsAmi {
+	if i.Type != InfrastructureTypes.AwsAmi {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AwsAmi))
 	}
 
-	i := &InfrastructureAwsAmi{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAwsAmi{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAwsAmi) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -284,24 +184,24 @@ func (i *InfrastructureAwsAmi) ToInfrastructureDetail() []*InfrastructureDetail 
 		Type: InfrastructureTypes.AwsAmi,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToAwsEcs() *InfrastructureAwsEcs {
-	if d.Type != InfrastructureTypes.AwsEcs {
+func (i *InfrastructureDetail) ToAwsEcs() *InfrastructureAwsEcs {
+	if i.Type != InfrastructureTypes.AwsEcs {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AwsEcs))
 	}
 
-	i := &InfrastructureAwsEcs{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAwsEcs{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAwsEcs) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -309,24 +209,24 @@ func (i *InfrastructureAwsEcs) ToInfrastructureDetail() []*InfrastructureDetail 
 		Type: InfrastructureTypes.AwsEcs,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToAwsLambda() *InfrastructureAwsLambda {
-	if d.Type != InfrastructureTypes.AwsLambda {
+func (i *InfrastructureDetail) ToAwsLambda() *InfrastructureAwsLambda {
+	if i.Type != InfrastructureTypes.AwsLambda {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AwsLambda))
 	}
 
-	i := &InfrastructureAwsLambda{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAwsLambda{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAwsLambda) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -334,24 +234,24 @@ func (i *InfrastructureAwsLambda) ToInfrastructureDetail() []*InfrastructureDeta
 		Type: InfrastructureTypes.AwsLambda,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToAwsWinRm() *InfrastructureAwsWinRM {
-	if d.Type != InfrastructureTypes.AwsSSH {
+func (i *InfrastructureDetail) ToAwsWinRm() *InfrastructureAwsWinRM {
+	if i.Type != InfrastructureTypes.AwsSSH {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AwsSSH))
 	}
 
-	i := &InfrastructureAwsWinRM{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAwsWinRM{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAwsWinRM) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -359,24 +259,24 @@ func (i *InfrastructureAwsWinRM) ToInfrastructureDetail() []*InfrastructureDetai
 		Type: InfrastructureTypes.AwsSSH,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToAwsSSH() *InfrastructureAwsSSH {
-	if d.Type != InfrastructureTypes.AwsSSH {
+func (i *InfrastructureDetail) ToAwsSSH() *InfrastructureAwsSSH {
+	if i.Type != InfrastructureTypes.AwsSSH {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AwsSSH))
 	}
 
-	i := &InfrastructureAwsSSH{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAwsSSH{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAwsSSH) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -384,24 +284,24 @@ func (i *InfrastructureAwsSSH) ToInfrastructureDetail() []*InfrastructureDetail 
 		Type: InfrastructureTypes.AwsSSH,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToAzureVmss() *InfrastructureAzureVmss {
-	if d.Type != InfrastructureTypes.AzureVmss {
+func (i *InfrastructureDetail) ToAzureVmss() *InfrastructureAzureVmss {
+	if i.Type != InfrastructureTypes.AzureVmss {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AzureVmss))
 	}
 
-	i := &InfrastructureAzureVmss{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAzureVmss{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAzureVmss) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -409,24 +309,24 @@ func (i *InfrastructureAzureVmss) ToInfrastructureDetail() []*InfrastructureDeta
 		Type: InfrastructureTypes.AzureVmss,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToAzureWebApp() *InfrastructureAzureWebApp {
-	if d.Type != InfrastructureTypes.AzureWebApp {
+func (i *InfrastructureDetail) ToAzureWebApp() *InfrastructureAzureWebApp {
+	if i.Type != InfrastructureTypes.AzureWebApp {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.AzureWebApp))
 	}
 
-	i := &InfrastructureAzureWebApp{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureAzureWebApp{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureAzureWebApp) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -434,24 +334,24 @@ func (i *InfrastructureAzureWebApp) ToInfrastructureDetail() []*InfrastructureDe
 		Type: InfrastructureTypes.AzureWebApp,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToCustom() *InfrastructureCustom {
-	if d.Type != InfrastructureTypes.Custom {
+func (i *InfrastructureDetail) ToCustom() *InfrastructureCustom {
+	if i.Type != InfrastructureTypes.Custom {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.Custom))
 	}
 
-	i := &InfrastructureCustom{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureCustom{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureCustom) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -459,24 +359,24 @@ func (i *InfrastructureCustom) ToInfrastructureDetail() []*InfrastructureDetail 
 		Type: InfrastructureTypes.Custom,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToDataCenterSSH() *InfrastructureDataCenterSSH {
-	if d.Type != InfrastructureTypes.DataCenterSSH {
+func (i *InfrastructureDetail) ToDataCenterSSH() *InfrastructureDataCenterSSH {
+	if i.Type != InfrastructureTypes.DataCenterSSH {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.DataCenterSSH))
 	}
 
-	i := &InfrastructureDataCenterSSH{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureDataCenterSSH{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureDataCenterSSH) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -484,24 +384,24 @@ func (i *InfrastructureDataCenterSSH) ToInfrastructureDetail() []*Infrastructure
 		Type: InfrastructureTypes.DataCenterSSH,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToDataCenterWinRM() *InfrastructureDataCenterWinRM {
-	if d.Type != InfrastructureTypes.DataCenterWinRM {
+func (i *InfrastructureDetail) ToDataCenterWinRM() *InfrastructureDataCenterWinRM {
+	if i.Type != InfrastructureTypes.DataCenterWinRM {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.DataCenterWinRM))
 	}
 
-	i := &InfrastructureDataCenterWinRM{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureDataCenterWinRM{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureDataCenterWinRM) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -509,24 +409,24 @@ func (i *InfrastructureDataCenterWinRM) ToInfrastructureDetail() []*Infrastructu
 		Type: InfrastructureTypes.DataCenterWinRM,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToKubernetesDirect() *InfrastructureKubernetesDirect {
-	if d.Type != InfrastructureTypes.KubernetesDirect {
+func (i *InfrastructureDetail) ToKubernetesDirect() *InfrastructureKubernetesDirect {
+	if i.Type != InfrastructureTypes.KubernetesDirect {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.KubernetesDirect))
 	}
 
-	i := &InfrastructureKubernetesDirect{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureKubernetesDirect{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureKubernetesDirect) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -534,24 +434,24 @@ func (i *InfrastructureKubernetesDirect) ToInfrastructureDetail() []*Infrastruct
 		Type: InfrastructureTypes.KubernetesDirect,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToKubernetesGcp() *InfrastructureKubernetesGcp {
-	if d.Type != InfrastructureTypes.KubernetesGcp {
+func (i *InfrastructureDetail) ToKubernetesGcp() *InfrastructureKubernetesGcp {
+	if i.Type != InfrastructureTypes.KubernetesGcp {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.KubernetesGcp))
 	}
 
-	i := &InfrastructureKubernetesGcp{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureKubernetesGcp{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureKubernetesGcp) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -559,24 +459,24 @@ func (i *InfrastructureKubernetesGcp) ToInfrastructureDetail() []*Infrastructure
 		Type: InfrastructureTypes.KubernetesGcp,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
 	return []*InfrastructureDetail{d}
 }
 
-func (d *InfrastructureDetail) ToPcf() *InfrastructureTanzu {
-	if d.Type != InfrastructureTypes.Pcf {
+func (i *InfrastructureDetail) ToPcf() *InfrastructureTanzu {
+	if i.Type != InfrastructureTypes.Pcf {
 		panic(fmt.Errorf("expected Type of %s", InfrastructureTypes.Pcf))
 	}
 
-	i := &InfrastructureTanzu{}
-	if err := copier.Copy(i, d); err != nil {
+	d := &InfrastructureTanzu{}
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 
-	return i
+	return d
 }
 
 func (i *InfrastructureTanzu) ToInfrastructureDetail() []*InfrastructureDetail {
@@ -584,7 +484,7 @@ func (i *InfrastructureTanzu) ToInfrastructureDetail() []*InfrastructureDetail {
 		Type: InfrastructureTypes.Pcf,
 	}
 
-	if err := copier.Copy(i, d); err != nil {
+	if err := copier.Copy(d, i); err != nil {
 		panic(err)
 	}
 

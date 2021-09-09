@@ -82,6 +82,10 @@ func (c *SecretClient) GetEncryptedTextByName(name string) (*graphql.EncryptedTe
 		return nil, err
 	}
 
+	if resp.IsEmpty() {
+		return nil, nil
+	}
+
 	return resp, nil
 }
 
@@ -90,6 +94,10 @@ func (c *SecretClient) GetEncryptedTextById(id string) (*graphql.EncryptedText, 
 	err := c.getSecretById(id, graphql.SecretTypes.EncryptedText, getEncryptedTextFields(), resp)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.IsEmpty() {
+		return nil, nil
 	}
 
 	return resp, nil

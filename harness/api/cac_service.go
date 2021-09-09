@@ -13,6 +13,10 @@ func (c *ConfigAsCodeClient) GetServiceById(applicationId string, serviceId stri
 		return nil, err
 	}
 
+	if svc.IsEmpty() {
+		return nil, nil
+	}
+
 	return svc, nil
 }
 

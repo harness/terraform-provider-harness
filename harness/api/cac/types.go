@@ -1,12 +1,16 @@
 package cac
 
-type Validation interface {
+import (
+	"errors"
+	"reflect"
+
+	"github.com/harness-io/harness-go-sdk/harness/utils"
+)
+
+type Entity interface {
+	IsEmpty() bool
 	Validate() (bool, error)
 }
-
-// type Entity interface {
-// 	GetPath() (string, error)
-// }
 
 type Application struct {
 	HarnessApiVersion HarnessApiVersion `yaml:"harnessApiVersion" json:"harnessApiVersion"`
@@ -14,6 +18,11 @@ type Application struct {
 	Id                string            `yaml:"-"`
 	Name              string            `yaml:"-"`
 }
+
+func (a *Application) IsEmpty() bool {
+	return reflect.DeepEqual(a, &Application{})
+}
+
 type Tag struct {
 	Name  string `yaml:"name,omitempty"`
 	Value string `yaml:"value,omitempty"`
@@ -73,6 +82,14 @@ type Service struct {
 	ConfigVariables           []*ServiceVariable `yaml:"configVariables,omitempty"`
 }
 
+func (a *Service) IsEmpty() bool {
+	return reflect.DeepEqual(a, &Service{})
+}
+
+func (s *Service) Validate() (bool, error) {
+	return utils.RequiredStringFieldsSet(s, []string{"ApplicationId"})
+}
+
 type ServiceVariable struct {
 	Name      string            `yaml:"name,omitempty"`
 	Value     string            `yaml:"value,omitempty"`
@@ -95,6 +112,10 @@ type AwsCloudProvider struct {
 	DelegateSelector       string                     `yaml:"tag,omitempty"`
 }
 
+func (a *AwsCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &AwsCloudProvider{})
+}
+
 type AwsCrossAccountAttributes struct {
 	CrossAccountRoleArn string `yaml:"crossAccountRoleArn,omitempty"`
 	ExternalId          string `yaml:"externalId,omitempty"`
@@ -113,12 +134,24 @@ type PcfCloudProvider struct {
 	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
 }
 
+func (a *PcfCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &PcfCloudProvider{})
+}
+
 type PhysicalDatacenterCloudProvider struct {
 	HarnessApiVersion HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Type              ObjectType         `yaml:"type" json:"type"`
 	Name              string             `yaml:"-"`
 	Id                string             `yaml:"-"`
 	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+func (a *PhysicalDatacenterCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &PhysicalDatacenterCloudProvider{})
+}
+
+func (cp *PhysicalDatacenterCloudProvider) Validate() (bool, error) {
+	return utils.RequiredStringFieldsSet(cp, []string{"Name"})
 }
 
 type AzureCloudProvider struct {
@@ -133,6 +166,10 @@ type AzureCloudProvider struct {
 	UsageRestrictions    *UsageRestrictions   `yaml:"usageRestrictions,omitempty"`
 }
 
+func (a *AzureCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &AzureCloudProvider{})
+}
+
 type GcpCloudProvider struct {
 	HarnessApiVersion            HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Id                           string             `yaml:"-"`
@@ -145,6 +182,14 @@ type GcpCloudProvider struct {
 	UseDelegate                  bool               `yaml:"useDelegate,omitempty"`
 	UseDelegateSelectors         bool               `yaml:"useDelegateSelectors,omitempty"`
 	UsageRestrictions            *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+func (a *GcpCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &GcpCloudProvider{})
+}
+
+func (cp *GcpCloudProvider) Validate() (bool, error) {
+	return utils.RequiredStringFieldsSet(cp, []string{"Name"})
 }
 
 type KubernetesCloudProvider struct {
@@ -177,6 +222,10 @@ type KubernetesCloudProvider struct {
 	UsageRestrictions          *UsageRestrictions          `yaml:"usageRestrictions,omitempty"`
 }
 
+func (a *KubernetesCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &KubernetesCloudProvider{})
+}
+
 type ContinuousEfficiencyConfig struct {
 	ContinuousEfficiencyEnabled bool `json:"continuousEfficiencyEnabled,omitempty"`
 }
@@ -189,6 +238,10 @@ type SpotInstCloudProvider struct {
 	AccountId         string             `yaml:"spotInstAccountId,omitempty"`
 	Token             *SecretRef         `yaml:"spotInstToken,omitempty"`
 	UsageRestrictions *UsageRestrictions `yaml:"usageRestrictions,omitempty"`
+}
+
+func (a *SpotInstCloudProvider) IsEmpty() bool {
+	return reflect.DeepEqual(a, &SpotInstCloudProvider{})
 }
 
 type UsageRestrictions struct {
@@ -228,6 +281,14 @@ type Environment struct {
 	ApplicationId                      string                  `yaml:"-"`
 }
 
+func (a *Environment) IsEmpty() bool {
+	return reflect.DeepEqual(a, &Environment{})
+}
+
+func (e *Environment) Validate() (bool, error) {
+	return utils.RequiredStringFieldsSet(e, []string{"Name", "EnvironmentType", "ApplicationId"})
+}
+
 type VariableOverride struct {
 	Name        string            `yaml:"name,omitempty"`
 	ServiceName string            `yaml:"serviceName,omitempty"`
@@ -250,6 +311,22 @@ type InfrastructureDefinition struct {
 	ScopedServices            []string                `yaml:"scopedServices,omitempty"`
 }
 
+func (a *InfrastructureDefinition) IsEmpty() bool {
+	return reflect.DeepEqual(a, &InfrastructureDefinition{})
+}
+
+func (i *InfrastructureDefinition) Validate() (bool, error) {
+	if _, err := utils.RequiredStringFieldsSet(i, []string{"ApplicationId", "EnvironmentId"}); err != nil {
+		return false, err
+	}
+
+	if len(i.InfrastructureDetail) != 1 {
+		return false, errors.New("expect one infrastructure detail to be set")
+	}
+
+	return true, nil
+}
+
 type InfrastructureDetail struct {
 	Type                          InfrastructureType `yaml:"type,omitempty"`
 	AmiDeploymentType             AmiDeploymentType  `yaml:"amiDeploymentType,omitempty"`
@@ -269,6 +346,7 @@ type InfrastructureDetail struct {
 	HostConnectionType            string             `yaml:"hostConnectionType,omitempty"`
 	HostNameConvention            string             `yaml:"hostNameConvention,omitempty"`
 	HostNames                     []string           `yaml:"hostNames,omitempty"`
+	IamRole                       string             `yaml:"iamRole,omitempty"`
 	InfraVariables                *InfraVariable     `yaml:"infraVariables,omitempty"`
 	LaunchType                    string             `yaml:"launchType,omitempty"`
 	Namespace                     string             `yaml:"namespace,omitempty"`

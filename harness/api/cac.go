@@ -249,7 +249,7 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 	}
 
 	// If the object implements the Validation interface then check it
-	if v, ok := input.(cac.Validation); ok {
+	if v, ok := input.(cac.Entity); ok {
 		if ok, err := v.Validate(); !ok {
 			return err
 		}
@@ -288,7 +288,8 @@ func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac
 
 	item := FindConfigAsCodeItemByPath(rootItem, filePath)
 	if item == nil {
-		return fmt.Errorf("unable to item at `%s`", filePath)
+		log.Printf("unable to find item at `%s`", filePath)
+		return nil
 	}
 
 	return c.ParseObject(item, filePath, applicationId, obj)
@@ -302,7 +303,8 @@ func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId strin
 
 	i := FindConfigAsCodeItemByUUID(rootItem, objectId)
 	if i == nil {
-		return errors.New("cannot find obj with id: " + objectId)
+		log.Printf("[DEBUG] cannot find obj with id: " + objectId)
+		return nil
 	}
 
 	return c.ParseObject(i, cac.YamlPath(i.DirectoryPath.Path), applicationId, out)

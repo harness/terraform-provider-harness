@@ -2,8 +2,10 @@ package api
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/jinzhu/copier"
 )
 
@@ -105,6 +107,9 @@ func (c *UserClient) GetUserGroupById(id string) (*graphql.UserGroup, error) {
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.USER_GROUP_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -125,6 +130,9 @@ func (c *UserClient) GetUserGroupByName(name string) (*graphql.UserGroup, error)
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.USER_GROUP_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

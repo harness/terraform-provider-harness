@@ -43,6 +43,8 @@ func (c *ConfigAsCodeClient) GetEnvironmentByName(applicationId string, environm
 
 	app, err := c.ApiClient.Applications().GetApplicationById(applicationId)
 	if err != nil {
+		return nil, err
+	} else if app == nil {
 		return nil, fmt.Errorf("could not find application '%s'", applicationId)
 	}
 
@@ -51,6 +53,10 @@ func (c *ConfigAsCodeClient) GetEnvironmentByName(applicationId string, environm
 	err = c.FindObjectByPath(applicationId, yamlPath, output)
 	if err != nil {
 		return nil, err
+	}
+
+	if output.IsEmpty() {
+		return nil, nil
 	}
 
 	return output, nil
@@ -69,6 +75,10 @@ func (c *ConfigAsCodeClient) GetEnvironmentById(applicationId string, environmen
 	err := c.FindObjectById(applicationId, environmentId, env)
 	if err != nil {
 		return nil, err
+	}
+
+	if env.IsEmpty() {
+		return nil, nil
 	}
 
 	return env, nil

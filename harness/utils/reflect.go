@@ -68,9 +68,45 @@ func TryGetFieldValue(i interface{}, fieldName string) (interface{}, bool) {
 
 func RequiredStringFieldsSet(obj interface{}, fields []string) (bool, error) {
 	for _, fieldName := range fields {
-		if val, ok := TryGetFieldValue(obj, fieldName); !ok || val == "" {
+		val, _ := TryGetFieldValue(obj, fieldName)
+		if val == nil || val == "" {
 			return false, fmt.Errorf("expected %s to be set", fieldName)
 		}
+	}
+
+	return true, nil
+}
+
+// Takes an object with a list of field names and their default values.
+// Returns true if the all of the fields are set with a non-default value.
+// Example usage:
+// 		if ok, err := utils.RequiredFieldsSetWithDefaultValues(obj, map[string]interface{}{
+// 			"field1": "default1",
+// 			"field2": "default2",
+// 		})
+// 		if !ok {
+// 			panic(err)
+// 		}
+func RequiredFieldsSetWithDefaultValues(obj interface{}, fieldValues map[string]interface{}) (bool, error) {
+	for fieldName, defaultValue := range fieldValues {
+		if val, ok := TryGetFieldValue(obj, fieldName); !ok || val == defaultValue {
+			return false, fmt.Errorf("expected %s to be set", fieldName)
+		}
+	}
+
+	return true, nil
+}
+func RequiredFieldsSet(obj interface{}, defaultValues map[string]interface{}) (bool, error) {
+	for fieldName, value := range defaultValues {
+		if !HasField(obj, fieldName) {
+			return false, fmt.Errorf("expected object to have field '%s'", fieldName)
+		}
+
+		if v, ok := TryGetFieldValue(obj, fieldName); !ok || v == value {
+			return false, fmt.Errorf("expected object to have field '%s' set with non-default value", fieldName)
+		}
+
+		return true, nil
 	}
 
 	return true, nil

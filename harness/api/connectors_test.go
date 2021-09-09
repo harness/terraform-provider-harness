@@ -126,3 +126,21 @@ func TestListGitConnectors(t *testing.T) {
 		offset += limit
 	}
 }
+
+func TestGetGitConnectorByName(t *testing.T) {
+	client := getClient()
+	expectedName := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(12))
+	conn, err := createGitConnector(expectedName)
+	require.NoError(t, err)
+
+	connLookup, err := client.Connectors().GetGitConnectorByName(conn.Name)
+
+	// Verify
+	require.NoError(t, err)
+	require.Equal(t, conn.Id, connLookup.Id)
+	require.Equal(t, conn.Name, connLookup.Name)
+
+	// Cleanup
+	err = client.Connectors().DeleteConnector(conn.Id)
+	require.NoError(t, err)
+}

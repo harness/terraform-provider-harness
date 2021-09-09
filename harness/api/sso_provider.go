@@ -2,8 +2,10 @@ package api
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
+	"github.com/harness-io/harness-go-sdk/harness/helpers"
 )
 
 type SSOClient struct {
@@ -31,6 +33,9 @@ func (c *SSOClient) GetSSOProviderById(id string) (*graphql.SSOProvider, error) 
 	}{}
 
 	if err := c.APIClient.ExecuteGraphQLQuery(query, &res); err != nil {
+		if strings.Contains(err.Error(), helpers.SSO_PROVIDER_NOT_FOUND) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

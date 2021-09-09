@@ -338,6 +338,13 @@ func TestGetSSHCredentialByName_KerberosAuth(t *testing.T) {
 	require.Equal(t, graphql.SSHAuthenticationTypes.KerberosAuthentication, s.AuthenticationType)
 }
 
+func TestGetSSHCredentialByName_NotFound(t *testing.T) {
+	client := getClient()
+	cred, err := client.Secrets().GetSSHCredentialByName("notfoundcred")
+	require.NoError(t, err)
+	require.Nil(t, cred)
+}
+
 func TestListSSHCredentials(t *testing.T) {
 	t.Skip("This endpoint requires the use of a bearer token.")
 	client := getClient()
