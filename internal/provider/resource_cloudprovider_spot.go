@@ -29,10 +29,10 @@ func resourceCloudProviderSpot() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a GCP cloud provider",
-		CreateContext: resourceCloudProviderSpotCreate,
+		CreateContext: resourceCloudProviderSpotCreateOrUpdate,
 		ReadContext:   resourceCloudProviderSpotRead,
-		UpdateContext: resourceCloudProviderSpotUpdate,
-		DeleteContext: resourceCloudProviderSpotDelete,
+		UpdateContext: resourceCloudProviderSpotCreateOrUpdate,
+		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
 	}
@@ -44,11 +44,18 @@ func resourceCloudProviderSpotRead(ctx context.Context, d *schema.ResourceData, 
 	name := d.Get("name").(string)
 
 	cp := &cac.SpotInstCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
-	if err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
 		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readCloudProviderSpot(c, d, cp)
+}
+
+func readCloudProviderSpot(c *api.Client, d *schema.ResourceData, cp *cac.SpotInstCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("account_id", cp.AccountId)
@@ -66,10 +73,25 @@ func resourceCloudProviderSpotRead(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func resourceCloudProviderSpotCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudProviderSpotCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := cac.NewEntity(cac.ObjectTypes.SpotInstCloudProvider).(*cac.SpotInstCloudProvider)
+	var input *cac.SpotInstCloudProvider
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.SpotInstCloudProvider).(*cac.SpotInstCloudProvider)
+	} else {
+		input = &cac.SpotInstCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
 	input.Name = d.Get("name").(string)
 	input.AccountId = d.Get("account_id").(string)
 
@@ -79,11 +101,9 @@ func resourceCloudProviderSpotCreate(ctx context.Context, d *schema.ResourceData
 		}
 	}
 
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}
-	input.UsageRestrictions = restrictions
 
 	cp, err := c.ConfigAsCode().UpsertSpotInstCloudProvider(input)
 
@@ -91,47 +111,5 @@ func resourceCloudProviderSpotCreate(ctx context.Context, d *schema.ResourceData
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cp.Id)
-
-	return nil
-}
-
-func resourceCloudProviderSpotUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	cp := cac.NewEntity(cac.ObjectTypes.SpotInstCloudProvider).(*cac.SpotInstCloudProvider)
-	cp.Name = d.Get("name").(string)
-	cp.AccountId = d.Get("account_id").(string)
-
-	if token := d.Get("token_secret_name").(string); token != "" {
-		cp.Token = &cac.SecretRef{
-			Name: token,
-		}
-	}
-
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertSpotInstCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
-}
-
-func resourceCloudProviderSpotDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	id := d.Get("id").(string)
-	err := c.CloudProviders().DeleteCloudProvider(id)
-
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return readCloudProviderSpot(c, d, cp)
 }

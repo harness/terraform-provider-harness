@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -36,6 +37,47 @@ func TestAccResourceEnvironment(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.Prod),
 				),
+			},
+		},
+	})
+}
+
+func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		resourceName = "harness_environment.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironment(name, cac.EnvironmentTypes.NonProd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.NonProd),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+					app, err := c.Applications().GetApplicationByName(name)
+					require.NoError(t, err)
+					require.NotNil(t, app)
+
+					env, err := c.ConfigAsCode().GetEnvironmentByName(app.Id, name)
+					require.NoError(t, err)
+					require.NotNil(t, env)
+
+					err = c.ConfigAsCode().DeleteEnvironment(app.Name, env.Name)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceTanzuCloudProvider(name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

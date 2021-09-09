@@ -30,9 +30,9 @@ var validTGTGenerationMethods = []string{
 func resourceSSHCredential() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for creating an encrypted text secret",
-		CreateContext: resourceSSHCredentialCreate,
+		CreateContext: resourceSSHCredentialCreateOrUpdate,
 		ReadContext:   resourceSSHCredentialRead,
-		UpdateContext: resourceSSHCredentialUpdate,
+		UpdateContext: resourceSSHCredentialCreateOrUpdate,
 		DeleteContext: resourceSSHCredentialDelete,
 
 		Schema: map[string]*schema.Schema{
@@ -189,12 +189,25 @@ func resourceSSHCredential() *schema.Resource {
 	}
 }
 
-func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := &graphql.SSHCredential{
-		Name: d.Get("name").(string),
+	var input *graphql.SSHCredential
+	var err error
+
+	if d.IsNewResource() {
+		input = &graphql.SSHCredential{}
+	} else {
+		if input, err = c.Secrets().GetSSHCredentialById(d.Id()); err != nil {
+			return diag.FromErr(err)
+		} else if input == nil {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
 	}
+
+	input.Name = d.Get("name").(string)
 
 	if err := expandAuthenticationScheme(d, input); err != nil {
 		return diag.FromErr(err)
@@ -212,10 +225,7 @@ func resourceSSHCredentialCreate(ctx context.Context, d *schema.ResourceData, me
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cred.Id)
-	d.Set("name", cred.Name)
-
-	return nil
+	return readSSHCredential(d, cred)
 }
 
 func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -224,14 +234,26 @@ func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta
 	credId := d.Get("id").(string)
 
 	cred, err := c.Secrets().GetSSHCredentialById(credId)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.Set("name", cred.Name)
+	if cred == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	return readSSHCredential(d, cred)
+}
+
+func readSSHCredential(d *schema.ResourceData, secret *graphql.SSHCredential) diag.Diagnostics {
+	d.SetId(secret.Id)
+	d.Set("name", secret.Name)
 	// d.Set("ssh_authentication", flattenSSHAuthentication(cred.SSHAuthentication))
 	// d.Set("kerberos_authentication", flattenKerberosAuthentication(cred.KerberosAuthentication))
-	d.Set("usage_scope", flattenUsageScope(cred.UsageScope))
+	d.Set("usage_scope", flattenUsageScope(secret.UsageScope))
 
 	return nil
 }

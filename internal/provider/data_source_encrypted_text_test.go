@@ -48,10 +48,6 @@ func testAccDataSourceEncryptedTextByName(name string) string {
 				application_filter_type = "ALL"
 				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 			}
-
-			lifecycle {
-				ignore_changes = [secret_manager_id]
-			}
 		}
 
 		data "harness_encrypted_text" "test" {

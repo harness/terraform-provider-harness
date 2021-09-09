@@ -605,7 +605,7 @@ func infraDetailsAwsLambda() *schema.Resource {
 			"iam_role": {
 				Description: "The IAM role to use.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"region": {
 				Description: "The region to deploy to.",

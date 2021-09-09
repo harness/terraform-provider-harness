@@ -3,13 +3,14 @@ package provider
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceDataCenterCloudProviderConnector(t *testing.T) {
@@ -37,7 +38,43 @@ func TestAccResourceDataCenterCloudProviderConnector(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDataCenterCloudProviderExists(t, resourceName, name),
 				),
-				ExpectError: regexp.MustCompile("name is immutable"),
+			},
+		},
+	})
+}
+
+func TestAccResourceDataCenterCloudProviderConnector_DeleteUnderlyingResource(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "harness_cloudprovider_datacenter.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceDataCenterCloudProvider(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					testAccCheckDataCenterCloudProviderExists(t, resourceName, name),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+					cp, err := c.CloudProviders().GetPhysicalDatacenterCloudProviderByName(name)
+					require.NoError(t, err)
+					require.NotNil(t, cp)
+
+					err = c.CloudProviders().DeleteCloudProvider(cp.Id)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceDataCenterCloudProvider(name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -83,8 +120,12 @@ func testAccCloudProviderDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		cp := &cac.PhysicalDatacenterCloudProvider{}
 		err := testAccGetCloudProvider(resourceName, state, &cp)
-		if err == nil {
-			return errors.New("found cloud provider")
+		if err != nil {
+			return err
+		}
+
+		if !cp.IsEmpty() {
+			return fmt.Errorf("cloud Provider still exists")
 		}
 
 		return nil

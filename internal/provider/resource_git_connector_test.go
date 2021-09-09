@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -91,6 +92,43 @@ func TestAccResourceGitConnector_invalid_urltype(t *testing.T) {
 			{
 				Config:      testAccResourceGitConnector_invalid_urltype(name),
 				ExpectError: regexp.MustCompile("invalid value badvalue. Must be one of ACCOUNT or REPO"),
+			},
+		},
+	})
+}
+
+func TestAccResourceGitConnector_DeleteUnderlyingResource(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		resourceName = "harness_git_connector.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config:                    testAccResourceGitConnector(name, true, true, true),
+				PreventPostDestroyRefresh: true,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckGitConnectorExists(t, resourceName, name),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+					conn, err := c.Connectors().GetGitConnectorByName(name)
+					require.NoError(t, err)
+					require.NotNil(t, conn)
+
+					err = c.Connectors().DeleteConnector(conn.Id)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceGitConnector(name, true, true, true),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -183,10 +221,6 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 			name 							= "%[1]s"
 			value 					  = "foo"
 			secret_manager_id = data.harness_secret_manager.test.id
-
-			lifecycle {
-				ignore_changes = [secret_manager_id]
-			}
 		}
 
 		resource "harness_git_connector" "test" {

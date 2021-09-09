@@ -23,9 +23,9 @@ func resourceKubernetesService() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a Kubernetes service",
-		CreateContext: resourceKubernetesServiceCreate,
+		CreateContext: resourceKubernetesServiceCreateOrUpdate,
 		ReadContext:   resourceKubernetesServiceKubernetesRead,
-		UpdateContext: resourceKubernetesServiceUpdate,
+		UpdateContext: resourceKubernetesServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        k8sSchema,
 	}
@@ -37,11 +37,22 @@ func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.Reso
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	svc, err := c.ConfigAsCode().GetServiceById(appId, svcId)
-	if err != nil {
+	var svc *cac.Service
+	var err error
+
+	if svc, err = c.ConfigAsCode().GetServiceById(appId, svcId); err != nil {
 		return diag.FromErr(err)
+	} else if svc == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readServiceK8s(d, svc)
+}
+
+func readServiceK8s(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics {
+	d.SetId(svc.Id)
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("helm_version", svc.HelmVersion)
@@ -54,58 +65,41 @@ func resourceKubernetesServiceKubernetesRead(ctx context.Context, d *schema.Reso
 	return nil
 }
 
-func resourceKubernetesServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceKubernetesServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
+
+	var input *cac.Service
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	} else {
+		if input, err = c.ConfigAsCode().GetServiceById(d.Get("app_id").(string), d.Id()); err != nil {
+			return diag.FromErr(err)
+		} else if input == nil {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
 
 	// Setup the object to be created
-	svcInput := &cac.Service{
-		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactTypes.Docker,
-		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    cac.HelmVersion(d.Get("helm_version").(string)),
-		ApplicationId:  d.Get("app_id").(string),
-		Description:    d.Get("description").(string),
-	}
+	input.Name = d.Get("name").(string)
+	input.ArtifactType = cac.ArtifactTypes.Docker
+	input.DeploymentType = cac.DeploymentTypes.Kubernetes
+	input.HelmVersion = cac.HelmVersion(d.Get("helm_version").(string))
+	input.ApplicationId = d.Get("app_id").(string)
+	input.Description = d.Get("description").(string)
 
 	if vars := d.Get("variable"); vars != nil {
-		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+		input.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
 	}
 
 	// Create Service
-	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(newSvc.Id)
-
-	return nil
-}
-
-func resourceKubernetesServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	// Setup the object to create
-	svcInput := &cac.Service{
-		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactTypes.Docker,
-		DeploymentType: cac.DeploymentTypes.Kubernetes,
-		HelmVersion:    cac.HelmVersion(d.Get("helm_version").(string)),
-		ApplicationId:  d.Get("app_id").(string),
-		Description:    d.Get("description").(string),
-	}
-
-	if vars := d.Get("variable"); vars != nil {
-		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
-	}
-
-	// Create Service
-	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId(newSvc.Id)
-
-	return nil
+	return readServiceK8s(d, newSvc)
 }

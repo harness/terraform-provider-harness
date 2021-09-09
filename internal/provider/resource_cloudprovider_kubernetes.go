@@ -224,9 +224,9 @@ func resourceCloudProviderK8s() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a GCP cloud provider",
-		CreateContext: resourceCloudProviderK8sCreate,
+		CreateContext: resourceCloudProviderK8sCreateOrUpdate,
 		ReadContext:   resourceCloudProviderK8sRead,
-		UpdateContext: resourceCloudProviderK8sUpdate,
+		UpdateContext: resourceCloudProviderK8sCreateOrUpdate,
 		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
@@ -239,11 +239,18 @@ func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, m
 	name := d.Get("name").(string)
 
 	cp := &cac.KubernetesCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
-	if err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
 		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readCloudProviderK8s(c, d, cp)
+}
+
+func readCloudProviderK8s(c *api.Client, d *schema.ResourceData, cp *cac.KubernetesCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("skip_validation", cp.SkipValidation)
@@ -258,20 +265,33 @@ func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceCloudProviderK8sCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := cac.NewEntity(cac.ObjectTypes.KubernetesCloudProvider).(*cac.KubernetesCloudProvider)
+	var input *cac.KubernetesCloudProvider
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.KubernetesCloudProvider).(*cac.KubernetesCloudProvider)
+	} else {
+		input = &cac.KubernetesCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
 	input.Name = d.Get("name").(string)
 	input.SkipValidation = d.Get("skip_validation").(bool)
 
 	expandK8sAuth(d.Get("authentication").([]interface{}), input)
 
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}
-	input.UsageRestrictions = restrictions
 
 	cp, err := c.ConfigAsCode().UpsertKubernetesCloudProvider(input)
 
@@ -279,31 +299,7 @@ func resourceCloudProviderK8sCreate(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cp.Id)
-
-	return nil
-}
-
-func resourceCloudProviderK8sUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	cp := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.KubernetesCloudProvider)
-	cp.Name = d.Get("name").(string)
-	cp.SkipValidation = d.Get("skip_validation").(bool)
-	expandK8sAuth(d.Get("authentication").([]interface{}), cp)
-
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertKubernetesCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return readCloudProviderK8s(c, d, cp)
 }
 
 func flattenK8sAuth(d *schema.ResourceData, cp *cac.KubernetesCloudProvider) []map[string]interface{} {

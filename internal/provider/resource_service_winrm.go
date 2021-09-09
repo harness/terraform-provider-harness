@@ -23,9 +23,9 @@ func resourceWinRMService() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating an WinRM service",
-		CreateContext: resourceWinRMServiceCreate,
+		CreateContext: resourceWinRMServiceCreateOrUpdate,
 		ReadContext:   resourceWinRMServiceRead,
-		UpdateContext: resourceWinRMServiceUpdate,
+		UpdateContext: resourceWinRMServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        sshSchema,
 	}
@@ -37,11 +37,22 @@ func resourceWinRMServiceRead(ctx context.Context, d *schema.ResourceData, meta 
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	svc, err := c.ConfigAsCode().GetServiceById(appId, svcId)
-	if err != nil {
+	var svc *cac.Service
+	var err error
+
+	if svc, err = c.ConfigAsCode().GetServiceById(appId, svcId); err != nil {
 		return diag.FromErr(err)
+	} else if svc == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readServiceWinRM(d, svc)
+}
+
+func readServiceWinRM(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics {
+	d.SetId(svc.Id)
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("description", svc.Description)
@@ -53,31 +64,42 @@ func resourceWinRMServiceRead(ctx context.Context, d *schema.ResourceData, meta 
 	return nil
 }
 
-func resourceWinRMServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceWinRMServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	// Setup the object to be created
-	svcInput := &cac.Service{
-		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactType(d.Get("artifact_type").(string)),
-		DeploymentType: cac.DeploymentTypes.WinRM,
-		ApplicationId:  d.Get("app_id").(string),
-		Description:    d.Get("description").(string),
+	var input *cac.Service
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	} else {
+		if input, err = c.ConfigAsCode().GetServiceById(d.Get("app_id").(string), d.Id()); err != nil {
+			return diag.FromErr(err)
+		} else if input == nil {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
 	}
 
+	// Setup the object to be created
+	input.Name = d.Get("name").(string)
+	input.ArtifactType = cac.ArtifactType(d.Get("artifact_type").(string))
+	input.DeploymentType = cac.DeploymentTypes.WinRM
+	input.ApplicationId = d.Get("app_id").(string)
+	input.Description = d.Get("description").(string)
+
 	if vars := d.Get("variable"); vars != nil {
-		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
+		input.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
 	}
 
 	// Create Service
-	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
+	newSvc, err := c.ConfigAsCode().UpsertService(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(newSvc.Id)
-
-	return nil
+	return readServiceWinRM(d, newSvc)
 }
 
 func resourceWinRMServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

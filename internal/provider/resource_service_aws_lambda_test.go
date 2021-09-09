@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -38,6 +39,51 @@ func TestAccResourceAWSLambdaService(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckAWSLambdaServiceExists(t, resourceName, name, updatedDescription),
 				),
+			},
+		},
+	})
+}
+
+func TestAccResourceAWSLambdaService_DeleteUnderlyingResource(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		description  = "some description"
+		resourceName = "harness_service_aws_lambda.test"
+		serviceId    = ""
+		appId        = ""
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceAWSLambdaService(name, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					func(state *terraform.State) error {
+						svc, _ := testAccGetService(resourceName, state)
+						serviceId = svc.Id
+						appId = svc.ApplicationId
+						return nil
+					},
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+					svc, err := c.ConfigAsCode().GetServiceById(appId, serviceId)
+					require.NoError(t, err)
+					require.NotNil(t, svc)
+
+					err = c.ConfigAsCode().DeleteService(svc.ApplicationId, svc.Id)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceAWSLambdaService(name, description),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

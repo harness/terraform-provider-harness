@@ -19,9 +19,9 @@ func testAccGetService(resourceName string, state *terraform.State) (*cac.Servic
 
 func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		conn, _ := testAccGetService(resourceName, state)
-		if conn != nil {
-			return fmt.Errorf("Found service: %s", conn.Id)
+		svc, _ := testAccGetService(resourceName, state)
+		if svc != nil {
+			return fmt.Errorf("Found service: %s", svc.Id)
 		}
 
 		return nil

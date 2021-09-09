@@ -77,12 +77,11 @@ func expandUsageScope(d []interface{}) (*graphql.UsageScope, error) {
 	return us, nil
 }
 
-func expandUsageRestrictions(c *api.Client, d []interface{}) (*cac.UsageRestrictions, error) {
+func expandUsageRestrictions(c *api.Client, d []interface{}, ur *cac.UsageRestrictions) error {
 	if len(d) == 0 {
-		return nil, nil
+		return nil
 	}
 
-	ur := &cac.UsageRestrictions{}
 	restrictions := make([]*cac.AppEnvRestriction, 0)
 
 	for _, appScope := range d {
@@ -104,7 +103,9 @@ func expandUsageRestrictions(c *api.Client, d []interface{}) (*cac.UsageRestrict
 		if attr, ok := scopeData["application_id"]; ok && attr != "" {
 			app, err := c.Applications().GetApplicationById(attr.(string))
 			if err != nil {
-				return nil, err
+				return nil
+			} else if app == nil {
+				return errors.New("application not found")
 			}
 			scope.AppFilter.EntityNames = []string{app.Name}
 		}
@@ -116,13 +117,15 @@ func expandUsageRestrictions(c *api.Client, d []interface{}) (*cac.UsageRestrict
 			case graphql.EnvironmentFilterTypes.Production:
 				scope.EnvFilter.FilterTypes = []cac.EnvironmentFilterType{cac.EnvironmentFilterTypes.Prod}
 			default:
-				return nil, errors.New("could not parse environment_filter_type '" + attr.(string) + "'")
+				return errors.New("could not parse environment_filter_type '" + attr.(string) + "'")
 			}
 
 			if attr, ok := scopeData["environment_id"]; ok && attr != "" {
 				env, err := c.ConfigAsCode().GetEnvironmentById(app.Id, attr.(string))
 				if err != nil {
-					return nil, err
+					return err
+				} else if env.IsEmpty() {
+					return errors.New("environment not found")
 				}
 				scope.EnvFilter.EntityNames = []string{env.Name}
 			}
@@ -131,9 +134,10 @@ func expandUsageRestrictions(c *api.Client, d []interface{}) (*cac.UsageRestrict
 		restrictions = append(restrictions, scope)
 	}
 
-	ur.AppEnvRestrictions = restrictions
-
-	return ur, nil
+	if len(restrictions) > 0 {
+		ur.AppEnvRestrictions = restrictions
+	}
+	return nil
 }
 
 func flattenUsageScope(uc *graphql.UsageScope) []map[string]interface{} {

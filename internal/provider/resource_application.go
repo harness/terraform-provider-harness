@@ -83,6 +83,23 @@ func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.FromErr(err)
 	}
 
+	if app == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	applicationRead(d, app)
+
+	return nil
+}
+
+func applicationRead(d *schema.ResourceData, app *graphql.Application) {
+	if app == nil {
+		return
+	}
+
+	d.Set("id", app.Id)
 	d.Set("name", app.Name)
 	d.Set("description", app.Description)
 	d.Set("is_manual_trigger_authorized", app.IsManualTriggerAuthorized)
@@ -94,8 +111,6 @@ func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta i
 			d.Set("git_sync_connector_id", app.GitSyncConfig.GitConnector.Id)
 		}
 	}
-
-	return nil
 }
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -108,10 +123,12 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 		Name:                      d.Get("name").(string),
 	}
 
-	_, err := c.Applications().UpdateApplication(input)
+	app, err := c.Applications().UpdateApplication(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	applicationRead(d, app)
 
 	return nil
 }
