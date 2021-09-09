@@ -171,7 +171,8 @@ func TestDeleteService(t *testing.T) {
 
 	svcLookup = &cac.Service{}
 	err = c.ConfigAsCode().FindObjectByPath(app.Id, cac.GetServiceYamlPath(app.Name, svc.Name), svcLookup)
-	require.Error(t, err, "received http status code '403'")
+	require.NoError(t, err)
+	require.True(t, svcLookup.IsEmpty())
 }
 
 func testServiceSerialization(applicationId string, applicationName string, deploymentType cac.DeploymentType, artifactType cac.ArtifactType) func(t *testing.T) {
