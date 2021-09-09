@@ -65,8 +65,18 @@ func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta
 	secret, err := c.Secrets().GetEncryptedTextById(secretId)
 	if err != nil {
 		return diag.FromErr(err)
+	} else if secret == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readEncryptedText(d, secret)
+
+}
+
+func readEncryptedText(d *schema.ResourceData, secret *graphql.EncryptedText) diag.Diagnostics {
+	d.SetId(secret.Id)
 	d.Set("name", secret.Name)
 	d.Set("inherit_scopes_from_secret_manager", secret.InheritScopesFromSM)
 	d.Set("scoped_to_account", secret.ScopedToAccount)
@@ -96,14 +106,11 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	input.EncryptedText.UsageScope = usageScope
 
 	secret, err := c.Secrets().CreateEncryptedText(input)
-
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(secret.Id)
-
-	return nil
+	return readEncryptedText(d, secret)
 }
 
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -125,24 +132,22 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 	}
 	input.EncryptedText.UsageScope = usageScope
 
-	_, err = c.Secrets().UpdateEncryptedText(input)
+	secret, err := c.Secrets().UpdateEncryptedText(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	// d.Set("secret_manager_id", secret.SecretManagerId)
-
-	return nil
+	return readEncryptedText(d, secret)
 }
 
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// c := meta.(*api.Client)
+	c := meta.(*api.Client)
 
-	// err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
+	err := c.Secrets().DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
 
-	// if err != nil {
-	// 	return diag.FromErr(err)
-	// }
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }

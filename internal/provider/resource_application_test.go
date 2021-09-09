@@ -2,9 +2,11 @@ package provider
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -45,6 +47,43 @@ func TestAccResourceApplication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "my description"),
 					testAccApplicationCreation(t, resourceName, updatedName),
 				),
+			},
+		},
+	})
+}
+
+func TestAccResourceApplication_DeleteUnderlyingResource(t *testing.T) {
+
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	resourceName := "harness_application.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccApplicationDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceApplication(expectedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "my description"),
+					testAccApplicationCreation(t, resourceName, expectedName),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+					app, err := c.Applications().GetApplicationByName(expectedName)
+					require.NoError(t, err)
+					require.NotNil(t, app)
+
+					err = c.Applications().DeleteApplication(app.Id)
+					require.NoError(t, err)
+				},
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+				Config:             testAccResourceApplication(expectedName),
 			},
 		},
 	})
@@ -102,6 +141,8 @@ func testSweepApplications(r string) error {
 		if err != nil {
 			return err
 		}
+
+		log.Printf("[INFO] Deleting %d applications", len(apps))
 
 		for _, app := range apps {
 			// Only delete applications that start with 'Test'

@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
@@ -72,6 +73,8 @@ func resourceUser() *schema.Resource {
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
+	log.Printf("[DEBUG] Creating user %s", d.Get("email").(string))
+
 	input := &graphql.CreateUserInput{
 		Name:  d.Get("name").(string),
 		Email: d.Get("email").(string),
@@ -82,9 +85,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		return diag.FromErr(err)
 	}
 
-	d.SetId(user.Id)
-
-	return nil
+	return readUser(d, user)
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -92,11 +93,23 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 
 	email := d.Get("email").(string)
 
+	log.Printf("[DEBUG] Looking for user by email %s", email)
+
 	user, err := c.Users().GetUserByEmail(email)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
+	if user == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	return readUser(d, user)
+}
+
+func readUser(d *schema.ResourceData, user *graphql.User) diag.Diagnostics {
 	d.SetId(user.Id)
 	d.Set("name", user.Name)
 	d.Set("email", user.Email)
@@ -112,17 +125,19 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
+	log.Printf("[DEBUG] Updating user %s", d.Id())
+
 	input := &graphql.UpdateUserInput{
 		Name: d.Get("name").(string),
 		Id:   d.Id(),
 	}
 
-	_, err := c.Users().UpdateUser(input)
+	user, err := c.Users().UpdateUser(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	return nil
+	return readUser(d, user)
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

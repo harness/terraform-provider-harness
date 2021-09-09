@@ -16,7 +16,7 @@ description: |-
 terraform {
   required_providers {
     harness = {
-      source = "micahlmartin/harness"
+      source = "harness-io/harness"
     }
   }
 }

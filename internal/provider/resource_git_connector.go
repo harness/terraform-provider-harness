@@ -91,14 +91,18 @@ func resourceGitConnector() *schema.Resource {
 				Computed:    true,
 			},
 			"password_secret_id": {
-				Description: "The id of the secret for connecting to the git repository",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:   "The id of the secret for connecting to the git repository",
+				Type:          schema.TypeString,
+				Optional:      true,
+				AtLeastOneOf:  []string{"password_secret_id", "ssh_setting_id"},
+				ConflictsWith: []string{"ssh_setting_id"},
 			},
 			"ssh_setting_id": {
-				Description: "The id of the SSH secret to use",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:   "The id of the SSH secret to use",
+				Type:          schema.TypeString,
+				Optional:      true,
+				AtLeastOneOf:  []string{"password_secret_id", "ssh_setting_id"},
+				ConflictsWith: []string{"password_secret_id"},
 			},
 			"url_type": {
 				Description:  fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo),
@@ -114,18 +118,6 @@ func resourceGitConnector() *schema.Resource {
 			},
 		},
 	}
-}
-
-func validateGitConnectorSecret(sshVal string, passVal string) error {
-	if sshVal == "" && passVal == "" {
-		return fmt.Errorf("must set either ssh_setting_id or password_secret_id")
-	}
-
-	if sshVal != "" && passVal != "" {
-		return fmt.Errorf("cannot set both ssh_setting_id and password_secret_id")
-	}
-
-	return nil
 }
 
 func validateUrlType(val interface{}, key string) (warn []string, errs []error) {
@@ -151,8 +143,17 @@ func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta 
 	conn, err := c.Connectors().GetGitConnectorById(connId)
 	if err != nil {
 		return diag.FromErr(err)
+	} else if conn == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readGitConnector(d, conn)
+}
+
+func readGitConnector(d *schema.ResourceData, conn *graphql.GitConnector) diag.Diagnostics {
+	d.SetId(conn.Id)
 	d.Set("name", conn.Name)
 	d.Set("created_at", conn.CreatedAt.String())
 	d.Set("url", conn.Url)
@@ -170,11 +171,6 @@ func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta 
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	// Validation
-	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
-		return diag.FromErr(err)
-	}
 
 	connInput := &graphql.GitConnectorInput{}
 	connInput.Name = d.Get("name").(string)
@@ -194,18 +190,11 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 		return diag.FromErr(err)
 	}
 
-	d.SetId(conn.Id)
-	d.Set("webhook_url", conn.WebhookUrl)
-
-	return nil
+	return readGitConnector(d, conn)
 }
 
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-
-	if err := validateGitConnectorSecret(d.Get("ssh_setting_id").(string), d.Get("password_secret_id").(string)); err != nil {
-		return diag.FromErr(err)
-	}
 
 	id := d.Get("id").(string)
 	connInput := &graphql.GitConnectorInput{}
@@ -225,10 +214,7 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 		return diag.FromErr(err)
 	}
 
-	// Set any computed fields
-	d.Set("webhook_url", conn.WebhookUrl)
-
-	return nil
+	return readGitConnector(d, conn)
 }
 
 func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -244,33 +230,6 @@ func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, met
 
 	return nil
 }
-
-// func validateUrlType() schema.SchemaValidateDiagFunc {
-// 	return func(i interface{}, path cty.Path) diag.Diagnostics {
-// 		return nil
-// 	}
-// }
-
-// func validateUrlType(i interface{}, path cty.Path) diag.Diagnostics {
-// 	v, ok := i.(string)
-// 	if !ok {
-// 		return diag.Errorf("expected type to be string")
-// 	}
-
-// 	rx := regexp.MustCompile(fmt.Sprintf("%s|%s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo))
-
-// 	if !rx.MatchString(v) {
-// 		return diag.Diagnostics{
-// 			diag.Diagnostic{
-// 				Severity: diag.Error,
-// 				Summary:  "invalid url_type",
-// 				Detail:   fmt.Sprintf("value must be either %s or %s", client.GitUrlTypes.Account, client.GitUrlTypes.Repo),
-// 			},
-// 		}
-// 	}
-
-// 	return nil
-// }
 
 func flattenCommitDetails(details *graphql.CustomCommitDetails) []interface{} {
 

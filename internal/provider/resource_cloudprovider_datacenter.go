@@ -15,10 +15,10 @@ func resourceCloudProviderDataCenter() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a physical data center cloud provider",
-		CreateContext: resourceCloudProviderDataCenterCreate,
+		CreateContext: resourceCloudProviderDataCenterCreateOrUpdate,
 		ReadContext:   resourceCloudProviderDataCenterRead,
-		UpdateContext: resourceCloudProviderDataCenterUpdate,
-		DeleteContext: resourceCloudProviderDataCenterDelete,
+		UpdateContext: resourceCloudProviderDataCenterCreateOrUpdate,
+		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
 	}
@@ -30,10 +30,18 @@ func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.Resource
 	name := d.Get("name").(string)
 
 	cp := &cac.PhysicalDatacenterCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
-	if err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
 		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
+
+	return readCloudProviderDataCenter(c, d, cp)
+}
+
+func readCloudProviderDataCenter(c *api.Client, d *schema.ResourceData, cp *cac.PhysicalDatacenterCloudProvider) diag.Diagnostics {
 
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
@@ -47,17 +55,29 @@ func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.Resource
 	return nil
 }
 
-func resourceCloudProviderDataCenterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudProviderDataCenterCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
-	input.Name = d.Get("name").(string)
+	var input *cac.PhysicalDatacenterCloudProvider
+	var err error
 
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
+	} else {
+		input = &cac.PhysicalDatacenterCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
+	input.Name = d.Get("name").(string)
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}
-	input.UsageRestrictions = restrictions
 
 	cp, err := c.ConfigAsCode().UpsertPhysicalDataCenterCloudProvider(input)
 
@@ -65,40 +85,5 @@ func resourceCloudProviderDataCenterCreate(ctx context.Context, d *schema.Resour
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cp.Id)
-
-	return nil
-}
-
-func resourceCloudProviderDataCenterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	cp := cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
-	cp.Name = d.Get("name").(string)
-
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertPhysicalDataCenterCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
-}
-
-func resourceCloudProviderDataCenterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	id := d.Get("id").(string)
-	err := c.CloudProviders().DeleteCloudProvider(id)
-
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return readCloudProviderDataCenter(c, d, cp)
 }

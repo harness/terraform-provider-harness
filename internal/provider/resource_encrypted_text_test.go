@@ -2,10 +2,10 @@ package provider
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -102,8 +102,45 @@ func TestAccResourceEncryptedText_secretmanagerid_immutable(t *testing.T) {
 				),
 			},
 			{
-				Config:      testAccResourceEncryptedText(name, value, "foo"),
-				ExpectError: regexp.MustCompile("secret_manager_id is immutable and cannot be changed once set"),
+				Config:             testAccResourceEncryptedText(name, value, "foo"),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceEncryptedText_secretmanagerid_DeleteUnderlyingResource(t *testing.T) {
+
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	resourceName := "harness_encrypted_text.test"
+	value := "someval"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEncryptedText(name, value, ""),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "value", value),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+					secret, err := c.Secrets().GetEncryptedTextByName(name)
+					require.NoError(t, err)
+					require.NotNil(t, secret)
+
+					err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceTanzuCloudProvider(name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

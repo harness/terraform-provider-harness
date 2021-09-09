@@ -47,10 +47,10 @@ func resourceCloudProviderTanzu() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a Tanzu cloud provider",
-		CreateContext: resourceCloudProviderTanzuCreate,
+		CreateContext: resourceCloudProviderTanzuCreateOrUpdate,
 		ReadContext:   resourceCloudProviderTanzuRead,
-		UpdateContext: resourceCloudProviderTanzuUpdate,
-		DeleteContext: resourceCloudProviderTanzuDelete,
+		UpdateContext: resourceCloudProviderTanzuCreateOrUpdate,
+		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
 	}
@@ -62,11 +62,19 @@ func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData,
 	name := d.Get("name").(string)
 
 	cp := &cac.PcfCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
-	if err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
 		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readCloudProviderTanzu(c, d, cp)
+
+}
+
+func readCloudProviderTanzu(c *api.Client, d *schema.ResourceData, cp *cac.PcfCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("endpoint", cp.EndpointUrl)
@@ -88,10 +96,25 @@ func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func resourceCloudProviderTanzuCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := cac.NewEntity(cac.ObjectTypes.PcfCloudProvider).(*cac.PcfCloudProvider)
+	var input *cac.PcfCloudProvider
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.PcfCloudProvider).(*cac.PcfCloudProvider)
+	} else {
+		input = &cac.PcfCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
 	input.Name = d.Get("name").(string)
 	input.EndpointUrl = d.Get("endpoint").(string)
 	input.SkipValidation = d.Get("skip_validation").(bool)
@@ -107,11 +130,9 @@ func resourceCloudProviderTanzuCreate(ctx context.Context, d *schema.ResourceDat
 		Name: d.Get("password_secret_name").(string),
 	}
 
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}
-	input.UsageRestrictions = restrictions
 
 	cp, err := c.ConfigAsCode().UpsertPcfCloudProvider(input)
 
@@ -119,9 +140,7 @@ func resourceCloudProviderTanzuCreate(ctx context.Context, d *schema.ResourceDat
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cp.Id)
-
-	return nil
+	return readCloudProviderTanzu(c, d, cp)
 }
 
 func resourceCloudProviderTanzuUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -143,26 +162,11 @@ func resourceCloudProviderTanzuUpdate(ctx context.Context, d *schema.ResourceDat
 		Name: d.Get("password_secret_name").(string),
 	}
 
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertPcfCloudProvider(cp)
-	if err != nil {
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), cp.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}
 
-	return nil
-}
-
-func resourceCloudProviderTanzuDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	id := d.Get("id").(string)
-	err := c.CloudProviders().DeleteCloudProvider(id)
-
+	_, err := c.ConfigAsCode().UpsertPcfCloudProvider(cp)
 	if err != nil {
 		return diag.FromErr(err)
 	}

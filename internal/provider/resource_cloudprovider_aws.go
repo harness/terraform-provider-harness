@@ -116,9 +116,9 @@ func resourceCloudProviderAws() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a physical data center cloud provider",
-		CreateContext: resourceCloudProviderAwsCreate,
+		CreateContext: resourceCloudProviderAwsCreateOrUpdate,
 		ReadContext:   resourceCloudProviderAwsRead,
-		UpdateContext: resourceCloudProviderAwsUpdate,
+		UpdateContext: resourceCloudProviderAwsCreateOrUpdate,
 		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
@@ -131,35 +131,40 @@ func resourceCloudProviderAwsRead(ctx context.Context, d *schema.ResourceData, m
 	name := d.Get("name").(string)
 
 	cp := &cac.AwsCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
-	if err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
 		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
-	d.SetId(cp.Id)
-	d.Set("name", cp.Name)
-
-	scope, err := flattenUsageRestrictions(c, cp.UsageRestrictions)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	d.Set("usage_scope", scope)
-
-	return nil
+	return readCloudProviderAws(c, d, cp)
 }
 
-func resourceCloudProviderAwsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudProviderAwsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := cac.NewEntity(cac.ObjectTypes.AwsCloudProvider).(*cac.AwsCloudProvider)
+	var input *cac.AwsCloudProvider
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.AwsCloudProvider).(*cac.AwsCloudProvider)
+	} else {
+		input = &cac.AwsCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
 	input.Name = d.Get("name").(string)
 
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
-	}
-	if restrictions != nil {
-		input.UsageRestrictions = restrictions
 	}
 
 	expandAwsCloudProviderCredentials(d.Get("credentials").([]interface{}), input)
@@ -169,27 +174,18 @@ func resourceCloudProviderAwsCreate(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cp.Id)
-
-	return nil
+	return readCloudProviderAws(c, d, cp)
 }
 
-func resourceCloudProviderAwsUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+func readCloudProviderAws(c *api.Client, d *schema.ResourceData, cp *cac.AwsCloudProvider) diag.Diagnostics {
+	d.SetId(cp.Id)
+	d.Set("name", cp.Name)
 
-	cp := cac.NewEntity(cac.ObjectTypes.AwsCloudProvider).(*cac.AwsCloudProvider)
-	cp.Name = d.Get("name").(string)
-
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
+	scope, err := flattenUsageRestrictions(c, cp.UsageRestrictions)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertAwsCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	d.Set("usage_scope", scope)
 
 	return nil
 }

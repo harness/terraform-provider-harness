@@ -13,9 +13,9 @@ import (
 func resourceEnvironment() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for creating an environment",
-		CreateContext: resourceEnvironmentCreate,
+		CreateContext: resourceEnvironmentCreateOrUpdate,
 		ReadContext:   resourceEnvironmentRead,
-		UpdateContext: resourceEnvironmentUpdate,
+		UpdateContext: resourceEnvironmentCreateOrUpdate,
 		DeleteContext: resourceEnvironmentDelete,
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -78,14 +78,26 @@ func resourceEnvironment() *schema.Resource {
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
+	var env *cac.Environment
+	var err error
+
 	envId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	env, err := c.ConfigAsCode().GetEnvironmentById(appId, envId)
-	if err != nil {
+	if env, err = c.ConfigAsCode().GetEnvironmentById(appId, envId); err != nil {
 		return diag.FromErr(err)
+	} else if env == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readEnvironment(d, env)
+}
+
+func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnostics {
+	d.SetId(env.Id)
+	d.Set("app_id", env.ApplicationId)
 	d.Set("name", env.Name)
 	d.Set("app_id", env.ApplicationId)
 	d.Set("type", env.EnvironmentType)
@@ -97,10 +109,29 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 	return nil
 }
 
-func resourceEnvironmentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	env := cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
+	appId := d.Get("app_id").(string)
+	id := d.Get("id").(string)
+
+	var env *cac.Environment
+	var err error
+
+	if d.IsNewResource() {
+		env = cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
+	} else {
+		if env, err = c.ConfigAsCode().GetEnvironmentById(appId, id); err != nil {
+			return diag.FromErr(err)
+		} else if env == nil {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
+	env.Id = id
+	env.ApplicationId = appId
 	env.Name = d.Get("name").(string)
 	env.EnvironmentType = cac.EnvironmentType(d.Get("type").(string))
 	env.ApplicationId = d.Get("app_id").(string)
@@ -114,33 +145,31 @@ func resourceEnvironmentCreate(ctx context.Context, d *schema.ResourceData, meta
 		return diag.FromErr(err)
 	}
 
-	d.SetId(newEnv.Id)
-
-	return nil
+	return readEnvironment(d, newEnv)
 }
 
-func resourceEnvironmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+// func resourceEnvironmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// 	c := meta.(*api.Client)
 
-	envInput := cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
-	envInput.Name = d.Get("name").(string)
-	envInput.EnvironmentType = cac.EnvironmentType(d.Get("type").(string))
-	envInput.ApplicationId = d.Get("app_id").(string)
+// 	envInput := cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
+// 	envInput.Name = d.Get("name").(string)
+// 	envInput.EnvironmentType = cac.EnvironmentType(d.Get("type").(string))
+// 	envInput.ApplicationId = d.Get("app_id").(string)
 
-	if overrides := d.Get("variable_overrides"); overrides != nil {
-		envInput.VariableOverrides = expandVariableOverrides(overrides.(*schema.Set).List())
-	}
+// 	if overrides := d.Get("variable_overrides"); overrides != nil {
+// 		envInput.VariableOverrides = expandVariableOverrides(overrides.(*schema.Set).List())
+// 	}
 
-	// Update the environment
-	newEnv, err := c.ConfigAsCode().UpsertEnvironment(envInput)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+// 	// Update the environment
+// 	newEnv, err := c.ConfigAsCode().UpsertEnvironment(envInput)
+// 	if err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	d.SetId(newEnv.Id)
+// 	d.SetId(newEnv.Id)
 
-	return nil
-}
+// 	return nil
+// }
 
 func flattenVariableOverrides(overrides []*cac.VariableOverride) []map[string]interface{} {
 	if len(overrides) == 0 {

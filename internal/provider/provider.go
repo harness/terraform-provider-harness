@@ -99,11 +99,6 @@ func New(version string) func() *schema.Provider {
 	}
 }
 
-type HarnessClient struct {
-	GraphQLClient *api.Client
-	CaacClient    *api.ConfigAsCodeClient
-}
-
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {

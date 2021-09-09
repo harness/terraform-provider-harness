@@ -421,6 +421,16 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
+	if userGroup == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	return readUserGroup(d, userGroup)
+}
+
+func readUserGroup(d *schema.ResourceData, userGroup *graphql.UserGroup) diag.Diagnostics {
 	d.SetId(userGroup.Id)
 	d.Set("name", userGroup.Name)
 
@@ -461,12 +471,7 @@ func resourceUserGroupUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.FromErr(err)
 	}
 
-	// Computed fields
-	d.SetId(userGroup.Id)
-	d.Set("imported_by_scim", userGroup.ImportedBySCIM)
-	d.Set("is_sso_linked", userGroup.IsSSOLinked)
-
-	return nil
+	return readUserGroup(d, userGroup)
 }
 
 func resourceUserGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

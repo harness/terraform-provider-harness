@@ -380,33 +380,34 @@ func flattenAwsSSHConfiguration(d *schema.ResourceData, infraDef *cac.Infrastruc
 
 	detail := infraDef.InfrastructureDetail[0]
 
-	if detail.Type != cac.InfrastructureTypes.AwsSSH && infraDef.DeploymentType != cac.DeploymentTypes.SSH {
-		return results
-	}
+	if detail.Type == cac.InfrastructureTypes.AwsSSH && infraDef.DeploymentType == cac.DeploymentTypes.SSH {
 
-	detailConfig := map[string]interface{}{}
-	infraDetail := detail.ToAwsSSH()
+		detailConfig := map[string]interface{}{}
+		infraDetail := detail.ToAwsSSH()
 
-	detailConfig["cloud_provider_name"] = infraDetail.CloudProviderName
-	detailConfig["autoscaling_group_name"] = infraDetail.AutoscalingGroupName
-	detailConfig["desired_capacity"] = infraDetail.DesiredCapacity
-	detailConfig["host_connection_attrs_name"] = infraDetail.HostConnectionAttrsName
-	detailConfig["host_connection_type"] = infraDetail.HostConnectionType
-	detailConfig["loadbalancer_name"] = infraDetail.LoadBalancerName
-	detailConfig["hostname_convention"] = infraDetail.HostNameConvention
-	detailConfig["region"] = infraDetail.Region
+		detailConfig["cloud_provider_name"] = infraDetail.CloudProviderName
+		detailConfig["autoscaling_group_name"] = infraDetail.AutoscalingGroupName
+		detailConfig["desired_capacity"] = infraDetail.DesiredCapacity
+		detailConfig["host_connection_attrs_name"] = infraDetail.HostConnectionAttrsName
+		detailConfig["host_connection_type"] = infraDetail.HostConnectionType
+		detailConfig["loadbalancer_name"] = infraDetail.LoadBalancerName
+		detailConfig["hostname_convention"] = infraDetail.HostNameConvention
+		detailConfig["region"] = infraDetail.Region
 
-	if infraDetail.AwsInstanceFilter != nil {
-		if tags := flattenAwsTags(infraDetail.AwsInstanceFilter.Tags); len(tags) > 0 {
-			detailConfig["tag"] = tags
+		if infraDetail.AwsInstanceFilter != nil {
+			if tags := flattenAwsTags(infraDetail.AwsInstanceFilter.Tags); len(tags) > 0 {
+				detailConfig["tag"] = tags
+			}
+
+			if vpcIds := flattenVpcIds(infraDetail.AwsInstanceFilter.VpcIds); len(vpcIds) > 0 {
+				detailConfig["vpc_ids"] = vpcIds
+			}
 		}
 
-		if vpcIds := flattenVpcIds(infraDetail.AwsInstanceFilter.VpcIds); len(vpcIds) > 0 {
-			detailConfig["vpc_ids"] = vpcIds
-		}
+		results = append(results, detailConfig)
 	}
 
-	return append(results, detailConfig)
+	return results
 }
 
 func expandAwsAmiConfiguration(d []interface{}, infraDef *cac.InfrastructureDefinition) {
@@ -746,23 +747,23 @@ func flattenAwsWinRMConfiguration(d *schema.ResourceData, infraDef *cac.Infrastr
 
 	detail := infraDef.InfrastructureDetail[0]
 
-	if detail.Type != cac.InfrastructureTypes.AwsSSH && infraDef.DeploymentType != cac.DeploymentTypes.WinRM {
-		return results
+	if detail.Type == cac.InfrastructureTypes.AwsSSH && infraDef.DeploymentType == cac.DeploymentTypes.WinRM {
+		detailConfig := map[string]interface{}{}
+		infraDetail := detail.ToAwsWinRm()
+
+		detailConfig["autoscaling_group_name"] = infraDetail.AutoscalingGroupName
+		detailConfig["cloud_provider_name"] = infraDetail.CloudProviderName
+		detailConfig["desired_capacity"] = infraDetail.DesiredCapacity
+		detailConfig["host_connection_attrs_name"] = infraDetail.HostConnectionAttrsName
+		detailConfig["host_connection_type"] = infraDetail.HostConnectionType
+		detailConfig["hostname_convention"] = infraDetail.HostNameConvention
+		detailConfig["loadbalancer_name"] = infraDetail.LoadBalancerName
+		detailConfig["region"] = infraDetail.Region
+
+		results = append(results, detailConfig)
 	}
 
-	detailConfig := map[string]interface{}{}
-	infraDetail := detail.ToAwsWinRm()
-
-	detailConfig["autoscaling_group_name"] = infraDetail.AutoscalingGroupName
-	detailConfig["cloud_provider_name"] = infraDetail.CloudProviderName
-	detailConfig["desired_capacity"] = infraDetail.DesiredCapacity
-	detailConfig["host_connection_attrs_name"] = infraDetail.HostConnectionAttrsName
-	detailConfig["host_connection_type"] = infraDetail.HostConnectionType
-	detailConfig["hostname_convention"] = infraDetail.HostNameConvention
-	detailConfig["loadbalancer_name"] = infraDetail.LoadBalancerName
-	detailConfig["region"] = infraDetail.Region
-
-	return append(results, detailConfig)
+	return results
 }
 
 func expandTanzuConfiguration(d []interface{}, infraDef *cac.InfrastructureDefinition) {

@@ -63,6 +63,41 @@ func TestAccResourceSSHCredential_SSHAuthentication(t *testing.T) {
 	})
 }
 
+func TestAccResourceSSHCredential_SSHAuthentication_DeleteUnderlyingResource(t *testing.T) {
+
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	resourceName := "harness_ssh_credential.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			// {
+			// 	PreConfig: func() {
+			// 		testAccConfigureProvider()
+			// 		c := testAccProvider.Meta().(*api.Client)
+
+			// 		secret, err := c.Secrets().GetSSHCredentialByName(name)
+			// 		require.NoError(t, err)
+			// 		require.NotNil(t, secret)
+
+			// 		err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+			// 		require.NoError(t, err)
+			// 	},
+			// 	Config:             testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
+			// 	PlanOnly:           true,
+			// 	ExpectNonEmptyPlan: true,
+			// },
+		},
+	})
+}
+
 func TestAccResourceSSHCredential_KerberosAuthentication(t *testing.T) {
 
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
@@ -234,10 +269,6 @@ func testAccResourceSSHCredentialEncryptedText(name string) string {
 			name 							= "%[1]s"
 			value 						= "foo"
 			secret_manager_id = data.harness_secret_manager.test.id
-
-			lifecycle {
-				ignore_changes = [secret_manager_id]
-			}
 		}
 	`, name)
 }

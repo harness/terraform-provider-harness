@@ -41,10 +41,10 @@ func resourceCloudProviderGcp() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating a GCP cloud provider",
-		CreateContext: resourceCloudProviderGcpCreate,
+		CreateContext: resourceCloudProviderGcpCreateOrUpdate,
 		ReadContext:   resourceCloudProviderGcpRead,
-		UpdateContext: resourceCloudProviderGcpUpdate,
-		DeleteContext: resourceCloudProviderGcpDelete,
+		UpdateContext: resourceCloudProviderGcpCreateOrUpdate,
+		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
 	}
@@ -56,11 +56,18 @@ func resourceCloudProviderGcpRead(ctx context.Context, d *schema.ResourceData, m
 	name := d.Get("name").(string)
 
 	cp := &cac.GcpCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
-	if err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
 		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
+	return readCloudProviderGcp(c, d, cp)
+}
+
+func readCloudProviderGcp(c *api.Client, d *schema.ResourceData, cp *cac.GcpCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("skip_validation", cp.SkipValidation)
@@ -79,10 +86,25 @@ func resourceCloudProviderGcpRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceCloudProviderGcpCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceCloudProviderGcpCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	input := cac.NewEntity(cac.ObjectTypes.GcpCloudProvider).(*cac.GcpCloudProvider)
+	var input *cac.GcpCloudProvider
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.GcpCloudProvider).(*cac.GcpCloudProvider)
+	} else {
+		input = &cac.GcpCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
 	input.Name = d.Get("name").(string)
 	input.SkipValidation = d.Get("skip_validation").(bool)
 
@@ -97,62 +119,14 @@ func resourceCloudProviderGcpCreate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}
-	input.UsageRestrictions = restrictions
 
 	cp, err := c.ConfigAsCode().UpsertGcpCloudProvider(input)
-
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(cp.Id)
-
-	return nil
-}
-
-func resourceCloudProviderGcpUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	cp := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.GcpCloudProvider)
-	cp.Name = d.Get("name").(string)
-	cp.SkipValidation = d.Get("skip_validation").(bool)
-
-	cp.DelegateSelectors = d.Get("delegate_selectors").([]string)
-	cp.UseDelegateSelectors = len(cp.DelegateSelectors) > 0
-
-	if secretId := d.Get("secret_file_id").(string); secretId != "" {
-		cp.ServiceAccountKeyFileContent = &cac.SecretRef{
-			Name: secretId,
-		}
-	}
-
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertGcpCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
-}
-
-func resourceCloudProviderGcpDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	id := d.Get("id").(string)
-	err := c.CloudProviders().DeleteCloudProvider(id)
-
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return readCloudProviderGcp(c, d, cp)
 }

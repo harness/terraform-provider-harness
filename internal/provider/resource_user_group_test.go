@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -99,6 +100,41 @@ func TestAccResourceUserGroup_AccountPermissions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
 					testAccUserGroupCreation(t, resourceName, expectedName),
 				),
+			},
+		},
+	})
+}
+
+func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
+
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	resourceName := "harness_user_group.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUserGroupAccountPermissions(expectedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
+				),
+			},
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
+
+					grp, err := c.Users().GetUserGroupByName(expectedName)
+					require.NoError(t, err)
+					require.NotNil(t, grp)
+
+					err = c.Users().DeleteUserGroup(grp.Id)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceUserGroupAccountPermissions(expectedName),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

@@ -43,10 +43,10 @@ func resourceCloudProviderAzure() *schema.Resource {
 
 	return &schema.Resource{
 		Description:   "Resource for creating an Azure cloud provider",
-		CreateContext: resourceCloudProviderAzureCreate,
+		CreateContext: resourceCloudProviderAzureCreateOrUpdate,
 		ReadContext:   resourceCloudProviderAzureRead,
-		UpdateContext: resourceCloudProviderAzureUpdate,
-		DeleteContext: resourceCloudProviderAzureDelete,
+		UpdateContext: resourceCloudProviderAzureCreateOrUpdate,
+		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
 	}
@@ -58,11 +58,58 @@ func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData,
 	name := d.Get("name").(string)
 
 	cp := &cac.AzureCloudProvider{}
-	err := c.ConfigAsCode().GetCloudProviderByName(name, cp)
+	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
+		return diag.FromErr(err)
+	} else if cp.IsEmpty() {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	return readCloudProviderAzure(c, d, cp)
+}
+
+func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*api.Client)
+
+	var input *cac.AzureCloudProvider
+	var err error
+
+	if d.IsNewResource() {
+		input = cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.AzureCloudProvider)
+	} else {
+		input = &cac.AzureCloudProvider{}
+		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
+			return diag.FromErr(err)
+		} else if input.IsEmpty() {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
+
+	input.Name = d.Get("name").(string)
+	input.AzureEnvironmentType = cac.AzureEnvironmentType(d.Get("environment_type").(string))
+	input.ClientId = d.Get("client_id").(string)
+	input.TenantId = d.Get("tenant_id").(string)
+	input.Key = &cac.SecretRef{
+		Name: d.Get("key").(string),
+	}
+
+	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
+		return diag.FromErr(err)
+	}
+
+	cp, err := c.ConfigAsCode().UpsertAzureCloudProvider(input)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
+	return readCloudProviderAzure(c, d, cp)
+}
+
+func readCloudProviderAzure(c *api.Client, d *schema.ResourceData, cp *cac.AzureCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("environment_type", cp.AzureEnvironmentType)
@@ -75,74 +122,6 @@ func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData,
 		return diag.FromErr(err)
 	}
 	d.Set("usage_scope", scope)
-
-	return nil
-}
-
-func resourceCloudProviderAzureCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	input := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.AzureCloudProvider)
-	input.Name = d.Get("name").(string)
-	input.AzureEnvironmentType = cac.AzureEnvironmentType(d.Get("environment_type").(string))
-	input.ClientId = d.Get("client_id").(string)
-	input.TenantId = d.Get("tenant_id").(string)
-	input.Key = &cac.SecretRef{
-		Name: d.Get("key").(string),
-	}
-
-	restrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	input.UsageRestrictions = restrictions
-
-	cp, err := c.ConfigAsCode().UpsertAzureCloudProvider(input)
-
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId(cp.Id)
-
-	return nil
-}
-
-func resourceCloudProviderAzureUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	cp := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.AzureCloudProvider)
-	cp.Name = d.Get("name").(string)
-	cp.AzureEnvironmentType = cac.AzureEnvironmentType(d.Get("environment_type").(string))
-	cp.ClientId = d.Get("client_id").(string)
-	cp.TenantId = d.Get("tenant_id").(string)
-	cp.Key = &cac.SecretRef{
-		Name: d.Get("key").(string),
-	}
-
-	usageRestrictions, err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	cp.UsageRestrictions = usageRestrictions
-
-	_, err = c.ConfigAsCode().UpsertAzureCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
-}
-
-func resourceCloudProviderAzureDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	id := d.Get("id").(string)
-	err := c.CloudProviders().DeleteCloudProvider(id)
-
-	if err != nil {
-		return diag.FromErr(err)
-	}
 
 	return nil
 }
