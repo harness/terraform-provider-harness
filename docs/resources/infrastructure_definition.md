@@ -93,11 +93,11 @@ Optional:
 Required:
 
 - **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **iam_role** (String) The IAM role to use.
 - **region** (String) The region to deploy to.
 
 Optional:
 
+- **iam_role** (String) The IAM role to use.
 - **security_group_ids** (Set of String) The security group ids to apply to the ecs service.
 - **subnet_ids** (Set of String) The subnet ids to apply to the ecs service.
 - **vpc_id** (String) The VPC ids to use when selecting the instances.
