@@ -15,14 +15,9 @@ func (c *ConfigAsCodeClient) GetApplicationById(applicationId string) (*cac.Appl
 }
 
 func (c *ConfigAsCodeClient) GetApplicationByName(name string) (*cac.Application, error) {
-	root, err := c.GetDirectoryTree("")
-	if err != nil {
+	appItems, err := c.FindRootAccountObjectByName("Applications")
+	if err != nil || appItems == nil {
 		return nil, err
-	}
-
-	appItems := findApplicationItems(root)
-	if appItems == nil {
-		return nil, nil
 	}
 
 	appItem := findApplicationItemById(appItems, name)
@@ -31,17 +26,6 @@ func (c *ConfigAsCodeClient) GetApplicationByName(name string) (*cac.Application
 	}
 
 	return c.GetApplicationById(appItem.AppId)
-}
-
-func findApplicationItems(rootItem *cac.ConfigAsCodeItem) *cac.ConfigAsCodeItem {
-
-	for _, i := range rootItem.Children {
-		if i.Name == "Applications" {
-			return i
-		}
-	}
-
-	return nil
 }
 
 func findApplicationItemById(rootItem *cac.ConfigAsCodeItem, appName string) *cac.ConfigAsCodeItem {

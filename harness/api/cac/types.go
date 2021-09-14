@@ -12,11 +12,20 @@ type Entity interface {
 	Validate() (bool, error)
 }
 
+type YamlEntity struct {
+	Name          string
+	Id            string
+	Content       string
+	ApplicationId string
+	Path          YamlPath
+}
+
 type Application struct {
 	HarnessApiVersion HarnessApiVersion `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Type              ObjectType        `yaml:"type" json:"type"`
 	Id                string            `yaml:"-"`
 	Name              string            `yaml:"-"`
+	Description       string            `yaml:"description"`
 }
 
 func (a *Application) IsEmpty() bool {

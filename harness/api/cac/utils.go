@@ -154,8 +154,16 @@ func GetCloudProviderYamlPath(cloudProviderName string) YamlPath {
 	return YamlPath(fmt.Sprintf("Setup/Cloud Providers/%s.yaml", cloudProviderName))
 }
 
+func GetSourceRepoProviderYamlPath(name string) YamlPath {
+	return YamlPath(fmt.Sprintf("Setup/Source Repo Providers/%s.yaml", name))
+}
+
+func GetArtifactServerYamlPath(name string) YamlPath {
+	return YamlPath(fmt.Sprintf("Setup/Artifact Servers/%s.yaml", name))
+}
+
 func GetApplicationYamlPath(applicationName string) YamlPath {
-	return YamlPath(fmt.Sprintf("Setup/Applications/%s/index.yaml", applicationName))
+	return YamlPath(fmt.Sprintf("Setup/Applications/%s/Index.yaml", applicationName))
 }
 
 func GetEnvironmentYamlPath(applicationName string, environmentName string) YamlPath {
@@ -164,6 +172,10 @@ func GetEnvironmentYamlPath(applicationName string, environmentName string) Yaml
 
 func GetInfraDefinitionYamlPath(applicationName string, environmentName string, infraName string) YamlPath {
 	return YamlPath(fmt.Sprintf("Setup/Applications/%s/Environments/%s/Infrastructure Definitions/%s.yaml", applicationName, environmentName, infraName))
+}
+
+func GetTemplateLibraryYamlPath(rootPath YamlPath, subDirPath string, name string) YamlPath {
+	return YamlPath(path.Join(string(rootPath), subDirPath, fmt.Sprintf("%s.yaml", name)))
 }
 
 func (i *InfrastructureDetail) ToAwsAmi() *InfrastructureAwsAmi {

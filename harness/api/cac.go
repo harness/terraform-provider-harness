@@ -110,6 +110,11 @@ func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity inte
 		return nil, err
 	}
 
+	return c.UpsertRawYaml(filePath, payload)
+}
+
+func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (*cac.ConfigAsCodeItem, error) {
+
 	// Setup form fields
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
@@ -119,13 +124,13 @@ func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity inte
 		return nil, err
 	}
 
-	if _, err = io.Copy(fw, strings.NewReader(string(payload))); err != nil {
+	if _, err = io.Copy(fw, strings.NewReader(string(yaml))); err != nil {
 		return nil, err
 	}
 
 	w.Close()
 
-	log.Printf("[DEBUG] HTTP Request Body: %s", string(payload))
+	log.Printf("[DEBUG] HTTP Request Body: %s", string(yaml))
 
 	req, err := c.ApiClient.NewAuthorizedPostRequest("/gateway/api/setup-as-code/yaml/upsert-entity", &b)
 
@@ -295,6 +300,21 @@ func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac
 	return c.ParseObject(item, filePath, applicationId, obj)
 }
 
+func (c *ConfigAsCodeClient) FindYamlByPath(applicationId string, filePath cac.YamlPath) (*cac.YamlEntity, error) {
+	rootItem, err := c.GetDirectoryTree(applicationId)
+	if err != nil {
+		return nil, err
+	}
+
+	item := FindConfigAsCodeItemByPath(rootItem, filePath)
+	if item == nil {
+		log.Printf("unable to find item at `%s`", filePath)
+		return nil, nil
+	}
+
+	return c.GetYamlDetails(item, filePath, applicationId)
+}
+
 func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId string, out interface{}) error {
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
@@ -308,6 +328,47 @@ func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId strin
 	}
 
 	return c.ParseObject(i, cac.YamlPath(i.DirectoryPath.Path), applicationId, out)
+}
+
+func (c *ConfigAsCodeClient) FindRootAccountObjectByName(name string) (*cac.ConfigAsCodeItem, error) {
+	root, err := c.GetDirectoryTree("")
+	if err != nil || root == nil {
+		return root, err
+	}
+
+	for _, item := range root.Children {
+		if item.Name == name {
+			return item, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (c *ConfigAsCodeClient) GetTemplateLibraryRootPathName() (cac.YamlPath, error) {
+	libraryItem, err := c.FindRootAccountObjectByName("Template Library")
+	if err != nil || libraryItem == nil {
+		return cac.YamlPath(""), err
+	}
+
+	return cac.YamlPath(libraryItem.Children[0].DirectoryPath.Path), nil
+}
+
+func (c *ConfigAsCodeClient) GetYamlDetails(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string) (*cac.YamlEntity, error) {
+	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
+	if err != nil {
+		return nil, err
+	}
+
+	results := &cac.YamlEntity{
+		Content:       itemContent.Yaml,
+		Name:          cac.GetEntityNameFromPath(filePath),
+		Id:            item.UUID,
+		ApplicationId: applicationId,
+		Path:          filePath,
+	}
+
+	return results, nil
 }
 
 func (c *ConfigAsCodeClient) ParseObject(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string, obj interface{}) error {
