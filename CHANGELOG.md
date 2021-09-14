@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.5...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.6...HEAD)
 
 **Merged pull requests:**
 
+- Fixed a few notfound issues [\#36](https://github.com/harness-io/harness-go-sdk/pull/36) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.6](https://github.com/harness-io/harness-go-sdk/tree/v0.0.6) (2021-09-09)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.5...v0.0.6)
+
+**Merged pull requests:**
+
+- Release version 0.0.6 09-09-2021 [\#35](https://github.com/harness-io/harness-go-sdk/pull/35) ([micahlmartin](https://github.com/micahlmartin))
 - Added better handling for when entities do not exist [\#34](https://github.com/harness-io/harness-go-sdk/pull/34) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.5](https://github.com/harness-io/harness-go-sdk/tree/v0.0.5) (2021-09-02)
@@ -36,7 +45,6 @@
 
 **Merged pull requests:**
 
-- Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness-io/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Added Update functions for Cloud Providers [\#24](https://github.com/harness-io/harness-go-sdk/pull/24) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.2](https://github.com/harness-io/harness-go-sdk/tree/v0.0.2) (2021-06-29)
@@ -54,6 +62,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness-io/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Release version 0.0.1 06-22-2021 [\#21](https://github.com/harness-io/harness-go-sdk/pull/21) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Release version 0.1.1 06-22-2021 [\#20](https://github.com/harness-io/harness-go-sdk/pull/20) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - initial build automation setup [\#4](https://github.com/harness-io/harness-go-sdk/pull/4) ([micahlmartin](https://github.com/micahlmartin))
