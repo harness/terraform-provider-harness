@@ -13,8 +13,6 @@ Resource for creating an environment
 ## Example Usage
 
 ```terraform
-# Some comments here about how to use this
-
 resource "harness_application" "test" {
   name = "%[1]s"
 }
@@ -92,5 +90,5 @@ Import is supported using the following syntax:
 
 ```shell
 # Import using the Harness application id and environment id.
-terraform import harness_environment.dev <application_id>:<environment_id>
+terraform import harness_environment.dev <application_id>/<environment_id>
 ```

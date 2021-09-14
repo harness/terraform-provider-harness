@@ -63,4 +63,12 @@ Optional:
 - **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
 - **environment_id** (String) Id of the environment scoping
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the Harness encrypted text format.
+# NOTE: The secret value cannot be decrypted and imported.
+terraform import harness_encrypted_text.example <secret_id>
+```
