@@ -26,7 +26,7 @@ pipeline:
                                 spec:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
-                                    command: go mod download -x
+                                    command: go mod vendor
                                     privileged: false
                           - step:
                                 type: Run
