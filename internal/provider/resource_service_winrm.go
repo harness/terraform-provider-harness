@@ -28,6 +28,9 @@ func resourceWinRMService() *schema.Resource {
 		UpdateContext: resourceWinRMServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        sshSchema,
+		Importer: &schema.ResourceImporter{
+			State: serviceStateImporter,
+		},
 	}
 }
 
@@ -56,6 +59,7 @@ func readServiceWinRM(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("description", svc.Description)
+	d.Set("artifact_type", svc.ArtifactType)
 
 	if vars := flattenServiceVariables(svc.ConfigVariables); len(vars) > 0 {
 		d.Set("variable", vars)

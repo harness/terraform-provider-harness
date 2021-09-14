@@ -18,6 +18,10 @@ func resourceAMIService() *schema.Resource {
 		DeleteContext: resourceServiceDelete,
 
 		Schema: commonServiceSchema(),
+
+		Importer: &schema.ResourceImporter{
+			State: serviceStateImporter,
+		},
 	}
 }
 

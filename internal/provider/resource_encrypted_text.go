@@ -54,6 +54,10 @@ func resourceEncryptedText() *schema.Resource {
 			},
 			"usage_scope": usageScopeSchema(),
 		},
+
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 

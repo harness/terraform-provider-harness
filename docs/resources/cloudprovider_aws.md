@@ -3,12 +3,12 @@
 page_title: "harness_cloudprovider_aws Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a physical data center cloud provider
+  Resource for creating an AWS cloud provider
 ---
 
 # harness_cloudprovider_aws (Resource)
 
-Resource for creating a physical data center cloud provider
+Resource for creating an AWS cloud provider
 
 
 
@@ -17,42 +17,25 @@ Resource for creating a physical data center cloud provider
 
 ### Required
 
-- **credentials** (Block List, Min: 1, Max: 1) Credential configuration for connecting to AWS (see [below for nested schema](#nestedblock--credentials))
 - **name** (String) The name of the cloud provider.
+- **secret_access_key_secret_name** (String) The name of the Harness secret containing the AWS secret access key.
 
 ### Optional
 
+- **access_key_id** (String) The plain text AWS access key id.
+- **access_key_id_secret_name** (String) The name of the Harness secret containing the AWS access key id
+- **assume_cross_account_role** (Block List, Max: 1) Configuration for assuming a cross account role. (see [below for nested schema](#nestedblock--assume_cross_account_role))
+- **delegate_selector** (String) Select the Delegate to use via one of its Selectors.
 - **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
+- **use_ec2_iam_credentials** (Boolean) Use the EC2 Instance Profile for Service Accounts.
+- **use_irsa** (Boolean) Use the AWS IAM Role for Service Accounts.
 
 ### Read-Only
 
 - **id** (String) The id of the cloud provider.
 
-<a id="nestedblock--credentials"></a>
-### Nested Schema for `credentials`
-
-Optional:
-
-- **access_keys** (Block List, Max: 1) Configuration for acquiring credentials with an api key and secret (see [below for nested schema](#nestedblock--credentials--access_keys))
-- **assume_cross_account_role** (Block List, Max: 1) Configuration for assuming a cross account role. (see [below for nested schema](#nestedblock--credentials--assume_cross_account_role))
-- **delegate** (Block List, Max: 1) Configuration for acquiring credentials through the IAM profile associated with the delegate. (see [below for nested schema](#nestedblock--credentials--delegate))
-- **iam_role_service_account** (Block List, Max: 1) Configure the use of IAM role for service accounts. (see [below for nested schema](#nestedblock--credentials--iam_role_service_account))
-
-<a id="nestedblock--credentials--access_keys"></a>
-### Nested Schema for `credentials.access_keys`
-
-Required:
-
-- **encrypted_secret_access_key_secret_name** (String) The name of the encrypted text secret in Harness containing the AWS secret access key.
-
-Optional:
-
-- **access_key_id** (String) The plain text AWS access key id.
-- **encrypted_access_key_name** (String) The name of the encrypted text secret in Harness containing the AWS access key id
-
-
-<a id="nestedblock--credentials--assume_cross_account_role"></a>
-### Nested Schema for `credentials.assume_cross_account_role`
+<a id="nestedblock--assume_cross_account_role"></a>
+### Nested Schema for `assume_cross_account_role`
 
 Required:
 
@@ -61,23 +44,6 @@ Required:
 Optional:
 
 - **external_id** (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
-
-
-<a id="nestedblock--credentials--delegate"></a>
-### Nested Schema for `credentials.delegate`
-
-Required:
-
-- **selector** (String) Select the Delegate to use via one of its Selectors.
-
-
-<a id="nestedblock--credentials--iam_role_service_account"></a>
-### Nested Schema for `credentials.iam_role_service_account`
-
-Required:
-
-- **delegate_selector** (String) Select the Delegate to use via one of its Selectors.
-
 
 
 <a id="nestedblock--usage_scope"></a>

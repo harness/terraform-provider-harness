@@ -40,6 +40,12 @@ func TestAccResourceAWSLambdaService(t *testing.T) {
 					testAccCheckAWSLambdaServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

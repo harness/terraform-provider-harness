@@ -46,6 +46,15 @@ func TestAccResourceUser(t *testing.T) {
 					testAccUserCreation(t, resourceName, expectedEmail),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					return primary.Attributes["email"], nil
+				},
+			},
 		},
 	})
 }

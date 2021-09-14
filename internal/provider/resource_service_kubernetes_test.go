@@ -42,6 +42,12 @@ func TestAccResourceKubernetesService(t *testing.T) {
 					testAccCheckKubernetesServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

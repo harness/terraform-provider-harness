@@ -378,6 +378,8 @@ func resourceUserGroup() *schema.Resource {
 				},
 			},
 		},
+
+		Importer: &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 	}
 }
 
@@ -433,6 +435,9 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 func readUserGroup(d *schema.ResourceData, userGroup *graphql.UserGroup) diag.Diagnostics {
 	d.SetId(userGroup.Id)
 	d.Set("name", userGroup.Name)
+	d.Set("description", userGroup.Description)
+	d.Set("imported_by_scim", userGroup.ImportedBySCIM)
+	d.Set("is_sso_linked", userGroup.IsSSOLinked)
 
 	if samlSettings := flattenSAMLSettings(d, userGroup.SAMLSettings); len(samlSettings) > 0 {
 		d.Set("saml_settings", samlSettings)

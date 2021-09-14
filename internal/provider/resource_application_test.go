@@ -89,6 +89,26 @@ func TestAccResourceApplication_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
+func TestAccResourceApplication_Import(t *testing.T) {
+
+	resourceName := "harness_application.test"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceApplication("test"),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccApplicationCreation(t *testing.T, resourceName string, appName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		app, err := testAccGetApplication(resourceName, state)

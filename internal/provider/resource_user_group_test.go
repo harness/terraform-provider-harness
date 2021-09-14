@@ -38,6 +38,11 @@ func TestAccResourceUserGroup_LDAP(t *testing.T) {
 					testAccUserGroupCreation(t, resourceName, expectedName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
