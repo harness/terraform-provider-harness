@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -32,6 +33,16 @@ func resourceAddUserToGroup() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
+			},
+		},
+
+		Importer: &schema.ResourceImporter{
+			StateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+				// <user_id>/<group_id>
+				parts := strings.Split(d.Id(), "/")
+				d.Set("user_id", parts[0])
+				d.Set("group_id", parts[1])
+				return []*schema.ResourceData{d}, nil
 			},
 		},
 	}
