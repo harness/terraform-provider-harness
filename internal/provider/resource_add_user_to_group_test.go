@@ -33,6 +33,17 @@ func TestAccResourceAddUserToGroup(t *testing.T) {
 					testAccUserNotInGroup(t, "data.harness_user.test", "harness_user_group.first"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					user_id := primary.Attributes["user_id"]
+					group_id := primary.Attributes["group_id"]
+					return fmt.Sprintf("%s/%s", user_id, group_id), nil
+				},
+			},
 		},
 	})
 }
