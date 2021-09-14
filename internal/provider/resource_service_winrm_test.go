@@ -40,6 +40,12 @@ func TestAccResourceWinRMService(t *testing.T) {
 					testAccCheckWinRMServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

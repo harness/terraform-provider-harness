@@ -2,12 +2,23 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+func serviceStateImporter(d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+	// <app_id>/<svc_id>
+	parts := strings.Split(d.Id(), "/")
+
+	d.Set("app_id", parts[0])
+	d.SetId(parts[1])
+
+	return []*schema.ResourceData{d}, nil
+}
 
 func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)

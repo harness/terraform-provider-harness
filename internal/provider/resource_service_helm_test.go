@@ -40,6 +40,12 @@ func TestAccResourceHelmService(t *testing.T) {
 					testAccCheckHelmServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

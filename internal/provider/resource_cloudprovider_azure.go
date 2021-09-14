@@ -49,16 +49,18 @@ func resourceCloudProviderAzure() *schema.Resource {
 		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
+
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
 func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	name := d.Get("name").(string)
-
 	cp := &cac.AzureCloudProvider{}
-	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		d.SetId("")

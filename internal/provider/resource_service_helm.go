@@ -17,6 +17,9 @@ func resourceHelmService() *schema.Resource {
 		UpdateContext: resourceHelmServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        commonServiceSchema(),
+		Importer: &schema.ResourceImporter{
+			State: serviceStateImporter,
+		},
 	}
 }
 

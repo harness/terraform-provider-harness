@@ -38,6 +38,17 @@ func TestAccResourceEnvironment(t *testing.T) {
 					testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.Prod),
 				),
 			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					id := primary.ID
+					app_id := primary.Attributes["app_id"]
+					return fmt.Sprintf("%s/%s", app_id, id), nil
+				},
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

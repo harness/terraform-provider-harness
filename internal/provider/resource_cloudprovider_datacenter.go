@@ -21,16 +21,18 @@ func resourceCloudProviderDataCenter() *schema.Resource {
 		DeleteContext: resourceCloudProviderDelete,
 
 		Schema: providerSchema,
+
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
 func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	name := d.Get("name").(string)
-
 	cp := &cac.PhysicalDatacenterCloudProvider{}
-	if err := c.ConfigAsCode().GetCloudProviderByName(name, cp); err != nil {
+	if err := c.ConfigAsCode().GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		d.SetId("")

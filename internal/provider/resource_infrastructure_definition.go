@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -20,6 +21,18 @@ func resourceInfraDefinition() *schema.Resource {
 		UpdateContext: resourceInfraDefinitionCreateOrUpdate,
 		DeleteContext: resourceInfraDefinitionDelete,
 		Schema:        infraDefSchema,
+		Importer: &schema.ResourceImporter{
+			State: func(d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+				// <app_id>/<env_id>/<id>
+				parts := strings.Split(d.Id(), "/")
+
+				d.Set("app_id", parts[0])
+				d.Set("env_id", parts[1])
+				d.SetId(parts[2])
+
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 	}
 }
 
@@ -33,6 +46,10 @@ func resourceInfraDefinitionRead(ctx context.Context, d *schema.ResourceData, me
 	infraDef, err := c.ConfigAsCode().GetInfraDefinitionById(appId, envId, id)
 	if err != nil {
 		return diag.FromErr(err)
+	} else if infraDef == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
 	readInfraDefinition(d, infraDef)

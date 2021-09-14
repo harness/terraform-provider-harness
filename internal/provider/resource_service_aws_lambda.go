@@ -17,6 +17,9 @@ func resourceAWSLambdaService() *schema.Resource {
 		UpdateContext: resourceAWSLambdaServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        commonServiceSchema(),
+		Importer: &schema.ResourceImporter{
+			State: serviceStateImporter,
+		},
 	}
 }
 

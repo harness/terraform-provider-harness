@@ -40,6 +40,12 @@ func TestAccResourceECSService(t *testing.T) {
 					testAccCheckECSServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

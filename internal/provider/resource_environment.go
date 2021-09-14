@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
@@ -72,6 +73,17 @@ func resourceEnvironment() *schema.Resource {
 				},
 			},
 		},
+
+		Importer: &schema.ResourceImporter{
+			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+				// <app_id>/<env_id>
+				parts := strings.Split(d.Id(), "/")
+				d.Set("app_id", parts[0])
+				d.SetId(parts[1])
+
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 	}
 }
 
@@ -103,7 +115,7 @@ func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnost
 	d.Set("type", env.EnvironmentType)
 
 	if overrides := flattenVariableOverrides(env.VariableOverrides); len(overrides) > 0 {
-		d.Set("variable_overrides", overrides)
+		d.Set("variable_override", overrides)
 	}
 
 	return nil
@@ -136,7 +148,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	env.EnvironmentType = cac.EnvironmentType(d.Get("type").(string))
 	env.ApplicationId = d.Get("app_id").(string)
 
-	if overrides := d.Get("variable_overrides"); overrides != nil {
+	if overrides := d.Get("variable_override"); overrides != nil {
 		env.VariableOverrides = expandVariableOverrides(overrides.(*schema.Set).List())
 	}
 

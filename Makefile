@@ -1,6 +1,7 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
 SWEEP_DIR?=./internal/provider
 SWEEP_ARGS?=
+SWEEP_RUN?=all
 HOSTNAME=hashicorp.com
 NAMESPACE=harness-io
 NAME=harness
@@ -28,4 +29,4 @@ test:
 
 sweep:
 	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
-	go test $(SWEEP_DIR) -v -sweep=all $(SWEEPARGS) -timeout 60m
+	go test $(SWEEP_DIR) -v -sweep=all -sweep-run=$(SWEEP_RUN) $(SWEEPARGS) -timeout 60m

@@ -67,6 +67,13 @@ func resourceUser() *schema.Resource {
 				Computed:    true,
 			},
 		},
+
+		Importer: &schema.ResourceImporter{
+			StateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+				d.Set("email", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 	}
 }
 

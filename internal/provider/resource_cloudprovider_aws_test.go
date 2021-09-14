@@ -16,21 +16,26 @@ import (
 func TestAccResourceAwsCloudProvider(t *testing.T) {
 
 	var (
-		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(7))
 		resourceName = "harness_cloudprovider_aws.test"
 	)
 
-	resource.UnitTest(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		CheckDestroy:      testAccCloudProviderDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceAwsCloudProvider(name, true),
+				Config: testAccResourceAwsCloudProvider(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckAwsCloudProviderExists(t, resourceName, name),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -48,7 +53,7 @@ func TestAccResourceAwsCloudProvider_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceAwsCloudProvider(name, true),
+				Config: testAccResourceAwsCloudProvider(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckAwsCloudProviderExists(t, resourceName, name),
@@ -65,7 +70,7 @@ func TestAccResourceAwsCloudProvider_DeleteUnderlyingResource(t *testing.T) {
 					err = c.CloudProviders().DeleteCloudProvider(cp.Id)
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceAwsCloudProvider(name, true),
+				Config:             testAccResourceAwsCloudProvider(name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -73,38 +78,30 @@ func TestAccResourceAwsCloudProvider_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccResourceAwsCloudProvider(name string, useAccessKeys bool) string {
-
-	credentialsConfig := ""
-
-	if useAccessKeys {
-		credentialsConfig = fmt.Sprintf(`
-			access_keys {
-				access_key_id = "%[1]s"
-				encrypted_secret_access_key_secret_name = harness_encrypted_text.test.name
-			}
-		`, helpers.TestEnvVars.AwsAccessKeyId.Get())
-	}
-
+func testAccResourceAwsCloudProvider(name string) string {
 	return fmt.Sprintf(`
 	data "harness_secret_manager" "default" {
 		default = true
 	}
 
-	resource "harness_encrypted_text" "test" {
-		name = "%[1]s"
+	resource "harness_encrypted_text" "aws_access_key" {
+		name = "%[1]s_access_key"
+		value = "%[2]s"
+		secret_manager_id = data.harness_secret_manager.default.id
+	}
+
+	resource "harness_encrypted_text" "aws_secret_key" {
+		name = "%[1]s_secret_key"
 		value = "%[3]s"
 		secret_manager_id = data.harness_secret_manager.default.id
 	}
 	
 	resource "harness_cloudprovider_aws" "test" {
 		name = "%[1]s"
-
-		credentials {
-			%[2]s
-		}
+		access_key_id_secret_name = harness_encrypted_text.aws_access_key.name
+		secret_access_key_secret_name = harness_encrypted_text.aws_secret_key.name
 	}	
-`, name, credentialsConfig, helpers.TestEnvVars.AwsSecretAccessKey.Get())
+`, name, helpers.TestEnvVars.AwsAccessKeyId.Get(), helpers.TestEnvVars.AwsSecretAccessKey.Get())
 }
 
 func testAccCheckAwsCloudProviderExists(t *testing.T, resourceName, cloudProviderName string) resource.TestCheckFunc {

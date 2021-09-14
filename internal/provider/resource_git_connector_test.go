@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"testing"
 
@@ -63,35 +62,23 @@ func TestAccResourceGitConnector(t *testing.T) {
 		CheckDestroy:      testAccGitConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitConnector(name, true, true, true),
+				Config: testAccResourceGitConnector_default(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "webhook_url"),
+					resource.TestCheckResourceAttr(resourceName, "generate_webhook_url", "true"),
 					testAccCheckGitConnectorExists(t, resourceName, name),
 				),
 			},
 			{
-				Config: testAccResourceGitConnector(updatedName, true, false, false),
+				Config: testAccResourceGitConnector_default(updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckGitConnectorUpdated(t, resourceName, updatedName),
 				),
 			},
-		},
-	})
-}
-
-func TestAccResourceGitConnector_invalid_urltype(t *testing.T) {
-
-	var (
-		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-	)
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		Steps: []resource.TestStep{
 			{
-				Config:      testAccResourceGitConnector_invalid_urltype(name),
-				ExpectError: regexp.MustCompile("invalid value badvalue. Must be one of ACCOUNT or REPO"),
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -109,7 +96,7 @@ func TestAccResourceGitConnector_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config:                    testAccResourceGitConnector(name, true, true, true),
+				Config:                    testAccResourceGitConnector(name, false, false, false),
 				PreventPostDestroyRefresh: true,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckGitConnectorExists(t, resourceName, name),
@@ -150,8 +137,6 @@ func testAccCheckGitConnectorExists(t *testing.T, resourceName string, connector
 		require.Equal(t, "https://github.com/micahlmartin/harness-demo", conn.Url)
 		require.Equal(t, "master", conn.Branch)
 		require.Equal(t, graphql.GitUrlTypes.Repo, conn.UrlType)
-		require.NotNil(t, conn.CustomCommitDetails)
-		require.Len(t, conn.DelegateSelectors, 1)
 		return nil
 	}
 }
@@ -195,6 +180,31 @@ func testAccGetCommitDetails() string {
 			message = "commit message here"
 		}
 	`
+}
+
+func testAccResourceGitConnector_default(name string) string {
+
+	return fmt.Sprintf(`
+		data "harness_secret_manager" "test" {
+			default = true
+		}
+
+		resource "harness_encrypted_text" "test" {
+			name 							= "%[1]s"
+			value 					  = "foo"
+			secret_manager_id = data.harness_secret_manager.test.id
+		}
+
+		resource "harness_git_connector" "test" {
+			name = "%[1]s"
+			url = "https://github.com/micahlmartin/harness-demo"
+			branch = "master"
+			generate_webhook_url = true
+			password_secret_id = harness_encrypted_text.test.id
+			url_type = "REPO"
+			username = "someuser"
+		}	
+`, name)
 }
 
 func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDetails bool, withDelegateSelectors bool) string {

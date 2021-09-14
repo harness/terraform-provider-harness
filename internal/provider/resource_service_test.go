@@ -8,6 +8,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+func serviceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		app_id := primary.Attributes["app_id"]
+
+		return fmt.Sprintf("%s/%s", app_id, id), nil
+	}
+}
+
 func testAccGetService(resourceName string, state *terraform.State) (*cac.Service, error) {
 	r := testAccGetResource(resourceName, state)
 	c := testAccGetApiClientFromProvider()

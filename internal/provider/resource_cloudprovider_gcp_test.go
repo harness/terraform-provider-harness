@@ -38,6 +38,11 @@ func TestAccResourceGcpCloudProviderConnector(t *testing.T) {
 					testAccCheckGcpCloudProviderExists(t, resourceName, name),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

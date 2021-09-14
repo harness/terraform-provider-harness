@@ -80,6 +80,12 @@ func TestAccResourceEncryptedText(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "value", updatedValue),
 				),
 			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"value"},
+			},
 		},
 	})
 }

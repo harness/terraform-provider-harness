@@ -32,6 +32,11 @@ func TestAccResourceSpotCloudProviderConnector(t *testing.T) {
 					testAccCheckSpotCloudProviderExists(t, resourceName, name),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

@@ -3,12 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
-	"regexp"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func resourceGitConnector() *schema.Resource {
@@ -21,12 +21,12 @@ func resourceGitConnector() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Description: "Id of the encrypted text secret",
+				Description: "Id of the git connector.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"name": {
-				Description: "Name of the encrypted text secret",
+				Description: "Name of the git connector.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -71,19 +71,17 @@ func resourceGitConnector() *schema.Resource {
 				},
 			},
 			"delegate_selectors": {
-				Description: "Delegate selectors to apply to this git connector",
-				Type:        schema.TypeList,
+				Description: "Delegate selectors to apply to this git connector.",
+				Type:        schema.TypeSet,
 				Optional:    true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"generate_webhook_url": {
-				Description: "Boolean indicating whether or not to generate a webhook url",
-				Default:     true,
-				Type:        schema.TypeBool,
-				Optional:    true,
-				ForceNew:    true,
+				Description: "Boolean indicating whether or not to generate a webhook url.",
+				// Default:     false,
+				Type:     schema.TypeBool,
+				Optional: true,
+				// ForceNew:    true,
 			},
 			"webhook_url": {
 				Description: "The generated webhook url",
@@ -107,9 +105,9 @@ func resourceGitConnector() *schema.Resource {
 			"url_type": {
 				Description:  fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo),
 				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validateUrlType,
-				ForceNew:     true,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice([]string{graphql.GitUrlTypes.Account.String(), graphql.GitUrlTypes.Repo.String()}, false),
+				// ForceNew:     true,
 			},
 			"username": {
 				Description: "The name of the user used to connect to the git repository",
@@ -117,22 +115,11 @@ func resourceGitConnector() *schema.Resource {
 				Optional:    true,
 			},
 		},
+
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
-}
-
-func validateUrlType(val interface{}, key string) (warn []string, errs []error) {
-	v := val.(string)
-
-	rx, err := regexp.Compile(fmt.Sprintf("%s|%s", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo))
-	if err != nil {
-		errs = append(errs, err)
-	}
-
-	if !rx.MatchString(v) {
-		errs = append(errs, fmt.Errorf("invalid value %s. Must be one of %s or %s", v, graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo))
-	}
-
-	return warn, errs
 }
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -159,20 +146,24 @@ func readGitConnector(d *schema.ResourceData, conn *graphql.GitConnector) diag.D
 	d.Set("url", conn.Url)
 	d.Set("branch", conn.Branch)
 	d.Set("password_secret_id", conn.PasswordSecretId)
+	d.Set("generate_webhook_url", conn.GenerateWebhookUrl || conn.WebhookUrl != "")
 	d.Set("ssh_setting_id", conn.SSHSettingId)
 	d.Set("webhook_url", conn.WebhookUrl)
 	d.Set("url_type", conn.UrlType)
 	d.Set("username", conn.UserName)
-	d.Set("commit_details", flattenCommitDetails(conn.CustomCommitDetails))
-	d.Set("delegate_selectors", flattenDelgateSelectors(conn.DelegateSelectors))
+
+	if details := flattenCommitDetails(conn.CustomCommitDetails); len(details) > 0 {
+		d.Set("commit_details", details)
+	}
+
+	if selectors := flattenDelgateSelectors(conn.DelegateSelectors); len(selectors) > 0 {
+		d.Set("delegate_selectors", selectors)
+	}
 
 	return nil
 }
 
-func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	connInput := &graphql.GitConnectorInput{}
+func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnectorInput, isUpdate bool) {
 	connInput.Name = d.Get("name").(string)
 	connInput.Url = d.Get("url").(string)
 	connInput.Branch = d.Get("branch").(string)
@@ -180,12 +171,27 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 	connInput.GenerateWebhookUrl = d.Get("generate_webhook_url").(bool)
 	connInput.PasswordSecretId = d.Get("password_secret_id").(string)
 	connInput.SSHSettingId = d.Get("ssh_setting_id").(string)
-	connInput.UrlType = graphql.GitUrlType(d.Get("url_type").(string))
-	connInput.DelegateSelectors = expandDelegateSelectors(d.Get("delegate_selectors").([]interface{}))
-	connInput.CustomCommitDetails = expandCommitDetails(d.Get("commit_details").(*schema.Set).List())
+
+	if !isUpdate {
+		connInput.UrlType = graphql.GitUrlType(d.Get("url_type").(string))
+	}
+
+	if selectors := expandDelegateSelectors(d.Get("delegate_selectors").(*schema.Set).List()); len(selectors) > 0 {
+		connInput.DelegateSelectors = selectors
+	}
+
+	if details := expandCommitDetails(d.Get("commit_details").(*schema.Set).List()); details != nil {
+		connInput.CustomCommitDetails = details
+	}
+}
+
+func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*api.Client)
+
+	connInput := &graphql.GitConnectorInput{}
+	setGitConnectorConfig(d, connInput, false)
 
 	conn, err := c.Connectors().CreateGitConnector(connInput)
-
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -197,19 +203,11 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 	c := meta.(*api.Client)
 
 	id := d.Get("id").(string)
+
 	connInput := &graphql.GitConnectorInput{}
-	connInput.Name = d.Get("name").(string)
-	connInput.Url = d.Get("url").(string)
-	connInput.Branch = d.Get("branch").(string)
-	connInput.UserName = d.Get("username").(string)
-	connInput.PasswordSecretId = d.Get("password_secret_id").(string)
-	connInput.SSHSettingId = d.Get("ssh_setting_id").(string)
-	connInput.GenerateWebhookUrl = d.Get("generate_webhook_url").(bool)
-	connInput.DelegateSelectors = expandDelegateSelectors(d.Get("delegate_selectors").([]interface{}))
-	connInput.CustomCommitDetails = expandCommitDetails(d.Get("commit_details").(*schema.Set).List())
+	setGitConnectorConfig(d, connInput, true)
 
 	conn, err := c.Connectors().UpdateGitConnector(id, connInput)
-
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -232,30 +230,24 @@ func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, met
 }
 
 func flattenCommitDetails(details *graphql.CustomCommitDetails) []interface{} {
+	results := []interface{}{}
 
-	if details.IsEmpty() {
-		return nil
+	if details == nil || details.IsEmpty() {
+		return results
 	}
 
-	cd := make([]interface{}, 1)
-
-	if details == nil {
-		// Create an empty commit details to remove it
-		cd[0] = &graphql.CustomCommitDetails{}
-	} else {
-		cd[0] = map[string]string{
-			"author_email_id": details.AuthorEmailId,
-			"author_name":     details.AuthorName,
-			"message":         details.CommitMessage,
-		}
+	cd := map[string]string{
+		"author_email_id": details.AuthorEmailId,
+		"author_name":     details.AuthorName,
+		"message":         details.CommitMessage,
 	}
 
-	return cd
+	return append(results, cd)
 }
 
 func expandCommitDetails(i []interface{}) *graphql.CustomCommitDetails {
 	if len(i) <= 0 {
-		return &graphql.CustomCommitDetails{}
+		return nil
 	}
 
 	cd := i[0].(map[string]interface{})

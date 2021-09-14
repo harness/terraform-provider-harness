@@ -17,6 +17,9 @@ func resourceAWSCodeDeployService() *schema.Resource {
 		UpdateContext: resourceAWSCodeDeployServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        commonServiceSchema(),
+		Importer: &schema.ResourceImporter{
+			State: serviceStateImporter,
+		},
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/api/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -56,9 +57,13 @@ func TestAccResourceSSHCredential_SSHAuthentication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.username", "testuser"),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", string(graphql.EnvironmentFilterTypes.NonProduction)),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", string(graphql.ApplicationFilterTypes.All)),
-					// testAccSShCredentialCreation(t, resourceName, graphql.SSHAuthenticationSchemes.SSH),
 				),
 			},
+			// {
+			// 	ResourceName:      resourceName,
+			// 	ImportState:       true,
+			// 	ImportStateVerify: true,
+			// },
 		},
 	})
 }
@@ -78,22 +83,22 @@ func TestAccResourceSSHCredential_SSHAuthentication_DeleteUnderlyingResource(t *
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
-			// {
-			// 	PreConfig: func() {
-			// 		testAccConfigureProvider()
-			// 		c := testAccProvider.Meta().(*api.Client)
+			{
+				PreConfig: func() {
+					testAccConfigureProvider()
+					c := testAccProvider.Meta().(*api.Client)
 
-			// 		secret, err := c.Secrets().GetSSHCredentialByName(name)
-			// 		require.NoError(t, err)
-			// 		require.NotNil(t, secret)
+					secret, err := c.Secrets().GetSSHCredentialByName(name)
+					require.NoError(t, err)
+					require.NotNil(t, secret)
 
-			// 		err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
-			// 		require.NoError(t, err)
-			// 	},
-			// 	Config:             testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
-			// 	PlanOnly:           true,
-			// 	ExpectNonEmptyPlan: true,
-			// },
+					err = c.Secrets().DeleteSecret(secret.Id, secret.SecretType)
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
 		},
 	})
 }
@@ -123,41 +128,40 @@ func TestAccResourceSSHCredential_KerberosAuthentication(t *testing.T) {
 	})
 }
 
-func TestAccResourceSSHCredential_Force_Recreate(t *testing.T) {
+// func TestAccResourceSSHCredential_Force_Recreate(t *testing.T) {
 
-	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-	resourceName := "harness_ssh_credential.test"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t) },
-		ProviderFactories: providerFactories,
-		CheckDestroy:      testAccSSHCredentialDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.port", "22"),
-					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.username", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", string(graphql.EnvironmentFilterTypes.NonProduction)),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", string(graphql.ApplicationFilterTypes.All)),
-					testAccSShCredentialCreation(t, resourceName, graphql.SSHAuthenticationSchemes.SSH),
-				),
-			},
-			{
-				Config: testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.KerberosAuthentication),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "kerberos_authentication.0.port", "22"),
-					resource.TestCheckResourceAttr(resourceName, "kerberos_authentication.0.principal", "testuser"),
-					resource.TestCheckResourceAttr(resourceName, "kerberos_authentication.0.realm", "domain.com"),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", string(graphql.EnvironmentFilterTypes.NonProduction)),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", string(graphql.ApplicationFilterTypes.All)),
-					testAccSShCredentialCreation(t, resourceName, graphql.SSHAuthenticationSchemes.Kerberos),
-				),
-			},
-		},
-	})
-}
+// 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+// 	resourceName := "harness_ssh_credential.test"
+// 	resource.UnitTest(t, resource.TestCase{
+// 		PreCheck:          func() { testAccPreCheck(t) },
+// 		ProviderFactories: providerFactories,
+// 		Steps: []resource.TestStep{
+// 			{
+// 				Config: testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(resourceName, "name", name),
+// 					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.port", "22"),
+// 					resource.TestCheckResourceAttr(resourceName, "ssh_authentication.0.username", "testuser"),
+// 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", string(graphql.EnvironmentFilterTypes.NonProduction)),
+// 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", string(graphql.ApplicationFilterTypes.All)),
+// 					testAccSShCredentialCreation(t, resourceName, graphql.SSHAuthenticationSchemes.SSH),
+// 				),
+// 			},
+// 			{
+// 				Config: testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.KerberosAuthentication),
+// 				Check: resource.ComposeTestCheckFunc(
+// 					resource.TestCheckResourceAttr(resourceName, "name", name),
+// 					resource.TestCheckResourceAttr(resourceName, "kerberos_authentication.0.port", "22"),
+// 					resource.TestCheckResourceAttr(resourceName, "kerberos_authentication.0.principal", "testuser"),
+// 					resource.TestCheckResourceAttr(resourceName, "kerberos_authentication.0.realm", "domain.com"),
+// 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", string(graphql.EnvironmentFilterTypes.NonProduction)),
+// 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", string(graphql.ApplicationFilterTypes.All)),
+// 					testAccSShCredentialCreation(t, resourceName, graphql.SSHAuthenticationSchemes.Kerberos),
+// 				),
+// 			},
+// 		},
+// 	})
+// }
 
 func TestAccResourceSSHCredential_BadAuthenticationMethods(t *testing.T) {
 
@@ -301,7 +305,13 @@ func testAccResourceSSHCredentialBadSSHAuthenticationTypes(name string) string {
 				path = "some/path"
 				passphrase_secret_id = harness_encrypted_text.test.id
 			}
+		}
 
+		lifecycle {
+			ignore_changes = [
+				"ssh_authentication",
+				"kerberos_authentication"
+			]
 		}
 	}
 
@@ -324,6 +334,13 @@ func testAccResourceSSHCredentialBadAuthenticationMethod(name string) string {
 			%[2]s
 
 			%[3]s
+
+			lifecycle {
+				ignore_changes = [
+					"ssh_authentication",
+					"kerberos_authentication"
+				]
+			}
 		}
 
 		%[4]s
@@ -356,6 +373,13 @@ func testAccResourceSSHCredential(name string, withUsageScope bool, authType gra
 			%[2]s
 
 			%[3]s
+
+			lifecycle {
+				ignore_changes = [
+					"ssh_authentication",
+					"kerberos_authentication"
+				]
+			}
 		}
 
 		%[4]s

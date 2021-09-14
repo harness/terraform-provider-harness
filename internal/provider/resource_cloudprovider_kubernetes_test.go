@@ -31,6 +31,11 @@ func TestAccResourceK8sCloudProviderConnector_delegate(t *testing.T) {
 					testAccCheckK8sCloudProviderExists(t, resourceName, name),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

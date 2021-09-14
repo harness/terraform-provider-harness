@@ -40,6 +40,12 @@ func TestAccResourceAMIService(t *testing.T) {
 					testAccCheckAMIServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
