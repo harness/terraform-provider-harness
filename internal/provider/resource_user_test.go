@@ -22,7 +22,7 @@ func init() {
 
 func TestAccResourceUser(t *testing.T) {
 
-	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	expectedEmail := fmt.Sprintf("%s@example.com", expectedName)
 	updatedName := fmt.Sprintf("%s_updated", expectedName)
 	resourceName := "harness_user.test"
