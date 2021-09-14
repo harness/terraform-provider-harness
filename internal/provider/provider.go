@@ -63,6 +63,7 @@ func New(version string) func() *schema.Provider {
 				"harness_sso_provider":   dataSourceSSOProvider(),
 				"harness_user":           dataSourceUser(),
 				"harness_user_group":     dataSourceUserGroup(),
+				"harness_yaml_config":    dataSourceYamlConfig(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_application":               resourceApplication(),
