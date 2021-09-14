@@ -74,7 +74,7 @@ func New(version string) func() *schema.Provider {
 				"harness_service_ecs":               resourceECSService(),
 				"harness_service_aws_codedeploy":    resourceAWSCodeDeployService(),
 				"harness_service_aws_lambda":        resourceAWSLambdaService(),
-				"harness_service_pcf":               resourcePCFService(),
+				"harness_service_tanzu":             resourcePCFService(),
 				"harness_service_helm":              resourceHelmService(),
 				"harness_service_ssh":               resourceSSHService(),
 				"harness_service_winrm":             resourceWinRMService(),

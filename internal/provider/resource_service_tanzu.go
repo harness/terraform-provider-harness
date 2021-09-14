@@ -11,10 +11,10 @@ import (
 
 func resourcePCFService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating a PCF service",
-		CreateContext: resourcePCFServiceCreateOrUpdate,
-		ReadContext:   resourcePCFServiceRead,
-		UpdateContext: resourcePCFServiceCreateOrUpdate,
+		Description:   "Resource for creating a Tanzu (PCF) service",
+		CreateContext: resourceTanzuServiceCreateOrUpdate,
+		ReadContext:   resourceTanzuServiceRead,
+		UpdateContext: resourceTanzuServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		Schema:        commonServiceSchema(),
 		Importer: &schema.ResourceImporter{
@@ -23,7 +23,7 @@ func resourcePCFService() *schema.Resource {
 	}
 }
 
-func resourcePCFServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceTanzuServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	svcId := d.Get("id").(string)
@@ -55,7 +55,7 @@ func readServicePCF(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics {
 	return nil
 }
 
-func resourcePCFServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceTanzuServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	var input *cac.Service

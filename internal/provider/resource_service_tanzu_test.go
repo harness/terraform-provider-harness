@@ -12,13 +12,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccResourcePCFService(t *testing.T) {
+func TestAccResourceTanzuService(t *testing.T) {
 
 	var (
 		name               = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
 		description        = "some description"
 		updatedDescription = "updated description"
-		resourceName       = "harness_service_pcf.test"
+		resourceName       = "harness_service_tanzu.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -27,17 +27,17 @@ func TestAccResourcePCFService(t *testing.T) {
 		CheckDestroy:      testAccServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePCFService(name, description),
+				Config: testAccResourceTanzuService(name, description),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					testAccCheckPCFServiceExists(t, resourceName, name, description),
+					testAccCheckTanzuServiceExists(t, resourceName, name, description),
 				),
 			},
 			{
-				Config: testAccResourcePCFService(name, updatedDescription),
+				Config: testAccResourceTanzuService(name, updatedDescription),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					testAccCheckPCFServiceExists(t, resourceName, name, updatedDescription),
+					testAccCheckTanzuServiceExists(t, resourceName, name, updatedDescription),
 				),
 			},
 			{
@@ -50,12 +50,12 @@ func TestAccResourcePCFService(t *testing.T) {
 	})
 }
 
-func TestAccResourcePCFService_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceTanzuService_DeleteUnderlyingResource(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
 		description  = "some description"
-		resourceName = "harness_service_pcf.test"
+		resourceName = "harness_service_tanzu.test"
 		serviceId    = ""
 		appId        = ""
 	)
@@ -65,7 +65,7 @@ func TestAccResourcePCFService_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePCFService(name, description),
+				Config: testAccResourceTanzuService(name, description),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					func(state *terraform.State) error {
@@ -87,7 +87,7 @@ func TestAccResourcePCFService_DeleteUnderlyingResource(t *testing.T) {
 					err = c.ConfigAsCode().DeleteService(svc.ApplicationId, svc.Id)
 					require.NoError(t, err)
 				},
-				Config:             testAccResourcePCFService(name, description),
+				Config:             testAccResourceTanzuService(name, description),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -95,7 +95,7 @@ func TestAccResourcePCFService_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccCheckPCFServiceExists(t *testing.T, resourceName string, name string, description string) resource.TestCheckFunc {
+func testAccCheckTanzuServiceExists(t *testing.T, resourceName string, name string, description string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		svc, err := testAccGetService(resourceName, state)
 		require.NoError(t, err)
@@ -109,13 +109,13 @@ func testAccCheckPCFServiceExists(t *testing.T, resourceName string, name string
 	}
 }
 
-func testAccResourcePCFService(name string, description string) string {
+func testAccResourceTanzuService(name string, description string) string {
 	return fmt.Sprintf(`
 		resource "harness_application" "test" {
 			name = "%[1]s"
 		}
 
-		resource "harness_service_pcf" "test" {
+		resource "harness_service_tanzu" "test" {
 			app_id = harness_application.test.id
 			name = "%[1]s"
 			description = "%[2]s"
