@@ -23,7 +23,9 @@ func TestCreateSSHCredential_SSHAuthentication_inlinesshkey(t *testing.T) {
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.SSH,
-		Name:                 expectedName,
+		Secret: graphql.Secret{
+			Name: expectedName,
+		},
 		SSHAuthentication: &graphql.SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
@@ -70,7 +72,9 @@ func TestCreateSSHCredential_SSHAuthentication_serverpassword(t *testing.T) {
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.SSH,
-		Name:                 expectedName,
+		Secret: graphql.Secret{
+			Name: expectedName,
+		},
 		SSHAuthentication: &graphql.SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
@@ -117,7 +121,9 @@ func TestCreateSSHCredential_SSHAuthentication_keyfile(t *testing.T) {
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.SSH,
-		Name:                 expectedName,
+		Secret: graphql.Secret{
+			Name: expectedName,
+		},
 		SSHAuthentication: &graphql.SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
@@ -164,7 +170,9 @@ func TestCreateSSHCredential_KerberosAuth_password(t *testing.T) {
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.Kerberos,
-		Name:                 expectedName,
+		Secret: graphql.Secret{
+			Name: expectedName,
+		},
 		KerberosAuthentication: &graphql.KerberosAuthentication{
 			Port:      9292,
 			Principal: "someuser",
@@ -208,7 +216,9 @@ func TestCreateSSHCredential_KerberosAuth_keytabfile(t *testing.T) {
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.Kerberos,
-		Name:                 expectedName,
+		Secret: graphql.Secret{
+			Name: expectedName,
+		},
 		KerberosAuthentication: &graphql.KerberosAuthentication{
 			Port:      9292,
 			Principal: "someuser",
@@ -257,7 +267,9 @@ func TestUpdateSSHCredential(t *testing.T) {
 	// Update secret
 	client := getClient()
 	input := &graphql.SSHCredential{
-		Name: updatedName,
+		Secret: graphql.Secret{
+			Name: updatedName,
+		},
 	}
 
 	updatedSecret, err := client.Secrets().UpdateSSHCredential(expectedSecret.Id, input)
@@ -362,7 +374,9 @@ func createSSHCredential_sshAuth(name string) (*graphql.SSHCredential, error) {
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.SSH,
-		Name:                 name,
+		Secret: graphql.Secret{
+			Name: name,
+		},
 		SSHAuthentication: &graphql.SSHAuthentication{
 			Port:     22,
 			Username: "testuser",
@@ -394,7 +408,9 @@ func createSSHCredential_kerberosAuth(name string) (*graphql.SSHCredential, erro
 
 	input := &graphql.SSHCredential{
 		AuthenticationScheme: graphql.SSHAuthenticationSchemes.Kerberos,
-		Name:                 name,
+		Secret: graphql.Secret{
+			Name: name,
+		},
 		KerberosAuthentication: &graphql.KerberosAuthentication{
 			Port:      9292,
 			Principal: "someuser",

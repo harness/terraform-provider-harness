@@ -439,7 +439,6 @@ type SSHCredential struct {
 	Secret
 	AuthenticationScheme   SSHAuthenticationScheme `json:"authenticationScheme,omitempty"`
 	KerberosAuthentication *KerberosAuthentication `json:"kerberosAuthentication,omitempty"`
-	Name                   string                  `json:"name,omitempty"`
 	SSHAuthentication      *SSHAuthentication      `json:"sshAuthentication,omitempty"`
 	UsageScope             *UsageScope             `json:"usageScope,omitempty"`
 	AuthenticationType     SSHAuthenticationType   `json:"authenticationType,omitempty"`

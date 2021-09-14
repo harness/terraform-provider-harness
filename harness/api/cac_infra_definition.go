@@ -68,6 +68,10 @@ func (c *ConfigAsCodeClient) GetInfraDefinitionById(appId string, envId string, 
 		return nil, err
 	}
 
+	if infra.IsEmpty() {
+		return nil, nil
+	}
+
 	infra.EnvironmentId = env.Id
 
 	return infra, nil

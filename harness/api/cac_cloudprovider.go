@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"log"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
@@ -104,7 +105,8 @@ func (c *ConfigAsCodeClient) GetCloudProviderById(providerId string, out interfa
 
 	i := FindConfigAsCodeItemByUUID(rootItem, providerId)
 	if i == nil {
-		return errors.New("cannot find cloud provider with id: " + providerId)
+		log.Printf("[DEBUG] cannot find cloud provider with id: " + providerId)
+		return nil
 	}
 
 	return c.ParseObject(i, cac.YamlPath(i.DirectoryPath.Path), "", out)

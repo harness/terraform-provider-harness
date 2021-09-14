@@ -74,7 +74,7 @@ func TestCreateApplication(t *testing.T) {
 	require.Nil(t, err, "Failed to delete application: %s", err)
 }
 
-func TestGetDeleteApplication(t *testing.T) {
+func TestGetDeletedApplication(t *testing.T) {
 
 	// Create a new app
 	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
@@ -91,7 +91,7 @@ func TestGetDeleteApplication(t *testing.T) {
 	app, err := client.Applications().GetApplicationById(newApp.Id)
 
 	require.Nil(t, app, "Failed to delete app")
-	require.NotNil(t, err)
+	require.NoError(t, err)
 
 }
 

@@ -102,7 +102,7 @@ type AwsCloudProvider struct {
 	Id                     string                     `yaml:"-"`
 	Name                   string                     `yaml:"-"`
 	AccessKey              string                     `yaml:"accessKey,omitempty"`
-	AccessKeySecretId      *SecretRef                 `yaml:"AccessKeySecretId,omitempty"`
+	AccessKeySecretId      *SecretRef                 `yaml:"accessKeySecretId,omitempty"`
 	AssumeCrossAccountRole bool                       `yaml:"assumeCrossAccountRole,omitempty"`
 	CrossAccountAttributes *AwsCrossAccountAttributes `yaml:"crossAccountAttributes,omitempty"`
 	SecretKey              *SecretRef                 `yaml:"secretKey,omitempty"`
@@ -349,6 +349,7 @@ type InfrastructureDetail struct {
 	IamRole                       string             `yaml:"iamRole,omitempty"`
 	InfraVariables                *InfraVariable     `yaml:"infraVariables,omitempty"`
 	LaunchType                    string             `yaml:"launchType,omitempty"`
+	LoadBalancerName              string             `yaml:"loadBalancerName,omitempty"`
 	Namespace                     string             `yaml:"namespace,omitempty"`
 	Organization                  string             `yaml:"organization,omitempty"`
 	Region                        string             `yaml:"region,omitempty"`
