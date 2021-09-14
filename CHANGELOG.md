@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.6...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.7...HEAD)
 
 **Merged pull requests:**
 
+- Added ability to upsert raw yaml [\#38](https://github.com/harness-io/harness-go-sdk/pull/38) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.7](https://github.com/harness-io/harness-go-sdk/tree/v0.0.7) (2021-09-14)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.6...v0.0.7)
+
+**Merged pull requests:**
+
+- Release version 0.0.7 09-14-2021 [\#37](https://github.com/harness-io/harness-go-sdk/pull/37) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed a few notfound issues [\#36](https://github.com/harness-io/harness-go-sdk/pull/36) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.6](https://github.com/harness-io/harness-go-sdk/tree/v0.0.6) (2021-09-09)
@@ -45,6 +54,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness-io/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Added Update functions for Cloud Providers [\#24](https://github.com/harness-io/harness-go-sdk/pull/24) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.2](https://github.com/harness-io/harness-go-sdk/tree/v0.0.2) (2021-06-29)
@@ -62,7 +72,6 @@
 
 **Merged pull requests:**
 
-- Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness-io/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Release version 0.0.1 06-22-2021 [\#21](https://github.com/harness-io/harness-go-sdk/pull/21) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Release version 0.1.1 06-22-2021 [\#20](https://github.com/harness-io/harness-go-sdk/pull/20) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - initial build automation setup [\#4](https://github.com/harness-io/harness-go-sdk/pull/4) ([micahlmartin](https://github.com/micahlmartin))
