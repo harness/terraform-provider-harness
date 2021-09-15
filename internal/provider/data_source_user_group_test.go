@@ -52,6 +52,27 @@ func TestAccDataSourceUserGroup_Name(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceUserGroup_NotFound(t *testing.T) {
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceUserGroupById_NotFound(),
+			},
+		},
+	})
+}
+
+func testAccDataSourceUserGroupById_NotFound() string {
+	return `
+		data "harness_user_group" "test" {
+			id = "somebadid"
+		}
+	`
+}
+
 func testAccDataSourceUserGroupById(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_user_group" "test" {

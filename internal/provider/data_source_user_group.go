@@ -63,6 +63,10 @@ func dataSourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.Errorf("id or name must be set")
 	}
 
+	if userGroup == nil {
+		return diag.Errorf("user group not found")
+	}
+
 	d.SetId(userGroup.Id)
 	d.Set("name", userGroup.Name)
 
