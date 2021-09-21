@@ -70,7 +70,7 @@ func resourceSSHCredential() *schema.Resource {
 							Optional:     true,
 							MaxItems:     1,
 							ExactlyOneOf: validSSHAuthenticationTypes,
-							// ForceNew:     true,
+							ForceNew:     true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"passphrase_secret_id": {
@@ -92,7 +92,7 @@ func resourceSSHCredential() *schema.Resource {
 							Optional:     true,
 							MaxItems:     1,
 							ExactlyOneOf: validSSHAuthenticationTypes,
-							// ForceNew:     true,
+							ForceNew:     true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"path": {
@@ -114,7 +114,7 @@ func resourceSSHCredential() *schema.Resource {
 							Optional:     true,
 							MaxItems:     1,
 							ExactlyOneOf: validSSHAuthenticationTypes,
-							// ForceNew:     true,
+							ForceNew:     true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"password_secret_id": {
@@ -186,9 +186,9 @@ func resourceSSHCredential() *schema.Resource {
 			"usage_scope": usageScopeSchema(),
 		},
 
-		// Importer: &schema.ResourceImporter{
-		// 	StateContext: schema.ImportStatePassthroughContext,
-		// },
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
 
