@@ -3,12 +3,12 @@
 page_title: "harness_service_helm Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating an AWS Helm service
+  Resource for creating a Kubernetes Helm service
 ---
 
 # harness_service_helm (Resource)
 
-Resource for creating an AWS Helm service
+Resource for creating a Kubernetes Helm service
 
 ## Example Usage
 
