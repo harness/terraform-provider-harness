@@ -15,7 +15,7 @@ resource "harness_encrypted_text" "my_secret" {
 
 resource "harness_ssh_credential" "ssh_creds" {
   name = "ssh-test"
-  
+
   ssh_authentication {
     port     = 22
     username = "git"
