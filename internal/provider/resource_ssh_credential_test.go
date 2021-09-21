@@ -59,11 +59,11 @@ func TestAccResourceSSHCredential_SSHAuthentication(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", string(graphql.ApplicationFilterTypes.All)),
 				),
 			},
-			// {
-			// 	ResourceName:      resourceName,
-			// 	ImportState:       true,
-			// 	ImportStateVerify: true,
-			// },
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
