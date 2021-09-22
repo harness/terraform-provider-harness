@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/utils"
@@ -59,7 +60,8 @@ func TestAccDataSourceUserGroup_NotFound(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceUserGroupById_NotFound(),
+				Config:      testAccDataSourceUserGroupById_NotFound(),
+				ExpectError: regexp.MustCompile("user group not found"),
 			},
 		},
 	})
