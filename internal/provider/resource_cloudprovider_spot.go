@@ -28,7 +28,7 @@ func resourceCloudProviderSpot() *schema.Resource {
 	helpers.MergeSchemas(commonCloudProviderSchema(), providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating a GCP cloud provider",
+		Description:   "Resource for creating a Spot cloud provider",
 		CreateContext: resourceCloudProviderSpotCreateOrUpdate,
 		ReadContext:   resourceCloudProviderSpotRead,
 		UpdateContext: resourceCloudProviderSpotCreateOrUpdate,

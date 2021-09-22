@@ -3,12 +3,12 @@
 page_title: "harness_cloudprovider_spot Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a GCP cloud provider
+  Resource for creating a Spot cloud provider
 ---
 
 # harness_cloudprovider_spot (Resource)
 
-Resource for creating a GCP cloud provider
+Resource for creating a Spot cloud provider
 
 ## Example Usage
 
