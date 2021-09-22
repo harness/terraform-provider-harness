@@ -38,10 +38,10 @@ func TestUpdateGitSyncConfig(t *testing.T) {
 		Branch:         "main",
 	}
 
-	config, err := c.Applications().UpdateApplicationGitGitSyncConfig(updateConfig)
+	config, err := c.Applications().UpdateGitSyncConfig(updateConfig)
 	require.NoError(t, err)
 	require.NotNil(t, config)
 
-	err = c.Applications().RemoveApplicationGitGitSyncConfig(app.Id)
+	err = c.Applications().RemoveGitSyncConfig(app.Id)
 	require.NoError(t, err)
 }
