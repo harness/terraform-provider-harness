@@ -342,7 +342,7 @@ func TestAddUserToUserGroup(t *testing.T) {
 
 func TestListUserGroups(t *testing.T) {
 	client := getClient()
-	limit := 10
+	limit := 100
 	offset := 0
 	hasMore := true
 
