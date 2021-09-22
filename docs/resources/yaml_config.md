@@ -3,12 +3,12 @@
 page_title: "harness_yaml_config Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a raw YAML configuration in Harness
+  Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects.
 ---
 
 # harness_yaml_config (Resource)
 
-Resource for creating a raw YAML configuration in Harness
+Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects.
 
 ## Example Usage
 

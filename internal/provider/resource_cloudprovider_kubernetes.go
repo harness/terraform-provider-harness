@@ -223,7 +223,7 @@ func resourceCloudProviderK8s() *schema.Resource {
 	helpers.MergeSchemas(commonCloudProviderSchema(), providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating a GCP cloud provider",
+		Description:   "Resource for creating a Kubernetes cloud provider",
 		CreateContext: resourceCloudProviderK8sCreateOrUpdate,
 		ReadContext:   resourceCloudProviderK8sRead,
 		UpdateContext: resourceCloudProviderK8sCreateOrUpdate,

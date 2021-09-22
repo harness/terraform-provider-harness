@@ -14,7 +14,7 @@ import (
 func resourceYamlConfig() *schema.Resource {
 
 	return &schema.Resource{
-		Description:   "Resource for creating a raw YAML configuration in Harness",
+		Description:   "Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects.",
 		CreateContext: resourceYamlConfigCreateOrUpdate,
 		ReadContext:   resourceYamlConfigRead,
 		UpdateContext: resourceYamlConfigCreateOrUpdate,
