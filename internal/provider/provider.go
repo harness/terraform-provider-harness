@@ -92,6 +92,7 @@ func New(version string) func() *schema.Provider {
 				"harness_add_user_to_group":         resourceAddUserToGroup(),
 				"harness_infrastructure_definition": resourceInfraDefinition(),
 				"harness_yaml_config":               resourceYamlConfig(),
+				"harness_application_gitsync":       resourceApplicationGitSync(),
 			},
 		}
 

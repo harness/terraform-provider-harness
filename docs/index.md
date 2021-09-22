@@ -21,7 +21,9 @@ terraform {
   }
 }
 provider "harness" {
-  # example configuration here
+  endpoint   = "https://app.harness.io"
+  account_id = "...."
+  api_key    = "......"
 }
 ```
 
