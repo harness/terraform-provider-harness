@@ -13,9 +13,8 @@ import (
 func TestCreateService(t *testing.T) {
 	// Setup
 	c := getClient()
-	appName := fmt.Sprintf("app-%s-%s", t.Name(), utils.RandStringBytes(5))
-	serviceName := fmt.Sprintf("svc-%s-%s", t.Name(), utils.RandStringBytes(5))
-	app, err := createApplication(appName)
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
+	app, err := createApplication(name)
 	require.NoError(t, err)
 	require.NotNil(t, app)
 
@@ -27,31 +26,29 @@ func TestCreateService(t *testing.T) {
 
 	// Verify
 	svc, _ := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
-	svc.Name = serviceName
+	svc.Name = name
 	svc.ApplicationId = app.Id
 	svc.DeploymentType = cac.DeploymentTypes.Kubernetes
 	svc.ArtifactType = cac.ArtifactTypes.Docker
 
 	newService := &cac.Service{}
-	err = c.ConfigAsCode().UpsertObject(svc, cac.GetServiceYamlPath(app.Name, serviceName), newService)
+	err = c.ConfigAsCode().UpsertObject(svc, cac.GetServiceYamlPath(app.Name, name), newService)
 	require.NoError(t, err)
 	require.NotEmpty(t, newService.Id)
 	require.Equal(t, app.Id, newService.ApplicationId)
 }
 
 func TestGetService(t *testing.T) {
-
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	// Create application
 	c := getClient()
-	appName := fmt.Sprintf("app_%s_%s", t.Name(), utils.RandStringBytes(4))
-	app, err := createApplication(appName)
+	app, err := createApplication(name)
 	require.NotNil(t, app)
 	require.NoError(t, err)
 
 	// Create service
-	serviceName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	svcInput := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
-	svcInput.Name = serviceName
+	svcInput.Name = name
 	svcInput.ApplicationId = app.Id
 	svcInput.DeploymentType = cac.DeploymentTypes.Kubernetes
 	svcInput.ArtifactType = cac.ArtifactTypes.Docker
@@ -60,7 +57,7 @@ func TestGetService(t *testing.T) {
 	require.NotNil(t, svcInput)
 
 	svc := &cac.Service{}
-	err = c.ConfigAsCode().UpsertObject(svcInput, cac.GetServiceYamlPath(app.Name, serviceName), svc)
+	err = c.ConfigAsCode().UpsertObject(svcInput, cac.GetServiceYamlPath(app.Name, name), svc)
 	require.NoError(t, err)
 	require.NotNil(t, svc)
 
@@ -71,12 +68,12 @@ func TestGetService(t *testing.T) {
 
 	// Find service by id
 	svcLookup := &cac.Service{}
-	err = c.ConfigAsCode().FindObjectByPath(app.Id, cac.GetServiceYamlPath(app.Name, serviceName), svcLookup)
+	err = c.ConfigAsCode().FindObjectByPath(app.Id, cac.GetServiceYamlPath(app.Name, name), svcLookup)
 	require.NoError(t, err)
 	require.NotNil(t, svcLookup)
 	require.Equal(t, cac.ArtifactTypes.Docker, svcLookup.ArtifactType)
 	require.Equal(t, cac.DeploymentTypes.Kubernetes, svcLookup.DeploymentType)
-	require.Equal(t, serviceName, svcLookup.Name)
+	require.Equal(t, name, svcLookup.Name)
 	require.Equal(t, cac.HelmVersions.V2, svcLookup.HelmVersion)
 }
 

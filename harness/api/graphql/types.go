@@ -267,10 +267,19 @@ type UpdateUserInput struct {
 }
 
 type GitSyncConfig struct {
-	Branch         string
-	GitConnector   *GitConnector
-	RepositoryName string
-	SyncEnabled    bool
+	Branch         string        `json:"branch,omitempty"`
+	GitConnector   *GitConnector `json:"gitConnector,omitempty"`
+	RepositoryName string        `json:"repositoryName,omitempty"`
+	SyncEnabled    bool          `json:"syncEnabled,omitempty"`
+}
+
+type UpdateApplicationGitSyncConfigInput struct {
+	ClientMutationID string `json:"clientMutationId,omitempty"`
+	ApplicationId    string `json:"applicationId,omitempty"`
+	Branch           string `json:"branch,omitempty"`
+	GitConnectorId   string `json:"gitConnectorId,omitempty"`
+	RepositoryName   string `json:"repositoryName,omitempty"`
+	SyncEnabled      bool   `json:"syncEnabled"`
 }
 
 type UsageScope struct {
@@ -516,9 +525,10 @@ type Connector struct {
 
 type GitConnector struct {
 	Connector
-	Url                 string               `json:"url,omitempty"`
+	Url                 string               `json:"URL,omitempty"`
 	Branch              string               `json:"branch,omitempty"`
 	CustomCommitDetails *CustomCommitDetails `json:"customCommitDetails,omitempty"`
+	Description         string               `json:"description,omitempty"`
 	DelegateSelectors   []string             `json:"delegateSelectors"`
 	GenerateWebhookUrl  bool                 `json:"generateWebhookUrl,omitempty"`
 	PasswordSecretId    string               `json:"passwordSecretId,omitempty"`
