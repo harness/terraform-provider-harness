@@ -89,11 +89,11 @@ func resourceGitConnector() *schema.Resource {
 				Computed:    true,
 			},
 			"password_secret_id": {
-				Description:   "The id of the secret for connecting to the git repository",
+				Description:   "The id of the secret for connecting to the git repository.",
 				Type:          schema.TypeString,
 				Optional:      true,
 				AtLeastOneOf:  []string{"password_secret_id", "ssh_setting_id"},
-				ConflictsWith: []string{"ssh_setting_id"},
+				ConflictsWith: []string{"ssh_setting_id", "usage_scope"},
 			},
 			"ssh_setting_id": {
 				Description:   "The id of the SSH secret to use",
@@ -114,6 +114,7 @@ func resourceGitConnector() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"usage_scope": usageScopeSchema(),
 		},
 
 		Importer: &schema.ResourceImporter{
@@ -160,10 +161,14 @@ func readGitConnector(d *schema.ResourceData, conn *graphql.GitConnector) diag.D
 		d.Set("delegate_selectors", selectors)
 	}
 
+	if scope := flattenUsageScope(conn.UsageScope); len(scope) > 0 {
+		d.Set("usage_scope", scope)
+	}
+
 	return nil
 }
 
-func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnectorInput, isUpdate bool) {
+func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnectorInput, isUpdate bool) error {
 	connInput.Name = d.Get("name").(string)
 	connInput.Url = d.Get("url").(string)
 	connInput.Branch = d.Get("branch").(string)
@@ -183,13 +188,26 @@ func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnect
 	if details := expandCommitDetails(d.Get("commit_details").(*schema.Set).List()); details != nil {
 		connInput.CustomCommitDetails = details
 	}
+
+	scope, err := expandUsageScope(d.Get("usage_scope").(*schema.Set).List())
+	if err != nil {
+		return err
+	}
+	if scope != nil {
+		connInput.UsageScope = scope
+	}
+
+	return nil
 }
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
 	connInput := &graphql.GitConnectorInput{}
-	setGitConnectorConfig(d, connInput, false)
+	err := setGitConnectorConfig(d, connInput, false)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	conn, err := c.Connectors().CreateGitConnector(connInput)
 	if err != nil {
@@ -205,7 +223,10 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 	id := d.Get("id").(string)
 
 	connInput := &graphql.GitConnectorInput{}
-	setGitConnectorConfig(d, connInput, true)
+	err := setGitConnectorConfig(d, connInput, true)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	conn, err := c.Connectors().UpdateGitConnector(id, connInput)
 	if err != nil {
