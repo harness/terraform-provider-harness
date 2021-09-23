@@ -44,23 +44,12 @@ resource "harness_cloudprovider_tanzu" "example" {
 ### Optional
 
 - **skip_validation** (Boolean) Skip validation of Tanzu configuration.
-- **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
 - **username** (String) The username to use to authenticate to Tanzu.
 - **username_secret_name** (String) The name of the Harness secret containing the username to authenticate to Tanzu with.
 
 ### Read-Only
 
 - **id** (String) The id of the cloud provider.
-
-<a id="nestedblock--usage_scope"></a>
-### Nested Schema for `usage_scope`
-
-Optional:
-
-- **application_filter_type** (String) Type of application filter applied. ALL if not application id supplied, otherwise NULL
-- **application_id** (String) Id of the application scoping
-- **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
-- **environment_id** (String) Id of the environment scoping
 
 ## Import
 

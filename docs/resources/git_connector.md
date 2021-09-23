@@ -49,8 +49,9 @@ resource "harness_git_connector" "example" {
 - **commit_details** (Block Set, Max: 1) Custom details to use when making commits using this git connector (see [below for nested schema](#nestedblock--commit_details))
 - **delegate_selectors** (Set of String) Delegate selectors to apply to this git connector.
 - **generate_webhook_url** (Boolean) Boolean indicating whether or not to generate a webhook url.
-- **password_secret_id** (String) The id of the secret for connecting to the git repository
+- **password_secret_id** (String) The id of the secret for connecting to the git repository.
 - **ssh_setting_id** (String) The id of the SSH secret to use
+- **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
 - **username** (String) The name of the user used to connect to the git repository
 
 ### Read-Only
@@ -67,6 +68,17 @@ Optional:
 - **author_email_id** (String) The email id of the author
 - **author_name** (String) The name of the author
 - **message** (String) Commit message
+
+
+<a id="nestedblock--usage_scope"></a>
+### Nested Schema for `usage_scope`
+
+Optional:
+
+- **application_filter_type** (String) Type of application filter applied. ALL if not application id supplied, otherwise NULL
+- **application_id** (String) Id of the application scoping
+- **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
+- **environment_id** (String) Id of the environment scoping
 
 ## Import
 
