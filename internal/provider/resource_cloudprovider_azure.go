@@ -39,7 +39,11 @@ func resourceCloudProviderAzure() *schema.Resource {
 		},
 	}
 
-	helpers.MergeSchemas(commonCloudProviderSchema(), providerSchema)
+	// usage_scope is not supported because the scope will always be inherited from the secret defined in `key`
+	commonSchema := commonCloudProviderSchema()
+	delete(commonSchema, "usage_scope")
+
+	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
 		Description:   "Resource for creating an Azure cloud provider",
@@ -96,6 +100,10 @@ func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.Res
 	input.TenantId = d.Get("tenant_id").(string)
 	input.Key = &cac.SecretRef{
 		Name: d.Get("key").(string),
+	}
+
+	if input.UsageRestrictions == nil {
+		input.UsageRestrictions = &cac.UsageRestrictions{}
 	}
 
 	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {

@@ -25,7 +25,11 @@ func resourceCloudProviderSpot() *schema.Resource {
 		},
 	}
 
-	helpers.MergeSchemas(commonCloudProviderSchema(), providerSchema)
+	// usage_scope is not supported because the scope will always be inherited from `token_secret_name`
+	commonSchema := commonCloudProviderSchema()
+	delete(commonSchema, "usage_scope")
+
+	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
 		Description:   "Resource for creating a Spot cloud provider",
@@ -66,12 +70,6 @@ func readCloudProviderSpot(c *api.Client, d *schema.ResourceData, cp *cac.SpotIn
 		d.Set("token_secret_name", cp.Token.Name)
 	}
 
-	scope, err := flattenUsageRestrictions(c, cp.UsageRestrictions)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	d.Set("usage_scope", scope)
-
 	return nil
 }
 
@@ -101,10 +99,6 @@ func resourceCloudProviderSpotCreateOrUpdate(ctx context.Context, d *schema.Reso
 		input.Token = &cac.SecretRef{
 			Name: token,
 		}
-	}
-
-	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
-		return diag.FromErr(err)
 	}
 
 	cp, err := c.ConfigAsCode().UpsertSpotInstCloudProvider(input)

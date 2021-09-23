@@ -121,6 +121,10 @@ func resourceCloudProviderGcpCreateOrUpdate(ctx context.Context, d *schema.Resou
 		}
 	}
 
+	if input.UsageRestrictions == nil {
+		input.UsageRestrictions = &cac.UsageRestrictions{}
+	}
+
 	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)
 	}

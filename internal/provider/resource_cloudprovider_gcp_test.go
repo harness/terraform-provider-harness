@@ -90,6 +90,16 @@ func testAccResourceGcpCloudProvider(name string) string {
 			name = "%[1]s"
 			skip_validation = true
 			delegate_selectors = ["testing"]
+
+			usage_scope {
+				application_filter_type = "ALL"
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+			
+			usage_scope {
+				application_filter_type = "ALL"
+				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
+			}
 		}
 `, name)
 }

@@ -43,7 +43,11 @@ func resourceCloudProviderTanzu() *schema.Resource {
 		},
 	}
 
-	helpers.MergeSchemas(commonCloudProviderSchema(), providerSchema)
+	// usage_scope is not supported because the scope will always be inherited from `token_secret_name`
+	commonSchema := commonCloudProviderSchema()
+	delete(commonSchema, "usage_scope")
+
+	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
 		Description:   "Resource for creating a Tanzu cloud provider",
@@ -89,12 +93,6 @@ func readCloudProviderTanzu(c *api.Client, d *schema.ResourceData, cp *cac.PcfCl
 
 	d.Set("password_secret_name", cp.Password.Name)
 
-	scope, err := flattenUsageRestrictions(c, cp.UsageRestrictions)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	d.Set("usage_scope", scope)
-
 	return nil
 }
 
@@ -132,10 +130,6 @@ func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.Res
 		Name: d.Get("password_secret_name").(string),
 	}
 
-	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
-		return diag.FromErr(err)
-	}
-
 	cp, err := c.ConfigAsCode().UpsertPcfCloudProvider(input)
 
 	if err != nil {
@@ -162,10 +156,6 @@ func resourceCloudProviderTanzuUpdate(ctx context.Context, d *schema.ResourceDat
 
 	cp.Password = &cac.SecretRef{
 		Name: d.Get("password_secret_name").(string),
-	}
-
-	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), cp.UsageRestrictions); err != nil {
-		return diag.FromErr(err)
 	}
 
 	_, err := c.ConfigAsCode().UpsertPcfCloudProvider(cp)
