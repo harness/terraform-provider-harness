@@ -28,12 +28,14 @@ func resourceCloudProviderAws() *schema.Resource {
 			Optional:    true,
 			ConflictsWith: []string{
 				"access_key_id",
+				"usage_scope",
 			},
 		},
 		"secret_access_key_secret_name": {
-			Description: "The name of the Harness secret containing the AWS secret access key.",
-			Type:        schema.TypeString,
-			Optional:    true,
+			Description:   "The name of the Harness secret containing the AWS secret access key.",
+			Type:          schema.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{"usage_scope"},
 		},
 		"assume_cross_account_role": {
 			Description: "Configuration for assuming a cross account role.",
@@ -173,6 +175,10 @@ func resourceCloudProviderAwsCreateOrUpdate(ctx context.Context, d *schema.Resou
 
 	if attr := d.Get("use_ec2_iam_credentials"); attr != nil {
 		input.UseEc2IamCredentials = attr.(bool)
+	}
+
+	if input.UsageRestrictions == nil {
+		input.UsageRestrictions = &cac.UsageRestrictions{}
 	}
 
 	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {

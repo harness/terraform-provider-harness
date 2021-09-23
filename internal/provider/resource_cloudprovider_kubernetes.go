@@ -45,11 +45,12 @@ func resourceCloudProviderK8s() *schema.Resource {
 						ExactlyOneOf: k8sAuthTypes,
 					},
 					"username_password": {
-						Description:  "Username and password for authentication to the cluster",
-						Type:         schema.TypeList,
-						Optional:     true,
-						MaxItems:     1,
-						ExactlyOneOf: k8sAuthTypes,
+						Description:   "Username and password for authentication to the cluster",
+						Type:          schema.TypeList,
+						Optional:      true,
+						MaxItems:      1,
+						ExactlyOneOf:  k8sAuthTypes,
+						ConflictsWith: []string{"usage_scope"},
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"username": {
@@ -59,10 +60,13 @@ func resourceCloudProviderK8s() *schema.Resource {
 									ConflictsWith: []string{"authentication.0.username_password.0.username_secret_name"},
 								},
 								"username_secret_name": {
-									Description:   "Name of the Harness secret containing the username for authentication to the cluster",
-									Type:          schema.TypeString,
-									Optional:      true,
-									ConflictsWith: []string{"authentication.0.username_password.0.username"},
+									Description: "Name of the Harness secret containing the username for authentication to the cluster",
+									Type:        schema.TypeString,
+									Optional:    true,
+									ConflictsWith: []string{
+										"authentication.0.username_password.0.username",
+										"usage_scope",
+									},
 								},
 								"password_secret_name": {
 									Description: "Name of the Harness secret containing the password for the cluster.",
@@ -78,11 +82,12 @@ func resourceCloudProviderK8s() *schema.Resource {
 						},
 					},
 					"oidc": {
-						Description:  "Service account configuration for connecting to the Kubernetes cluster",
-						Type:         schema.TypeList,
-						Optional:     true,
-						MaxItems:     1,
-						ExactlyOneOf: k8sAuthTypes,
+						Description:   "Service account configuration for connecting to the Kubernetes cluster",
+						Type:          schema.TypeList,
+						Optional:      true,
+						MaxItems:      1,
+						ExactlyOneOf:  k8sAuthTypes,
+						ConflictsWith: []string{"usage_scope"},
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"identity_provider_url": {
@@ -106,9 +111,10 @@ func resourceCloudProviderK8s() *schema.Resource {
 									Required:    true,
 								},
 								"client_secret_secret_name": {
-									Description: "Name of the Harness secret containing the client secret for the cluster.",
-									Type:        schema.TypeString,
-									Optional:    true,
+									Description:   "Name of the Harness secret containing the client secret for the cluster.",
+									Type:          schema.TypeString,
+									Optional:      true,
+									ConflictsWith: []string{"usage_scope"},
 								},
 								"scopes": {
 									Description: "Scopes to request from the identity provider.",
@@ -125,11 +131,12 @@ func resourceCloudProviderK8s() *schema.Resource {
 						},
 					},
 					"service_account": {
-						Description:  "Username and password for authentication to the cluster",
-						Type:         schema.TypeList,
-						Optional:     true,
-						MaxItems:     1,
-						ExactlyOneOf: k8sAuthTypes,
+						Description:   "Username and password for authentication to the cluster",
+						Type:          schema.TypeList,
+						Optional:      true,
+						MaxItems:      1,
+						ExactlyOneOf:  k8sAuthTypes,
+						ConflictsWith: []string{"usage_scope"},
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"service_account_token_secret_name": {
@@ -138,9 +145,10 @@ func resourceCloudProviderK8s() *schema.Resource {
 									Required:    true,
 								},
 								"ca_certificate_secret_name": {
-									Description: "Name of the Harness secret containing the CA certificate for the cluster.",
-									Type:        schema.TypeString,
-									Optional:    true,
+									Description:   "Name of the Harness secret containing the CA certificate for the cluster.",
+									Type:          schema.TypeString,
+									Optional:      true,
+									ConflictsWith: []string{"usage_scope"},
 								},
 								"master_url": {
 									Description: "URL of the Kubernetes master to connect to.",
@@ -290,6 +298,10 @@ func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.Resou
 	input.SkipValidation = d.Get("skip_validation").(bool)
 
 	expandK8sAuth(d.Get("authentication").([]interface{}), input)
+
+	if input.UsageRestrictions == nil {
+		input.UsageRestrictions = &cac.UsageRestrictions{}
+	}
 
 	if err := expandUsageRestrictions(c, d.Get("usage_scope").(*schema.Set).List(), input.UsageRestrictions); err != nil {
 		return diag.FromErr(err)

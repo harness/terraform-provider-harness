@@ -178,6 +178,16 @@ func testAccResourceK8sCloudProvider_delegate(name string) string {
 			authentication {
 				delegate_selectors = ["test"]
 			}
+
+			usage_scope {
+				application_filter_type = "ALL"
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+			
+			usage_scope {
+				application_filter_type = "ALL"
+				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
+			}
 		}
 `, name)
 }
