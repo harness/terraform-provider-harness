@@ -78,7 +78,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.gcp
                                           image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
-                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
+                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover -parallel
                                           privileged: false
                                           reports:
                                               type: JUnit
@@ -119,3 +119,6 @@ pipeline:
                   - name: GOPATH
                     type: String
                     value: /goroot
+                  - name: TF_ACC
+                    type: String
+                    value: "1"
