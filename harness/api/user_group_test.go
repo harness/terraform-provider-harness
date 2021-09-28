@@ -347,7 +347,7 @@ func TestListUserGroups(t *testing.T) {
 	hasMore := true
 
 	for hasMore {
-		groups, pagination, err := client.Users().ListUsers(limit, offset)
+		groups, pagination, err := client.Users().ListUserGroups(limit, offset)
 		require.NoError(t, err, "Failed to list user groups: %s", err)
 		require.NotEmpty(t, groups, "No user groups found")
 		require.NotNil(t, pagination, "Pagination should not be nil")
