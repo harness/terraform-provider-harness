@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.10...HEAD)
+
+**Merged pull requests:**
+
+- Added support for TEMPLATE in user group permissions [\#43](https://github.com/harness-io/harness-go-sdk/pull/43) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.10](https://github.com/harness-io/harness-go-sdk/tree/v0.0.10) (2021-09-28)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.9...v0.0.10)
+
+**Merged pull requests:**
+
+- Release version 0.0.10 09-28-2021 [\#42](https://github.com/harness-io/harness-go-sdk/pull/42) ([micahlmartin](https://github.com/micahlmartin))
+
 ## [v0.0.9](https://github.com/harness-io/harness-go-sdk/tree/v0.0.9) (2021-09-22)
 
 [Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.8...v0.0.9)
@@ -83,7 +99,6 @@
 **Merged pull requests:**
 
 - Release version 0.0.1 06-22-2021 [\#21](https://github.com/harness-io/harness-go-sdk/pull/21) ([harness-ci-automation](https://github.com/harness-ci-automation))
-- Release version 0.1.1 06-22-2021 [\#20](https://github.com/harness-io/harness-go-sdk/pull/20) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - initial build automation setup [\#4](https://github.com/harness-io/harness-go-sdk/pull/4) ([micahlmartin](https://github.com/micahlmartin))
 
 
