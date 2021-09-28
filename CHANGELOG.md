@@ -1,11 +1,12 @@
 # Changelog
 
-## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+## [v0.0.9](https://github.com/harness-io/harness-go-sdk/tree/v0.0.9) (2021-09-22)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.8...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.8...v0.0.9)
 
 **Merged pull requests:**
 
+- Release version 0.0.9 09-22-2021 [\#41](https://github.com/harness-io/harness-go-sdk/pull/41) ([micahlmartin](https://github.com/micahlmartin))
 - Added support for gitsync configuration [\#40](https://github.com/harness-io/harness-go-sdk/pull/40) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.8](https://github.com/harness-io/harness-go-sdk/tree/v0.0.8) (2021-09-14)
@@ -56,7 +57,6 @@
 - Config as code environments [\#28](https://github.com/harness-io/harness-go-sdk/pull/28) ([micahlmartin](https://github.com/micahlmartin))
 - Config-as-Code Cloud Provider Implementation [\#27](https://github.com/harness-io/harness-go-sdk/pull/27) ([micahlmartin](https://github.com/micahlmartin))
 - Format Files + add golangci-lint [\#26](https://github.com/harness-io/harness-go-sdk/pull/26) ([vyas-n](https://github.com/vyas-n))
-- CloudProvider functionality [\#22](https://github.com/harness-io/harness-go-sdk/pull/22) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.3](https://github.com/harness-io/harness-go-sdk/tree/v0.0.3) (2021-06-30)
 
@@ -74,6 +74,7 @@
 **Merged pull requests:**
 
 - Release version 0.0.2 06-29-2021 [\#23](https://github.com/harness-io/harness-go-sdk/pull/23) ([harness-ci-automation](https://github.com/harness-ci-automation))
+- CloudProvider functionality [\#22](https://github.com/harness-io/harness-go-sdk/pull/22) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.1](https://github.com/harness-io/harness-go-sdk/tree/v0.0.1) (2021-06-22)
 
