@@ -89,6 +89,7 @@ Required:
 - **ami_deployment_type** (String) The ami deployment type to use. Valid options are AWS_ASG, SPOTINST
 - **cloud_provider_name** (String) The name of the cloud provider to connect with.
 - **region** (String) The region to deploy to.
+- **spotinst_cloud_provider_name** (String) The name of the SpotInst cloud provider to connect with.
 
 Optional:
 
@@ -96,7 +97,6 @@ Optional:
 - **autoscaling_group_name** (String) The name of the autoscaling group.
 - **classic_loadbalancers** (Set of String) The classic load balancers to use.
 - **hostname_convention** (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
-- **spotinst_cloud_provider_name** (String) The name of the SpotInst cloud provider to connect with.
 - **spotinst_config_json** (String) The SpotInst configuration to use.
 - **stage_classic_loadbalancers** (Set of String) The staging classic load balancers to use.
 - **stage_target_group_arns** (Set of String) The staging classic load balancers to use.
