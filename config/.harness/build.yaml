@@ -92,7 +92,7 @@ pipeline:
                                               limits:
                                                   memory: 1Gi
                                                   cpu: "1"
-                                      timeout: 10m
+                                      timeout: 30m
                                       failureStrategies:
                                           - onFailure:
                                                 errors:
