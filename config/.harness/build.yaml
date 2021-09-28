@@ -61,34 +61,44 @@ pipeline:
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
                                     command: go build -v
                                     privileged: false
-                          - step:
-                                type: Run
-                                name: Test Terraform v1-0-0
-                                identifier: Test_Terraform_v100
-                                spec:
-                                    connectorRef: org.gcp
-                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
-                                    command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
-                                    privileged: false
-                                    reports:
-                                        type: JUnit
-                                        spec:
-                                            paths:
-                                                - junit.xml
-                                    envVariables:
-                                        TF_ACC: "1"
-                                        TF_ACC_TERRAFORM_VERSION: 1.0.0
-                                    resources:
-                                        limits:
-                                            memory: 1Gi
-                                            cpu: "1"
-                                timeout: 10m
-                                failureStrategies:
-                                    - onFailure:
-                                          errors:
-                                              - AllErrors
-                                          action:
-                                              type: Ignore
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      spec:
+                                          privileged: false
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          connectorRef: org.gcp
+                                          command: golangci-lint run -v
+                                      name: Lint
+                                      identifier: lint
+                                - step:
+                                      type: Run
+                                      name: Test Terraform v1-0-0
+                                      identifier: Test_Terraform_v100
+                                      spec:
+                                          connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover
+                                          privileged: false
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          envVariables:
+                                              TF_ACC: "1"
+                                              TF_ACC_TERRAFORM_VERSION: 1.0.0
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
+                                      timeout: 10m
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
                   infrastructure:
                       type: KubernetesDirect
                       spec:
