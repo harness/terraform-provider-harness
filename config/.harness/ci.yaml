@@ -2,36 +2,36 @@ pipeline:
     stages:
         - stage:
               variables:
-                  - value: org.harness_api_key
+                  - name: HARNESS_API_KEY
                     type: Secret
-                    name: HARNESS_API_KEY
-                  - value: org.harness_account_id
+                    value: org.harness_api_key
+                  - name: HARNESS_ACCOUNT_ID
                     type: Secret
-                    name: HARNESS_ACCOUNT_ID
-                  - value: https://app.harness.io
+                    value: org.harness_account_id
+                  - name: HARNESS_ENDPOINT
                     type: String
-                    name: HARNESS_ENDPOINT
-                  - value: org.spotinst_account_id
+                    value: https://app.harness.io
+                  - name: HARNESS_TEST_SPOT_ACCT_ID
                     type: Secret
-                    name: HARNESS_TEST_SPOT_ACCT_ID
-                  - value: org.spotinst_token
+                    value: org.spotinst_account_id
+                  - name: HARNESS_TEST_SPOT_TOKEN
                     type: Secret
-                    name: HARNESS_TEST_SPOT_TOKEN
-                  - value: org.azure_client_id
+                    value: org.spotinst_token
+                  - name: HARNESS_TEST_AZURE_CLIENT_ID
                     type: Secret
-                    name: HARNESS_TEST_AZURE_CLIENT_ID
-                  - value: org.azure_client_secret
+                    value: org.azure_client_id
+                  - name: HARNESS_TEST_AZURE_CLIENT_SECRET
                     type: Secret
-                    name: HARNESS_TEST_AZURE_CLIENT_SECRET
-                  - value: org.azure_tenant_id
+                    value: org.azure_client_secret
+                  - name: HARNESS_TEST_AZURE_TENANT_ID
                     type: Secret
-                    name: HARNESS_TEST_AZURE_TENANT_ID
-                  - value: org.aws_access_key_id
+                    value: org.azure_tenant_id
+                  - name: HARNESS_TEST_AWS_ACCESS_KEY_ID
                     type: Secret
-                    name: HARNESS_TEST_AWS_ACCESS_KEY_ID
-                  - value: org.aws_secret_access_key
+                    value: org.aws_access_key_id
+                  - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
                     type: Secret
-                    name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
+                    value: org.aws_secret_access_key
               type: CI
               spec:
                   infrastructure:
@@ -48,7 +48,7 @@ pipeline:
                                         limits:
                                             memory: 1Gi
                                             cpu: "1"
-                                    key: harness-gpo-sdk-{{ checksum "go.mod" }}
+                                    key: harness-go-sdk-{{ checksum "go.mod" }}
                                     connectorRef: org.gcp
                                     bucket: harness-micah-test
                                     archiveFormat: Gzip
