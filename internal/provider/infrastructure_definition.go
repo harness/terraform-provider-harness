@@ -559,7 +559,7 @@ func infraDetailsAwsAmi() *schema.Resource {
 			"spotinst_cloud_provider_name": {
 				Description: "The name of the SpotInst cloud provider to connect with.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"spotinst_config_json": {
 				Description: "The SpotInst configuration to use.",

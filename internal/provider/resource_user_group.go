@@ -34,11 +34,13 @@ func resourceUserGroup() *schema.Resource {
 				Description: "The name of the user group.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"description": {
 				Description: "The description of the user group.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"imported_by_scim": {
 				Description: "Indicates whether the user group was imported by SCIM.",

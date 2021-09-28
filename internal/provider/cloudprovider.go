@@ -19,7 +19,6 @@ func commonCloudProviderSchema() map[string]*schema.Schema {
 			Description: "The name of the cloud provider.",
 			Type:        schema.TypeString,
 			Required:    true,
-			ForceNew:    true,
 		},
 		"usage_scope": usageScopeSchema(),
 	}
