@@ -93,30 +93,3 @@ func resourceAWSCodeDeployServiceCreateOrUpdate(ctx context.Context, d *schema.R
 
 	return readServiceCodeDeploy(d, newSvc)
 }
-
-func resourceAWSCodeDeployServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	// Setup the object to create
-	svcInput := &cac.Service{
-		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactTypes.AWSCodeDeploy,
-		DeploymentType: cac.DeploymentTypes.AWSCodeDeploy,
-		ApplicationId:  d.Get("app_id").(string),
-		Description:    d.Get("description").(string),
-	}
-
-	if vars := d.Get("variable"); vars != nil {
-		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
-	}
-
-	// Create Service
-	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId(newSvc.Id)
-
-	return nil
-}

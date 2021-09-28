@@ -105,30 +105,3 @@ func resourceWinRMServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 
 	return readServiceWinRM(d, newSvc)
 }
-
-func resourceWinRMServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	// Setup the object to create
-	svcInput := &cac.Service{
-		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactType(d.Get("artifact_type").(string)),
-		DeploymentType: cac.DeploymentTypes.WinRM,
-		ApplicationId:  d.Get("app_id").(string),
-		Description:    d.Get("description").(string),
-	}
-
-	if vars := d.Get("variable"); vars != nil {
-		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
-	}
-
-	// Create Service
-	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId(newSvc.Id)
-
-	return nil
-}

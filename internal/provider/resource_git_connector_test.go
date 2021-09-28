@@ -249,29 +249,6 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 `, name, generateWebhook, commitDetails, delegateSelectors)
 }
 
-func testAccResourceGitConnector_invalid_urltype(name string) string {
-	return fmt.Sprintf(`
-		data "harness_secret_manager" "test" {
-			default = true 
-		}
-
-		resource "harness_encrypted_text" "test" {
-			name              = "%[1]s"
-			value 					  = "foo"
-			secret_manager_id = data.harness_secret_manager.test.id
-		}
-
-		resource "harness_git_connector" "test" {
-			name = "%[1]s"
-			url = "https://github.com/micahlmartin/harness-demo"
-			branch = "master"
-			password_secret_id = harness_encrypted_text.test.id
-			url_type = "badvalue"
-			username = "someuser"
-		}	
-`, name)
-}
-
 // func testAccResourceEncryptedText_UsageScopes(name string) string {
 // 	// nonprod :=
 // 	return fmt.Sprintf(`

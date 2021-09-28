@@ -64,6 +64,11 @@ func TestAccResourceUserGroup_SAML(t *testing.T) {
 					testAccUserGroupCreation(t, resourceName, expectedName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -85,6 +90,11 @@ func TestAccResourceUserGroup_NotificationsSettings(t *testing.T) {
 					testAccUserGroupCreation(t, resourceName, expectedName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -105,6 +115,11 @@ func TestAccResourceUserGroup_AccountPermissions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
 					testAccUserGroupCreation(t, resourceName, expectedName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -161,6 +176,11 @@ func TestAccResourceUserGroup_AppPermissions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
 					testAccUserGroupCreation(t, resourceName, expectedName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -254,6 +274,10 @@ func testAccResourceUserGroupAppPermissions(name string) string {
 
 					service {
 						actions = ["UPDATE", "DELETE"]
+					}
+					
+					template {
+						actions = ["CREATE", "READ", "UPDATE", "DELETE"]
 					}
 
 					workflow {

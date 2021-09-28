@@ -357,26 +357,6 @@ func testAccInfraDefK8s(name string) string {
 `, name)
 }
 
-func testAccInfraDefAws(name string) string {
-	return fmt.Sprintf(`
-		resource "harness_cloudprovider_aws" "test" {
-			name = "%[1]s"
-			// delegate_selector = "aws"
-
-		}
-
-		resource "harness_application" "test" {
-			name = "%[1]s"
-		}
-
-		resource "harness_environment" "test" {
-			name = "%[1]s"
-			app_id = harness_application.test.id
-			type = "NON_PROD"
-		}
-`, name)
-}
-
 func testAccResourceInfraDefEnvironment(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_application" "test" {

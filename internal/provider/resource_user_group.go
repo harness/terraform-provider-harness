@@ -326,6 +326,34 @@ func resourceUserGroup() *schema.Resource {
 											},
 										},
 									},
+									"template": {
+										Description: "Permission configuration to perform actions against templates.",
+										Type:        schema.TypeSet,
+										Optional:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"app_ids": {
+													Description: "The application IDs to which the permission applies. Leave empty to apply to all applications.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Elem:        &schema.Schema{Type: schema.TypeString},
+												},
+												"template_ids": {
+													Description: "The template IDs to which the permission applies. Leave empty to apply to all environments.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Elem:        &schema.Schema{Type: schema.TypeString},
+												},
+												"actions": {
+													Description: fmt.Sprintf("The actions allowed to be performed. Valid options are %s", strings.Join(standardActions, ", ")),
+													Type:        schema.TypeSet,
+													Required:    true,
+													MinItems:    1,
+													Elem:        &schema.Schema{Type: schema.TypeString},
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -504,6 +532,53 @@ func expandAccountPermissions(d []interface{}, input *graphql.UserGroupPermissio
 	}
 	input.AccountPermissions = &graphql.AccountPermissions{
 		AccountPermissionTypes: permissionTypes,
+	}
+}
+
+func expandTemplateAppPermissions(d []interface{}, input *graphql.UserGroupPermissions) {
+	if len(d) == 0 {
+		return
+	}
+
+	for _, v := range d {
+		permission := &graphql.AppPermission{
+			PermissionType: graphql.AppPermissionTypes.Template,
+			Applications:   &graphql.AppFilter{},
+			Actions:        []graphql.Action{},
+			Templates:      &graphql.TemplatePermissionFilter{},
+		}
+
+		permissionConfig := v.(map[string]interface{})
+		if attr := permissionConfig["app_ids"]; attr != nil {
+			for _, appId := range attr.(*schema.Set).List() {
+				permission.Applications.AppIds = append(permission.Applications.AppIds, appId.(string))
+			}
+		}
+
+		if len(permission.Applications.AppIds) == 0 {
+			permission.Applications.FilterType = graphql.FilterTypes.All
+		}
+
+		if attr := permissionConfig["actions"]; attr != nil {
+			for _, action := range attr.(*schema.Set).List() {
+				permission.Actions = append(permission.Actions, graphql.Action(action.(string)))
+			}
+		}
+
+		if attr := permissionConfig["template_ids"]; attr != nil {
+			templateIds := attr.(*schema.Set).List()
+			if len(templateIds) > 0 {
+				tmplIds := []string{}
+				for _, templateId := range templateIds {
+					tmplIds = append(tmplIds, templateId.(string))
+				}
+				permission.Templates.TemplateIds = tmplIds
+			} else {
+				permission.Templates.FilterType = graphql.FilterTypes.All
+			}
+		}
+
+		input.AppPermissions = append(input.AppPermissions, permission)
 	}
 }
 
@@ -862,6 +937,7 @@ func expandAppPermissions(d []interface{}, input *graphql.UserGroupPermissions) 
 	expandPipelineAppPermissions(appPermissionsConfig["pipeline"].(*schema.Set).List(), input)
 	expandProvisionerAppPermissions(appPermissionsConfig["provisioner"].(*schema.Set).List(), input)
 	expandServiceAppPermissions(appPermissionsConfig["service"].(*schema.Set).List(), input)
+	expandTemplateAppPermissions(appPermissionsConfig["template"].(*schema.Set).List(), input)
 	expandWorkflowAppPermissions(appPermissionsConfig["workflow"].(*schema.Set).List(), input)
 }
 
@@ -1093,6 +1169,26 @@ func flattenAppPermissionService(appPermissions *graphql.AppPermission) map[stri
 	return results
 }
 
+func flattenAppPermissionTemplate(appPermissions *graphql.AppPermission) map[string]interface{} {
+	results := map[string]interface{}{}
+
+	if len(appPermissions.Applications.AppIds) > 0 {
+		results["app_ids"] = appPermissions.Applications.AppIds
+	}
+
+	if len(appPermissions.Actions) > 0 {
+		results["actions"] = appPermissions.Actions
+	}
+
+	if appPermissions.Templates != nil {
+		if len(appPermissions.Templates.TemplateIds) > 0 {
+			results["template_ids"] = appPermissions.Templates.TemplateIds
+		}
+	}
+
+	return results
+}
+
 func flattenAppPermissionWorkflow(appPermissions *graphql.AppPermission) map[string]interface{} {
 	results := map[string]interface{}{}
 
@@ -1130,6 +1226,7 @@ func flattenAppPermissions(permissions *graphql.UserGroupPermissions) []interfac
 	pipelines := []interface{}{}
 	provisioners := []interface{}{}
 	services := []interface{}{}
+	templates := []interface{}{}
 	workflows := []interface{}{}
 
 	for _, appPermission := range permissions.AppPermissions {
@@ -1146,6 +1243,8 @@ func flattenAppPermissions(permissions *graphql.UserGroupPermissions) []interfac
 			provisioners = append(provisioners, flattenAppPermissionProvisioner(appPermission))
 		case graphql.AppPermissionTypes.Service:
 			services = append(services, flattenAppPermissionService(appPermission))
+		case graphql.AppPermissionTypes.Template:
+			templates = append(templates, flattenAppPermissionTemplate(appPermission))
 		case graphql.AppPermissionTypes.Workflow:
 			workflows = append(workflows, flattenAppPermissionWorkflow(appPermission))
 		default:
@@ -1160,6 +1259,7 @@ func flattenAppPermissions(permissions *graphql.UserGroupPermissions) []interfac
 		"pipeline":    pipelines,
 		"provisioner": provisioners,
 		"service":     services,
+		"template":    templates,
 		"workflow":    workflows,
 	})
 }

@@ -73,6 +73,10 @@ resource "harness_user_group" "example" {
         actions = ["UPDATE", "DELETE"]
       }
 
+      template {
+        actions = ["CREATE", "READ", "UPDATE", "DELETE"]
+      }
+
       workflow {
         actions = ["UPDATE", "DELETE"]
         filters = ["NON_PRODUCTION_WORKFLOWS", ]
@@ -151,6 +155,7 @@ Optional:
 - **pipeline** (Block Set) Permission configuration to perform actions against pipelines. (see [below for nested schema](#nestedblock--permissions--app_permissions--pipeline))
 - **provisioner** (Block Set) Permission configuration to perform actions against provisioners. (see [below for nested schema](#nestedblock--permissions--app_permissions--provisioner))
 - **service** (Block Set) Permission configuration to perform actions against services. (see [below for nested schema](#nestedblock--permissions--app_permissions--service))
+- **template** (Block Set) Permission configuration to perform actions against templates. (see [below for nested schema](#nestedblock--permissions--app_permissions--template))
 - **workflow** (Block Set) Permission configuration to perform actions against workflows. (see [below for nested schema](#nestedblock--permissions--app_permissions--workflow))
 
 <a id="nestedblock--permissions--app_permissions--all"></a>
@@ -231,6 +236,19 @@ Optional:
 
 - **app_ids** (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
 - **service_ids** (Set of String) The service IDs to which the permission applies. Leave empty to apply to all services.
+
+
+<a id="nestedblock--permissions--app_permissions--template"></a>
+### Nested Schema for `permissions.app_permissions.template`
+
+Required:
+
+- **actions** (Set of String) The actions allowed to be performed. Valid options are CREATE, READ, UPDATE, DELETE
+
+Optional:
+
+- **app_ids** (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
+- **template_ids** (Set of String) The template IDs to which the permission applies. Leave empty to apply to all environments.
 
 
 <a id="nestedblock--permissions--app_permissions--workflow"></a>

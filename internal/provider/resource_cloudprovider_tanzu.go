@@ -138,30 +138,3 @@ func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.Res
 
 	return readCloudProviderTanzu(c, d, cp)
 }
-
-func resourceCloudProviderTanzuUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	cp := cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.PcfCloudProvider)
-	cp.Name = d.Get("name").(string)
-	cp.EndpointUrl = d.Get("endpoint").(string)
-	cp.SkipValidation = d.Get("skip_validation").(bool)
-	cp.Username = d.Get("username").(string)
-
-	if attr := d.Get("username_secret_name").(string); attr != "" {
-		cp.UsernameSecretId = &cac.SecretRef{
-			Name: attr,
-		}
-	}
-
-	cp.Password = &cac.SecretRef{
-		Name: d.Get("password_secret_name").(string),
-	}
-
-	_, err := c.ConfigAsCode().UpsertPcfCloudProvider(cp)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
-}
