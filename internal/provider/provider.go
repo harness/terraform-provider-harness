@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -33,24 +34,22 @@ func New(version string) func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
 				"endpoint": {
+					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io`. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessEndpoint.String()),
 					Type:        schema.TypeString,
-					Optional:    true,
+					Required:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessEndpoint.String(), api.DefaultApiUrl),
 				},
 				"account_id": {
+					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessAccountId.String()),
 					Type:        schema.TypeString,
-					Optional:    true,
+					Required:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessAccountId.String(), nil),
 				},
 				"api_key": {
+					Description: fmt.Sprintf("The Harness api key. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessApiKey.String()),
 					Type:        schema.TypeString,
-					Optional:    true,
+					Required:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessApiKey.String(), nil),
-				},
-				"bearer_token": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessBearerToken.String(), nil),
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
@@ -118,12 +117,11 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		}
 
 		return &api.Client{
-			UserAgent:   p.UserAgent("terraform-provider-harness", version),
-			Endpoint:    d.Get("endpoint").(string),
-			AccountId:   d.Get("account_id").(string),
-			APIKey:      d.Get("api_key").(string),
-			BearerToken: d.Get("bearer_token").(string),
-			HTTPClient:  httpClient,
+			UserAgent:  p.UserAgent("terraform-provider-harness", version),
+			Endpoint:   d.Get("endpoint").(string),
+			AccountId:  d.Get("account_id").(string),
+			APIKey:     d.Get("api_key").(string),
+			HTTPClient: httpClient,
 		}, nil
 	}
 }

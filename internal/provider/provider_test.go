@@ -81,10 +81,9 @@ func testAccConfigureProvider() {
 		testAccProvider = New("dev")()
 
 		config := map[string]interface{}{
-			"endpoint":     os.Getenv(helpers.EnvVars.HarnessEndpoint.String()),
-			"account_id":   os.Getenv(helpers.EnvVars.HarnessAccountId.String()),
-			"api_key":      os.Getenv(helpers.EnvVars.HarnessApiKey.String()),
-			"bearer_token": os.Getenv(helpers.EnvVars.HarnessBearerToken.String()),
+			"endpoint":   os.Getenv(helpers.EnvVars.HarnessEndpoint.String()),
+			"account_id": os.Getenv(helpers.EnvVars.HarnessAccountId.String()),
+			"api_key":    os.Getenv(helpers.EnvVars.HarnessApiKey.String()),
 		}
 
 		testAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))

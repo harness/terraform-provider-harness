@@ -32,7 +32,6 @@ provider "harness" {
 
 ### Optional
 
-- **account_id** (String)
-- **api_key** (String)
-- **bearer_token** (String)
-- **endpoint** (String)
+- **account_id** (String) The Harness account id. This can also be set using the `HARNESS_ACCOUNT_ID` environment variable.
+- **api_key** (String) The Harness api key. This can also be set using the `HARNESS_API_KEY` environment variable.
+- **endpoint** (String) The URL of the Harness API endpoint. The default is `https://app.harness.io`. This can also be set using the `HARNESS_ENDPOINT` environment variable.
