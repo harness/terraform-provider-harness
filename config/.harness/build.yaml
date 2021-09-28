@@ -42,6 +42,17 @@ pipeline:
                                     command: go mod vendor
                                     privileged: false
                           - step:
+                                type: SaveCacheGCS
+                                spec:
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
+                                    key: terraform-provider-harness-{{ checksum "go.mod" }}
+                                    sourcePaths:
+                                        - ./vendor
+                                    archiveFormat: Gzip
+                                name: Save cache
+                                identifier: Save_cache
+                          - step:
                                 type: Run
                                 name: Build
                                 identifier: build
@@ -50,17 +61,6 @@ pipeline:
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
                                     command: go build -v
                                     privileged: false
-                          - step:
-                                type: SaveCacheGCS
-                                spec:
-                                    sourcePaths:
-                                        - ./vendor
-                                    key: terraform-provider-harness-{{ checksum "go.mod" }}
-                                    connectorRef: org.gcp
-                                    bucket: harness-micah-test
-                                    archiveFormat: Gzip
-                                name: Save cache
-                                identifier: Save_cache
                           - step:
                                 type: Run
                                 name: Test Terraform v1-0-0
@@ -89,7 +89,6 @@ pipeline:
                                               - AllErrors
                                           action:
                                               type: Ignore
-                  serviceDependencies: []
                   infrastructure:
                       type: KubernetesDirect
                       spec:
