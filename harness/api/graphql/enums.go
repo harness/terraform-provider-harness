@@ -463,6 +463,7 @@ var AppPermissionTypes = struct {
 	Pipeline    AppPermissionType
 	Provisioner AppPermissionType
 	Service     AppPermissionType
+	Template    AppPermissionType
 	Workflow    AppPermissionType
 }{
 	All:         "ALL",
@@ -471,6 +472,7 @@ var AppPermissionTypes = struct {
 	Pipeline:    "PIPELINE",
 	Provisioner: "PROVISIONER",
 	Service:     "SERVICE",
+	Template:    "TEMPLATE",
 	Workflow:    "WORKFLOW",
 }
 

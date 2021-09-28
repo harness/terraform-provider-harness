@@ -207,6 +207,7 @@ type AppPermission struct {
 	Pipelines      *PipelinePermissionFilter    `json:"pipelines,omitempty"`
 	Provisioners   *ProvisionerPermissionFilter `json:"provisioners,omitempty"`
 	Services       *ServicePermissionFilter     `json:"services,omitempty"`
+	Templates      *TemplatePermissionFilter    `json:"templates,omitempty"`
 	Workflows      *WorkflowPermissionFilter    `json:"workflows,omitempty"`
 }
 
@@ -249,6 +250,11 @@ type DeploymentPermissionFilter struct {
 type EnvPermissionFilter struct {
 	EnvIds      []string        `json:"envIds,omitempty"`
 	FilterTypes []EnvFilterType `json:"filterTypes,omitempty"`
+}
+
+type TemplatePermissionFilter struct {
+	TemplateIds []string   `json:"templateIds,omitempty"`
+	FilterType  FilterType `json:"filterType,omitempty"`
 }
 
 type AccountPermissions struct {
