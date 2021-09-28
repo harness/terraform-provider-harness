@@ -93,30 +93,3 @@ func resourceAWSLambdaServiceCreateOrUpdate(ctx context.Context, d *schema.Resou
 
 	return readServiceAwsLambda(d, newSvc)
 }
-
-func resourceAWSLambdaServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
-	// Setup the object to create
-	svcInput := &cac.Service{
-		Name:           d.Get("name").(string),
-		ArtifactType:   cac.ArtifactTypes.AWSLambda,
-		DeploymentType: cac.DeploymentTypes.AWSLambda,
-		ApplicationId:  d.Get("app_id").(string),
-		Description:    d.Get("description").(string),
-	}
-
-	if vars := d.Get("variable"); vars != nil {
-		svcInput.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
-	}
-
-	// Create Service
-	newSvc, err := c.ConfigAsCode().UpsertService(svcInput)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	d.SetId(newSvc.Id)
-
-	return nil
-}

@@ -58,6 +58,10 @@ resource "harness_user_group" "example" {
         actions = ["UPDATE", "DELETE"]
       }
 
+      template {
+        actions = ["CREATE", "READ", "UPDATE", "DELETE"]
+      }
+
       workflow {
         actions = ["UPDATE", "DELETE"]
         filters = ["NON_PRODUCTION_WORKFLOWS", ]
