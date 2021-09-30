@@ -2,7 +2,7 @@
 
 - Website: [harness.io](https://harness.io)
 
-The Terraform Harness provider is the official plugin that allows you to manage Harness CD resources.
+The Terraform provider for Harness is a plugin that allows you to manage resources in Harness CD.
 
 ## Disclaimer
 
