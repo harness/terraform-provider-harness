@@ -1,6 +1,10 @@
 # Harness SDK for Go
 
-harness-go-sdk is the official Harness SDK for the go programming language. It provides go client for interacting with the current gen GraphQL and Config-as-Code API's.
+This project is a Harness SDK for the go programming language. It provides go client for interacting with the current gen GraphQL and Config-as-Code API's.
+
+## Disclaimer
+
+This product is not supported by the Harness Customer support team. If you have any questions please open a [new issue](https://github.com/harness-io/harness-go-sdk/issues/new) or join our slack [channel](https://harnesscommunity.slack.com/archives/C02G9CUNF1S).
 
 ## Getting Started
 
