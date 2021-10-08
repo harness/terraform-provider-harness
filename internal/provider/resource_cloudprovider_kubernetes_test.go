@@ -40,6 +40,34 @@ func TestAccResourceK8sCloudProviderConnector_delegate(t *testing.T) {
 	})
 }
 
+func TestAccResourceK8sCloudProviderConnector_usagescope_application(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		resourceName = "harness_cloudprovider_kubernetes.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccCloudProviderDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceK8sCloudProvider_usagescope_application(name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					testAccCheckK8sCloudProviderExists(t, resourceName, name),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceK8sCloudProviderConnector_username_password(t *testing.T) {
 
 	var (
@@ -180,14 +208,50 @@ func testAccResourceK8sCloudProvider_delegate(name string) string {
 			}
 
 			usage_scope {
-				application_filter_type = "ALL"
 				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 			}
 			
 			usage_scope {
-				application_filter_type = "ALL"
 				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
 			}
+		}
+`, name)
+}
+
+func testAccResourceK8sCloudProvider_usagescope_application(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_application" "test" {
+			name = "%[1]s"
+		}
+
+		resource "harness_environment" "test" {
+			name = "%[1]s"
+			app_id = harness_application.test.id
+			type = "NON_PROD"
+		}
+
+		resource "harness_cloudprovider_kubernetes" "test" {
+			name = "%[1]s"
+			skip_validation = true
+
+			authentication {
+				delegate_selectors = ["test"]
+			}
+
+			usage_scope {
+				application_id = harness_application.test.id
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+
+			usage_scope {
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+
+			usage_scope {
+				application_id = harness_application.test.id
+				environment_id = harness_environment.test.id
+			}
+
 		}
 `, name)
 }

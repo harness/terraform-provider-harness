@@ -166,9 +166,7 @@ func TestAccResourceEncryptedText_UsageScopes(t *testing.T) {
 				Config: testAccResourceEncryptedText_UsageScopes(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.1.application_filter_type", graphql.ApplicationFilterTypes.All.String()),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.1.environment_filter_type", graphql.EnvironmentFilterTypes.Production.String()),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", graphql.ApplicationFilterTypes.All.String()),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", graphql.EnvironmentFilterTypes.NonProduction.String()),
 					func(state *terraform.State) error {
 						et, err := testAccGetEncryptedText(resourceName, state)
@@ -184,7 +182,6 @@ func TestAccResourceEncryptedText_UsageScopes(t *testing.T) {
 				Config: testAccResourceEncryptedText_usageScopes_update(updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", graphql.ApplicationFilterTypes.All.String()),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", graphql.EnvironmentFilterTypes.Production.String()),
 					resource.TestCheckNoResourceAttr(resourceName, "usage_scope.1"),
 					func(state *terraform.State) error {
@@ -236,12 +233,10 @@ func testAccResourceEncryptedText_UsageScopes(name string) string {
 		secret_manager_id = data.harness_secret_manager.default.id
 
 		usage_scope {
-			application_filter_type = "ALL"
 			environment_filter_type = "PRODUCTION_ENVIRONMENTS"
 		}
 
 		usage_scope {
-			application_filter_type = "ALL"
 			environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 		}
 	}
@@ -259,7 +254,6 @@ func testAccResourceEncryptedText_usageScopes_update(name string) string {
 		value = "someval"
 		secret_manager_id = data.harness_secret_manager.default.id
 		usage_scope {
-			application_filter_type = "ALL"
 			environment_filter_type = "PRODUCTION_ENVIRONMENTS"
 		}
 	}

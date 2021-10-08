@@ -50,7 +50,7 @@ resource "harness_cloudprovider_aws" "aws" {
 - **assume_cross_account_role** (Block List, Max: 1) Configuration for assuming a cross account role. (see [below for nested schema](#nestedblock--assume_cross_account_role))
 - **delegate_selector** (String) Select the Delegate to use via one of its Selectors.
 - **secret_access_key_secret_name** (String) The name of the Harness secret containing the AWS secret access key.
-- **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
+- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
 - **use_ec2_iam_credentials** (Boolean) Use the EC2 Instance Profile for Service Accounts.
 - **use_irsa** (Boolean) Use the AWS IAM Role for Service Accounts.
 
@@ -75,10 +75,9 @@ Optional:
 
 Optional:
 
-- **application_filter_type** (String) Type of application filter applied. ALL if not application id supplied, otherwise NULL
-- **application_id** (String) Id of the application scoping
-- **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
-- **environment_id** (String) Id of the environment scoping
+- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 
