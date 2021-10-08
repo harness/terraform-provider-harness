@@ -2,11 +2,23 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.11...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.12...HEAD)
+
+**Merged pull requests:**
+
+- Added environment description [\#47](https://github.com/harness-io/harness-go-sdk/pull/47) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.12](https://github.com/harness-io/harness-go-sdk/tree/v0.0.12) (2021-10-08)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.11...v0.0.12)
 
 **Implemented enhancements:**
 
 - Added support for querying delegates [\#45](https://github.com/harness-io/harness-go-sdk/pull/45) ([micahlmartin](https://github.com/micahlmartin))
+
+**Merged pull requests:**
+
+- Release version 0.0.12 10-08-2021 [\#46](https://github.com/harness-io/harness-go-sdk/pull/46) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.11](https://github.com/harness-io/harness-go-sdk/tree/v0.0.11) (2021-09-28)
 
@@ -58,6 +70,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.0.6 09-09-2021 [\#35](https://github.com/harness-io/harness-go-sdk/pull/35) ([micahlmartin](https://github.com/micahlmartin))
 - Added better handling for when entities do not exist [\#34](https://github.com/harness-io/harness-go-sdk/pull/34) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.5](https://github.com/harness-io/harness-go-sdk/tree/v0.0.5) (2021-09-02)
@@ -75,7 +88,6 @@
 
 **Merged pull requests:**
 
-- Release version 0.0.6 09-09-2021 [\#35](https://github.com/harness-io/harness-go-sdk/pull/35) ([micahlmartin](https://github.com/micahlmartin))
 - Release version 0.0.4 08-20-2021 [\#31](https://github.com/harness-io/harness-go-sdk/pull/31) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed tests and linting issues [\#30](https://github.com/harness-io/harness-go-sdk/pull/30) ([micahlmartin](https://github.com/micahlmartin))
 - Add support for Users and User Groups [\#29](https://github.com/harness-io/harness-go-sdk/pull/29) ([micahlmartin](https://github.com/micahlmartin))
