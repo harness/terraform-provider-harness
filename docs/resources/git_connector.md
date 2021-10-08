@@ -51,7 +51,7 @@ resource "harness_git_connector" "example" {
 - **generate_webhook_url** (Boolean) Boolean indicating whether or not to generate a webhook url.
 - **password_secret_id** (String) The id of the secret for connecting to the git repository.
 - **ssh_setting_id** (String) The id of the SSH secret to use
-- **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
+- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
 - **username** (String) The name of the user used to connect to the git repository
 
 ### Read-Only
@@ -75,10 +75,9 @@ Optional:
 
 Optional:
 
-- **application_filter_type** (String) Type of application filter applied. ALL if not application id supplied, otherwise NULL
-- **application_id** (String) Id of the application scoping
-- **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
-- **environment_id** (String) Id of the environment scoping
+- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 

@@ -25,7 +25,6 @@ func TestAccDataSourceEncryptedTextByName(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
 					resource.TestCheckResourceAttrSet(resourceName, "secret_manager_id"),
-					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.application_filter_type", "ALL"),
 					resource.TestCheckResourceAttr(resourceName, "usage_scope.0.environment_filter_type", "NON_PRODUCTION_ENVIRONMENTS"),
 				),
 			},
@@ -45,7 +44,6 @@ func testAccDataSourceEncryptedTextByName(name string) string {
 			secret_manager_id = data.harness_secret_manager.test.id
 			
 			usage_scope {
-				application_filter_type = "ALL"
 				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 			}
 		}

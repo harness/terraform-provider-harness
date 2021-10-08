@@ -92,12 +92,10 @@ func testAccResourceGcpCloudProvider(name string) string {
 			delegate_selectors = ["testing"]
 
 			usage_scope {
-				application_filter_type = "ALL"
 				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 			}
 			
 			usage_scope {
-				application_filter_type = "ALL"
 				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
 			}
 		}

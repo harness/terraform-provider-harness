@@ -58,7 +58,7 @@ resource "harness_ssh_credential" "ssh_creds" {
 
 - **kerberos_authentication** (Block List, Max: 1) Kerberos authentication for SSH. Cannot be used if ssh_authentication is specified (see [below for nested schema](#nestedblock--kerberos_authentication))
 - **ssh_authentication** (Block List, Max: 1) Authentication method for SSH. Cannot be used if kerberos_authentication is specified. Only one of `inline_ssh`, `server_password`, or `ssh_key_file` should be set (see [below for nested schema](#nestedblock--ssh_authentication))
-- **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
+- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
 
 ### Read-Only
 
@@ -139,10 +139,9 @@ Optional:
 
 Optional:
 
-- **application_filter_type** (String) Type of application filter applied. ALL if not application id supplied, otherwise NULL
-- **application_id** (String) Id of the application scoping
-- **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
-- **environment_id** (String) Id of the environment scoping
+- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 

@@ -24,7 +24,7 @@ Resource for creating a GCP cloud provider
 - **delegate_selectors** (List of String) Delegate selectors to use for this provider.
 - **secret_file_id** (String) The id of the secret containing the GCP credentials
 - **skip_validation** (Boolean) Skip validation of GCP configuration.
-- **usage_scope** (Block Set) Usage scopes (see [below for nested schema](#nestedblock--usage_scope))
+- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
 
 ### Read-Only
 
@@ -35,9 +35,8 @@ Resource for creating a GCP cloud provider
 
 Optional:
 
-- **application_filter_type** (String) Type of application filter applied. ALL if not application id supplied, otherwise NULL
-- **application_id** (String) Id of the application scoping
-- **environment_filter_type** (String) Type of environment filter applied. ALL if not filter applied
-- **environment_id** (String) Id of the environment scoping
+- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 
