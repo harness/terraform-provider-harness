@@ -36,6 +36,11 @@ func resourceEnvironment() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
+			"description": {
+				Description: "The description of the environment.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"type": {
 				Description:  "The type of the environment. Valid values are `PROD` and `NON_PROD`",
 				Type:         schema.TypeString,
@@ -113,6 +118,7 @@ func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnost
 	d.Set("name", env.Name)
 	d.Set("app_id", env.ApplicationId)
 	d.Set("type", env.EnvironmentType)
+	d.Set("description", env.Description)
 
 	if overrides := flattenVariableOverrides(env.VariableOverrides); len(overrides) > 0 {
 		d.Set("variable_override", overrides)
@@ -147,6 +153,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	env.Name = d.Get("name").(string)
 	env.EnvironmentType = cac.EnvironmentType(d.Get("type").(string))
 	env.ApplicationId = d.Get("app_id").(string)
+	env.Description = d.Get("description").(string)
 
 	if overrides := d.Get("variable_override"); overrides != nil {
 		env.VariableOverrides = expandVariableOverrides(overrides.(*schema.Set).List())
@@ -159,29 +166,6 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 
 	return readEnvironment(d, newEnv)
 }
-
-// func resourceEnvironmentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-// 	c := meta.(*api.Client)
-
-// 	envInput := cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
-// 	envInput.Name = d.Get("name").(string)
-// 	envInput.EnvironmentType = cac.EnvironmentType(d.Get("type").(string))
-// 	envInput.ApplicationId = d.Get("app_id").(string)
-
-// 	if overrides := d.Get("variable_overrides"); overrides != nil {
-// 		envInput.VariableOverrides = expandVariableOverrides(overrides.(*schema.Set).List())
-// 	}
-
-// 	// Update the environment
-// 	newEnv, err := c.ConfigAsCode().UpsertEnvironment(envInput)
-// 	if err != nil {
-// 		return diag.FromErr(err)
-// 	}
-
-// 	d.SetId(newEnv.Id)
-
-// 	return nil
-// }
 
 func flattenVariableOverrides(overrides []*cac.VariableOverride) []map[string]interface{} {
 	if len(overrides) == 0 {

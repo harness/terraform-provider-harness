@@ -31,6 +31,11 @@ func dataSourceEnvironment() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"description": {
+				Description: "The description of the environment.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 			"type": {
 				Description: "The type of the environment. Valid values are `PROD` and `NON_PROD`",
 				Type:        schema.TypeString,
