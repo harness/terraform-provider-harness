@@ -285,6 +285,7 @@ type Environment struct {
 	Id                                 string                  `yaml:"-"`
 	Name                               string                  `yaml:"-"`
 	ConfigMapYamlByServiceTemplateName *map[string]interface{} `yaml:"configMapYamlByServiceTemplateName,omitempty"`
+	Description                        string                  `yaml:"description,omitempty"`
 	EnvironmentType                    EnvironmentType         `yaml:"environmentType,omitempty"`
 	VariableOverrides                  []*VariableOverride     `yaml:"variableOverrides,omitempty"`
 	ApplicationId                      string                  `yaml:"-"`
