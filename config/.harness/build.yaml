@@ -65,12 +65,18 @@ pipeline:
                                 - step:
                                       type: Run
                                       spec:
-                                          privileged: false
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
                                           connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
                                           command: golangci-lint run -v
+                                          privileged: false
                                       name: Lint
                                       identifier: lint
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
                                 - step:
                                       type: Run
                                       name: Test Terraform v1-0-0
