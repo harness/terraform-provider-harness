@@ -1,11 +1,11 @@
 ---
 subcategory: ""
-page_title: "Configuring usage scopes - Harness Provider"
+page_title: "Configuring usage scopes"
 description: |-
     An example of how to apply usage scopes to a resource.
 ---
 
-# Configure usage scopes for a resource
+# Configure usage scopes for resources
 
 There are a number of resources that can be scoped to a specific set of applications and environments. These include cloud providers, secrets, connectors, and more. Configuring it is the same across all of these resources.
 

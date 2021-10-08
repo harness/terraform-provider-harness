@@ -68,6 +68,7 @@ resource "harness_environment" "test" {
 
 ### Optional
 
+- **description** (String) The description of the environment.
 - **variable_override** (Block Set) Override for a service variable (see [below for nested schema](#nestedblock--variable_override))
 
 ### Read-Only
