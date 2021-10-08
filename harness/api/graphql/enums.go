@@ -526,3 +526,53 @@ var SSOTypes = struct {
 	LDAP: "LDAP",
 	SAML: "SAML",
 }
+
+type DelegateType string
+
+var DelegateTypes = struct {
+	Docker     DelegateType
+	Ecs        DelegateType
+	Helm       DelegateType
+	Kubernetes DelegateType
+	Shell      DelegateType
+}{
+	Docker:     "DOCKER",
+	Ecs:        "ECS",
+	Helm:       "HELM_DELEGATE",
+	Kubernetes: "KUBERNETES",
+	Shell:      "SHELL_SCRIPT",
+}
+
+var DelegateTypesSlice = []string{
+	"DOCKER",
+	"ECS",
+	"HELM_DELEGATE",
+	"KUBERNETES",
+	"SHELL_SCRIPT",
+}
+
+func (d DelegateType) String() string {
+	return string(d)
+}
+
+type DelegateStatus string
+
+var DelegateStatusList = struct {
+	Deleted            DelegateStatus
+	Enabled            DelegateStatus
+	WaitingForApproval DelegateStatus
+}{
+	Deleted:            "DELETED",
+	Enabled:            "ENABLED",
+	WaitingForApproval: "WAITING_FOR_APPROVAL",
+}
+
+var DelegateStatusSlice = []string{
+	"DELETED",
+	"ENABLED",
+	"WAITING_FOR_APPROVAL",
+}
+
+func (d DelegateStatus) String() string {
+	return string(d)
+}
