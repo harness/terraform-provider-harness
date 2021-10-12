@@ -16,6 +16,7 @@ func TestAccResourceK8sCloudProviderConnector_delegate(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		updatedName  = fmt.Sprintf("%s_updated", name)
 		resourceName = "harness_cloudprovider_kubernetes.test"
 	)
 
@@ -29,6 +30,13 @@ func TestAccResourceK8sCloudProviderConnector_delegate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckK8sCloudProviderExists(t, resourceName, name),
+				),
+			},
+			{
+				Config: testAccResourceK8sCloudProvider_delegate(updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					testAccCheckK8sCloudProviderExists(t, resourceName, updatedName),
 				),
 			},
 			{
