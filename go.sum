@@ -199,10 +199,6 @@ github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+
 github.com/googleapis/gax-go/v2 v2.0.5 h1:sjZBwGj9Jlw33ImPtvFviGYvseOtDM7hkSKB7+Tv3SM=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
-github.com/harness-io/harness-go-sdk v0.0.11 h1:qfIYLlPgfAzvQJx/+ZbjFneuQfN0hzfQuVBLph976AA=
-github.com/harness-io/harness-go-sdk v0.0.11/go.mod h1:/5oCswBe0pg/6GAuviqJErMxGgQWx+/OOD7UQ74d1FY=
-github.com/harness-io/harness-go-sdk v0.0.12 h1:EIy3PNsiSCrykctPE3PzNo7IZh5ubyoMY77ppQMREAA=
-github.com/harness-io/harness-go-sdk v0.0.12/go.mod h1:/5oCswBe0pg/6GAuviqJErMxGgQWx+/OOD7UQ74d1FY=
 github.com/harness-io/harness-go-sdk v0.0.13 h1:bvjPh4s4gOmcVl1j1EyDppb895NAbjz03qfoBiBPJ7c=
 github.com/harness-io/harness-go-sdk v0.0.13/go.mod h1:/5oCswBe0pg/6GAuviqJErMxGgQWx+/OOD7UQ74d1FY=
 github.com/harness-io/harness-go-sdk v0.0.14 h1:rP81qvpUOBWmS/M2Xn12YfFOS9N4VWp2fVEDyRTMzTk=
