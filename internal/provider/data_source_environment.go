@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -19,7 +20,9 @@ func dataSourceEnvironment() *schema.Resource {
 			"id": {
 				Description: "The id of the environment.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				AtLeastOneOf: []string{"id", "name"},
+				ConflictsWith: []string{"name"},
 			},
 			"app_id": {
 				Description: "The id of the application.",
@@ -29,7 +32,9 @@ func dataSourceEnvironment() *schema.Resource {
 			"name": {
 				Description: "The name of the environment.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
+				AtLeastOneOf: []string{"id", "name"},
+				ConflictsWith: []string{"id"},
 			},
 			"type": {
 				Description: "The type of the environment. Valid values are `PROD` and `NON_PROD`",
@@ -73,23 +78,31 @@ func dataSourceEnvironment() *schema.Resource {
 func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	envId := d.Get("id").(string)
+	var env *cac.Environment
+	var err error
+
 	appId := d.Get("app_id").(string)
 
-	env, err := c.ConfigAsCode().GetEnvironmentById(appId, envId)
-	if err != nil {
-		return diag.FromErr(err)
+	if id := d.Get("id").(string); id != "" {
+		env, err = c.ConfigAsCode().GetEnvironmentById(appId, id)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	} else if name := d.Get("name").(string); name != "" {
+		env, err = c.ConfigAsCode().GetEnvironmentByName(appId, name)
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 
-	d.Set("name", env.Name)
+	d.SetId(env.Id)
 	d.Set("app_id", env.ApplicationId)
-	d.Set("type", env.EnvironmentType)
+	d.Set("name", env.Name)
+	d.Set("type", env.Type)
 
 	if overrides := flattenVariableOverrides(env.VariableOverrides); len(overrides) > 0 {
 		d.Set("variable_overrides", overrides)
 	}
-
-	d.SetId(env.Id)
 
 	return nil
 }
