@@ -104,6 +104,7 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 	d.Set("app_id", env.ApplicationId)
 	d.Set("name", env.Name)
 	d.Set("type", env.Type)
+	d.Set("description", env.Description)
 
 	if overrides := flattenVariableOverrides(env.VariableOverrides); len(overrides) > 0 {
 		d.Set("variable_overrides", overrides)
