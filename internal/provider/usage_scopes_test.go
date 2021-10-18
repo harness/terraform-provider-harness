@@ -2,7 +2,6 @@ package provider
 
 const testAccDefaultUsageScope = `
 	usage_scope {
-		application_filter_type = "ALL"
 		environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 	}
 `

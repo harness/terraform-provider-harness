@@ -54,6 +54,7 @@ func New(version string) func() *schema.Provider {
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"harness_application":    dataSourceApplication(),
+				"harness_delegate":       dataSourceDelegate(),
 				"harness_secret_manager": dataSourceSecretManager(),
 				"harness_encrypted_text": dataSourceEncryptedText(),
 				"harness_git_connector":  dataSourceGitConnector(),

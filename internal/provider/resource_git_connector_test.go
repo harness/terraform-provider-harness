@@ -257,12 +257,10 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 // 		value = "someval"
 
 // 		usage_scope {
-// 			application_filter_type = "ALL"
 // 			environment_filter_type = "PRODUCTION_ENVIRONMENTS"
 // 		}
 
 // 		usage_scope {
-// 			application_filter_type = "ALL"
 // 			environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
 // 		}
 // 	}
@@ -277,7 +275,6 @@ func testAccResourceGitConnector(name string, generateWebhook bool, withCommitDe
 // 		value = "someval"
 
 // 		usage_scope {
-// 			application_filter_type = "ALL"
 // 			environment_filter_type = "PRODUCTION_ENVIRONMENTS"
 // 		}
 // 	}
