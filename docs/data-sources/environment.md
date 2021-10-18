@@ -18,7 +18,11 @@ Data source for retrieving a Harness service
 ### Required
 
 - **app_id** (String) The id of the application.
+
+### Optional
+
 - **id** (String) The id of the environment.
+- **name** (String) The name of the environment.
 
 ### Read-Only
 
@@ -36,5 +40,3 @@ Read-Only:
 - **service_name** (String) The name of the service
 - **type** (String) The type of the service variable. Valid values are `TEXT` and `ENCRYPTED_TEXT`
 - **value** (String) The value of the service variable
-
-
