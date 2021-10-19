@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
@@ -231,7 +232,7 @@ func resourceCloudProviderK8s() *schema.Resource {
 	helpers.MergeSchemas(commonCloudProviderSchema(), providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating a Kubernetes cloud provider",
+		Description:   configAsCodeDescription("Resource for creating a Kubernetes cloud provider."),
 		CreateContext: resourceCloudProviderK8sCreateOrUpdate,
 		ReadContext:   resourceCloudProviderK8sRead,
 		UpdateContext: resourceCloudProviderK8sCreateOrUpdate,
@@ -249,9 +250,13 @@ func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, m
 	c := meta.(*api.Client)
 
 	cp := &cac.KubernetesCloudProvider{}
-	if err := c.ConfigAsCode().GetCloudProviderById(d.Id(), cp); err != nil {
+	id := d.Id()
+
+	log.Printf("[DEBUG] Terraform: Reading Kubernetes cloud provider %s", id)
+	if err := c.ConfigAsCode().GetCloudProviderById(id, cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
+		log.Printf("[DEBUG] Terraform: Could not find cloud provider %s. Marking as new resource", id)
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -282,12 +287,15 @@ func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.Resou
 	var err error
 
 	if d.IsNewResource() {
+		log.Printf("[DEBUG] Terraform: Creating Kubernetes cloud provider %s", d.Get("name"))
 		input = cac.NewEntity(cac.ObjectTypes.KubernetesCloudProvider).(*cac.KubernetesCloudProvider)
 	} else {
+		log.Printf("[DEBUG] Terraform: Updating Kubernetes cloud provider %s", d.Get("name"))
 		input = &cac.KubernetesCloudProvider{}
 		if err = c.ConfigAsCode().GetCloudProviderById(d.Id(), input); err != nil {
 			return diag.FromErr(err)
 		} else if input.IsEmpty() {
+			log.Printf("[DEBUG] Terraform: Could not find cloud provider. Marking as new resource.")
 			d.SetId("")
 			d.MarkNewResource()
 			return nil

@@ -11,7 +11,7 @@ import (
 
 func resourcePCFService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating a Tanzu (PCF) service",
+		Description:   configAsCodeDescription("Resource for creating a Tanzu (PCF) service."),
 		CreateContext: resourceTanzuServiceCreateOrUpdate,
 		ReadContext:   resourceTanzuServiceRead,
 		UpdateContext: resourceTanzuServiceCreateOrUpdate,

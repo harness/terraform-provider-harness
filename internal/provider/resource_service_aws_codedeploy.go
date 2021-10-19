@@ -11,7 +11,7 @@ import (
 
 func resourceAWSCodeDeployService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating an AWS CodeDeploy service",
+		Description:   configAsCodeDescription("Resource for creating an AWS CodeDeploy service."),
 		CreateContext: resourceAWSCodeDeployServiceCreateOrUpdate,
 		ReadContext:   resourceAWSCodeDeployServiceRead,
 		UpdateContext: resourceAWSCodeDeployServiceCreateOrUpdate,

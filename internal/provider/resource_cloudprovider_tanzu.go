@@ -50,7 +50,7 @@ func resourceCloudProviderTanzu() *schema.Resource {
 	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating a Tanzu cloud provider",
+		Description:   configAsCodeDescription("Resource for creating a Tanzu cloud provider."),
 		CreateContext: resourceCloudProviderTanzuCreateOrUpdate,
 		ReadContext:   resourceCloudProviderTanzuRead,
 		UpdateContext: resourceCloudProviderTanzuCreateOrUpdate,

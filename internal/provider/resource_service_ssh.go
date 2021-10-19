@@ -22,7 +22,7 @@ func resourceSSHService() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Description:   "Resource for creating an SSH service",
+		Description:   configAsCodeDescription("Resource for creating an SSH service."),
 		CreateContext: resourceSSHServiceCreateOrUpdate,
 		ReadContext:   resourceSSHServiceRead,
 		UpdateContext: resourceSSHServiceCreateOrUpdate,

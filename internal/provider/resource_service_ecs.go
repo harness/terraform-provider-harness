@@ -11,7 +11,7 @@ import (
 
 func resourceECSService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating an AWS ECS service",
+		Description:   configAsCodeDescription("Resource for creating an AWS ECS service."),
 		CreateContext: resourceECSServiceCreateOrUpdate,
 		ReadContext:   resourceECSServiceRead,
 		UpdateContext: resourceECSServiceCreateOrUpdate,

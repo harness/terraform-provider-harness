@@ -47,6 +47,42 @@ func TestAccResourceInfrastructureDefinition_K8sDirect(t *testing.T) {
 	})
 }
 
+func TestAccResourceInfrastructureDefinition_RenameCloudProvider(t *testing.T) {
+
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+	resourceName := "harness_infrastructure_definition.test"
+	resourceCPName := "harness_cloudprovider_kubernetes.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		CheckDestroy:      testAccInfraDefDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccInfraDefK8s_Rename_CloudProvider(expectedName, expectedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
+					testAccInfraDefCreation(t, resourceName, expectedName),
+				),
+			},
+			{
+				Config: testAccInfraDefK8s_Rename_CloudProvider(expectedName, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
+					resource.TestCheckResourceAttr(resourceCPName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: infraDefImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceInfrastructureDefinition_AwsSSH(t *testing.T) {
 
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
@@ -319,6 +355,42 @@ func testAccInfraDefDestroy(resourceName string) resource.TestCheckFunc {
 
 		return nil
 	}
+}
+
+func testAccInfraDefK8s_Rename_CloudProvider(name string, cloudproviderName string) string {
+	return fmt.Sprintf(`
+		resource "harness_cloudprovider_kubernetes" "test" {
+			name = "%[2]s"
+
+			authentication {
+				delegate_selectors = ["test-account", "k8s"]
+			}
+		}
+
+		resource "harness_application" "test" {
+			name = "%[1]s"
+		}
+
+		resource "harness_environment" "test" {
+			name = "%[1]s"
+			app_id = harness_application.test.id
+			type = "NON_PROD"
+		}
+
+		resource "harness_infrastructure_definition" "test" {
+			name = "%[1]s"
+			app_id = harness_application.test.id
+			env_id = harness_environment.test.id
+			cloud_provider_type = "KUBERNETES_CLUSTER"
+			deployment_type = "KUBERNETES"
+
+			kubernetes {
+				cloud_provider_name = harness_cloudprovider_kubernetes.test.name
+				namespace = "testing"
+				release_name = "release-$${infra.kubernetes.infraId}"
+			}
+		}
+`, name, cloudproviderName)
 }
 
 func testAccInfraDefK8s(name string) string {

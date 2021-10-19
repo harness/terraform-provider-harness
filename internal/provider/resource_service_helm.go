@@ -11,7 +11,7 @@ import (
 
 func resourceHelmService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating a Kubernetes Helm service",
+		Description:   configAsCodeDescription("Resource for creating a Kubernetes Helm service."),
 		CreateContext: resourceHelmServiceCreateOrUpdate,
 		ReadContext:   resourceHelmServiceRead,
 		UpdateContext: resourceHelmServiceCreateOrUpdate,

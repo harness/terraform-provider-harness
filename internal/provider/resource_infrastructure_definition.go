@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
@@ -15,7 +16,7 @@ func resourceInfraDefinition() *schema.Resource {
 	infraDefSchema := infraDefSchema()
 
 	return &schema.Resource{
-		Description:   "Resource for creating am infrastructure definition",
+		Description:   configAsCodeDescription("Resource for creating am infrastructure definition."),
 		CreateContext: resourceInfraDefinitionCreateOrUpdate,
 		ReadContext:   resourceInfraDefinitionRead,
 		UpdateContext: resourceInfraDefinitionCreateOrUpdate,
@@ -43,6 +44,7 @@ func resourceInfraDefinitionRead(ctx context.Context, d *schema.ResourceData, me
 	appId := d.Get("app_id").(string)
 	envId := d.Get("env_id").(string)
 
+	log.Printf("[DEBUG] Terraform: Read infrastructure definition %s", id)
 	infraDef, err := c.ConfigAsCode().GetInfraDefinitionById(appId, envId, id)
 	if err != nil {
 		return diag.FromErr(err)
@@ -64,6 +66,7 @@ func resourceInfraDefinitionDelete(ctx context.Context, d *schema.ResourceData, 
 	appId := d.Get("app_id").(string)
 	envId := d.Get("env_id").(string)
 
+	log.Printf("[DEBUG] Terraform: Delete infrastructure definition %s", id)
 	err := c.ConfigAsCode().DeleteInfraDefinition(appId, envId, id)
 	if err != nil {
 		return diag.FromErr(err)
@@ -79,11 +82,13 @@ func resourceInfraDefinitionCreateOrUpdate(ctx context.Context, d *schema.Resour
 	var err error
 
 	if d.IsNewResource() {
+		log.Printf("[DEBUG] Terraform: Create infrastructure definition %s", d.Get("name"))
 		input = cac.NewEntity(cac.ObjectTypes.InfrastructureDefinition).(*cac.InfrastructureDefinition)
 	} else {
 		id := d.Get("id").(string)
 		appId := d.Get("app_id").(string)
 		envId := d.Get("env_id").(string)
+		log.Printf("[DEBUG] Terraform: Updating infrastructure definition %s", d.Get("name"))
 		input, err = c.ConfigAsCode().GetInfraDefinitionById(appId, envId, id)
 		if err != nil {
 			return diag.FromErr(err)

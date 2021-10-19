@@ -14,7 +14,7 @@ func resourceCloudProviderDataCenter() *schema.Resource {
 	providerSchema := commonCloudProviderSchema()
 
 	return &schema.Resource{
-		Description:   "Resource for creating a physical data center cloud provider",
+		Description:   configAsCodeDescription("Resource for creating a physical data center cloud provider."),
 		CreateContext: resourceCloudProviderDataCenterCreateOrUpdate,
 		ReadContext:   resourceCloudProviderDataCenterRead,
 		UpdateContext: resourceCloudProviderDataCenterCreateOrUpdate,
