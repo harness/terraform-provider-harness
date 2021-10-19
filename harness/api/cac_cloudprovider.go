@@ -9,6 +9,7 @@ import (
 )
 
 func (c *ConfigAsCodeClient) UpsertSpotInstCloudProvider(input *cac.SpotInstCloudProvider) (*cac.SpotInstCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert Spot cloud provider %s", input.Name)
 	out := &cac.SpotInstCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -19,6 +20,7 @@ func (c *ConfigAsCodeClient) UpsertSpotInstCloudProvider(input *cac.SpotInstClou
 }
 
 func (c *ConfigAsCodeClient) UpsertPcfCloudProvider(input *cac.PcfCloudProvider) (*cac.PcfCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert PCF cloud provider %s", input.Name)
 	out := &cac.PcfCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -29,6 +31,7 @@ func (c *ConfigAsCodeClient) UpsertPcfCloudProvider(input *cac.PcfCloudProvider)
 }
 
 func (c *ConfigAsCodeClient) UpsertKubernetesCloudProvider(input *cac.KubernetesCloudProvider) (*cac.KubernetesCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert Kubernetes cloud provider %s", input.Name)
 	out := &cac.KubernetesCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -39,6 +42,7 @@ func (c *ConfigAsCodeClient) UpsertKubernetesCloudProvider(input *cac.Kubernetes
 }
 
 func (c *ConfigAsCodeClient) UpsertAzureCloudProvider(input *cac.AzureCloudProvider) (*cac.AzureCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert Azure cloud provider %s", input.Name)
 	out := &cac.AzureCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -49,6 +53,7 @@ func (c *ConfigAsCodeClient) UpsertAzureCloudProvider(input *cac.AzureCloudProvi
 }
 
 func (c *ConfigAsCodeClient) UpsertGcpCloudProvider(input *cac.GcpCloudProvider) (*cac.GcpCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert GCP cloud provider %s", input.Name)
 	out := &cac.GcpCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -59,6 +64,7 @@ func (c *ConfigAsCodeClient) UpsertGcpCloudProvider(input *cac.GcpCloudProvider)
 }
 
 func (c *ConfigAsCodeClient) UpsertPhysicalDataCenterCloudProvider(input *cac.PhysicalDatacenterCloudProvider) (*cac.PhysicalDatacenterCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert Datacenter cloud provider %s", input.Name)
 	out := &cac.PhysicalDatacenterCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -69,6 +75,7 @@ func (c *ConfigAsCodeClient) UpsertPhysicalDataCenterCloudProvider(input *cac.Ph
 }
 
 func (c *ConfigAsCodeClient) UpsertAwsCloudProvider(input *cac.AwsCloudProvider) (*cac.AwsCloudProvider, error) {
+	log.Printf("[DEBUG] CAC: Upsert AWS cloud provider %s", input.Name)
 	out := &cac.AwsCloudProvider{}
 	err := c.UpsertCloudProvider(input, out)
 	if err != nil {
@@ -98,6 +105,7 @@ func (c *ConfigAsCodeClient) UpsertCloudProvider(input interface{}, output inter
 }
 
 func (c *ConfigAsCodeClient) GetCloudProviderById(providerId string, out interface{}) error {
+	log.Printf("[DEBUG] CAC: Get cloud provider by id %s", providerId)
 	rootItem, err := c.GetDirectoryTree("")
 	if err != nil {
 		return err
@@ -113,6 +121,7 @@ func (c *ConfigAsCodeClient) GetCloudProviderById(providerId string, out interfa
 }
 
 func (c *ConfigAsCodeClient) GetCloudProviderByName(name string, obj interface{}) error {
+	log.Printf("[DEBUG] CAC: Get cloud provider by name %s", name)
 	filePath := cac.GetCloudProviderYamlPath(name)
 	return c.FindObjectByPath("", filePath, obj)
 }

@@ -30,7 +30,7 @@ func (client *Client) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.Req
 		return nil, err
 	}
 
-	log.Printf("[DEBUG] GraphQL Query: %s", requestBody.String())
+	log.Printf("[DEBUG] GraphQL: Query %s", requestBody.String())
 
 	req, err := client.NewAuthorizedPostRequest(DefaultGraphQLApiUrl, &requestBody)
 
@@ -78,7 +78,7 @@ func (client *Client) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj inter
 		return fmt.Errorf("error reading body: %s", err)
 	}
 
-	log.Printf("[DEBUG] GraphQL response: %s", buf.String())
+	log.Printf("[TRACE] GraphQL response: %s", buf.String())
 
 	gqlResponse := &GraphQLStandardResponse{}
 

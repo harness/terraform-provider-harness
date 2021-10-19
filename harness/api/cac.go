@@ -54,6 +54,8 @@ func FindConfigAsCodeItemByUUID(rootItem *cac.ConfigAsCodeItem, uuid string) *ca
 
 func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid string, applicationId string) (*cac.ConfigAsCodeItem, error) {
 	path := fmt.Sprintf("/gateway/api/setup-as-code/yaml/%s/%s", restName, uuid)
+	log.Printf("[DEBUG] CAC: Getting directory item content at %s", path)
+
 	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
 
 	if err != nil {
@@ -79,6 +81,8 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 
 func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.ConfigAsCodeItem, error) {
 	path := "/gateway/api/setup-as-code/yaml/directory"
+	log.Printf("[DEBUG] CAC: Getting directory tree for app '%s'", applicationId)
+
 	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
 
 	if err != nil {
@@ -104,7 +108,6 @@ func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.Config
 }
 
 func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity interface{}) (*cac.ConfigAsCodeItem, error) {
-
 	payload, err := yaml.Marshal(&entity)
 	if err != nil {
 		return nil, err
@@ -114,6 +117,7 @@ func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity inte
 }
 
 func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (*cac.ConfigAsCodeItem, error) {
+	log.Printf("[DEBUG] CAC: Upserting yaml at %s", filePath)
 
 	// Setup form fields
 	var b bytes.Buffer
@@ -130,7 +134,7 @@ func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (
 
 	w.Close()
 
-	log.Printf("[DEBUG] HTTP Request Body: %s", string(yaml))
+	log.Printf("[TRACE] CAC: HTTP Request Body %s", string(yaml))
 
 	req, err := c.ApiClient.NewAuthorizedPostRequest("/gateway/api/setup-as-code/yaml/upsert-entity", &b)
 
@@ -157,7 +161,7 @@ func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (
 
 func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*cac.ConfigAsCodeItem, error) {
 
-	log.Printf("[DEBUG] Request url: %s", request.URL)
+	log.Printf("[TRACE] CAC: Request url %s", request.URL)
 
 	res, err := c.ApiClient.HTTPClient.Do(request)
 	if err != nil {
@@ -178,7 +182,7 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*ca
 
 	// Check for request throttling
 	responseString := buf.String()
-	log.Printf("[DEBUG] HTTP response: %d - %s", res.StatusCode, responseString)
+	log.Printf("[TRACE] CAC: HTTP response %d - %s", res.StatusCode, responseString)
 
 	responseObj := &cac.Response{}
 
@@ -219,6 +223,7 @@ type ConfigAsCodeClient struct {
 }
 
 func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
+	log.Printf("[DEBUG] CAC: Deleting entity at %s", filePath)
 	req, err := c.ApiClient.NewAuthorizedDeleteRequest("/gateway/api/setup-as-code/yaml/delete-entities")
 
 	if err != nil {
@@ -232,7 +237,6 @@ func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
 	req.URL.RawQuery = q.Encode()
 
 	log.Printf("[DEBUG] Url: %s", req.URL)
-	log.Printf("[DEBUG] Headers: %s", req.Header)
 
 	resp, err := c.ExecuteRequest(req)
 	if err != nil {
@@ -266,8 +270,8 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 		return err
 	}
 
-	log.Printf("[DEBUG] UUID: %s", resp.UUID)
-	log.Printf("[DEBUG] EntityId: %s", resp.EntityId)
+	log.Printf("[TRACE] UUID: %s", resp.UUID)
+	log.Printf("[TRACE] EntityId: %s", resp.EntityId)
 
 	appId, ok := utils.TryGetFieldValue(input, "ApplicationId")
 	if !ok {
@@ -286,6 +290,7 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 // Typically this is needed just after an Upsert command. The Upsert API unfortunately does not
 // return the Id of the newly created object.
 func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac.YamlPath, obj interface{}) error {
+	log.Printf("[DEBUG] CAC: Finding object by path %s", filePath)
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return err
@@ -301,6 +306,7 @@ func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac
 }
 
 func (c *ConfigAsCodeClient) FindYamlByPath(applicationId string, filePath cac.YamlPath) (*cac.YamlEntity, error) {
+	log.Printf("[DEBUG] CAC: Find yaml by path %s", filePath)
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return nil, err
@@ -316,6 +322,7 @@ func (c *ConfigAsCodeClient) FindYamlByPath(applicationId string, filePath cac.Y
 }
 
 func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId string, out interface{}) error {
+	log.Printf("[DEBUG] CAC: Find object by id %s", objectId)
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return err
@@ -331,6 +338,7 @@ func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId strin
 }
 
 func (c *ConfigAsCodeClient) FindRootAccountObjectByName(name string) (*cac.ConfigAsCodeItem, error) {
+	log.Printf("[DEBUG] CAC: Finding account by name %s", name)
 	root, err := c.GetDirectoryTree("")
 	if err != nil || root == nil {
 		return root, err
@@ -355,6 +363,7 @@ func (c *ConfigAsCodeClient) GetTemplateLibraryRootPathName() (cac.YamlPath, err
 }
 
 func (c *ConfigAsCodeClient) GetYamlDetails(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string) (*cac.YamlEntity, error) {
+	log.Printf("[DEBUG] CAC: Get yaml details %s", filePath)
 	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
 	if err != nil {
 		return nil, err
@@ -372,6 +381,7 @@ func (c *ConfigAsCodeClient) GetYamlDetails(item *cac.ConfigAsCodeItem, filePath
 }
 
 func (c *ConfigAsCodeClient) ParseObject(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string, obj interface{}) error {
+	log.Printf("[DEBUG] CAC: Prase yaml entity %s", filePath)
 	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
 	if err != nil {
 		return err

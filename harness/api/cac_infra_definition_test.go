@@ -100,6 +100,10 @@ func TestCreateInfraDefinition_KubernetesDirect_Helm(t *testing.T) {
 	err = c.ConfigAsCode().DeleteInfraDefinition(infraDef.ApplicationId, infraDef.EnvironmentId, infraDef.Id)
 	require.NoError(t, err)
 
+	id, err := c.ConfigAsCode().GetInfraDefinitionById(infraDef.ApplicationId, infraDef.EnvironmentId, infraDef.Id)
+	require.NoError(t, err)
+	require.Nil(t, id)
+
 	err = c.Applications().DeleteApplication(app.Id)
 	require.NoError(t, err)
 

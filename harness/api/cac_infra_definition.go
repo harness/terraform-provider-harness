@@ -2,13 +2,14 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 
 	"github.com/harness-io/harness-go-sdk/harness/api/cac"
 )
 
 func (c *ConfigAsCodeClient) UpsertInfraDefinition(input *cac.InfrastructureDefinition) (*cac.InfrastructureDefinition, error) {
-
+	log.Printf("[DEBUG] CAC: Upsert infra definition %s", input.Name)
 	if ok, err := input.Validate(); !ok {
 		return nil, err
 	}
@@ -44,6 +45,7 @@ func (c *ConfigAsCodeClient) UpsertInfraDefinition(input *cac.InfrastructureDefi
 }
 
 func (c *ConfigAsCodeClient) GetInfraDefinitionById(appId string, envId string, infraId string) (*cac.InfrastructureDefinition, error) {
+	log.Printf("[DEBUG] CAC: Get infra definition by id %s", infraId)
 	app, err := c.ApiClient.Applications().GetApplicationById(appId)
 	if err != nil {
 		return nil, err
@@ -78,6 +80,7 @@ func (c *ConfigAsCodeClient) GetInfraDefinitionById(appId string, envId string, 
 }
 
 func (c *ConfigAsCodeClient) GetInfraDefinitionByName(appId string, envId string, infraName string) (*cac.InfrastructureDefinition, error) {
+	log.Printf("[DEBUG] CAC: Get infra definition by name %s", infraName)
 	app, err := c.ApiClient.Applications().GetApplicationById(appId)
 	if err != nil {
 		return nil, err
@@ -108,6 +111,7 @@ func (c *ConfigAsCodeClient) GetInfraDefinitionByName(appId string, envId string
 }
 
 func (c *ConfigAsCodeClient) DeleteInfraDefinition(applicationId string, environmentId string, infraId string) error {
+	log.Printf("[DEBUG] CAC: Delete infra definition %s", infraId)
 	app, err := c.ApiClient.Applications().GetApplicationById(applicationId)
 	if err != nil {
 		return err
