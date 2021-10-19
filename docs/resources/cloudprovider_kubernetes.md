@@ -3,12 +3,12 @@
 page_title: "harness_cloudprovider_kubernetes Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a Kubernetes cloud provider
+  Resource for creating a Kubernetes cloud provider. This object uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
 ---
 
 # harness_cloudprovider_kubernetes (Resource)
 
-Resource for creating a Kubernetes cloud provider
+Resource for creating a Kubernetes cloud provider. This object uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
 
 ## Example Usage
 
@@ -39,6 +39,10 @@ resource "harness_cloudprovider_kubernetes" "example" {
       username_secret_name = harness_encrypted_text.username.name
       password_secret_name = harness_encrypted_text.password.name
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 ```

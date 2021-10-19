@@ -46,7 +46,7 @@ func resourceCloudProviderAzure() *schema.Resource {
 	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating an Azure cloud provider",
+		Description:   configAsCodeDescription("Resource for creating an Azure cloud provider."),
 		CreateContext: resourceCloudProviderAzureCreateOrUpdate,
 		ReadContext:   resourceCloudProviderAzureRead,
 		UpdateContext: resourceCloudProviderAzureCreateOrUpdate,

@@ -11,7 +11,7 @@ import (
 
 func resourceAWSLambdaService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating an AWS Lambda service",
+		Description:   configAsCodeDescription("Resource for creating an AWS Lambda service."),
 		CreateContext: resourceAWSLambdaServiceCreateOrUpdate,
 		ReadContext:   resourceAWSLambdaServiceRead,
 		UpdateContext: resourceAWSLambdaServiceCreateOrUpdate,

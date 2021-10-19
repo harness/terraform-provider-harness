@@ -80,7 +80,7 @@ func resourceCloudProviderAws() *schema.Resource {
 	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating an AWS cloud provider",
+		Description:   configAsCodeDescription("Resource for creating an AWS cloud provider."),
 		CreateContext: resourceCloudProviderAwsCreateOrUpdate,
 		ReadContext:   resourceCloudProviderAwsRead,
 		UpdateContext: resourceCloudProviderAwsCreateOrUpdate,

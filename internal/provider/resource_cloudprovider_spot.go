@@ -32,7 +32,7 @@ func resourceCloudProviderSpot() *schema.Resource {
 	helpers.MergeSchemas(commonSchema, providerSchema)
 
 	return &schema.Resource{
-		Description:   "Resource for creating a Spot cloud provider",
+		Description:   configAsCodeDescription("Resource for creating a Spot cloud provider."),
 		CreateContext: resourceCloudProviderSpotCreateOrUpdate,
 		ReadContext:   resourceCloudProviderSpotRead,
 		UpdateContext: resourceCloudProviderSpotCreateOrUpdate,

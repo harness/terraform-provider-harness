@@ -22,7 +22,7 @@ func resourceWinRMService() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Description:   "Resource for creating an WinRM service",
+		Description:   configAsCodeDescription("Resource for creating an WinRM service."),
 		CreateContext: resourceWinRMServiceCreateOrUpdate,
 		ReadContext:   resourceWinRMServiceRead,
 		UpdateContext: resourceWinRMServiceCreateOrUpdate,

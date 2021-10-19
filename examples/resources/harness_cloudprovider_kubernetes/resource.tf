@@ -25,4 +25,8 @@ resource "harness_cloudprovider_kubernetes" "example" {
       password_secret_name = harness_encrypted_text.password.name
     }
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

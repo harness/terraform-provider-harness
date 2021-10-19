@@ -11,7 +11,7 @@ import (
 
 func resourceAMIService() *schema.Resource {
 	return &schema.Resource{
-		Description:   "Resource for creating an AMI service",
+		Description:   configAsCodeDescription("Resource for creating an AMI service."),
 		CreateContext: resourceAMIServiceCreateOrUpdate,
 		ReadContext:   resourceAMIServiceRead,
 		UpdateContext: resourceAMIServiceCreateOrUpdate,

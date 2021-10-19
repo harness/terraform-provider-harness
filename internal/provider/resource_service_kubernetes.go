@@ -22,7 +22,7 @@ func resourceKubernetesService() *schema.Resource {
 	}
 
 	return &schema.Resource{
-		Description:   "Resource for creating a Kubernetes service",
+		Description:   configAsCodeDescription("Resource for creating a Kubernetes service."),
 		CreateContext: resourceKubernetesServiceCreateOrUpdate,
 		ReadContext:   resourceKubernetesServiceKubernetesRead,
 		UpdateContext: resourceKubernetesServiceCreateOrUpdate,
