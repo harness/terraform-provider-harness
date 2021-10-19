@@ -30,6 +30,10 @@ func FindConfigAsCodeItemByPath(rootItem *cac.ConfigAsCodeItem, path cac.YamlPat
 	}
 
 	for _, item := range rootItem.Children {
+		if item == nil {
+			continue
+		}
+
 		if matchingItem := FindConfigAsCodeItemByPath(item, path); matchingItem != nil {
 			return matchingItem
 		}
@@ -44,6 +48,11 @@ func FindConfigAsCodeItemByUUID(rootItem *cac.ConfigAsCodeItem, uuid string) *ca
 	}
 
 	for _, item := range rootItem.Children {
+		// There's a strange edgecase where child items are nil
+		if item == nil {
+			continue
+		}
+
 		if matchingItem := FindConfigAsCodeItemByUUID(item, uuid); matchingItem != nil {
 			return matchingItem
 		}
