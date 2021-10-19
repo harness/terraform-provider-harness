@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.12...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.13...HEAD)
 
 **Merged pull requests:**
 
+- Cleanup logging [\#49](https://github.com/harness-io/harness-go-sdk/pull/49) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.13](https://github.com/harness-io/harness-go-sdk/tree/v0.0.13) (2021-10-08)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.12...v0.0.13)
+
+**Merged pull requests:**
+
+- Release version 0.0.13 10-08-2021 [\#48](https://github.com/harness-io/harness-go-sdk/pull/48) ([micahlmartin](https://github.com/micahlmartin))
 - Added environment description [\#47](https://github.com/harness-io/harness-go-sdk/pull/47) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.12](https://github.com/harness-io/harness-go-sdk/tree/v0.0.12) (2021-10-08)
@@ -28,14 +37,11 @@
 
 - Release version 0.0.11 09-28-2021 [\#44](https://github.com/harness-io/harness-go-sdk/pull/44) ([micahlmartin](https://github.com/micahlmartin))
 - Added support for TEMPLATE in user group permissions [\#43](https://github.com/harness-io/harness-go-sdk/pull/43) ([micahlmartin](https://github.com/micahlmartin))
+- Release version 0.0.10 09-28-2021 [\#42](https://github.com/harness-io/harness-go-sdk/pull/42) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.10](https://github.com/harness-io/harness-go-sdk/tree/v0.0.10) (2021-09-28)
 
 [Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.9...v0.0.10)
-
-**Merged pull requests:**
-
-- Release version 0.0.10 09-28-2021 [\#42](https://github.com/harness-io/harness-go-sdk/pull/42) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.9](https://github.com/harness-io/harness-go-sdk/tree/v0.0.9) (2021-09-22)
 
