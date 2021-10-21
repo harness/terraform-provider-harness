@@ -9,38 +9,50 @@ import (
 	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness"
+	"github.com/harness-io/harness-go-sdk/harness/api/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/go-retryablehttp"
 )
 
 type Client struct {
-	HTTPClient *retryablehttp.Client
-	Endpoint   string
-	UserAgent  string
-	APIKey     string
-	// ApiToken    string
 	AccountId   string
+	APIKey      string
 	BearerToken string
+	Endpoint    string
+	HTTPClient  *retryablehttp.Client
+	UserAgent   string
+	NGClient    *nextgen.APIClient
 }
 
 func NewClient() *Client {
+	httpClient := &retryablehttp.Client{
+		RetryMax:     10,
+		RetryWaitMin: 5 * time.Second,
+		RetryWaitMax: 10 * time.Second,
+		HTTPClient: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+		Logger:     log.New(os.Stderr, "", log.LstdFlags),
+		Backoff:    retryablehttp.DefaultBackoff,
+		CheckRetry: retryablehttp.DefaultRetryPolicy,
+	}
+	userAgent := getUserAgentString()
+
 	return &Client{
-		UserAgent:   getUserAgentString(),
-		Endpoint:    helpers.EnvVars.HarnessEndpoint.GetDefault(DefaultApiUrl),
 		AccountId:   helpers.EnvVars.HarnessAccountId.Get(),
 		APIKey:      helpers.EnvVars.HarnessApiKey.Get(),
 		BearerToken: helpers.EnvVars.HarnessBearerToken.Get(),
-		HTTPClient: &retryablehttp.Client{
-			RetryMax:     10,
-			RetryWaitMin: 5 * time.Second,
-			RetryWaitMax: 10 * time.Second,
-			HTTPClient: &http.Client{
-				Timeout: 10 * time.Second,
+		Endpoint:    helpers.EnvVars.HarnessEndpoint.GetWithDefault(DefaultApiUrl),
+		UserAgent:   userAgent,
+		HTTPClient:  httpClient,
+		NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
+			BasePath: helpers.EnvVars.HarnessNGEndpoint.GetWithDefault(DefaultNGApiUrl),
+			DefaultHeader: map[string]string{
+				helpers.EnvVars.HarnessNGApiKey.String(): helpers.EnvVars.HarnessNGApiKey.Get(),
 			},
-			Logger:     log.New(os.Stderr, "", log.LstdFlags),
-			Backoff:    retryablehttp.DefaultBackoff,
-			CheckRetry: retryablehttp.DefaultRetryPolicy,
-		},
+			UserAgent:  userAgent,
+			HTTPClient: httpClient,
+		}),
 	}
 }
 
