@@ -3,12 +3,12 @@
 page_title: "harness_cloudprovider_datacenter Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a physical data center cloud provider. This object uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
+  Resource for creating a physical data center cloud provider. This resource uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
 ---
 
 # harness_cloudprovider_datacenter (Resource)
 
-Resource for creating a physical data center cloud provider. This object uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
+Resource for creating a physical data center cloud provider. This resource uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
 
 ## Example Usage
 

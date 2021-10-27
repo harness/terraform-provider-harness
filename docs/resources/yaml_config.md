@@ -3,12 +3,12 @@
 page_title: "harness_yaml_config Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects. This object uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
+  Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects. This resource uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
 ---
 
 # harness_yaml_config (Resource)
 
-Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects. This object uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
+Resource for creating a raw YAML configuration in Harness. Note: This works for all objects EXCEPT application objects. This resource uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
 
 ## Example Usage
 

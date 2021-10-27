@@ -7,7 +7,13 @@ import (
 	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
+	"github.com/harness-io/harness-go-sdk/harness/api/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd"
+	"github.com/harness-io/terraform-provider-harness/internal/service/ng"
+
+	// "github.com/harness-io/terraform-provider-harness/internal/service/cd"
+	// "github.com/harness-io/terraform-provider-harness/internal/service/ng"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,53 +52,72 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessAccountId.String(), nil),
 				},
 				"api_key": {
-					Description: fmt.Sprintf("The Harness api key. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessApiKey.String()),
+					Description: fmt.Sprintf("The Harness API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessApiKey.String()),
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessApiKey.String(), nil),
+				},
+				"ng_endpoint": {
+					Description: fmt.Sprintf("The URL of the Harness nextgen API. The default is `%s`. This can also be set using the `%s` environment variable.", api.DefaultNGApiUrl, helpers.EnvVars.HarnessNGEndpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessApiKey.String(), nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessNGEndpoint.String(), api.DefaultNGApiUrl),
+				},
+				"ng_api_key": {
+					Description: fmt.Sprintf("The Harness nextgen API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessNGApiKey.String()),
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessNGApiKey.String(), nil),
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"harness_application":    dataSourceApplication(),
-				"harness_delegate":       dataSourceDelegate(),
-				"harness_secret_manager": dataSourceSecretManager(),
-				"harness_encrypted_text": dataSourceEncryptedText(),
-				"harness_git_connector":  dataSourceGitConnector(),
-				"harness_service":        dataSourceService(),
-				"harness_environment":    dataSourceEnvironment(),
-				"harness_sso_provider":   dataSourceSSOProvider(),
-				"harness_user":           dataSourceUser(),
-				"harness_user_group":     dataSourceUserGroup(),
-				"harness_yaml_config":    dataSourceYamlConfig(),
+				"harness_application":    cd.DataSourceApplication(),
+				"harness_delegate":       cd.DataSourceDelegate(),
+				"harness_secret_manager": cd.DataSourceSecretManager(),
+				"harness_encrypted_text": cd.DataSourceEncryptedText(),
+				"harness_git_connector":  cd.DataSourceGitConnector(),
+				"harness_service":        cd.DataSourceService(),
+				"harness_environment":    cd.DataSourceEnvironment(),
+				"harness_sso_provider":   cd.DataSourceSSOProvider(),
+				"harness_user":           cd.DataSourceUser(),
+				"harness_user_group":     cd.DataSourceUserGroup(),
+				"harness_yaml_config":    cd.DataSourceYamlConfig(),
+				"harness_project":        ng.DataSourceProject(),
+				"harness_organization":   ng.DataSourceOrganization(),
+				"harness_connector":      ng.DataSourceConnector(),
+				"harness_current_user":   ng.DataSourceCurrentUser(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"harness_application":               resourceApplication(),
-				"harness_encrypted_text":            resourceEncryptedText(),
-				"harness_git_connector":             resourceGitConnector(),
-				"harness_ssh_credential":            resourceSSHCredential(),
-				"harness_service_kubernetes":        resourceKubernetesService(),
-				"harness_service_ami":               resourceAMIService(),
-				"harness_service_ecs":               resourceECSService(),
-				"harness_service_aws_codedeploy":    resourceAWSCodeDeployService(),
-				"harness_service_aws_lambda":        resourceAWSLambdaService(),
-				"harness_service_tanzu":             resourcePCFService(),
-				"harness_service_helm":              resourceHelmService(),
-				"harness_service_ssh":               resourceSSHService(),
-				"harness_service_winrm":             resourceWinRMService(),
-				"harness_environment":               resourceEnvironment(),
-				"harness_cloudprovider_datacenter":  resourceCloudProviderDataCenter(),
-				"harness_cloudprovider_aws":         resourceCloudProviderAws(),
-				"harness_cloudprovider_azure":       resourceCloudProviderAzure(),
-				"harness_cloudprovider_tanzu":       resourceCloudProviderTanzu(),
-				"harness_cloudprovider_gcp":         resourceCloudProviderGcp(),
-				"harness_cloudprovider_kubernetes":  resourceCloudProviderK8s(),
-				"harness_cloudprovider_spot":        resourceCloudProviderSpot(),
-				"harness_user":                      resourceUser(),
-				"harness_user_group":                resourceUserGroup(),
-				"harness_add_user_to_group":         resourceAddUserToGroup(),
-				"harness_infrastructure_definition": resourceInfraDefinition(),
-				"harness_yaml_config":               resourceYamlConfig(),
-				"harness_application_gitsync":       resourceApplicationGitSync(),
+				"harness_application":               cd.ResourceApplication(),
+				"harness_encrypted_text":            cd.ResourceEncryptedText(),
+				"harness_git_connector":             cd.ResourceGitConnector(),
+				"harness_ssh_credential":            cd.ResourceSSHCredential(),
+				"harness_service_kubernetes":        cd.ResourceKubernetesService(),
+				"harness_service_ami":               cd.ResourceAMIService(),
+				"harness_service_ecs":               cd.ResourceECSService(),
+				"harness_service_aws_codedeploy":    cd.ResourceAWSCodeDeployService(),
+				"harness_service_aws_lambda":        cd.ResourceAWSLambdaService(),
+				"harness_service_tanzu":             cd.ResourcePCFService(),
+				"harness_service_helm":              cd.ResourceHelmService(),
+				"harness_service_ssh":               cd.ResourceSSHService(),
+				"harness_service_winrm":             cd.ResourceWinRMService(),
+				"harness_environment":               cd.ResourceEnvironment(),
+				"harness_cloudprovider_datacenter":  cd.ResourceCloudProviderDataCenter(),
+				"harness_cloudprovider_aws":         cd.ResourceCloudProviderAws(),
+				"harness_cloudprovider_azure":       cd.ResourceCloudProviderAzure(),
+				"harness_cloudprovider_tanzu":       cd.ResourceCloudProviderTanzu(),
+				"harness_cloudprovider_gcp":         cd.ResourceCloudProviderGcp(),
+				"harness_cloudprovider_kubernetes":  cd.ResourceCloudProviderK8s(),
+				"harness_cloudprovider_spot":        cd.ResourceCloudProviderSpot(),
+				"harness_user":                      cd.ResourceUser(),
+				"harness_user_group":                cd.ResourceUserGroup(),
+				"harness_add_user_to_group":         cd.ResourceAddUserToGroup(),
+				"harness_infrastructure_definition": cd.ResourceInfraDefinition(),
+				"harness_yaml_config":               cd.ResourceYamlConfig(),
+				"harness_application_gitsync":       cd.ResourceApplicationGitSync(),
+				"harness_project":                   ng.ResourceProject(),
+				"harness_organization":              ng.ResourceOrganization(),
+				"harness_connector":                 ng.ResourceConnector(),
 			},
 		}
 
@@ -113,16 +138,32 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			HTTPClient: &http.Client{
 				Timeout: 30 * time.Second,
 			},
-			Backoff:    retryablehttp.DefaultBackoff,
-			CheckRetry: retryablehttp.DefaultRetryPolicy,
+			Backoff: retryablehttp.DefaultBackoff,
+			// CheckRetry: retryablehttp.DefaultRetryPolicy,
+			CheckRetry: func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+				if resp.StatusCode == http.StatusInternalServerError {
+					return false, err
+				}
+				return retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err)
+			},
 		}
 
+		userAgent := p.UserAgent("terraform-provider-harness", version)
+
 		return &api.Client{
-			UserAgent:  p.UserAgent("terraform-provider-harness", version),
+			UserAgent:  userAgent,
 			Endpoint:   d.Get("endpoint").(string),
 			AccountId:  d.Get("account_id").(string),
 			APIKey:     d.Get("api_key").(string),
 			HTTPClient: httpClient,
+			NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
+				BasePath: d.Get("ng_endpoint").(string),
+				DefaultHeader: map[string]string{
+					helpers.HTTPHeaders.ApiKey.String(): d.Get("ng_api_key").(string),
+				},
+				UserAgent:  userAgent,
+				HTTPClient: httpClient,
+			}),
 		}, nil
 	}
 }
