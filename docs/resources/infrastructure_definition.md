@@ -3,12 +3,12 @@
 page_title: "harness_infrastructure_definition Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating am infrastructure definition. This object uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
+  Resource for creating am infrastructure definition. This resource uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
 ---
 
 # harness_infrastructure_definition (Resource)
 
-Resource for creating am infrastructure definition. This object uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
+Resource for creating am infrastructure definition. This resource uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
 
 ## Example Usage
 

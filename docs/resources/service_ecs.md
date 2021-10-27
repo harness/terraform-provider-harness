@@ -3,12 +3,12 @@
 page_title: "harness_service_ecs Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating an AWS ECS service. This object uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
+  Resource for creating an AWS ECS service. This resource uses the config-as-code API's. When updating the name or path of this resource you should typically also set the create_before_destroy = true lifecycle setting.
 ---
 
 # harness_service_ecs (Resource)
 
-Resource for creating an AWS ECS service. This object uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
+Resource for creating an AWS ECS service. This resource uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting.
 
 ## Example Usage
 
