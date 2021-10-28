@@ -18,10 +18,10 @@ func dataSourceEnvironment() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Description: "The id of the environment.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				AtLeastOneOf: []string{"id", "name"},
+				Description:   "The id of the environment.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				AtLeastOneOf:  []string{"id", "name"},
 				ConflictsWith: []string{"name"},
 			},
 			"app_id": {
@@ -30,10 +30,10 @@ func dataSourceEnvironment() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "The name of the environment.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				AtLeastOneOf: []string{"id", "name"},
+				Description:   "The name of the environment.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				AtLeastOneOf:  []string{"id", "name"},
 				ConflictsWith: []string{"id"},
 			},
 			"description": {
@@ -98,6 +98,10 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 		if err != nil {
 			return diag.FromErr(err)
 		}
+	}
+
+	if env == nil {
+		return diag.Errorf("environment not found")
 	}
 
 	d.SetId(env.Id)

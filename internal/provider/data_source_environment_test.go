@@ -37,7 +37,7 @@ func TestAccDataSourceEnvironment_Name(t *testing.T) {
 	)
 
 	resource.UnitTest(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
@@ -85,7 +85,7 @@ func testAccDataSourceEnvironmentByName(name string, envType cac.EnvironmentType
 
 	data "harness_environment" "test" {
 		app_id = harness_application.test.id
-		name = "%[1]s"
+		name = harness_environment.test.name
 	}
 
 	`, name, envType)
