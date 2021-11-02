@@ -84,7 +84,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.gcp
                                           image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
-                                          command: gotestsum --junitfile junit.xml --format testname ./internal/provider -- -cover -parallel
+                                          command: gotestsum --junitfile junit.xml --format testname ./... -- -cover
                                           privileged: false
                                           reports:
                                               type: JUnit
