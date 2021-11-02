@@ -128,3 +128,6 @@ pipeline:
                   - name: TF_ACC
                     type: String
                     value: "1"
+                  - name: HARNESS_NG_API_KEY
+                    type: Secret
+                    value: harness_ng_api_key
