@@ -41,6 +41,10 @@ pipeline:
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
                                     command: go mod vendor
                                     privileged: false
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
                           - step:
                                 type: SaveCacheGCS
                                 spec:
@@ -61,6 +65,10 @@ pipeline:
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
                                     command: go build -v
                                     privileged: false
+                                    resources:
+                                        limits:
+                                            memory: 4Gi
+                                            cpu: "1"
                           - parallel:
                                 - step:
                                       type: Run
