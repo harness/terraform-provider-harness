@@ -78,10 +78,14 @@ pipeline:
                                 - step:
                                       type: Run
                                       spec:
-                                          privileged: false
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
                                           connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
                                           command: golangci-lint run -v
+                                          privileged: false
+                                          resources:
+                                              limits:
+                                                  memory: 2Gi
+                                                  cpu: "1"
                                       name: Lint
                                       identifier: lint
                                 - step:
