@@ -143,3 +143,24 @@ pipeline:
                   - name: HARNESS_NG_API_KEY
                     type: Secret
                     value: harness_ng_api_key
+                  - name: HARNESS_TEST_AWS_ACCESS_KEY_ID
+                    type: Secret
+                    value: org.aws_access_key_id
+                  - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
+                    type: Secret
+                    value: org.aws_secret_access_key
+                  - name: HARNESS_TEST_AZURE_CLIENT_ID
+                    type: Secret
+                    value: org.azure_client_id
+                  - name: HARNESS_TEST_AZURE_CLIENT_SECRET
+                    type: Secret
+                    value: org.azure_client_secret
+                  - name: HARNESS_TEST_AZURE_TENANT_ID
+                    type: Secret
+                    value: org.azure_tenant_id
+                  - name: HARNESS_TEST_SPOT_ACCT_ID
+                    type: Secret
+                    value: org.spotinst_account_id
+                  - name: HARNESS_TEST_SPOT_TOKEN
+                    type: Secret
+                    value: org.spotinst_token
