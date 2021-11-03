@@ -40,7 +40,7 @@ pipeline:
                                     shell: Bash
                                 when:
                                     stageStatus: Success
-                                    condition: <+Release.variables.SKIP_TAG_CREATION> == "true"
+                                    condition: <+Release.variables.CREATE_TAG> == "true"
                                 failureStrategies: []
                           - step:
                                 type: Run
@@ -113,7 +113,7 @@ pipeline:
                   - name: VERSION
                     type: String
                     value: <+input>
-                  - name: SKIP_TAG_CREATION
+                  - name: CREATE_TAG
                     type: String
-                    default: "false"
+                    default: "true"
                     value: <+input>.allowedValues(true,false)
