@@ -22,14 +22,123 @@ Resource for creating a connector. This resource is part of the Harness nextgen 
 
 ### Optional
 
+- **aws** (Block List, Max: 1) Aws account configuration. (see [below for nested schema](#nestedblock--aws))
 - **branch** (String) The branch to use for the connector.
 - **description** (String) The description of the connector.
+- **docker_registry** (Block List, Max: 1) The docker registry to use for the connector. (see [below for nested schema](#nestedblock--docker_registry))
+- **gcp** (Block List, Max: 1) Gcp connector configuration. (see [below for nested schema](#nestedblock--gcp))
 - **id** (String) The ID of this resource.
-- **k8s_cluster** (Block List, Max: 1) Kubernetes cluster connector config. (see [below for nested schema](#nestedblock--k8s_cluster))
+- **k8s_cluster** (Block List, Max: 1) The k8s cluster to use for the connector. (see [below for nested schema](#nestedblock--k8s_cluster))
 - **org_id** (String) The unique identifier for the organization.
 - **project_id** (String) The unique identifier for the project.
 - **repo_id** (String) The unique identifier for the repository.
 - **tags** (Set of String) Tags associated with the connector.
+
+<a id="nestedblock--aws"></a>
+### Nested Schema for `aws`
+
+Optional:
+
+- **cross_account_access** (Block List, Max: 1) Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature. (see [below for nested schema](#nestedblock--aws--cross_account_access))
+- **inherit_from_delegate** (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--aws--inherit_from_delegate))
+- **irsa** (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--aws--irsa))
+- **manual** (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--aws--manual))
+
+<a id="nestedblock--aws--cross_account_access"></a>
+### Nested Schema for `aws.cross_account_access`
+
+Required:
+
+- **role_arn** (String) The Amazon Resource Name (ARN) of the role that you want to assume. This is an IAM role in the target AWS account.
+
+Optional:
+
+- **external_id** (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
+
+
+<a id="nestedblock--aws--inherit_from_delegate"></a>
+### Nested Schema for `aws.inherit_from_delegate`
+
+Required:
+
+- **delegate_selectors** (Set of String) The delegates to inherit the credentials from.
+
+
+<a id="nestedblock--aws--irsa"></a>
+### Nested Schema for `aws.irsa`
+
+Required:
+
+- **delegate_selectors** (Set of String) The delegates to inherit the credentials from.
+
+
+<a id="nestedblock--aws--manual"></a>
+### Nested Schema for `aws.manual`
+
+Required:
+
+- **secret_key_ref** (String) Reference to the Harness secret containing the aws secret key.
+
+Optional:
+
+- **access_key** (String) AWS access key.
+- **access_key_ref** (String) Reference to the Harness secret containing the aws access key.
+- **delegate_selectors** (Set of String) Connect only use deleagates with these tags.
+
+
+
+<a id="nestedblock--docker_registry"></a>
+### Nested Schema for `docker_registry`
+
+Required:
+
+- **type** (String) The type of the docker registry. Valid options are DockerHub, Harbor, Other, Quay
+- **url** (String) The url of the docker registry.
+
+Optional:
+
+- **credentials** (Block List, Max: 1) The credentials to use for the docker registry. If not specified then the connection is made to the registry anonymously. (see [below for nested schema](#nestedblock--docker_registry--credentials))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+<a id="nestedblock--docker_registry--credentials"></a>
+### Nested Schema for `docker_registry.credentials`
+
+Required:
+
+- **password_ref** (String) The reference to the password to use for the docker registry.
+
+Optional:
+
+- **username** (String) The username to use for the docker registry.
+- **username_ref** (String) The reference to the username to use for the docker registry.
+
+
+
+<a id="nestedblock--gcp"></a>
+### Nested Schema for `gcp`
+
+Optional:
+
+- **inherit_from_delegate** (Block List) Inherit configuration from delegate. (see [below for nested schema](#nestedblock--gcp--inherit_from_delegate))
+- **manual** (Block List, Max: 1) Manual credential configuration. (see [below for nested schema](#nestedblock--gcp--manual))
+
+<a id="nestedblock--gcp--inherit_from_delegate"></a>
+### Nested Schema for `gcp.inherit_from_delegate`
+
+Required:
+
+- **delegate_selectors** (Set of String) The delegates to inherit the credentials from.
+
+
+<a id="nestedblock--gcp--manual"></a>
+### Nested Schema for `gcp.manual`
+
+Required:
+
+- **delegate_selectors** (Set of String) The delegates to connect with.
+- **secret_key_ref** (String) Reference to the Harness secret containing the secret key.
+
+
 
 <a id="nestedblock--k8s_cluster"></a>
 ### Nested Schema for `k8s_cluster`
