@@ -13,7 +13,7 @@ func ConfigAsCodeDescription(descripton string) string {
 }
 
 func GetNextgenDescription(description string) string {
-	return fmt.Sprintf("%s %s", description, NextgenDescription)
+	return fmt.Sprintf("[NG] - %s %s", description, NextgenDescription)
 }
 
 func ExpandDelegateSelectors(ds []interface{}) []string {
