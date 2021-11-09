@@ -8,8 +8,6 @@ import (
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/provider"
-
-	// "github.com/harness-io/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )

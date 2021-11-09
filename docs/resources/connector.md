@@ -3,12 +3,12 @@
 page_title: "harness_connector Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a connector. This resource is part of the Harness nextgen platform.
+  [NG] - Resource for creating a connector. This resource is part of the Harness nextgen platform.
 ---
 
 # harness_connector (Resource)
 
-Resource for creating a connector. This resource is part of the Harness nextgen platform.
+[NG] - Resource for creating a connector. This resource is part of the Harness nextgen platform.
 
 ## Example Usage
 
@@ -55,17 +55,48 @@ resource "harness_connector" "test" {
 
 ### Optional
 
+- **artifactory** (Block List, Max: 1) Artifactory connector. (see [below for nested schema](#nestedblock--artifactory))
 - **aws** (Block List, Max: 1) Aws account configuration. (see [below for nested schema](#nestedblock--aws))
+- **aws_cloudcost** (Block List, Max: 1) Aws cloud cost account configuration. (see [below for nested schema](#nestedblock--aws_cloudcost))
 - **branch** (String) The branch to use for the connector.
 - **description** (String) The description of the connector.
 - **docker_registry** (Block List, Max: 1) The docker registry to use for the connector. (see [below for nested schema](#nestedblock--docker_registry))
 - **gcp** (Block List, Max: 1) Gcp connector configuration. (see [below for nested schema](#nestedblock--gcp))
+- **git** (Block List, Max: 1) Git connector (see [below for nested schema](#nestedblock--git))
+- **http_helm** (Block List, Max: 1) Helm connector. (see [below for nested schema](#nestedblock--http_helm))
 - **id** (String) The ID of this resource.
 - **k8s_cluster** (Block List, Max: 1) The k8s cluster to use for the connector. (see [below for nested schema](#nestedblock--k8s_cluster))
+- **nexus** (Block List, Max: 1) Nexus connector. (see [below for nested schema](#nestedblock--nexus))
 - **org_id** (String) The unique identifier for the organization.
 - **project_id** (String) The unique identifier for the project.
 - **repo_id** (String) The unique identifier for the repository.
 - **tags** (Set of String) Tags associated with the connector.
+
+<a id="nestedblock--artifactory"></a>
+### Nested Schema for `artifactory`
+
+Required:
+
+- **url** (String) URL of the Artifactory server.
+
+Optional:
+
+- **credentials** (Block List, Max: 1) Credentials to use for authentication. (see [below for nested schema](#nestedblock--artifactory--credentials))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+<a id="nestedblock--artifactory--credentials"></a>
+### Nested Schema for `artifactory.credentials`
+
+Required:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+
+Optional:
+
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
 
 <a id="nestedblock--aws"></a>
 ### Nested Schema for `aws`
@@ -120,6 +151,27 @@ Optional:
 
 
 
+<a id="nestedblock--aws_cloudcost"></a>
+### Nested Schema for `aws_cloudcost`
+
+Required:
+
+- **account_id** (String) The AWS account id.
+- **cross_account_access** (Block List, Min: 1, Max: 1) Harness uses the secure cross-account role to access your AWS account. The role includes a restricted policy to access the cost and usage reports and resources for the sole purpose of cost analysis and cost optimization. (see [below for nested schema](#nestedblock--aws_cloudcost--cross_account_access))
+- **features_enabled** (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY.
+- **report_name** (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
+- **s3_bucket** (String) The name of s3 bucket.
+
+<a id="nestedblock--aws_cloudcost--cross_account_access"></a>
+### Nested Schema for `aws_cloudcost.cross_account_access`
+
+Required:
+
+- **external_id** (String) The external id of the role to use for cross-account access. This is a random unique value to provide additional secure authentication.
+- **role_arn** (String) The ARN of the role to use for cross-account access.
+
+
+
 <a id="nestedblock--docker_registry"></a>
 ### Nested Schema for `docker_registry`
 
@@ -170,6 +222,77 @@ Required:
 
 - **delegate_selectors** (Set of String) The delegates to connect with.
 - **secret_key_ref** (String) Reference to the Harness secret containing the secret key.
+
+
+
+<a id="nestedblock--git"></a>
+### Nested Schema for `git`
+
+Required:
+
+- **connection_type** (String) Whether the connection we're making is to a git repository or a git account. Valid values are Account, Repo.
+- **credentials** (Block List, Min: 1, Max: 1) Credentials to use for the connection. (see [below for nested schema](#nestedblock--git--credentials))
+- **url** (String) Url of the git repository or account.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **validation_repo** (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
+
+<a id="nestedblock--git--credentials"></a>
+### Nested Schema for `git.credentials`
+
+Optional:
+
+- **http** (Block List, Max: 1) Authenticate using Username and password over http(s) for the connection. (see [below for nested schema](#nestedblock--git--credentials--http))
+- **ssh** (Block List, Max: 1) Authenticate using SSH for the connection. (see [below for nested schema](#nestedblock--git--credentials--ssh))
+
+<a id="nestedblock--git--credentials--http"></a>
+### Nested Schema for `git.credentials.http`
+
+Required:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+
+Optional:
+
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
+<a id="nestedblock--git--credentials--ssh"></a>
+### Nested Schema for `git.credentials.ssh`
+
+Required:
+
+- **ssh_key_ref** (String) Reference to the Harness secret containing the ssh key.
+
+
+
+
+<a id="nestedblock--http_helm"></a>
+### Nested Schema for `http_helm`
+
+Required:
+
+- **url** (String) URL of the helm server.
+
+Optional:
+
+- **credentials** (Block List, Max: 1) Credentials to use for authentication. (see [below for nested schema](#nestedblock--http_helm--credentials))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+<a id="nestedblock--http_helm--credentials"></a>
+### Nested Schema for `http_helm.credentials`
+
+Required:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+
+Optional:
+
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
 
 
 
@@ -247,6 +370,33 @@ Optional:
 
 - **username** (String) Username for the connector.
 - **username_ref** (String) Reference to the secret containing the username for the connector.
+
+
+
+<a id="nestedblock--nexus"></a>
+### Nested Schema for `nexus`
+
+Required:
+
+- **url** (String) URL of the Nexus server.
+- **version** (String) Version of the Nexus server. Valid values are 2.x, 3.x
+
+Optional:
+
+- **credentials** (Block List, Max: 1) Credentials to use for authentication. (see [below for nested schema](#nestedblock--nexus--credentials))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+<a id="nestedblock--nexus--credentials"></a>
+### Nested Schema for `nexus.credentials`
+
+Required:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+
+Optional:
+
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
 
 ## Import
 

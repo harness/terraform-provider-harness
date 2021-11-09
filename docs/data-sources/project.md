@@ -3,12 +3,12 @@
 page_title: "harness_project Data Source - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Data source for retrieving a Harness project. This resource is part of the Harness nextgen platform.
+  [NG] - Data source for retrieving a Harness project. This resource is part of the Harness nextgen platform.
 ---
 
 # harness_project (Data Source)
 
-Data source for retrieving a Harness project. This resource is part of the Harness nextgen platform.
+[NG] - Data source for retrieving a Harness project. This resource is part of the Harness nextgen platform.
 
 
 

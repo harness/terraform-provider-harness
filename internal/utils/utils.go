@@ -64,3 +64,15 @@ func FlattenTags(tags map[string]string) []string {
 	}
 	return result
 }
+
+func GetConflictsWithSlice(source []string, self string) []string {
+	tmp := make([]string, len(source))
+	copy(tmp, source)
+
+	for i, v := range tmp {
+		if v == self {
+			return append(tmp[:i], tmp[i+1:]...)
+		}
+	}
+	return tmp
+}

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
-	"github.com/harness-io/harness-go-sdk/harness/api/nextgen"
+	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
