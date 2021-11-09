@@ -46,7 +46,7 @@ go get github.com/harness-io/harness-go-sdk@latest
 
 ```go
 client := NewClient()
-app, err := client.Applications().GetApplicationByName("my-app)
+app, err := client.ApplicationClient.GetApplicationByName("my-app)
 ```
 
 ### Create a Service
@@ -72,7 +72,7 @@ If you need to provide additional configuration you can create a client object f
 ```go
 client := &Client{
     UserAgent:   getUserAgentString(),
-    Endpoint:    utils.GetEnv(envvar.HarnessEndpoint, DefaultApiUrl),
+    Endpoint:    utils.GetEnv(envvar.HarnessEndpoint, utils.DefaultApiUrl),
     AccountId:   os.Getenv(envvar.HarnessAccountId),
     APIKey:      os.Getenv(envvar.HarnessApiKey),
     BearerToken: os.Getenv(envvar.HarnessBearerToken),
