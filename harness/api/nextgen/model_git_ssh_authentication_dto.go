@@ -10,6 +10,6 @@
 package nextgen
 
 type GitSshAuthenticationDto struct {
-	Type_ string `json:"type"`
+	Type_     string `json:"-"`
 	SshKeyRef string `json:"sshKeyRef"`
 }

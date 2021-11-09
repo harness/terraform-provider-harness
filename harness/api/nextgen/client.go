@@ -503,20 +503,20 @@ type GenericSwaggerError struct {
 
 // Error returns non-empty string if there was an error.
 func (e GenericSwaggerError) Error() string {
-	failure := e.model.(Failure)
+	failure := e.model.(ModelError)
 	if failure.Message != "" {
 		return failure.Message
 	}
 
-	if len(failure.Errors) > 0 {
-		return failure.Errors[0].Error_
+	if len(failure.ResponseMessages) > 0 {
+		return failure.ResponseMessages[0].Message
 	}
 
 	return failure.Code
 }
 
 func (e GenericSwaggerError) Code() ErrorCode {
-	return ErrorCode(e.model.(Failure).Code)
+	return ErrorCode(e.model.(ModelError).Code)
 }
 
 // Body returns the raw bytes of the response

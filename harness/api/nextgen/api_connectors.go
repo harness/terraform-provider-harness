@@ -1,4 +1,3 @@
-
 /*
  * CD NextGen API Reference
  *
@@ -12,11 +11,12 @@ package nextgen
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
+
 	"github.com/antihax/optional"
 )
 
@@ -26,37 +26,38 @@ var (
 )
 
 type ConnectorsApiService service
+
 /*
 ConnectorsApiService Creates a Connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Connector to be created
  * @param optional nil or *ConnectorsApiCreateConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "RootFolder" (optional.String) - 
-     * @param "FilePath" (optional.String) - 
-     * @param "CommitMsg" (optional.String) - 
-     * @param "BaseBranch" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "RootFolder" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "BaseBranch" (optional.String) -
 @return ResponseDtoConnectorResponse
 */
 
 type ConnectorsApiCreateConnectorOpts struct {
-    AccountIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    RootFolder optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    BaseBranch optional.String
+	AccountIdentifier optional.String
+	Branch            optional.String
+	RepoIdentifier    optional.String
+	RootFolder        optional.String
+	FilePath          optional.String
+	CommitMsg         optional.String
+	BaseBranch        optional.String
 }
 
 func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connector, localVarOptionals *ConnectorsApiCreateConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorResponse
 	)
 
@@ -125,86 +126,87 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connect
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Deletes Connector by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param identifier
  * @param optional nil or *ConnectorsApiDeleteConnectorOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "RootFolder" (optional.String) - 
-     * @param "FilePath" (optional.String) - 
-     * @param "CommitMsg" (optional.String) - 
-     * @param "LastObjectId" (optional.String) - 
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "RootFolder" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "LastObjectId" (optional.String) -
 @return ResponseDtoBoolean
 */
 
 type ConnectorsApiDeleteConnectorOpts struct {
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    RootFolder optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    LastObjectId optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Branch            optional.String
+	RepoIdentifier    optional.String
+	RootFolder        optional.String
+	FilePath          optional.String
+	CommitMsg         optional.String
+	LastObjectId      optional.String
 }
 
 func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ConnectorsApiDeleteConnectorOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoBoolean
 	)
 
@@ -276,52 +278,53 @@ func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdent
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoBoolean
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Get the allowed field values by Connector Type
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -330,10 +333,10 @@ ConnectorsApiService Get the allowed field values by Connector Type
 */
 func (a *ConnectorsApiService) GetAllAllowedFieldValues(ctx context.Context, connectorType string) (ResponseDtoFieldValues, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoFieldValues
 	)
 
@@ -380,74 +383,75 @@ func (a *ConnectorsApiService) GetAllAllowedFieldValues(ctx context.Context, con
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoFieldValues
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Get the Template URL of connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetCEAwsTemplateOpts - Optional Parameters:
-     * @param "EventsEnabled" (optional.Bool) - 
-     * @param "CurEnabled" (optional.Bool) - 
-     * @param "OptimizationEnabled" (optional.Bool) - 
+     * @param "EventsEnabled" (optional.Bool) -
+     * @param "CurEnabled" (optional.Bool) -
+     * @param "OptimizationEnabled" (optional.Bool) -
 @return ResponseDtoString
 */
 
 type ConnectorsApiGetCEAwsTemplateOpts struct {
-    EventsEnabled optional.Bool
-    CurEnabled optional.Bool
-    OptimizationEnabled optional.Bool
+	EventsEnabled       optional.Bool
+	CurEnabled          optional.Bool
+	OptimizationEnabled optional.Bool
 }
 
 func (a *ConnectorsApiService) GetCEAwsTemplate(ctx context.Context, localVarOptionals *ConnectorsApiGetCEAwsTemplateOpts) (ResponseDtoString, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoString
 	)
 
@@ -502,81 +506,82 @@ func (a *ConnectorsApiService) GetCEAwsTemplate(ctx context.Context, localVarOpt
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoString
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService get the Connector by accountIdentifier and connectorIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param optional nil or *ConnectorsApiGetConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
 @return ResponseDtoConnectorResponse
 */
 
 type ConnectorsApiGetConnectorOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	AccountIdentifier       optional.String
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
 }
 
 func (a *ConnectorsApiService) GetConnector(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorResponse
 	)
 
@@ -641,70 +646,71 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, identifier stri
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService gets the connector catalogue by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetConnectorCatalogueOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
 @return ResponseDtoConnectorCatalogueRespone
 */
 
 type ConnectorsApiGetConnectorCatalogueOpts struct {
-    AccountIdentifier optional.String
+	AccountIdentifier optional.String
 }
 
 func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localVarOptionals *ConnectorsApiGetConnectorCatalogueOpts) (ResponseDtoConnectorCatalogueRespone, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorCatalogueRespone
 	)
 
@@ -753,92 +759,93 @@ func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localV
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorCatalogueRespone
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Get the list of connectors satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetConnectorListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) - 
-     * @param "PageSize" (optional.Int32) - 
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "SearchTerm" (optional.String) - 
-     * @param "Type_" (optional.String) - 
-     * @param "Category" (optional.String) - 
-     * @param "SourceCategory" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) - 
+     * @param "PageIndex" (optional.Int32) -
+     * @param "PageSize" (optional.Int32) -
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "SearchTerm" (optional.String) -
+     * @param "Type_" (optional.String) -
+     * @param "Category" (optional.String) -
+     * @param "SourceCategory" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
 @return ResponseDtoPageResponseConnectorResponse
 */
 
 type ConnectorsApiGetConnectorListOpts struct {
-    PageIndex optional.Int32
-    PageSize optional.Int32
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    SearchTerm optional.String
-    Type_ optional.String
-    Category optional.String
-    SourceCategory optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	PageIndex               optional.Int32
+	PageSize                optional.Int32
+	AccountIdentifier       optional.String
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
+	SearchTerm              optional.String
+	Type_                   optional.String
+	Category                optional.String
+	SourceCategory          optional.String
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
 }
 
 func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, localVarOptionals *ConnectorsApiGetConnectorListOpts) (ResponseDtoPageResponseConnectorResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoPageResponseConnectorResponse
 	)
 
@@ -920,93 +927,94 @@ func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, localVarOpt
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoPageResponseConnectorResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Get the list of connectors satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the filters applied
  * @param optional nil or *ConnectorsApiGetConnectorListV2Opts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) - 
-     * @param "PageSize" (optional.Int32) - 
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "SearchTerm" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "FilterIdentifier" (optional.String) - 
-     * @param "IncludeAllConnectorsAvailableAtScope" (optional.Bool) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) - 
-     * @param "GetDistinctFromBranches" (optional.Bool) - 
+     * @param "PageIndex" (optional.Int32) -
+     * @param "PageSize" (optional.Int32) -
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "SearchTerm" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "FilterIdentifier" (optional.String) -
+     * @param "IncludeAllConnectorsAvailableAtScope" (optional.Bool) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "GetDistinctFromBranches" (optional.Bool) -
 @return ResponseDtoPageResponseConnectorResponse
 */
 
 type ConnectorsApiGetConnectorListV2Opts struct {
-    PageIndex optional.Int32
-    PageSize optional.Int32
-    AccountIdentifier optional.String
-    SearchTerm optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    FilterIdentifier optional.String
-    IncludeAllConnectorsAvailableAtScope optional.Bool
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
-    GetDistinctFromBranches optional.Bool
+	PageIndex                            optional.Int32
+	PageSize                             optional.Int32
+	AccountIdentifier                    optional.String
+	SearchTerm                           optional.String
+	OrgIdentifier                        optional.String
+	ProjectIdentifier                    optional.String
+	FilterIdentifier                     optional.String
+	IncludeAllConnectorsAvailableAtScope optional.Bool
+	Branch                               optional.String
+	RepoIdentifier                       optional.String
+	GetDefaultFromOtherRepo              optional.Bool
+	GetDistinctFromBranches              optional.Bool
 }
 
 func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body ConnectorFilterProperties, localVarOptionals *ConnectorsApiGetConnectorListV2Opts) (ResponseDtoPageResponseConnectorResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoPageResponseConnectorResponse
 	)
 
@@ -1090,80 +1098,81 @@ func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body Conn
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoPageResponseConnectorResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService gets the connector&#x27;s statistics by accountIdentifier, projectIdentifier and orgIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetConnectorStatisticsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
 @return ResponseDtoConnectorStatistics
 */
 
 type ConnectorsApiGetConnectorStatisticsOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	AccountIdentifier       optional.String
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
 }
 
 func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, localVarOptionals *ConnectorsApiGetConnectorStatisticsOpts) (ResponseDtoConnectorStatistics, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorStatistics
 	)
 
@@ -1227,67 +1236,68 @@ func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, local
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorStatistics
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param optional nil or *ConnectorsApiGetConnectorValidationParamsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
 
 */
 
 type ConnectorsApiGetConnectorValidationParamsOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
 }
 
 func (a *ConnectorsApiService) GetConnectorValidationParams(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetConnectorValidationParamsOpts) (*http.Response, error) {
@@ -1296,7 +1306,6 @@ func (a *ConnectorsApiService) GetConnectorValidationParams(ctx context.Context,
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		
 	)
 
 	// create path and map variables
@@ -1349,66 +1358,66 @@ func (a *ConnectorsApiService) GetConnectorValidationParams(ctx context.Context,
 		return localVarHttpResponse, err
 	}
 
-
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
 		}
 		return localVarHttpResponse, newErr
 	}
 
 	return localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Tests the connection of the connector by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param optional nil or *ConnectorsApiGetTestConnectionResultOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
 @return ResponseDtoConnectorValidationResult
 */
 
 type ConnectorsApiGetTestConnectionResultOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	AccountIdentifier       optional.String
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
 }
 
 func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetTestConnectionResultOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorValidationResult
 	)
 
@@ -1473,77 +1482,78 @@ func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, iden
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorValidationResult
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Tests the created Connector&#x27;s connection
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param optional nil or *ConnectorsApiGetTestGitRepoConnectionResultOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "RepoURL" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "RepoURL" (optional.String) -
 @return ResponseDtoConnectorValidationResult
 */
 
 type ConnectorsApiGetTestGitRepoConnectionResultOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    RepoURL optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	RepoURL           optional.String
 }
 
 func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetTestGitRepoConnectionResultOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorValidationResult
 	)
 
@@ -1602,71 +1612,72 @@ func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Contex
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorValidationResult
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Get the list of connectors by FQN satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body List of connectorsFQN as strings
  * @param optional nil or *ConnectorsApiListConnectorByFQNOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
 @return ResponseDtoListConnectorResponse
 */
 
 type ConnectorsApiListConnectorByFQNOpts struct {
-    AccountIdentifier optional.String
+	AccountIdentifier optional.String
 }
 
 func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []string, localVarOptionals *ConnectorsApiListConnectorByFQNOpts) (ResponseDtoListConnectorResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoListConnectorResponse
 	)
 
@@ -1717,85 +1728,86 @@ func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []st
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoListConnectorResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService Updates the Connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the updated Connector. This should have all the fields not just the updated ones
  * @param optional nil or *ConnectorsApiPutConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "Branch" (optional.String) - 
-     * @param "RepoIdentifier" (optional.String) - 
-     * @param "RootFolder" (optional.String) - 
-     * @param "FilePath" (optional.String) - 
-     * @param "CommitMsg" (optional.String) - 
-     * @param "LastObjectId" (optional.String) - 
-     * @param "BaseBranch" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "RootFolder" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "LastObjectId" (optional.String) -
+     * @param "BaseBranch" (optional.String) -
 @return ResponseDtoConnectorResponse
 */
 
 type ConnectorsApiPutConnectorOpts struct {
-    AccountIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    RootFolder optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    LastObjectId optional.String
-    BaseBranch optional.String
+	AccountIdentifier optional.String
+	Branch            optional.String
+	RepoIdentifier    optional.String
+	RootFolder        optional.String
+	FilePath          optional.String
+	CommitMsg         optional.String
+	LastObjectId      optional.String
+	BaseBranch        optional.String
 }
 
 func (a *ConnectorsApiService) PutConnector(ctx context.Context, body Connector, localVarOptionals *ConnectorsApiPutConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Put")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoConnectorResponse
 	)
 
@@ -1867,76 +1879,77 @@ func (a *ConnectorsApiService) PutConnector(ctx context.Context, body Connector,
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoConnectorResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 ConnectorsApiService validate the Connector by accountIdentifier and connectorIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiValidateTheIdentifierIsUniqueOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) - 
-     * @param "OrgIdentifier" (optional.String) - 
-     * @param "ProjectIdentifier" (optional.String) - 
-     * @param "Identifier" (optional.String) - 
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "Identifier" (optional.String) -
 @return ResponseDtoBoolean
 */
 
 type ConnectorsApiValidateTheIdentifierIsUniqueOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    Identifier optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Identifier        optional.String
 }
 
 func (a *ConnectorsApiService) ValidateTheIdentifierIsUnique(ctx context.Context, localVarOptionals *ConnectorsApiValidateTheIdentifierIsUniqueOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoBoolean
 	)
 
@@ -1994,46 +2007,46 @@ func (a *ConnectorsApiService) ValidateTheIdentifierIsUnique(ctx context.Context
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoBoolean
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
