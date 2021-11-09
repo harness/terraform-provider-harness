@@ -7,13 +7,22 @@ import (
 	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
-	"github.com/harness-io/harness-go-sdk/harness/api/nextgen"
+	"github.com/harness-io/harness-go-sdk/harness/cd"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
-	"github.com/harness-io/terraform-provider-harness/internal/service/cd"
+	"github.com/harness-io/harness-go-sdk/harness/nextgen"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/application"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/cloudprovider"
+	cd_connector "github.com/harness-io/terraform-provider-harness/internal/service/cd/connector"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/delegate"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/environment"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/secrets"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/service"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/sso"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/user"
+	"github.com/harness-io/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness-io/terraform-provider-harness/internal/service/ng"
-
-	// "github.com/harness-io/terraform-provider-harness/internal/service/cd"
-	// "github.com/harness-io/terraform-provider-harness/internal/service/ng"
+	"github.com/harness-io/terraform-provider-harness/internal/service/ng/connector"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -43,7 +52,7 @@ func New(version string) func() *schema.Provider {
 					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io`. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessEndpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessEndpoint.String(), api.DefaultApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessEndpoint.String(), utils.DefaultApiUrl),
 				},
 				"account_id": {
 					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessAccountId.String()),
@@ -71,53 +80,53 @@ func New(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"harness_application":    cd.DataSourceApplication(),
-				"harness_delegate":       cd.DataSourceDelegate(),
-				"harness_secret_manager": cd.DataSourceSecretManager(),
-				"harness_encrypted_text": cd.DataSourceEncryptedText(),
-				"harness_git_connector":  cd.DataSourceGitConnector(),
-				"harness_service":        cd.DataSourceService(),
-				"harness_environment":    cd.DataSourceEnvironment(),
-				"harness_sso_provider":   cd.DataSourceSSOProvider(),
-				"harness_user":           cd.DataSourceUser(),
-				"harness_user_group":     cd.DataSourceUserGroup(),
-				"harness_yaml_config":    cd.DataSourceYamlConfig(),
+				"harness_application":    application.DataSourceApplication(),
+				"harness_delegate":       delegate.DataSourceDelegate(),
+				"harness_secret_manager": secrets.DataSourceSecretManager(),
+				"harness_encrypted_text": secrets.DataSourceEncryptedText(),
+				"harness_git_connector":  cd_connector.DataSourceGitConnector(),
+				"harness_service":        service.DataSourceService(),
+				"harness_environment":    environment.DataSourceEnvironment(),
+				"harness_sso_provider":   sso.DataSourceSSOProvider(),
+				"harness_user":           user.DataSourceUser(),
+				"harness_user_group":     user.DataSourceUserGroup(),
+				"harness_yaml_config":    yamlconfig.DataSourceYamlConfig(),
 				"harness_project":        ng.DataSourceProject(),
 				"harness_organization":   ng.DataSourceOrganization(),
 				"harness_connector":      ng.DataSourceConnector(),
 				"harness_current_user":   ng.DataSourceCurrentUser(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"harness_application":               cd.ResourceApplication(),
-				"harness_encrypted_text":            cd.ResourceEncryptedText(),
-				"harness_git_connector":             cd.ResourceGitConnector(),
-				"harness_ssh_credential":            cd.ResourceSSHCredential(),
-				"harness_service_kubernetes":        cd.ResourceKubernetesService(),
-				"harness_service_ami":               cd.ResourceAMIService(),
-				"harness_service_ecs":               cd.ResourceECSService(),
-				"harness_service_aws_codedeploy":    cd.ResourceAWSCodeDeployService(),
-				"harness_service_aws_lambda":        cd.ResourceAWSLambdaService(),
-				"harness_service_tanzu":             cd.ResourcePCFService(),
-				"harness_service_helm":              cd.ResourceHelmService(),
-				"harness_service_ssh":               cd.ResourceSSHService(),
-				"harness_service_winrm":             cd.ResourceWinRMService(),
-				"harness_environment":               cd.ResourceEnvironment(),
-				"harness_cloudprovider_datacenter":  cd.ResourceCloudProviderDataCenter(),
-				"harness_cloudprovider_aws":         cd.ResourceCloudProviderAws(),
-				"harness_cloudprovider_azure":       cd.ResourceCloudProviderAzure(),
-				"harness_cloudprovider_tanzu":       cd.ResourceCloudProviderTanzu(),
-				"harness_cloudprovider_gcp":         cd.ResourceCloudProviderGcp(),
-				"harness_cloudprovider_kubernetes":  cd.ResourceCloudProviderK8s(),
-				"harness_cloudprovider_spot":        cd.ResourceCloudProviderSpot(),
-				"harness_user":                      cd.ResourceUser(),
-				"harness_user_group":                cd.ResourceUserGroup(),
-				"harness_add_user_to_group":         cd.ResourceAddUserToGroup(),
-				"harness_infrastructure_definition": cd.ResourceInfraDefinition(),
-				"harness_yaml_config":               cd.ResourceYamlConfig(),
-				"harness_application_gitsync":       cd.ResourceApplicationGitSync(),
+				"harness_application":               application.ResourceApplication(),
+				"harness_encrypted_text":            secrets.ResourceEncryptedText(),
+				"harness_git_connector":             cd_connector.ResourceGitConnector(),
+				"harness_ssh_credential":            secrets.ResourceSSHCredential(),
+				"harness_service_kubernetes":        service.ResourceKubernetesService(),
+				"harness_service_ami":               service.ResourceAMIService(),
+				"harness_service_ecs":               service.ResourceECSService(),
+				"harness_service_aws_codedeploy":    service.ResourceAWSCodeDeployService(),
+				"harness_service_aws_lambda":        service.ResourceAWSLambdaService(),
+				"harness_service_tanzu":             service.ResourcePCFService(),
+				"harness_service_helm":              service.ResourceHelmService(),
+				"harness_service_ssh":               service.ResourceSSHService(),
+				"harness_service_winrm":             service.ResourceWinRMService(),
+				"harness_environment":               environment.ResourceEnvironment(),
+				"harness_cloudprovider_datacenter":  cloudprovider.ResourceCloudProviderDataCenter(),
+				"harness_cloudprovider_aws":         cloudprovider.ResourceCloudProviderAws(),
+				"harness_cloudprovider_azure":       cloudprovider.ResourceCloudProviderAzure(),
+				"harness_cloudprovider_tanzu":       cloudprovider.ResourceCloudProviderTanzu(),
+				"harness_cloudprovider_gcp":         cloudprovider.ResourceCloudProviderGcp(),
+				"harness_cloudprovider_kubernetes":  cloudprovider.ResourceCloudProviderK8s(),
+				"harness_cloudprovider_spot":        cloudprovider.ResourceCloudProviderSpot(),
+				"harness_user":                      user.ResourceUser(),
+				"harness_user_group":                user.ResourceUserGroup(),
+				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
+				"harness_infrastructure_definition": environment.ResourceInfraDefinition(),
+				"harness_yaml_config":               yamlconfig.ResourceYamlConfig(),
+				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
 				"harness_project":                   ng.ResourceProject(),
 				"harness_organization":              ng.ResourceOrganization(),
-				"harness_connector":                 ng.ResourceConnector(),
+				"harness_connector":                 connector.ResourceConnector(),
 			},
 		}
 
@@ -139,7 +148,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 				Timeout: 30 * time.Second,
 			},
 			Backoff: retryablehttp.DefaultBackoff,
-			// CheckRetry: retryablehttp.DefaultRetryPolicy,
 			CheckRetry: func(ctx context.Context, resp *http.Response, err error) (bool, error) {
 				if resp.StatusCode == http.StatusInternalServerError {
 					return false, err
@@ -149,13 +157,18 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		}
 
 		userAgent := p.UserAgent("terraform-provider-harness", version)
-
-		return &api.Client{
-			UserAgent:  userAgent,
-			Endpoint:   d.Get("endpoint").(string),
+		cfg := &cd.Configuration{
 			AccountId:  d.Get("account_id").(string),
 			APIKey:     d.Get("api_key").(string),
+			Endpoint:   d.Get("endpoint").(string),
+			UserAgent:  userAgent,
 			HTTPClient: httpClient,
+		}
+
+		client := &api.Client{
+			AccountId: cfg.AccountId,
+			Endpoint:  cfg.Endpoint,
+			CDClient:  cd.NewClient(cfg),
 			NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
 				BasePath: d.Get("ng_endpoint").(string),
 				DefaultHeader: map[string]string{
@@ -164,6 +177,8 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 				UserAgent:  userAgent,
 				HTTPClient: httpClient,
 			}),
-		}, nil
+		}
+
+		return client, nil
 	}
 }

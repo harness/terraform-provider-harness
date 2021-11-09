@@ -7,7 +7,7 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness-io/harness-go-sdk/harness/api"
-	"github.com/harness-io/harness-go-sdk/harness/api/nextgen"
+	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

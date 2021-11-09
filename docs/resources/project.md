@@ -3,12 +3,12 @@
 page_title: "harness_project Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a Harness project. This resource is part of the Harness nextgen platform.
+  [NG] - Resource for creating a Harness project. This resource is part of the Harness nextgen platform.
 ---
 
 # harness_project (Resource)
 
-Resource for creating a Harness project. This resource is part of the Harness nextgen platform.
+[NG] - Resource for creating a Harness project. This resource is part of the Harness nextgen platform.
 
 ## Example Usage
 

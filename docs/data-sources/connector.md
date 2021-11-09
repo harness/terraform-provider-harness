@@ -3,12 +3,12 @@
 page_title: "harness_connector Data Source - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Data source for retrieving a Harness connector This resource is part of the Harness nextgen platform.
+  [NG] - Data source for retrieving a Harness connector This resource is part of the Harness nextgen platform.
 ---
 
 # harness_connector (Data Source)
 
-Data source for retrieving a Harness connector This resource is part of the Harness nextgen platform.
+[NG] - Data source for retrieving a Harness connector This resource is part of the Harness nextgen platform.
 
 
 

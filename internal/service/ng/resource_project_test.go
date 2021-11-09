@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/antihax/optional"
-	"github.com/harness-io/harness-go-sdk/harness/api/nextgen"
+	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -53,82 +53,6 @@ func TestAccResourceProject(t *testing.T) {
 		},
 	})
 }
-
-// func TestAccResourceApplication_DeleteUnderlyingResource(t *testing.T) {
-
-// 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-// 	resourceName := "harness_application.test"
-
-// 	resource.UnitTest(t, resource.TestCase{
-// 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-// 		ProviderFactories: acctest.ProviderFactories,
-// 		CheckDestroy:      testAccApplicationDestroy(resourceName),
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccResourceApplication(expectedName),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
-// 					resource.TestCheckResourceAttr(resourceName, "description", "my description"),
-// 					testAccApplicationCreation(t, resourceName, expectedName),
-// 				),
-// 			},
-// 			{
-// 				PreConfig: func() {
-// 					testAccConfigureProvider()
-// 					c := testAccProvider.Meta().(*api.Client)
-// 					app, err := c.Applications().GetApplicationByName(expectedName)
-// 					require.NoError(t, err)
-// 					require.NotNil(t, app)
-
-// 					err = c.Applications().DeleteApplication(app.Id)
-// 					require.NoError(t, err)
-// 				},
-// 				PlanOnly:           true,
-// 				ExpectNonEmptyPlan: true,
-// 				Config:             testAccResourceApplication(expectedName),
-// 			},
-// 		},
-// 	})
-// }
-
-// func TestAccResourceApplication_Import(t *testing.T) {
-
-// 	resourceName := "harness_application.test"
-
-// 	resource.ParallelTest(t, resource.TestCase{
-// 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-// 		ProviderFactories: acctest.ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccResourceApplication("test"),
-// 			},
-// 			{
-// 				ResourceName:      resourceName,
-// 				ImportState:       true,
-// 				ImportStateVerify: true,
-// 			},
-// 		},
-// 	})
-// }
-
-// func testAccApplicationCreation(t *testing.T, resourceName string, appName string) resource.TestCheckFunc {
-// 	return func(state *terraform.State) error {
-// 		app, err := testAccGetApplication(resourceName, state)
-// 		require.NoError(t, err)
-// 		require.NotNil(t, app)
-// 		require.Equal(t, appName, app.Name)
-
-// 		return nil
-// 	}
-// }
-
-// func testAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
-// 	r := testAccGetResource(resourceName, state)
-// 	c := testAccGetApiClientFromProvider()
-// 	id := r.Primary.ID
-
-// 	return c.Applications().GetApplicationById(id)
-// }
 
 func testAccGetProject(resourceName string, state *terraform.State) (*nextgen.Project, error) {
 	r := acctest.TestAccGetResource(resourceName, state)

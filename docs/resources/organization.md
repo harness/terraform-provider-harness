@@ -3,12 +3,12 @@
 page_title: "harness_organization Resource - terraform-provider-harness"
 subcategory: ""
 description: |-
-  Resource for creating a Harness organization. This resource is part of the Harness nextgen platform.
+  [NG] - Resource for creating a Harness organization. This resource is part of the Harness nextgen platform.
 ---
 
 # harness_organization (Resource)
 
-Resource for creating a Harness organization. This resource is part of the Harness nextgen platform.
+[NG] - Resource for creating a Harness organization. This resource is part of the Harness nextgen platform.
 
 ## Example Usage
 
