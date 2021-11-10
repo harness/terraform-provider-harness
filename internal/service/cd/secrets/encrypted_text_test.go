@@ -13,6 +13,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	awsSecretManager = "LoyX8CUFQWm3pk_kCLPn2w"
+)
+
 func TestAccResourceEncryptedText(t *testing.T) {
 
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
@@ -43,6 +47,41 @@ func TestAccResourceEncryptedText(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"value"},
+			},
+		},
+	})
+}
+
+func TestAccResourceEncryptedText_Reference(t *testing.T) {
+
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	resourceName := "harness_encrypted_text.test"
+	value := "someval"
+	updatedValue := value + "-updated"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEncryptedText_Reference(name, value, awsSecretManager, "test/secret/micah"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "secret_reference", "test/secret/micah"),
+				),
+			},
+			{
+				Config: testAccResourceEncryptedText_Reference(name, updatedValue, awsSecretManager, "test/secret/micah2"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "secret_reference", "test/secret/micah2"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"secret_reference"},
 			},
 		},
 	})
@@ -176,6 +215,28 @@ func testAccResourceEncryptedText(name string, value string, secretMangerId stri
 			secret_manager_id = %[3]s
 		}
 `, name, value, secretMangerId)
+}
+
+func testAccResourceEncryptedText_Reference(name string, value string, secretMangerId string, ref string) string {
+
+	if secretMangerId == "" {
+		secretMangerId = "data.harness_secret_manager.default.id"
+	} else {
+		secretMangerId = fmt.Sprintf("\"%s\"", secretMangerId)
+	}
+
+	return fmt.Sprintf(`
+		data "harness_secret_manager" "default" {
+			default = true
+		}
+
+	
+		resource "harness_encrypted_text" "test" {
+			name = "%s"
+			secret_manager_id = %[3]s
+			secret_reference = "%[4]s"
+		}
+`, name, value, secretMangerId, ref)
 }
 
 func testAccResourceEncryptedText_UsageScopes(name string) string {
