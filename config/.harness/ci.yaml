@@ -32,6 +32,9 @@ pipeline:
                   - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
                     type: Secret
                     value: org.aws_secret_access_key
+                  - name: HARNESS_DELEGATE_SECRET
+                    type: Secret
+                    value: org.harness_delegate_secret
               type: CI
               spec:
                   infrastructure:
