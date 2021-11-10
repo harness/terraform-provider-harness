@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.14...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.15...HEAD)
 
 **Merged pull requests:**
 
+- Refactored CD api [\#53](https://github.com/harness-io/harness-go-sdk/pull/53) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.0.15](https://github.com/harness-io/harness-go-sdk/tree/v0.0.15) (2021-11-03)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.0.14...v0.0.15)
+
+**Merged pull requests:**
+
+- Release version 0.0.15 11-03-2021 [\#52](https://github.com/harness-io/harness-go-sdk/pull/52) ([micahlmartin](https://github.com/micahlmartin))
 - Nextgen API code generation [\#51](https://github.com/harness-io/harness-go-sdk/pull/51) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.14](https://github.com/harness-io/harness-go-sdk/tree/v0.0.14) (2021-10-19)
