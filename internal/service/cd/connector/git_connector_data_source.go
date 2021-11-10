@@ -20,48 +20,52 @@ func DataSourceGitConnector() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Description: "Id of the encrypted text secret",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:   "Id of the git connector.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ExactlyOneOf:  []string{"id", "name"},
+				ConflictsWith: []string{"name"},
 			},
 			"name": {
-				Description: "Name of the encrypted text secret",
-				Type:        schema.TypeString,
-				Computed:    true,
+				Description:   "The name of the git connector.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ExactlyOneOf:  []string{"id", "name"},
+				ConflictsWith: []string{"id"},
 			},
 			"created_at": {
-				Description: "The time the git connector was created",
+				Description: "The time the git connector was created.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"url": {
-				Description: "The url of the git repository or account/organization",
+				Description: "The url of the git repository or account/organization.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"branch": {
-				Description: "The branch of the git connector to use",
+				Description: "The branch of the git connector to use.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"commit_details": {
-				Description: "Custom details to use when making commits using this git connector",
+				Description: "Custom details to use when making commits using this git connector.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"author_email_id": {
-							Description: "The email id of the author",
+							Description: "The email id of the author.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"author_name": {
-							Description: "The name of the author",
+							Description: "The name of the author.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"message": {
-							Description: "Commit message",
+							Description: "Commit message.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -69,7 +73,7 @@ func DataSourceGitConnector() *schema.Resource {
 				},
 			},
 			"delegate_selectors": {
-				Description: "Delegate selectors to apply to this git connector",
+				Description: "Delegate selectors to apply to this git connector.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Schema{
@@ -77,32 +81,32 @@ func DataSourceGitConnector() *schema.Resource {
 				},
 			},
 			"generate_webhook_url": {
-				Description: "Boolean indicating whether or not to generate a webhook url",
+				Description: "Boolean indicating whether or not to generate a webhook url.",
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
 			"webhook_url": {
-				Description: "The generated webhook url",
+				Description: "The generated webhook url.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"password_secret_id": {
-				Description: "The id of the secret for connecting to the git repository",
+				Description: "The id of the secret for connecting to the git repository.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"ssh_setting_id": {
-				Description: "The id of the SSH secret to use",
+				Description: "The id of the SSH secret to use.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"url_type": {
-				Description: fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s.`", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo),
+				Description: fmt.Sprintf("The type of git url being used. Options are `%s`, and `%s`.", graphql.GitUrlTypes.Account, graphql.GitUrlTypes.Repo),
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"username": {
-				Description: "The name of the user used to connect to the git repository",
+				Description: "The name of the user used to connect to the git repository.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -111,16 +115,28 @@ func DataSourceGitConnector() *schema.Resource {
 }
 
 func dataSourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// use the meta value to retrieve your client from the provider configure method
 	c := meta.(*api.Client)
 
-	id := d.Get("id").(string)
-	conn, err := c.CDClient.ConnectorClient.GetGitConnectorById(id)
+	var conn *graphql.GitConnector
+	var err error
+
+	if id, ok := d.GetOk("id"); ok {
+		conn, err = c.CDClient.ConnectorClient.GetGitConnectorById(id.(string))
+	} else if name, ok := d.GetOk("name"); ok {
+		conn, err = c.CDClient.ConnectorClient.GetGitConnectorByName(name.(string))
+	} else {
+		return diag.Errorf("Must specify either `id` or `name`.")
+	}
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(id)
+	if conn == nil {
+		return diag.Errorf("Git connector not found.")
+	}
+
+	d.SetId(conn.Id)
 	d.Set("name", conn.Name)
 	d.Set("created_at", conn.CreatedAt.String())
 	d.Set("url", conn.Url)
