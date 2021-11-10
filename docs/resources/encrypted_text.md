@@ -39,13 +39,14 @@ resource "harness_encrypted_text" "example" {
 
 - **name** (String) Name of the encrypted text secret
 - **secret_manager_id** (String) The id of the secret manager to associate the secret with. Once set, this field cannot be changed.
-- **value** (String, Sensitive) The value of the secret
 
 ### Optional
 
 - **inherit_scopes_from_secret_manager** (Boolean) Boolean that indicates whether or not to inherit the usage scopes from the secret manager
 - **scoped_to_account** (Boolean) Boolean that indicates whether or not the secret is scoped to the account
+- **secret_reference** (String) Name of the existing secret. If you already have secrets created in a secrets manager such as HashiCorp Vault or AWS Secrets Manager, you do not need to re-create the existing secrets in Harness.
 - **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
+- **value** (String, Sensitive) The value of the secret.
 
 ### Read-Only
 
