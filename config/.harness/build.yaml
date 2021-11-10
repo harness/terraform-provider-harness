@@ -164,3 +164,6 @@ pipeline:
                   - name: HARNESS_TEST_SPOT_TOKEN
                     type: Secret
                     value: org.spotinst_token
+                  - name: HARNESS_DELEGATE_SECRET
+                    type: Secret
+                    value: org.harness_delegate_secret
