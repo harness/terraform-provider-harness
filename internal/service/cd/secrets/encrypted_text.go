@@ -48,10 +48,19 @@ func ResourceEncryptedText() *schema.Resource {
 				ForceNew:    true,
 			},
 			"value": {
-				Description: "The value of the secret",
-				Type:        schema.TypeString,
-				Sensitive:   true,
-				Required:    true,
+				Description:   "The value of the secret.",
+				Type:          schema.TypeString,
+				Sensitive:     true,
+				Optional:      true,
+				ConflictsWith: []string{"secret_reference"},
+				ExactlyOneOf:  []string{"value", "secret_reference"},
+			},
+			"secret_reference": {
+				Description:   "Name of the existing secret. If you already have secrets created in a secrets manager such as HashiCorp Vault or AWS Secrets Manager, you do not need to re-create the existing secrets in Harness.",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"value"},
+				ExactlyOneOf:  []string{"value", "secret_reference"},
 			},
 			"usage_scope": usagescope.Schema(),
 		},
@@ -95,13 +104,31 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	c := meta.(*api.Client)
 
 	input := &graphql.CreateSecretInput{
-		EncryptedText: &graphql.EncryptedTextInput{
-			InheritScopesFromSM: d.Get("inherit_scopes_from_secret_manager").(bool),
-			Name:                d.Get("name").(string),
-			ScopedToAccount:     d.Get("scoped_to_account").(bool),
-			SecretManagerId:     d.Get("secret_manager_id").(string),
-			Value:               d.Get("value").(string),
-		},
+		EncryptedText: &graphql.EncryptedTextInput{},
+	}
+
+	if attr, ok := d.GetOk("inherit_scopes_from_secret_manager"); ok {
+		input.EncryptedText.InheritScopesFromSM = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("name"); ok {
+		input.EncryptedText.Name = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("scoped_to_account"); ok {
+		input.EncryptedText.ScopedToAccount = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("secret_manager_id"); ok {
+		input.EncryptedText.SecretManagerId = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("value"); ok {
+		input.EncryptedText.Value = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("secret_reference"); ok {
+		input.EncryptedText.SecretReference = attr.(string)
 	}
 
 	usageScope, err := usagescope.ExpandUsageScope(d.Get("usage_scope").(*schema.Set).List())
@@ -122,13 +149,28 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 	c := meta.(*api.Client)
 
 	input := &graphql.UpdateSecretInput{
-		SecretId: d.Get("id").(string),
-		EncryptedText: &graphql.UpdateEncryptedText{
-			InheritScopesFromSM: d.Get("inherit_scopes_from_secret_manager").(bool),
-			Name:                d.Get("name").(string),
-			ScopedToAccount:     d.Get("scoped_to_account").(bool),
-			Value:               d.Get("value").(string),
-		},
+		SecretId:      d.Id(),
+		EncryptedText: &graphql.UpdateEncryptedText{},
+	}
+
+	if attr, ok := d.GetOk("inherit_scopes_from_secret_manager"); ok {
+		input.EncryptedText.InheritScopesFromSM = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("name"); ok {
+		input.EncryptedText.Name = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("scoped_to_account"); ok {
+		input.EncryptedText.ScopedToAccount = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("value"); ok {
+		input.EncryptedText.Value = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("secret_reference"); ok {
+		input.EncryptedText.SecretReference = attr.(string)
 	}
 
 	usageScope, err := usagescope.ExpandUsageScope(d.Get("usage_scope").(*schema.Set).List())
