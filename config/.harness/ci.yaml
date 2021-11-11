@@ -32,18 +32,52 @@ pipeline:
                   - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
                     type: Secret
                     value: org.aws_secret_access_key
-                  - name: HARNESS_DELEGATE_SECRET
+                  - name: HARNESS_TEST_DELEGATE_SECRET
                     type: Secret
                     value: org.harness_delegate_secret
+                  - name: HARNESS_TEST_DELEGATE_PROFILE_ID
+                    type: Secret
+                    value: org.harness_delegate_profile_id
               type: CI
               spec:
                   infrastructure:
                       type: KubernetesDirect
                       spec:
-                          namespace: micahs-projects
                           connectorRef: account.micahsprojects
+                          namespace: micahs-projects
                   execution:
                       steps:
+                          - step:
+                                type: Run
+                                name: Wait for Docker Host
+                                identifier: Wait_for_Docker_Host
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: docker:dind
+                                    command: |-
+                                        ls -la /var/run
+                                        ls -la /var/lib/docker
+
+                                        while ! docker ps ;do
+                                            echo "Docker not availble yet"
+                                            sleep 1s
+                                        done
+                                            echo "Docker Service Ready"
+
+                                        ls -la /var/run
+                                        ls -la /var/lib/docker
+                                    privileged: false
+                          - step:
+                                type: Run
+                                name: test
+                                identifier: test
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: busybox:latest
+                                    command: |
+                                        ls -la /var/run
+                                        ls -la /var/lib/docker
+                                    privileged: false
                           - step:
                                 type: RestoreCacheGCS
                                 spec:
@@ -91,26 +125,46 @@ pipeline:
                                                   cpu: "1"
                                       name: Lint
                                       identifier: lint
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
                                 - step:
                                       type: Run
                                       spec:
-                                          resources:
-                                              limits:
-                                                  memory: 2Gi
-                                                  cpu: "2"
+                                          connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          command: gotestsum --junitfile junit.xml --format testname
+                                          privileged: false
                                           reports:
                                               type: JUnit
                                               spec:
                                                   paths:
                                                       - junit.xml
-                                          privileged: false
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          connectorRef: org.gcp
-                                          command: |
-                                              gotestsum --junitfile junit.xml --format testname
+                                          resources:
+                                              limits:
+                                                  memory: 2Gi
+                                                  cpu: "2"
                                       name: Test
                                       identifier: Test
                   cloneCodebase: true
+                  sharedPaths:
+                      - /var/run
+                      - /var/lib/docker
+                  serviceDependencies:
+                      - identifier: DockerHost
+                        name: DockerHost
+                        type: Service
+                        spec:
+                            connectorRef: account.harnessImage
+                            image: docker:dind
+                            privileged: true
+                            resources:
+                                limits:
+                                    memory: 4Gi
+                                    cpu: "1"
               name: Build
               identifier: Build
     properties:
