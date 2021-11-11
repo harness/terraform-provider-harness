@@ -148,5 +148,5 @@ pipeline:
                     type: Secret
                     value: org.harness_delegate_secret
                   - name: HARNESS_BEARER_TOKEN
-                    type: Secret
+                    type: String
                     value: <+input>
