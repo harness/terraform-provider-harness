@@ -11,6 +11,9 @@ func init() {
 	resource.AddTestSweepers("harness_cloudprovider", &resource.Sweeper{
 		Name: "harness_cloudprovider",
 		F:    testSweepCloudProviders,
+		Dependencies: []string{
+			"harness_application",
+		},
 	})
 }
 
