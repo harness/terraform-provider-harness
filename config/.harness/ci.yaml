@@ -38,6 +38,9 @@ pipeline:
                   - name: HARNESS_TEST_DELEGATE_PROFILE_ID
                     type: Secret
                     value: org.harness_delegate_profile_id
+                  - name: HARNESS_TEST_DELEGATE_WAIT_TIMEOUT
+                    type: String
+                    value: 10m
               type: CI
               spec:
                   infrastructure:
