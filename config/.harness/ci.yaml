@@ -71,17 +71,6 @@ pipeline:
                                         ls -la /var/lib/docker
                                     privileged: false
                           - step:
-                                type: Run
-                                name: test
-                                identifier: test
-                                spec:
-                                    connectorRef: account.harnessImage
-                                    image: busybox:latest
-                                    command: |
-                                        ls -la /var/run
-                                        ls -la /var/lib/docker
-                                    privileged: false
-                          - step:
                                 type: RestoreCacheGCS
                                 spec:
                                     resources:
