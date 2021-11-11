@@ -109,7 +109,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.gcp
                                           image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          command: gotestsum --junitfile junit.xml --format testname -- ./... -v -timeout 30m -count 4
+                                          command: gotestsum --junitfile junit.xml --format testname -- ./... -v -timeout 60m -count 4
                                           privileged: false
                                           reports:
                                               type: JUnit
@@ -122,7 +122,7 @@ pipeline:
                                                   cpu: "2"
                                       name: Test
                                       identifier: Test
-                                      timeout: 30m
+                                      timeout: 60m
                                 - step:
                                       type: Run
                                       spec:
