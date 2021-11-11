@@ -72,10 +72,10 @@ If you need to provide additional configuration you can create a client object f
 ```go
 client := &Client{
     UserAgent:   getUserAgentString(),
-    Endpoint:    utils.GetEnv(envvar.HarnessEndpoint, utils.DefaultApiUrl),
-    AccountId:   os.Getenv(envvar.HarnessAccountId),
-    APIKey:      os.Getenv(envvar.HarnessApiKey),
-    BearerToken: os.Getenv(envvar.HarnessBearerToken),
+    Endpoint:    utils.GetEnv(envvar.Endpoint, utils.DefaultApiUrl),
+    AccountId:   os.Getenv(envvar.AccountId),
+    APIKey:      os.Getenv(envvar.ApiKey),
+    BearerToken: os.Getenv(envvar.BearerToken),
     HTTPClient: &retryablehttp.Client{
         RetryMax:     10,
         RetryWaitMin: 5 * time.Second,

@@ -27,9 +27,9 @@ func getClient() *ApiClient {
 	return NewClient(&Configuration{
 		UserAgent:   "micahlmartin-harness-go-sdk-0.0.1",
 		Endpoint:    utils.DefaultApiUrl,
-		AccountId:   helpers.EnvVars.HarnessAccountId.Get(),
-		APIKey:      helpers.EnvVars.HarnessApiKey.Get(),
-		BearerToken: helpers.EnvVars.HarnessBearerToken.Get(),
+		AccountId:   helpers.EnvVars.AccountId.Get(),
+		APIKey:      helpers.EnvVars.ApiKey.Get(),
+		BearerToken: helpers.EnvVars.BearerToken.Get(),
 		HTTPClient: &retryablehttp.Client{
 			RetryMax:     10,
 			RetryWaitMin: 5 * time.Second,
@@ -48,7 +48,7 @@ func GetUnauthorizedClient() *ApiClient {
 	return NewClient(&Configuration{
 		UserAgent: "micahlmartin-harness-go-sdk-0.0.1",
 		Endpoint:  utils.DefaultApiUrl,
-		AccountId: helpers.EnvVars.HarnessAccountId.Get(),
+		AccountId: helpers.EnvVars.AccountId.Get(),
 		APIKey:    "BAD_KEY",
 		HTTPClient: &retryablehttp.Client{
 			RetryMax:     10,

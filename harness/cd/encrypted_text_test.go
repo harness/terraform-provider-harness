@@ -18,7 +18,7 @@ func TestCreateEncryptedText(t *testing.T) {
 	input := &graphql.CreateSecretInput{
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            expectedName,
-			SecretManagerId: helpers.EnvVars.HarnessAccountId.Get(),
+			SecretManagerId: helpers.EnvVars.AccountId.Get(),
 			Value:           "someval",
 			UsageScope:      getExampleUsageScopes(),
 		},
@@ -47,7 +47,7 @@ func TestDeleteSecret_EncryptedText(t *testing.T) {
 		SecretType: graphql.SecretTypes.EncryptedText,
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            expectedName,
-			SecretManagerId: helpers.EnvVars.HarnessAccountId.Get(),
+			SecretManagerId: helpers.EnvVars.AccountId.Get(),
 			Value:           "someval",
 		},
 	}
@@ -193,7 +193,7 @@ func createEncryptedTextSecret(name string, value string) (*graphql.EncryptedTex
 		SecretType: graphql.SecretTypes.EncryptedText,
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            name,
-			SecretManagerId: helpers.EnvVars.HarnessAccountId.Get(),
+			SecretManagerId: helpers.EnvVars.AccountId.Get(),
 			Value:           value,
 		},
 	}

@@ -1,8 +1,11 @@
 package cd
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"strings"
+	"time"
 
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 )
@@ -10,6 +13,92 @@ import (
 // Helper type for accessing all delegate related crud methods
 type DelegateClient struct {
 	ApiClient *ApiClient
+}
+
+func (c *DelegateClient) WaitForDelegate(ctx context.Context, delegateName string, timeout time.Duration) (*graphql.Delegate, error) {
+
+	pollInterval := time.Second * 10
+	ctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	for {
+		delegate, err := c.GetDelegateByName(delegateName)
+		if err != nil || delegate != nil {
+			return delegate, err
+		}
+
+		select {
+		case <-ctx.Done():
+			log.Printf("[ERROR] Timedout waitingWaiting for delegate %s", delegateName)
+			return nil, ctx.Err()
+		case <-time.After(pollInterval):
+			log.Printf("[INFO] Waiting for delegate %s", delegateName)
+		}
+	}
+}
+
+func (c *DelegateClient) DeleteDelegate(delegateId string) error {
+
+	query := &GraphQLQuery{
+		Query: `mutation($input: DeleteDelegateInput!) {
+			deleteDelegate(input: $input) {
+				clientMutationId
+			}
+		}`,
+		Variables: map[string]interface{}{
+			"input": struct {
+				AccountId  string `json:"accountId"`
+				DelegateId string `json:"delegateId"`
+			}{
+				AccountId:  c.ApiClient.Configuration.AccountId,
+				DelegateId: delegateId,
+			},
+		},
+	}
+
+	res := &struct {
+		deleteDelegate struct {
+			clientMutationId string
+		}
+	}{}
+
+	err := c.ApiClient.ExecuteGraphQLQuery(query, &res)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *DelegateClient) UpdateDelegateApprovalStatus(input *graphql.DelegateApprovalRejectInput) (*graphql.Delegate, error) {
+
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`mutation($input: DelegateApproveRejectInput!) {
+			delegateApproveReject(input: $input) {
+				delegate {
+					%[1]s
+				}
+			}
+		}`, standardDelegateFields),
+		Variables: map[string]interface{}{
+			"input": &input,
+		},
+	}
+
+	res := &struct {
+		DelegateApproveReject struct {
+			Delegate graphql.Delegate
+		}
+	}{}
+
+	err := c.ApiClient.ExecuteGraphQLQuery(query, &res)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &res.DelegateApproveReject.Delegate, nil
 }
 
 func (c *DelegateClient) GetDelegateByName(name string) (*graphql.Delegate, error) {

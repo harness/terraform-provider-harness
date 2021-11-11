@@ -5,19 +5,21 @@ import "os"
 type EnvVar string
 
 var EnvVars = struct {
-	HarnessAccountId   EnvVar
-	HarnessApiKey      EnvVar
-	HarnessEndpoint    EnvVar
-	HarnessBearerToken EnvVar
-	HarnessNGApiKey    EnvVar
-	HarnessNGEndpoint  EnvVar
+	AccountId      EnvVar
+	ApiKey         EnvVar
+	BearerToken    EnvVar
+	DelegateSecret EnvVar
+	Endpoint       EnvVar
+	NGApiKey       EnvVar
+	NGEndpoint     EnvVar
 }{
-	HarnessAccountId:   "HARNESS_ACCOUNT_ID",
-	HarnessApiKey:      "HARNESS_API_KEY",
-	HarnessEndpoint:    "HARNESS_ENDPOINT",
-	HarnessBearerToken: "HARNESS_BEARER_TOKEN",
-	HarnessNGApiKey:    "HARNESS_NG_API_KEY",
-	HarnessNGEndpoint:  "HARNESS_NG_ENDPOINT",
+	AccountId:      "HARNESS_ACCOUNT_ID",
+	ApiKey:         "HARNESS_API_KEY",
+	BearerToken:    "HARNESS_BEARER_TOKEN",
+	DelegateSecret: "HARNESS_DELEGATE_SECRET",
+	Endpoint:       "HARNESS_ENDPOINT",
+	NGApiKey:       "HARNESS_NG_API_KEY",
+	NGEndpoint:     "HARNESS_NG_ENDPOINT",
 }
 
 func (e EnvVar) String() string {

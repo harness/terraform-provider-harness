@@ -39,20 +39,20 @@ func NewClient() *Client {
 	userAgent := getUserAgentString()
 
 	return &Client{
-		AccountId: helpers.EnvVars.HarnessAccountId.Get(),
-		Endpoint:  helpers.EnvVars.HarnessEndpoint.GetWithDefault(utils.DefaultApiUrl),
+		AccountId: helpers.EnvVars.AccountId.Get(),
+		Endpoint:  helpers.EnvVars.Endpoint.GetWithDefault(utils.DefaultApiUrl),
 		CDClient: cd.NewClient(&cd.Configuration{
-			AccountId:   helpers.EnvVars.HarnessAccountId.Get(),
-			APIKey:      helpers.EnvVars.HarnessApiKey.Get(),
-			BearerToken: helpers.EnvVars.HarnessBearerToken.Get(),
-			Endpoint:    helpers.EnvVars.HarnessEndpoint.GetWithDefault(utils.DefaultApiUrl),
+			AccountId:   helpers.EnvVars.AccountId.Get(),
+			APIKey:      helpers.EnvVars.ApiKey.Get(),
+			BearerToken: helpers.EnvVars.BearerToken.Get(),
+			Endpoint:    helpers.EnvVars.Endpoint.GetWithDefault(utils.DefaultApiUrl),
 			UserAgent:   userAgent,
 			HTTPClient:  httpClient,
 		}),
 		NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
-			BasePath: helpers.EnvVars.HarnessNGEndpoint.GetWithDefault(DefaultNGApiUrl),
+			BasePath: helpers.EnvVars.NGEndpoint.GetWithDefault(DefaultNGApiUrl),
 			DefaultHeader: map[string]string{
-				helpers.EnvVars.HarnessNGApiKey.String(): helpers.EnvVars.HarnessNGApiKey.Get(),
+				helpers.EnvVars.NGApiKey.String(): helpers.EnvVars.NGApiKey.Get(),
 			},
 			UserAgent:  userAgent,
 			HTTPClient: httpClient,
