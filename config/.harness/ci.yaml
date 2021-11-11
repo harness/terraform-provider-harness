@@ -109,7 +109,7 @@ pipeline:
                                       spec:
                                           connectorRef: org.gcp
                                           image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          command: gotestsum --junitfile junit.xml --format testname -- ./... -v -timeout 60m -count 4
+                                          command: gotestsum --junitfile junit.xml --format testname -- ./... -v -timeout 60m
                                           privileged: false
                                           reports:
                                               type: JUnit
@@ -156,8 +156,8 @@ pipeline:
                             privileged: true
                             resources:
                                 limits:
-                                    memory: 4Gi
-                                    cpu: "1"
+                                    memory: 8Gi
+                                    cpu: "2"
               name: Build
               identifier: Build
     properties:
