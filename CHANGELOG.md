@@ -1,11 +1,12 @@
 # Changelog
 
-## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+## [v0.1.1](https://github.com/harness-io/harness-go-sdk/tree/v0.1.1) (2021-11-11)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.0...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.0...v0.1.1)
 
 **Merged pull requests:**
 
+- Release version 0.1.1 11-11-2021 [\#57](https://github.com/harness-io/harness-go-sdk/pull/57) ([micahlmartin](https://github.com/micahlmartin))
 - Add support for approving delegates [\#56](https://github.com/harness-io/harness-go-sdk/pull/56) ([micahlmartin](https://github.com/micahlmartin))
 - Update pipeline ci [\#55](https://github.com/harness-io/harness-go-sdk/pull/55) ([micahlmartin](https://github.com/micahlmartin))
 
@@ -65,7 +66,6 @@
 
 - Release version 0.0.11 09-28-2021 [\#44](https://github.com/harness-io/harness-go-sdk/pull/44) ([micahlmartin](https://github.com/micahlmartin))
 - Added support for TEMPLATE in user group permissions [\#43](https://github.com/harness-io/harness-go-sdk/pull/43) ([micahlmartin](https://github.com/micahlmartin))
-- Release version 0.0.9 09-22-2021 [\#41](https://github.com/harness-io/harness-go-sdk/pull/41) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.10](https://github.com/harness-io/harness-go-sdk/tree/v0.0.10) (2021-09-28)
 
@@ -81,6 +81,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.0.9 09-22-2021 [\#41](https://github.com/harness-io/harness-go-sdk/pull/41) ([micahlmartin](https://github.com/micahlmartin))
 - Added support for gitsync configuration [\#40](https://github.com/harness-io/harness-go-sdk/pull/40) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.8](https://github.com/harness-io/harness-go-sdk/tree/v0.0.8) (2021-09-14)
