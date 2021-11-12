@@ -10,6 +10,6 @@
 package nextgen
 
 type ConnectedArgoGitOpsInfoDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_      string `json:"type,omitempty"`
 	AdapterUrl string `json:"adapterUrl"`
 }

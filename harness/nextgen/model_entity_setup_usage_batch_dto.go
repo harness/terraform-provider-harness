@@ -10,6 +10,6 @@
 package nextgen
 
 type EntitySetupUsageBatchDto struct {
-	ReferredByEntity string `json:"referredByEntity,omitempty"`
+	ReferredByEntity string                `json:"referredByEntity,omitempty"`
 	ReferredEntities []EntitySetupUsageDto `json:"referredEntities,omitempty"`
 }

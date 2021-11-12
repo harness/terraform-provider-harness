@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseMessageException struct {
-	StackTrace []ResponseMessageExceptionStackTrace `json:"stackTrace,omitempty"`
-	Message string `json:"message,omitempty"`
-	LocalizedMessage string `json:"localizedMessage,omitempty"`
-	Suppressed []ResponseMessageExceptionSuppressed `json:"suppressed,omitempty"`
+	StackTrace       []ResponseMessageExceptionStackTrace `json:"stackTrace,omitempty"`
+	Message          string                               `json:"message,omitempty"`
+	LocalizedMessage string                               `json:"localizedMessage,omitempty"`
+	Suppressed       []ResponseMessageExceptionSuppressed `json:"suppressed,omitempty"`
 }

@@ -11,7 +11,7 @@ package nextgen
 
 type AccountResourcesDto struct {
 	ConnectorsCount int64 `json:"connectorsCount,omitempty"`
-	SecretsCount int64 `json:"secretsCount,omitempty"`
-	DelegatesCount int64 `json:"delegatesCount,omitempty"`
-	TemplatesCount int64 `json:"templatesCount,omitempty"`
+	SecretsCount    int64 `json:"secretsCount,omitempty"`
+	DelegatesCount  int64 `json:"delegatesCount,omitempty"`
+	TemplatesCount  int64 `json:"templatesCount,omitempty"`
 }

@@ -10,17 +10,17 @@
 package nextgen
 
 type Descriptor struct {
-	Index int32 `json:"index,omitempty"`
-	Proto *DescriptorProto `json:"proto,omitempty"`
-	FullName string `json:"fullName,omitempty"`
-	File *FileDescriptor `json:"file,omitempty"`
-	ContainingType *Descriptor `json:"containingType,omitempty"`
-	NestedTypes []Descriptor `json:"nestedTypes,omitempty"`
-	EnumTypes []EnumDescriptor `json:"enumTypes,omitempty"`
-	Fields []FieldDescriptor `json:"fields,omitempty"`
-	Extensions []FieldDescriptor `json:"extensions,omitempty"`
-	Oneofs []OneofDescriptor `json:"oneofs,omitempty"`
-	Options *MessageOptions `json:"options,omitempty"`
-	Extendable bool `json:"extendable,omitempty"`
-	Name string `json:"name,omitempty"`
+	Index          int32             `json:"index,omitempty"`
+	Proto          *DescriptorProto  `json:"proto,omitempty"`
+	FullName       string            `json:"fullName,omitempty"`
+	File           *FileDescriptor   `json:"file,omitempty"`
+	ContainingType *Descriptor       `json:"containingType,omitempty"`
+	NestedTypes    []Descriptor      `json:"nestedTypes,omitempty"`
+	EnumTypes      []EnumDescriptor  `json:"enumTypes,omitempty"`
+	Fields         []FieldDescriptor `json:"fields,omitempty"`
+	Extensions     []FieldDescriptor `json:"extensions,omitempty"`
+	Oneofs         []OneofDescriptor `json:"oneofs,omitempty"`
+	Options        *MessageOptions   `json:"options,omitempty"`
+	Extendable     bool              `json:"extendable,omitempty"`
+	Name           string            `json:"name,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type BitbucketUsernameTokenApiAccessDto struct {
-	Username string `json:"username,omitempty"`
+	Username    string `json:"username,omitempty"`
 	UsernameRef string `json:"usernameRef,omitempty"`
-	TokenRef string `json:"tokenRef"`
+	TokenRef    string `json:"tokenRef"`
 }

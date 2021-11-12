@@ -10,6 +10,6 @@
 package nextgen
 
 type NgAccessWithEncryptionConsumer struct {
-	NgAccess *NgAccess `json:"ngAccess,omitempty"`
+	NgAccess          *NgAccess          `json:"ngAccess,omitempty"`
 	DecryptableEntity *DecryptableEntity `json:"decryptableEntity,omitempty"`
 }

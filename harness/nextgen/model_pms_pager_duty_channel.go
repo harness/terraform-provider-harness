@@ -10,7 +10,7 @@
 package nextgen
 
 type PmsPagerDutyChannel struct {
-	Type_ string `json:"type"`
-	UserGroups []string `json:"userGroups,omitempty"`
-	IntegrationKey string `json:"integrationKey,omitempty"`
+	Type_          string   `json:"type"`
+	UserGroups     []string `json:"userGroups,omitempty"`
+	IntegrationKey string   `json:"integrationKey,omitempty"`
 }

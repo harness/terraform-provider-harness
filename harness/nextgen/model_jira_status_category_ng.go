@@ -10,7 +10,7 @@
 package nextgen
 
 type JiraStatusCategoryNg struct {
-	Id int64 `json:"id"`
-	Key string `json:"key"`
+	Id   int64  `json:"id"`
+	Key  string `json:"key"`
 	Name string `json:"name"`
 }

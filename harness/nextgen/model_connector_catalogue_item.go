@@ -10,6 +10,6 @@
 package nextgen
 
 type ConnectorCatalogueItem struct {
-	Category string `json:"category,omitempty"`
+	Category   string   `json:"category,omitempty"`
 	Connectors []string `json:"connectors,omitempty"`
 }

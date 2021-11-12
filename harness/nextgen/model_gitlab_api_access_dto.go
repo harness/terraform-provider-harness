@@ -10,6 +10,6 @@
 package nextgen
 
 type GitlabApiAccessDto struct {
-	Type_ string `json:"type"`
-	Spec *GitlabApiAccessSpecDto `json:"spec,omitempty"`
+	Type_ string                  `json:"type"`
+	Spec  *GitlabApiAccessSpecDto `json:"spec,omitempty"`
 }

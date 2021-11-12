@@ -11,8 +11,8 @@ package nextgen
 
 // This is the view of a License With Summary defined in Harness
 type LicensesWithSummary struct {
-	Edition string `json:"edition,omitempty"`
-	LicenseType string `json:"licenseType,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
-	MaxExpiryTime int64 `json:"maxExpiryTime,omitempty"`
+	Edition       string `json:"edition,omitempty"`
+	LicenseType   string `json:"licenseType,omitempty"`
+	ModuleType    string `json:"moduleType,omitempty"`
+	MaxExpiryTime int64  `json:"maxExpiryTime,omitempty"`
 }

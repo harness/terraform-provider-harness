@@ -10,7 +10,7 @@
 package nextgen
 
 type EnvFilter struct {
-	Ids []string `json:"ids,omitempty"`
-	Type_ string `json:"type"`
+	Ids         []string `json:"ids,omitempty"`
+	Type_       string   `json:"type"`
 	FilterTypes []string `json:"filterTypes,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type UserFilter struct {
-	SearchTerm string `json:"searchTerm,omitempty"`
-	Identifiers []string `json:"identifiers,omitempty"`
-	ParentFilter string `json:"parentFilter,omitempty"`
+	SearchTerm   string   `json:"searchTerm,omitempty"`
+	Identifiers  []string `json:"identifiers,omitempty"`
+	ParentFilter string   `json:"parentFilter,omitempty"`
 }

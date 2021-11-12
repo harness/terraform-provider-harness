@@ -10,6 +10,6 @@
 package nextgen
 
 type GithubHttpCredentialsDto struct {
-	Type_ string `json:"type"`
-	Spec *GithubHttpCredentialsSpecDto `json:"spec"`
+	Type_ string                        `json:"type"`
+	Spec  *GithubHttpCredentialsSpecDto `json:"spec"`
 }

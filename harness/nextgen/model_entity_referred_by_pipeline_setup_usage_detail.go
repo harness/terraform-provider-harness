@@ -10,7 +10,7 @@
 package nextgen
 
 type EntityReferredByPipelineSetupUsageDetail struct {
-	Type_ string `json:"type"`
-	Identifier string `json:"identifier,omitempty"`
+	Type_         string `json:"type"`
+	Identifier    string `json:"identifier,omitempty"`
 	ReferenceType string `json:"referenceType,omitempty"`
 }

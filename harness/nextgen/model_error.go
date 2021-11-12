@@ -11,10 +11,11 @@ package nextgen
 
 // This is Error entity as defined in Harness
 type ModelError struct {
-	Status string `json:"status,omitempty"`
-	Code string `json:"code,omitempty"`
-	Message string `json:"message,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
-	DetailedMessage string `json:"detailedMessage,omitempty"`
+	Status           string            `json:"status,omitempty"`
+	Code             string            `json:"code,omitempty"`
+	Message          string            `json:"message,omitempty"`
+	CorrelationId    string            `json:"correlationId,omitempty"`
+	DetailedMessage  string            `json:"detailedMessage,omitempty"`
 	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	Metadata         *ErrorMetadataDto `json:"metadata,omitempty"`
 }

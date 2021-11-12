@@ -10,9 +10,9 @@
 package nextgen
 
 type ServiceAccountAggregateDto struct {
-	ServiceAccount *ServiceAccountDto `json:"serviceAccount"`
-	CreatedAt int64 `json:"createdAt"`
-	LastModifiedAt int64 `json:"lastModifiedAt"`
-	TokensCount int32 `json:"tokensCount,omitempty"`
+	ServiceAccount             *ServiceAccountDto          `json:"serviceAccount"`
+	CreatedAt                  int64                       `json:"createdAt"`
+	LastModifiedAt             int64                       `json:"lastModifiedAt"`
+	TokensCount                int32                       `json:"tokensCount,omitempty"`
 	RoleAssignmentsMetadataDTO []RoleAssignmentMetadataDto `json:"roleAssignmentsMetadataDTO,omitempty"`
 }

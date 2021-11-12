@@ -11,5 +11,5 @@ package nextgen
 
 type SecretsFilesBody struct {
 	File *interface{} `json:"file"`
-	Spec string `json:"spec,omitempty"`
+	Spec string       `json:"spec,omitempty"`
 }

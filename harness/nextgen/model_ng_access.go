@@ -10,8 +10,8 @@
 package nextgen
 
 type NgAccess struct {
-	Identifier string `json:"identifier,omitempty"`
+	Identifier        string `json:"identifier,omitempty"`
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
 }

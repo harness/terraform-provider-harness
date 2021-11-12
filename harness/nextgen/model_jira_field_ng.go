@@ -10,11 +10,11 @@
 package nextgen
 
 type JiraFieldNg struct {
-	Key string `json:"key"`
-	Name string `json:"name"`
-	Required bool `json:"required,omitempty"`
-	IsCustom bool `json:"isCustom,omitempty"`
-	Schema *JiraFieldSchemaNg `json:"schema"`
+	Key           string                    `json:"key"`
+	Name          string                    `json:"name"`
+	Required      bool                      `json:"required,omitempty"`
+	IsCustom      bool                      `json:"isCustom,omitempty"`
+	Schema        *JiraFieldSchemaNg        `json:"schema"`
 	AllowedValues []JiraFieldAllowedValueNg `json:"allowedValues"`
-	Custom bool `json:"custom,omitempty"`
+	Custom        bool                      `json:"custom,omitempty"`
 }

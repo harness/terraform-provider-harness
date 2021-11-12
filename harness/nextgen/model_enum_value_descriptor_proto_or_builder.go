@@ -10,15 +10,15 @@
 package nextgen
 
 type EnumValueDescriptorProtoOrBuilder struct {
-	Options *EnumValueOptions `json:"options,omitempty"`
-	OptionsOrBuilder *EnumValueOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
-	NameBytes *ByteString `json:"nameBytes,omitempty"`
-	Name string `json:"name,omitempty"`
-	Number int32 `json:"number,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	Options                   *EnumValueOptions          `json:"options,omitempty"`
+	NameBytes                 *ByteString                `json:"nameBytes,omitempty"`
+	OptionsOrBuilder          *EnumValueOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
+	Name                      string                     `json:"name,omitempty"`
+	Number                    int32                      `json:"number,omitempty"`
+	AllFields                 map[string]interface{}     `json:"allFields,omitempty"`
+	UnknownFields             *UnknownFieldSet           `json:"unknownFields,omitempty"`
+	InitializationErrorString string                     `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                `json:"descriptorForType,omitempty"`
+	DefaultInstanceForType    *Message                   `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                       `json:"initialized,omitempty"`
 }

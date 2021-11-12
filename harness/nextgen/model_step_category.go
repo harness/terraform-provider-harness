@@ -10,7 +10,7 @@
 package nextgen
 
 type StepCategory struct {
-	Name string `json:"name,omitempty"`
-	StepsData []StepData `json:"stepsData,omitempty"`
+	Name           string         `json:"name,omitempty"`
+	StepsData      []StepData     `json:"stepsData,omitempty"`
 	StepCategories []StepCategory `json:"stepCategories,omitempty"`
 }

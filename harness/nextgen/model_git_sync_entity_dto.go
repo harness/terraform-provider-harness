@@ -10,15 +10,15 @@
 package nextgen
 
 type GitSyncEntityDto struct {
-	EntityName string `json:"entityName,omitempty"`
-	EntityType string `json:"entityType,omitempty"`
-	EntityIdentifier string `json:"entityIdentifier,omitempty"`
-	GitConnectorId string `json:"gitConnectorId,omitempty"`
-	RepoUrl string `json:"repoUrl,omitempty"`
-	Branch string `json:"branch,omitempty"`
-	FolderPath string `json:"folderPath,omitempty"`
-	EntityGitPath string `json:"entityGitPath,omitempty"`
-	RepoProviderType string `json:"repoProviderType,omitempty"`
-	EntityReference *EntityReference `json:"entityReference,omitempty"`
-	AccountId string `json:"accountId,omitempty"`
+	EntityName       string           `json:"entityName,omitempty"`
+	EntityType       string           `json:"entityType,omitempty"`
+	EntityIdentifier string           `json:"entityIdentifier,omitempty"`
+	GitConnectorId   string           `json:"gitConnectorId,omitempty"`
+	RepoUrl          string           `json:"repoUrl,omitempty"`
+	Branch           string           `json:"branch,omitempty"`
+	FolderPath       string           `json:"folderPath,omitempty"`
+	EntityGitPath    string           `json:"entityGitPath,omitempty"`
+	RepoProviderType string           `json:"repoProviderType,omitempty"`
+	EntityReference  *EntityReference `json:"entityReference,omitempty"`
+	AccountId        string           `json:"accountId,omitempty"`
 }

@@ -10,9 +10,9 @@
 package nextgen
 
 type KerberosConfigDto struct {
-	Type_ string `json:"type"`
-	Principal string `json:"principal"`
-	Realm string `json:"realm"`
-	TgtGenerationMethod string `json:"tgtGenerationMethod,omitempty"`
-	Spec *TgtGenerationSpecDto `json:"spec,omitempty"`
+	Type_               string                `json:"type"`
+	Principal           string                `json:"principal"`
+	Realm               string                `json:"realm"`
+	TgtGenerationMethod string                `json:"tgtGenerationMethod,omitempty"`
+	Spec                *TgtGenerationSpecDto `json:"spec,omitempty"`
 }

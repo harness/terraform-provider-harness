@@ -10,7 +10,7 @@
 package nextgen
 
 type RateLimitRestrictionDto struct {
-	Limit int64 `json:"limit,omitempty"`
-	Count int64 `json:"count,omitempty"`
+	Limit    int64     `json:"limit,omitempty"`
+	Count    int64     `json:"count,omitempty"`
 	TimeUnit *TimeUnit `json:"timeUnit,omitempty"`
 }

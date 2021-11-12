@@ -10,7 +10,7 @@
 package nextgen
 
 type Sort struct {
-	Sorted bool `json:"sorted,omitempty"`
+	Sorted   bool `json:"sorted,omitempty"`
 	Unsorted bool `json:"unsorted,omitempty"`
-	Empty bool `json:"empty,omitempty"`
+	Empty    bool `json:"empty,omitempty"`
 }

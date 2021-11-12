@@ -10,15 +10,15 @@
 package nextgen
 
 type ReservedRange struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	Start int32 `json:"start,omitempty"`
-	End int32 `json:"end,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserReservedRange `json:"parserForType,omitempty"`
-	DefaultInstanceForType *ReservedRange `json:"defaultInstanceForType,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
+	End                       int32                  `json:"end,omitempty"`
+	Start                     int32                  `json:"start,omitempty"`
+	ParserForType             *ParserReservedRange   `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *ReservedRange         `json:"defaultInstanceForType,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

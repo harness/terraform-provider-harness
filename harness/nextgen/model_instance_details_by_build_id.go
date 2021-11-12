@@ -10,6 +10,6 @@
 package nextgen
 
 type InstanceDetailsByBuildId struct {
-	BuildId string `json:"buildId,omitempty"`
+	BuildId   string               `json:"buildId,omitempty"`
 	Instances []InstanceDetailsDto `json:"instances,omitempty"`
 }

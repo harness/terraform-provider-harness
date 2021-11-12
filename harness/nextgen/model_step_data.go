@@ -11,5 +11,5 @@ package nextgen
 
 type StepData struct {
 	Type_ string `json:"type,omitempty"`
-	Name string `json:"name,omitempty"`
+	Name  string `json:"name,omitempty"`
 }

@@ -11,5 +11,5 @@ package nextgen
 
 type UserLockoutInfo struct {
 	NumberOfFailedLoginAttempts int32 `json:"numberOfFailedLoginAttempts,omitempty"`
-	UserLockedAt int64 `json:"userLockedAt,omitempty"`
+	UserLockedAt                int64 `json:"userLockedAt,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type DynatraceConnectorDto struct {
-	Url string `json:"url"`
-	ApiTokenRef string `json:"apiTokenRef"`
+	Url               string   `json:"url"`
+	ApiTokenRef       string   `json:"apiTokenRef"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 }

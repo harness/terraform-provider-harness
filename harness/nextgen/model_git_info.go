@@ -12,8 +12,8 @@ package nextgen
 type GitInfo struct {
 	SourceBranch string `json:"sourceBranch,omitempty"`
 	TargetBranch string `json:"targetBranch,omitempty"`
-	Commit string `json:"commit,omitempty"`
-	CommitID string `json:"commitID,omitempty"`
-	EventType string `json:"eventType,omitempty"`
-	RepoName string `json:"repoName,omitempty"`
+	Commit       string `json:"commit,omitempty"`
+	CommitID     string `json:"commitID,omitempty"`
+	EventType    string `json:"eventType,omitempty"`
+	RepoName     string `json:"repoName,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type GitEntitySummaryFilterDto struct {
-	ModuleType string `json:"moduleType,omitempty"`
+	ModuleType               string   `json:"moduleType,omitempty"`
 	GitSyncConfigIdentifiers []string `json:"gitSyncConfigIdentifiers,omitempty"`
-	EntityTypes []string `json:"entityTypes,omitempty"`
-	SearchTerm string `json:"searchTerm,omitempty"`
+	EntityTypes              []string `json:"entityTypes,omitempty"`
+	SearchTerm               string   `json:"searchTerm,omitempty"`
 }

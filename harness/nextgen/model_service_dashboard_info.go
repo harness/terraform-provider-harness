@@ -10,15 +10,15 @@
 package nextgen
 
 type ServiceDashboardInfo struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	TotalDeploymentsCount int64 `json:"totalDeploymentsCount,omitempty"`
-	SuccessDeploymentsCount int64 `json:"successDeploymentsCount,omitempty"`
-	FailureDeploymentsCount int64 `json:"failureDeploymentsCount,omitempty"`
+	Name                       string  `json:"name,omitempty"`
+	Identifier                 string  `json:"identifier,omitempty"`
+	OrgIdentifier              string  `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier          string  `json:"projectIdentifier,omitempty"`
+	AccountIdentifier          string  `json:"accountIdentifier,omitempty"`
+	TotalDeploymentsCount      int64   `json:"totalDeploymentsCount,omitempty"`
+	SuccessDeploymentsCount    int64   `json:"successDeploymentsCount,omitempty"`
+	FailureDeploymentsCount    int64   `json:"failureDeploymentsCount,omitempty"`
 	TotalDeploymentsChangeRate float64 `json:"totalDeploymentsChangeRate,omitempty"`
-	InstancesCount int64 `json:"instancesCount,omitempty"`
-	InstancesCountChangeRate float64 `json:"instancesCountChangeRate,omitempty"`
+	InstancesCount             int64   `json:"instancesCount,omitempty"`
+	InstancesCountChangeRate   float64 `json:"instancesCountChangeRate,omitempty"`
 }

@@ -10,17 +10,17 @@
 package nextgen
 
 type ExtensionRange struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	Options *ExtensionRangeOptions `json:"options,omitempty"`
-	Start int32 `json:"start,omitempty"`
-	End int32 `json:"end,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserExtensionRange `json:"parserForType,omitempty"`
-	DefaultInstanceForType *ExtensionRange `json:"defaultInstanceForType,omitempty"`
-	OptionsOrBuilder *ExtensionRangeOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	UnknownFields             *UnknownFieldSet                `json:"unknownFields,omitempty"`
+	Initialized               bool                            `json:"initialized,omitempty"`
+	Options                   *ExtensionRangeOptions          `json:"options,omitempty"`
+	End                       int32                           `json:"end,omitempty"`
+	Start                     int32                           `json:"start,omitempty"`
+	ParserForType             *ParserExtensionRange           `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *ExtensionRange                 `json:"defaultInstanceForType,omitempty"`
+	SerializedSize            int32                           `json:"serializedSize,omitempty"`
+	OptionsOrBuilder          *ExtensionRangeOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
+	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
+	InitializationErrorString string                          `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                     `json:"descriptorForType,omitempty"`
+	MemoizedSerializedSize    int32                           `json:"memoizedSerializedSize,omitempty"`
 }

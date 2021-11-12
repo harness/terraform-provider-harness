@@ -10,7 +10,7 @@
 package nextgen
 
 type DeploymentInfo struct {
-	Count int64 `json:"count,omitempty"`
-	Rate float64 `json:"rate,omitempty"`
+	Count     int64                    `json:"count,omitempty"`
+	Rate      float64                  `json:"rate,omitempty"`
 	CountList []DeploymentDateAndCount `json:"countList,omitempty"`
 }

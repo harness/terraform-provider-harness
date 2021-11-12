@@ -10,9 +10,9 @@
 package nextgen
 
 type SecretResourceFilterDto struct {
-	Identifiers []string `json:"identifiers,omitempty"`
-	SearchTerm string `json:"searchTerm,omitempty"`
-	SecretTypes []string `json:"secretTypes,omitempty"`
-	SourceCategory string `json:"sourceCategory,omitempty"`
-	IncludeSecretsFromEverySubScope bool `json:"includeSecretsFromEverySubScope,omitempty"`
+	Identifiers                     []string `json:"identifiers,omitempty"`
+	SearchTerm                      string   `json:"searchTerm,omitempty"`
+	SecretTypes                     []string `json:"secretTypes,omitempty"`
+	SourceCategory                  string   `json:"sourceCategory,omitempty"`
+	IncludeSecretsFromEverySubScope bool     `json:"includeSecretsFromEverySubScope,omitempty"`
 }

@@ -11,7 +11,7 @@ package nextgen
 
 // Project resource along with metadata. Generally, Used to power UI.
 type ProjectResponse struct {
-	Project *Project `json:"project"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
+	Project        *Project `json:"project"`
+	CreatedAt      int64    `json:"createdAt,omitempty"`
+	LastModifiedAt int64    `json:"lastModifiedAt,omitempty"`
 }

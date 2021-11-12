@@ -11,5 +11,5 @@ package nextgen
 
 type TrialSignupOptions struct {
 	ProductsSelected []string `json:"productsSelected,omitempty"`
-	AssistedOption bool `json:"assistedOption,omitempty"`
+	AssistedOption   bool     `json:"assistedOption,omitempty"`
 }

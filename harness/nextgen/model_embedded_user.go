@@ -10,7 +10,7 @@
 package nextgen
 
 type EmbeddedUser struct {
-	Uuid string `json:"uuid,omitempty"`
-	Name string `json:"name,omitempty"`
+	Uuid  string `json:"uuid,omitempty"`
+	Name  string `json:"name,omitempty"`
 	Email string `json:"email,omitempty"`
 }

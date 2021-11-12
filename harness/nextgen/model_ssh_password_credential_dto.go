@@ -11,6 +11,6 @@ package nextgen
 
 type SshPasswordCredentialDto struct {
 	CredentialType string `json:"credentialType"`
-	UserName string `json:"userName"`
-	Password string `json:"password"`
+	UserName       string `json:"userName"`
+	Password       string `json:"password"`
 }

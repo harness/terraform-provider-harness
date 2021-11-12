@@ -10,11 +10,11 @@
 package nextgen
 
 type PageResponseUserGroupDto struct {
-	TotalPages int64 `json:"totalPages,omitempty"`
-	TotalItems int64 `json:"totalItems,omitempty"`
-	PageItemCount int64 `json:"pageItemCount,omitempty"`
-	PageSize int64 `json:"pageSize,omitempty"`
-	Content []UserGroupDto `json:"content,omitempty"`
-	PageIndex int64 `json:"pageIndex,omitempty"`
-	Empty bool `json:"empty,omitempty"`
+	TotalPages    int64          `json:"totalPages,omitempty"`
+	TotalItems    int64          `json:"totalItems,omitempty"`
+	PageItemCount int64          `json:"pageItemCount,omitempty"`
+	PageSize      int64          `json:"pageSize,omitempty"`
+	Content       []UserGroupDto `json:"content,omitempty"`
+	PageIndex     int64          `json:"pageIndex,omitempty"`
+	Empty         bool           `json:"empty,omitempty"`
 }

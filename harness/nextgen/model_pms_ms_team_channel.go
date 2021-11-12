@@ -10,7 +10,7 @@
 package nextgen
 
 type PmsMsTeamChannel struct {
-	Type_ string `json:"type"`
+	Type_      string   `json:"type"`
 	MsTeamKeys []string `json:"msTeamKeys,omitempty"`
 	UserGroups []string `json:"userGroups,omitempty"`
 }

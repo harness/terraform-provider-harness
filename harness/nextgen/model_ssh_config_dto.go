@@ -10,7 +10,7 @@
 package nextgen
 
 type SshConfigDto struct {
-	Type_ string `json:"type"`
-	CredentialType string `json:"credentialType"`
-	Spec *SshCredentialSpecDto `json:"spec"`
+	Type_          string                `json:"type"`
+	CredentialType string                `json:"credentialType"`
+	Spec           *SshCredentialSpecDto `json:"spec"`
 }

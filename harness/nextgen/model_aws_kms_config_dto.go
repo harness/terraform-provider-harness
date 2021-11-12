@@ -10,15 +10,15 @@
 package nextgen
 
 type AwsKmsConfigDto struct {
-	Name string `json:"name,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Description string `json:"description,omitempty"`
-	EncryptionType string `json:"encryptionType,omitempty"`
-	HarnessManaged bool `json:"harnessManaged,omitempty"`
-	Default_ bool `json:"default,omitempty"`
+	Name                string               `json:"name,omitempty"`
+	AccountIdentifier   string               `json:"accountIdentifier,omitempty"`
+	OrgIdentifier       string               `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier   string               `json:"projectIdentifier,omitempty"`
+	Tags                map[string]string    `json:"tags,omitempty"`
+	Identifier          string               `json:"identifier,omitempty"`
+	Description         string               `json:"description,omitempty"`
+	EncryptionType      string               `json:"encryptionType,omitempty"`
+	HarnessManaged      bool                 `json:"harnessManaged,omitempty"`
+	Default_            bool                 `json:"default,omitempty"`
 	BaseAwsKmsConfigDTO *BaseAwsKmsConfigDto `json:"baseAwsKmsConfigDTO,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type NexusConnectorDto struct {
-	NexusServerUrl string `json:"nexusServerUrl"`
-	Version string `json:"version"`
-	Auth *NexusAuthenticationDto `json:"auth,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	NexusServerUrl    string                  `json:"nexusServerUrl"`
+	Version           string                  `json:"version"`
+	Auth              *NexusAuthenticationDto `json:"auth,omitempty"`
+	DelegateSelectors []string                `json:"delegateSelectors,omitempty"`
 }

@@ -10,21 +10,21 @@
 package nextgen
 
 type MessageOptions struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserMessageOptions `json:"parserForType,omitempty"`
-	DefaultInstanceForType *MessageOptions `json:"defaultInstanceForType,omitempty"`
-	NoStandardDescriptorAccessor bool `json:"noStandardDescriptorAccessor,omitempty"`
-	Deprecated bool `json:"deprecated,omitempty"`
-	MessageSetWireFormat bool `json:"messageSetWireFormat,omitempty"`
-	UninterpretedOptionList []UninterpretedOption `json:"uninterpretedOptionList,omitempty"`
-	UninterpretedOptionCount int32 `json:"uninterpretedOptionCount,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
+	Deprecated                       bool                           `json:"deprecated,omitempty"`
+	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	MapEntry bool `json:"mapEntry,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	AllFieldsRaw map[string]interface{} `json:"allFieldsRaw,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	ParserForType                    *ParserMessageOptions          `json:"parserForType,omitempty"`
+	DefaultInstanceForType           *MessageOptions                `json:"defaultInstanceForType,omitempty"`
+	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
+	MessageSetWireFormat             bool                           `json:"messageSetWireFormat,omitempty"`
+	NoStandardDescriptorAccessor     bool                           `json:"noStandardDescriptorAccessor,omitempty"`
+	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
+	MapEntry                         bool                           `json:"mapEntry,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
+	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

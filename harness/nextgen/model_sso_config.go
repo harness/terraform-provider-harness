@@ -10,7 +10,7 @@
 package nextgen
 
 type SsoConfig struct {
-	AccountId string `json:"accountId,omitempty"`
-	SsoSettings []SsoSettings `json:"ssoSettings,omitempty"`
-	AuthenticationMechanism string `json:"authenticationMechanism,omitempty"`
+	AccountId               string        `json:"accountId,omitempty"`
+	SsoSettings             []SsoSettings `json:"ssoSettings,omitempty"`
+	AuthenticationMechanism string        `json:"authenticationMechanism,omitempty"`
 }

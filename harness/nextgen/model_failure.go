@@ -11,9 +11,9 @@ package nextgen
 
 // This is Failure entity as defied in Harness
 type Failure struct {
-	Status string `json:"status,omitempty"`
-	Code string `json:"code,omitempty"`
-	Message string `json:"message,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
-	Errors []ValidationError `json:"errors,omitempty"`
+	Status        string            `json:"status,omitempty"`
+	Code          string            `json:"code,omitempty"`
+	Message       string            `json:"message,omitempty"`
+	CorrelationId string            `json:"correlationId,omitempty"`
+	Errors        []ValidationError `json:"errors,omitempty"`
 }

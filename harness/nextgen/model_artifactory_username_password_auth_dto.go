@@ -10,7 +10,7 @@
 package nextgen
 
 type ArtifactoryUsernamePasswordAuthDto struct {
-	Username string `json:"username,omitempty"`
+	Username    string `json:"username,omitempty"`
 	UsernameRef string `json:"usernameRef,omitempty"`
 	PasswordRef string `json:"passwordRef"`
 }

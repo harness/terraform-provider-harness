@@ -10,6 +10,6 @@
 package nextgen
 
 type EncryptedDataParams struct {
-	Name string `json:"name,omitempty"`
+	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }

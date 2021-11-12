@@ -10,8 +10,8 @@
 package nextgen
 
 type MessageLite struct {
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserMessageLite `json:"parserForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	DefaultInstanceForType *MessageLite `json:"defaultInstanceForType,omitempty"`
+	ParserForType          *ParserMessageLite `json:"parserForType,omitempty"`
+	SerializedSize         int32              `json:"serializedSize,omitempty"`
+	Initialized            bool               `json:"initialized,omitempty"`
+	DefaultInstanceForType *MessageLite       `json:"defaultInstanceForType,omitempty"`
 }

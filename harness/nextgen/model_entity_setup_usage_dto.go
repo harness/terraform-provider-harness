@@ -10,9 +10,9 @@
 package nextgen
 
 type EntitySetupUsageDto struct {
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	ReferredEntity *EntityDetail `json:"referredEntity,omitempty"`
-	ReferredByEntity *EntityDetail `json:"referredByEntity"`
-	Detail *SetupUsageDetail `json:"detail,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
+	AccountIdentifier string            `json:"accountIdentifier,omitempty"`
+	ReferredEntity    *EntityDetail     `json:"referredEntity,omitempty"`
+	ReferredByEntity  *EntityDetail     `json:"referredByEntity"`
+	Detail            *SetupUsageDetail `json:"detail,omitempty"`
+	CreatedAt         int64             `json:"createdAt,omitempty"`
 }

@@ -10,6 +10,6 @@
 package nextgen
 
 type ExecutionDeployment struct {
-	Time int64 `json:"time,omitempty"`
+	Time        int64            `json:"time,omitempty"`
 	Deployments *DeploymentCount `json:"deployments,omitempty"`
 }

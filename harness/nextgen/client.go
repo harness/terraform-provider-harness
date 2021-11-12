@@ -46,8 +46,6 @@ type APIClient struct {
 
 	// API Services
 
-	AclApi *AclApiService
-
 	AccountsApi *AccountsApiService
 
 	AuthenticationSettingsApi *AuthenticationSettingsApiService
@@ -55,6 +53,10 @@ type APIClient struct {
 	ConnectorsApi *ConnectorsApiService
 
 	DefaultApi *DefaultApiService
+
+	DelegateConfigurationManagementApi *DelegateConfigurationManagementApiService
+
+	DelegateConfigurationResourceApi *DelegateConfigurationResourceApiService
 
 	EnforcementApi *EnforcementApiService
 
@@ -68,13 +70,7 @@ type APIClient struct {
 
 	ProjectApi *ProjectApiService
 
-	PermissionsApi *PermissionsApiService
-
-	RoleAssignmentsApi *RoleAssignmentsApiService
-
-	RolesApi *RolesApiService
-
-	UsersApi *UsersApiService
+	WebhookEventHandlerApi *WebhookEventHandlerApiService
 }
 
 type service struct {
@@ -95,19 +91,17 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	// API Services
 	c.AccountsApi = (*AccountsApiService)(&c.common)
 	c.AuthenticationSettingsApi = (*AuthenticationSettingsApiService)(&c.common)
-	c.AclApi = (*AclApiService)(&c.common)
 	c.ConnectorsApi = (*ConnectorsApiService)(&c.common)
 	c.DefaultApi = (*DefaultApiService)(&c.common)
+	c.DelegateConfigurationManagementApi = (*DelegateConfigurationManagementApiService)(&c.common)
+	c.DelegateConfigurationResourceApi = (*DelegateConfigurationResourceApiService)(&c.common)
 	c.EnforcementApi = (*EnforcementApiService)(&c.common)
 	c.FeedbackApi = (*FeedbackApiService)(&c.common)
 	c.GcpClustersApi = (*GcpClustersApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
 	c.OrganizationApi = (*OrganizationApiService)(&c.common)
-	c.PermissionsApi = (*PermissionsApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
-	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
-	c.RolesApi = (*RolesApiService)(&c.common)
-	c.UsersApi = (*UsersApiService)(&c.common)
+	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 
 	return c
 }

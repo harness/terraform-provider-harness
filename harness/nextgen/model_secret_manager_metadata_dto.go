@@ -10,6 +10,6 @@
 package nextgen
 
 type SecretManagerMetadataDto struct {
-	EncryptionType string `json:"encryptionType,omitempty"`
-	Spec *SecretManagerMetadataSpecDto `json:"spec,omitempty"`
+	EncryptionType string                        `json:"encryptionType,omitempty"`
+	Spec           *SecretManagerMetadataSpecDto `json:"spec,omitempty"`
 }

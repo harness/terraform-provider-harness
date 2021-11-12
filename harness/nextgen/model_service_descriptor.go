@@ -10,11 +10,11 @@
 package nextgen
 
 type ServiceDescriptor struct {
-	Index int32 `json:"index,omitempty"`
-	Proto *ServiceDescriptorProto `json:"proto,omitempty"`
-	FullName string `json:"fullName,omitempty"`
-	File *FileDescriptor `json:"file,omitempty"`
-	Methods []MethodDescriptor `json:"methods,omitempty"`
-	Options *ServiceOptions `json:"options,omitempty"`
-	Name string `json:"name,omitempty"`
+	Index    int32                   `json:"index,omitempty"`
+	Proto    *ServiceDescriptorProto `json:"proto,omitempty"`
+	FullName string                  `json:"fullName,omitempty"`
+	File     *FileDescriptor         `json:"file,omitempty"`
+	Methods  []MethodDescriptor      `json:"methods,omitempty"`
+	Options  *ServiceOptions         `json:"options,omitempty"`
+	Name     string                  `json:"name,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type RestResponseLoginTypeResponse struct {
-	MetaData map[string]interface{} `json:"metaData,omitempty"`
-	Resource *LoginTypeResponse `json:"resource,omitempty"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	MetaData         map[string]interface{} `json:"metaData,omitempty"`
+	Resource         *LoginTypeResponse     `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage      `json:"responseMessages,omitempty"`
 }

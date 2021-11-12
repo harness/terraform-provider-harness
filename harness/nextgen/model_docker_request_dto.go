@@ -10,7 +10,7 @@
 package nextgen
 
 type DockerRequestDto struct {
-	Tag string `json:"tag,omitempty"`
-	TagRegex string `json:"tagRegex,omitempty"`
+	Tag      string   `json:"tag,omitempty"`
+	TagRegex string   `json:"tagRegex,omitempty"`
 	TagsList []string `json:"tagsList,omitempty"`
 }

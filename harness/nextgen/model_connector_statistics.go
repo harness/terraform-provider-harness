@@ -10,6 +10,6 @@
 package nextgen
 
 type ConnectorStatistics struct {
-	TypeStats []ConnectorTypeStats `json:"typeStats,omitempty"`
+	TypeStats   []ConnectorTypeStats   `json:"typeStats,omitempty"`
 	StatusStats []ConnectorStatusStats `json:"statusStats,omitempty"`
 }

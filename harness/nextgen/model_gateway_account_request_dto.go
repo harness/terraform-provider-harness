@@ -10,11 +10,11 @@
 package nextgen
 
 type GatewayAccountRequestDto struct {
-	Uuid string `json:"uuid,omitempty"`
-	AccountName string `json:"accountName,omitempty"`
-	CompanyName string `json:"companyName,omitempty"`
+	Uuid              string `json:"uuid,omitempty"`
+	AccountName       string `json:"accountName,omitempty"`
+	CompanyName       string `json:"companyName,omitempty"`
 	DefaultExperience string `json:"defaultExperience,omitempty"`
-	CreatedFromNG bool `json:"createdFromNG,omitempty"`
-	IsNextGenEnabled bool `json:"isNextGenEnabled,omitempty"`
-	NextGenEnabled bool `json:"nextGenEnabled,omitempty"`
+	CreatedFromNG     bool   `json:"createdFromNG,omitempty"`
+	IsNextGenEnabled  bool   `json:"isNextGenEnabled,omitempty"`
+	NextGenEnabled    bool   `json:"nextGenEnabled,omitempty"`
 }

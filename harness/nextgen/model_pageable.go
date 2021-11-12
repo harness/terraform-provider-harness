@@ -10,10 +10,10 @@
 package nextgen
 
 type Pageable struct {
-	Sort *Sort `json:"sort,omitempty"`
-	PageSize int32 `json:"pageSize,omitempty"`
-	Paged bool `json:"paged,omitempty"`
-	Unpaged bool `json:"unpaged,omitempty"`
+	Sort       *Sort `json:"sort,omitempty"`
+	Unpaged    bool  `json:"unpaged,omitempty"`
 	PageNumber int32 `json:"pageNumber,omitempty"`
-	Offset int64 `json:"offset,omitempty"`
+	PageSize   int32 `json:"pageSize,omitempty"`
+	Paged      bool  `json:"paged,omitempty"`
+	Offset     int64 `json:"offset,omitempty"`
 }

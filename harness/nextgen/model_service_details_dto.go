@@ -10,17 +10,17 @@
 package nextgen
 
 type ServiceDetailsDto struct {
-	ServiceName string `json:"serviceName,omitempty"`
-	ServiceIdentifier string `json:"serviceIdentifier,omitempty"`
-	DeploymentTypeList []string `json:"deploymentTypeList,omitempty"`
-	TotalDeployments int64 `json:"totalDeployments,omitempty"`
-	TotalDeploymentChangeRate float64 `json:"totalDeploymentChangeRate,omitempty"`
-	SuccessRate float64 `json:"successRate,omitempty"`
-	SuccessRateChangeRate float64 `json:"successRateChangeRate,omitempty"`
-	FailureRate float64 `json:"failureRate,omitempty"`
-	FailureRateChangeRate float64 `json:"failureRateChangeRate,omitempty"`
-	Frequency float64 `json:"frequency,omitempty"`
-	FrequencyChangeRate float64 `json:"frequencyChangeRate,omitempty"`
-	InstanceCountDetails *InstanceCountDetailsByEnvTypeBase `json:"instanceCountDetails,omitempty"`
-	LastPipelineExecuted *ServicePipelineInfo `json:"lastPipelineExecuted,omitempty"`
+	ServiceName               string                             `json:"serviceName,omitempty"`
+	ServiceIdentifier         string                             `json:"serviceIdentifier,omitempty"`
+	DeploymentTypeList        []string                           `json:"deploymentTypeList,omitempty"`
+	TotalDeployments          int64                              `json:"totalDeployments,omitempty"`
+	TotalDeploymentChangeRate float64                            `json:"totalDeploymentChangeRate,omitempty"`
+	SuccessRate               float64                            `json:"successRate,omitempty"`
+	SuccessRateChangeRate     float64                            `json:"successRateChangeRate,omitempty"`
+	FailureRate               float64                            `json:"failureRate,omitempty"`
+	FailureRateChangeRate     float64                            `json:"failureRateChangeRate,omitempty"`
+	Frequency                 float64                            `json:"frequency,omitempty"`
+	FrequencyChangeRate       float64                            `json:"frequencyChangeRate,omitempty"`
+	InstanceCountDetails      *InstanceCountDetailsByEnvTypeBase `json:"instanceCountDetails,omitempty"`
+	LastPipelineExecuted      *ServicePipelineInfo               `json:"lastPipelineExecuted,omitempty"`
 }

@@ -10,11 +10,11 @@
 package nextgen
 
 type GithubConnectorDto struct {
-	Url string `json:"url"`
-	ValidationRepo string `json:"validationRepo,omitempty"`
-	Authentication *GithubAuthenticationDto `json:"authentication"`
-	ApiAccess *GithubApiAccessDto `json:"apiAccess,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	ExecuteOnManager bool `json:"executeOnManager,omitempty"`
-	Type_ string `json:"type"`
+	Url               string                   `json:"url"`
+	ValidationRepo    string                   `json:"validationRepo,omitempty"`
+	Authentication    *GithubAuthenticationDto `json:"authentication"`
+	ApiAccess         *GithubApiAccessDto      `json:"apiAccess,omitempty"`
+	DelegateSelectors []string                 `json:"delegateSelectors,omitempty"`
+	ExecuteOnManager  bool                     `json:"executeOnManager,omitempty"`
+	Type_             string                   `json:"type"`
 }

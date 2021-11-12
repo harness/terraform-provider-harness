@@ -10,8 +10,8 @@
 package nextgen
 
 type GitSyncSettingsDto struct {
-	AccountIdentifier string `json:"accountIdentifier"`
-	ProjectIdentifier string `json:"projectIdentifier"`
+	AccountIdentifier      string `json:"accountIdentifier"`
+	ProjectIdentifier      string `json:"projectIdentifier"`
 	OrganizationIdentifier string `json:"organizationIdentifier"`
-	ExecuteOnDelegate bool `json:"executeOnDelegate"`
+	ExecuteOnDelegate      bool   `json:"executeOnDelegate"`
 }

@@ -10,16 +10,16 @@
 package nextgen
 
 type SourceCodeInfo struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserSourceCodeInfo `json:"parserForType,omitempty"`
-	DefaultInstanceForType *SourceCodeInfo `json:"defaultInstanceForType,omitempty"`
-	LocationList []Location `json:"locationList,omitempty"`
-	LocationCount int32 `json:"locationCount,omitempty"`
-	LocationOrBuilderList []LocationOrBuilder `json:"locationOrBuilderList,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
+	LocationCount             int32                  `json:"locationCount,omitempty"`
+	LocationOrBuilderList     []LocationOrBuilder    `json:"locationOrBuilderList,omitempty"`
+	ParserForType             *ParserSourceCodeInfo  `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *SourceCodeInfo        `json:"defaultInstanceForType,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	LocationList              []Location             `json:"locationList,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

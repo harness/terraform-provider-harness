@@ -10,10 +10,10 @@
 package nextgen
 
 type TwoFactorAuthSettingsInfo struct {
-	UserId string `json:"userId,omitempty"`
-	Email string `json:"email,omitempty"`
-	TwoFactorAuthenticationEnabled bool `json:"twoFactorAuthenticationEnabled,omitempty"`
-	Mechanism string `json:"mechanism,omitempty"`
-	TotpSecretKey string `json:"totpSecretKey,omitempty"`
-	Totpqrurl string `json:"totpqrurl,omitempty"`
+	UserId                         string `json:"userId,omitempty"`
+	Email                          string `json:"email,omitempty"`
+	TwoFactorAuthenticationEnabled bool   `json:"twoFactorAuthenticationEnabled,omitempty"`
+	Mechanism                      string `json:"mechanism,omitempty"`
+	TotpSecretKey                  string `json:"totpSecretKey,omitempty"`
+	Totpqrurl                      string `json:"totpqrurl,omitempty"`
 }

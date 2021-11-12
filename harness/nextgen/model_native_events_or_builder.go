@@ -10,19 +10,19 @@
 package nextgen
 
 type NativeEventsOrBuilder struct {
-	Github *GithubWebhookEvents `json:"github,omitempty"`
-	NativeEventsCase string `json:"nativeEventsCase,omitempty"`
-	GithubOrBuilder *GithubWebhookEventsOrBuilder `json:"githubOrBuilder,omitempty"`
-	Gitlab *GitlabWebhookEvents `json:"gitlab,omitempty"`
-	GitlabOrBuilder *GitlabWebhookEventsOrBuilder `json:"gitlabOrBuilder,omitempty"`
-	BitbucketCloud *BitbucketCloudWebhookEvents `json:"bitbucketCloud,omitempty"`
-	BitbucketCloudOrBuilder *BitbucketCloudWebhookEventsOrBuilder `json:"bitbucketCloudOrBuilder,omitempty"`
-	BitbucketServer *BitbucketServerWebhookEvents `json:"bitbucketServer,omitempty"`
-	BitbucketServerOrBuilder *BitbucketServerWebhookEventsOrBuilder `json:"bitbucketServerOrBuilder,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	GithubOrBuilder           *GithubWebhookEventsOrBuilder          `json:"githubOrBuilder,omitempty"`
+	Gitlab                    *GitlabWebhookEvents                   `json:"gitlab,omitempty"`
+	GitlabOrBuilder           *GitlabWebhookEventsOrBuilder          `json:"gitlabOrBuilder,omitempty"`
+	BitbucketCloud            *BitbucketCloudWebhookEvents           `json:"bitbucketCloud,omitempty"`
+	BitbucketCloudOrBuilder   *BitbucketCloudWebhookEventsOrBuilder  `json:"bitbucketCloudOrBuilder,omitempty"`
+	BitbucketServer           *BitbucketServerWebhookEvents          `json:"bitbucketServer,omitempty"`
+	BitbucketServerOrBuilder  *BitbucketServerWebhookEventsOrBuilder `json:"bitbucketServerOrBuilder,omitempty"`
+	Github                    *GithubWebhookEvents                   `json:"github,omitempty"`
+	NativeEventsCase          string                                 `json:"nativeEventsCase,omitempty"`
+	AllFields                 map[string]interface{}                 `json:"allFields,omitempty"`
+	UnknownFields             *UnknownFieldSet                       `json:"unknownFields,omitempty"`
+	InitializationErrorString string                                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                            `json:"descriptorForType,omitempty"`
+	DefaultInstanceForType    *Message                               `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                                   `json:"initialized,omitempty"`
 }

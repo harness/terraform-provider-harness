@@ -10,6 +10,6 @@
 package nextgen
 
 type EmailConfigDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_      string `json:"type,omitempty"`
 	GroupEmail string `json:"groupEmail"`
 }

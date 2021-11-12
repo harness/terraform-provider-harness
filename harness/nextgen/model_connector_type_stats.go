@@ -11,5 +11,5 @@ package nextgen
 
 type ConnectorTypeStats struct {
 	Type_ string `json:"type,omitempty"`
-	Count int32 `json:"count,omitempty"`
+	Count int32  `json:"count,omitempty"`
 }

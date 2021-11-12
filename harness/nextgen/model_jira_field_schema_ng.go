@@ -10,8 +10,8 @@
 package nextgen
 
 type JiraFieldSchemaNg struct {
-	Array bool `json:"array,omitempty"`
-	TypeStr string `json:"typeStr"`
-	Type_ string `json:"type"`
+	Array      bool   `json:"array,omitempty"`
+	TypeStr    string `json:"typeStr"`
+	Type_      string `json:"type"`
 	CustomType string `json:"customType,omitempty"`
 }

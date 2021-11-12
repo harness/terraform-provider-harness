@@ -10,12 +10,12 @@
 package nextgen
 
 type Message struct {
-	ParserForType *ParserMessage `json:"parserForType,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	DefaultInstanceForType *MessageLite `json:"defaultInstanceForType,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
+	ParserForType             *ParserMessage         `json:"parserForType,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
+	DefaultInstanceForType    *MessageLite           `json:"defaultInstanceForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 }

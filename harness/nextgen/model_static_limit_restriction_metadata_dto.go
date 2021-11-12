@@ -11,5 +11,6 @@ package nextgen
 
 type StaticLimitRestrictionMetadataDto struct {
 	RestrictionType string `json:"restrictionType,omitempty"`
-	Limit int64 `json:"limit,omitempty"`
+	Limit           int64  `json:"limit,omitempty"`
+	AllowedIfEqual  bool   `json:"allowedIfEqual,omitempty"`
 }

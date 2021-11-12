@@ -11,6 +11,6 @@ package nextgen
 
 type InfraExecutionSummary struct {
 	Identifier string `json:"identifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Type_ string `json:"type,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Type_      string `json:"type,omitempty"`
 }

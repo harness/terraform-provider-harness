@@ -10,9 +10,9 @@
 package nextgen
 
 type UtmInfo struct {
-	UtmSource string `json:"utmSource,omitempty"`
-	UtmContent string `json:"utmContent,omitempty"`
-	UtmMedium string `json:"utmMedium,omitempty"`
-	UtmTerm string `json:"utmTerm,omitempty"`
+	UtmSource   string `json:"utmSource,omitempty"`
+	UtmContent  string `json:"utmContent,omitempty"`
+	UtmMedium   string `json:"utmMedium,omitempty"`
+	UtmTerm     string `json:"utmTerm,omitempty"`
 	UtmCampaign string `json:"utmCampaign,omitempty"`
 }

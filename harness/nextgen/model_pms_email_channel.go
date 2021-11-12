@@ -10,7 +10,7 @@
 package nextgen
 
 type PmsEmailChannel struct {
-	Type_ string `json:"type"`
+	Type_      string   `json:"type"`
 	UserGroups []string `json:"userGroups,omitempty"`
 	Recipients []string `json:"recipients,omitempty"`
 }

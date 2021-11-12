@@ -10,11 +10,11 @@
 package nextgen
 
 type NgActivityDto struct {
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	ReferredEntity *EntityDetail `json:"referredEntity,omitempty"`
-	Type_ string `json:"type"`
-	ActivityStatus string `json:"activityStatus"`
-	Detail *ActivityDetail `json:"detail,omitempty"`
-	ActivityTime int64 `json:"activityTime"`
-	Description string `json:"description,omitempty"`
+	AccountIdentifier string          `json:"accountIdentifier,omitempty"`
+	ReferredEntity    *EntityDetail   `json:"referredEntity,omitempty"`
+	Type_             string          `json:"type"`
+	ActivityStatus    string          `json:"activityStatus"`
+	Detail            *ActivityDetail `json:"detail,omitempty"`
+	ActivityTime      int64           `json:"activityTime"`
+	Description       string          `json:"description,omitempty"`
 }

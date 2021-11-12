@@ -11,5 +11,5 @@ package nextgen
 
 type ServiceAccountConfig struct {
 	ApiKeyLimit int64 `json:"apiKeyLimit,omitempty"`
-	TokenLimit int64 `json:"tokenLimit,omitempty"`
+	TokenLimit  int64 `json:"tokenLimit,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type LastWorkloadInfo struct {
-	StartTime int64 `json:"startTime,omitempty"`
-	EndTime int64 `json:"endTime,omitempty"`
+	StartTime      int64  `json:"startTime,omitempty"`
+	EndTime        int64  `json:"endTime,omitempty"`
 	DeploymentType string `json:"deploymentType,omitempty"`
-	Status string `json:"status,omitempty"`
+	Status         string `json:"status,omitempty"`
 }

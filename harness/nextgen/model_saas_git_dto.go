@@ -11,5 +11,5 @@ package nextgen
 
 type SaasGitDto struct {
 	IsSaasGit bool `json:"isSaasGit"`
-	SaasGit bool `json:"saasGit,omitempty"`
+	SaasGit   bool `json:"saasGit,omitempty"`
 }

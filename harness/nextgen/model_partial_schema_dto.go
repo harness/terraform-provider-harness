@@ -10,9 +10,9 @@
 package nextgen
 
 type PartialSchemaDto struct {
-	Schema *JsonNode `json:"schema,omitempty"`
-	NodeType string `json:"nodeType,omitempty"`
-	NodeName string `json:"nodeName,omitempty"`
-	Namespace string `json:"namespace,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
+	Schema     *JsonNode `json:"schema,omitempty"`
+	NodeType   string    `json:"nodeType,omitempty"`
+	NodeName   string    `json:"nodeName,omitempty"`
+	Namespace  string    `json:"namespace,omitempty"`
+	ModuleType string    `json:"moduleType,omitempty"`
 }

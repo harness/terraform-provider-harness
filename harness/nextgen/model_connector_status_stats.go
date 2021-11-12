@@ -11,5 +11,5 @@ package nextgen
 
 type ConnectorStatusStats struct {
 	Status string `json:"status,omitempty"`
-	Count int32 `json:"count,omitempty"`
+	Count  int32  `json:"count,omitempty"`
 }

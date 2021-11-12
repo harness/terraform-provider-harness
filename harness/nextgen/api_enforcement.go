@@ -131,7 +131,7 @@ func (a *EnforcementApiService) GetAllFeatureRestrictionMetadata(ctx context.Con
 /*
 EnforcementApiService Gets List of Enabled Feature Restriction Detail for The Account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param accountIdentifier Account id to get the enable features for the account
 @return ResponseDtoListFeatureRestrictionDetails
 */
 func (a *EnforcementApiService) GetEnabledFeatureRestrictionDetailByAccountId(ctx context.Context, accountIdentifier string) (ResponseDtoListFeatureRestrictionDetails, *http.Response, error) {
@@ -237,7 +237,7 @@ func (a *EnforcementApiService) GetEnabledFeatureRestrictionDetailByAccountId(ct
 EnforcementApiService Gets Feature Restriction Detail
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier
+ * @param accountIdentifier Account id to get the feature restriction detail.
 @return ResponseDtoFeatureRestrictionDetails
 */
 func (a *EnforcementApiService) GetFeatureRestrictionDetail(ctx context.Context, body FeatureRestrictionDetailRequest, accountIdentifier string) (ResponseDtoFeatureRestrictionDetails, *http.Response, error) {
@@ -344,8 +344,8 @@ func (a *EnforcementApiService) GetFeatureRestrictionDetail(ctx context.Context,
 /*
 EnforcementApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param featureRestrictionName
- * @param accountIdentifier
+ * @param featureRestrictionName The feature restriction to retrieve metadata from.
+ * @param accountIdentifier Account id to get the feature metadata.
 
 */
 func (a *EnforcementApiService) GetFeatureRestrictionMetadata(ctx context.Context, featureRestrictionName string, accountIdentifier string) (*http.Response, error) {
@@ -433,7 +433,7 @@ func (a *EnforcementApiService) GetFeatureRestrictionMetadata(ctx context.Contex
 EnforcementApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier
+ * @param accountIdentifier Account id to get all metadata from.
 
 */
 func (a *EnforcementApiService) GetFeatureRestrictionMetadataMap(ctx context.Context, body RestrictionMetadataMapRequestDto, accountIdentifier string) (*http.Response, error) {

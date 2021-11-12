@@ -10,7 +10,7 @@
 package nextgen
 
 type HealthDeploymentInfo struct {
-	Total *TotalDeploymentInfo `json:"total,omitempty"`
-	Success *DeploymentInfo `json:"success,omitempty"`
-	Failure *DeploymentInfo `json:"failure,omitempty"`
+	Total   *TotalDeploymentInfo `json:"total,omitempty"`
+	Success *DeploymentInfo      `json:"success,omitempty"`
+	Failure *DeploymentInfo      `json:"failure,omitempty"`
 }

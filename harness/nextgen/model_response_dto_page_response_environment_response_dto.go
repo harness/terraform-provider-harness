@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoPageResponseEnvironmentResponseDto struct {
-	Status string `json:"status,omitempty"`
-	Data *PageResponseEnvironmentResponseDto `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                              `json:"status,omitempty"`
+	Data          *PageResponseEnvironmentResponseDto `json:"data,omitempty"`
+	MetaData      *interface{}                        `json:"metaData,omitempty"`
+	CorrelationId string                              `json:"correlationId,omitempty"`
 }

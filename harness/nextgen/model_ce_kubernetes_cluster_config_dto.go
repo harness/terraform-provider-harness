@@ -10,6 +10,6 @@
 package nextgen
 
 type CeKubernetesClusterConfigDto struct {
-	ConnectorRef string `json:"connectorRef"`
+	ConnectorRef    string   `json:"connectorRef"`
 	FeaturesEnabled []string `json:"featuresEnabled,omitempty"`
 }

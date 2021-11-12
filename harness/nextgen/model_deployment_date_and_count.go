@@ -10,6 +10,6 @@
 package nextgen
 
 type DeploymentDateAndCount struct {
-	Time int64 `json:"time,omitempty"`
+	Time        int64       `json:"time,omitempty"`
 	Deployments *Deployment `json:"deployments,omitempty"`
 }

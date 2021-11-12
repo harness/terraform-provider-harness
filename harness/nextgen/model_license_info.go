@@ -10,9 +10,9 @@
 package nextgen
 
 type LicenseInfo struct {
-	AccountType string `json:"accountType,omitempty"`
-	AccountStatus string `json:"accountStatus,omitempty"`
-	ExpireAfterDays int32 `json:"expireAfterDays,omitempty"`
-	ExpiryTime int64 `json:"expiryTime,omitempty"`
-	LicenseUnits int32 `json:"licenseUnits,omitempty"`
+	AccountType     string `json:"accountType,omitempty"`
+	AccountStatus   string `json:"accountStatus,omitempty"`
+	ExpireAfterDays int32  `json:"expireAfterDays,omitempty"`
+	ExpiryTime      int64  `json:"expiryTime,omitempty"`
+	LicenseUnits    int32  `json:"licenseUnits,omitempty"`
 }

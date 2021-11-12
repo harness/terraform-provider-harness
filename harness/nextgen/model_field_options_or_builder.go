@@ -10,19 +10,19 @@
 package nextgen
 
 type FieldOptionsOrBuilder struct {
-	Ctype string `json:"ctype,omitempty"`
-	Lazy bool `json:"lazy,omitempty"`
-	Deprecated bool `json:"deprecated,omitempty"`
-	Jstype string `json:"jstype,omitempty"`
-	UninterpretedOptionList []UninterpretedOption `json:"uninterpretedOptionList,omitempty"`
-	UninterpretedOptionCount int32 `json:"uninterpretedOptionCount,omitempty"`
+	Ctype                            string                         `json:"ctype,omitempty"`
+	Deprecated                       bool                           `json:"deprecated,omitempty"`
+	Weak                             bool                           `json:"weak,omitempty"`
+	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	Weak bool `json:"weak,omitempty"`
-	Packed bool `json:"packed,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	Lazy                             bool                           `json:"lazy,omitempty"`
+	Jstype                           string                         `json:"jstype,omitempty"`
+	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
+	Packed                           bool                           `json:"packed,omitempty"`
+	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
 }

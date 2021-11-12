@@ -11,5 +11,5 @@ package nextgen
 
 type CrossAccountAccessDto struct {
 	CrossAccountRoleArn string `json:"crossAccountRoleArn"`
-	ExternalId string `json:"externalId,omitempty"`
+	ExternalId          string `json:"externalId,omitempty"`
 }

@@ -10,6 +10,6 @@
 package nextgen
 
 type ManagedArgoGitOpsInfoDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_     string `json:"type,omitempty"`
 	Namespace string `json:"namespace"`
 }

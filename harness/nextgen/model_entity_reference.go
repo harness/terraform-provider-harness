@@ -10,12 +10,12 @@
 package nextgen
 
 type EntityReference struct {
-	Branch string `json:"branch,omitempty"`
-	RepoIdentifier string `json:"repoIdentifier,omitempty"`
-	IsDefault bool `json:"isDefault,omitempty"`
-	Default_ bool `json:"default,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
+	Branch            string `json:"branch,omitempty"`
+	RepoIdentifier    string `json:"repoIdentifier,omitempty"`
+	IsDefault         bool   `json:"isDefault,omitempty"`
+	Default_          bool   `json:"default,omitempty"`
+	Identifier        string `json:"identifier,omitempty"`
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
 }

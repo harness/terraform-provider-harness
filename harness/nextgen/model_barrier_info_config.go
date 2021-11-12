@@ -11,5 +11,5 @@ package nextgen
 
 type BarrierInfoConfig struct {
 	Identifier string `json:"identifier"`
-	Name string `json:"name"`
+	Name       string `json:"name"`
 }

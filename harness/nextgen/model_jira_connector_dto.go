@@ -10,9 +10,9 @@
 package nextgen
 
 type JiraConnectorDto struct {
-	JiraUrl string `json:"jiraUrl"`
-	Username string `json:"username,omitempty"`
-	UsernameRef string `json:"usernameRef,omitempty"`
-	PasswordRef string `json:"passwordRef"`
+	JiraUrl           string   `json:"jiraUrl"`
+	Username          string   `json:"username,omitempty"`
+	UsernameRef       string   `json:"usernameRef,omitempty"`
+	PasswordRef       string   `json:"passwordRef"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 }

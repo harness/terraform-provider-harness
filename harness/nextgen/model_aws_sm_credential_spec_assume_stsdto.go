@@ -10,7 +10,7 @@
 package nextgen
 
 type AwsSmCredentialSpecAssumeStsdto struct {
-	RoleArn string `json:"roleArn"`
-	ExternalId string `json:"externalId,omitempty"`
-	AssumeStsRoleDuration int32 `json:"assumeStsRoleDuration,omitempty"`
+	RoleArn               string `json:"roleArn"`
+	ExternalId            string `json:"externalId,omitempty"`
+	AssumeStsRoleDuration int32  `json:"assumeStsRoleDuration,omitempty"`
 }

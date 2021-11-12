@@ -11,5 +11,5 @@ package nextgen
 
 type ByteString struct {
 	ValidUtf8 bool `json:"validUtf8,omitempty"`
-	Empty bool `json:"empty,omitempty"`
+	Empty     bool `json:"empty,omitempty"`
 }

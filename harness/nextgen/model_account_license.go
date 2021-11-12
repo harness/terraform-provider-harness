@@ -11,9 +11,9 @@ package nextgen
 
 // This is the view of an Account License defined in Harness
 type AccountLicense struct {
-	AccountId string `json:"accountId,omitempty"`
-	ModuleLicenses map[string]ModuleLicense `json:"moduleLicenses,omitempty"`
+	AccountId         string                     `json:"accountId,omitempty"`
+	ModuleLicenses    map[string]ModuleLicense   `json:"moduleLicenses,omitempty"`
 	AllModuleLicenses map[string][]ModuleLicense `json:"allModuleLicenses,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastUpdatedAt int64 `json:"lastUpdatedAt,omitempty"`
+	CreatedAt         int64                      `json:"createdAt,omitempty"`
+	LastUpdatedAt     int64                      `json:"lastUpdatedAt,omitempty"`
 }

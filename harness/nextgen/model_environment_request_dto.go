@@ -10,13 +10,13 @@
 package nextgen
 
 type EnvironmentRequestDto struct {
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Name string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Color string `json:"color,omitempty"`
-	Type_ string `json:"type,omitempty"`
-	Version int64 `json:"version,omitempty"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	Identifier        string            `json:"identifier,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Name              string            `json:"name,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	Color             string            `json:"color,omitempty"`
+	Type_             string            `json:"type,omitempty"`
+	Version           int64             `json:"version,omitempty"`
 }

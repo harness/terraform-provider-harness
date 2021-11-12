@@ -10,10 +10,10 @@
 package nextgen
 
 type NotificationSettings struct {
-	UseIndividualEmails bool `json:"useIndividualEmails,omitempty"`
-	SendMailToNewMembers bool `json:"sendMailToNewMembers,omitempty"`
-	EmailAddresses []string `json:"emailAddresses"`
-	SlackConfig *SlackNotificationSetting `json:"slackConfig"`
-	PagerDutyIntegrationKey string `json:"pagerDutyIntegrationKey,omitempty"`
-	MicrosoftTeamsWebhookUrl string `json:"microsoftTeamsWebhookUrl,omitempty"`
+	UseIndividualEmails      bool                      `json:"useIndividualEmails,omitempty"`
+	SendMailToNewMembers     bool                      `json:"sendMailToNewMembers,omitempty"`
+	EmailAddresses           []string                  `json:"emailAddresses"`
+	SlackConfig              *SlackNotificationSetting `json:"slackConfig"`
+	PagerDutyIntegrationKey  string                    `json:"pagerDutyIntegrationKey,omitempty"`
+	MicrosoftTeamsWebhookUrl string                    `json:"microsoftTeamsWebhookUrl,omitempty"`
 }

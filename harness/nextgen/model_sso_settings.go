@@ -10,16 +10,16 @@
 package nextgen
 
 type SsoSettings struct {
-	Uuid string `json:"uuid"`
-	AppId string `json:"appId"`
-	CreatedBy *EmbeddedUser `json:"createdBy,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastUpdatedBy *EmbeddedUser `json:"lastUpdatedBy,omitempty"`
-	LastUpdatedAt int64 `json:"lastUpdatedAt"`
-	Type_ string `json:"type"`
-	DisplayName string `json:"displayName,omitempty"`
-	Url string `json:"url,omitempty"`
-	NextIteration int64 `json:"nextIteration,omitempty"`
-	NextIterations []int64 `json:"nextIterations,omitempty"`
-	AccountId string `json:"accountId,omitempty"`
+	Uuid           string        `json:"uuid"`
+	AppId          string        `json:"appId"`
+	CreatedBy      *EmbeddedUser `json:"createdBy,omitempty"`
+	CreatedAt      int64         `json:"createdAt,omitempty"`
+	LastUpdatedBy  *EmbeddedUser `json:"lastUpdatedBy,omitempty"`
+	LastUpdatedAt  int64         `json:"lastUpdatedAt"`
+	Type_          string        `json:"type"`
+	DisplayName    string        `json:"displayName,omitempty"`
+	Url            string        `json:"url,omitempty"`
+	NextIteration  int64         `json:"nextIteration,omitempty"`
+	NextIterations []int64       `json:"nextIterations,omitempty"`
+	AccountId      string        `json:"accountId,omitempty"`
 }

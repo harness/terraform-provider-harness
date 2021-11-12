@@ -10,10 +10,10 @@
 package nextgen
 
 type YamlSnippetMetaDataDto struct {
-	Name string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Version string `json:"version,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Tags []string `json:"tags,omitempty"`
-	IconTag string `json:"iconTag,omitempty"`
+	Name        string   `json:"name,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Version     string   `json:"version,omitempty"`
+	Identifier  string   `json:"identifier,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	IconTag     string   `json:"iconTag,omitempty"`
 }

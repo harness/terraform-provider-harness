@@ -10,10 +10,10 @@
 package nextgen
 
 type GitlabConnectorDto struct {
-	Url string `json:"url"`
-	ValidationRepo string `json:"validationRepo,omitempty"`
-	Authentication *GitlabAuthenticationDto `json:"authentication"`
-	ApiAccess *GitlabApiAccessDto `json:"apiAccess,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Type_ string `json:"type"`
+	Url               string                   `json:"url"`
+	ValidationRepo    string                   `json:"validationRepo,omitempty"`
+	Authentication    *GitlabAuthenticationDto `json:"authentication"`
+	ApiAccess         *GitlabApiAccessDto      `json:"apiAccess,omitempty"`
+	DelegateSelectors []string                 `json:"delegateSelectors,omitempty"`
+	Type_             string                   `json:"type"`
 }

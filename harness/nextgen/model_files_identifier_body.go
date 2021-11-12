@@ -11,5 +11,5 @@ package nextgen
 
 type FilesIdentifierBody struct {
 	File *interface{} `json:"file,omitempty"`
-	Spec string `json:"spec,omitempty"`
+	Spec string       `json:"spec,omitempty"`
 }

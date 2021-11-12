@@ -10,9 +10,9 @@
 package nextgen
 
 type ResponseMessage struct {
-	Code string `json:"code,omitempty"`
-	Level string `json:"level,omitempty"`
-	Message string `json:"message,omitempty"`
-	Exception *ResponseMessageException `json:"exception,omitempty"`
-	FailureTypes []string `json:"failureTypes,omitempty"`
+	Code         string                    `json:"code,omitempty"`
+	Level        string                    `json:"level,omitempty"`
+	Message      string                    `json:"message,omitempty"`
+	Exception    *ResponseMessageException `json:"exception,omitempty"`
+	FailureTypes []string                  `json:"failureTypes,omitempty"`
 }

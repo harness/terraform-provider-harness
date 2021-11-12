@@ -10,7 +10,7 @@
 package nextgen
 
 type PmsSlackChannel struct {
-	Type_ string `json:"type"`
-	UserGroups []string `json:"userGroups,omitempty"`
-	WebhookUrl string `json:"webhookUrl,omitempty"`
+	Type_      string                `json:"type"`
+	UserGroups []string              `json:"userGroups,omitempty"`
+	WebhookUrl *ParameterFieldString `json:"webhookUrl,omitempty"`
 }

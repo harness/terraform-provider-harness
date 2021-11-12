@@ -10,7 +10,7 @@
 package nextgen
 
 type JiraStatusNg struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
+	Id             string                `json:"id"`
+	Name           string                `json:"name"`
 	StatusCategory *JiraStatusCategoryNg `json:"statusCategory,omitempty"`
 }

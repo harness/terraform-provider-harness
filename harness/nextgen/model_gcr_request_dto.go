@@ -10,8 +10,8 @@
 package nextgen
 
 type GcrRequestDto struct {
-	Tag string `json:"tag,omitempty"`
-	TagRegex string `json:"tagRegex,omitempty"`
-	TagsList []string `json:"tagsList,omitempty"`
-	RegistryHostname string `json:"registryHostname,omitempty"`
+	Tag              string   `json:"tag,omitempty"`
+	TagRegex         string   `json:"tagRegex,omitempty"`
+	TagsList         []string `json:"tagsList,omitempty"`
+	RegistryHostname string   `json:"registryHostname,omitempty"`
 }

@@ -11,5 +11,5 @@ package nextgen
 
 type ServiceDeploymentInfo struct {
 	ServiceName string `json:"serviceName,omitempty"`
-	ServiceTag string `json:"serviceTag,omitempty"`
+	ServiceTag  string `json:"serviceTag,omitempty"`
 }

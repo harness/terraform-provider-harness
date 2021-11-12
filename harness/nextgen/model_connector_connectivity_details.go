@@ -10,10 +10,10 @@
 package nextgen
 
 type ConnectorConnectivityDetails struct {
-	Status string `json:"status,omitempty"`
-	ErrorSummary string `json:"errorSummary,omitempty"`
-	Errors []ErrorDetail `json:"errors,omitempty"`
-	TestedAt int64 `json:"testedAt,omitempty"`
-	LastTestedAt int64 `json:"lastTestedAt,omitempty"`
-	LastConnectedAt int64 `json:"lastConnectedAt,omitempty"`
+	Status          string        `json:"status,omitempty"`
+	ErrorSummary    string        `json:"errorSummary,omitempty"`
+	Errors          []ErrorDetail `json:"errors,omitempty"`
+	TestedAt        int64         `json:"testedAt,omitempty"`
+	LastTestedAt    int64         `json:"lastTestedAt,omitempty"`
+	LastConnectedAt int64         `json:"lastConnectedAt,omitempty"`
 }

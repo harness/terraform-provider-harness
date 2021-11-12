@@ -10,17 +10,17 @@
 package nextgen
 
 type PipelineInfoConfig struct {
-	Uuid string `json:"__uuid,omitempty"`
-	Name string `json:"name"`
-	Identifier string `json:"identifier"`
-	FlowControl *FlowControlConfig `json:"flowControl,omitempty"`
-	Description *ParameterFieldString `json:"description,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Variables []NgVariable `json:"variables,omitempty"`
-	Properties *NgProperties `json:"properties,omitempty"`
-	Stages []StageElementWrapperConfig `json:"stages,omitempty"`
-	NotificationRules []NotificationRules `json:"notificationRules,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Timeout *ParameterFieldTimeout `json:"timeout,omitempty"`
+	Uuid              string                      `json:"__uuid,omitempty"`
+	Name              string                      `json:"name"`
+	Identifier        string                      `json:"identifier"`
+	FlowControl       *FlowControlConfig          `json:"flowControl,omitempty"`
+	Description       *ParameterFieldString       `json:"description,omitempty"`
+	Tags              map[string]string           `json:"tags,omitempty"`
+	Variables         []NgVariable                `json:"variables,omitempty"`
+	Properties        *NgProperties               `json:"properties,omitempty"`
+	Stages            []StageElementWrapperConfig `json:"stages,omitempty"`
+	NotificationRules []NotificationRules         `json:"notificationRules,omitempty"`
+	OrgIdentifier     string                      `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string                      `json:"projectIdentifier,omitempty"`
+	Timeout           *ParameterFieldTimeout      `json:"timeout,omitempty"`
 }

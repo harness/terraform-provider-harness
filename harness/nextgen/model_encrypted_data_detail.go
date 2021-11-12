@@ -10,8 +10,8 @@
 package nextgen
 
 type EncryptedDataDetail struct {
-	EncryptedData *EncryptedRecordData `json:"encryptedData,omitempty"`
-	EncryptionConfig *EncryptionConfig `json:"encryptionConfig,omitempty"`
-	FieldName string `json:"fieldName,omitempty"`
-	Identifier *SecretUniqueIdentifier `json:"identifier,omitempty"`
+	EncryptedData    *EncryptedRecordData    `json:"encryptedData,omitempty"`
+	EncryptionConfig *EncryptionConfig       `json:"encryptionConfig,omitempty"`
+	FieldName        string                  `json:"fieldName,omitempty"`
+	Identifier       *SecretUniqueIdentifier `json:"identifier,omitempty"`
 }

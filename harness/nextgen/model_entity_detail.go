@@ -10,7 +10,7 @@
 package nextgen
 
 type EntityDetail struct {
-	Type_ string `json:"type,omitempty"`
+	Type_     string           `json:"type,omitempty"`
 	EntityRef *EntityReference `json:"entityRef,omitempty"`
-	Name string `json:"name,omitempty"`
+	Name      string           `json:"name,omitempty"`
 }

@@ -52,15 +52,13 @@ Class | Method | HTTP request | Description
 *ConnectorsApi* | [**PutConnector**](docs/ConnectorsApi.md#putconnector) | **Put** /connectors | Updates the Connector
 *ConnectorsApi* | [**ValidateTheIdentifierIsUnique**](docs/ConnectorsApi.md#validatetheidentifierisunique) | **Get** /connectors/validateUniqueIdentifier | validate the Connector by accountIdentifier and connectorIdentifier
 *DefaultApi* | [**Accept**](docs/DefaultApi.md#accept) | **Get** /invites/accept | 
-*DefaultApi* | [**Add**](docs/DefaultApi.md#add) | **Post** /v2/delegate-configs | 
-*DefaultApi* | [**Add1**](docs/DefaultApi.md#add1) | **Post** /v2/accounts/{accountId}/delegate-configs | 
-*DefaultApi* | [**Add2**](docs/DefaultApi.md#add2) | **Post** /delegate-profiles/ng | 
 *DefaultApi* | [**AddMember**](docs/DefaultApi.md#addmember) | **Put** /user-groups/{identifier}/member/{userIdentifier} | 
 *DefaultApi* | [**AddUsers**](docs/DefaultApi.md#addusers) | **Post** /user/users | 
 *DefaultApi* | [**ChangeUserPassword**](docs/DefaultApi.md#changeuserpassword) | **Put** /user/password | 
 *DefaultApi* | [**CheckIfLastAdmin**](docs/DefaultApi.md#checkiflastadmin) | **Get** /user/last-admin | 
 *DefaultApi* | [**CheckMember**](docs/DefaultApi.md#checkmember) | **Get** /user-groups/{identifier}/member/{userIdentifier} | 
 *DefaultApi* | [**CheckUserMembership**](docs/DefaultApi.md#checkusermembership) | **Get** /user/usermembership | 
+*DefaultApi* | [**CommunitySignup**](docs/DefaultApi.md#communitysignup) | **Post** /signup/community | 
 *DefaultApi* | [**CompleteInvite**](docs/DefaultApi.md#completeinvite) | **Get** /invites/complete | 
 *DefaultApi* | [**CompleteSignupInvite**](docs/DefaultApi.md#completesignupinvite) | **Put** /signup/complete/{token} | 
 *DefaultApi* | [**Create**](docs/DefaultApi.md#create) | **Post** /filters | 
@@ -85,19 +83,18 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**CreateServices1**](docs/DefaultApi.md#createservices1) | **Post** /servicesV2/batch | 
 *DefaultApi* | [**CreateToken**](docs/DefaultApi.md#createtoken) | **Post** /token | 
 *DefaultApi* | [**CreateViaYaml**](docs/DefaultApi.md#createviayaml) | **Post** /v2/secrets/yaml | 
+*DefaultApi* | [**DecryptEncryptedDetails**](docs/DefaultApi.md#decryptencrypteddetails) | **Post** /v2/secrets/decrypt-encryption-details | 
 *DefaultApi* | [**Delete**](docs/DefaultApi.md#delete) | **Delete** /filters/{identifier} | 
 *DefaultApi* | [**Delete1**](docs/DefaultApi.md#delete1) | **Delete** /gitopsproviders/{identifier} | 
-*DefaultApi* | [**Delete10**](docs/DefaultApi.md#delete10) | **Delete** /services/{serviceIdentifier} | 
-*DefaultApi* | [**Delete11**](docs/DefaultApi.md#delete11) | **Delete** /servicesV2/{serviceIdentifier} | 
-*DefaultApi* | [**Delete12**](docs/DefaultApi.md#delete12) | **Delete** /source-code-manager/{identifier} | 
-*DefaultApi* | [**Delete2**](docs/DefaultApi.md#delete2) | **Delete** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | 
-*DefaultApi* | [**Delete3**](docs/DefaultApi.md#delete3) | **Delete** /delegate-profiles/ng/{delegateProfileId} | 
-*DefaultApi* | [**Delete4**](docs/DefaultApi.md#delete4) | **Delete** /entitySetupUsage/internal | 
-*DefaultApi* | [**Delete5**](docs/DefaultApi.md#delete5) | **Delete** /environments/{environmentIdentifier} | 
-*DefaultApi* | [**Delete6**](docs/DefaultApi.md#delete6) | **Delete** /environmentsV2/{environmentIdentifier} | 
-*DefaultApi* | [**Delete7**](docs/DefaultApi.md#delete7) | **Delete** /invites/{inviteId} | 
-*DefaultApi* | [**Delete8**](docs/DefaultApi.md#delete8) | **Delete** /v2/secrets/{identifier} | 
-*DefaultApi* | [**Delete9**](docs/DefaultApi.md#delete9) | **Delete** /user-groups/{identifier} | 
+*DefaultApi* | [**Delete10**](docs/DefaultApi.md#delete10) | **Delete** /source-code-manager/{identifier} | 
+*DefaultApi* | [**Delete2**](docs/DefaultApi.md#delete2) | **Delete** /entitySetupUsage/internal | 
+*DefaultApi* | [**Delete3**](docs/DefaultApi.md#delete3) | **Delete** /environments/{environmentIdentifier} | 
+*DefaultApi* | [**Delete4**](docs/DefaultApi.md#delete4) | **Delete** /environmentsV2/{environmentIdentifier} | 
+*DefaultApi* | [**Delete5**](docs/DefaultApi.md#delete5) | **Delete** /invites/{inviteId} | 
+*DefaultApi* | [**Delete6**](docs/DefaultApi.md#delete6) | **Delete** /v2/secrets/{identifier} | 
+*DefaultApi* | [**Delete7**](docs/DefaultApi.md#delete7) | **Delete** /user-groups/{identifier} | 
+*DefaultApi* | [**Delete8**](docs/DefaultApi.md#delete8) | **Delete** /services/{serviceIdentifier} | 
+*DefaultApi* | [**Delete9**](docs/DefaultApi.md#delete9) | **Delete** /servicesV2/{serviceIdentifier} | 
 *DefaultApi* | [**DeleteApiKey**](docs/DefaultApi.md#deleteapikey) | **Delete** /apikey/{identifier} | 
 *DefaultApi* | [**DeleteServiceAccount**](docs/DefaultApi.md#deleteserviceaccount) | **Delete** /serviceaccount/{identifier} | 
 *DefaultApi* | [**DeleteToken**](docs/DefaultApi.md#deletetoken) | **Delete** /token/{identifier} | 
@@ -106,20 +103,18 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**EvaluateCustomFeatureRestriction**](docs/DefaultApi.md#evaluatecustomfeaturerestriction) | **Put** /enforcement/client/custom/{featureRestrictionName} | 
 *DefaultApi* | [**Get**](docs/DefaultApi.md#get) | **Get** /filters/{identifier} | 
 *DefaultApi* | [**Get1**](docs/DefaultApi.md#get1) | **Get** /gitopsproviders/{identifier} | 
-*DefaultApi* | [**Get10**](docs/DefaultApi.md#get10) | **Get** /aggregate/organizations/{identifier} | 
-*DefaultApi* | [**Get11**](docs/DefaultApi.md#get11) | **Get** /v2/secrets/{identifier} | 
-*DefaultApi* | [**Get12**](docs/DefaultApi.md#get12) | **Get** /user-groups/{identifier} | 
-*DefaultApi* | [**Get13**](docs/DefaultApi.md#get13) | **Get** /services/{serviceIdentifier} | 
-*DefaultApi* | [**Get14**](docs/DefaultApi.md#get14) | **Get** /servicesV2/{serviceIdentifier} | 
-*DefaultApi* | [**Get15**](docs/DefaultApi.md#get15) | **Get** /source-code-manager | 
+*DefaultApi* | [**Get10**](docs/DefaultApi.md#get10) | **Get** /user-groups/{identifier} | 
+*DefaultApi* | [**Get11**](docs/DefaultApi.md#get11) | **Get** /services/{serviceIdentifier} | 
+*DefaultApi* | [**Get12**](docs/DefaultApi.md#get12) | **Get** /servicesV2/{serviceIdentifier} | 
+*DefaultApi* | [**Get13**](docs/DefaultApi.md#get13) | **Get** /source-code-manager | 
 *DefaultApi* | [**Get2**](docs/DefaultApi.md#get2) | **Get** /git-sync-settings | 
 *DefaultApi* | [**Get3**](docs/DefaultApi.md#get3) | **Post** /roleassignments/filter | 
-*DefaultApi* | [**Get4**](docs/DefaultApi.md#get4) | **Get** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | 
-*DefaultApi* | [**Get5**](docs/DefaultApi.md#get5) | **Get** /delegate-profiles/ng/{delegateProfileId} | 
-*DefaultApi* | [**Get6**](docs/DefaultApi.md#get6) | **Get** /environments/{environmentIdentifier} | 
-*DefaultApi* | [**Get7**](docs/DefaultApi.md#get7) | **Get** /environmentsV2/{environmentIdentifier} | 
-*DefaultApi* | [**Get8**](docs/DefaultApi.md#get8) | **Get** /health | 
-*DefaultApi* | [**Get9**](docs/DefaultApi.md#get9) | **Get** /aggregate/projects/{identifier} | 
+*DefaultApi* | [**Get4**](docs/DefaultApi.md#get4) | **Get** /environments/{environmentIdentifier} | 
+*DefaultApi* | [**Get5**](docs/DefaultApi.md#get5) | **Get** /environmentsV2/{environmentIdentifier} | 
+*DefaultApi* | [**Get6**](docs/DefaultApi.md#get6) | **Get** /health | 
+*DefaultApi* | [**Get7**](docs/DefaultApi.md#get7) | **Get** /aggregate/projects/{identifier} | 
+*DefaultApi* | [**Get8**](docs/DefaultApi.md#get8) | **Get** /aggregate/organizations/{identifier} | 
+*DefaultApi* | [**Get9**](docs/DefaultApi.md#get9) | **Get** /v2/secrets/{identifier} | 
 *DefaultApi* | [**GetAccessibleProjectsCount**](docs/DefaultApi.md#getaccessibleprojectscount) | **Get** /user/projects-count | 
 *DefaultApi* | [**GetAccountLicensesDTO**](docs/DefaultApi.md#getaccountlicensesdto) | **Get** /admin/licenses/{accountIdentifier} | 
 *DefaultApi* | [**GetAccountResourcesCount**](docs/DefaultApi.md#getaccountresourcescount) | **Get** /aggregate/account-resources | 
@@ -163,6 +158,7 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**GetImages**](docs/DefaultApi.md#getimages) | **Get** /artifacts/ecr/getImages | 
 *DefaultApi* | [**GetInstanceCountHistory**](docs/DefaultApi.md#getinstancecounthistory) | **Get** /dashboard/getInstanceCountHistory | 
 *DefaultApi* | [**GetInstanceGrowthTrend**](docs/DefaultApi.md#getinstancegrowthtrend) | **Get** /dashboard/getInstanceGrowthTrend | 
+*DefaultApi* | [**GetInstanceNGData**](docs/DefaultApi.md#getinstancengdata) | **Get** /instanceng | 
 *DefaultApi* | [**GetInviteWithToken**](docs/DefaultApi.md#getinvitewithtoken) | **Get** /invites/invite | 
 *DefaultApi* | [**GetInvites**](docs/DefaultApi.md#getinvites) | **Get** /invites | 
 *DefaultApi* | [**GetIssueCreateMetadata**](docs/DefaultApi.md#getissuecreatemetadata) | **Get** /jira/createMetadata | 
@@ -206,19 +202,17 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**LinkToSamlGroup**](docs/DefaultApi.md#linktosamlgroup) | **Put** /user-groups/{userGroupId}/link/saml/{samlId} | 
 *DefaultApi* | [**List**](docs/DefaultApi.md#list) | **Get** /filters | 
 *DefaultApi* | [**List1**](docs/DefaultApi.md#list1) | **Get** /gitopsproviders/list | 
-*DefaultApi* | [**List10**](docs/DefaultApi.md#list10) | **Get** /aggregate/organizations | 
-*DefaultApi* | [**List11**](docs/DefaultApi.md#list11) | **Get** /aggregate/acl/usergroups/{identifier} | 
-*DefaultApi* | [**List12**](docs/DefaultApi.md#list12) | **Get** /v2/secrets | 
-*DefaultApi* | [**List13**](docs/DefaultApi.md#list13) | **Get** /user-groups | 
-*DefaultApi* | [**List14**](docs/DefaultApi.md#list14) | **Post** /user-groups/batch | 
+*DefaultApi* | [**List10**](docs/DefaultApi.md#list10) | **Get** /v2/secrets | 
+*DefaultApi* | [**List11**](docs/DefaultApi.md#list11) | **Post** /user-groups/batch | 
+*DefaultApi* | [**List12**](docs/DefaultApi.md#list12) | **Get** /user-groups | 
 *DefaultApi* | [**List2**](docs/DefaultApi.md#list2) | **Get** /git-sync | 
 *DefaultApi* | [**List3**](docs/DefaultApi.md#list3) | **Get** /activityHistory | 
-*DefaultApi* | [**List4**](docs/DefaultApi.md#list4) | **Get** /v2/accounts/{accountId}/delegate-configs | 
-*DefaultApi* | [**List5**](docs/DefaultApi.md#list5) | **Get** /delegate-profiles/ng | 
-*DefaultApi* | [**List6**](docs/DefaultApi.md#list6) | **Get** /entitySetupUsage | 
-*DefaultApi* | [**List7**](docs/DefaultApi.md#list7) | **Get** /aggregate/acl/usergroups | 
-*DefaultApi* | [**List8**](docs/DefaultApi.md#list8) | **Get** /aggregate/projects | 
-*DefaultApi* | [**List9**](docs/DefaultApi.md#list9) | **Post** /aggregate/acl/usergroups/filter | 
+*DefaultApi* | [**List4**](docs/DefaultApi.md#list4) | **Get** /entitySetupUsage | 
+*DefaultApi* | [**List5**](docs/DefaultApi.md#list5) | **Get** /aggregate/acl/usergroups | 
+*DefaultApi* | [**List6**](docs/DefaultApi.md#list6) | **Get** /aggregate/projects | 
+*DefaultApi* | [**List7**](docs/DefaultApi.md#list7) | **Post** /aggregate/acl/usergroups/filter | 
+*DefaultApi* | [**List8**](docs/DefaultApi.md#list8) | **Get** /aggregate/organizations | 
+*DefaultApi* | [**List9**](docs/DefaultApi.md#list9) | **Get** /aggregate/acl/usergroups/{identifier} | 
 *DefaultApi* | [**ListAccessEnvironment**](docs/DefaultApi.md#listaccessenvironment) | **Get** /environmentsV2/list/access | 
 *DefaultApi* | [**ListAccessServices**](docs/DefaultApi.md#listaccessservices) | **Get** /servicesV2/list/access | 
 *DefaultApi* | [**ListAggregatedApiKeys**](docs/DefaultApi.md#listaggregatedapikeys) | **Get** /apikey/aggregate | 
@@ -244,10 +238,8 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**ListServicesForProject**](docs/DefaultApi.md#listservicesforproject) | **Get** /services | 
 *DefaultApi* | [**ListSummary**](docs/DefaultApi.md#listsummary) | **Post** /git-sync-entities/summary | 
 *DefaultApi* | [**ListSummaryByRepoAndBranch**](docs/DefaultApi.md#listsummarybyrepoandbranch) | **Post** /git-sync-entities/branch/{branch} | 
-*DefaultApi* | [**ListV2**](docs/DefaultApi.md#listv2) | **Post** /v2/accounts/{accountId}/delegate-configs/listV2 | 
 *DefaultApi* | [**ProcessInstanceSyncPerpetualTaskResponse**](docs/DefaultApi.md#processinstancesyncperpetualtaskresponse) | **Post** /instancesync/response | 
 *DefaultApi* | [**ProcessPollingResultNg**](docs/DefaultApi.md#processpollingresultng) | **Post** /polling/delegate-response/{perpetualTaskId} | 
-*DefaultApi* | [**ProcessWebhookEvent**](docs/DefaultApi.md#processwebhookevent) | **Post** /webhook | 
 *DefaultApi* | [**RemoveMember**](docs/DefaultApi.md#removemember) | **Delete** /user-groups/{identifier}/member/{userIdentifier} | 
 *DefaultApi* | [**RemoveUser**](docs/DefaultApi.md#removeuser) | **Delete** /user/{userId} | 
 *DefaultApi* | [**RemoveUserInternal**](docs/DefaultApi.md#removeuserinternal) | **Delete** /user/internal/{userId} | 
@@ -264,27 +256,21 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**Unsubscribe**](docs/DefaultApi.md#unsubscribe) | **Post** /polling/unsubscribe | 
 *DefaultApi* | [**Update**](docs/DefaultApi.md#update) | **Put** /filters | 
 *DefaultApi* | [**Update1**](docs/DefaultApi.md#update1) | **Put** /gitopsproviders | 
-*DefaultApi* | [**Update10**](docs/DefaultApi.md#update10) | **Put** /services | 
-*DefaultApi* | [**Update11**](docs/DefaultApi.md#update11) | **Put** /servicesV2 | 
-*DefaultApi* | [**Update12**](docs/DefaultApi.md#update12) | **Put** /source-code-manager/{identifier} | 
+*DefaultApi* | [**Update10**](docs/DefaultApi.md#update10) | **Put** /source-code-manager/{identifier} | 
 *DefaultApi* | [**Update2**](docs/DefaultApi.md#update2) | **Put** /git-sync-settings | 
 *DefaultApi* | [**Update3**](docs/DefaultApi.md#update3) | **Put** /git-sync | 
 *DefaultApi* | [**Update4**](docs/DefaultApi.md#update4) | **Put** /admin/licenses/{identifier} | 
-*DefaultApi* | [**Update5**](docs/DefaultApi.md#update5) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | 
-*DefaultApi* | [**Update6**](docs/DefaultApi.md#update6) | **Put** /delegate-profiles/ng/{delegateProfileId} | 
-*DefaultApi* | [**Update7**](docs/DefaultApi.md#update7) | **Put** /environments | 
-*DefaultApi* | [**Update8**](docs/DefaultApi.md#update8) | **Put** /environmentsV2 | 
-*DefaultApi* | [**Update9**](docs/DefaultApi.md#update9) | **Put** /user-groups | 
+*DefaultApi* | [**Update5**](docs/DefaultApi.md#update5) | **Put** /environments | 
+*DefaultApi* | [**Update6**](docs/DefaultApi.md#update6) | **Put** /environmentsV2 | 
+*DefaultApi* | [**Update7**](docs/DefaultApi.md#update7) | **Put** /user-groups | 
+*DefaultApi* | [**Update8**](docs/DefaultApi.md#update8) | **Put** /services | 
+*DefaultApi* | [**Update9**](docs/DefaultApi.md#update9) | **Put** /servicesV2 | 
 *DefaultApi* | [**UpdateApiKey**](docs/DefaultApi.md#updateapikey) | **Put** /apikey/{identifier} | 
 *DefaultApi* | [**UpdateDefault**](docs/DefaultApi.md#updatedefault) | **Put** /git-sync/{identifier}/folder/{folderIdentifier}/default | 
 *DefaultApi* | [**UpdateInvite**](docs/DefaultApi.md#updateinvite) | **Put** /invites/{inviteId} | 
-*DefaultApi* | [**UpdateScopingRules**](docs/DefaultApi.md#updatescopingrules) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/scoping-rules | 
-*DefaultApi* | [**UpdateScopingRules1**](docs/DefaultApi.md#updatescopingrules1) | **Put** /delegate-profiles/ng/{delegateProfileId}/scoping-rules | 
 *DefaultApi* | [**UpdateSecret**](docs/DefaultApi.md#updatesecret) | **Put** /v2/secrets/{identifier} | 
 *DefaultApi* | [**UpdateSecretFile**](docs/DefaultApi.md#updatesecretfile) | **Put** /v2/secrets/files/{identifier} | 
 *DefaultApi* | [**UpdateSecretViaYaml**](docs/DefaultApi.md#updatesecretviayaml) | **Put** /v2/secrets/{identifier}/yaml | 
-*DefaultApi* | [**UpdateSelectors**](docs/DefaultApi.md#updateselectors) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/selectors | 
-*DefaultApi* | [**UpdateSelectors1**](docs/DefaultApi.md#updateselectors1) | **Put** /delegate-profiles/ng/{delegateProfileId}/selectors | 
 *DefaultApi* | [**UpdateServiceAccount**](docs/DefaultApi.md#updateserviceaccount) | **Put** /serviceaccount/{identifier} | 
 *DefaultApi* | [**UpdateToken**](docs/DefaultApi.md#updatetoken) | **Put** /token/{identifier} | 
 *DefaultApi* | [**UpdateTwoFactorAuthInfo**](docs/DefaultApi.md#updatetwofactorauthinfo) | **Put** /user/enable-two-factor-auth | 
@@ -310,6 +296,22 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**VerifyInviteViaNGAuthUi**](docs/DefaultApi.md#verifyinviteviangauthui) | **Get** /invites/verify | 
 *DefaultApi* | [**VerifyToken**](docs/DefaultApi.md#verifytoken) | **Post** /signup/verify/{token} | 
 *DefaultApi* | [**WebhookCatcher**](docs/DefaultApi.md#webhookcatcher) | **Post** /git-sync-trigger/webhook/{entityToken} | 
+*DelegateConfigurationManagementApi* | [**CreateDelegateConfiguration**](docs/DelegateConfigurationManagementApi.md#createdelegateconfiguration) | **Post** /delegate-profiles/ng | Creates Delegate Configuration specified by Configuration details in body
+*DelegateConfigurationManagementApi* | [**DeleteDelegateConfig**](docs/DelegateConfigurationManagementApi.md#deletedelegateconfig) | **Delete** /delegate-profiles/ng/{delegateProfileId} | Deletes Delegate Configuration specified by Id
+*DelegateConfigurationManagementApi* | [**GetDelegateConfigrationDetails**](docs/DelegateConfigurationManagementApi.md#getdelegateconfigrationdetails) | **Get** /delegate-profiles/ng/{delegateProfileId} | Retrieves Delegate Configuration details for given Delegate Configuration Id.
+*DelegateConfigurationManagementApi* | [**GetDelegateConfigurationsForAccount**](docs/DelegateConfigurationManagementApi.md#getdelegateconfigurationsforaccount) | **Get** /delegate-profiles/ng | Lists Delegate Configuration for specified Account, Organization and Project
+*DelegateConfigurationManagementApi* | [**UpdateDelegateConfiguration**](docs/DelegateConfigurationManagementApi.md#updatedelegateconfiguration) | **Put** /delegate-profiles/ng/{delegateProfileId} | Updates Delegate Configuration specified by Id
+*DelegateConfigurationManagementApi* | [**UpdateDelegateSelectors**](docs/DelegateConfigurationManagementApi.md#updatedelegateselectors) | **Put** /delegate-profiles/ng/{delegateProfileId}/selectors | Updates Delegate Selectors for Delegate Configuration specified by Id
+*DelegateConfigurationManagementApi* | [**UpdateScopingRules**](docs/DelegateConfigurationManagementApi.md#updatescopingrules) | **Put** /delegate-profiles/ng/{delegateProfileId}/scoping-rules | Updates Scoping Rules for the Delegate Configuration specified by Id
+*DelegateConfigurationResourceApi* | [**AddDelegateConfigurationForAccount**](docs/DelegateConfigurationResourceApi.md#adddelegateconfigurationforaccount) | **Post** /v2/accounts/{accountId}/delegate-configs | Creates Delegate Configuration specified by config details for specified account
+*DelegateConfigurationResourceApi* | [**CreateDelegateConfigurationV2**](docs/DelegateConfigurationResourceApi.md#createdelegateconfigurationv2) | **Post** /v2/delegate-configs | Creates Delegate Configuration specified by config details
+*DelegateConfigurationResourceApi* | [**DeleteDelegateConfigV2**](docs/DelegateConfigurationResourceApi.md#deletedelegateconfigv2) | **Delete** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | Deletes Delegate Configuration specified by identifier
+*DelegateConfigurationResourceApi* | [**GetDelegateConfigrationDetailsV2**](docs/DelegateConfigurationResourceApi.md#getdelegateconfigrationdetailsv2) | **Get** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | Retrieves Delegate Configuration details for given Delegate Configuration identifier.
+*DelegateConfigurationResourceApi* | [**GetDelegateConfigurationsForAccountV2**](docs/DelegateConfigurationResourceApi.md#getdelegateconfigurationsforaccountv2) | **Get** /v2/accounts/{accountId}/delegate-configs | Lists Delegate Configuration for specified account, org and project
+*DelegateConfigurationResourceApi* | [**GetDelegateConfigurationsWithFiltering**](docs/DelegateConfigurationResourceApi.md#getdelegateconfigurationswithfiltering) | **Post** /v2/accounts/{accountId}/delegate-configs/listV2 | Lists Delegate Configuration for specified account, org and project and filter applied
+*DelegateConfigurationResourceApi* | [**UpdateDelegateConfigurationV2**](docs/DelegateConfigurationResourceApi.md#updatedelegateconfigurationv2) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | Updates Delegate Configuration specified by Identifier
+*DelegateConfigurationResourceApi* | [**UpdateDelegateSelectorsV2**](docs/DelegateConfigurationResourceApi.md#updatedelegateselectorsv2) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/selectors | Updates Delegate selectors for Delegate Configuration specified by identifier
+*DelegateConfigurationResourceApi* | [**UpdateScopingRulesV2**](docs/DelegateConfigurationResourceApi.md#updatescopingrulesv2) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/scoping-rules | Updates Scoping Rules for the Delegate Configuration specified by identifier
 *EnforcementApi* | [**GetAllFeatureRestrictionMetadata**](docs/EnforcementApi.md#getallfeaturerestrictionmetadata) | **Get** /enforcement/metadata | Gets All Feature Restriction Metadata
 *EnforcementApi* | [**GetEnabledFeatureRestrictionDetailByAccountId**](docs/EnforcementApi.md#getenabledfeaturerestrictiondetailbyaccountid) | **Get** /enforcement/enabled | Gets List of Enabled Feature Restriction Detail for The Account
 *EnforcementApi* | [**GetFeatureRestrictionDetail**](docs/EnforcementApi.md#getfeaturerestrictiondetail) | **Post** /enforcement | Gets Feature Restriction Detail
@@ -320,7 +322,7 @@ Class | Method | HTTP request | Description
 *LicensesApi* | [**CheckExpiry**](docs/LicensesApi.md#checkexpiry) | **Get** /licenses/{accountId}/check-expiry | 
 *LicensesApi* | [**ExtendTrialLicense**](docs/LicensesApi.md#extendtriallicense) | **Post** /licenses/extend-trial | Extends Trial License For A Module
 *LicensesApi* | [**GetAccountLicenses**](docs/LicensesApi.md#getaccountlicenses) | **Get** /licenses/account | Gets All Module License Information in Account
-*LicensesApi* | [**GetEditionActions**](docs/LicensesApi.md#geteditionactions) | **Get** /licenses/actions | 
+*LicensesApi* | [**GetEditionActions**](docs/LicensesApi.md#geteditionactions) | **Get** /licenses/actions | Get Allowed Actions Under Each Edition
 *LicensesApi* | [**GetLicensesAndSummary**](docs/LicensesApi.md#getlicensesandsummary) | **Get** /licenses/{accountIdentifier}/summary | Gets Module Licenses With Summary By Account And ModuleType
 *LicensesApi* | [**GetModuleLicenseByAccountAndModuleType**](docs/LicensesApi.md#getmodulelicensebyaccountandmoduletype) | **Get** /licenses | Gets Module License By Account And ModuleType
 *LicensesApi* | [**GetModuleLicenseById**](docs/LicensesApi.md#getmodulelicensebyid) | **Get** /licenses/{identifier} | Gets Module License
@@ -340,6 +342,7 @@ Class | Method | HTTP request | Description
 *ProjectApi* | [**GetProjectList**](docs/ProjectApi.md#getprojectlist) | **Get** /projects | List user&#x27;s project
 *ProjectApi* | [**PostProject**](docs/ProjectApi.md#postproject) | **Post** /projects | Creates a Project
 *ProjectApi* | [**PutProject**](docs/ProjectApi.md#putproject) | **Put** /projects/{identifier} | Update project by identifier
+*WebhookEventHandlerApi* | [**ProcessWebhookEvent**](docs/WebhookEventHandlerApi.md#processwebhookevent) | **Post** /webhook | Process event payload for webhook triggers.
 
 ## Documentation For Models
 
@@ -467,6 +470,7 @@ Class | Method | HTTP request | Description
  - [DashboardWorkloadDeployment](docs/DashboardWorkloadDeployment.md)
  - [DatadogConnectorDto](docs/DatadogConnectorDto.md)
  - [DecryptableEntity](docs/DecryptableEntity.md)
+ - [DecryptableEntityWithEncryptionConsumers](docs/DecryptableEntityWithEncryptionConsumers.md)
  - [DelegateConfiguration](docs/DelegateConfiguration.md)
  - [DelegateProfileDetailsNg](docs/DelegateProfileDetailsNg.md)
  - [DelegateProfileFilterPropertiesDto](docs/DelegateProfileFilterPropertiesDto.md)
@@ -510,6 +514,7 @@ Class | Method | HTTP request | Description
  - [EntityReferredByPipelineSetupUsageDetail](docs/EntityReferredByPipelineSetupUsageDetail.md)
  - [EntitySetupUsageBatchDto](docs/EntitySetupUsageBatchDto.md)
  - [EntitySetupUsageDto](docs/EntitySetupUsageDto.md)
+ - [EntityValidityDetails](docs/EntityValidityDetails.md)
  - [EnumDescriptor](docs/EnumDescriptor.md)
  - [EnumDescriptorProto](docs/EnumDescriptorProto.md)
  - [EnumDescriptorProtoOrBuilder](docs/EnumDescriptorProtoOrBuilder.md)
@@ -531,6 +536,7 @@ Class | Method | HTTP request | Description
  - [EnvironmentResponse](docs/EnvironmentResponse.md)
  - [EnvironmentResponseDto](docs/EnvironmentResponseDto.md)
  - [ErrorDetail](docs/ErrorDetail.md)
+ - [ErrorMetadataDto](docs/ErrorMetadataDto.md)
  - [ExecutionDeployment](docs/ExecutionDeployment.md)
  - [ExecutionDeploymentInfo](docs/ExecutionDeploymentInfo.md)
  - [ExecutionStatusInfo](docs/ExecutionStatusInfo.md)
@@ -628,6 +634,7 @@ Class | Method | HTTP request | Description
  - [GitlabUsernameTokenDto](docs/GitlabUsernameTokenDto.md)
  - [GitlabWebhookEvents](docs/GitlabWebhookEvents.md)
  - [GitlabWebhookEventsOrBuilder](docs/GitlabWebhookEventsOrBuilder.md)
+ - [HarnessServiceInfoNg](docs/HarnessServiceInfoNg.md)
  - [HealthDeploymentDashboard](docs/HealthDeploymentDashboard.md)
  - [HealthDeploymentInfo](docs/HealthDeploymentInfo.md)
  - [HttpHelmAuthCredentialsDto](docs/HttpHelmAuthCredentialsDto.md)
@@ -744,7 +751,7 @@ Class | Method | HTTP request | Description
  - [PageResponseProject](docs/PageResponseProject.md)
  - [PageResponseProjectAggregateDto](docs/PageResponseProjectAggregateDto.md)
  - [PageResponseProjectResponse](docs/PageResponseProjectResponse.md)
- - [PageResponseRoleAssignmentResponseDto](docs/PageResponseRoleAssignmentResponseDto.md)
+ - [PageResponseRoleAssignmentResponse](docs/PageResponseRoleAssignmentResponse.md)
  - [PageResponseSecretResponseWrapper](docs/PageResponseSecretResponseWrapper.md)
  - [PageResponseServiceAccountAggregateDto](docs/PageResponseServiceAccountAggregateDto.md)
  - [PageResponseServiceResponse](docs/PageResponseServiceResponse.md)
@@ -758,6 +765,7 @@ Class | Method | HTTP request | Description
  - [PagerDutyConfigDto](docs/PagerDutyConfigDto.md)
  - [PagerDutyConnectorDto](docs/PagerDutyConnectorDto.md)
  - [ParameterFieldDouble](docs/ParameterFieldDouble.md)
+ - [ParameterFieldNotificationChannelWrapper](docs/ParameterFieldNotificationChannelWrapper.md)
  - [ParameterFieldObject](docs/ParameterFieldObject.md)
  - [ParameterFieldSecretRefData](docs/ParameterFieldSecretRefData.md)
  - [ParameterFieldString](docs/ParameterFieldString.md)
@@ -810,7 +818,7 @@ Class | Method | HTTP request | Description
  - [PmsPagerDutyChannel](docs/PmsPagerDutyChannel.md)
  - [PmsSlackChannel](docs/PmsSlackChannel.md)
  - [PollingResponseDto](docs/PollingResponseDto.md)
- - [PrincipalDto](docs/PrincipalDto.md)
+ - [Principal](docs/Principal.md)
  - [Project](docs/Project.md)
  - [ProjectAggregateDto](docs/ProjectAggregateDto.md)
  - [ProjectDashBoardInfo](docs/ProjectDashBoardInfo.md)
@@ -822,7 +830,7 @@ Class | Method | HTTP request | Description
  - [RateLimitRestrictionMetadataDto](docs/RateLimitRestrictionMetadataDto.md)
  - [ReservedRange](docs/ReservedRange.md)
  - [ReservedRangeOrBuilder](docs/ReservedRangeOrBuilder.md)
- - [ResourceGroupDto](docs/ResourceGroupDto.md)
+ - [ResourceGroup](docs/ResourceGroup.md)
  - [ResponseDtoAccount](docs/ResponseDtoAccount.md)
  - [ResponseDtoAccountLicense](docs/ResponseDtoAccountLicense.md)
  - [ResponseDtoAccountResourcesDto](docs/ResponseDtoAccountResourcesDto.md)
@@ -842,6 +850,7 @@ Class | Method | HTTP request | Description
  - [ResponseDtoCreatePrdto](docs/ResponseDtoCreatePrdto.md)
  - [ResponseDtoDashboardExecutionStatusInfo](docs/ResponseDtoDashboardExecutionStatusInfo.md)
  - [ResponseDtoDashboardWorkloadDeployment](docs/ResponseDtoDashboardWorkloadDeployment.md)
+ - [ResponseDtoDecryptableEntity](docs/ResponseDtoDecryptableEntity.md)
  - [ResponseDtoDeploymentStatsSummary](docs/ResponseDtoDeploymentStatsSummary.md)
  - [ResponseDtoDeploymentsInfo](docs/ResponseDtoDeploymentsInfo.md)
  - [ResponseDtoDockerBuildDetailsDto](docs/ResponseDtoDockerBuildDetailsDto.md)
@@ -893,7 +902,7 @@ Class | Method | HTTP request | Description
  - [ResponseDtoListJiraStatusNg](docs/ResponseDtoListJiraStatusNg.md)
  - [ResponseDtoListModuleLicense](docs/ResponseDtoListModuleLicense.md)
  - [ResponseDtoListProject](docs/ResponseDtoListProject.md)
- - [ResponseDtoListRoleAssignmentResponseDto](docs/ResponseDtoListRoleAssignmentResponseDto.md)
+ - [ResponseDtoListRoleAssignmentResponse](docs/ResponseDtoListRoleAssignmentResponse.md)
  - [ResponseDtoListServiceAccountDto](docs/ResponseDtoListServiceAccountDto.md)
  - [ResponseDtoListServiceDefinitionType](docs/ResponseDtoListServiceDefinitionType.md)
  - [ResponseDtoListServiceResponse](docs/ResponseDtoListServiceResponse.md)
@@ -905,6 +914,7 @@ Class | Method | HTTP request | Description
  - [ResponseDtoMapServiceDefinitionTypeListExecutionStrategyType](docs/ResponseDtoMapServiceDefinitionTypeListExecutionStrategyType.md)
  - [ResponseDtoMapStringString](docs/ResponseDtoMapStringString.md)
  - [ResponseDtoModuleLicense](docs/ResponseDtoModuleLicense.md)
+ - [ResponseDtoOptionalHarnessServiceInfoNg](docs/ResponseDtoOptionalHarnessServiceInfoNg.md)
  - [ResponseDtoOptionalInviteDto](docs/ResponseDtoOptionalInviteDto.md)
  - [ResponseDtoOrganizationAggregateDto](docs/ResponseDtoOrganizationAggregateDto.md)
  - [ResponseDtoOrganizationResponse](docs/ResponseDtoOrganizationResponse.md)
@@ -926,7 +936,7 @@ Class | Method | HTTP request | Description
  - [ResponseDtoPageResponseProject](docs/ResponseDtoPageResponseProject.md)
  - [ResponseDtoPageResponseProjectAggregateDto](docs/ResponseDtoPageResponseProjectAggregateDto.md)
  - [ResponseDtoPageResponseProjectResponse](docs/ResponseDtoPageResponseProjectResponse.md)
- - [ResponseDtoPageResponseRoleAssignmentResponseDto](docs/ResponseDtoPageResponseRoleAssignmentResponseDto.md)
+ - [ResponseDtoPageResponseRoleAssignmentResponse](docs/ResponseDtoPageResponseRoleAssignmentResponse.md)
  - [ResponseDtoPageResponseSecretResponseWrapper](docs/ResponseDtoPageResponseSecretResponseWrapper.md)
  - [ResponseDtoPageResponseServiceAccountAggregateDto](docs/ResponseDtoPageResponseServiceAccountAggregateDto.md)
  - [ResponseDtoPageResponseServiceResponse](docs/ResponseDtoPageResponseServiceResponse.md)
@@ -945,8 +955,8 @@ Class | Method | HTTP request | Description
  - [ResponseDtoProjectResponse](docs/ResponseDtoProjectResponse.md)
  - [ResponseDtoProjectsDashboardInfo](docs/ResponseDtoProjectsDashboardInfo.md)
  - [ResponseDtoRestrictionMetadataMapResponseDto](docs/ResponseDtoRestrictionMetadataMapResponseDto.md)
- - [ResponseDtoRoleAssignmentAggregateResponseDto](docs/ResponseDtoRoleAssignmentAggregateResponseDto.md)
- - [ResponseDtoRoleAssignmentResponseDto](docs/ResponseDtoRoleAssignmentResponseDto.md)
+ - [ResponseDtoRoleAssignmentAggregateResponse](docs/ResponseDtoRoleAssignmentAggregateResponse.md)
+ - [ResponseDtoRoleAssignmentResponse](docs/ResponseDtoRoleAssignmentResponse.md)
  - [ResponseDtoSaasGitDto](docs/ResponseDtoSaasGitDto.md)
  - [ResponseDtoSecretManagerConfigDto](docs/ResponseDtoSecretManagerConfigDto.md)
  - [ResponseDtoSecretManagerMetadataDto](docs/ResponseDtoSecretManagerMetadataDto.md)
@@ -999,18 +1009,19 @@ Class | Method | HTTP request | Description
  - [RestrictionMetadataDto](docs/RestrictionMetadataDto.md)
  - [RestrictionMetadataMapRequestDto](docs/RestrictionMetadataMapRequestDto.md)
  - [RestrictionMetadataMapResponseDto](docs/RestrictionMetadataMapResponseDto.md)
- - [RoleAssignmentAggregateResponseDto](docs/RoleAssignmentAggregateResponseDto.md)
- - [RoleAssignmentCreateRequestDto](docs/RoleAssignmentCreateRequestDto.md)
- - [RoleAssignmentDto](docs/RoleAssignmentDto.md)
- - [RoleAssignmentFilterDto](docs/RoleAssignmentFilterDto.md)
+ - [Role](docs/Role.md)
+ - [RoleAssignment](docs/RoleAssignment.md)
+ - [RoleAssignmentAggregateResponse](docs/RoleAssignmentAggregateResponse.md)
+ - [RoleAssignmentCreateRequest](docs/RoleAssignmentCreateRequest.md)
+ - [RoleAssignmentFilter](docs/RoleAssignmentFilter.md)
  - [RoleAssignmentMetadataDto](docs/RoleAssignmentMetadataDto.md)
- - [RoleAssignmentResponseDto](docs/RoleAssignmentResponseDto.md)
+ - [RoleAssignmentResponse](docs/RoleAssignmentResponse.md)
  - [RoleBinding](docs/RoleBinding.md)
- - [RoleDto](docs/RoleDto.md)
- - [RoleResponseDto](docs/RoleResponseDto.md)
+ - [RoleResponse](docs/RoleResponse.md)
  - [SaasGitDto](docs/SaasGitDto.md)
  - [SamlLinkGroupRequest](docs/SamlLinkGroupRequest.md)
- - [ScopeDto](docs/ScopeDto.md)
+ - [SampleErrorMetadataDto](docs/SampleErrorMetadataDto.md)
+ - [Scope](docs/Scope.md)
  - [ScopingRuleDetailsNg](docs/ScopingRuleDetailsNg.md)
  - [SearchFilter](docs/SearchFilter.md)
  - [SecretDtov2](docs/SecretDtov2.md)

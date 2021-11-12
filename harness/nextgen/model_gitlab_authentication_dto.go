@@ -10,6 +10,6 @@
 package nextgen
 
 type GitlabAuthenticationDto struct {
-	Type_ string `json:"type"`
-	Spec *GitlabCredentialsDto `json:"spec"`
+	Type_ string                `json:"type"`
+	Spec  *GitlabCredentialsDto `json:"spec"`
 }

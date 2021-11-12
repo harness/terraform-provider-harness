@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoDashboardWorkloadDeployment struct {
-	Status string `json:"status,omitempty"`
-	Data *DashboardWorkloadDeployment `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                       `json:"status,omitempty"`
+	Data          *DashboardWorkloadDeployment `json:"data,omitempty"`
+	MetaData      *interface{}                 `json:"metaData,omitempty"`
+	CorrelationId string                       `json:"correlationId,omitempty"`
 }

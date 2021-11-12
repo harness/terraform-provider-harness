@@ -10,7 +10,7 @@
 package nextgen
 
 type ArtifactoryConnectorDto struct {
-	ArtifactoryServerUrl string `json:"artifactoryServerUrl"`
-	Auth *ArtifactoryAuthenticationDto `json:"auth,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	ArtifactoryServerUrl string                        `json:"artifactoryServerUrl"`
+	Auth                 *ArtifactoryAuthenticationDto `json:"auth,omitempty"`
+	DelegateSelectors    []string                      `json:"delegateSelectors,omitempty"`
 }

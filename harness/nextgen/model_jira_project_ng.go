@@ -10,8 +10,8 @@
 package nextgen
 
 type JiraProjectNg struct {
-	Id string `json:"id"`
-	Key string `json:"key"`
-	Name string `json:"name"`
+	Id         string                     `json:"id"`
+	Key        string                     `json:"key"`
+	Name       string                     `json:"name"`
 	Issuetypes map[string]JiraIssueTypeNg `json:"issuetypes"`
 }

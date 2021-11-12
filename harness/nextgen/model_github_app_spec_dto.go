@@ -11,6 +11,6 @@ package nextgen
 
 type GithubAppSpecDto struct {
 	InstallationId string `json:"installationId"`
-	ApplicationId string `json:"applicationId"`
-	PrivateKeyRef string `json:"privateKeyRef"`
+	ApplicationId  string `json:"applicationId"`
+	PrivateKeyRef  string `json:"privateKeyRef"`
 }

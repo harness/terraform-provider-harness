@@ -10,7 +10,7 @@
 package nextgen
 
 type GitEnabledDto struct {
-	IsGitSyncEnabled bool `json:"isGitSyncEnabled,omitempty"`
+	IsGitSyncEnabled bool   `json:"isGitSyncEnabled,omitempty"`
 	ConnectivityMode string `json:"connectivityMode,omitempty"`
-	GitSyncEnabled bool `json:"gitSyncEnabled,omitempty"`
+	GitSyncEnabled   bool   `json:"gitSyncEnabled,omitempty"`
 }

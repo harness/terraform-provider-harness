@@ -10,8 +10,8 @@
 package nextgen
 
 type AwsCodeCommitConnectorDto struct {
-	Url string `json:"url"`
-	Authentication *AwsCodeCommitAuthenticationDto `json:"authentication"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Type_ string `json:"type"`
+	Url               string                          `json:"url"`
+	Authentication    *AwsCodeCommitAuthenticationDto `json:"authentication"`
+	DelegateSelectors []string                        `json:"delegateSelectors,omitempty"`
+	Type_             string                          `json:"type"`
 }

@@ -10,9 +10,9 @@
 package nextgen
 
 type RoleBinding struct {
-	RoleIdentifier string `json:"roleIdentifier,omitempty"`
-	RoleName string `json:"roleName,omitempty"`
+	RoleIdentifier          string `json:"roleIdentifier,omitempty"`
+	RoleName                string `json:"roleName,omitempty"`
 	ResourceGroupIdentifier string `json:"resourceGroupIdentifier,omitempty"`
-	ResourceGroupName string `json:"resourceGroupName,omitempty"`
-	ManagedRole bool `json:"managedRole,omitempty"`
+	ResourceGroupName       string `json:"resourceGroupName,omitempty"`
+	ManagedRole             bool   `json:"managedRole,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type EnvBuildIdAndInstanceCountInfo struct {
-	EnvId string `json:"envId,omitempty"`
-	EnvName string `json:"envName,omitempty"`
+	EnvId                       string                    `json:"envId,omitempty"`
+	EnvName                     string                    `json:"envName,omitempty"`
 	BuildIdAndInstanceCountList []BuildIdAndInstanceCount `json:"buildIdAndInstanceCountList,omitempty"`
 }

@@ -10,6 +10,6 @@
 package nextgen
 
 type GitFileContent struct {
-	Content string `json:"content,omitempty"`
+	Content  string `json:"content,omitempty"`
 	ObjectId string `json:"objectId,omitempty"`
 }

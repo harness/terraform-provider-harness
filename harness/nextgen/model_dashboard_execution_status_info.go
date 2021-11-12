@@ -12,5 +12,5 @@ package nextgen
 type DashboardExecutionStatusInfo struct {
 	Failure []ExecutionStatusInfo `json:"failure,omitempty"`
 	Pending []ExecutionStatusInfo `json:"pending,omitempty"`
-	Active []ExecutionStatusInfo `json:"active,omitempty"`
+	Active  []ExecutionStatusInfo `json:"active,omitempty"`
 }

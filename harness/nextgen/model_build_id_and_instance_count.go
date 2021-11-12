@@ -11,5 +11,5 @@ package nextgen
 
 type BuildIdAndInstanceCount struct {
 	BuildId string `json:"buildId,omitempty"`
-	Count int32 `json:"count,omitempty"`
+	Count   int32  `json:"count,omitempty"`
 }

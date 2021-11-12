@@ -117,7 +117,7 @@ func (a *LicensesApiService) CheckExpiry(ctx context.Context, accountId string) 
 LicensesApiService Extends Trial License For A Module
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier
+ * @param accountIdentifier Account id to extend a trial
 @return ResponseDtoModuleLicense
 */
 func (a *LicensesApiService) ExtendTrialLicense(ctx context.Context, body StartTrial, accountIdentifier string) (ResponseDtoModuleLicense, *http.Response, error) {
@@ -225,7 +225,7 @@ func (a *LicensesApiService) ExtendTrialLicense(ctx context.Context, body StartT
 LicensesApiService Gets All Module License Information in Account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *LicensesApiGetAccountLicensesOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Accouunt id to get all module licenses.
 @return ResponseDtoAccountLicense
 */
 
@@ -335,18 +335,19 @@ func (a *LicensesApiService) GetAccountLicenses(ctx context.Context, localVarOpt
 }
 
 /*
-LicensesApiService
+LicensesApiService Get Allowed Actions Under Each Edition
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param moduleType
-
+ * @param accountIdentifier Account id to get the allowed actions.
+ * @param moduleType A Harness Platform module.
+@return ResponseDtoMapEditionSetEditionActionDto
 */
-func (a *LicensesApiService) GetEditionActions(ctx context.Context, accountIdentifier string, moduleType string) (*http.Response, error) {
+func (a *LicensesApiService) GetEditionActions(ctx context.Context, accountIdentifier string, moduleType string) (ResponseDtoMapEditionSetEditionActionDto, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoMapEditionSetEditionActionDto
 	)
 
 	// create path and map variables
@@ -377,18 +378,26 @@ func (a *LicensesApiService) GetEditionActions(ctx context.Context, accountIdent
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
 	localVarHttpResponse.Body.Close()
 	if err != nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -401,32 +410,42 @@ func (a *LicensesApiService) GetEditionActions(ctx context.Context, accountIdent
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		return localVarHttpResponse, newErr
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoMapEditionSetEditionActionDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
-	return localVarHttpResponse, nil
+	return localVarReturnValue, localVarHttpResponse, nil
 }
 
 /*
 LicensesApiService Gets Module Licenses With Summary By Account And ModuleType
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param moduleType
+ * @param accountIdentifier Account id to get a module license with summary.
+ * @param moduleType A Harness Platform module.
 @return ResponseDtoLicensesWithSummary
 */
 func (a *LicensesApiService) GetLicensesAndSummary(ctx context.Context, accountIdentifier string, moduleType string) (ResponseDtoLicensesWithSummary, *http.Response, error) {
@@ -532,8 +551,8 @@ func (a *LicensesApiService) GetLicensesAndSummary(ctx context.Context, accountI
 /*
 LicensesApiService Gets Module License By Account And ModuleType
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param moduleType
+ * @param accountIdentifier Account id to get a module license.
+ * @param moduleType A Harness Platform module.
 @return ResponseDtoModuleLicense
 */
 func (a *LicensesApiService) GetModuleLicenseByAccountAndModuleType(ctx context.Context, accountIdentifier string, moduleType string) (ResponseDtoModuleLicense, *http.Response, error) {
@@ -639,8 +658,8 @@ func (a *LicensesApiService) GetModuleLicenseByAccountAndModuleType(ctx context.
 /*
 LicensesApiService Gets Module License
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
+ * @param identifier The module license identifier
+ * @param accountIdentifier Account id to get a module license from an account.
 @return ResponseDtoModuleLicense
 */
 func (a *LicensesApiService) GetModuleLicenseById(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoModuleLicense, *http.Response, error) {
@@ -746,8 +765,8 @@ func (a *LicensesApiService) GetModuleLicenseById(ctx context.Context, identifie
 /*
 LicensesApiService Gets Module Licenses By Account And ModuleType
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param moduleType
+ * @param accountIdentifier Account id to get a module license.
+ * @param moduleType A Harness Platform module.
 @return ResponseDtoListModuleLicense
 */
 func (a *LicensesApiService) GetModuleLicensesByAccountAndModuleType(ctx context.Context, accountIdentifier string, moduleType string) (ResponseDtoListModuleLicense, *http.Response, error) {
@@ -1027,8 +1046,8 @@ func (a *LicensesApiService) StartCommunityLicense(ctx context.Context, accountI
 /*
 LicensesApiService Starts Free License For A Module
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param moduleType
+ * @param accountIdentifier Account id to start a free license
+ * @param moduleType A Harness Platform module.
 @return ResponseDtoModuleLicense
 */
 func (a *LicensesApiService) StartFreeLicense(ctx context.Context, accountIdentifier string, moduleType string) (ResponseDtoModuleLicense, *http.Response, error) {
@@ -1135,7 +1154,7 @@ func (a *LicensesApiService) StartFreeLicense(ctx context.Context, accountIdenti
 LicensesApiService Starts Trial License For A Module
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier
+ * @param accountIdentifier Account id to start a trial license
 @return ResponseDtoModuleLicense
 */
 func (a *LicensesApiService) StartTrialLicense(ctx context.Context, body StartTrial, accountIdentifier string) (ResponseDtoModuleLicense, *http.Response, error) {

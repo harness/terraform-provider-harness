@@ -10,10 +10,10 @@
 package nextgen
 
 type PasswordStrengthPolicy struct {
-	Enabled bool `json:"enabled,omitempty"`
-	MinNumberOfCharacters int32 `json:"minNumberOfCharacters,omitempty"`
+	Enabled                        bool  `json:"enabled,omitempty"`
+	MinNumberOfCharacters          int32 `json:"minNumberOfCharacters,omitempty"`
 	MinNumberOfUppercaseCharacters int32 `json:"minNumberOfUppercaseCharacters,omitempty"`
 	MinNumberOfLowercaseCharacters int32 `json:"minNumberOfLowercaseCharacters,omitempty"`
-	MinNumberOfSpecialCharacters int32 `json:"minNumberOfSpecialCharacters,omitempty"`
-	MinNumberOfDigits int32 `json:"minNumberOfDigits,omitempty"`
+	MinNumberOfSpecialCharacters   int32 `json:"minNumberOfSpecialCharacters,omitempty"`
+	MinNumberOfDigits              int32 `json:"minNumberOfDigits,omitempty"`
 }

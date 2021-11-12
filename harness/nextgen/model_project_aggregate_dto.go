@@ -10,9 +10,9 @@
 package nextgen
 
 type ProjectAggregateDto struct {
-	ProjectResponse *ProjectResponse `json:"projectResponse"`
-	Organization *Organization `json:"organization,omitempty"`
-	HarnessManagedOrg bool `json:"harnessManagedOrg,omitempty"`
-	Admins []UserMetadataDto `json:"admins,omitempty"`
-	Collaborators []UserMetadataDto `json:"collaborators,omitempty"`
+	ProjectResponse   *ProjectResponse  `json:"projectResponse"`
+	Organization      *Organization     `json:"organization,omitempty"`
+	HarnessManagedOrg bool              `json:"harnessManagedOrg,omitempty"`
+	Admins            []UserMetadataDto `json:"admins,omitempty"`
+	Collaborators     []UserMetadataDto `json:"collaborators,omitempty"`
 }

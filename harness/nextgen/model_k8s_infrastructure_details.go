@@ -10,7 +10,7 @@
 package nextgen
 
 type K8sInfrastructureDetails struct {
-	Type_ string `json:"type"`
-	Namespace string `json:"namespace,omitempty"`
+	Type_       string `json:"type"`
+	Namespace   string `json:"namespace,omitempty"`
 	ReleaseName string `json:"releaseName,omitempty"`
 }

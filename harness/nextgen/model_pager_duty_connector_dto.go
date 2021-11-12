@@ -10,6 +10,6 @@
 package nextgen
 
 type PagerDutyConnectorDto struct {
-	ApiTokenRef string `json:"apiTokenRef"`
+	ApiTokenRef       string   `json:"apiTokenRef"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 }

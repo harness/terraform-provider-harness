@@ -10,9 +10,9 @@
 package nextgen
 
 type BaseAwsKmsConfigDto struct {
-	CredentialType string `json:"credentialType,omitempty"`
-	Credential *AwsKmsCredentialSpecConfig `json:"credential,omitempty"`
-	KmsArn string `json:"kmsArn,omitempty"`
-	Region string `json:"region,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	CredentialType    string                      `json:"credentialType,omitempty"`
+	Credential        *AwsKmsCredentialSpecConfig `json:"credential,omitempty"`
+	KmsArn            string                      `json:"kmsArn,omitempty"`
+	Region            string                      `json:"region,omitempty"`
+	DelegateSelectors []string                    `json:"delegateSelectors,omitempty"`
 }

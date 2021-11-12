@@ -10,11 +10,11 @@
 package nextgen
 
 type PipelineExecutionDashboardInfo struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	Name              string `json:"name,omitempty"`
+	Identifier        string `json:"identifier,omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	PlanExecutionId string `json:"planExecutionId,omitempty"`
-	StartTs int64 `json:"startTs,omitempty"`
+	PlanExecutionId   string `json:"planExecutionId,omitempty"`
+	StartTs           int64  `json:"startTs,omitempty"`
 }

@@ -10,10 +10,10 @@
 package nextgen
 
 type NgActivitySummaryDto struct {
-	GetId int64 `json:"get_id,omitempty"`
-	StartTime int64 `json:"startTime,omitempty"`
-	EndTime int64 `json:"endTime,omitempty"`
-	HeartBeatFailuresCount int64 `json:"heartBeatFailuresCount,omitempty"`
+	GetId                     int64 `json:"get_id,omitempty"`
+	StartTime                 int64 `json:"startTime,omitempty"`
+	EndTime                   int64 `json:"endTime,omitempty"`
+	HeartBeatFailuresCount    int64 `json:"heartBeatFailuresCount,omitempty"`
 	SuccessfulActivitiesCount int64 `json:"successfulActivitiesCount,omitempty"`
-	FailedActivitiesCount int64 `json:"failedActivitiesCount,omitempty"`
+	FailedActivitiesCount     int64 `json:"failedActivitiesCount,omitempty"`
 }

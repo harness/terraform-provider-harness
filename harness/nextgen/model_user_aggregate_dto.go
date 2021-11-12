@@ -10,6 +10,6 @@
 package nextgen
 
 type UserAggregateDto struct {
-	User *UserMetadataDto `json:"user,omitempty"`
+	User                   *UserMetadataDto            `json:"user,omitempty"`
 	RoleAssignmentMetadata []RoleAssignmentMetadataDto `json:"roleAssignmentMetadata,omitempty"`
 }

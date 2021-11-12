@@ -10,8 +10,8 @@
 package nextgen
 
 type SshKeyPathCredentialDto struct {
-	CredentialType string `json:"credentialType"`
-	UserName string `json:"userName"`
-	KeyPath string `json:"keyPath"`
+	CredentialType      string `json:"credentialType"`
+	UserName            string `json:"userName"`
+	KeyPath             string `json:"keyPath"`
 	EncryptedPassphrase string `json:"encryptedPassphrase,omitempty"`
 }

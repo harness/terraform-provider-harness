@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoEnvCount struct {
-	Status string `json:"status,omitempty"`
-	Data *EnvCount `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string       `json:"status,omitempty"`
+	Data          *EnvCount    `json:"data,omitempty"`
+	MetaData      *interface{} `json:"metaData,omitempty"`
+	CorrelationId string       `json:"correlationId,omitempty"`
 }

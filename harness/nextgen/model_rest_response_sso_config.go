@@ -10,7 +10,7 @@
 package nextgen
 
 type RestResponseSsoConfig struct {
-	MetaData map[string]interface{} `json:"metaData,omitempty"`
-	Resource *SsoConfig `json:"resource,omitempty"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	MetaData         map[string]interface{} `json:"metaData,omitempty"`
+	Resource         *SsoConfig             `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage      `json:"responseMessages,omitempty"`
 }

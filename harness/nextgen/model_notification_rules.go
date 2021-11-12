@@ -10,8 +10,8 @@
 package nextgen
 
 type NotificationRules struct {
-	Name string `json:"name,omitempty"`
-	Enabled bool `json:"enabled,omitempty"`
-	PipelineEvents []PipelineEvent `json:"pipelineEvents,omitempty"`
-	NotificationMethod *NotificationChannelWrapper `json:"notificationMethod,omitempty"`
+	Name               string                                    `json:"name,omitempty"`
+	Enabled            bool                                      `json:"enabled,omitempty"`
+	PipelineEvents     []PipelineEvent                           `json:"pipelineEvents,omitempty"`
+	NotificationMethod *ParameterFieldNotificationChannelWrapper `json:"notificationMethod,omitempty"`
 }

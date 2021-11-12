@@ -10,9 +10,9 @@
 package nextgen
 
 type UserLockoutPolicy struct {
-	EnableLockoutPolicy bool `json:"enableLockoutPolicy,omitempty"`
-	NumberOfFailedAttemptsBeforeLockout int32 `json:"numberOfFailedAttemptsBeforeLockout,omitempty"`
-	LockOutPeriod int32 `json:"lockOutPeriod,omitempty"`
-	NotifyUser bool `json:"notifyUser,omitempty"`
-	UserGroupsToNotify []UserGroup `json:"userGroupsToNotify,omitempty"`
+	EnableLockoutPolicy                 bool        `json:"enableLockoutPolicy,omitempty"`
+	NumberOfFailedAttemptsBeforeLockout int32       `json:"numberOfFailedAttemptsBeforeLockout,omitempty"`
+	LockOutPeriod                       int32       `json:"lockOutPeriod,omitempty"`
+	NotifyUser                          bool        `json:"notifyUser,omitempty"`
+	UserGroupsToNotify                  []UserGroup `json:"userGroupsToNotify,omitempty"`
 }

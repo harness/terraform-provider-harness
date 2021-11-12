@@ -10,9 +10,9 @@
 package nextgen
 
 type SecretManagerMetadataRequestDto struct {
-	EncryptionType string `json:"encryptionType"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Identifier string `json:"identifier"`
-	Spec *SecretManagerMetadataRequestSpecDto `json:"spec"`
+	EncryptionType    string                               `json:"encryptionType"`
+	OrgIdentifier     string                               `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string                               `json:"projectIdentifier,omitempty"`
+	Identifier        string                               `json:"identifier"`
+	Spec              *SecretManagerMetadataRequestSpecDto `json:"spec"`
 }

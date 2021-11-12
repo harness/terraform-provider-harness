@@ -10,12 +10,12 @@
 package nextgen
 
 type ServiceAccountDto struct {
-	Identifier string `json:"identifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
-	Description string `json:"description,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	Identifier        string            `json:"identifier,omitempty"`
+	Name              string            `json:"name,omitempty"`
+	Email             string            `json:"email,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	AccountIdentifier string            `json:"accountIdentifier,omitempty"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
 }

@@ -10,18 +10,18 @@
 package nextgen
 
 type EncryptedRecordData struct {
-	Uuid string `json:"uuid,omitempty"`
-	Name string `json:"name,omitempty"`
-	Path string `json:"path,omitempty"`
-	Parameters []EncryptedDataParams `json:"parameters,omitempty"`
-	EncryptionKey string `json:"encryptionKey,omitempty"`
-	EncryptedValue []string `json:"encryptedValue,omitempty"`
-	KmsId string `json:"kmsId,omitempty"`
-	EncryptionType string `json:"encryptionType,omitempty"`
-	BackupEncryptedValue []string `json:"backupEncryptedValue,omitempty"`
-	BackupEncryptionKey string `json:"backupEncryptionKey,omitempty"`
-	BackupKmsId string `json:"backupKmsId,omitempty"`
-	BackupEncryptionType string `json:"backupEncryptionType,omitempty"`
-	Base64Encoded bool `json:"base64Encoded,omitempty"`
-	AdditionalMetadata *AdditionalMetadata `json:"additionalMetadata,omitempty"`
+	Uuid                 string                `json:"uuid,omitempty"`
+	Name                 string                `json:"name,omitempty"`
+	Path                 string                `json:"path,omitempty"`
+	Parameters           []EncryptedDataParams `json:"parameters,omitempty"`
+	EncryptionKey        string                `json:"encryptionKey,omitempty"`
+	EncryptedValue       []string              `json:"encryptedValue,omitempty"`
+	KmsId                string                `json:"kmsId,omitempty"`
+	EncryptionType       string                `json:"encryptionType,omitempty"`
+	BackupEncryptedValue []string              `json:"backupEncryptedValue,omitempty"`
+	BackupEncryptionKey  string                `json:"backupEncryptionKey,omitempty"`
+	BackupKmsId          string                `json:"backupKmsId,omitempty"`
+	BackupEncryptionType string                `json:"backupEncryptionType,omitempty"`
+	Base64Encoded        bool                  `json:"base64Encoded,omitempty"`
+	AdditionalMetadata   *AdditionalMetadata   `json:"additionalMetadata,omitempty"`
 }

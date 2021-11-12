@@ -11,5 +11,5 @@ package nextgen
 
 type CeLicenseInfo struct {
 	LicenseType string `json:"licenseType,omitempty"`
-	ExpiryTime int64 `json:"expiryTime,omitempty"`
+	ExpiryTime  int64  `json:"expiryTime,omitempty"`
 }

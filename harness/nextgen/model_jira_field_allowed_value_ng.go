@@ -10,7 +10,7 @@
 package nextgen
 
 type JiraFieldAllowedValueNg struct {
-	Id string `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
+	Id    string `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
 }

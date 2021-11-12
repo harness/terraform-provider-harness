@@ -11,8 +11,8 @@ package nextgen
 
 type ServicePipelineInfo struct {
 	PipelineExecutionId string `json:"pipelineExecutionId,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Status string `json:"status,omitempty"`
-	LastExecutedAt int64 `json:"lastExecutedAt,omitempty"`
+	Identifier          string `json:"identifier,omitempty"`
+	Name                string `json:"name,omitempty"`
+	Status              string `json:"status,omitempty"`
+	LastExecutedAt      int64  `json:"lastExecutedAt,omitempty"`
 }

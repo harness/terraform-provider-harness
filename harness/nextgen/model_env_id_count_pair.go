@@ -11,5 +11,5 @@ package nextgen
 
 type EnvIdCountPair struct {
 	EnvId string `json:"envId,omitempty"`
-	Count int32 `json:"count,omitempty"`
+	Count int32  `json:"count,omitempty"`
 }

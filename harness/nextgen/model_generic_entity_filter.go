@@ -10,7 +10,7 @@
 package nextgen
 
 type GenericEntityFilter struct {
-	Ids []string `json:"ids,omitempty"`
-	Type_ string `json:"type"`
-	FilterType string `json:"filterType,omitempty"`
+	Ids        []string `json:"ids,omitempty"`
+	Type_      string   `json:"type"`
+	FilterType string   `json:"filterType,omitempty"`
 }

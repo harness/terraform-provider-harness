@@ -10,13 +10,13 @@
 package nextgen
 
 type AzureKeyVaultConnectorDto struct {
-	ClientId string `json:"clientId"`
-	SecretKey string `json:"secretKey"`
-	TenantId string `json:"tenantId"`
-	VaultName string `json:"vaultName"`
-	Subscription string `json:"subscription"`
-	IsDefault bool `json:"isDefault,omitempty"`
-	AzureEnvironmentType string `json:"azureEnvironmentType,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Default_ bool `json:"default,omitempty"`
+	ClientId             string   `json:"clientId"`
+	SecretKey            string   `json:"secretKey"`
+	TenantId             string   `json:"tenantId"`
+	VaultName            string   `json:"vaultName"`
+	Subscription         string   `json:"subscription"`
+	IsDefault            bool     `json:"isDefault,omitempty"`
+	AzureEnvironmentType string   `json:"azureEnvironmentType,omitempty"`
+	DelegateSelectors    []string `json:"delegateSelectors,omitempty"`
+	Default_             bool     `json:"default,omitempty"`
 }

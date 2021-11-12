@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoListEncryptedDataDetail struct {
-	Status string `json:"status,omitempty"`
-	Data []EncryptedDataDetail `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                `json:"status,omitempty"`
+	Data          []EncryptedDataDetail `json:"data,omitempty"`
+	MetaData      *interface{}          `json:"metaData,omitempty"`
+	CorrelationId string                `json:"correlationId,omitempty"`
 }

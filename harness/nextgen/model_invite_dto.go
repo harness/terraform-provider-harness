@@ -10,14 +10,14 @@
 package nextgen
 
 type InviteDto struct {
-	Id string `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	RoleBindings []RoleBinding `json:"roleBindings,omitempty"`
-	UserGroups []string `json:"userGroups,omitempty"`
-	InviteType string `json:"inviteType"`
-	Approved bool `json:"approved,omitempty"`
+	Id                string        `json:"id,omitempty"`
+	Name              string        `json:"name,omitempty"`
+	Email             string        `json:"email,omitempty"`
+	AccountIdentifier string        `json:"accountIdentifier,omitempty"`
+	OrgIdentifier     string        `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string        `json:"projectIdentifier,omitempty"`
+	RoleBindings      []RoleBinding `json:"roleBindings,omitempty"`
+	UserGroups        []string      `json:"userGroups,omitempty"`
+	InviteType        string        `json:"inviteType"`
+	Approved          bool          `json:"approved,omitempty"`
 }

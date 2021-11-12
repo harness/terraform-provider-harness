@@ -11,5 +11,5 @@ package nextgen
 
 type InputSetValidator struct {
 	ValidatorType string `json:"validatorType,omitempty"`
-	Parameters string `json:"parameters,omitempty"`
+	Parameters    string `json:"parameters,omitempty"`
 }

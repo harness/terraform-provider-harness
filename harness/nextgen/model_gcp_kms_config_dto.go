@@ -10,20 +10,20 @@
 package nextgen
 
 type GcpKmsConfigDto struct {
-	Name string `json:"name,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Description string `json:"description,omitempty"`
-	EncryptionType string `json:"encryptionType,omitempty"`
-	HarnessManaged bool `json:"harnessManaged,omitempty"`
-	Default_ bool `json:"default,omitempty"`
-	ProjectId string `json:"projectId,omitempty"`
-	Region string `json:"region,omitempty"`
-	KeyRing string `json:"keyRing,omitempty"`
-	KeyName string `json:"keyName,omitempty"`
-	Credentials []string `json:"credentials,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	Name              string            `json:"name,omitempty"`
+	AccountIdentifier string            `json:"accountIdentifier,omitempty"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Identifier        string            `json:"identifier,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	EncryptionType    string            `json:"encryptionType,omitempty"`
+	HarnessManaged    bool              `json:"harnessManaged,omitempty"`
+	Default_          bool              `json:"default,omitempty"`
+	ProjectId         string            `json:"projectId,omitempty"`
+	Region            string            `json:"region,omitempty"`
+	KeyRing           string            `json:"keyRing,omitempty"`
+	KeyName           string            `json:"keyName,omitempty"`
+	Credentials       []string          `json:"credentials,omitempty"`
+	DelegateSelectors []string          `json:"delegateSelectors,omitempty"`
 }

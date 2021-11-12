@@ -10,9 +10,9 @@
 package nextgen
 
 type SplunkConnectorDto struct {
-	SplunkUrl string `json:"splunkUrl"`
-	Username string `json:"username,omitempty"`
-	AccountId string `json:"accountId"`
+	SplunkUrl         string   `json:"splunkUrl"`
+	Username          string   `json:"username,omitempty"`
+	AccountId         string   `json:"accountId"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	PasswordRef string `json:"passwordRef"`
+	PasswordRef       string   `json:"passwordRef"`
 }

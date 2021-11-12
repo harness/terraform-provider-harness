@@ -10,6 +10,6 @@
 package nextgen
 
 type GitBranchListDto struct {
-	DefaultBranch *GitBranchDto `json:"defaultBranch,omitempty"`
-	Branches *PageResponseGitBranchDto `json:"branches,omitempty"`
+	DefaultBranch *GitBranchDto             `json:"defaultBranch,omitempty"`
+	Branches      *PageResponseGitBranchDto `json:"branches,omitempty"`
 }

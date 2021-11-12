@@ -10,10 +10,10 @@
 package nextgen
 
 type FilterDto struct {
-	Name string `json:"name"`
-	Identifier string `json:"identifier"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	FilterProperties *FilterPropertiesDto `json:"filterProperties"`
-	FilterVisibility string `json:"filterVisibility,omitempty"`
+	Name              string               `json:"name"`
+	Identifier        string               `json:"identifier"`
+	OrgIdentifier     string               `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string               `json:"projectIdentifier,omitempty"`
+	FilterProperties  *FilterPropertiesDto `json:"filterProperties"`
+	FilterVisibility  string               `json:"filterVisibility,omitempty"`
 }

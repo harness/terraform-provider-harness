@@ -10,11 +10,11 @@
 package nextgen
 
 type ProjectDashBoardInfo struct {
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	AccountId string `json:"accountId,omitempty"`
-	DeploymentsCount int64 `json:"deploymentsCount,omitempty"`
+	ProjectIdentifier          string  `json:"projectIdentifier,omitempty"`
+	OrgIdentifier              string  `json:"orgIdentifier,omitempty"`
+	AccountId                  string  `json:"accountId,omitempty"`
+	DeploymentsCount           int64   `json:"deploymentsCount,omitempty"`
 	DeploymentsCountChangeRate float64 `json:"deploymentsCountChangeRate,omitempty"`
-	SuccessDeploymentsCount int64 `json:"successDeploymentsCount,omitempty"`
-	FailedDeploymentsCount int64 `json:"failedDeploymentsCount,omitempty"`
+	SuccessDeploymentsCount    int64   `json:"successDeploymentsCount,omitempty"`
+	FailedDeploymentsCount     int64   `json:"failedDeploymentsCount,omitempty"`
 }

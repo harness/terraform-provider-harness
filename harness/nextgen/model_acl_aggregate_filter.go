@@ -11,5 +11,5 @@ package nextgen
 
 type AclAggregateFilter struct {
 	ResourceGroupIdentifiers []string `json:"resourceGroupIdentifiers,omitempty"`
-	RoleIdentifiers []string `json:"roleIdentifiers,omitempty"`
+	RoleIdentifiers          []string `json:"roleIdentifiers,omitempty"`
 }

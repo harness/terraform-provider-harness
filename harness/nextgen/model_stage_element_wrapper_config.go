@@ -10,6 +10,6 @@
 package nextgen
 
 type StageElementWrapperConfig struct {
-	Stage *JsonNode `json:"stage,omitempty"`
+	Stage    *JsonNode `json:"stage,omitempty"`
 	Parallel *JsonNode `json:"parallel,omitempty"`
 }

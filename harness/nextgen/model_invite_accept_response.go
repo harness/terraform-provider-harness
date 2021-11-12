@@ -10,11 +10,11 @@
 package nextgen
 
 type InviteAcceptResponse struct {
-	Response string `json:"response,omitempty"`
-	UserInfo *UserInfo `json:"userInfo,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	InviteId string `json:"inviteId,omitempty"`
-	Email string `json:"email,omitempty"`
+	Response          string    `json:"response,omitempty"`
+	UserInfo          *UserInfo `json:"userInfo,omitempty"`
+	AccountIdentifier string    `json:"accountIdentifier,omitempty"`
+	OrgIdentifier     string    `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string    `json:"projectIdentifier,omitempty"`
+	InviteId          string    `json:"inviteId,omitempty"`
+	Email             string    `json:"email,omitempty"`
 }

@@ -10,12 +10,12 @@
 package nextgen
 
 type EnumDescriptor struct {
-	Index int32 `json:"index,omitempty"`
-	Proto *EnumDescriptorProto `json:"proto,omitempty"`
-	FullName string `json:"fullName,omitempty"`
-	File *FileDescriptor `json:"file,omitempty"`
-	ContainingType *Descriptor `json:"containingType,omitempty"`
-	Values []EnumValueDescriptor `json:"values,omitempty"`
-	Options *EnumOptions `json:"options,omitempty"`
-	Name string `json:"name,omitempty"`
+	Index          int32                 `json:"index,omitempty"`
+	Proto          *EnumDescriptorProto  `json:"proto,omitempty"`
+	FullName       string                `json:"fullName,omitempty"`
+	File           *FileDescriptor       `json:"file,omitempty"`
+	ContainingType *Descriptor           `json:"containingType,omitempty"`
+	Values         []EnumValueDescriptor `json:"values,omitempty"`
+	Options        *EnumOptions          `json:"options,omitempty"`
+	Name           string                `json:"name,omitempty"`
 }

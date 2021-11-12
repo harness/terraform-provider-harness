@@ -11,6 +11,6 @@ package nextgen
 
 type SecretFileSpecDto struct {
 	ErrorMessageForInvalidYaml string `json:"errorMessageForInvalidYaml,omitempty"`
-	Type_ string `json:"type"`
-	SecretManagerIdentifier string `json:"secretManagerIdentifier"`
+	Type_                      string `json:"type"`
+	SecretManagerIdentifier    string `json:"secretManagerIdentifier"`
 }

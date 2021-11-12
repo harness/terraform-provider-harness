@@ -10,7 +10,7 @@
 package nextgen
 
 type ScopingRuleDetailsNg struct {
-	Description string `json:"description,omitempty"`
-	EnvironmentTypeId string `json:"environmentTypeId,omitempty"`
-	EnvironmentIds []string `json:"environmentIds,omitempty"`
+	Description       string   `json:"description,omitempty"`
+	EnvironmentTypeId string   `json:"environmentTypeId,omitempty"`
+	EnvironmentIds    []string `json:"environmentIds,omitempty"`
 }

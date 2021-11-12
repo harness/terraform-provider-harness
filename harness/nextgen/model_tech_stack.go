@@ -10,6 +10,6 @@
 package nextgen
 
 type TechStack struct {
-	Category string `json:"category,omitempty"`
+	Category   string `json:"category,omitempty"`
 	Technology string `json:"technology,omitempty"`
 }

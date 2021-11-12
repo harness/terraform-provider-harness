@@ -10,10 +10,10 @@
 package nextgen
 
 type CfLicenseSummaryDto struct {
-	Edition string `json:"edition,omitempty"`
-	LicenseType string `json:"licenseType,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
-	MaxExpiryTime int64 `json:"maxExpiryTime,omitempty"`
-	TotalClientMAUs int64 `json:"totalClientMAUs,omitempty"`
-	TotalFeatureFlagUnits int32 `json:"totalFeatureFlagUnits,omitempty"`
+	Edition               string `json:"edition,omitempty"`
+	LicenseType           string `json:"licenseType,omitempty"`
+	ModuleType            string `json:"moduleType,omitempty"`
+	MaxExpiryTime         int64  `json:"maxExpiryTime,omitempty"`
+	TotalClientMAUs       int64  `json:"totalClientMAUs,omitempty"`
+	TotalFeatureFlagUnits int32  `json:"totalFeatureFlagUnits,omitempty"`
 }

@@ -10,6 +10,6 @@
 package nextgen
 
 type SlackConfigDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_           string `json:"type,omitempty"`
 	SlackWebhookUrl string `json:"slackWebhookUrl"`
 }

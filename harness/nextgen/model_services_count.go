@@ -11,5 +11,5 @@ package nextgen
 
 type ServicesCount struct {
 	TotalCount int64 `json:"totalCount,omitempty"`
-	NewCount int64 `json:"newCount,omitempty"`
+	NewCount   int64 `json:"newCount,omitempty"`
 }

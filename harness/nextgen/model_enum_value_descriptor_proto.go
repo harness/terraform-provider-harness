@@ -10,18 +10,18 @@
 package nextgen
 
 type EnumValueDescriptorProto struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	Options *EnumValueOptions `json:"options,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserEnumValueDescriptorProto `json:"parserForType,omitempty"`
-	DefaultInstanceForType *EnumValueDescriptorProto `json:"defaultInstanceForType,omitempty"`
-	OptionsOrBuilder *EnumValueOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
-	NameBytes *ByteString `json:"nameBytes,omitempty"`
-	Name string `json:"name,omitempty"`
-	Number int32 `json:"number,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	UnknownFields             *UnknownFieldSet                `json:"unknownFields,omitempty"`
+	Initialized               bool                            `json:"initialized,omitempty"`
+	Options                   *EnumValueOptions               `json:"options,omitempty"`
+	NameBytes                 *ByteString                     `json:"nameBytes,omitempty"`
+	ParserForType             *ParserEnumValueDescriptorProto `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *EnumValueDescriptorProto       `json:"defaultInstanceForType,omitempty"`
+	SerializedSize            int32                           `json:"serializedSize,omitempty"`
+	OptionsOrBuilder          *EnumValueOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
+	Name                      string                          `json:"name,omitempty"`
+	Number                    int32                           `json:"number,omitempty"`
+	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
+	InitializationErrorString string                          `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                     `json:"descriptorForType,omitempty"`
+	MemoizedSerializedSize    int32                           `json:"memoizedSerializedSize,omitempty"`
 }

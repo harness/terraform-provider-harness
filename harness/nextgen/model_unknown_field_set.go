@@ -10,9 +10,9 @@
 package nextgen
 
 type UnknownFieldSet struct {
-	Initialized bool `json:"initialized,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *Parser `json:"parserForType,omitempty"`
-	DefaultInstanceForType *UnknownFieldSet `json:"defaultInstanceForType,omitempty"`
-	SerializedSizeAsMessageSet int32 `json:"serializedSizeAsMessageSet,omitempty"`
+	Initialized                bool             `json:"initialized,omitempty"`
+	SerializedSizeAsMessageSet int32            `json:"serializedSizeAsMessageSet,omitempty"`
+	ParserForType              *Parser          `json:"parserForType,omitempty"`
+	DefaultInstanceForType     *UnknownFieldSet `json:"defaultInstanceForType,omitempty"`
+	SerializedSize             int32            `json:"serializedSize,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type GitSyncEntityListDto struct {
-	EntityType string `json:"entityType,omitempty"`
-	Count int64 `json:"count,omitempty"`
+	EntityType      string             `json:"entityType,omitempty"`
+	Count           int64              `json:"count,omitempty"`
 	GitSyncEntities []GitSyncEntityDto `json:"gitSyncEntities,omitempty"`
 }

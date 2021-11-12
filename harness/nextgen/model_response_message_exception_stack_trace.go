@@ -10,9 +10,9 @@
 package nextgen
 
 type ResponseMessageExceptionStackTrace struct {
-	MethodName string `json:"methodName,omitempty"`
-	FileName string `json:"fileName,omitempty"`
-	LineNumber int32 `json:"lineNumber,omitempty"`
-	ClassName string `json:"className,omitempty"`
-	NativeMethod bool `json:"nativeMethod,omitempty"`
+	MethodName   string `json:"methodName,omitempty"`
+	FileName     string `json:"fileName,omitempty"`
+	LineNumber   int32  `json:"lineNumber,omitempty"`
+	ClassName    string `json:"className,omitempty"`
+	NativeMethod bool   `json:"nativeMethod,omitempty"`
 }

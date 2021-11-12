@@ -10,6 +10,6 @@
 package nextgen
 
 type MicrosoftTeamsConfigDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_                    string `json:"type,omitempty"`
 	MicrosoftTeamsWebhookUrl string `json:"microsoftTeamsWebhookUrl"`
 }

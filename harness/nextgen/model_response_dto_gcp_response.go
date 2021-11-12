@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoGcpResponse struct {
-	Status string `json:"status,omitempty"`
-	Data *GcpResponse `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string       `json:"status,omitempty"`
+	Data          *GcpResponse `json:"data,omitempty"`
+	MetaData      *interface{} `json:"metaData,omitempty"`
+	CorrelationId string       `json:"correlationId,omitempty"`
 }

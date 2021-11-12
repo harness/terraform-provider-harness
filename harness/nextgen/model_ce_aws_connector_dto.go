@@ -11,7 +11,7 @@ package nextgen
 
 type CeAwsConnectorDto struct {
 	CrossAccountAccess *CrossAccountAccessDto `json:"crossAccountAccess"`
-	CurAttributes *AwsCurAttributesDto `json:"curAttributes,omitempty"`
-	AwsAccountId string `json:"awsAccountId,omitempty"`
-	FeaturesEnabled []string `json:"featuresEnabled,omitempty"`
+	CurAttributes      *AwsCurAttributesDto   `json:"curAttributes,omitempty"`
+	AwsAccountId       string                 `json:"awsAccountId,omitempty"`
+	FeaturesEnabled    []string               `json:"featuresEnabled,omitempty"`
 }

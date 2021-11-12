@@ -10,8 +10,8 @@
 package nextgen
 
 type GcpCloudCostConnectorDto struct {
-	FeaturesEnabled []string `json:"featuresEnabled,omitempty"`
-	ProjectId string `json:"projectId"`
-	ServiceAccountEmail string `json:"serviceAccountEmail"`
-	BillingExportSpec *GcpBillingExportSpecDto `json:"billingExportSpec,omitempty"`
+	FeaturesEnabled     []string                 `json:"featuresEnabled,omitempty"`
+	ProjectId           string                   `json:"projectId"`
+	ServiceAccountEmail string                   `json:"serviceAccountEmail"`
+	BillingExportSpec   *GcpBillingExportSpecDto `json:"billingExportSpec,omitempty"`
 }

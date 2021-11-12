@@ -10,6 +10,6 @@
 package nextgen
 
 type OrgProjectIdentifier struct {
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 }

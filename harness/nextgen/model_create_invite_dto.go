@@ -10,8 +10,8 @@
 package nextgen
 
 type CreateInviteDto struct {
-	Users []string `json:"users,omitempty"`
+	Users        []string      `json:"users,omitempty"`
 	RoleBindings []RoleBinding `json:"roleBindings,omitempty"`
-	InviteType string `json:"inviteType,omitempty"`
-	UserGroups []string `json:"userGroups,omitempty"`
+	InviteType   string        `json:"inviteType,omitempty"`
+	UserGroups   []string      `json:"userGroups,omitempty"`
 }

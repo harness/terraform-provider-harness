@@ -31,7 +31,7 @@ FeedbackApiService Saves Feedback
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *FeedbackApiSaveFeedbackOpts - Optional Parameters:
      * @param "Body" (optional.Interface of FeedbackForm) -
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account id to save the feedback to.
 @return ResponseDtoBoolean
 */
 

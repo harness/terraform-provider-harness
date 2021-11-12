@@ -30,7 +30,7 @@ type AccountsApiService service
 /*
 AccountsApiService Gets an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param accountIdentifier Account id to get an account.
 @return ResponseDtoAccount
 */
 func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {
@@ -135,7 +135,7 @@ func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier
 /*
 AccountsApiService Update Default Experience
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param accountIdentifier Account id to update the default experience.
  * @param optional nil or *AccountsApiUpdateAccountDefaultExperienceNGOpts - Optional Parameters:
      * @param "Body" (optional.Interface of Account) -
 @return ResponseDtoAccount
@@ -253,7 +253,7 @@ func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Contex
 /*
 AccountsApiService Update Account Name
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param accountIdentifier Account id to update an account name.
  * @param optional nil or *AccountsApiUpdateAccountNameNGOpts - Optional Parameters:
      * @param "Body" (optional.Interface of Account) -
 @return ResponseDtoAccount

@@ -10,7 +10,7 @@
 package nextgen
 
 type GitHttpAuthenticationDto struct {
-	Type_       string `json:"-"`
+	Type_       string `json:"type"`
 	Username    string `json:"username,omitempty"`
 	UsernameRef string `json:"usernameRef,omitempty"`
 	PasswordRef string `json:"passwordRef"`

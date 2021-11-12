@@ -10,7 +10,7 @@
 package nextgen
 
 type AddUsersDto struct {
-	Emails []string `json:"emails,omitempty"`
+	Emails       []string      `json:"emails,omitempty"`
 	RoleBindings []RoleBinding `json:"roleBindings,omitempty"`
-	UserGroups []string `json:"userGroups,omitempty"`
+	UserGroups   []string      `json:"userGroups,omitempty"`
 }

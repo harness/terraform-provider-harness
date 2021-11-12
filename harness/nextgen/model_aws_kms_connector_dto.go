@@ -10,9 +10,9 @@
 package nextgen
 
 type AwsKmsConnectorDto struct {
-	Credential *AwsKmsConnectorCredentialDto `json:"credential,omitempty"`
-	KmsArn string `json:"kmsArn"`
-	Region string `json:"region,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Default_ bool `json:"default,omitempty"`
+	Credential        *AwsKmsConnectorCredentialDto `json:"credential,omitempty"`
+	KmsArn            string                        `json:"kmsArn"`
+	Region            string                        `json:"region,omitempty"`
+	DelegateSelectors []string                      `json:"delegateSelectors,omitempty"`
+	Default_          bool                          `json:"default,omitempty"`
 }

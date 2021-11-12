@@ -10,13 +10,13 @@
 package nextgen
 
 type GitSyncConfigDto struct {
-	Identifier string `json:"identifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	GitConnectorRef string `json:"gitConnectorRef,omitempty"`
-	Repo string `json:"repo,omitempty"`
-	Branch string `json:"branch,omitempty"`
-	GitConnectorType string `json:"gitConnectorType"`
+	Identifier              string                   `json:"identifier,omitempty"`
+	Name                    string                   `json:"name,omitempty"`
+	ProjectIdentifier       string                   `json:"projectIdentifier,omitempty"`
+	OrgIdentifier           string                   `json:"orgIdentifier,omitempty"`
+	GitConnectorRef         string                   `json:"gitConnectorRef,omitempty"`
+	Repo                    string                   `json:"repo,omitempty"`
+	Branch                  string                   `json:"branch,omitempty"`
+	GitConnectorType        string                   `json:"gitConnectorType"`
 	GitSyncFolderConfigDTOs []GitSyncFolderConfigDto `json:"gitSyncFolderConfigDTOs,omitempty"`
 }

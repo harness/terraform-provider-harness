@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoRestrictionMetadataMapResponseDto struct {
-	Status string `json:"status,omitempty"`
-	Data *RestrictionMetadataMapResponseDto `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                             `json:"status,omitempty"`
+	Data          *RestrictionMetadataMapResponseDto `json:"data,omitempty"`
+	MetaData      *interface{}                       `json:"metaData,omitempty"`
+	CorrelationId string                             `json:"correlationId,omitempty"`
 }

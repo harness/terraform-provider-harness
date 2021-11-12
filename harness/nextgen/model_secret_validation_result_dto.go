@@ -10,6 +10,6 @@
 package nextgen
 
 type SecretValidationResultDto struct {
-	Success bool `json:"success,omitempty"`
+	Success bool   `json:"success,omitempty"`
 	Message string `json:"message,omitempty"`
 }

@@ -10,16 +10,16 @@
 package nextgen
 
 type BitbucketServerWebhookEvents struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserBitbucketServerWebhookEvents `json:"parserForType,omitempty"`
-	DefaultInstanceForType *BitbucketServerWebhookEvents `json:"defaultInstanceForType,omitempty"`
-	EventsCount int32 `json:"eventsCount,omitempty"`
-	EventsList []string `json:"eventsList,omitempty"`
-	EventsValueList []int32 `json:"eventsValueList,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	UnknownFields             *UnknownFieldSet                    `json:"unknownFields,omitempty"`
+	Initialized               bool                                `json:"initialized,omitempty"`
+	ParserForType             *ParserBitbucketServerWebhookEvents `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *BitbucketServerWebhookEvents       `json:"defaultInstanceForType,omitempty"`
+	SerializedSize            int32                               `json:"serializedSize,omitempty"`
+	EventsList                []string                            `json:"eventsList,omitempty"`
+	EventsCount               int32                               `json:"eventsCount,omitempty"`
+	EventsValueList           []int32                             `json:"eventsValueList,omitempty"`
+	AllFields                 map[string]interface{}              `json:"allFields,omitempty"`
+	InitializationErrorString string                              `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                         `json:"descriptorForType,omitempty"`
+	MemoizedSerializedSize    int32                               `json:"memoizedSerializedSize,omitempty"`
 }

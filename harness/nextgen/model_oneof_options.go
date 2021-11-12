@@ -10,17 +10,17 @@
 package nextgen
 
 type OneofOptions struct {
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
-	SerializedSize int32 `json:"serializedSize,omitempty"`
-	ParserForType *ParserOneofOptions `json:"parserForType,omitempty"`
-	DefaultInstanceForType *OneofOptions `json:"defaultInstanceForType,omitempty"`
-	UninterpretedOptionList []UninterpretedOption `json:"uninterpretedOptionList,omitempty"`
-	UninterpretedOptionCount int32 `json:"uninterpretedOptionCount,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
+	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	AllFieldsRaw map[string]interface{} `json:"allFieldsRaw,omitempty"`
-	MemoizedSerializedSize int32 `json:"memoizedSerializedSize,omitempty"`
+	ParserForType                    *ParserOneofOptions            `json:"parserForType,omitempty"`
+	DefaultInstanceForType           *OneofOptions                  `json:"defaultInstanceForType,omitempty"`
+	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
+	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
+	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

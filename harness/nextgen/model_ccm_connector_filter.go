@@ -10,10 +10,10 @@
 package nextgen
 
 type CcmConnectorFilter struct {
-	FeaturesEnabled []string `json:"featuresEnabled,omitempty"`
-	AwsAccountId string `json:"awsAccountId,omitempty"`
-	AzureSubscriptionId string `json:"azureSubscriptionId,omitempty"`
-	AzureTenantId string `json:"azureTenantId,omitempty"`
-	GcpProjectId string `json:"gcpProjectId,omitempty"`
-	K8sConnectorRef string `json:"k8sConnectorRef,omitempty"`
+	FeaturesEnabled     []string `json:"featuresEnabled,omitempty"`
+	AwsAccountId        string   `json:"awsAccountId,omitempty"`
+	AzureSubscriptionId string   `json:"azureSubscriptionId,omitempty"`
+	AzureTenantId       string   `json:"azureTenantId,omitempty"`
+	GcpProjectId        string   `json:"gcpProjectId,omitempty"`
+	K8sConnectorRef     string   `json:"k8sConnectorRef,omitempty"`
 }

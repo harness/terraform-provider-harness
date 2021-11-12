@@ -11,11 +11,12 @@ package nextgen
 
 // Connetor Resource along with metadata
 type ConnectorResponse struct {
-	Connector *ConnectorInfoDto `json:"connector,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
-	Status *ConnectorConnectivityDetails `json:"status,omitempty"`
-	ActivityDetails *ConnectorActivityDetails `json:"activityDetails,omitempty"`
-	HarnessManaged bool `json:"harnessManaged,omitempty"`
-	GitDetails *EntityGitDetails `json:"gitDetails,omitempty"`
+	Connector             *ConnectorInfoDto             `json:"connector,omitempty"`
+	CreatedAt             int64                         `json:"createdAt,omitempty"`
+	LastModifiedAt        int64                         `json:"lastModifiedAt,omitempty"`
+	Status                *ConnectorConnectivityDetails `json:"status,omitempty"`
+	ActivityDetails       *ConnectorActivityDetails     `json:"activityDetails,omitempty"`
+	HarnessManaged        bool                          `json:"harnessManaged,omitempty"`
+	GitDetails            *EntityGitDetails             `json:"gitDetails,omitempty"`
+	EntityValidityDetails *EntityValidityDetails        `json:"entityValidityDetails,omitempty"`
 }

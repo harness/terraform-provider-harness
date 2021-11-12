@@ -11,5 +11,5 @@ package nextgen
 
 type PasswordChangeDto struct {
 	CurrentPassword string `json:"currentPassword,omitempty"`
-	NewPassword string `json:"newPassword,omitempty"`
+	NewPassword     string `json:"newPassword,omitempty"`
 }

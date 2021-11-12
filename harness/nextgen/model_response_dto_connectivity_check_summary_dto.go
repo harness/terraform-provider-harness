@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoConnectivityCheckSummaryDto struct {
-	Status string `json:"status,omitempty"`
-	Data *ConnectivityCheckSummaryDto `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                       `json:"status,omitempty"`
+	Data          *ConnectivityCheckSummaryDto `json:"data,omitempty"`
+	MetaData      *interface{}                 `json:"metaData,omitempty"`
+	CorrelationId string                       `json:"correlationId,omitempty"`
 }

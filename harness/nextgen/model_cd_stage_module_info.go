@@ -10,7 +10,7 @@
 package nextgen
 
 type CdStageModuleInfo struct {
-	ServiceInfo *ServiceExecutionSummary `json:"serviceInfo,omitempty"`
-	InfraExecutionSummary *InfraExecutionSummary `json:"infraExecutionSummary,omitempty"`
-	NodeExecutionId string `json:"nodeExecutionId,omitempty"`
+	ServiceInfo           *ServiceExecutionSummary `json:"serviceInfo,omitempty"`
+	InfraExecutionSummary *InfraExecutionSummary   `json:"infraExecutionSummary,omitempty"`
+	NodeExecutionId       string                   `json:"nodeExecutionId,omitempty"`
 }

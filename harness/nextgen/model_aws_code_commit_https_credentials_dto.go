@@ -10,6 +10,6 @@
 package nextgen
 
 type AwsCodeCommitHttpsCredentialsDto struct {
-	Type_ string `json:"type"`
-	Spec *AwsCodeCommitHttpsCredentialsSpecDto `json:"spec"`
+	Type_ string                                `json:"type"`
+	Spec  *AwsCodeCommitHttpsCredentialsSpecDto `json:"spec"`
 }

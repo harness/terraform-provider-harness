@@ -10,6 +10,6 @@
 package nextgen
 
 type GitSyncRepoFilesListDto struct {
-	ModuleType string `json:"moduleType,omitempty"`
+	ModuleType           string                `json:"moduleType,omitempty"`
 	GitSyncRepoFilesList []GitSyncRepoFilesDto `json:"gitSyncRepoFilesList,omitempty"`
 }

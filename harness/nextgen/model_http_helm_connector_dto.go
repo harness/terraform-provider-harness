@@ -10,7 +10,7 @@
 package nextgen
 
 type HttpHelmConnectorDto struct {
-	HelmRepoUrl string `json:"helmRepoUrl"`
-	Auth *HttpHelmAuthenticationDto `json:"auth,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	HelmRepoUrl       string                     `json:"helmRepoUrl"`
+	Auth              *HttpHelmAuthenticationDto `json:"auth,omitempty"`
+	DelegateSelectors []string                   `json:"delegateSelectors,omitempty"`
 }

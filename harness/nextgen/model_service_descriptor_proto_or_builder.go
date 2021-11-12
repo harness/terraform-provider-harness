@@ -10,17 +10,17 @@
 package nextgen
 
 type ServiceDescriptorProtoOrBuilder struct {
-	Options *ServiceOptions `json:"options,omitempty"`
-	MethodList []MethodDescriptorProto `json:"methodList,omitempty"`
-	OptionsOrBuilder *ServiceOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
-	MethodCount int32 `json:"methodCount,omitempty"`
-	NameBytes *ByteString `json:"nameBytes,omitempty"`
-	MethodOrBuilderList []MethodDescriptorProtoOrBuilder `json:"methodOrBuilderList,omitempty"`
-	Name string `json:"name,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	Options                   *ServiceOptions                  `json:"options,omitempty"`
+	MethodList                []MethodDescriptorProto          `json:"methodList,omitempty"`
+	MethodCount               int32                            `json:"methodCount,omitempty"`
+	NameBytes                 *ByteString                      `json:"nameBytes,omitempty"`
+	OptionsOrBuilder          *ServiceOptionsOrBuilder         `json:"optionsOrBuilder,omitempty"`
+	MethodOrBuilderList       []MethodDescriptorProtoOrBuilder `json:"methodOrBuilderList,omitempty"`
+	Name                      string                           `json:"name,omitempty"`
+	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
+	UnknownFields             *UnknownFieldSet                 `json:"unknownFields,omitempty"`
+	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                      `json:"descriptorForType,omitempty"`
+	DefaultInstanceForType    *Message                         `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                             `json:"initialized,omitempty"`
 }

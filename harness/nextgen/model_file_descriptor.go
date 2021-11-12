@@ -10,17 +10,17 @@
 package nextgen
 
 type FileDescriptor struct {
-	Proto *FileDescriptorProto `json:"proto,omitempty"`
-	MessageTypes []Descriptor `json:"messageTypes,omitempty"`
-	EnumTypes []EnumDescriptor `json:"enumTypes,omitempty"`
-	Services []ServiceDescriptor `json:"services,omitempty"`
-	Extensions []FieldDescriptor `json:"extensions,omitempty"`
-	Dependencies []FileDescriptor `json:"dependencies,omitempty"`
-	PublicDependencies []FileDescriptor `json:"publicDependencies,omitempty"`
-	FullName string `json:"fullName,omitempty"`
-	Options *FileOptions `json:"options,omitempty"`
-	Syntax string `json:"syntax,omitempty"`
-	Name string `json:"name,omitempty"`
-	Package_ string `json:"package,omitempty"`
-	File *FileDescriptor `json:"file,omitempty"`
+	Proto              *FileDescriptorProto `json:"proto,omitempty"`
+	MessageTypes       []Descriptor         `json:"messageTypes,omitempty"`
+	EnumTypes          []EnumDescriptor     `json:"enumTypes,omitempty"`
+	Services           []ServiceDescriptor  `json:"services,omitempty"`
+	Extensions         []FieldDescriptor    `json:"extensions,omitempty"`
+	Dependencies       []FileDescriptor     `json:"dependencies,omitempty"`
+	PublicDependencies []FileDescriptor     `json:"publicDependencies,omitempty"`
+	FullName           string               `json:"fullName,omitempty"`
+	Options            *FileOptions         `json:"options,omitempty"`
+	Syntax             string               `json:"syntax,omitempty"`
+	Name               string               `json:"name,omitempty"`
+	Package_           string               `json:"package,omitempty"`
+	File               *FileDescriptor      `json:"file,omitempty"`
 }

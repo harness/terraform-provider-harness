@@ -10,11 +10,11 @@
 package nextgen
 
 type GcpKmsConnectorDto struct {
-	ProjectId string `json:"projectId,omitempty"`
-	Region string `json:"region,omitempty"`
-	KeyRing string `json:"keyRing,omitempty"`
-	KeyName string `json:"keyName,omitempty"`
-	Credentials string `json:"credentials"`
+	ProjectId         string   `json:"projectId,omitempty"`
+	Region            string   `json:"region,omitempty"`
+	KeyRing           string   `json:"keyRing,omitempty"`
+	KeyName           string   `json:"keyName,omitempty"`
+	Credentials       string   `json:"credentials"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Default_ bool `json:"default,omitempty"`
+	Default_          bool     `json:"default,omitempty"`
 }

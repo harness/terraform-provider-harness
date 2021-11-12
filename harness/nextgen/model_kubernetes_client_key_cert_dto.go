@@ -10,9 +10,9 @@
 package nextgen
 
 type KubernetesClientKeyCertDto struct {
-	CaCertRef string `json:"caCertRef,omitempty"`
-	ClientCertRef string `json:"clientCertRef"`
-	ClientKeyRef string `json:"clientKeyRef"`
+	CaCertRef              string `json:"caCertRef,omitempty"`
+	ClientCertRef          string `json:"clientCertRef"`
+	ClientKeyRef           string `json:"clientKeyRef"`
 	ClientKeyPassphraseRef string `json:"clientKeyPassphraseRef,omitempty"`
-	ClientKeyAlgo string `json:"clientKeyAlgo,omitempty"`
+	ClientKeyAlgo          string `json:"clientKeyAlgo,omitempty"`
 }

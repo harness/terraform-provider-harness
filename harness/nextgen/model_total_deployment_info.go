@@ -10,8 +10,8 @@
 package nextgen
 
 type TotalDeploymentInfo struct {
-	Count int64 `json:"count,omitempty"`
-	Production int64 `json:"production,omitempty"`
-	NonProduction int64 `json:"nonProduction,omitempty"`
-	CountList []DeploymentDateAndCount `json:"countList,omitempty"`
+	Count         int64                    `json:"count,omitempty"`
+	Production    int64                    `json:"production,omitempty"`
+	NonProduction int64                    `json:"nonProduction,omitempty"`
+	CountList     []DeploymentDateAndCount `json:"countList,omitempty"`
 }

@@ -10,13 +10,13 @@
 package nextgen
 
 type ServiceDeploymentListInfo struct {
-	StartTime int64 `json:"startTime,omitempty"`
-	EndTime int64 `json:"endTime,omitempty"`
-	TotalDeployments int64 `json:"totalDeployments,omitempty"`
-	FailureRate float64 `json:"failureRate,omitempty"`
-	Frequency float64 `json:"frequency,omitempty"`
-	FailureRateChangeRate float64 `json:"failureRateChangeRate,omitempty"`
-	TotalDeploymentsChangeRate float64 `json:"totalDeploymentsChangeRate,omitempty"`
-	FrequencyChangeRate float64 `json:"frequencyChangeRate,omitempty"`
-	ServiceDeploymentList []ServiceDeployment `json:"serviceDeploymentList,omitempty"`
+	StartTime                  int64               `json:"startTime,omitempty"`
+	EndTime                    int64               `json:"endTime,omitempty"`
+	TotalDeployments           int64               `json:"totalDeployments,omitempty"`
+	FailureRate                float64             `json:"failureRate,omitempty"`
+	Frequency                  float64             `json:"frequency,omitempty"`
+	FailureRateChangeRate      float64             `json:"failureRateChangeRate,omitempty"`
+	TotalDeploymentsChangeRate float64             `json:"totalDeploymentsChangeRate,omitempty"`
+	FrequencyChangeRate        float64             `json:"frequencyChangeRate,omitempty"`
+	ServiceDeploymentList      []ServiceDeployment `json:"serviceDeploymentList,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type AppPermission struct {
-	PermissionType string `json:"permissionType,omitempty"`
-	AppFilter *GenericEntityFilter `json:"appFilter,omitempty"`
-	EntityFilter *Filter `json:"entityFilter,omitempty"`
-	Actions []string `json:"actions,omitempty"`
+	PermissionType string               `json:"permissionType,omitempty"`
+	AppFilter      *GenericEntityFilter `json:"appFilter,omitempty"`
+	EntityFilter   *Filter              `json:"entityFilter,omitempty"`
+	Actions        []string             `json:"actions,omitempty"`
 }

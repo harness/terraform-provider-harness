@@ -11,5 +11,5 @@ package nextgen
 
 type ValidationError struct {
 	FieldId string `json:"fieldId,omitempty"`
-	Error_ string `json:"error,omitempty"`
+	Error_  string `json:"error,omitempty"`
 }

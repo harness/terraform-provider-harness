@@ -10,9 +10,9 @@
 package nextgen
 
 type CeLicenseSummaryDto struct {
-	Edition string `json:"edition,omitempty"`
-	LicenseType string `json:"licenseType,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
-	MaxExpiryTime int64 `json:"maxExpiryTime,omitempty"`
-	TotalSpendLimit int64 `json:"totalSpendLimit,omitempty"`
+	Edition         string `json:"edition,omitempty"`
+	LicenseType     string `json:"licenseType,omitempty"`
+	ModuleType      string `json:"moduleType,omitempty"`
+	MaxExpiryTime   int64  `json:"maxExpiryTime,omitempty"`
+	TotalSpendLimit int64  `json:"totalSpendLimit,omitempty"`
 }

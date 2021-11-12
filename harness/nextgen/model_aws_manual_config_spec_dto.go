@@ -10,7 +10,7 @@
 package nextgen
 
 type AwsManualConfigSpecDto struct {
-	AccessKey string `json:"accessKey,omitempty"`
+	AccessKey    string `json:"accessKey,omitempty"`
 	AccessKeyRef string `json:"accessKeyRef,omitempty"`
 	SecretKeyRef string `json:"secretKeyRef"`
 }

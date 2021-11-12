@@ -10,14 +10,14 @@
 package nextgen
 
 type ApiKeyDto struct {
-	Identifier string `json:"identifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	ApiKeyType string `json:"apiKeyType,omitempty"`
-	ParentIdentifier string `json:"parentIdentifier,omitempty"`
-	DefaultTimeToExpireToken int64 `json:"defaultTimeToExpireToken,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	Identifier               string            `json:"identifier,omitempty"`
+	Name                     string            `json:"name,omitempty"`
+	Description              string            `json:"description,omitempty"`
+	Tags                     map[string]string `json:"tags,omitempty"`
+	ApiKeyType               string            `json:"apiKeyType,omitempty"`
+	ParentIdentifier         string            `json:"parentIdentifier,omitempty"`
+	DefaultTimeToExpireToken int64             `json:"defaultTimeToExpireToken,omitempty"`
+	AccountIdentifier        string            `json:"accountIdentifier,omitempty"`
+	ProjectIdentifier        string            `json:"projectIdentifier,omitempty"`
+	OrgIdentifier            string            `json:"orgIdentifier,omitempty"`
 }

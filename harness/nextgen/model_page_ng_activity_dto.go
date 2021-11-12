@@ -10,15 +10,15 @@
 package nextgen
 
 type PageNgActivityDto struct {
-	TotalElements int64 `json:"totalElements,omitempty"`
-	TotalPages int32 `json:"totalPages,omitempty"`
-	Sort *Sort `json:"sort,omitempty"`
-	First bool `json:"first,omitempty"`
-	Last bool `json:"last,omitempty"`
-	NumberOfElements int32 `json:"numberOfElements,omitempty"`
-	Pageable *Pageable `json:"pageable,omitempty"`
-	Size int32 `json:"size,omitempty"`
-	Content []NgActivityDto `json:"content,omitempty"`
-	Number int32 `json:"number,omitempty"`
-	Empty bool `json:"empty,omitempty"`
+	TotalPages       int32           `json:"totalPages,omitempty"`
+	TotalElements    int64           `json:"totalElements,omitempty"`
+	Sort             *Sort           `json:"sort,omitempty"`
+	First            bool            `json:"first,omitempty"`
+	Last             bool            `json:"last,omitempty"`
+	Pageable         *Pageable       `json:"pageable,omitempty"`
+	NumberOfElements int32           `json:"numberOfElements,omitempty"`
+	Size             int32           `json:"size,omitempty"`
+	Content          []NgActivityDto `json:"content,omitempty"`
+	Number           int32           `json:"number,omitempty"`
+	Empty            bool            `json:"empty,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type ApiKeyAggregateDto struct {
-	ApiKey *ApiKeyDto `json:"apiKey"`
-	CreatedAt int64 `json:"createdAt"`
-	LastModifiedAt int64 `json:"lastModifiedAt"`
-	TokensCount int32 `json:"tokensCount,omitempty"`
+	ApiKey         *ApiKeyDto `json:"apiKey"`
+	CreatedAt      int64      `json:"createdAt"`
+	LastModifiedAt int64      `json:"lastModifiedAt"`
+	TokensCount    int32      `json:"tokensCount,omitempty"`
 }

@@ -11,5 +11,5 @@ package nextgen
 
 type ArtifactSummary struct {
 	DisplayName string `json:"displayName,omitempty"`
-	Type_ string `json:"type,omitempty"`
+	Type_       string `json:"type,omitempty"`
 }

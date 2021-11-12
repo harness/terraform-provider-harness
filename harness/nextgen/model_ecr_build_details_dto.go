@@ -10,9 +10,9 @@
 package nextgen
 
 type EcrBuildDetailsDto struct {
-	Tag string `json:"tag,omitempty"`
-	BuildUrl string `json:"buildUrl,omitempty"`
-	Metadata map[string]string `json:"metadata,omitempty"`
-	Labels map[string]string `json:"labels,omitempty"`
-	ImagePath string `json:"imagePath,omitempty"`
+	Tag       string            `json:"tag,omitempty"`
+	BuildUrl  string            `json:"buildUrl,omitempty"`
+	Metadata  map[string]string `json:"metadata,omitempty"`
+	Labels    map[string]string `json:"labels,omitempty"`
+	ImagePath string            `json:"imagePath,omitempty"`
 }

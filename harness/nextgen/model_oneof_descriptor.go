@@ -10,13 +10,13 @@
 package nextgen
 
 type OneofDescriptor struct {
-	Index int32 `json:"index,omitempty"`
-	Proto *OneofDescriptorProto `json:"proto,omitempty"`
-	FullName string `json:"fullName,omitempty"`
-	File *FileDescriptor `json:"file,omitempty"`
-	ContainingType *Descriptor `json:"containingType,omitempty"`
-	FieldCount int32 `json:"fieldCount,omitempty"`
-	Fields []FieldDescriptor `json:"fields,omitempty"`
-	Options *OneofOptions `json:"options,omitempty"`
-	Name string `json:"name,omitempty"`
+	Index          int32                 `json:"index,omitempty"`
+	Proto          *OneofDescriptorProto `json:"proto,omitempty"`
+	FullName       string                `json:"fullName,omitempty"`
+	File           *FileDescriptor       `json:"file,omitempty"`
+	ContainingType *Descriptor           `json:"containingType,omitempty"`
+	FieldCount     int32                 `json:"fieldCount,omitempty"`
+	Fields         []FieldDescriptor     `json:"fields,omitempty"`
+	Options        *OneofOptions         `json:"options,omitempty"`
+	Name           string                `json:"name,omitempty"`
 }

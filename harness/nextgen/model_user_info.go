@@ -10,19 +10,19 @@
 package nextgen
 
 type UserInfo struct {
-	Uuid string `json:"uuid,omitempty"`
-	Name string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
-	Token string `json:"token,omitempty"`
-	DefaultAccountId string `json:"defaultAccountId,omitempty"`
-	Intent string `json:"intent,omitempty"`
-	Accounts []GatewayAccountRequestDto `json:"accounts,omitempty"`
-	Admin bool `json:"admin,omitempty"`
-	TwoFactorAuthenticationEnabled bool `json:"twoFactorAuthenticationEnabled,omitempty"`
-	EmailVerified bool `json:"emailVerified,omitempty"`
-	Locked bool `json:"locked,omitempty"`
-	SignupAction string `json:"signupAction,omitempty"`
-	Edition string `json:"edition,omitempty"`
-	BillingFrequency string `json:"billingFrequency,omitempty"`
-	UtmInfo *UtmInfo `json:"utmInfo,omitempty"`
+	Uuid                           string                     `json:"uuid,omitempty"`
+	Name                           string                     `json:"name,omitempty"`
+	Email                          string                     `json:"email,omitempty"`
+	Token                          string                     `json:"token,omitempty"`
+	DefaultAccountId               string                     `json:"defaultAccountId,omitempty"`
+	Intent                         string                     `json:"intent,omitempty"`
+	Accounts                       []GatewayAccountRequestDto `json:"accounts,omitempty"`
+	Admin                          bool                       `json:"admin,omitempty"`
+	TwoFactorAuthenticationEnabled bool                       `json:"twoFactorAuthenticationEnabled,omitempty"`
+	EmailVerified                  bool                       `json:"emailVerified,omitempty"`
+	Locked                         bool                       `json:"locked,omitempty"`
+	SignupAction                   string                     `json:"signupAction,omitempty"`
+	Edition                        string                     `json:"edition,omitempty"`
+	BillingFrequency               string                     `json:"billingFrequency,omitempty"`
+	UtmInfo                        *UtmInfo                   `json:"utmInfo,omitempty"`
 }

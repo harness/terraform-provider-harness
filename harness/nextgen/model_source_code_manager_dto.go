@@ -10,12 +10,12 @@
 package nextgen
 
 type SourceCodeManagerDto struct {
-	Id string `json:"id,omitempty"`
-	UserIdentifier string `json:"userIdentifier,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	Name string `json:"name"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
-	Authentication *SourceCodeManagerAuthentication `json:"authentication,omitempty"`
-	Type_ string `json:"type,omitempty"`
+	Id                string                           `json:"id,omitempty"`
+	UserIdentifier    string                           `json:"userIdentifier,omitempty"`
+	AccountIdentifier string                           `json:"accountIdentifier,omitempty"`
+	Name              string                           `json:"name"`
+	CreatedAt         int64                            `json:"createdAt,omitempty"`
+	LastModifiedAt    int64                            `json:"lastModifiedAt,omitempty"`
+	Authentication    *SourceCodeManagerAuthentication `json:"authentication,omitempty"`
+	Type_             string                           `json:"type,omitempty"`
 }

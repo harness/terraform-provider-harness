@@ -10,6 +10,6 @@
 package nextgen
 
 type GitSyncRepoFilesDto struct {
-	GitSyncConfigIdentifier string `json:"gitSyncConfigIdentifier,omitempty"`
-	GitSyncEntityLists []GitSyncEntityListDto `json:"gitSyncEntityLists,omitempty"`
+	GitSyncConfigIdentifier string                 `json:"gitSyncConfigIdentifier,omitempty"`
+	GitSyncEntityLists      []GitSyncEntityListDto `json:"gitSyncEntityLists,omitempty"`
 }

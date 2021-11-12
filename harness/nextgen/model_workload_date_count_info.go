@@ -10,6 +10,6 @@
 package nextgen
 
 type WorkloadDateCountInfo struct {
-	Date int64 `json:"date,omitempty"`
+	Date      int64              `json:"date,omitempty"`
 	Execution *WorkloadCountInfo `json:"execution,omitempty"`
 }

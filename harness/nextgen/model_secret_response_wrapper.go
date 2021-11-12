@@ -10,8 +10,8 @@
 package nextgen
 
 type SecretResponseWrapper struct {
-	Secret *SecretDtov2 `json:"secret"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	UpdatedAt int64 `json:"updatedAt,omitempty"`
-	Draft bool `json:"draft,omitempty"`
+	Secret    *SecretDtov2 `json:"secret"`
+	CreatedAt int64        `json:"createdAt,omitempty"`
+	UpdatedAt int64        `json:"updatedAt,omitempty"`
+	Draft     bool         `json:"draft,omitempty"`
 }

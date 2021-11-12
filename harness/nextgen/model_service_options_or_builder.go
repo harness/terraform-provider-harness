@@ -10,14 +10,14 @@
 package nextgen
 
 type ServiceOptionsOrBuilder struct {
-	Deprecated bool `json:"deprecated,omitempty"`
-	UninterpretedOptionList []UninterpretedOption `json:"uninterpretedOptionList,omitempty"`
-	UninterpretedOptionCount int32 `json:"uninterpretedOptionCount,omitempty"`
+	Deprecated                       bool                           `json:"deprecated,omitempty"`
+	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
+	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
 }

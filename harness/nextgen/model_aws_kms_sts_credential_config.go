@@ -10,8 +10,8 @@
 package nextgen
 
 type AwsKmsStsCredentialConfig struct {
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	RoleArn string `json:"roleArn,omitempty"`
-	ExternalName string `json:"externalName,omitempty"`
-	AssumeStsRoleDuration int32 `json:"assumeStsRoleDuration,omitempty"`
+	DelegateSelectors     []string `json:"delegateSelectors,omitempty"`
+	RoleArn               string   `json:"roleArn,omitempty"`
+	ExternalName          string   `json:"externalName,omitempty"`
+	AssumeStsRoleDuration int32    `json:"assumeStsRoleDuration,omitempty"`
 }

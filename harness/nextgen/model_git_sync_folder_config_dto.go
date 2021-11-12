@@ -11,7 +11,7 @@ package nextgen
 
 type GitSyncFolderConfigDto struct {
 	RootFolder string `json:"rootFolder,omitempty"`
-	IsDefault bool `json:"isDefault,omitempty"`
+	IsDefault  bool   `json:"isDefault,omitempty"`
 	Identifier string `json:"identifier,omitempty"`
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled    bool   `json:"enabled,omitempty"`
 }

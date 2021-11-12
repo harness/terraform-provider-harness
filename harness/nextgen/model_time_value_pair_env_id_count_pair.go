@@ -10,6 +10,6 @@
 package nextgen
 
 type TimeValuePairEnvIdCountPair struct {
-	Timestamp int64 `json:"timestamp,omitempty"`
-	Value *EnvIdCountPair `json:"value,omitempty"`
+	Timestamp int64           `json:"timestamp,omitempty"`
+	Value     *EnvIdCountPair `json:"value,omitempty"`
 }

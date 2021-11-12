@@ -10,7 +10,7 @@
 package nextgen
 
 type SearchFilter struct {
-	FieldName string `json:"fieldName,omitempty"`
+	FieldName   string        `json:"fieldName,omitempty"`
 	FieldValues []interface{} `json:"fieldValues,omitempty"`
-	Op string `json:"op,omitempty"`
+	Op          string        `json:"op,omitempty"`
 }

@@ -10,17 +10,17 @@
 package nextgen
 
 type MessageOptionsOrBuilder struct {
-	NoStandardDescriptorAccessor bool `json:"noStandardDescriptorAccessor,omitempty"`
-	Deprecated bool `json:"deprecated,omitempty"`
-	MessageSetWireFormat bool `json:"messageSetWireFormat,omitempty"`
-	UninterpretedOptionList []UninterpretedOption `json:"uninterpretedOptionList,omitempty"`
-	UninterpretedOptionCount int32 `json:"uninterpretedOptionCount,omitempty"`
+	Deprecated                       bool                           `json:"deprecated,omitempty"`
+	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	MapEntry bool `json:"mapEntry,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	MessageSetWireFormat             bool                           `json:"messageSetWireFormat,omitempty"`
+	NoStandardDescriptorAccessor     bool                           `json:"noStandardDescriptorAccessor,omitempty"`
+	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
+	MapEntry                         bool                           `json:"mapEntry,omitempty"`
+	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
 }

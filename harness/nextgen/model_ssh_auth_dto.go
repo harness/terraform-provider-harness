@@ -10,6 +10,6 @@
 package nextgen
 
 type SshAuthDto struct {
-	Spec *BaseSshSpecDto `json:"spec"`
-	Type_ string `json:"type"`
+	Spec  *BaseSshSpecDto `json:"spec"`
+	Type_ string          `json:"type"`
 }

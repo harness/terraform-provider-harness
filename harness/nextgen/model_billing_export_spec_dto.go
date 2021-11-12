@@ -11,8 +11,8 @@ package nextgen
 
 type BillingExportSpecDto struct {
 	StorageAccountName string `json:"storageAccountName"`
-	ContainerName string `json:"containerName"`
-	DirectoryName string `json:"directoryName"`
-	ReportName string `json:"reportName"`
-	SubscriptionId string `json:"subscriptionId"`
+	ContainerName      string `json:"containerName"`
+	DirectoryName      string `json:"directoryName"`
+	ReportName         string `json:"reportName"`
+	SubscriptionId     string `json:"subscriptionId"`
 }

@@ -10,10 +10,10 @@
 package nextgen
 
 type ServiceHeaderInfo struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Description string `json:"description,omitempty"`
+	Name            string   `json:"name,omitempty"`
+	Identifier      string   `json:"identifier,omitempty"`
+	Description     string   `json:"description,omitempty"`
 	DeploymentTypes []string `json:"deploymentTypes,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
+	CreatedAt       int64    `json:"createdAt,omitempty"`
+	LastModifiedAt  int64    `json:"lastModifiedAt,omitempty"`
 }

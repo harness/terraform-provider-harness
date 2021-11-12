@@ -11,6 +11,6 @@ package nextgen
 
 type UpsertWebhookResponseDto struct {
 	WebhookResponse *WebhookResponse `json:"webhookResponse,omitempty"`
-	Status int32 `json:"status,omitempty"`
-	Error_ string `json:"error,omitempty"`
+	Status          int32            `json:"status,omitempty"`
+	Error_          string           `json:"error,omitempty"`
 }

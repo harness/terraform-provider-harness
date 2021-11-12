@@ -10,7 +10,7 @@
 package nextgen
 
 type ErrorDetail struct {
-	Reason string `json:"reason,omitempty"`
+	Reason  string `json:"reason,omitempty"`
 	Message string `json:"message,omitempty"`
-	Code int32 `json:"code,omitempty"`
+	Code    int32  `json:"code,omitempty"`
 }

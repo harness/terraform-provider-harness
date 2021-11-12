@@ -10,10 +10,10 @@
 package nextgen
 
 type NgVariable struct {
-	Description string `json:"description,omitempty"`
+	Description  string                `json:"description,omitempty"`
 	CurrentValue *ParameterFieldObject `json:"currentValue,omitempty"`
-	Required bool `json:"required,omitempty"`
-	Name string `json:"name,omitempty"`
-	Type_ string `json:"type,omitempty"`
-	Metadata string `json:"metadata,omitempty"`
+	Required     bool                  `json:"required,omitempty"`
+	Name         string                `json:"name,omitempty"`
+	Type_        string                `json:"type,omitempty"`
+	Metadata     string                `json:"metadata,omitempty"`
 }

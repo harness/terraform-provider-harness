@@ -10,6 +10,6 @@
 package nextgen
 
 type FilterPropertiesDto struct {
-	Tags map[string]string `json:"tags,omitempty"`
-	FilterType string `json:"filterType,omitempty"`
+	Tags       map[string]string `json:"tags,omitempty"`
+	FilterType string            `json:"filterType,omitempty"`
 }

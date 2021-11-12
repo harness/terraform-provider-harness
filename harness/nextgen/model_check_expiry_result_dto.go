@@ -10,6 +10,6 @@
 package nextgen
 
 type CheckExpiryResultDto struct {
-	ShouldDelete bool `json:"shouldDelete,omitempty"`
-	ExpiryTime int64 `json:"expiryTime,omitempty"`
+	ShouldDelete bool  `json:"shouldDelete,omitempty"`
+	ExpiryTime   int64 `json:"expiryTime,omitempty"`
 }

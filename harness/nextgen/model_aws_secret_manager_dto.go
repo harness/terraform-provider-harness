@@ -10,9 +10,9 @@
 package nextgen
 
 type AwsSecretManagerDto struct {
-	Credential *AwsSecretManagerCredentialDto `json:"credential"`
-	Region string `json:"region"`
-	SecretNamePrefix string `json:"secretNamePrefix,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Default_ bool `json:"default,omitempty"`
+	Credential        *AwsSecretManagerCredentialDto `json:"credential"`
+	Region            string                         `json:"region"`
+	SecretNamePrefix  string                         `json:"secretNamePrefix,omitempty"`
+	DelegateSelectors []string                       `json:"delegateSelectors,omitempty"`
+	Default_          bool                           `json:"default,omitempty"`
 }

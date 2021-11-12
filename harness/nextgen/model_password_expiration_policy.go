@@ -10,7 +10,7 @@
 package nextgen
 
 type PasswordExpirationPolicy struct {
-	Enabled bool `json:"enabled,omitempty"`
-	DaysBeforePasswordExpires int32 `json:"daysBeforePasswordExpires,omitempty"`
+	Enabled                                    bool  `json:"enabled,omitempty"`
+	DaysBeforePasswordExpires                  int32 `json:"daysBeforePasswordExpires,omitempty"`
 	DaysBeforeUserNotifiedOfPasswordExpiration int32 `json:"daysBeforeUserNotifiedOfPasswordExpiration,omitempty"`
 }

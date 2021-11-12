@@ -10,6 +10,6 @@
 package nextgen
 
 type NotificationChannelWrapper struct {
-	Type_ string `json:"type,omitempty"`
-	Spec *PmsNotificationChannel `json:"spec,omitempty"`
+	Type_ string                  `json:"type,omitempty"`
+	Spec  *PmsNotificationChannel `json:"spec,omitempty"`
 }

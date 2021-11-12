@@ -10,6 +10,6 @@
 package nextgen
 
 type GitBranchDto struct {
-	BranchName string `json:"branchName,omitempty"`
+	BranchName       string `json:"branchName,omitempty"`
 	BranchSyncStatus string `json:"branchSyncStatus,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type ServiceExecutionSummary struct {
-	Identifier string `json:"identifier,omitempty"`
-	DisplayName string `json:"displayName,omitempty"`
-	DeploymentType string `json:"deploymentType,omitempty"`
-	Artifacts *ArtifactsSummary `json:"artifacts,omitempty"`
+	Identifier     string            `json:"identifier,omitempty"`
+	DisplayName    string            `json:"displayName,omitempty"`
+	DeploymentType string            `json:"deploymentType,omitempty"`
+	Artifacts      *ArtifactsSummary `json:"artifacts,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type RestResponseBoolean struct {
-	MetaData map[string]interface{} `json:"metaData,omitempty"`
-	Resource bool `json:"resource,omitempty"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	MetaData         map[string]interface{} `json:"metaData,omitempty"`
+	Resource         bool                   `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage      `json:"responseMessages,omitempty"`
 }

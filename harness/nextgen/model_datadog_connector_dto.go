@@ -10,8 +10,8 @@
 package nextgen
 
 type DatadogConnectorDto struct {
-	Url string `json:"url"`
-	ApplicationKeyRef string `json:"applicationKeyRef"`
-	ApiKeyRef string `json:"apiKeyRef"`
+	Url               string   `json:"url"`
+	ApplicationKeyRef string   `json:"applicationKeyRef"`
+	ApiKeyRef         string   `json:"apiKeyRef"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 }

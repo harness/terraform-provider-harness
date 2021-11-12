@@ -10,20 +10,20 @@
 package nextgen
 
 type LocationOrBuilder struct {
-	PathList []int32 `json:"pathList,omitempty"`
-	PathCount int32 `json:"pathCount,omitempty"`
-	SpanList []int32 `json:"spanList,omitempty"`
-	SpanCount int32 `json:"spanCount,omitempty"`
-	LeadingComments string `json:"leadingComments,omitempty"`
-	LeadingCommentsBytes *ByteString `json:"leadingCommentsBytes,omitempty"`
-	TrailingComments string `json:"trailingComments,omitempty"`
-	TrailingCommentsBytes *ByteString `json:"trailingCommentsBytes,omitempty"`
-	LeadingDetachedCommentsList []string `json:"leadingDetachedCommentsList,omitempty"`
-	LeadingDetachedCommentsCount int32 `json:"leadingDetachedCommentsCount,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	SpanList                     []int32                `json:"spanList,omitempty"`
+	PathList                     []int32                `json:"pathList,omitempty"`
+	PathCount                    int32                  `json:"pathCount,omitempty"`
+	TrailingCommentsBytes        *ByteString            `json:"trailingCommentsBytes,omitempty"`
+	LeadingDetachedCommentsList  []string               `json:"leadingDetachedCommentsList,omitempty"`
+	SpanCount                    int32                  `json:"spanCount,omitempty"`
+	LeadingComments              string                 `json:"leadingComments,omitempty"`
+	LeadingCommentsBytes         *ByteString            `json:"leadingCommentsBytes,omitempty"`
+	LeadingDetachedCommentsCount int32                  `json:"leadingDetachedCommentsCount,omitempty"`
+	TrailingComments             string                 `json:"trailingComments,omitempty"`
+	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
+	UnknownFields                *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	InitializationErrorString    string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType            *Descriptor            `json:"descriptorForType,omitempty"`
+	DefaultInstanceForType       *Message               `json:"defaultInstanceForType,omitempty"`
+	Initialized                  bool                   `json:"initialized,omitempty"`
 }

@@ -12,6 +12,6 @@ package nextgen
 type ConnectivityCheckSummaryDto struct {
 	SuccessCount int64 `json:"successCount,omitempty"`
 	FailureCount int64 `json:"failureCount,omitempty"`
-	StartTime int64 `json:"startTime,omitempty"`
-	EndTime int64 `json:"endTime,omitempty"`
+	StartTime    int64 `json:"startTime,omitempty"`
+	EndTime      int64 `json:"endTime,omitempty"`
 }

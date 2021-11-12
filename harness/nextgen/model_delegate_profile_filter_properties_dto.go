@@ -10,11 +10,11 @@
 package nextgen
 
 type DelegateProfileFilterPropertiesDto struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Description string `json:"description,omitempty"`
-	ApprovalRequired bool `json:"approvalRequired,omitempty"`
-	Selectors []string `json:"selectors,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	FilterType string `json:"filterType,omitempty"`
+	Name             string            `json:"name,omitempty"`
+	Identifier       string            `json:"identifier,omitempty"`
+	Description      string            `json:"description,omitempty"`
+	ApprovalRequired bool              `json:"approvalRequired,omitempty"`
+	Selectors        []string          `json:"selectors,omitempty"`
+	Tags             map[string]string `json:"tags,omitempty"`
+	FilterType       string            `json:"filterType,omitempty"`
 }

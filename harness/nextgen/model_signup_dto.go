@@ -10,11 +10,11 @@
 package nextgen
 
 type SignupDto struct {
-	Email string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
-	UtmInfo *UtmInfo `json:"utmInfo,omitempty"`
-	Intent string `json:"intent,omitempty"`
-	SignupAction string `json:"signupAction,omitempty"`
-	Edition string `json:"edition,omitempty"`
-	BillingFrequency string `json:"billingFrequency,omitempty"`
+	Email            string   `json:"email,omitempty"`
+	Password         string   `json:"password,omitempty"`
+	UtmInfo          *UtmInfo `json:"utmInfo,omitempty"`
+	Intent           string   `json:"intent,omitempty"`
+	SignupAction     string   `json:"signupAction,omitempty"`
+	Edition          string   `json:"edition,omitempty"`
+	BillingFrequency string   `json:"billingFrequency,omitempty"`
 }

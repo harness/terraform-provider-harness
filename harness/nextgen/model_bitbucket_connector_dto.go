@@ -10,10 +10,10 @@
 package nextgen
 
 type BitbucketConnectorDto struct {
-	Url string `json:"url"`
-	ValidationRepo string `json:"validationRepo,omitempty"`
-	Authentication *BitbucketAuthenticationDto `json:"authentication"`
-	ApiAccess *BitbucketApiAccessDto `json:"apiAccess,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Type_ string `json:"type"`
+	Url               string                      `json:"url"`
+	ValidationRepo    string                      `json:"validationRepo,omitempty"`
+	Authentication    *BitbucketAuthenticationDto `json:"authentication"`
+	ApiAccess         *BitbucketApiAccessDto      `json:"apiAccess,omitempty"`
+	DelegateSelectors []string                    `json:"delegateSelectors,omitempty"`
+	Type_             string                      `json:"type"`
 }

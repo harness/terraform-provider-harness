@@ -10,7 +10,7 @@
 package nextgen
 
 type RestResponseDelegateProfileDetailsNg struct {
-	MetaData map[string]interface{} `json:"metaData,omitempty"`
-	Resource *DelegateProfileDetailsNg `json:"resource,omitempty"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	MetaData         map[string]interface{}    `json:"metaData,omitempty"`
+	Resource         *DelegateProfileDetailsNg `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage         `json:"responseMessages,omitempty"`
 }

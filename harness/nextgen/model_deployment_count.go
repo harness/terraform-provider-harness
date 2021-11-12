@@ -10,7 +10,7 @@
 package nextgen
 
 type DeploymentCount struct {
-	Total int64 `json:"total,omitempty"`
+	Total   int64 `json:"total,omitempty"`
 	Success int64 `json:"success,omitempty"`
 	Failure int64 `json:"failure,omitempty"`
 }

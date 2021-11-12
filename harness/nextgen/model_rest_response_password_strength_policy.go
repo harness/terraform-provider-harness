@@ -10,7 +10,7 @@
 package nextgen
 
 type RestResponsePasswordStrengthPolicy struct {
-	MetaData map[string]interface{} `json:"metaData,omitempty"`
-	Resource *PasswordStrengthPolicy `json:"resource,omitempty"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	MetaData         map[string]interface{}  `json:"metaData,omitempty"`
+	Resource         *PasswordStrengthPolicy `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage       `json:"responseMessages,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoPageResponseConnectorResponse struct {
-	Status string `json:"status,omitempty"`
-	Data *PageResponseConnectorResponse `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                         `json:"status,omitempty"`
+	Data          *PageResponseConnectorResponse `json:"data,omitempty"`
+	MetaData      *interface{}                   `json:"metaData,omitempty"`
+	CorrelationId string                         `json:"correlationId,omitempty"`
 }

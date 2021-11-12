@@ -11,8 +11,8 @@ package nextgen
 
 // View of Organization entity as defined in Harness.
 type Organization struct {
-	Identifier string `json:"identifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
+	Identifier  string            `json:"identifier,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Description string            `json:"description,omitempty"`
+	Tags        map[string]string `json:"tags,omitempty"`
 }

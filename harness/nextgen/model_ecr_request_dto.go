@@ -10,8 +10,8 @@
 package nextgen
 
 type EcrRequestDto struct {
-	Tag string `json:"tag,omitempty"`
-	TagRegex string `json:"tagRegex,omitempty"`
+	Tag      string   `json:"tag,omitempty"`
+	TagRegex string   `json:"tagRegex,omitempty"`
 	TagsList []string `json:"tagsList,omitempty"`
-	Region string `json:"region,omitempty"`
+	Region   string   `json:"region,omitempty"`
 }

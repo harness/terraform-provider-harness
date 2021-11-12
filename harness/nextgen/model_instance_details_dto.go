@@ -10,13 +10,13 @@
 package nextgen
 
 type InstanceDetailsDto struct {
-	PodName string `json:"podName,omitempty"`
-	ArtifactName string `json:"artifactName,omitempty"`
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	PodName               string                 `json:"podName,omitempty"`
+	ArtifactName          string                 `json:"artifactName,omitempty"`
+	ConnectorRef          string                 `json:"connectorRef,omitempty"`
 	InfrastructureDetails *InfrastructureDetails `json:"infrastructureDetails,omitempty"`
-	TerraformInstance string `json:"terraformInstance,omitempty"`
-	DeployedAt int64 `json:"deployedAt,omitempty"`
-	DeployedById string `json:"deployedById,omitempty"`
-	DeployedByName string `json:"deployedByName,omitempty"`
-	PipelineExecutionName string `json:"pipelineExecutionName,omitempty"`
+	TerraformInstance     string                 `json:"terraformInstance,omitempty"`
+	DeployedAt            int64                  `json:"deployedAt,omitempty"`
+	DeployedById          string                 `json:"deployedById,omitempty"`
+	DeployedByName        string                 `json:"deployedByName,omitempty"`
+	PipelineExecutionName string                 `json:"pipelineExecutionName,omitempty"`
 }

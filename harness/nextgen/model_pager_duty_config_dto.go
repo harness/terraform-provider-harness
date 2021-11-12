@@ -10,6 +10,6 @@
 package nextgen
 
 type PagerDutyConfigDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_        string `json:"type,omitempty"`
 	PagerDutyKey string `json:"pagerDutyKey"`
 }

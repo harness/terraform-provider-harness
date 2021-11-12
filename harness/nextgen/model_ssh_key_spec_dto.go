@@ -10,8 +10,8 @@
 package nextgen
 
 type SshKeySpecDto struct {
-	ErrorMessageForInvalidYaml string `json:"errorMessageForInvalidYaml,omitempty"`
-	Type_ string `json:"type"`
-	Port int32 `json:"port,omitempty"`
-	Auth *SshAuthDto `json:"auth"`
+	ErrorMessageForInvalidYaml string      `json:"errorMessageForInvalidYaml,omitempty"`
+	Type_                      string      `json:"type"`
+	Port                       int32       `json:"port,omitempty"`
+	Auth                       *SshAuthDto `json:"auth"`
 }

@@ -10,11 +10,11 @@
 package nextgen
 
 type ServiceRequestDto struct {
-	Identifier string `json:"identifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Version int64 `json:"version,omitempty"`
+	Identifier        string            `json:"identifier,omitempty"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	Name              string            `json:"name,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Version           int64             `json:"version,omitempty"`
 }

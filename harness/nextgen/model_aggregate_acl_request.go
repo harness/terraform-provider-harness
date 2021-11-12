@@ -10,7 +10,7 @@
 package nextgen
 
 type AggregateAclRequest struct {
-	SearchTerm string `json:"searchTerm,omitempty"`
+	SearchTerm          string   `json:"searchTerm,omitempty"`
 	ResourceGroupFilter []string `json:"resourceGroupFilter,omitempty"`
-	RoleFilter []string `json:"roleFilter,omitempty"`
+	RoleFilter          []string `json:"roleFilter,omitempty"`
 }

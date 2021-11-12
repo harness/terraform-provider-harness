@@ -10,6 +10,6 @@
 package nextgen
 
 type AwsSecretManagerCredentialDto struct {
-	Type_ string `json:"type"`
-	Spec *AwsSecretManagerCredentialSpecDto `json:"spec,omitempty"`
+	Type_ string                             `json:"type"`
+	Spec  *AwsSecretManagerCredentialSpecDto `json:"spec,omitempty"`
 }

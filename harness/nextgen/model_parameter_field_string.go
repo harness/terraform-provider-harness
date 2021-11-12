@@ -10,11 +10,11 @@
 package nextgen
 
 type ParameterFieldString struct {
-	ExpressionValue string `json:"expressionValue,omitempty"`
-	Expression bool `json:"expression,omitempty"`
-	Value string `json:"value,omitempty"`
-	TypeString bool `json:"typeString,omitempty"`
+	ExpressionValue   string             `json:"expressionValue,omitempty"`
+	Expression        bool               `json:"expression,omitempty"`
+	Value             string             `json:"value,omitempty"`
+	TypeString        bool               `json:"typeString,omitempty"`
 	InputSetValidator *InputSetValidator `json:"inputSetValidator,omitempty"`
-	JsonResponseField bool `json:"jsonResponseField,omitempty"`
-	ResponseField string `json:"responseField,omitempty"`
+	JsonResponseField bool               `json:"jsonResponseField,omitempty"`
+	ResponseField     string             `json:"responseField,omitempty"`
 }

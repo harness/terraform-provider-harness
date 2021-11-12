@@ -12,5 +12,5 @@ package nextgen
 // This is the view of a Start Trial object defined in Harness
 type StartTrial struct {
 	ModuleType string `json:"moduleType"`
-	Edition string `json:"edition"`
+	Edition    string `json:"edition"`
 }

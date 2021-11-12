@@ -10,9 +10,9 @@
 package nextgen
 
 type CdPipelineModuleInfo struct {
-	ServiceIdentifiers []string `json:"serviceIdentifiers,omitempty"`
-	EnvIdentifiers []string `json:"envIdentifiers,omitempty"`
+	ServiceIdentifiers     []string `json:"serviceIdentifiers,omitempty"`
+	EnvIdentifiers         []string `json:"envIdentifiers,omitempty"`
 	ServiceDefinitionTypes []string `json:"serviceDefinitionTypes,omitempty"`
-	EnvironmentTypes []string `json:"environmentTypes,omitempty"`
-	InfrastructureTypes []string `json:"infrastructureTypes,omitempty"`
+	EnvironmentTypes       []string `json:"environmentTypes,omitempty"`
+	InfrastructureTypes    []string `json:"infrastructureTypes,omitempty"`
 }

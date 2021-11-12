@@ -11,5 +11,5 @@ package nextgen
 
 type TgtPasswordSpecDto struct {
 	TgtGenerationMethod string `json:"tgtGenerationMethod"`
-	Password string `json:"password,omitempty"`
+	Password            string `json:"password,omitempty"`
 }

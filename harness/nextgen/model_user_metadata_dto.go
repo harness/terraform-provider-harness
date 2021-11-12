@@ -10,8 +10,8 @@
 package nextgen
 
 type UserMetadataDto struct {
-	Name string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
-	Uuid string `json:"uuid,omitempty"`
-	Locked bool `json:"locked,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Email  string `json:"email,omitempty"`
+	Uuid   string `json:"uuid,omitempty"`
+	Locked bool   `json:"locked,omitempty"`
 }

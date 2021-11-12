@@ -10,7 +10,7 @@
 package nextgen
 
 type JiraProjectBasicNg struct {
-	Id string `json:"id"`
-	Key string `json:"key"`
+	Id   string `json:"id"`
+	Key  string `json:"key"`
 	Name string `json:"name"`
 }

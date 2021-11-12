@@ -11,9 +11,9 @@ package nextgen
 
 // This is the view of feedback form defined in Harness
 type FeedbackForm struct {
-	AccountId string `json:"accountId,omitempty"`
-	Email string `json:"email,omitempty"`
+	AccountId  string `json:"accountId,omitempty"`
+	Email      string `json:"email,omitempty"`
 	ModuleType string `json:"moduleType,omitempty"`
-	Score int32 `json:"score,omitempty"`
+	Score      int32  `json:"score,omitempty"`
 	Suggestion string `json:"suggestion,omitempty"`
 }

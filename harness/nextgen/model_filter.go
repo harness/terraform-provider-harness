@@ -10,6 +10,6 @@
 package nextgen
 
 type Filter struct {
-	Ids []string `json:"ids,omitempty"`
-	Type_ string `json:"type"`
+	Ids   []string `json:"ids,omitempty"`
+	Type_ string   `json:"type"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoMapServiceDefinitionTypeListExecutionStrategyType struct {
-	Status string `json:"status,omitempty"`
-	Data map[string][]string `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string              `json:"status,omitempty"`
+	Data          map[string][]string `json:"data,omitempty"`
+	MetaData      *interface{}        `json:"metaData,omitempty"`
+	CorrelationId string              `json:"correlationId,omitempty"`
 }

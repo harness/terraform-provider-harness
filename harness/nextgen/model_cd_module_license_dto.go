@@ -10,17 +10,17 @@
 package nextgen
 
 type CdModuleLicenseDto struct {
-	Id string `json:"id,omitempty"`
+	Id                string `json:"id,omitempty"`
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
-	Edition string `json:"edition,omitempty"`
-	LicenseType string `json:"licenseType,omitempty"`
-	Status string `json:"status,omitempty"`
-	StartTime int64 `json:"startTime,omitempty"`
-	ExpiryTime int64 `json:"expiryTime,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
-	CdLicenseType string `json:"cdLicenseType,omitempty"`
-	Workloads int32 `json:"workloads,omitempty"`
-	ServiceInstances int32 `json:"serviceInstances,omitempty"`
+	ModuleType        string `json:"moduleType,omitempty"`
+	Edition           string `json:"edition,omitempty"`
+	LicenseType       string `json:"licenseType,omitempty"`
+	Status            string `json:"status,omitempty"`
+	StartTime         int64  `json:"startTime,omitempty"`
+	ExpiryTime        int64  `json:"expiryTime,omitempty"`
+	CreatedAt         int64  `json:"createdAt,omitempty"`
+	LastModifiedAt    int64  `json:"lastModifiedAt,omitempty"`
+	CdLicenseType     string `json:"cdLicenseType,omitempty"`
+	Workloads         int32  `json:"workloads,omitempty"`
+	ServiceInstances  int32  `json:"serviceInstances,omitempty"`
 }

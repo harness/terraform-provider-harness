@@ -11,5 +11,5 @@ package nextgen
 
 type TgtKeyTabFilePathSpecDto struct {
 	TgtGenerationMethod string `json:"tgtGenerationMethod"`
-	KeyPath string `json:"keyPath,omitempty"`
+	KeyPath             string `json:"keyPath,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type PipelinesExecutionDashboardInfo struct {
-	RunningExecutions []PipelineExecutionDashboardInfo `json:"runningExecutions,omitempty"`
-	PendingApprovalExecutions []PipelineExecutionDashboardInfo `json:"pendingApprovalExecutions,omitempty"`
+	RunningExecutions                   []PipelineExecutionDashboardInfo `json:"runningExecutions,omitempty"`
+	PendingApprovalExecutions           []PipelineExecutionDashboardInfo `json:"pendingApprovalExecutions,omitempty"`
 	PendingManualInterventionExecutions []PipelineExecutionDashboardInfo `json:"pendingManualInterventionExecutions,omitempty"`
-	Failed24HrsExecutions []PipelineExecutionDashboardInfo `json:"failed24HrsExecutions,omitempty"`
+	Failed24HrsExecutions               []PipelineExecutionDashboardInfo `json:"failed24HrsExecutions,omitempty"`
 }

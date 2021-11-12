@@ -10,8 +10,8 @@
 package nextgen
 
 type AuthenticationSettingsResponse struct {
-	NgAuthSettings []NgAuthSettings `json:"ngAuthSettings,omitempty"`
-	WhitelistedDomains []string `json:"whitelistedDomains,omitempty"`
-	AuthenticationMechanism string `json:"authenticationMechanism,omitempty"`
-	TwoFactorEnabled bool `json:"twoFactorEnabled,omitempty"`
+	NgAuthSettings          []NgAuthSettings `json:"ngAuthSettings,omitempty"`
+	WhitelistedDomains      []string         `json:"whitelistedDomains,omitempty"`
+	AuthenticationMechanism string           `json:"authenticationMechanism,omitempty"`
+	TwoFactorEnabled        bool             `json:"twoFactorEnabled,omitempty"`
 }

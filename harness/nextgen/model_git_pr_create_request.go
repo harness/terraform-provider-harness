@@ -10,12 +10,12 @@
 package nextgen
 
 type GitPrCreateRequest struct {
-	SourceBranch string `json:"sourceBranch"`
-	TargetBranch string `json:"targetBranch"`
-	Title string `json:"title"`
-	YamlGitConfigRef string `json:"yamlGitConfigRef"`
+	SourceBranch      string `json:"sourceBranch"`
+	TargetBranch      string `json:"targetBranch"`
+	Title             string `json:"title"`
+	YamlGitConfigRef  string `json:"yamlGitConfigRef"`
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	UseUserFromToken bool `json:"useUserFromToken,omitempty"`
+	UseUserFromToken  bool   `json:"useUserFromToken,omitempty"`
 }

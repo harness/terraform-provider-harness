@@ -10,11 +10,11 @@
 package nextgen
 
 type GitSyncErrorAggregateByCommitDto struct {
-	GitCommitId string `json:"gitCommitId,omitempty"`
-	FailedCount int32 `json:"failedCount,omitempty"`
-	RepoId string `json:"repoId,omitempty"`
-	BranchName string `json:"branchName,omitempty"`
-	CommitMessage string `json:"commitMessage,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
+	GitCommitId          string            `json:"gitCommitId,omitempty"`
+	FailedCount          int32             `json:"failedCount,omitempty"`
+	RepoId               string            `json:"repoId,omitempty"`
+	BranchName           string            `json:"branchName,omitempty"`
+	CommitMessage        string            `json:"commitMessage,omitempty"`
+	CreatedAt            int64             `json:"createdAt,omitempty"`
 	ErrorsForSummaryView []GitSyncErrorDto `json:"errorsForSummaryView,omitempty"`
 }

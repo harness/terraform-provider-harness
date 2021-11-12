@@ -10,6 +10,6 @@
 package nextgen
 
 type SecretReferredByConnectorSetupUsageDetail struct {
-	Type_ string `json:"type"`
+	Type_     string `json:"type"`
 	FieldName string `json:"fieldName,omitempty"`
 }

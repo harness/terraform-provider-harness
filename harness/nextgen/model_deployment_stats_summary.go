@@ -10,11 +10,11 @@
 package nextgen
 
 type DeploymentStatsSummary struct {
-	TotalCount int64 `json:"totalCount,omitempty"`
-	TotalCountChangeRate float64 `json:"totalCountChangeRate,omitempty"`
-	FailureRate float64 `json:"failureRate,omitempty"`
-	FailureRateChangeRate float64 `json:"failureRateChangeRate,omitempty"`
-	DeploymentRate float64 `json:"deploymentRate,omitempty"`
-	DeploymentRateChangeRate float64 `json:"deploymentRateChangeRate,omitempty"`
+	TotalCount                  int64                     `json:"totalCount,omitempty"`
+	TotalCountChangeRate        float64                   `json:"totalCountChangeRate,omitempty"`
+	FailureRate                 float64                   `json:"failureRate,omitempty"`
+	FailureRateChangeRate       float64                   `json:"failureRateChangeRate,omitempty"`
+	DeploymentRate              float64                   `json:"deploymentRate,omitempty"`
+	DeploymentRateChangeRate    float64                   `json:"deploymentRateChangeRate,omitempty"`
 	TimeBasedDeploymentInfoList []TimeBasedDeploymentInfo `json:"timeBasedDeploymentInfoList,omitempty"`
 }

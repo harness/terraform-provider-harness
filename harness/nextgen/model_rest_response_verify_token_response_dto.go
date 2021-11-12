@@ -10,7 +10,7 @@
 package nextgen
 
 type RestResponseVerifyTokenResponseDto struct {
-	MetaData map[string]interface{} `json:"metaData,omitempty"`
-	Resource *VerifyTokenResponseDto `json:"resource,omitempty"`
-	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
+	MetaData         map[string]interface{}  `json:"metaData,omitempty"`
+	Resource         *VerifyTokenResponseDto `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage       `json:"responseMessages,omitempty"`
 }

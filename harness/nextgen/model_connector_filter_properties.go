@@ -11,14 +11,14 @@ package nextgen
 
 // This is the Connector Filter Properties entity as defined in harness
 type ConnectorFilterProperties struct {
-	ConnectorNames []string `json:"connectorNames,omitempty"`
-	ConnectorIdentifiers []string `json:"connectorIdentifiers,omitempty"`
-	Description string `json:"description,omitempty"`
-	Types []string `json:"types,omitempty"`
-	Categories []string `json:"categories,omitempty"`
-	ConnectivityStatuses []string `json:"connectivityStatuses,omitempty"`
-	InheritingCredentialsFromDelegate bool `json:"inheritingCredentialsFromDelegate,omitempty"`
-	CcmConnectorFilter *CcmConnectorFilter `json:"ccmConnectorFilter,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	FilterType string `json:"filterType,omitempty"`
+	ConnectorNames                    []string            `json:"connectorNames,omitempty"`
+	ConnectorIdentifiers              []string            `json:"connectorIdentifiers,omitempty"`
+	Description                       string              `json:"description,omitempty"`
+	Types                             []string            `json:"types,omitempty"`
+	Categories                        []string            `json:"categories,omitempty"`
+	ConnectivityStatuses              []string            `json:"connectivityStatuses,omitempty"`
+	InheritingCredentialsFromDelegate bool                `json:"inheritingCredentialsFromDelegate,omitempty"`
+	CcmConnectorFilter                *CcmConnectorFilter `json:"ccmConnectorFilter,omitempty"`
+	Tags                              map[string]string   `json:"tags,omitempty"`
+	FilterType                        string              `json:"filterType,omitempty"`
 }

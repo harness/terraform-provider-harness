@@ -10,6 +10,6 @@
 package nextgen
 
 type BitbucketApiAccessDto struct {
-	Type_ string `json:"type"`
-	Spec *BitbucketApiAccessSpecDto `json:"spec"`
+	Type_ string                     `json:"type"`
+	Spec  *BitbucketApiAccessSpecDto `json:"spec"`
 }

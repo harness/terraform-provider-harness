@@ -10,9 +10,9 @@
 package nextgen
 
 type EntityGitDetails struct {
-	ObjectId string `json:"objectId,omitempty"`
-	Branch string `json:"branch,omitempty"`
+	ObjectId       string `json:"objectId,omitempty"`
+	Branch         string `json:"branch,omitempty"`
 	RepoIdentifier string `json:"repoIdentifier,omitempty"`
-	RootFolder string `json:"rootFolder,omitempty"`
-	FilePath string `json:"filePath,omitempty"`
+	RootFolder     string `json:"rootFolder,omitempty"`
+	FilePath       string `json:"filePath,omitempty"`
 }

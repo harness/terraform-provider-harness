@@ -11,11 +11,11 @@ package nextgen
 
 type OrganizationAggregateDto struct {
 	OrganizationResponse *OrganizationResponse `json:"organizationResponse"`
-	ProjectsCount int32 `json:"projectsCount,omitempty"`
-	ConnectorsCount int64 `json:"connectorsCount,omitempty"`
-	SecretsCount int64 `json:"secretsCount,omitempty"`
-	DelegatesCount int64 `json:"delegatesCount,omitempty"`
-	TemplatesCount int64 `json:"templatesCount,omitempty"`
-	Admins []UserMetadataDto `json:"admins,omitempty"`
-	Collaborators []UserMetadataDto `json:"collaborators,omitempty"`
+	ProjectsCount        int32                 `json:"projectsCount,omitempty"`
+	ConnectorsCount      int64                 `json:"connectorsCount,omitempty"`
+	SecretsCount         int64                 `json:"secretsCount,omitempty"`
+	DelegatesCount       int64                 `json:"delegatesCount,omitempty"`
+	TemplatesCount       int64                 `json:"templatesCount,omitempty"`
+	Admins               []UserMetadataDto     `json:"admins,omitempty"`
+	Collaborators        []UserMetadataDto     `json:"collaborators,omitempty"`
 }

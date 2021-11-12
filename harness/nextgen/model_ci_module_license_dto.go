@@ -10,15 +10,15 @@
 package nextgen
 
 type CiModuleLicenseDto struct {
-	Id string `json:"id,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
-	Edition string `json:"edition,omitempty"`
-	LicenseType string `json:"licenseType,omitempty"`
-	Status string `json:"status,omitempty"`
-	StartTime int64 `json:"startTime,omitempty"`
-	ExpiryTime int64 `json:"expiryTime,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
-	NumberOfCommitters int32 `json:"numberOfCommitters,omitempty"`
+	Id                 string `json:"id,omitempty"`
+	AccountIdentifier  string `json:"accountIdentifier,omitempty"`
+	ModuleType         string `json:"moduleType,omitempty"`
+	Edition            string `json:"edition,omitempty"`
+	LicenseType        string `json:"licenseType,omitempty"`
+	Status             string `json:"status,omitempty"`
+	StartTime          int64  `json:"startTime,omitempty"`
+	ExpiryTime         int64  `json:"expiryTime,omitempty"`
+	CreatedAt          int64  `json:"createdAt,omitempty"`
+	LastModifiedAt     int64  `json:"lastModifiedAt,omitempty"`
+	NumberOfCommitters int32  `json:"numberOfCommitters,omitempty"`
 }

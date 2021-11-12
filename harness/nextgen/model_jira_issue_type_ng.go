@@ -10,10 +10,10 @@
 package nextgen
 
 type JiraIssueTypeNg struct {
-	Id string `json:"id"`
-	Name string `json:"name"`
-	Description string `json:"description,omitempty"`
-	Statuses []JiraStatusNg `json:"statuses"`
-	Fields map[string]JiraFieldNg `json:"fields"`
-	SubTask bool `json:"subTask,omitempty"`
+	Id          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description,omitempty"`
+	Statuses    []JiraStatusNg         `json:"statuses"`
+	Fields      map[string]JiraFieldNg `json:"fields"`
+	SubTask     bool                   `json:"subTask,omitempty"`
 }

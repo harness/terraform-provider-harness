@@ -10,8 +10,8 @@
 package nextgen
 
 type UserGroupAggregateDto struct {
-	UserGroupDTO *UserGroupDto `json:"userGroupDTO"`
-	Users []UserMetadataDto `json:"users,omitempty"`
+	UserGroupDTO               *UserGroupDto               `json:"userGroupDTO"`
+	Users                      []UserMetadataDto           `json:"users,omitempty"`
 	RoleAssignmentsMetadataDTO []RoleAssignmentMetadataDto `json:"roleAssignmentsMetadataDTO,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
+	LastModifiedAt             int64                       `json:"lastModifiedAt,omitempty"`
 }

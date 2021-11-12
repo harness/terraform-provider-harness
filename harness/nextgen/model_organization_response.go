@@ -11,8 +11,8 @@ package nextgen
 
 // Organization resource along with metadata. Generally, Used to power UI.
 type OrganizationResponse struct {
-	Organization *Organization `json:"organization"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
-	HarnessManaged bool `json:"harnessManaged,omitempty"`
+	Organization   *Organization `json:"organization"`
+	CreatedAt      int64         `json:"createdAt,omitempty"`
+	LastModifiedAt int64         `json:"lastModifiedAt,omitempty"`
+	HarnessManaged bool          `json:"harnessManaged,omitempty"`
 }

@@ -10,11 +10,11 @@
 package nextgen
 
 type GitOpsProviderDto struct {
-	Name string `json:"name"`
-	Identifier string `json:"identifier"`
-	Description string `json:"description,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Spec *GitOpsInfoDto `json:"spec"`
+	Name              string            `json:"name"`
+	Identifier        string            `json:"identifier"`
+	Description       string            `json:"description,omitempty"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Spec              *GitOpsInfoDto    `json:"spec"`
 }

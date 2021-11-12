@@ -10,7 +10,7 @@
 package nextgen
 
 type OAuthSettings struct {
-	Filter string `json:"filter,omitempty"`
+	Filter           string   `json:"filter,omitempty"`
 	AllowedProviders []string `json:"allowedProviders,omitempty"`
-	SettingsType string `json:"settingsType,omitempty"`
+	SettingsType     string   `json:"settingsType,omitempty"`
 }

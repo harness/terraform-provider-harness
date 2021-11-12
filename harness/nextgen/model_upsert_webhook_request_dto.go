@@ -10,10 +10,10 @@
 package nextgen
 
 type UpsertWebhookRequestDto struct {
-	AccountIdentifier string `json:"accountIdentifier"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	AccountIdentifier      string `json:"accountIdentifier"`
+	OrgIdentifier          string `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier      string `json:"projectIdentifier,omitempty"`
 	ConnectorIdentifierRef string `json:"connectorIdentifierRef"`
-	HookEventType string `json:"hookEventType"`
-	RepoURL string `json:"repoURL,omitempty"`
+	HookEventType          string `json:"hookEventType"`
+	RepoURL                string `json:"repoURL,omitempty"`
 }

@@ -10,14 +10,14 @@
 package nextgen
 
 type EncryptionConfig struct {
-	Default_ bool `json:"default,omitempty"`
-	AccountId string `json:"accountId,omitempty"`
-	NumOfEncryptedValue int32 `json:"numOfEncryptedValue,omitempty"`
+	Default_             bool   `json:"default,omitempty"`
+	EncryptionType       string `json:"encryptionType,omitempty"`
+	AccountId            string `json:"accountId,omitempty"`
+	NumOfEncryptedValue  int32  `json:"numOfEncryptedValue,omitempty"`
 	EncryptionServiceUrl string `json:"encryptionServiceUrl,omitempty"`
-	ValidationCriteria string `json:"validationCriteria,omitempty"`
-	GlobalKms bool `json:"globalKms,omitempty"`
-	Uuid string `json:"uuid,omitempty"`
-	EncryptionType string `json:"encryptionType,omitempty"`
-	Name string `json:"name,omitempty"`
-	Type_ string `json:"type,omitempty"`
+	ValidationCriteria   string `json:"validationCriteria,omitempty"`
+	GlobalKms            bool   `json:"globalKms,omitempty"`
+	Uuid                 string `json:"uuid,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	Type_                string `json:"type,omitempty"`
 }

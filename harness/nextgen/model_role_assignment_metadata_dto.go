@@ -10,11 +10,11 @@
 package nextgen
 
 type RoleAssignmentMetadataDto struct {
-	Identifier string `json:"identifier,omitempty"`
-	RoleIdentifier string `json:"roleIdentifier,omitempty"`
-	RoleName string `json:"roleName,omitempty"`
+	Identifier              string `json:"identifier,omitempty"`
+	RoleIdentifier          string `json:"roleIdentifier,omitempty"`
+	RoleName                string `json:"roleName,omitempty"`
 	ResourceGroupIdentifier string `json:"resourceGroupIdentifier,omitempty"`
-	ResourceGroupName string `json:"resourceGroupName,omitempty"`
-	ManagedRole bool `json:"managedRole,omitempty"`
-	ManagedRoleAssignment bool `json:"managedRoleAssignment,omitempty"`
+	ResourceGroupName       string `json:"resourceGroupName,omitempty"`
+	ManagedRole             bool   `json:"managedRole,omitempty"`
+	ManagedRoleAssignment   bool   `json:"managedRoleAssignment,omitempty"`
 }

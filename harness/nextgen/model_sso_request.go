@@ -10,7 +10,7 @@
 package nextgen
 
 type SsoRequest struct {
-	OauthProviderType string `json:"oauthProviderType,omitempty"`
-	IdpRedirectUrl string `json:"idpRedirectUrl,omitempty"`
+	OauthProviderType  string   `json:"oauthProviderType,omitempty"`
+	IdpRedirectUrl     string   `json:"idpRedirectUrl,omitempty"`
 	OauthProviderTypes []string `json:"oauthProviderTypes,omitempty"`
 }

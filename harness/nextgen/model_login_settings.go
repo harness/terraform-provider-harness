@@ -10,11 +10,11 @@
 package nextgen
 
 type LoginSettings struct {
-	Uuid string `json:"uuid"`
-	AccountId string `json:"accountId"`
-	LastUpdatedBy *EmbeddedUser `json:"lastUpdatedBy,omitempty"`
-	LastUpdatedAt int64 `json:"lastUpdatedAt,omitempty"`
-	UserLockoutPolicy *UserLockoutPolicy `json:"userLockoutPolicy"`
+	Uuid                     string                    `json:"uuid"`
+	AccountId                string                    `json:"accountId"`
+	LastUpdatedBy            *EmbeddedUser             `json:"lastUpdatedBy,omitempty"`
+	LastUpdatedAt            int64                     `json:"lastUpdatedAt,omitempty"`
+	UserLockoutPolicy        *UserLockoutPolicy        `json:"userLockoutPolicy"`
 	PasswordExpirationPolicy *PasswordExpirationPolicy `json:"passwordExpirationPolicy"`
-	PasswordStrengthPolicy *PasswordStrengthPolicy `json:"passwordStrengthPolicy"`
+	PasswordStrengthPolicy   *PasswordStrengthPolicy   `json:"passwordStrengthPolicy"`
 }

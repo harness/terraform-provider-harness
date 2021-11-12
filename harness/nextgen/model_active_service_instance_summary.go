@@ -10,6 +10,6 @@
 package nextgen
 
 type ActiveServiceInstanceSummary struct {
-	ChangeRate float64 `json:"changeRate,omitempty"`
+	ChangeRate   float64                            `json:"changeRate,omitempty"`
 	CountDetails *InstanceCountDetailsByEnvTypeBase `json:"countDetails,omitempty"`
 }

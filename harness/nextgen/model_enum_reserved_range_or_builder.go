@@ -10,12 +10,12 @@
 package nextgen
 
 type EnumReservedRangeOrBuilder struct {
-	Start int32 `json:"start,omitempty"`
-	End int32 `json:"end,omitempty"`
-	AllFields map[string]interface{} `json:"allFields,omitempty"`
-	UnknownFields *UnknownFieldSet `json:"unknownFields,omitempty"`
-	DefaultInstanceForType *Message `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string `json:"initializationErrorString,omitempty"`
-	DescriptorForType *Descriptor `json:"descriptorForType,omitempty"`
-	Initialized bool `json:"initialized,omitempty"`
+	End                       int32                  `json:"end,omitempty"`
+	Start                     int32                  `json:"start,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
 }

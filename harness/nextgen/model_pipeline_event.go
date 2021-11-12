@@ -10,6 +10,6 @@
 package nextgen
 
 type PipelineEvent struct {
-	Type_ string `json:"type,omitempty"`
+	Type_     string   `json:"type,omitempty"`
 	ForStages []string `json:"forStages,omitempty"`
 }

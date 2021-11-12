@@ -10,6 +10,6 @@
 package nextgen
 
 type ArtifactsSummary struct {
-	Primary *ArtifactSummary `json:"primary,omitempty"`
+	Primary  *ArtifactSummary  `json:"primary,omitempty"`
 	Sidecars []ArtifactSummary `json:"sidecars,omitempty"`
 }

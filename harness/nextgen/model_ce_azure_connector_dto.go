@@ -10,8 +10,8 @@
 package nextgen
 
 type CeAzureConnectorDto struct {
-	FeaturesEnabled []string `json:"featuresEnabled,omitempty"`
-	TenantId string `json:"tenantId"`
-	SubscriptionId string `json:"subscriptionId"`
+	FeaturesEnabled   []string              `json:"featuresEnabled,omitempty"`
+	TenantId          string                `json:"tenantId"`
+	SubscriptionId    string                `json:"subscriptionId"`
 	BillingExportSpec *BillingExportSpecDto `json:"billingExportSpec,omitempty"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoPageResponseUserMetadataDto struct {
-	Status string `json:"status,omitempty"`
-	Data *PageResponseUserMetadataDto `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                       `json:"status,omitempty"`
+	Data          *PageResponseUserMetadataDto `json:"data,omitempty"`
+	MetaData      *interface{}                 `json:"metaData,omitempty"`
+	CorrelationId string                       `json:"correlationId,omitempty"`
 }

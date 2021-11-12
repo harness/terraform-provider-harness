@@ -10,11 +10,11 @@
 package nextgen
 
 type UserGroupFilterDto struct {
-	DatabaseIdFilter []string `json:"databaseIdFilter,omitempty"`
-	IdentifierFilter []string `json:"identifierFilter,omitempty"`
+	DatabaseIdFilter     []string `json:"databaseIdFilter,omitempty"`
+	IdentifierFilter     []string `json:"identifierFilter,omitempty"`
 	UserIdentifierFilter []string `json:"userIdentifierFilter,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	SearchTerm string `json:"searchTerm,omitempty"`
+	AccountIdentifier    string   `json:"accountIdentifier,omitempty"`
+	OrgIdentifier        string   `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier    string   `json:"projectIdentifier,omitempty"`
+	SearchTerm           string   `json:"searchTerm,omitempty"`
 }

@@ -10,6 +10,6 @@
 package nextgen
 
 type TimeUnit struct {
-	Unit string `json:"unit,omitempty"`
-	NumberOfUnits int32 `json:"numberOfUnits,omitempty"`
+	Unit          string `json:"unit,omitempty"`
+	NumberOfUnits int32  `json:"numberOfUnits,omitempty"`
 }

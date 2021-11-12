@@ -10,11 +10,11 @@
 package nextgen
 
 type LoginTypeResponse struct {
-	AuthenticationMechanism string `json:"authenticationMechanism,omitempty"`
-	SSORequest *SsoRequest `json:"SSORequest,omitempty"`
-	IsOauthEnabled bool `json:"isOauthEnabled,omitempty"`
-	ShowCaptcha bool `json:"showCaptcha,omitempty"`
-	DefaultExperience string `json:"defaultExperience,omitempty"`
-	OauthEnabled bool `json:"oauthEnabled,omitempty"`
-	Ssorequest *SsoRequest `json:"ssorequest,omitempty"`
+	AuthenticationMechanism string      `json:"authenticationMechanism,omitempty"`
+	SSORequest              *SsoRequest `json:"SSORequest,omitempty"`
+	IsOauthEnabled          bool        `json:"isOauthEnabled,omitempty"`
+	ShowCaptcha             bool        `json:"showCaptcha,omitempty"`
+	DefaultExperience       string      `json:"defaultExperience,omitempty"`
+	OauthEnabled            bool        `json:"oauthEnabled,omitempty"`
+	Ssorequest              *SsoRequest `json:"ssorequest,omitempty"`
 }

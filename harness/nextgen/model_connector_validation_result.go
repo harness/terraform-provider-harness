@@ -10,9 +10,9 @@
 package nextgen
 
 type ConnectorValidationResult struct {
-	Status string `json:"status,omitempty"`
-	Errors []ErrorDetail `json:"errors,omitempty"`
-	ErrorSummary string `json:"errorSummary,omitempty"`
-	TestedAt int64 `json:"testedAt,omitempty"`
-	DelegateId string `json:"delegateId,omitempty"`
+	Status       string        `json:"status,omitempty"`
+	Errors       []ErrorDetail `json:"errors,omitempty"`
+	ErrorSummary string        `json:"errorSummary,omitempty"`
+	TestedAt     int64         `json:"testedAt,omitempty"`
+	DelegateId   string        `json:"delegateId,omitempty"`
 }

@@ -11,7 +11,7 @@ package nextgen
 
 type InstanceCountDetailsByEnvTypeBase struct {
 	EnvTypeVsInstanceCountMap map[string]int32 `json:"envTypeVsInstanceCountMap,omitempty"`
-	NonProdInstances int32 `json:"nonProdInstances,omitempty"`
-	ProdInstances int32 `json:"prodInstances,omitempty"`
-	TotalInstances int32 `json:"totalInstances,omitempty"`
+	NonProdInstances          int32            `json:"nonProdInstances,omitempty"`
+	ProdInstances             int32            `json:"prodInstances,omitempty"`
+	TotalInstances            int32            `json:"totalInstances,omitempty"`
 }

@@ -10,6 +10,6 @@
 package nextgen
 
 type BitbucketHttpCredentialsDto struct {
-	Type_ string `json:"type"`
-	Spec *BitbucketHttpCredentialsSpecDto `json:"spec"`
+	Type_ string                           `json:"type"`
+	Spec  *BitbucketHttpCredentialsSpecDto `json:"spec"`
 }

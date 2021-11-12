@@ -12,12 +12,11 @@ package nextgen
 import (
 	"context"
 	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -98,291 +97,6 @@ func (a *DefaultApiService) Accept(ctx context.Context, token string) (ResponseD
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoInviteAcceptResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
-@return RestResponseDelegateProfileDetailsNg
-*/
-func (a *DefaultApiService) Add(ctx context.Context, body DelegateProfileDetailsNg) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/delegate-configs"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param accountId
-@return RestResponseDelegateProfileDetailsNg
-*/
-func (a *DefaultApiService) Add1(ctx context.Context, body DelegateProfileDetailsNg, accountId string) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs"
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *DefaultApiAdd2Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of DelegateProfileDetailsNg) -
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiAdd2Opts struct {
-	Body      optional.Interface
-	AccountId optional.String
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Add2(ctx context.Context, localVarOptionals *DefaultApiAdd2Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1000,6 +714,102 @@ func (a *DefaultApiService) CheckUserMembership(ctx context.Context, accountIden
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoBoolean
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param optional nil or *DefaultApiCommunitySignupOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of SignupDto) -
+@return RestResponseUserInfo
+*/
+
+type DefaultApiCommunitySignupOpts struct {
+	Body optional.Interface
+}
+
+func (a *DefaultApiService) CommunitySignup(ctx context.Context, localVarOptionals *DefaultApiCommunitySignupOpts) (RestResponseUserInfo, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue RestResponseUserInfo
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/signup/community"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v RestResponseUserInfo
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1999,11 +1809,11 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param optional nil or *DefaultApiCreate5Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignmentCreateRequestDto) -
+     * @param "Body" (optional.Interface of RoleAssignmentCreateRequest) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
      * @param "Managed" (optional.Bool) -
-@return ResponseDtoListRoleAssignmentResponseDto
+@return ResponseDtoListRoleAssignmentResponse
 */
 
 type DefaultApiCreate5Opts struct {
@@ -2013,13 +1823,13 @@ type DefaultApiCreate5Opts struct {
 	Managed           optional.Bool
 }
 
-func (a *DefaultApiService) Create5(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiCreate5Opts) (ResponseDtoListRoleAssignmentResponseDto, *http.Response, error) {
+func (a *DefaultApiService) Create5(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiCreate5Opts) (ResponseDtoListRoleAssignmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoListRoleAssignmentResponseDto
+		localVarReturnValue ResponseDtoListRoleAssignmentResponse
 	)
 
 	// create path and map variables
@@ -2092,7 +1902,7 @@ func (a *DefaultApiService) Create5(ctx context.Context, accountIdentifier strin
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoListRoleAssignmentResponseDto
+			var v ResponseDtoListRoleAssignmentResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2112,10 +1922,10 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param optional nil or *DefaultApiCreate6Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignmentDto) -
+     * @param "Body" (optional.Interface of RoleAssignment) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoRoleAssignmentResponseDto
+@return ResponseDtoRoleAssignmentResponse
 */
 
 type DefaultApiCreate6Opts struct {
@@ -2124,13 +1934,13 @@ type DefaultApiCreate6Opts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Create6(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiCreate6Opts) (ResponseDtoRoleAssignmentResponseDto, *http.Response, error) {
+func (a *DefaultApiService) Create6(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiCreate6Opts) (ResponseDtoRoleAssignmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoRoleAssignmentResponseDto
+		localVarReturnValue ResponseDtoRoleAssignmentResponse
 	)
 
 	// create path and map variables
@@ -2200,7 +2010,7 @@ func (a *DefaultApiService) Create6(ctx context.Context, accountIdentifier strin
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoRoleAssignmentResponseDto
+			var v ResponseDtoRoleAssignmentResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -3437,6 +3247,107 @@ func (a *DefaultApiService) CreateViaYaml(ctx context.Context, accountIdentifier
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param optional nil or *DefaultApiDecryptEncryptedDetailsOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of DecryptableEntityWithEncryptionConsumers) -
+     * @param "AccountIdentifier" (optional.String) -
+@return ResponseDtoDecryptableEntity
+*/
+
+type DefaultApiDecryptEncryptedDetailsOpts struct {
+	Body              optional.Interface
+	AccountIdentifier optional.String
+}
+
+func (a *DefaultApiService) DecryptEncryptedDetails(ctx context.Context, localVarOptionals *DefaultApiDecryptEncryptedDetailsOpts) (ResponseDtoDecryptableEntity, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoDecryptableEntity
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/v2/secrets/decrypt-encryption-details"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/x-kryo"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/x-kryo"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoDecryptableEntity
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param type_
  * @param optional nil or *DefaultApiDeleteOpts - Optional Parameters:
@@ -3649,231 +3560,11 @@ func (a *DefaultApiService) Delete1(ctx context.Context, identifier string, loca
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param serviceIdentifier
- * @param optional nil or *DefaultApiDelete10Opts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -
-     * @param "AccountId" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoBoolean
-*/
-
-type DefaultApiDelete10Opts struct {
-	IfMatch           optional.String
-	AccountId         optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *DefaultApiService) Delete10(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiDelete10Opts) (ResponseDtoBoolean, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Delete")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoBoolean
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/services/{serviceIdentifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"serviceIdentifier"+"}", fmt.Sprintf("%v", serviceIdentifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
-		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoBoolean
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param serviceIdentifier
- * @param optional nil or *DefaultApiDelete11Opts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoBoolean
-*/
-
-type DefaultApiDelete11Opts struct {
-	IfMatch           optional.String
-	AccountIdentifier optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *DefaultApiService) Delete11(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiDelete11Opts) (ResponseDtoBoolean, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Delete")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoBoolean
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/servicesV2/{serviceIdentifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"serviceIdentifier"+"}", fmt.Sprintf("%v", serviceIdentifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
-		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoBoolean
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param accountIdentifier
 @return ResponseDtoBoolean
 */
-func (a *DefaultApiService) Delete12(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoBoolean, *http.Response, error) {
+func (a *DefaultApiService) Delete10(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -3956,214 +3647,7 @@ func (a *DefaultApiService) Delete12(ctx context.Context, identifier string, acc
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateConfigIdentifier
- * @param accountId
  * @param optional nil or *DefaultApiDelete2Opts - Optional Parameters:
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return ResponseDtoBoolean
-*/
-
-type DefaultApiDelete2Opts struct {
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Delete2(ctx context.Context, delegateConfigIdentifier string, accountId string, localVarOptionals *DefaultApiDelete2Opts) (ResponseDtoBoolean, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Delete")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoBoolean
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateConfigIdentifier"+"}", fmt.Sprintf("%v", delegateConfigIdentifier), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoBoolean
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateProfileId
- * @param optional nil or *DefaultApiDelete3Opts - Optional Parameters:
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseVoid
-*/
-
-type DefaultApiDelete3Opts struct {
-	AccountId optional.String
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Delete3(ctx context.Context, delegateProfileId string, localVarOptionals *DefaultApiDelete3Opts) (RestResponseVoid, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Delete")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseVoid
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng/{delegateProfileId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateProfileId"+"}", fmt.Sprintf("%v", delegateProfileId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseVoid
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *DefaultApiDelete4Opts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -
      * @param "ReferredEntityFQN" (optional.String) -
      * @param "ReferredEntityType" (optional.String) -
@@ -4172,7 +3656,7 @@ DefaultApiService
 @return ResponseDtoBoolean
 */
 
-type DefaultApiDelete4Opts struct {
+type DefaultApiDelete2Opts struct {
 	AccountIdentifier    optional.String
 	ReferredEntityFQN    optional.String
 	ReferredEntityType   optional.String
@@ -4180,7 +3664,7 @@ type DefaultApiDelete4Opts struct {
 	ReferredByEntityType optional.String
 }
 
-func (a *DefaultApiService) Delete4(ctx context.Context, localVarOptionals *DefaultApiDelete4Opts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *DefaultApiService) Delete2(ctx context.Context, localVarOptionals *DefaultApiDelete2Opts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -4277,7 +3761,7 @@ func (a *DefaultApiService) Delete4(ctx context.Context, localVarOptionals *Defa
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param environmentIdentifier
- * @param optional nil or *DefaultApiDelete5Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiDelete3Opts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
      * @param "AccountId" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
@@ -4285,14 +3769,14 @@ DefaultApiService
 @return ResponseDtoBoolean
 */
 
-type DefaultApiDelete5Opts struct {
+type DefaultApiDelete3Opts struct {
 	IfMatch           optional.String
 	AccountId         optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Delete5(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiDelete5Opts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *DefaultApiService) Delete3(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiDelete3Opts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -4387,7 +3871,7 @@ func (a *DefaultApiService) Delete5(ctx context.Context, environmentIdentifier s
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param environmentIdentifier
- * @param optional nil or *DefaultApiDelete6Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiDelete4Opts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
      * @param "AccountIdentifier" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
@@ -4395,14 +3879,14 @@ DefaultApiService
 @return ResponseDtoBoolean
 */
 
-type DefaultApiDelete6Opts struct {
+type DefaultApiDelete4Opts struct {
 	IfMatch           optional.String
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Delete6(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiDelete6Opts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *DefaultApiService) Delete4(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiDelete4Opts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -4499,7 +3983,7 @@ DefaultApiService
  * @param inviteId
 @return ResponseDtoOptionalInviteDto
 */
-func (a *DefaultApiService) Delete7(ctx context.Context, inviteId string) (ResponseDtoOptionalInviteDto, *http.Response, error) {
+func (a *DefaultApiService) Delete5(ctx context.Context, inviteId string) (ResponseDtoOptionalInviteDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -4583,18 +4067,18 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param accountIdentifier
- * @param optional nil or *DefaultApiDelete8Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiDelete6Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
 @return ResponseDtoBoolean
 */
 
-type DefaultApiDelete8Opts struct {
+type DefaultApiDelete6Opts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Delete8(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiDelete8Opts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *DefaultApiService) Delete6(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiDelete6Opts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -4684,20 +4168,20 @@ func (a *DefaultApiService) Delete8(ctx context.Context, identifier string, acco
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
- * @param optional nil or *DefaultApiDelete9Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiDelete7Opts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
 @return ResponseDtoUserGroupDto
 */
 
-type DefaultApiDelete9Opts struct {
+type DefaultApiDelete7Opts struct {
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Delete9(ctx context.Context, identifier string, localVarOptionals *DefaultApiDelete9Opts) (ResponseDtoUserGroupDto, *http.Response, error) {
+func (a *DefaultApiService) Delete7(ctx context.Context, identifier string, localVarOptionals *DefaultApiDelete7Opts) (ResponseDtoUserGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -4771,6 +4255,226 @@ func (a *DefaultApiService) Delete9(ctx context.Context, identifier string, loca
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoUserGroupDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param serviceIdentifier
+ * @param optional nil or *DefaultApiDelete8Opts - Optional Parameters:
+     * @param "IfMatch" (optional.String) -
+     * @param "AccountId" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+@return ResponseDtoBoolean
+*/
+
+type DefaultApiDelete8Opts struct {
+	IfMatch           optional.String
+	AccountId         optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *DefaultApiService) Delete8(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiDelete8Opts) (ResponseDtoBoolean, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoBoolean
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/services/{serviceIdentifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"serviceIdentifier"+"}", fmt.Sprintf("%v", serviceIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
+		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
+		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoBoolean
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param serviceIdentifier
+ * @param optional nil or *DefaultApiDelete9Opts - Optional Parameters:
+     * @param "IfMatch" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+@return ResponseDtoBoolean
+*/
+
+type DefaultApiDelete9Opts struct {
+	IfMatch           optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *DefaultApiService) Delete9(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiDelete9Opts) (ResponseDtoBoolean, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoBoolean
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/servicesV2/{serviceIdentifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"serviceIdentifier"+"}", fmt.Sprintf("%v", serviceIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
+		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoBoolean
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -5583,209 +5287,20 @@ func (a *DefaultApiService) Get1(ctx context.Context, identifier string, localVa
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
- * @param accountIdentifier
-@return ResponseDtoOrganizationAggregateDto
-*/
-func (a *DefaultApiService) Get10(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoOrganizationAggregateDto, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoOrganizationAggregateDto
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/aggregate/organizations/{identifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoOrganizationAggregateDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
- * @param optional nil or *DefaultApiGet11Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoSecretResponseWrapper
-*/
-
-type DefaultApiGet11Opts struct {
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *DefaultApiService) Get11(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiGet11Opts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/secrets/{identifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param optional nil or *DefaultApiGet12Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiGet10Opts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
 @return ResponseDtoUserGroupDto
 */
 
-type DefaultApiGet12Opts struct {
+type DefaultApiGet10Opts struct {
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Get12(ctx context.Context, identifier string, localVarOptionals *DefaultApiGet12Opts) (ResponseDtoUserGroupDto, *http.Response, error) {
+func (a *DefaultApiService) Get10(ctx context.Context, identifier string, localVarOptionals *DefaultApiGet10Opts) (ResponseDtoUserGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -5877,7 +5392,7 @@ func (a *DefaultApiService) Get12(ctx context.Context, identifier string, localV
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param serviceIdentifier
- * @param optional nil or *DefaultApiGet13Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiGet11Opts - Optional Parameters:
      * @param "AccountId" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
@@ -5885,14 +5400,14 @@ DefaultApiService
 @return ResponseDtoServiceResponseDto
 */
 
-type DefaultApiGet13Opts struct {
+type DefaultApiGet11Opts struct {
 	AccountId         optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	Deleted           optional.Bool
 }
 
-func (a *DefaultApiService) Get13(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiGet13Opts) (ResponseDtoServiceResponseDto, *http.Response, error) {
+func (a *DefaultApiService) Get11(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiGet11Opts) (ResponseDtoServiceResponseDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -5987,7 +5502,7 @@ func (a *DefaultApiService) Get13(ctx context.Context, serviceIdentifier string,
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param serviceIdentifier
- * @param optional nil or *DefaultApiGet14Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiGet12Opts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
@@ -5995,14 +5510,14 @@ DefaultApiService
 @return ResponseDtoServiceResponse
 */
 
-type DefaultApiGet14Opts struct {
+type DefaultApiGet12Opts struct {
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	Deleted           optional.Bool
 }
 
-func (a *DefaultApiService) Get14(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiGet14Opts) (ResponseDtoServiceResponse, *http.Response, error) {
+func (a *DefaultApiService) Get12(ctx context.Context, serviceIdentifier string, localVarOptionals *DefaultApiGet12Opts) (ResponseDtoServiceResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -6099,7 +5614,7 @@ DefaultApiService
  * @param accountIdentifier
 @return ResponseDtoListSourceCodeManagerDto
 */
-func (a *DefaultApiService) Get15(ctx context.Context, accountIdentifier string) (ResponseDtoListSourceCodeManagerDto, *http.Response, error) {
+func (a *DefaultApiService) Get13(ctx context.Context, accountIdentifier string) (ResponseDtoListSourceCodeManagerDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -6286,13 +5801,13 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param optional nil or *DefaultApiGet3Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignmentFilterDto) -
+     * @param "Body" (optional.Interface of RoleAssignmentFilter) -
      * @param "PageIndex" (optional.Int32) -
      * @param "PageSize" (optional.Int32) -
      * @param "SortOrders" (optional.Interface of []SortOrder) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoPageResponseRoleAssignmentResponseDto
+@return ResponseDtoPageResponseRoleAssignmentResponse
 */
 
 type DefaultApiGet3Opts struct {
@@ -6304,13 +5819,13 @@ type DefaultApiGet3Opts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Get3(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiGet3Opts) (ResponseDtoPageResponseRoleAssignmentResponseDto, *http.Response, error) {
+func (a *DefaultApiService) Get3(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiGet3Opts) (ResponseDtoPageResponseRoleAssignmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseRoleAssignmentResponseDto
+		localVarReturnValue ResponseDtoPageResponseRoleAssignmentResponse
 	)
 
 	// create path and map variables
@@ -6389,214 +5904,7 @@ func (a *DefaultApiService) Get3(ctx context.Context, accountIdentifier string, 
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseRoleAssignmentResponseDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateConfigIdentifier
- * @param accountId
- * @param optional nil or *DefaultApiGet4Opts - Optional Parameters:
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiGet4Opts struct {
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Get4(ctx context.Context, delegateConfigIdentifier string, accountId string, localVarOptionals *DefaultApiGet4Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateConfigIdentifier"+"}", fmt.Sprintf("%v", delegateConfigIdentifier), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateProfileId
- * @param optional nil or *DefaultApiGet5Opts - Optional Parameters:
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiGet5Opts struct {
-	AccountId optional.String
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Get5(ctx context.Context, delegateProfileId string, localVarOptionals *DefaultApiGet5Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng/{delegateProfileId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateProfileId"+"}", fmt.Sprintf("%v", delegateProfileId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
+			var v ResponseDtoPageResponseRoleAssignmentResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -6615,7 +5923,7 @@ func (a *DefaultApiService) Get5(ctx context.Context, delegateProfileId string, 
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param environmentIdentifier
- * @param optional nil or *DefaultApiGet6Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiGet4Opts - Optional Parameters:
      * @param "AccountId" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
@@ -6623,14 +5931,14 @@ DefaultApiService
 @return ResponseDtoEnvironmentResponseDto
 */
 
-type DefaultApiGet6Opts struct {
+type DefaultApiGet4Opts struct {
 	AccountId         optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	Deleted           optional.Bool
 }
 
-func (a *DefaultApiService) Get6(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiGet6Opts) (ResponseDtoEnvironmentResponseDto, *http.Response, error) {
+func (a *DefaultApiService) Get4(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiGet4Opts) (ResponseDtoEnvironmentResponseDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -6725,7 +6033,7 @@ func (a *DefaultApiService) Get6(ctx context.Context, environmentIdentifier stri
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param environmentIdentifier
- * @param optional nil or *DefaultApiGet7Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiGet5Opts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
@@ -6733,14 +6041,14 @@ DefaultApiService
 @return ResponseDtoEnvironmentResponse
 */
 
-type DefaultApiGet7Opts struct {
+type DefaultApiGet5Opts struct {
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	Deleted           optional.Bool
 }
 
-func (a *DefaultApiService) Get7(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiGet7Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
+func (a *DefaultApiService) Get5(ctx context.Context, environmentIdentifier string, localVarOptionals *DefaultApiGet5Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -6836,7 +6144,7 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 @return ResponseDtoString
 */
-func (a *DefaultApiService) Get8(ctx context.Context) (ResponseDtoString, *http.Response, error) {
+func (a *DefaultApiService) Get6(ctx context.Context) (ResponseDtoString, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -6919,16 +6227,16 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
  * @param accountIdentifier
- * @param optional nil or *DefaultApiGet9Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiGet7Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -
 @return ResponseDtoProjectAggregateDto
 */
 
-type DefaultApiGet9Opts struct {
+type DefaultApiGet7Opts struct {
 	OrgIdentifier optional.String
 }
 
-func (a *DefaultApiService) Get9(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiGet9Opts) (ResponseDtoProjectAggregateDto, *http.Response, error) {
+func (a *DefaultApiService) Get7(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiGet7Opts) (ResponseDtoProjectAggregateDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -6997,6 +6305,195 @@ func (a *DefaultApiService) Get9(ctx context.Context, identifier string, account
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoProjectAggregateDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identifier
+ * @param accountIdentifier
+@return ResponseDtoOrganizationAggregateDto
+*/
+func (a *DefaultApiService) Get8(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoOrganizationAggregateDto, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoOrganizationAggregateDto
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/aggregate/organizations/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoOrganizationAggregateDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identifier
+ * @param accountIdentifier
+ * @param optional nil or *DefaultApiGet9Opts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+@return ResponseDtoSecretResponseWrapper
+*/
+
+type DefaultApiGet9Opts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *DefaultApiService) Get9(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiGet9Opts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoSecretResponseWrapper
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/v2/secrets/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoSecretResponseWrapper
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -7874,10 +7371,10 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param optional nil or *DefaultApiGetAggregatedOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignmentFilterDto) -
+     * @param "Body" (optional.Interface of RoleAssignmentFilter) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoRoleAssignmentAggregateResponseDto
+@return ResponseDtoRoleAssignmentAggregateResponse
 */
 
 type DefaultApiGetAggregatedOpts struct {
@@ -7886,13 +7383,13 @@ type DefaultApiGetAggregatedOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) GetAggregated(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiGetAggregatedOpts) (ResponseDtoRoleAssignmentAggregateResponseDto, *http.Response, error) {
+func (a *DefaultApiService) GetAggregated(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiGetAggregatedOpts) (ResponseDtoRoleAssignmentAggregateResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoRoleAssignmentAggregateResponseDto
+		localVarReturnValue ResponseDtoRoleAssignmentAggregateResponse
 	)
 
 	// create path and map variables
@@ -7962,7 +7459,7 @@ func (a *DefaultApiService) GetAggregated(ctx context.Context, accountIdentifier
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoRoleAssignmentAggregateResponseDto
+			var v ResponseDtoRoleAssignmentAggregateResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -11323,6 +10820,95 @@ func (a *DefaultApiService) GetInstanceGrowthTrend(ctx context.Context, accountI
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoTimeValuePairListDtoInteger
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier
+ * @param instanceInfoPodName
+ * @param instanceInfoNamespace
+@return ResponseDtoOptionalHarnessServiceInfoNg
+*/
+func (a *DefaultApiService) GetInstanceNGData(ctx context.Context, accountIdentifier string, instanceInfoPodName string, instanceInfoNamespace string) (ResponseDtoOptionalHarnessServiceInfoNg, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoOptionalHarnessServiceInfoNg
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/instanceng"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("instanceInfoPodName", parameterToString(instanceInfoPodName, ""))
+	localVarQueryParams.Add("instanceInfoNamespace", parameterToString(instanceInfoNamespace, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoOptionalHarnessServiceInfoNg
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -15772,218 +15358,6 @@ DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param optional nil or *DefaultApiList10Opts - Optional Parameters:
-     * @param "SearchTerm" (optional.String) -
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
-@return ResponseDtoPageResponseOrganizationAggregateDto
-*/
-
-type DefaultApiList10Opts struct {
-	SearchTerm optional.String
-	PageIndex  optional.Int32
-	PageSize   optional.Int32
-	SortOrders optional.Interface
-}
-
-func (a *DefaultApiService) List10(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList10Opts) (ResponseDtoPageResponseOrganizationAggregateDto, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseOrganizationAggregateDto
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/aggregate/organizations"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
-		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.PageIndex.IsSet() {
-		localVarQueryParams.Add("pageIndex", parameterToString(localVarOptionals.PageIndex.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.PageSize.IsSet() {
-		localVarQueryParams.Add("pageSize", parameterToString(localVarOptionals.PageSize.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.SortOrders.IsSet() {
-		localVarQueryParams.Add("sortOrders", parameterToString(localVarOptionals.SortOrders.Value(), "multi"))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseOrganizationAggregateDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
- * @param optional nil or *DefaultApiList11Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoUserGroupAggregateDto
-*/
-
-type DefaultApiList11Opts struct {
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *DefaultApiService) List11(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiList11Opts) (ResponseDtoUserGroupAggregateDto, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoUserGroupAggregateDto
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/aggregate/acl/usergroups/{identifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoUserGroupAggregateDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param optional nil or *DefaultApiList12Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
      * @param "Identifiers" (optional.Interface of []string) -
@@ -15997,7 +15371,7 @@ DefaultApiService
 @return ResponseDtoPageResponseSecretResponseWrapper
 */
 
-type DefaultApiList12Opts struct {
+type DefaultApiList10Opts struct {
 	OrgIdentifier                   optional.String
 	ProjectIdentifier               optional.String
 	Identifiers                     optional.Interface
@@ -16010,7 +15384,7 @@ type DefaultApiList12Opts struct {
 	PageSize                        optional.Int32
 }
 
-func (a *DefaultApiService) List12(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList12Opts) (ResponseDtoPageResponseSecretResponseWrapper, *http.Response, error) {
+func (a *DefaultApiService) List10(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList10Opts) (ResponseDtoPageResponseSecretResponseWrapper, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -16122,8 +15496,94 @@ func (a *DefaultApiService) List12(ctx context.Context, accountIdentifier string
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
+@return ResponseDtoListUserGroupDto
+*/
+func (a *DefaultApiService) List11(ctx context.Context, body UserGroupFilterDto) (ResponseDtoListUserGroupDto, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoListUserGroupDto
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/user-groups/batch"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoListUserGroupDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
- * @param optional nil or *DefaultApiList13Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiList12Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
      * @param "SearchTerm" (optional.String) -
@@ -16133,7 +15593,7 @@ DefaultApiService
 @return ResponseDtoPageResponseUserGroupDto
 */
 
-type DefaultApiList13Opts struct {
+type DefaultApiList12Opts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	SearchTerm        optional.String
@@ -16142,7 +15602,7 @@ type DefaultApiList13Opts struct {
 	SortOrders        optional.Interface
 }
 
-func (a *DefaultApiService) List13(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList13Opts) (ResponseDtoPageResponseUserGroupDto, *http.Response, error) {
+func (a *DefaultApiService) List12(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList12Opts) (ResponseDtoPageResponseUserGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -16225,92 +15685,6 @@ func (a *DefaultApiService) List13(ctx context.Context, accountIdentifier string
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoPageResponseUserGroupDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
-@return ResponseDtoListUserGroupDto
-*/
-func (a *DefaultApiService) List14(ctx context.Context, body UserGroupFilterDto) (ResponseDtoListUserGroupDto, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoListUserGroupDto
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/user-groups/batch"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoListUserGroupDto
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -16565,250 +15939,7 @@ func (a *DefaultApiService) List3(ctx context.Context, startTime int64, endTime 
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId
  * @param optional nil or *DefaultApiList4Opts - Optional Parameters:
-     * @param "Offset" (optional.String) -
-     * @param "Limit" (optional.String) -
-     * @param "FieldsIncluded" (optional.Interface of []string) -
-     * @param "FieldsExcluded" (optional.Interface of []string) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponsePageResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiList4Opts struct {
-	Offset         optional.String
-	Limit          optional.String
-	FieldsIncluded optional.Interface
-	FieldsExcluded optional.Interface
-	OrgId          optional.String
-	ProjectId      optional.String
-}
-
-func (a *DefaultApiService) List4(ctx context.Context, accountId string, localVarOptionals *DefaultApiList4Opts) (RestResponsePageResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponsePageResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs"
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.Offset.IsSet() {
-		localVarQueryParams.Add("offset", parameterToString(localVarOptionals.Offset.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Limit.IsSet() {
-		localVarQueryParams.Add("limit", parameterToString(localVarOptionals.Limit.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.FieldsIncluded.IsSet() {
-		localVarQueryParams.Add("fieldsIncluded", parameterToString(localVarOptionals.FieldsIncluded.Value(), "multi"))
-	}
-	if localVarOptionals != nil && localVarOptionals.FieldsExcluded.IsSet() {
-		localVarQueryParams.Add("fieldsExcluded", parameterToString(localVarOptionals.FieldsExcluded.Value(), "multi"))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponsePageResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *DefaultApiList5Opts - Optional Parameters:
-     * @param "Offset" (optional.String) -
-     * @param "Limit" (optional.String) -
-     * @param "FieldsIncluded" (optional.Interface of []string) -
-     * @param "FieldsExcluded" (optional.Interface of []string) -
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponsePageResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiList5Opts struct {
-	Offset         optional.String
-	Limit          optional.String
-	FieldsIncluded optional.Interface
-	FieldsExcluded optional.Interface
-	AccountId      optional.String
-	OrgId          optional.String
-	ProjectId      optional.String
-}
-
-func (a *DefaultApiService) List5(ctx context.Context, localVarOptionals *DefaultApiList5Opts) (RestResponsePageResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponsePageResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.Offset.IsSet() {
-		localVarQueryParams.Add("offset", parameterToString(localVarOptionals.Offset.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Limit.IsSet() {
-		localVarQueryParams.Add("limit", parameterToString(localVarOptionals.Limit.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.FieldsIncluded.IsSet() {
-		localVarQueryParams.Add("fieldsIncluded", parameterToString(localVarOptionals.FieldsIncluded.Value(), "multi"))
-	}
-	if localVarOptionals != nil && localVarOptionals.FieldsExcluded.IsSet() {
-		localVarQueryParams.Add("fieldsExcluded", parameterToString(localVarOptionals.FieldsExcluded.Value(), "multi"))
-	}
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponsePageResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *DefaultApiList6Opts - Optional Parameters:
      * @param "PageIndex" (optional.Int32) -
      * @param "PageSize" (optional.Int32) -
      * @param "AccountIdentifier" (optional.String) -
@@ -16823,7 +15954,7 @@ DefaultApiService
 @return ResponseDtoPageEntitySetupUsageDto
 */
 
-type DefaultApiList6Opts struct {
+type DefaultApiList4Opts struct {
 	PageIndex               optional.Int32
 	PageSize                optional.Int32
 	AccountIdentifier       optional.String
@@ -16837,7 +15968,7 @@ type DefaultApiList6Opts struct {
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *DefaultApiService) List6(ctx context.Context, localVarOptionals *DefaultApiList6Opts) (ResponseDtoPageEntitySetupUsageDto, *http.Response, error) {
+func (a *DefaultApiService) List4(ctx context.Context, localVarOptionals *DefaultApiList4Opts) (ResponseDtoPageEntitySetupUsageDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -16952,7 +16083,7 @@ func (a *DefaultApiService) List6(ctx context.Context, localVarOptionals *Defaul
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
- * @param optional nil or *DefaultApiList7Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiList5Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
      * @param "PageIndex" (optional.Int32) -
@@ -16963,7 +16094,7 @@ DefaultApiService
 @return ResponseDtoPageResponseUserGroupAggregateDto
 */
 
-type DefaultApiList7Opts struct {
+type DefaultApiList5Opts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	PageIndex         optional.Int32
@@ -16973,7 +16104,7 @@ type DefaultApiList7Opts struct {
 	UserSize          optional.Int32
 }
 
-func (a *DefaultApiService) List7(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList7Opts) (ResponseDtoPageResponseUserGroupAggregateDto, *http.Response, error) {
+func (a *DefaultApiService) List5(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList5Opts) (ResponseDtoPageResponseUserGroupAggregateDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -17077,7 +16208,7 @@ func (a *DefaultApiService) List7(ctx context.Context, accountIdentifier string,
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
- * @param optional nil or *DefaultApiList8Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiList6Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -
      * @param "HasModule" (optional.Bool) -
      * @param "ModuleType" (optional.String) -
@@ -17088,7 +16219,7 @@ DefaultApiService
 @return ResponseDtoPageResponseProjectAggregateDto
 */
 
-type DefaultApiList8Opts struct {
+type DefaultApiList6Opts struct {
 	OrgIdentifier optional.String
 	HasModule     optional.Bool
 	ModuleType    optional.String
@@ -17098,7 +16229,7 @@ type DefaultApiList8Opts struct {
 	SortOrders    optional.Interface
 }
 
-func (a *DefaultApiService) List8(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList8Opts) (ResponseDtoPageResponseProjectAggregateDto, *http.Response, error) {
+func (a *DefaultApiService) List6(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList6Opts) (ResponseDtoPageResponseProjectAggregateDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -17202,20 +16333,20 @@ func (a *DefaultApiService) List8(ctx context.Context, accountIdentifier string,
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
- * @param optional nil or *DefaultApiList9Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiList7Opts - Optional Parameters:
      * @param "Body" (optional.Interface of AggregateAclRequest) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
 @return ResponseDtoListUserGroupAggregateDto
 */
 
-type DefaultApiList9Opts struct {
+type DefaultApiList7Opts struct {
 	Body              optional.Interface
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) List9(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList9Opts) (ResponseDtoListUserGroupAggregateDto, *http.Response, error) {
+func (a *DefaultApiService) List7(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList7Opts) (ResponseDtoListUserGroupAggregateDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -17292,6 +16423,218 @@ func (a *DefaultApiService) List9(ctx context.Context, accountIdentifier string,
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoListUserGroupAggregateDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier
+ * @param optional nil or *DefaultApiList8Opts - Optional Parameters:
+     * @param "SearchTerm" (optional.String) -
+     * @param "PageIndex" (optional.Int32) -
+     * @param "PageSize" (optional.Int32) -
+     * @param "SortOrders" (optional.Interface of []SortOrder) -
+@return ResponseDtoPageResponseOrganizationAggregateDto
+*/
+
+type DefaultApiList8Opts struct {
+	SearchTerm optional.String
+	PageIndex  optional.Int32
+	PageSize   optional.Int32
+	SortOrders optional.Interface
+}
+
+func (a *DefaultApiService) List8(ctx context.Context, accountIdentifier string, localVarOptionals *DefaultApiList8Opts) (ResponseDtoPageResponseOrganizationAggregateDto, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoPageResponseOrganizationAggregateDto
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/aggregate/organizations"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
+		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageIndex.IsSet() {
+		localVarQueryParams.Add("pageIndex", parameterToString(localVarOptionals.PageIndex.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageSize.IsSet() {
+		localVarQueryParams.Add("pageSize", parameterToString(localVarOptionals.PageSize.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SortOrders.IsSet() {
+		localVarQueryParams.Add("sortOrders", parameterToString(localVarOptionals.SortOrders.Value(), "multi"))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoPageResponseOrganizationAggregateDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param identifier
+ * @param accountIdentifier
+ * @param optional nil or *DefaultApiList9Opts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+@return ResponseDtoUserGroupAggregateDto
+*/
+
+type DefaultApiList9Opts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *DefaultApiService) List9(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *DefaultApiList9Opts) (ResponseDtoUserGroupAggregateDto, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoUserGroupAggregateDto
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/aggregate/acl/usergroups/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoUserGroupAggregateDto
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -20404,144 +19747,6 @@ func (a *DefaultApiService) ListSummaryByRepoAndBranch(ctx context.Context, bran
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId
- * @param optional nil or *DefaultApiListV2Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of DelegateProfileFilterPropertiesDto) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-     * @param "FilterIdentifier" (optional.String) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "Offset" (optional.String) -
-     * @param "Limit" (optional.String) -
-     * @param "FieldsIncluded" (optional.Interface of []string) -
-     * @param "FieldsExcluded" (optional.Interface of []string) -
-@return RestResponsePageResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiListV2Opts struct {
-	Body             optional.Interface
-	OrgId            optional.String
-	ProjectId        optional.String
-	FilterIdentifier optional.String
-	SearchTerm       optional.String
-	Offset           optional.String
-	Limit            optional.String
-	FieldsIncluded   optional.Interface
-	FieldsExcluded   optional.Interface
-}
-
-func (a *DefaultApiService) ListV2(ctx context.Context, accountId string, localVarOptionals *DefaultApiListV2Opts) (RestResponsePageResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponsePageResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs/listV2"
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.FilterIdentifier.IsSet() {
-		localVarQueryParams.Add("filterIdentifier", parameterToString(localVarOptionals.FilterIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
-		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Offset.IsSet() {
-		localVarQueryParams.Add("offset", parameterToString(localVarOptionals.Offset.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Limit.IsSet() {
-		localVarQueryParams.Add("limit", parameterToString(localVarOptionals.Limit.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.FieldsIncluded.IsSet() {
-		localVarQueryParams.Add("fieldsIncluded", parameterToString(localVarOptionals.FieldsIncluded.Value(), "multi"))
-	}
-	if localVarOptionals != nil && localVarOptionals.FieldsExcluded.IsSet() {
-		localVarQueryParams.Add("fieldsExcluded", parameterToString(localVarOptionals.FieldsExcluded.Value(), "multi"))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponsePageResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier
  * @param perpetualTaskId
  * @param optional nil or *DefaultApiProcessInstanceSyncPerpetualTaskResponseOpts - Optional Parameters:
@@ -20721,94 +19926,6 @@ func (a *DefaultApiService) ProcessPollingResultNg(ctx context.Context, perpetua
 	}
 
 	return localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param accountIdentifier
-@return ResponseDtoString
-*/
-func (a *DefaultApiService) ProcessWebhookEvent(ctx context.Context, body string, accountIdentifier string) (ResponseDtoString, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoString
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/webhook"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml", "text/plain"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml", "text/plain"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoString
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
 }
 
 /*
@@ -22434,217 +21551,10 @@ func (a *DefaultApiService) Update1(ctx context.Context, body GitOpsProviderDto,
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param optional nil or *DefaultApiUpdate10Opts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -
-     * @param "AccountId" (optional.String) -
-@return ResponseDtoServiceResponseDto
-*/
-
-type DefaultApiUpdate10Opts struct {
-	IfMatch   optional.String
-	AccountId optional.String
-}
-
-func (a *DefaultApiService) Update10(ctx context.Context, body ServiceRequestDto, localVarOptionals *DefaultApiUpdate10Opts) (ResponseDtoServiceResponseDto, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoServiceResponseDto
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/services"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
-		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
-	}
-	// body params
-	localVarPostBody = &body
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoServiceResponseDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *DefaultApiUpdate11Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of ServiceRequestDto) -
-     * @param "IfMatch" (optional.String) -
-     * @param "AccountIdentifier" (optional.String) -
-@return ResponseDtoServiceResponse
-*/
-
-type DefaultApiUpdate11Opts struct {
-	Body              optional.Interface
-	IfMatch           optional.String
-	AccountIdentifier optional.String
-}
-
-func (a *DefaultApiService) Update11(ctx context.Context, localVarOptionals *DefaultApiUpdate11Opts) (ResponseDtoServiceResponse, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoServiceResponse
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/servicesV2"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
-		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoServiceResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
  * @param identifier
 @return ResponseDtoSourceCodeManagerDto
 */
-func (a *DefaultApiService) Update12(ctx context.Context, body SourceCodeManagerDto, identifier string) (ResponseDtoSourceCodeManagerDto, *http.Response, error) {
+func (a *DefaultApiService) Update10(ctx context.Context, body SourceCodeManagerDto, identifier string) (ResponseDtoSourceCodeManagerDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -23009,236 +21919,18 @@ func (a *DefaultApiService) Update4(ctx context.Context, body ModuleLicense, ide
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param delegateConfigIdentifier
- * @param accountId
  * @param optional nil or *DefaultApiUpdate5Opts - Optional Parameters:
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiUpdate5Opts struct {
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Update5(ctx context.Context, body DelegateProfileDetailsNg, delegateConfigIdentifier string, accountId string, localVarOptionals *DefaultApiUpdate5Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateConfigIdentifier"+"}", fmt.Sprintf("%v", delegateConfigIdentifier), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateProfileId
- * @param optional nil or *DefaultApiUpdate6Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of DelegateProfileDetailsNg) -
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiUpdate6Opts struct {
-	Body      optional.Interface
-	AccountId optional.String
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) Update6(ctx context.Context, delegateProfileId string, localVarOptionals *DefaultApiUpdate6Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng/{delegateProfileId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateProfileId"+"}", fmt.Sprintf("%v", delegateProfileId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param optional nil or *DefaultApiUpdate7Opts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
      * @param "AccountId" (optional.String) -
 @return ResponseDtoEnvironmentResponseDto
 */
 
-type DefaultApiUpdate7Opts struct {
+type DefaultApiUpdate5Opts struct {
 	IfMatch   optional.String
 	AccountId optional.String
 }
 
-func (a *DefaultApiService) Update7(ctx context.Context, body EnvironmentRequestDto, localVarOptionals *DefaultApiUpdate7Opts) (ResponseDtoEnvironmentResponseDto, *http.Response, error) {
+func (a *DefaultApiService) Update5(ctx context.Context, body EnvironmentRequestDto, localVarOptionals *DefaultApiUpdate5Opts) (ResponseDtoEnvironmentResponseDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -23327,20 +22019,20 @@ func (a *DefaultApiService) Update7(ctx context.Context, body EnvironmentRequest
 /*
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *DefaultApiUpdate8Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiUpdate6Opts - Optional Parameters:
      * @param "Body" (optional.Interface of EnvironmentRequestDto) -
      * @param "IfMatch" (optional.String) -
      * @param "AccountIdentifier" (optional.String) -
 @return ResponseDtoEnvironmentResponse
 */
 
-type DefaultApiUpdate8Opts struct {
+type DefaultApiUpdate6Opts struct {
 	Body              optional.Interface
 	IfMatch           optional.String
 	AccountIdentifier optional.String
 }
 
-func (a *DefaultApiService) Update8(ctx context.Context, localVarOptionals *DefaultApiUpdate8Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
+func (a *DefaultApiService) Update6(ctx context.Context, localVarOptionals *DefaultApiUpdate6Opts) (ResponseDtoEnvironmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -23434,20 +22126,20 @@ func (a *DefaultApiService) Update8(ctx context.Context, localVarOptionals *Defa
 DefaultApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param optional nil or *DefaultApiUpdate9Opts - Optional Parameters:
+ * @param optional nil or *DefaultApiUpdate7Opts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -
      * @param "ProjectIdentifier" (optional.String) -
 @return ResponseDtoUserGroupDto
 */
 
-type DefaultApiUpdate9Opts struct {
+type DefaultApiUpdate7Opts struct {
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DefaultApiService) Update9(ctx context.Context, body UserGroupDto, localVarOptionals *DefaultApiUpdate9Opts) (ResponseDtoUserGroupDto, *http.Response, error) {
+func (a *DefaultApiService) Update7(ctx context.Context, body UserGroupDto, localVarOptionals *DefaultApiUpdate7Opts) (ResponseDtoUserGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -23522,6 +22214,213 @@ func (a *DefaultApiService) Update9(ctx context.Context, body UserGroupDto, loca
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoUserGroupDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
+ * @param optional nil or *DefaultApiUpdate8Opts - Optional Parameters:
+     * @param "IfMatch" (optional.String) -
+     * @param "AccountId" (optional.String) -
+@return ResponseDtoServiceResponseDto
+*/
+
+type DefaultApiUpdate8Opts struct {
+	IfMatch   optional.String
+	AccountId optional.String
+}
+
+func (a *DefaultApiService) Update8(ctx context.Context, body ServiceRequestDto, localVarOptionals *DefaultApiUpdate8Opts) (ResponseDtoServiceResponseDto, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoServiceResponseDto
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/services"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
+		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
+		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
+	}
+	// body params
+	localVarPostBody = &body
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoServiceResponseDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+DefaultApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param optional nil or *DefaultApiUpdate9Opts - Optional Parameters:
+     * @param "Body" (optional.Interface of ServiceRequestDto) -
+     * @param "IfMatch" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -
+@return ResponseDtoServiceResponse
+*/
+
+type DefaultApiUpdate9Opts struct {
+	Body              optional.Interface
+	IfMatch           optional.String
+	AccountIdentifier optional.String
+}
+
+func (a *DefaultApiService) Update9(ctx context.Context, localVarOptionals *DefaultApiUpdate9Opts) (ResponseDtoServiceResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoServiceResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/servicesV2"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if localVarOptionals != nil && localVarOptionals.IfMatch.IsSet() {
+		localVarHeaderParams["If-Match"] = parameterToString(localVarOptionals.IfMatch.Value(), "")
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoServiceResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -23825,229 +22724,6 @@ func (a *DefaultApiService) UpdateInvite(ctx context.Context, body InviteDto, in
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoOptionalInviteDto
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateConfigIdentifier
- * @param accountId
- * @param optional nil or *DefaultApiUpdateScopingRulesOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of []ScopingRuleDetailsNg) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiUpdateScopingRulesOpts struct {
-	Body      optional.Interface
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) UpdateScopingRules(ctx context.Context, delegateConfigIdentifier string, accountId string, localVarOptionals *DefaultApiUpdateScopingRulesOpts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/scoping-rules"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateConfigIdentifier"+"}", fmt.Sprintf("%v", delegateConfigIdentifier), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateProfileId
- * @param optional nil or *DefaultApiUpdateScopingRules1Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of []ScopingRuleDetailsNg) -
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiUpdateScopingRules1Opts struct {
-	Body      optional.Interface
-	AccountId optional.String
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) UpdateScopingRules1(ctx context.Context, delegateProfileId string, localVarOptionals *DefaultApiUpdateScopingRules1Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng/{delegateProfileId}/scoping-rules"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateProfileId"+"}", fmt.Sprintf("%v", delegateProfileId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -24380,229 +23056,6 @@ func (a *DefaultApiService) UpdateSecretViaYaml(ctx context.Context, accountIden
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoSecretResponseWrapper
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateConfigIdentifier
- * @param accountId
- * @param optional nil or *DefaultApiUpdateSelectorsOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of []string) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiUpdateSelectorsOpts struct {
-	Body      optional.Interface
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) UpdateSelectors(ctx context.Context, delegateConfigIdentifier string, accountId string, localVarOptionals *DefaultApiUpdateSelectorsOpts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/selectors"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateConfigIdentifier"+"}", fmt.Sprintf("%v", delegateConfigIdentifier), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"accountId"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-DefaultApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param delegateProfileId
- * @param optional nil or *DefaultApiUpdateSelectors1Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of []string) -
-     * @param "AccountId" (optional.String) -
-     * @param "OrgId" (optional.String) -
-     * @param "ProjectId" (optional.String) -
-@return RestResponseDelegateProfileDetailsNg
-*/
-
-type DefaultApiUpdateSelectors1Opts struct {
-	Body      optional.Interface
-	AccountId optional.String
-	OrgId     optional.String
-	ProjectId optional.String
-}
-
-func (a *DefaultApiService) UpdateSelectors1(ctx context.Context, delegateProfileId string, localVarOptionals *DefaultApiUpdateSelectors1Opts) (RestResponseDelegateProfileDetailsNg, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseDelegateProfileDetailsNg
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/delegate-profiles/ng/{delegateProfileId}/selectors"
-	localVarPath = strings.Replace(localVarPath, "{"+"delegateProfileId"+"}", fmt.Sprintf("%v", delegateProfileId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgId.IsSet() {
-		localVarQueryParams.Add("orgId", parameterToString(localVarOptionals.OrgId.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectId.IsSet() {
-		localVarQueryParams.Add("projectId", parameterToString(localVarOptionals.ProjectId.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseDelegateProfileDetailsNg
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

@@ -10,10 +10,10 @@
 package nextgen
 
 type CdLicenseSummaryDto struct {
-	Edition string `json:"edition,omitempty"`
-	LicenseType string `json:"licenseType,omitempty"`
-	ModuleType string `json:"moduleType,omitempty"`
-	MaxExpiryTime int64 `json:"maxExpiryTime,omitempty"`
-	TotalWorkload int32 `json:"totalWorkload,omitempty"`
-	TotalServiceInstances int32 `json:"totalServiceInstances,omitempty"`
+	Edition               string `json:"edition,omitempty"`
+	LicenseType           string `json:"licenseType,omitempty"`
+	ModuleType            string `json:"moduleType,omitempty"`
+	MaxExpiryTime         int64  `json:"maxExpiryTime,omitempty"`
+	TotalWorkload         int32  `json:"totalWorkload,omitempty"`
+	TotalServiceInstances int32  `json:"totalServiceInstances,omitempty"`
 }

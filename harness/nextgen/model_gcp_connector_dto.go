@@ -10,6 +10,6 @@
 package nextgen
 
 type GcpConnectorDto struct {
-	Credential *GcpConnectorCredentialDto `json:"credential,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	Credential        *GcpConnectorCredentialDto `json:"credential,omitempty"`
+	DelegateSelectors []string                   `json:"delegateSelectors,omitempty"`
 }

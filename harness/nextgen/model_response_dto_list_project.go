@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoListProject struct {
-	Status string `json:"status,omitempty"`
-	Data []Project `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string       `json:"status,omitempty"`
+	Data          []Project    `json:"data,omitempty"`
+	MetaData      *interface{} `json:"metaData,omitempty"`
+	CorrelationId string       `json:"correlationId,omitempty"`
 }

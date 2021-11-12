@@ -10,7 +10,7 @@
 package nextgen
 
 type ServiceDeployment struct {
-	Time int64 `json:"time,omitempty"`
-	Deployments *DeploymentCount `json:"deployments,omitempty"`
-	Rate *DeploymentChangeRates `json:"rate,omitempty"`
+	Time        int64                  `json:"time,omitempty"`
+	Deployments *DeploymentCount       `json:"deployments,omitempty"`
+	Rate        *DeploymentChangeRates `json:"rate,omitempty"`
 }

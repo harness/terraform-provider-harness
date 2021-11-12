@@ -10,8 +10,8 @@
 package nextgen
 
 type ResponseDtoServiceDetailsInfoDto struct {
-	Status string `json:"status,omitempty"`
-	Data *ServiceDetailsInfoDto `json:"data,omitempty"`
-	MetaData *interface{} `json:"metaData,omitempty"`
-	CorrelationId string `json:"correlationId,omitempty"`
+	Status        string                 `json:"status,omitempty"`
+	Data          *ServiceDetailsInfoDto `json:"data,omitempty"`
+	MetaData      *interface{}           `json:"metaData,omitempty"`
+	CorrelationId string                 `json:"correlationId,omitempty"`
 }

@@ -10,12 +10,12 @@
 package nextgen
 
 type SecretDtov2 struct {
-	Type_ string `json:"type"`
-	Name string `json:"name"`
-	Identifier string `json:"identifier"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Description string `json:"description,omitempty"`
-	Spec *SecretSpecDto `json:"spec"`
+	Type_             string            `json:"type"`
+	Name              string            `json:"name"`
+	Identifier        string            `json:"identifier"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	Spec              *SecretSpecDto    `json:"spec"`
 }

@@ -10,8 +10,8 @@
 package nextgen
 
 type NewRelicConnectorDto struct {
-	NewRelicAccountId string `json:"newRelicAccountId"`
-	Url string `json:"url"`
-	ApiKeyRef string `json:"apiKeyRef"`
+	NewRelicAccountId string   `json:"newRelicAccountId"`
+	Url               string   `json:"url"`
+	ApiKeyRef         string   `json:"apiKeyRef"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 }

@@ -10,14 +10,14 @@
 package nextgen
 
 type ExecutionStatusInfo struct {
-	PipelineName string `json:"pipelineName,omitempty"`
-	PipelineIdentifier string `json:"pipelineIdentifier,omitempty"`
-	StartTs int64 `json:"startTs,omitempty"`
-	EndTs int64 `json:"endTs,omitempty"`
-	Status string `json:"status,omitempty"`
-	PlanExecutionId string `json:"planExecutionId,omitempty"`
-	GitInfo *GitInfo `json:"gitInfo,omitempty"`
-	TriggerType string `json:"triggerType,omitempty"`
-	Author *AuthorInfo `json:"author,omitempty"`
-	ServiceInfoList []ServiceDeploymentInfo `json:"serviceInfoList,omitempty"`
+	PipelineName       string                  `json:"pipelineName,omitempty"`
+	PipelineIdentifier string                  `json:"pipelineIdentifier,omitempty"`
+	StartTs            int64                   `json:"startTs,omitempty"`
+	EndTs              int64                   `json:"endTs,omitempty"`
+	Status             string                  `json:"status,omitempty"`
+	PlanExecutionId    string                  `json:"planExecutionId,omitempty"`
+	GitInfo            *GitInfo                `json:"gitInfo,omitempty"`
+	TriggerType        string                  `json:"triggerType,omitempty"`
+	Author             *AuthorInfo             `json:"author,omitempty"`
+	ServiceInfoList    []ServiceDeploymentInfo `json:"serviceInfoList,omitempty"`
 }

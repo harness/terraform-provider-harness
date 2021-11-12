@@ -10,6 +10,6 @@
 package nextgen
 
 type AwsKmsConnectorCredentialDto struct {
-	Type_ string `json:"type"`
-	Spec *AwsKmsCredentialSpecDto `json:"spec,omitempty"`
+	Type_ string                   `json:"type"`
+	Spec  *AwsKmsCredentialSpecDto `json:"spec,omitempty"`
 }

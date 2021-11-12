@@ -10,6 +10,6 @@
 package nextgen
 
 type NgTag struct {
-	Key string `json:"key"`
+	Key   string `json:"key"`
 	Value string `json:"value"`
 }

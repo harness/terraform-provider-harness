@@ -10,8 +10,8 @@
 package nextgen
 
 type AwsCurAttributesDto struct {
-	ReportName string `json:"reportName"`
+	ReportName   string `json:"reportName"`
 	S3BucketName string `json:"s3BucketName"`
-	Region string `json:"region,omitempty"`
-	S3Prefix string `json:"s3Prefix,omitempty"`
+	Region       string `json:"region,omitempty"`
+	S3Prefix     string `json:"s3Prefix,omitempty"`
 }

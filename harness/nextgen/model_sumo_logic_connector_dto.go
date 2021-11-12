@@ -10,8 +10,8 @@
 package nextgen
 
 type SumoLogicConnectorDto struct {
-	Url string `json:"url"`
-	AccessIdRef string `json:"accessIdRef"`
-	AccessKeyRef string `json:"accessKeyRef"`
+	Url               string   `json:"url"`
+	AccessIdRef       string   `json:"accessIdRef"`
+	AccessKeyRef      string   `json:"accessKeyRef"`
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 }

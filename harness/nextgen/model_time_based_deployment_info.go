@@ -10,8 +10,9 @@
 package nextgen
 
 type TimeBasedDeploymentInfo struct {
-	EpochTime int64 `json:"epochTime,omitempty"`
-	TotalCount int64 `json:"totalCount,omitempty"`
-	SuccessCount int64 `json:"successCount,omitempty"`
-	FailedCount int64 `json:"failedCount,omitempty"`
+	EpochTime    int64   `json:"epochTime,omitempty"`
+	TotalCount   int64   `json:"totalCount,omitempty"`
+	SuccessCount int64   `json:"successCount,omitempty"`
+	FailedCount  int64   `json:"failedCount,omitempty"`
+	FailureRate  float64 `json:"failureRate,omitempty"`
 }

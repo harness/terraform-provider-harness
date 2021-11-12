@@ -10,6 +10,6 @@
 package nextgen
 
 type AwsConnectorDto struct {
-	Credential *AwsCredentialDto `json:"credential"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	Credential        *AwsCredentialDto `json:"credential"`
+	DelegateSelectors []string          `json:"delegateSelectors,omitempty"`
 }

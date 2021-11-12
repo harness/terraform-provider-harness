@@ -10,8 +10,8 @@
 package nextgen
 
 type DeploymentChangeRates struct {
-	FailureRate float64 `json:"failureRate,omitempty"`
+	FailureRate           float64 `json:"failureRate,omitempty"`
 	FailureRateChangeRate float64 `json:"failureRateChangeRate,omitempty"`
-	Frequency float64 `json:"frequency,omitempty"`
-	FrequencyChangeRate float64 `json:"frequencyChangeRate,omitempty"`
+	Frequency             float64 `json:"frequency,omitempty"`
+	FrequencyChangeRate   float64 `json:"frequencyChangeRate,omitempty"`
 }

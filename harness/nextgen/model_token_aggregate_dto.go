@@ -10,8 +10,8 @@
 package nextgen
 
 type TokenAggregateDto struct {
-	Token *TokenDto `json:"token"`
-	ExpiryAt int64 `json:"expiryAt"`
-	CreatedAt int64 `json:"createdAt"`
-	LastModifiedAt int64 `json:"lastModifiedAt"`
+	Token          *TokenDto `json:"token"`
+	ExpiryAt       int64     `json:"expiryAt"`
+	CreatedAt      int64     `json:"createdAt"`
+	LastModifiedAt int64     `json:"lastModifiedAt"`
 }

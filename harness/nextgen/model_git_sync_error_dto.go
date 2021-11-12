@@ -10,16 +10,16 @@
 package nextgen
 
 type GitSyncErrorDto struct {
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	RepoUrl string `json:"repoUrl,omitempty"`
-	RepoId string `json:"repoId,omitempty"`
-	BranchName string `json:"branchName,omitempty"`
-	ChangeType string `json:"changeType,omitempty"`
-	CompleteFilePath string `json:"completeFilePath,omitempty"`
-	EntityType string `json:"entityType,omitempty"`
-	FailureReason string `json:"failureReason,omitempty"`
-	Status string `json:"status,omitempty"`
-	ErrorType string `json:"errorType,omitempty"`
+	AccountIdentifier      string                  `json:"accountIdentifier,omitempty"`
+	RepoUrl                string                  `json:"repoUrl,omitempty"`
+	RepoId                 string                  `json:"repoId,omitempty"`
+	BranchName             string                  `json:"branchName,omitempty"`
+	ChangeType             string                  `json:"changeType,omitempty"`
+	CompleteFilePath       string                  `json:"completeFilePath,omitempty"`
+	EntityType             string                  `json:"entityType,omitempty"`
+	FailureReason          string                  `json:"failureReason,omitempty"`
+	Status                 string                  `json:"status,omitempty"`
+	ErrorType              string                  `json:"errorType,omitempty"`
 	AdditionalErrorDetails *GitSyncErrorDetailsDto `json:"additionalErrorDetails,omitempty"`
-	CreatedAt int64 `json:"createdAt,omitempty"`
+	CreatedAt              int64                   `json:"createdAt,omitempty"`
 }

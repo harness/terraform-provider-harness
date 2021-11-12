@@ -10,8 +10,8 @@
 package nextgen
 
 type AccountEvent struct {
-	AccountEventType string `json:"accountEventType,omitempty"`
-	CustomMsg string `json:"customMsg,omitempty"`
-	Category string `json:"category,omitempty"`
-	Properties map[string]string `json:"properties,omitempty"`
+	AccountEventType string            `json:"accountEventType,omitempty"`
+	CustomMsg        string            `json:"customMsg,omitempty"`
+	Category         string            `json:"category,omitempty"`
+	Properties       map[string]string `json:"properties,omitempty"`
 }

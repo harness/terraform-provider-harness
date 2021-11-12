@@ -10,8 +10,8 @@
 package nextgen
 
 type DockerConnectorDto struct {
-	DockerRegistryUrl string `json:"dockerRegistryUrl"`
-	ProviderType string `json:"providerType"`
-	Auth *DockerAuthenticationDto `json:"auth,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	DockerRegistryUrl string                   `json:"dockerRegistryUrl"`
+	ProviderType      string                   `json:"providerType"`
+	Auth              *DockerAuthenticationDto `json:"auth,omitempty"`
+	DelegateSelectors []string                 `json:"delegateSelectors,omitempty"`
 }

@@ -11,5 +11,5 @@ package nextgen
 
 type TimeValuePairInteger struct {
 	Timestamp int64 `json:"timestamp,omitempty"`
-	Value int32 `json:"value,omitempty"`
+	Value     int32 `json:"value,omitempty"`
 }
