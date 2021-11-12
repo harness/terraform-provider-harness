@@ -44,11 +44,11 @@ func TestProvider_configure_url_env(t *testing.T) {
 
 	// Cleanup function
 	defer func() {
-		os.Unsetenv(helpers.EnvVars.HarnessEndpoint.String())
+		os.Unsetenv(helpers.EnvVars.Endpoint.String())
 	}()
 
 	// Configure environment
-	os.Setenv(helpers.EnvVars.HarnessEndpoint.String(), expectedEndpoint)
+	os.Setenv(helpers.EnvVars.Endpoint.String(), expectedEndpoint)
 
 	// Create provider
 	rc := terraform.NewResourceConfigRaw(map[string]interface{}{})

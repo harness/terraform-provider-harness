@@ -49,34 +49,34 @@ func New(version string) func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
 				"endpoint": {
-					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io`. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessEndpoint.String()),
+					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessEndpoint.String(), utils.DefaultApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.DefaultApiUrl),
 				},
 				"account_id": {
-					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessAccountId.String()),
+					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.AccountId.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessAccountId.String(), nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.AccountId.String(), nil),
 				},
 				"api_key": {
-					Description: fmt.Sprintf("The Harness API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessApiKey.String()),
+					Description: fmt.Sprintf("The Harness API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.ApiKey.String()),
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessApiKey.String(), nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.ApiKey.String(), nil),
 				},
 				"ng_endpoint": {
-					Description: fmt.Sprintf("The URL of the Harness nextgen API. The default is `%s`. This can also be set using the `%s` environment variable.", api.DefaultNGApiUrl, helpers.EnvVars.HarnessNGEndpoint.String()),
+					Description: fmt.Sprintf("The URL of the Harness nextgen API. The default is `%s`. This can also be set using the `%s` environment variable.", api.DefaultNGApiUrl, helpers.EnvVars.NGEndpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessNGEndpoint.String(), api.DefaultNGApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.NGEndpoint.String(), api.DefaultNGApiUrl),
 				},
 				"ng_api_key": {
-					Description: fmt.Sprintf("The Harness nextgen API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.HarnessNGApiKey.String()),
+					Description: fmt.Sprintf("The Harness nextgen API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.NGApiKey.String()),
 					Type:        schema.TypeString,
 					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.HarnessNGApiKey.String(), nil),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.NGApiKey.String(), nil),
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
@@ -98,6 +98,7 @@ func New(version string) func() *schema.Provider {
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_application":               application.ResourceApplication(),
+				"harness_delegate_approval":         delegate.ResourceDelegateApproval(),
 				"harness_encrypted_text":            secrets.ResourceEncryptedText(),
 				"harness_git_connector":             cd_connector.ResourceGitConnector(),
 				"harness_ssh_credential":            secrets.ResourceSSHCredential(),
