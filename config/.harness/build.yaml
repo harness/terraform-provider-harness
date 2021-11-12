@@ -201,3 +201,6 @@ pipeline:
                   - name: HARNESS_DELEGATE_SECRET
                     type: Secret
                     value: org.harness_delegate_secret
+                  - name: HARNESS_TEST_DELEGATE_WAIT_TIMEOUT
+                    type: String
+                    value: 60m
