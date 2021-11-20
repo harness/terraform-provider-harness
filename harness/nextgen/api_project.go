@@ -28,13 +28,13 @@ var (
 type ProjectApiService service
 
 /*
-ProjectApiService Delete a project by identifier
+ProjectApiService Delete a Project by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
+ * @param identifier Project Identifier for the entity
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *ProjectApiDeleteProjectOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the project. If left empty, the project will be create under default organization
+     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the Project. If left empty, Default Organization is assumed
 @return ResponseDtoBoolean
 */
 
@@ -152,10 +152,10 @@ func (a *ProjectApiService) DeleteProject(ctx context.Context, identifier string
 /*
 ProjectApiService Gets a Project by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
+ * @param identifier Project Identifier for the entity
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *ProjectApiGetProjectOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the project. If left empty, the project will be create under default organization
+     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the project. If left empty, Default Organization is assumed
 @return ResponseDtoProjectResponse
 */
 
@@ -269,13 +269,13 @@ func (a *ProjectApiService) GetProject(ctx context.Context, identifier string, a
 /*
 ProjectApiService List user&#x27;s project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *ProjectApiGetProjectListOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "HasModule" (optional.Bool) -
-     * @param "Identifiers" (optional.Interface of []string) -  list of projectIdentifiers to filter results by
-     * @param "ModuleType" (optional.String) -
-     * @param "SearchTerm" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "HasModule" (optional.Bool) -  This boolean specifies whether to Filter Projects which has the Module of type passed in the module type parameter or to Filter Projects which does not has the Module of type passed in the module type parameter
+     * @param "Identifiers" (optional.Interface of []string) -  list of Project Ids for filtering results
+     * @param "ModuleType" (optional.String) -  Filter Projects by module type
+     * @param "SearchTerm" (optional.String) -  Filter Projects by searching for this word in Name, Id, and Tag
      * @param "PageIndex" (optional.Int32) -
      * @param "PageSize" (optional.Int32) -
      * @param "SortOrders" (optional.Interface of []SortOrder) -
@@ -419,10 +419,10 @@ func (a *ProjectApiService) GetProjectList(ctx context.Context, accountIdentifie
 /*
 ProjectApiService Creates a Project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Details of the project to be created
- * @param accountIdentifier
+ * @param body Details of the Project to create
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *ProjectApiPostProjectOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the project. If left empty, the project will be create under default organization
+     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the Project. If left empty, the Project is created under Default Organization
 @return ResponseDtoProjectResponse
 */
 
@@ -535,14 +535,14 @@ func (a *ProjectApiService) PostProject(ctx context.Context, body ProjectRequest
 }
 
 /*
-ProjectApiService Update project by identifier
+ProjectApiService Update Project by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body This is the updated project. This should have all the fields not just the updated ones
- * @param accountIdentifier
- * @param identifier
+ * @param body This is the updated project. Please provide values for all fields, not just the fields you are updating
+ * @param accountIdentifier Account Identifier for the entity
+ * @param identifier Project Identifier for the entity
  * @param optional nil or *ProjectApiPutProjectOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the project. If left empty, the project will be create under default organization
+     * @param "OrgIdentifier" (optional.String) -  Organization identifier for the Project. If left empty, Default Organization is assumed
 @return ResponseDtoProjectResponse
 */
 

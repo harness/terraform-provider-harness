@@ -1,12 +1,12 @@
 package nextgen
 
-type KubernetesAuthMethod string
+type KubernetesAuthType string
 
-var KubernetesAuthMethods = struct {
-	UsernamePassword KubernetesAuthMethod
-	ServiceAccount   KubernetesAuthMethod
-	OpenIdConnect    KubernetesAuthMethod
-	ClientKeyCert    KubernetesAuthMethod
+var KubernetesAuthTypes = struct {
+	UsernamePassword KubernetesAuthType
+	ServiceAccount   KubernetesAuthType
+	OpenIdConnect    KubernetesAuthType
+	ClientKeyCert    KubernetesAuthType
 }{
 	UsernamePassword: "UsernamePassword",
 	ServiceAccount:   "ServiceAccount",
@@ -14,6 +14,6 @@ var KubernetesAuthMethods = struct {
 	ClientKeyCert:    "ClientKeyCert",
 }
 
-func (k KubernetesAuthMethod) String() string {
+func (k KubernetesAuthType) String() string {
 	return string(k)
 }

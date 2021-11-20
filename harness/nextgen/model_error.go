@@ -18,4 +18,5 @@ type ModelError struct {
 	DetailedMessage  string            `json:"detailedMessage,omitempty"`
 	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
 	Metadata         *ErrorMetadataDto `json:"metadata,omitempty"`
+	Errors           []ValidationError `json:"errors,omitempty"`
 }

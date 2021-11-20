@@ -33,269 +33,24 @@ Class | Method | HTTP request | Description
 *AuthenticationSettingsApi* | [**SetTwoFactorAuthAtAccountLevel**](docs/AuthenticationSettingsApi.md#settwofactorauthataccountlevel) | **Put** /authentication-settings/two-factor-admin-override-settings | set two factor auth at account lever by accountIdentifier
 *AuthenticationSettingsApi* | [**UpdateAuthMechanism**](docs/AuthenticationSettingsApi.md#updateauthmechanism) | **Put** /authentication-settings/update-auth-mechanism | Updates the Auth mechanism by accountIdentifier
 *AuthenticationSettingsApi* | [**UpdateOauthProviders**](docs/AuthenticationSettingsApi.md#updateoauthproviders) | **Put** /authentication-settings/oauth/update-providers | Updates the Oauth providers by accountIdentifier
-*AuthenticationSettingsApi* | [**UpdateSamlMetaData**](docs/AuthenticationSettingsApi.md#updatesamlmetadata) | **Put** /authentication-settings/saml-metadata-upload | Uploads the saml metadata by accountId
+*AuthenticationSettingsApi* | [**UpdateSamlMetaData**](docs/AuthenticationSettingsApi.md#updatesamlmetadata) | **Put** /authentication-settings/saml-metadata-upload | Updates the saml metadata by accountId
 *AuthenticationSettingsApi* | [**UpdateWhitelistedDomains**](docs/AuthenticationSettingsApi.md#updatewhitelisteddomains) | **Put** /authentication-settings/whitelisted-domains | Updates the Whitelisted domains by accountIdentifier
-*AuthenticationSettingsApi* | [**UploadSamlMetaData**](docs/AuthenticationSettingsApi.md#uploadsamlmetadata) | **Post** /authentication-settings/saml-metadata-upload | 
+*AuthenticationSettingsApi* | [**UploadSamlMetaData**](docs/AuthenticationSettingsApi.md#uploadsamlmetadata) | **Post** /authentication-settings/saml-metadata-upload | Uploads the saml metadata by accountId
 *ConnectorsApi* | [**CreateConnector**](docs/ConnectorsApi.md#createconnector) | **Post** /connectors | Creates a Connector
 *ConnectorsApi* | [**DeleteConnector**](docs/ConnectorsApi.md#deleteconnector) | **Delete** /connectors/{identifier} | Deletes Connector by identifier
 *ConnectorsApi* | [**GetAllAllowedFieldValues**](docs/ConnectorsApi.md#getallallowedfieldvalues) | **Get** /connectors/fieldValues | Get the allowed field values by Connector Type
 *ConnectorsApi* | [**GetCEAwsTemplate**](docs/ConnectorsApi.md#getceawstemplate) | **Post** /connectors/getceawstemplateurl | Get the Template URL of connector
 *ConnectorsApi* | [**GetConnector**](docs/ConnectorsApi.md#getconnector) | **Get** /connectors/{identifier} | get the Connector by accountIdentifier and connectorIdentifier
 *ConnectorsApi* | [**GetConnectorCatalogue**](docs/ConnectorsApi.md#getconnectorcatalogue) | **Get** /connectors/catalogue | gets the connector catalogue by accountIdentifier
-*ConnectorsApi* | [**GetConnectorList**](docs/ConnectorsApi.md#getconnectorlist) | **Get** /connectors | Get the list of connectors satisfying the criteria (if any) in the request
-*ConnectorsApi* | [**GetConnectorListV2**](docs/ConnectorsApi.md#getconnectorlistv2) | **Post** /connectors/listV2 | Get the list of connectors satisfying the criteria (if any) in the request
+*ConnectorsApi* | [**GetConnectorList**](docs/ConnectorsApi.md#getconnectorlist) | **Get** /connectors | Get the list of Connectors satisfying the criteria (if any) in the request
+*ConnectorsApi* | [**GetConnectorListV2**](docs/ConnectorsApi.md#getconnectorlistv2) | **Post** /connectors/listV2 | Get the list of Connectors satisfying the criteria (if any) in the request
 *ConnectorsApi* | [**GetConnectorStatistics**](docs/ConnectorsApi.md#getconnectorstatistics) | **Get** /connectors/stats | gets the connector&#x27;s statistics by accountIdentifier, projectIdentifier and orgIdentifier
 *ConnectorsApi* | [**GetConnectorValidationParams**](docs/ConnectorsApi.md#getconnectorvalidationparams) | **Get** /connectors/{identifier}/validation-params | 
-*ConnectorsApi* | [**GetTestConnectionResult**](docs/ConnectorsApi.md#gettestconnectionresult) | **Post** /connectors/testConnection/{identifier} | Tests the connection of the connector by Identifier
+*ConnectorsApi* | [**GetTestConnectionResult**](docs/ConnectorsApi.md#gettestconnectionresult) | **Post** /connectors/testConnection/{identifier} | Tests the connection of the Connector by Identifier
 *ConnectorsApi* | [**GetTestGitRepoConnectionResult**](docs/ConnectorsApi.md#gettestgitrepoconnectionresult) | **Post** /connectors/testGitRepoConnection/{identifier} | Tests the created Connector&#x27;s connection
 *ConnectorsApi* | [**ListConnectorByFQN**](docs/ConnectorsApi.md#listconnectorbyfqn) | **Post** /connectors/listbyfqn | Get the list of connectors by FQN satisfying the criteria (if any) in the request
 *ConnectorsApi* | [**PutConnector**](docs/ConnectorsApi.md#putconnector) | **Put** /connectors | Updates the Connector
 *ConnectorsApi* | [**ValidateTheIdentifierIsUnique**](docs/ConnectorsApi.md#validatetheidentifierisunique) | **Get** /connectors/validateUniqueIdentifier | validate the Connector by accountIdentifier and connectorIdentifier
-*DefaultApi* | [**Accept**](docs/DefaultApi.md#accept) | **Get** /invites/accept | 
-*DefaultApi* | [**AddMember**](docs/DefaultApi.md#addmember) | **Put** /user-groups/{identifier}/member/{userIdentifier} | 
-*DefaultApi* | [**AddUsers**](docs/DefaultApi.md#addusers) | **Post** /user/users | 
-*DefaultApi* | [**ChangeUserPassword**](docs/DefaultApi.md#changeuserpassword) | **Put** /user/password | 
-*DefaultApi* | [**CheckIfLastAdmin**](docs/DefaultApi.md#checkiflastadmin) | **Get** /user/last-admin | 
-*DefaultApi* | [**CheckMember**](docs/DefaultApi.md#checkmember) | **Get** /user-groups/{identifier}/member/{userIdentifier} | 
-*DefaultApi* | [**CheckUserMembership**](docs/DefaultApi.md#checkusermembership) | **Get** /user/usermembership | 
-*DefaultApi* | [**CommunitySignup**](docs/DefaultApi.md#communitysignup) | **Post** /signup/community | 
-*DefaultApi* | [**CompleteInvite**](docs/DefaultApi.md#completeinvite) | **Get** /invites/complete | 
-*DefaultApi* | [**CompleteSignupInvite**](docs/DefaultApi.md#completesignupinvite) | **Put** /signup/complete/{token} | 
-*DefaultApi* | [**Create**](docs/DefaultApi.md#create) | **Post** /filters | 
-*DefaultApi* | [**Create1**](docs/DefaultApi.md#create1) | **Post** /gitopsproviders | 
-*DefaultApi* | [**Create10**](docs/DefaultApi.md#create10) | **Post** /user-groups | 
-*DefaultApi* | [**Create11**](docs/DefaultApi.md#create11) | **Post** /services | 
-*DefaultApi* | [**Create12**](docs/DefaultApi.md#create12) | **Post** /servicesV2 | 
-*DefaultApi* | [**Create2**](docs/DefaultApi.md#create2) | **Post** /git-sync-settings | 
-*DefaultApi* | [**Create3**](docs/DefaultApi.md#create3) | **Post** /git-sync | 
-*DefaultApi* | [**Create4**](docs/DefaultApi.md#create4) | **Post** /admin/licenses | 
-*DefaultApi* | [**Create5**](docs/DefaultApi.md#create5) | **Post** /roleassignments/multi/internal | 
-*DefaultApi* | [**Create6**](docs/DefaultApi.md#create6) | **Post** /roleassignments | 
-*DefaultApi* | [**Create7**](docs/DefaultApi.md#create7) | **Post** /environments | 
-*DefaultApi* | [**Create8**](docs/DefaultApi.md#create8) | **Post** /environmentsV2 | 
-*DefaultApi* | [**Create9**](docs/DefaultApi.md#create9) | **Post** /v2/secrets | 
-*DefaultApi* | [**CreateApiKey**](docs/DefaultApi.md#createapikey) | **Post** /apikey | 
-*DefaultApi* | [**CreateInvitations**](docs/DefaultApi.md#createinvitations) | **Post** /invites | 
-*DefaultApi* | [**CreatePR**](docs/DefaultApi.md#createpr) | **Post** /scm/createPR | 
-*DefaultApi* | [**CreateSecretFile**](docs/DefaultApi.md#createsecretfile) | **Post** /v2/secrets/files | 
-*DefaultApi* | [**CreateServiceAccount**](docs/DefaultApi.md#createserviceaccount) | **Post** /serviceaccount | 
-*DefaultApi* | [**CreateServices**](docs/DefaultApi.md#createservices) | **Post** /services/batch | 
-*DefaultApi* | [**CreateServices1**](docs/DefaultApi.md#createservices1) | **Post** /servicesV2/batch | 
-*DefaultApi* | [**CreateToken**](docs/DefaultApi.md#createtoken) | **Post** /token | 
-*DefaultApi* | [**CreateViaYaml**](docs/DefaultApi.md#createviayaml) | **Post** /v2/secrets/yaml | 
-*DefaultApi* | [**DecryptEncryptedDetails**](docs/DefaultApi.md#decryptencrypteddetails) | **Post** /v2/secrets/decrypt-encryption-details | 
-*DefaultApi* | [**Delete**](docs/DefaultApi.md#delete) | **Delete** /filters/{identifier} | 
-*DefaultApi* | [**Delete1**](docs/DefaultApi.md#delete1) | **Delete** /gitopsproviders/{identifier} | 
-*DefaultApi* | [**Delete10**](docs/DefaultApi.md#delete10) | **Delete** /source-code-manager/{identifier} | 
-*DefaultApi* | [**Delete2**](docs/DefaultApi.md#delete2) | **Delete** /entitySetupUsage/internal | 
-*DefaultApi* | [**Delete3**](docs/DefaultApi.md#delete3) | **Delete** /environments/{environmentIdentifier} | 
-*DefaultApi* | [**Delete4**](docs/DefaultApi.md#delete4) | **Delete** /environmentsV2/{environmentIdentifier} | 
-*DefaultApi* | [**Delete5**](docs/DefaultApi.md#delete5) | **Delete** /invites/{inviteId} | 
-*DefaultApi* | [**Delete6**](docs/DefaultApi.md#delete6) | **Delete** /v2/secrets/{identifier} | 
-*DefaultApi* | [**Delete7**](docs/DefaultApi.md#delete7) | **Delete** /user-groups/{identifier} | 
-*DefaultApi* | [**Delete8**](docs/DefaultApi.md#delete8) | **Delete** /services/{serviceIdentifier} | 
-*DefaultApi* | [**Delete9**](docs/DefaultApi.md#delete9) | **Delete** /servicesV2/{serviceIdentifier} | 
-*DefaultApi* | [**DeleteApiKey**](docs/DefaultApi.md#deleteapikey) | **Delete** /apikey/{identifier} | 
-*DefaultApi* | [**DeleteServiceAccount**](docs/DefaultApi.md#deleteserviceaccount) | **Delete** /serviceaccount/{identifier} | 
-*DefaultApi* | [**DeleteToken**](docs/DefaultApi.md#deletetoken) | **Delete** /token/{identifier} | 
-*DefaultApi* | [**DisableTFA**](docs/DefaultApi.md#disabletfa) | **Put** /user/disable-two-factor-auth | 
-*DefaultApi* | [**DummyApiForSwaggerSchemaCheck**](docs/DefaultApi.md#dummyapiforswaggerschemacheck) | **Get** /executions/dummyApiForSwaggerSchemaCheck | 
-*DefaultApi* | [**EvaluateCustomFeatureRestriction**](docs/DefaultApi.md#evaluatecustomfeaturerestriction) | **Put** /enforcement/client/custom/{featureRestrictionName} | 
-*DefaultApi* | [**Get**](docs/DefaultApi.md#get) | **Get** /filters/{identifier} | 
-*DefaultApi* | [**Get1**](docs/DefaultApi.md#get1) | **Get** /gitopsproviders/{identifier} | 
-*DefaultApi* | [**Get10**](docs/DefaultApi.md#get10) | **Get** /user-groups/{identifier} | 
-*DefaultApi* | [**Get11**](docs/DefaultApi.md#get11) | **Get** /services/{serviceIdentifier} | 
-*DefaultApi* | [**Get12**](docs/DefaultApi.md#get12) | **Get** /servicesV2/{serviceIdentifier} | 
-*DefaultApi* | [**Get13**](docs/DefaultApi.md#get13) | **Get** /source-code-manager | 
-*DefaultApi* | [**Get2**](docs/DefaultApi.md#get2) | **Get** /git-sync-settings | 
-*DefaultApi* | [**Get3**](docs/DefaultApi.md#get3) | **Post** /roleassignments/filter | 
-*DefaultApi* | [**Get4**](docs/DefaultApi.md#get4) | **Get** /environments/{environmentIdentifier} | 
-*DefaultApi* | [**Get5**](docs/DefaultApi.md#get5) | **Get** /environmentsV2/{environmentIdentifier} | 
-*DefaultApi* | [**Get6**](docs/DefaultApi.md#get6) | **Get** /health | 
-*DefaultApi* | [**Get7**](docs/DefaultApi.md#get7) | **Get** /aggregate/projects/{identifier} | 
-*DefaultApi* | [**Get8**](docs/DefaultApi.md#get8) | **Get** /aggregate/organizations/{identifier} | 
-*DefaultApi* | [**Get9**](docs/DefaultApi.md#get9) | **Get** /v2/secrets/{identifier} | 
-*DefaultApi* | [**GetAccessibleProjectsCount**](docs/DefaultApi.md#getaccessibleprojectscount) | **Get** /user/projects-count | 
-*DefaultApi* | [**GetAccountLicensesDTO**](docs/DefaultApi.md#getaccountlicensesdto) | **Get** /admin/licenses/{accountIdentifier} | 
-*DefaultApi* | [**GetAccountResourcesCount**](docs/DefaultApi.md#getaccountresourcescount) | **Get** /aggregate/account-resources | 
-*DefaultApi* | [**GetActiveDeploymentStats**](docs/DefaultApi.md#getactivedeploymentstats) | **Get** /landingDashboards/activeDeploymentStats | 
-*DefaultApi* | [**GetActiveInstancesByServiceIdEnvIdAndBuildIds**](docs/DefaultApi.md#getactiveinstancesbyserviceidenvidandbuildids) | **Get** /dashboard/getInstancesByServiceEnvAndBuilds | 
-*DefaultApi* | [**GetActiveServiceInstanceCountBreakdown**](docs/DefaultApi.md#getactiveserviceinstancecountbreakdown) | **Get** /dashboard/getInstanceCountDetailsByService | 
-*DefaultApi* | [**GetActiveServiceInstanceSummary**](docs/DefaultApi.md#getactiveserviceinstancesummary) | **Get** /dashboard/getActiveServiceInstanceSummary | 
-*DefaultApi* | [**GetActiveServices**](docs/DefaultApi.md#getactiveservices) | **Get** /landingDashboards/activeServices | 
-*DefaultApi* | [**GetActivitiesSummary**](docs/DefaultApi.md#getactivitiessummary) | **Get** /activityHistory/summary | 
-*DefaultApi* | [**GetAggregated**](docs/DefaultApi.md#getaggregated) | **Post** /roleassignments/aggregate | 
-*DefaultApi* | [**GetAggregatedApiKey**](docs/DefaultApi.md#getaggregatedapikey) | **Get** /apikey/aggregate/{identifier} | 
-*DefaultApi* | [**GetAggregatedServiceAccount**](docs/DefaultApi.md#getaggregatedserviceaccount) | **Get** /serviceaccount/aggregate/{identifier} | 
-*DefaultApi* | [**GetAggregatedUser**](docs/DefaultApi.md#getaggregateduser) | **Get** /user/aggregate/{userId} | 
-*DefaultApi* | [**GetAggregatedUsers**](docs/DefaultApi.md#getaggregatedusers) | **Post** /user/aggregate | 
-*DefaultApi* | [**GetBuckets**](docs/DefaultApi.md#getbuckets) | **Get** /buckets/s3/getBuckets | 
-*DefaultApi* | [**GetBuildDetails**](docs/DefaultApi.md#getbuilddetails) | **Get** /artifacts/docker/getBuildDetails | 
-*DefaultApi* | [**GetBuildDetails1**](docs/DefaultApi.md#getbuilddetails1) | **Get** /artifacts/ecr/getBuildDetails | 
-*DefaultApi* | [**GetBuildDetails2**](docs/DefaultApi.md#getbuilddetails2) | **Get** /artifacts/gcr/getBuildDetails | 
-*DefaultApi* | [**GetBuildDetails3**](docs/DefaultApi.md#getbuilddetails3) | **Post** /artifacts/gcr/getBuildDetailsV2 | 
-*DefaultApi* | [**GetBuildDetailsV2**](docs/DefaultApi.md#getbuilddetailsv2) | **Post** /artifacts/docker/getBuildDetailsV2 | 
-*DefaultApi* | [**GetBuildDetailsV21**](docs/DefaultApi.md#getbuilddetailsv21) | **Post** /artifacts/ecr/getBuildDetailsV2 | 
-*DefaultApi* | [**GetConnectivitySummary**](docs/DefaultApi.md#getconnectivitysummary) | **Get** /activityHistory/connectivityCheckSummary | 
-*DefaultApi* | [**GetCurrentGenUsers**](docs/DefaultApi.md#getcurrentgenusers) | **Get** /user/currentgen | 
-*DefaultApi* | [**GetDeploymentExecution**](docs/DefaultApi.md#getdeploymentexecution) | **Get** /dashboard/deploymentExecution | 
-*DefaultApi* | [**GetDeploymentExecutionInfo**](docs/DefaultApi.md#getdeploymentexecutioninfo) | **Get** /dashboard/serviceDeploymentsInfo | 
-*DefaultApi* | [**GetDeploymentHealth**](docs/DefaultApi.md#getdeploymenthealth) | **Get** /dashboard/deploymentHealth | 
-*DefaultApi* | [**GetDeploymentStatsSummary**](docs/DefaultApi.md#getdeploymentstatssummary) | **Get** /landingDashboards/deploymentStatsSummary | 
-*DefaultApi* | [**GetDeployments**](docs/DefaultApi.md#getdeployments) | **Get** /dashboard/getDeployments | 
-*DefaultApi* | [**GetDeploymentsByServiceId**](docs/DefaultApi.md#getdeploymentsbyserviceid) | **Get** /dashboard/getDeploymentsByServiceId | 
-*DefaultApi* | [**GetDummyCDPipelineModuleInfo**](docs/DefaultApi.md#getdummycdpipelinemoduleinfo) | **Get** /executions/dummyCDPipelineModuleInfo | 
-*DefaultApi* | [**GetDummyCDStageModuleInfo**](docs/DefaultApi.md#getdummycdstagemoduleinfo) | **Get** /executions/dummyCDStageModuleInfo | 
-*DefaultApi* | [**GetEncryptionDetails**](docs/DefaultApi.md#getencryptiondetails) | **Post** /v2/secrets/encryption-details | 
-*DefaultApi* | [**GetEnvBuildInstanceCount**](docs/DefaultApi.md#getenvbuildinstancecount) | **Get** /dashboard/getEnvBuildInstanceCountByService | 
-*DefaultApi* | [**GetEnvCount**](docs/DefaultApi.md#getenvcount) | **Get** /landingDashboards/envCount | 
-*DefaultApi* | [**GetErrorCount**](docs/DefaultApi.md#geterrorcount) | **Get** /git-sync-errors/count | 
-*DefaultApi* | [**GetExecutionStatuses**](docs/DefaultApi.md#getexecutionstatuses) | **Get** /executions/executionStatus | 
-*DefaultApi* | [**GetExecutionStrategyList**](docs/DefaultApi.md#getexecutionstrategylist) | **Get** /pipelines/configuration/strategies | 
-*DefaultApi* | [**GetExecutionStrategyYaml**](docs/DefaultApi.md#getexecutionstrategyyaml) | **Get** /pipelines/configuration/strategies/yaml-snippets | 
-*DefaultApi* | [**GetFeatureUsage**](docs/DefaultApi.md#getfeatureusage) | **Put** /enforcement/client/usage/{featureRestrictionName} | 
-*DefaultApi* | [**GetFileContent**](docs/DefaultApi.md#getfilecontent) | **Get** /scm/fileContent | 
-*DefaultApi* | [**GetImages**](docs/DefaultApi.md#getimages) | **Get** /artifacts/ecr/getImages | 
-*DefaultApi* | [**GetInstanceCountHistory**](docs/DefaultApi.md#getinstancecounthistory) | **Get** /dashboard/getInstanceCountHistory | 
-*DefaultApi* | [**GetInstanceGrowthTrend**](docs/DefaultApi.md#getinstancegrowthtrend) | **Get** /dashboard/getInstanceGrowthTrend | 
-*DefaultApi* | [**GetInstanceNGData**](docs/DefaultApi.md#getinstancengdata) | **Get** /instanceng | 
-*DefaultApi* | [**GetInviteWithToken**](docs/DefaultApi.md#getinvitewithtoken) | **Get** /invites/invite | 
-*DefaultApi* | [**GetInvites**](docs/DefaultApi.md#getinvites) | **Get** /invites | 
-*DefaultApi* | [**GetIssueCreateMetadata**](docs/DefaultApi.md#getissuecreatemetadata) | **Get** /jira/createMetadata | 
-*DefaultApi* | [**GetIssueUpdateMetadata**](docs/DefaultApi.md#getissueupdatemetadata) | **Get** /jira/updateMetadata | 
-*DefaultApi* | [**GetLabels**](docs/DefaultApi.md#getlabels) | **Post** /artifacts/docker/getLabels | 
-*DefaultApi* | [**GetLastSuccessfulBuild**](docs/DefaultApi.md#getlastsuccessfulbuild) | **Post** /artifacts/docker/getLastSuccessfulBuild | 
-*DefaultApi* | [**GetLastSuccessfulBuild1**](docs/DefaultApi.md#getlastsuccessfulbuild1) | **Post** /artifacts/ecr/getLastSuccessfulBuild | 
-*DefaultApi* | [**GetLastSuccessfulBuild2**](docs/DefaultApi.md#getlastsuccessfulbuild2) | **Post** /artifacts/gcr/getLastSuccessfulBuild | 
-*DefaultApi* | [**GetListBuckets**](docs/DefaultApi.md#getlistbuckets) | **Get** /buckets/gcs | 
-*DefaultApi* | [**GetPendingInvites**](docs/DefaultApi.md#getpendinginvites) | **Post** /invites/aggregate | 
-*DefaultApi* | [**GetProjects**](docs/DefaultApi.md#getprojects) | **Get** /jira/projects | 
-*DefaultApi* | [**GetProvisionerExecutionStrategyYaml**](docs/DefaultApi.md#getprovisionerexecutionstrategyyaml) | **Get** /pipelines/configuration/strategies/provisioner-yaml-snippets | Gets Yaml for Execution Strategy based on Provisioner Type
-*DefaultApi* | [**GetProvisionerSteps**](docs/DefaultApi.md#getprovisionersteps) | **Get** /pipelines/configuration/provisioner-steps | Get provisioner steps
-*DefaultApi* | [**GetSchemaFile**](docs/DefaultApi.md#getschemafile) | **Get** /yamlschema/schemafile | 
-*DefaultApi* | [**GetSecretEngines**](docs/DefaultApi.md#getsecretengines) | **Post** /secret-managers/meta-data | 
-*DefaultApi* | [**GetSecretManager**](docs/DefaultApi.md#getsecretmanager) | **Get** /secret-managers/{identifier} | 
-*DefaultApi* | [**GetServiceDefinitionTypes**](docs/DefaultApi.md#getservicedefinitiontypes) | **Get** /pipelines/configuration/serviceDefinitionTypes | 
-*DefaultApi* | [**GetServiceDeployment**](docs/DefaultApi.md#getservicedeployment) | **Get** /dashboard/serviceDeployments | 
-*DefaultApi* | [**GetServiceDeployments**](docs/DefaultApi.md#getservicedeployments) | **Get** /dashboard/serviceDetails | 
-*DefaultApi* | [**GetServiceHeaderInfo**](docs/DefaultApi.md#getserviceheaderinfo) | **Get** /dashboard/getServiceHeaderInfo | 
-*DefaultApi* | [**GetServicesCount**](docs/DefaultApi.md#getservicescount) | **Get** /landingDashboards/servicesCount | 
-*DefaultApi* | [**GetServicesGrowthTrend**](docs/DefaultApi.md#getservicesgrowthtrend) | **Get** /dashboard/getServicesGrowthTrend | 
-*DefaultApi* | [**GetStatuses**](docs/DefaultApi.md#getstatuses) | **Get** /jira/statuses | 
-*DefaultApi* | [**GetSteps**](docs/DefaultApi.md#getsteps) | **Get** /pipelines/configuration/steps | 
-*DefaultApi* | [**GetToken**](docs/DefaultApi.md#gettoken) | **Get** /token | 
-*DefaultApi* | [**GetTopProjects**](docs/DefaultApi.md#gettopprojects) | **Get** /landingDashboards/topProjects | 
-*DefaultApi* | [**GetTwoFactorAuthSettingsInfo**](docs/DefaultApi.md#gettwofactorauthsettingsinfo) | **Get** /user/two-factor-auth/{authMechanism} | 
-*DefaultApi* | [**GetUserAllProjectsInfo**](docs/DefaultApi.md#getuserallprojectsinfo) | **Get** /user/all-projects | 
-*DefaultApi* | [**GetUserInfo**](docs/DefaultApi.md#getuserinfo) | **Get** /user/currentUser | 
-*DefaultApi* | [**GetUserProjectInfo**](docs/DefaultApi.md#getuserprojectinfo) | **Get** /user/projects | 
-*DefaultApi* | [**GetUsers**](docs/DefaultApi.md#getusers) | **Post** /user/batch | 
-*DefaultApi* | [**GetUsersInUserGroup**](docs/DefaultApi.md#getusersinusergroup) | **Post** /user-groups/{identifier}/users | 
-*DefaultApi* | [**GetWorkloads**](docs/DefaultApi.md#getworkloads) | **Get** /dashboard/getWorkloads | 
-*DefaultApi* | [**GetYamlSchema**](docs/DefaultApi.md#getyamlschema) | **Get** /partial-yaml-schema | 
-*DefaultApi* | [**GetYamlSchema1**](docs/DefaultApi.md#getyamlschema1) | **Get** /yaml-schema | 
-*DefaultApi* | [**GetYamlSnippet**](docs/DefaultApi.md#getyamlsnippet) | **Get** /yaml-snippet/{identifier} | 
-*DefaultApi* | [**GetYamlSnippetsMetaData**](docs/DefaultApi.md#getyamlsnippetsmetadata) | **Get** /yaml-snippet | 
-*DefaultApi* | [**IsEntityReferenced**](docs/DefaultApi.md#isentityreferenced) | **Get** /entitySetupUsage/internal/isEntityReferenced | 
-*DefaultApi* | [**IsGitSyncEnabled**](docs/DefaultApi.md#isgitsyncenabled) | **Get** /git-sync/git-sync-enabled | 
-*DefaultApi* | [**IsSaasGit**](docs/DefaultApi.md#issaasgit) | **Post** /scm/isSaasGit | 
-*DefaultApi* | [**LinkToSamlGroup**](docs/DefaultApi.md#linktosamlgroup) | **Put** /user-groups/{userGroupId}/link/saml/{samlId} | 
-*DefaultApi* | [**List**](docs/DefaultApi.md#list) | **Get** /filters | 
-*DefaultApi* | [**List1**](docs/DefaultApi.md#list1) | **Get** /gitopsproviders/list | 
-*DefaultApi* | [**List10**](docs/DefaultApi.md#list10) | **Get** /v2/secrets | 
-*DefaultApi* | [**List11**](docs/DefaultApi.md#list11) | **Post** /user-groups/batch | 
-*DefaultApi* | [**List12**](docs/DefaultApi.md#list12) | **Get** /user-groups | 
-*DefaultApi* | [**List2**](docs/DefaultApi.md#list2) | **Get** /git-sync | 
-*DefaultApi* | [**List3**](docs/DefaultApi.md#list3) | **Get** /activityHistory | 
-*DefaultApi* | [**List4**](docs/DefaultApi.md#list4) | **Get** /entitySetupUsage | 
-*DefaultApi* | [**List5**](docs/DefaultApi.md#list5) | **Get** /aggregate/acl/usergroups | 
-*DefaultApi* | [**List6**](docs/DefaultApi.md#list6) | **Get** /aggregate/projects | 
-*DefaultApi* | [**List7**](docs/DefaultApi.md#list7) | **Post** /aggregate/acl/usergroups/filter | 
-*DefaultApi* | [**List8**](docs/DefaultApi.md#list8) | **Get** /aggregate/organizations | 
-*DefaultApi* | [**List9**](docs/DefaultApi.md#list9) | **Get** /aggregate/acl/usergroups/{identifier} | 
-*DefaultApi* | [**ListAccessEnvironment**](docs/DefaultApi.md#listaccessenvironment) | **Get** /environmentsV2/list/access | 
-*DefaultApi* | [**ListAccessServices**](docs/DefaultApi.md#listaccessservices) | **Get** /servicesV2/list/access | 
-*DefaultApi* | [**ListAggregatedApiKeys**](docs/DefaultApi.md#listaggregatedapikeys) | **Get** /apikey/aggregate | 
-*DefaultApi* | [**ListAggregatedServiceAccounts**](docs/DefaultApi.md#listaggregatedserviceaccounts) | **Get** /serviceaccount/aggregate | 
-*DefaultApi* | [**ListAggregatedTokens**](docs/DefaultApi.md#listaggregatedtokens) | **Get** /token/aggregate | 
-*DefaultApi* | [**ListAllEntityUsage**](docs/DefaultApi.md#listallentityusage) | **Get** /entitySetupUsage/internal | 
-*DefaultApi* | [**ListAllReferredUsages**](docs/DefaultApi.md#listallreferredusages) | **Get** /entitySetupUsage/internal/listAllReferredUsages | 
-*DefaultApi* | [**ListAllReferredUsagesBatch**](docs/DefaultApi.md#listallreferredusagesbatch) | **Post** /entitySetupUsage/internal/listAllReferredUsagesBatch | 
-*DefaultApi* | [**ListApiKeys**](docs/DefaultApi.md#listapikeys) | **Get** /apikey | 
-*DefaultApi* | [**ListBranchesForRepo**](docs/DefaultApi.md#listbranchesforrepo) | **Get** /scm/listRepoBranches | 
-*DefaultApi* | [**ListBranchesForRepo1**](docs/DefaultApi.md#listbranchesforrepo1) | **Get** /scm/listBranchesByGitConfig | 
-*DefaultApi* | [**ListBranchesWithStatusForRepo**](docs/DefaultApi.md#listbrancheswithstatusforrepo) | **Get** /git-sync-branch/listBranchesWithStatus | 
-*DefaultApi* | [**ListBranchesWithStatusForRepo1**](docs/DefaultApi.md#listbrancheswithstatusforrepo1) | **Post** /git-sync-branch/sync | 
-*DefaultApi* | [**ListByType**](docs/DefaultApi.md#listbytype) | **Get** /git-sync-entities/{entityType} | 
-*DefaultApi* | [**ListEnvironment**](docs/DefaultApi.md#listenvironment) | **Get** /environmentsV2 | 
-*DefaultApi* | [**ListEnvironmentsForProject**](docs/DefaultApi.md#listenvironmentsforproject) | **Get** /environments | 
-*DefaultApi* | [**ListGitSyncErrors**](docs/DefaultApi.md#listgitsyncerrors) | **Get** /git-sync-errors | 
-*DefaultApi* | [**ListGitSyncErrorsForACommit**](docs/DefaultApi.md#listgitsyncerrorsforacommit) | **Get** /git-sync-errors/commits/{commitId} | 
-*DefaultApi* | [**ListGitToHarnessErrorsGroupedByCommits**](docs/DefaultApi.md#listgittoharnesserrorsgroupedbycommits) | **Get** /git-sync-errors/aggregate | 
-*DefaultApi* | [**ListSecrets**](docs/DefaultApi.md#listsecrets) | **Post** /v2/secrets/list | 
-*DefaultApi* | [**ListServiceAccounts**](docs/DefaultApi.md#listserviceaccounts) | **Get** /serviceaccount | 
-*DefaultApi* | [**ListServices**](docs/DefaultApi.md#listservices) | **Get** /servicesV2 | 
-*DefaultApi* | [**ListServicesForProject**](docs/DefaultApi.md#listservicesforproject) | **Get** /services | 
-*DefaultApi* | [**ListSummary**](docs/DefaultApi.md#listsummary) | **Post** /git-sync-entities/summary | 
-*DefaultApi* | [**ListSummaryByRepoAndBranch**](docs/DefaultApi.md#listsummarybyrepoandbranch) | **Post** /git-sync-entities/branch/{branch} | 
-*DefaultApi* | [**ProcessInstanceSyncPerpetualTaskResponse**](docs/DefaultApi.md#processinstancesyncperpetualtaskresponse) | **Post** /instancesync/response | 
-*DefaultApi* | [**ProcessPollingResultNg**](docs/DefaultApi.md#processpollingresultng) | **Post** /polling/delegate-response/{perpetualTaskId} | 
-*DefaultApi* | [**RemoveMember**](docs/DefaultApi.md#removemember) | **Delete** /user-groups/{identifier}/member/{userIdentifier} | 
-*DefaultApi* | [**RemoveUser**](docs/DefaultApi.md#removeuser) | **Delete** /user/{userId} | 
-*DefaultApi* | [**RemoveUserInternal**](docs/DefaultApi.md#removeuserinternal) | **Delete** /user/internal/{userId} | 
-*DefaultApi* | [**ResendVerifyEmail**](docs/DefaultApi.md#resendverifyemail) | **Post** /signup/verify-notification | 
-*DefaultApi* | [**RotateToken**](docs/DefaultApi.md#rotatetoken) | **Post** /token/rotate/{identifier} | 
-*DefaultApi* | [**Save**](docs/DefaultApi.md#save) | **Post** /activityHistory | 
-*DefaultApi* | [**Save1**](docs/DefaultApi.md#save1) | **Post** /entitySetupUsage/internal | 
-*DefaultApi* | [**Save2**](docs/DefaultApi.md#save2) | **Post** /source-code-manager | 
-*DefaultApi* | [**Signup**](docs/DefaultApi.md#signup) | **Post** /signup | 
-*DefaultApi* | [**SignupOAuth**](docs/DefaultApi.md#signupoauth) | **Post** /signup/oauth | 
-*DefaultApi* | [**Subscribe**](docs/DefaultApi.md#subscribe) | **Post** /polling/subscribe | 
-*DefaultApi* | [**UnlinkSsoGroup**](docs/DefaultApi.md#unlinkssogroup) | **Put** /user-groups/{userGroupId}/unlink | 
-*DefaultApi* | [**UnlockUser**](docs/DefaultApi.md#unlockuser) | **Put** /user/unlock-user/{userId} | 
-*DefaultApi* | [**Unsubscribe**](docs/DefaultApi.md#unsubscribe) | **Post** /polling/unsubscribe | 
-*DefaultApi* | [**Update**](docs/DefaultApi.md#update) | **Put** /filters | 
-*DefaultApi* | [**Update1**](docs/DefaultApi.md#update1) | **Put** /gitopsproviders | 
-*DefaultApi* | [**Update10**](docs/DefaultApi.md#update10) | **Put** /source-code-manager/{identifier} | 
-*DefaultApi* | [**Update2**](docs/DefaultApi.md#update2) | **Put** /git-sync-settings | 
-*DefaultApi* | [**Update3**](docs/DefaultApi.md#update3) | **Put** /git-sync | 
-*DefaultApi* | [**Update4**](docs/DefaultApi.md#update4) | **Put** /admin/licenses/{identifier} | 
-*DefaultApi* | [**Update5**](docs/DefaultApi.md#update5) | **Put** /environments | 
-*DefaultApi* | [**Update6**](docs/DefaultApi.md#update6) | **Put** /environmentsV2 | 
-*DefaultApi* | [**Update7**](docs/DefaultApi.md#update7) | **Put** /user-groups | 
-*DefaultApi* | [**Update8**](docs/DefaultApi.md#update8) | **Put** /services | 
-*DefaultApi* | [**Update9**](docs/DefaultApi.md#update9) | **Put** /servicesV2 | 
-*DefaultApi* | [**UpdateApiKey**](docs/DefaultApi.md#updateapikey) | **Put** /apikey/{identifier} | 
-*DefaultApi* | [**UpdateDefault**](docs/DefaultApi.md#updatedefault) | **Put** /git-sync/{identifier}/folder/{folderIdentifier}/default | 
-*DefaultApi* | [**UpdateInvite**](docs/DefaultApi.md#updateinvite) | **Put** /invites/{inviteId} | 
-*DefaultApi* | [**UpdateSecret**](docs/DefaultApi.md#updatesecret) | **Put** /v2/secrets/{identifier} | 
-*DefaultApi* | [**UpdateSecretFile**](docs/DefaultApi.md#updatesecretfile) | **Put** /v2/secrets/files/{identifier} | 
-*DefaultApi* | [**UpdateSecretViaYaml**](docs/DefaultApi.md#updatesecretviayaml) | **Put** /v2/secrets/{identifier}/yaml | 
-*DefaultApi* | [**UpdateServiceAccount**](docs/DefaultApi.md#updateserviceaccount) | **Put** /serviceaccount/{identifier} | 
-*DefaultApi* | [**UpdateToken**](docs/DefaultApi.md#updatetoken) | **Put** /token/{identifier} | 
-*DefaultApi* | [**UpdateTwoFactorAuthInfo**](docs/DefaultApi.md#updatetwofactorauthinfo) | **Put** /user/enable-two-factor-auth | 
-*DefaultApi* | [**UpdateUserInfo**](docs/DefaultApi.md#updateuserinfo) | **Put** /user | 
-*DefaultApi* | [**Upsert**](docs/DefaultApi.md#upsert) | **Put** /environments/upsert | 
-*DefaultApi* | [**Upsert1**](docs/DefaultApi.md#upsert1) | **Put** /environmentsV2/upsert | 
-*DefaultApi* | [**Upsert2**](docs/DefaultApi.md#upsert2) | **Put** /services/upsert | 
-*DefaultApi* | [**Upsert3**](docs/DefaultApi.md#upsert3) | **Put** /servicesV2/upsert | 
-*DefaultApi* | [**UpsertWebhook**](docs/DefaultApi.md#upsertwebhook) | **Post** /webhookevent | 
-*DefaultApi* | [**ValidateArtifact**](docs/DefaultApi.md#validateartifact) | **Post** /artifacts/docker/validateArtifact | 
-*DefaultApi* | [**ValidateArtifact1**](docs/DefaultApi.md#validateartifact1) | **Post** /artifacts/ecr/validateArtifact | 
-*DefaultApi* | [**ValidateArtifact2**](docs/DefaultApi.md#validateartifact2) | **Post** /artifacts/gcr/validateArtifact | 
-*DefaultApi* | [**ValidateArtifactImage**](docs/DefaultApi.md#validateartifactimage) | **Get** /artifacts/docker/validateArtifactSource | 
-*DefaultApi* | [**ValidateArtifactImage1**](docs/DefaultApi.md#validateartifactimage1) | **Get** /artifacts/ecr/validateArtifactSource | 
-*DefaultApi* | [**ValidateArtifactImage2**](docs/DefaultApi.md#validateartifactimage2) | **Get** /artifacts/gcr/validateArtifactSource | 
-*DefaultApi* | [**ValidateArtifactServer**](docs/DefaultApi.md#validateartifactserver) | **Get** /artifacts/docker/validateArtifactServer | 
-*DefaultApi* | [**ValidateArtifactServer1**](docs/DefaultApi.md#validateartifactserver1) | **Get** /artifacts/ecr/validateArtifactServer | 
-*DefaultApi* | [**ValidateArtifactServer2**](docs/DefaultApi.md#validateartifactserver2) | **Get** /artifacts/gcr/validateArtifactServer | 
-*DefaultApi* | [**ValidateCredentials**](docs/DefaultApi.md#validatecredentials) | **Get** /jira/validate | 
-*DefaultApi* | [**ValidateSecret**](docs/DefaultApi.md#validatesecret) | **Post** /v2/secrets/validate | 
-*DefaultApi* | [**ValidateTheIdentifierIsUnique1**](docs/DefaultApi.md#validatetheidentifierisunique1) | **Get** /gitopsproviders/validateUniqueIdentifier | 
-*DefaultApi* | [**ValidateTheIdentifierIsUnique2**](docs/DefaultApi.md#validatetheidentifierisunique2) | **Get** /v2/secrets/validateUniqueIdentifier/{identifier} | 
-*DefaultApi* | [**VerifyInviteViaNGAuthUi**](docs/DefaultApi.md#verifyinviteviangauthui) | **Get** /invites/verify | 
-*DefaultApi* | [**VerifyToken**](docs/DefaultApi.md#verifytoken) | **Post** /signup/verify/{token} | 
-*DefaultApi* | [**WebhookCatcher**](docs/DefaultApi.md#webhookcatcher) | **Post** /git-sync-trigger/webhook/{entityToken} | 
 *DelegateConfigurationManagementApi* | [**CreateDelegateConfiguration**](docs/DelegateConfigurationManagementApi.md#createdelegateconfiguration) | **Post** /delegate-profiles/ng | Creates Delegate Configuration specified by Configuration details in body
 *DelegateConfigurationManagementApi* | [**DeleteDelegateConfig**](docs/DelegateConfigurationManagementApi.md#deletedelegateconfig) | **Delete** /delegate-profiles/ng/{delegateProfileId} | Deletes Delegate Configuration specified by Id
 *DelegateConfigurationManagementApi* | [**GetDelegateConfigrationDetails**](docs/DelegateConfigurationManagementApi.md#getdelegateconfigrationdetails) | **Get** /delegate-profiles/ng/{delegateProfileId} | Retrieves Delegate Configuration details for given Delegate Configuration Id.
@@ -312,22 +67,58 @@ Class | Method | HTTP request | Description
 *DelegateConfigurationResourceApi* | [**UpdateDelegateConfigurationV2**](docs/DelegateConfigurationResourceApi.md#updatedelegateconfigurationv2) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier} | Updates Delegate Configuration specified by Identifier
 *DelegateConfigurationResourceApi* | [**UpdateDelegateSelectorsV2**](docs/DelegateConfigurationResourceApi.md#updatedelegateselectorsv2) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/selectors | Updates Delegate selectors for Delegate Configuration specified by identifier
 *DelegateConfigurationResourceApi* | [**UpdateScopingRulesV2**](docs/DelegateConfigurationResourceApi.md#updatescopingrulesv2) | **Put** /v2/accounts/{accountId}/delegate-configs/{delegateConfigIdentifier}/scoping-rules | Updates Scoping Rules for the Delegate Configuration specified by identifier
-*EnforcementApi* | [**GetAllFeatureRestrictionMetadata**](docs/EnforcementApi.md#getallfeaturerestrictionmetadata) | **Get** /enforcement/metadata | Gets All Feature Restriction Metadata
-*EnforcementApi* | [**GetEnabledFeatureRestrictionDetailByAccountId**](docs/EnforcementApi.md#getenabledfeaturerestrictiondetailbyaccountid) | **Get** /enforcement/enabled | Gets List of Enabled Feature Restriction Detail for The Account
-*EnforcementApi* | [**GetFeatureRestrictionDetail**](docs/EnforcementApi.md#getfeaturerestrictiondetail) | **Post** /enforcement | Gets Feature Restriction Detail
-*EnforcementApi* | [**GetFeatureRestrictionMetadata**](docs/EnforcementApi.md#getfeaturerestrictionmetadata) | **Get** /enforcement/{featureRestrictionName}/metadata | 
-*EnforcementApi* | [**GetFeatureRestrictionMetadataMap**](docs/EnforcementApi.md#getfeaturerestrictionmetadatamap) | **Post** /enforcement/metadata | 
+*EnforcementApi* | [**GetAllFeatureRestrictionMetadata**](docs/EnforcementApi.md#getallfeaturerestrictionmetadata) | **Get** /enforcement/metadata | Fetch All Feature Restriction Metadata
+*EnforcementApi* | [**GetEnabledFeatureRestrictionDetailByAccountId**](docs/EnforcementApi.md#getenabledfeaturerestrictiondetailbyaccountid) | **Get** /enforcement/enabled | Fetch List of Enabled Feature Restriction Detail for The Account
+*EnforcementApi* | [**GetFeatureRestrictionDetail**](docs/EnforcementApi.md#getfeaturerestrictiondetail) | **Post** /enforcement | Fetch Feature Restriction Detail
+*EnforcementApi* | [**GetFeatureRestrictionDetails**](docs/EnforcementApi.md#getfeaturerestrictiondetails) | **Post** /enforcement/details | Fetch List of Feature Restriction Detail
+*EnvironmentsApi* | [**CreateEnvironmentV2**](docs/EnvironmentsApi.md#createenvironmentv2) | **Post** /environmentsV2 | Create an Environment
+*EnvironmentsApi* | [**DeleteEnvironmentV2**](docs/EnvironmentsApi.md#deleteenvironmentv2) | **Delete** /environmentsV2/{environmentIdentifier} | Delete an Environment by identifier
+*EnvironmentsApi* | [**GetEnvironmentAccessList**](docs/EnvironmentsApi.md#getenvironmentaccesslist) | **Get** /environmentsV2/list/access | Gets Environment Access list
+*EnvironmentsApi* | [**GetEnvironmentList**](docs/EnvironmentsApi.md#getenvironmentlist) | **Get** /environmentsV2 | Gets Environment list for a project
+*EnvironmentsApi* | [**GetEnvironmentV2**](docs/EnvironmentsApi.md#getenvironmentv2) | **Get** /environmentsV2/{environmentIdentifier} | Gets an Environment by identifier
+*EnvironmentsApi* | [**UpdateEnvironmentV2**](docs/EnvironmentsApi.md#updateenvironmentv2) | **Put** /environmentsV2 | Update an Environment by identifier
+*EnvironmentsApi* | [**UpsertEnvironmentV2**](docs/EnvironmentsApi.md#upsertenvironmentv2) | **Put** /environmentsV2/upsert | Upsert an Environment by identifier
 *FeedbackApi* | [**SaveFeedback**](docs/FeedbackApi.md#savefeedback) | **Post** /feedback | Saves Feedback
+*FilterApi* | [**DeleteFilter**](docs/FilterApi.md#deletefilter) | **Delete** /filters/{identifier} | Delete a Filter by identifier
+*FilterApi* | [**GetConnectorListV21**](docs/FilterApi.md#getconnectorlistv21) | **Get** /filters | Get the list of Filters satisfying the criteria (if any) in the request
+*FilterApi* | [**GetFilter**](docs/FilterApi.md#getfilter) | **Get** /filters/{identifier} | Gets a Filter by identifier
+*FilterApi* | [**PostFilter**](docs/FilterApi.md#postfilter) | **Post** /filters | Creates a Filter
+*FilterApi* | [**UpdateFilter**](docs/FilterApi.md#updatefilter) | **Put** /filters | Updates the Filter
+*FullSyncApi* | [**TriggerFullSync**](docs/FullSyncApi.md#triggerfullsync) | **Post** /full-sync | Triggers Full Sync
 *GcpClustersApi* | [**GetClusterNamesForGcp**](docs/GcpClustersApi.md#getclusternamesforgcp) | **Get** /gcp/clusters | Gets gcp cluster names
-*LicensesApi* | [**CheckExpiry**](docs/LicensesApi.md#checkexpiry) | **Get** /licenses/{accountId}/check-expiry | 
+*GitBranchesApi* | [**GetListOfBranchesWithStatus**](docs/GitBranchesApi.md#getlistofbrancheswithstatus) | **Get** /git-sync-branch/listBranchesWithStatus | Lists branches with their status(Synced, Unsynced) by Git Sync Config Identifier for the given scope
+*GitBranchesApi* | [**SyncGitBranch**](docs/GitBranchesApi.md#syncgitbranch) | **Post** /git-sync-branch/sync | Sync the content of new Git Branch into harness with Git Sync Config Identifier
+*GitSyncApi* | [**CreateGitSyncConfig**](docs/GitSyncApi.md#creategitsyncconfig) | **Post** /git-sync | Creates Git Sync Config in given scope
+*GitSyncApi* | [**GetGitSyncConfigList**](docs/GitSyncApi.md#getgitsyncconfiglist) | **Get** /git-sync | Lists Git Sync Config for the given scope
+*GitSyncApi* | [**IsGitSyncEnabled**](docs/GitSyncApi.md#isgitsyncenabled) | **Get** /git-sync/git-sync-enabled | Check whether Git Sync is enabled for given scope or not
+*GitSyncApi* | [**UpdateDefaultFolder**](docs/GitSyncApi.md#updatedefaultfolder) | **Put** /git-sync/{identifier}/folder/{folderIdentifier}/default | Update existing Git Sync Config default root folder by Identifier
+*GitSyncApi* | [**UpdateGitSyncConfig**](docs/GitSyncApi.md#updategitsyncconfig) | **Put** /git-sync | Update existing Git Sync Config by Identifier
+*GitSyncEntitiesApi* | [**ListGitSyncEntitiesByType**](docs/GitSyncEntitiesApi.md#listgitsyncentitiesbytype) | **Get** /git-sync-entities/{entityType} | Lists Git Sync Entity filtered by their Type for the given scope
+*GitSyncEntitiesApi* | [**ListGitSyncEntitiesSummaryForRepoAndBranch**](docs/GitSyncEntitiesApi.md#listgitsyncentitiessummaryforrepoandbranch) | **Post** /git-sync-entities/branch/{branch} | Lists Git Sync Entity by product for the given Repo, Branch and list of Entity Types
+*GitSyncEntitiesApi* | [**ListGitSyncEntitiesSummaryForRepoAndTypes**](docs/GitSyncEntitiesApi.md#listgitsyncentitiessummaryforrepoandtypes) | **Post** /git-sync-entities/summary | Lists Git Sync Entity by product for the given list of Repos and Entity Types
+*GitSyncErrorsApi* | [**GetGitSyncErrorsCount**](docs/GitSyncErrorsApi.md#getgitsyncerrorscount) | **Get** /git-sync-errors/count | Get Errors Count for the given scope, Repo and Branch
+*GitSyncErrorsApi* | [**ListGitSyncErrors**](docs/GitSyncErrorsApi.md#listgitsyncerrors) | **Get** /git-sync-errors | Lists Git to Harness Errors by file or connectivity errors for the given scope, Repo and Branch
+*GitSyncErrorsApi* | [**ListGitToHarnessErrorForCommit**](docs/GitSyncErrorsApi.md#listgittoharnesserrorforcommit) | **Get** /git-sync-errors/commits/{commitId} | Lists Git to Harness Errors for the given Commit Id
+*GitSyncErrorsApi* | [**ListGitToHarnessErrorsGroupedByCommits**](docs/GitSyncErrorsApi.md#listgittoharnesserrorsgroupedbycommits) | **Get** /git-sync-errors/aggregate | Lists Git to Harness Errors grouped by Commits for the given scope, Repo and Branch
+*GitSyncSettingsApi* | [**CreateGitSyncSetting**](docs/GitSyncSettingsApi.md#creategitsyncsetting) | **Post** /git-sync-settings | Creates Git Sync Setting in a scope
+*GitSyncSettingsApi* | [**GetGitSyncSettings**](docs/GitSyncSettingsApi.md#getgitsyncsettings) | **Get** /git-sync-settings | Get Git Sync Setting for the given scope
+*GitSyncSettingsApi* | [**UpdateGitSyncSetting**](docs/GitSyncSettingsApi.md#updategitsyncsetting) | **Put** /git-sync-settings | Update existing Git Sync Setting by scope. Only changing execution on delegate is allowed
+*InviteApi* | [**Accept**](docs/InviteApi.md#accept) | **Get** /invites/accept | 
+*InviteApi* | [**CompleteInvite**](docs/InviteApi.md#completeinvite) | **Get** /invites/complete | Complete the User Invite
+*InviteApi* | [**DeleteInvite**](docs/InviteApi.md#deleteinvite) | **Delete** /invites/{inviteId} | Delete an Invite by Identifier
+*InviteApi* | [**GetInvite**](docs/InviteApi.md#getinvite) | **Get** /invites/invite | Gets an Invite by either Invite Id or JwtToken
+*InviteApi* | [**GetInvites**](docs/InviteApi.md#getinvites) | **Get** /invites | List all the Invites for a Project or Organization
+*InviteApi* | [**GetPendingUsersAggregated**](docs/InviteApi.md#getpendingusersaggregated) | **Post** /invites/aggregate | List of all the Invites pending users
+*InviteApi* | [**SendInvite**](docs/InviteApi.md#sendinvite) | **Post** /invites | Send a user Invite to either Project or Organization
+*InviteApi* | [**UpdateInvite**](docs/InviteApi.md#updateinvite) | **Put** /invites/{inviteId} | Resend the Invite email
+*InviteApi* | [**VerifyInviteViaNGAuthUi**](docs/InviteApi.md#verifyinviteviangauthui) | **Get** /invites/verify | 
 *LicensesApi* | [**ExtendTrialLicense**](docs/LicensesApi.md#extendtriallicense) | **Post** /licenses/extend-trial | Extends Trial License For A Module
 *LicensesApi* | [**GetAccountLicenses**](docs/LicensesApi.md#getaccountlicenses) | **Get** /licenses/account | Gets All Module License Information in Account
 *LicensesApi* | [**GetEditionActions**](docs/LicensesApi.md#geteditionactions) | **Get** /licenses/actions | Get Allowed Actions Under Each Edition
+*LicensesApi* | [**GetLastModifiedTimeForAllModuleTypes**](docs/LicensesApi.md#getlastmodifiedtimeforallmoduletypes) | **Post** /licenses/versions | Get Last Modified Time Under Each ModuleType
 *LicensesApi* | [**GetLicensesAndSummary**](docs/LicensesApi.md#getlicensesandsummary) | **Get** /licenses/{accountIdentifier}/summary | Gets Module Licenses With Summary By Account And ModuleType
-*LicensesApi* | [**GetModuleLicenseByAccountAndModuleType**](docs/LicensesApi.md#getmodulelicensebyaccountandmoduletype) | **Get** /licenses | Gets Module License By Account And ModuleType
 *LicensesApi* | [**GetModuleLicenseById**](docs/LicensesApi.md#getmodulelicensebyid) | **Get** /licenses/{identifier} | Gets Module License
 *LicensesApi* | [**GetModuleLicensesByAccountAndModuleType**](docs/LicensesApi.md#getmodulelicensesbyaccountandmoduletype) | **Get** /licenses/modules/{accountIdentifier} | Gets Module Licenses By Account And ModuleType
-*LicensesApi* | [**SoftDelete**](docs/LicensesApi.md#softdelete) | **Get** /licenses/{accountId}/soft-delete | 
 *LicensesApi* | [**StartCommunityLicense**](docs/LicensesApi.md#startcommunitylicense) | **Post** /licenses/community | 
 *LicensesApi* | [**StartFreeLicense**](docs/LicensesApi.md#startfreelicense) | **Post** /licenses/free | Starts Free License For A Module
 *LicensesApi* | [**StartTrialLicense**](docs/LicensesApi.md#starttriallicense) | **Post** /licenses/trial | Starts Trial License For A Module
@@ -335,13 +126,30 @@ Class | Method | HTTP request | Description
 *OrganizationApi* | [**DeleteOrganization**](docs/OrganizationApi.md#deleteorganization) | **Delete** /organizations/{identifier} | Deletes Organization by identifier
 *OrganizationApi* | [**GetOrganization**](docs/OrganizationApi.md#getorganization) | **Get** /organizations/{identifier} | Get the Organization by accountIdentifier and orgIdentifier
 *OrganizationApi* | [**GetOrganizationList**](docs/OrganizationApi.md#getorganizationlist) | **Get** /organizations | Get the list of organizations satisfying the criteria (if any) in the request
-*OrganizationApi* | [**ListAllOrganizations**](docs/OrganizationApi.md#listallorganizations) | **Get** /organizations/all-organizations | 
+*OrganizationApi* | [**ListAllOrganizations**](docs/OrganizationApi.md#listallorganizations) | **Post** /organizations/all-organizations | 
 *OrganizationApi* | [**PutOrganization**](docs/OrganizationApi.md#putorganization) | **Put** /organizations/{identifier} | Updates the Organization
-*ProjectApi* | [**DeleteProject**](docs/ProjectApi.md#deleteproject) | **Delete** /projects/{identifier} | Delete a project by identifier
+*ProjectApi* | [**DeleteProject**](docs/ProjectApi.md#deleteproject) | **Delete** /projects/{identifier} | Delete a Project by identifier
 *ProjectApi* | [**GetProject**](docs/ProjectApi.md#getproject) | **Get** /projects/{identifier} | Gets a Project by identifier
 *ProjectApi* | [**GetProjectList**](docs/ProjectApi.md#getprojectlist) | **Get** /projects | List user&#x27;s project
 *ProjectApi* | [**PostProject**](docs/ProjectApi.md#postproject) | **Post** /projects | Creates a Project
-*ProjectApi* | [**PutProject**](docs/ProjectApi.md#putproject) | **Put** /projects/{identifier} | Update project by identifier
+*ProjectApi* | [**PutProject**](docs/ProjectApi.md#putproject) | **Put** /projects/{identifier} | Update Project by identifier
+*ScmApi* | [**CreatePR**](docs/ScmApi.md#createpr) | **Post** /scm/createPR | creates a Pull Request
+*ScmApi* | [**GetFileContent**](docs/ScmApi.md#getfilecontent) | **Get** /scm/fileContent | Gets Git File Content
+*ScmApi* | [**GetListOfBranchesByConnector**](docs/ScmApi.md#getlistofbranchesbyconnector) | **Get** /scm/listRepoBranches | Lists Branches of given Repo by referenced Connector Identifier
+*ScmApi* | [**GetListOfBranchesByGitConfig**](docs/ScmApi.md#getlistofbranchesbygitconfig) | **Get** /scm/listBranchesByGitConfig | Lists Branches by given Git Sync Config Identifier
+*ScmApi* | [**IsSaasGit**](docs/ScmApi.md#issaasgit) | **Post** /scm/isSaasGit | Checks if Saas is possible for given Repo Url
+*ServicesApi* | [**CreateServiceV2**](docs/ServicesApi.md#createservicev2) | **Post** /servicesV2 | Create a Service
+*ServicesApi* | [**CreateServicesV2**](docs/ServicesApi.md#createservicesv2) | **Post** /servicesV2/batch | Create Services
+*ServicesApi* | [**DeleteServiceV2**](docs/ServicesApi.md#deleteservicev2) | **Delete** /servicesV2/{serviceIdentifier} | Delete a Service by identifier
+*ServicesApi* | [**GetServiceAccessList**](docs/ServicesApi.md#getserviceaccesslist) | **Get** /servicesV2/list/access | Gets Service Access list
+*ServicesApi* | [**GetServiceList**](docs/ServicesApi.md#getservicelist) | **Get** /servicesV2 | Gets Service list
+*ServicesApi* | [**GetServiceV2**](docs/ServicesApi.md#getservicev2) | **Get** /servicesV2/{serviceIdentifier} | Gets a Service by identifier
+*ServicesApi* | [**UpdateServiceV2**](docs/ServicesApi.md#updateservicev2) | **Put** /servicesV2 | Update a Service by identifier
+*ServicesApi* | [**UpsertServiceV2**](docs/ServicesApi.md#upsertservicev2) | **Put** /servicesV2/upsert | Upsert a Service by identifier
+*SourceCodeManagerApi* | [**CreateSourceCodeManager**](docs/SourceCodeManagerApi.md#createsourcecodemanager) | **Post** /source-code-manager | Creates Source Code Manager
+*SourceCodeManagerApi* | [**DeleteSourceCodeManager**](docs/SourceCodeManagerApi.md#deletesourcecodemanager) | **Delete** /source-code-manager/{identifier} | Deletes the Source Code Manager corresponding to the specified Source Code Manager Id
+*SourceCodeManagerApi* | [**GetSourceCodeManagers**](docs/SourceCodeManagerApi.md#getsourcecodemanagers) | **Get** /source-code-manager | Lists Source Code Managers for the given account
+*SourceCodeManagerApi* | [**UpdateSourceCodeManager**](docs/SourceCodeManagerApi.md#updatesourcecodemanager) | **Put** /source-code-manager/{identifier} | Updates Source Code Manager Details with the given Source Code Manager Id
 *WebhookEventHandlerApi* | [**ProcessWebhookEvent**](docs/WebhookEventHandlerApi.md#processwebhookevent) | **Post** /webhook | Process event payload for webhook triggers.
 
 ## Documentation For Models
@@ -351,648 +159,290 @@ Class | Method | HTTP request | Description
  - [AccountLicense](docs/AccountLicense.md)
  - [AccountPermissions](docs/AccountPermissions.md)
  - [AccountPreferences](docs/AccountPreferences.md)
- - [AccountResourcesDto](docs/AccountResourcesDto.md)
  - [AclAggregateFilter](docs/AclAggregateFilter.md)
- - [ActiveProjectsCountDto](docs/ActiveProjectsCountDto.md)
- - [ActiveServiceInstanceSummary](docs/ActiveServiceInstanceSummary.md)
- - [ActivityDetail](docs/ActivityDetail.md)
- - [AddUsersDto](docs/AddUsersDto.md)
- - [AddUsersResponse](docs/AddUsersResponse.md)
- - [AdditionalMetadata](docs/AdditionalMetadata.md)
- - [AggregateAclRequest](docs/AggregateAclRequest.md)
- - [ApiKeyAggregateDto](docs/ApiKeyAggregateDto.md)
- - [ApiKeyDto](docs/ApiKeyDto.md)
  - [AppDynamicsConnectorDto](docs/AppDynamicsConnectorDto.md)
  - [AppPermission](docs/AppPermission.md)
- - [ArtifactSummary](docs/ArtifactSummary.md)
- - [ArtifactoryAuthCredentialsDto](docs/ArtifactoryAuthCredentialsDto.md)
- - [ArtifactoryAuthenticationDto](docs/ArtifactoryAuthenticationDto.md)
- - [ArtifactoryConnectorDto](docs/ArtifactoryConnectorDto.md)
- - [ArtifactoryUsernamePasswordAuthDto](docs/ArtifactoryUsernamePasswordAuthDto.md)
- - [ArtifactsSummary](docs/ArtifactsSummary.md)
+ - [ArtifactoryAuthCredentials](docs/ArtifactoryAuthCredentials.md)
+ - [ArtifactoryAuthentication](docs/ArtifactoryAuthentication.md)
+ - [ArtifactoryConnector](docs/ArtifactoryConnector.md)
+ - [ArtifactoryUsernamePasswordAuth](docs/ArtifactoryUsernamePasswordAuth.md)
  - [AuthenticationSettingsResponse](docs/AuthenticationSettingsResponse.md)
  - [AuthenticationsettingsSamlmetadatauploadBody](docs/AuthenticationsettingsSamlmetadatauploadBody.md)
  - [AuthenticationsettingsSamlmetadatauploadBody1](docs/AuthenticationsettingsSamlmetadatauploadBody1.md)
- - [AuthorInfo](docs/AuthorInfo.md)
- - [AvailabilityRestrictionDto](docs/AvailabilityRestrictionDto.md)
- - [AvailabilityRestrictionMetadataDto](docs/AvailabilityRestrictionMetadataDto.md)
- - [AwsCodeCommitAuthenticationDto](docs/AwsCodeCommitAuthenticationDto.md)
- - [AwsCodeCommitConnectorDto](docs/AwsCodeCommitConnectorDto.md)
- - [AwsCodeCommitCredentialsDto](docs/AwsCodeCommitCredentialsDto.md)
- - [AwsCodeCommitHttpsCredentialsDto](docs/AwsCodeCommitHttpsCredentialsDto.md)
- - [AwsCodeCommitHttpsCredentialsSpecDto](docs/AwsCodeCommitHttpsCredentialsSpecDto.md)
- - [AwsCodeCommitSecretKeyAccessKeyDto](docs/AwsCodeCommitSecretKeyAccessKeyDto.md)
- - [AwsConnectorDto](docs/AwsConnectorDto.md)
- - [AwsCredentialDto](docs/AwsCredentialDto.md)
- - [AwsCredentialSpecDto](docs/AwsCredentialSpecDto.md)
+ - [AvailabilityRestriction](docs/AvailabilityRestriction.md)
+ - [AvailabilityRestrictionMetadata](docs/AvailabilityRestrictionMetadata.md)
+ - [AwsCodeCommitAuthentication](docs/AwsCodeCommitAuthentication.md)
+ - [AwsCodeCommitConnector](docs/AwsCodeCommitConnector.md)
+ - [AwsCodeCommitCredentials](docs/AwsCodeCommitCredentials.md)
+ - [AwsCodeCommitHttpsCredentials](docs/AwsCodeCommitHttpsCredentials.md)
+ - [AwsCodeCommitHttpsCredentialsSpec](docs/AwsCodeCommitHttpsCredentialsSpec.md)
+ - [AwsCodeCommitSecretKeyAccessKey](docs/AwsCodeCommitSecretKeyAccessKey.md)
+ - [AwsConnector](docs/AwsConnector.md)
+ - [AwsCredential](docs/AwsCredential.md)
+ - [AwsCredentialSpec](docs/AwsCredentialSpec.md)
  - [AwsCurAttributesDto](docs/AwsCurAttributesDto.md)
- - [AwsKmsConfigDto](docs/AwsKmsConfigDto.md)
  - [AwsKmsConnectorCredentialDto](docs/AwsKmsConnectorCredentialDto.md)
  - [AwsKmsConnectorDto](docs/AwsKmsConnectorDto.md)
  - [AwsKmsCredentialSpecAssumeIamdto](docs/AwsKmsCredentialSpecAssumeIamdto.md)
  - [AwsKmsCredentialSpecAssumeStsdto](docs/AwsKmsCredentialSpecAssumeStsdto.md)
- - [AwsKmsCredentialSpecConfig](docs/AwsKmsCredentialSpecConfig.md)
  - [AwsKmsCredentialSpecDto](docs/AwsKmsCredentialSpecDto.md)
  - [AwsKmsCredentialSpecManualConfigDto](docs/AwsKmsCredentialSpecManualConfigDto.md)
- - [AwsKmsIamCredentialConfig](docs/AwsKmsIamCredentialConfig.md)
- - [AwsKmsManualCredentialConfig](docs/AwsKmsManualCredentialConfig.md)
- - [AwsKmsStsCredentialConfig](docs/AwsKmsStsCredentialConfig.md)
- - [AwsManualConfigSpecDto](docs/AwsManualConfigSpecDto.md)
+ - [AwsManualConfigSpec](docs/AwsManualConfigSpec.md)
  - [AwsSecretManagerCredentialDto](docs/AwsSecretManagerCredentialDto.md)
  - [AwsSecretManagerCredentialSpecDto](docs/AwsSecretManagerCredentialSpecDto.md)
  - [AwsSecretManagerDto](docs/AwsSecretManagerDto.md)
  - [AwsSmCredentialSpecAssumeIamdto](docs/AwsSmCredentialSpecAssumeIamdto.md)
  - [AwsSmCredentialSpecAssumeStsdto](docs/AwsSmCredentialSpecAssumeStsdto.md)
  - [AwsSmCredentialSpecManualConfigDto](docs/AwsSmCredentialSpecManualConfigDto.md)
- - [AzureKeyVaultConfigDto](docs/AzureKeyVaultConfigDto.md)
  - [AzureKeyVaultConnectorDto](docs/AzureKeyVaultConnectorDto.md)
- - [BarrierInfoConfig](docs/BarrierInfoConfig.md)
- - [BaseAwsKmsConfigDto](docs/BaseAwsKmsConfigDto.md)
- - [BaseSshSpecDto](docs/BaseSshSpecDto.md)
  - [BillingExportSpecDto](docs/BillingExportSpecDto.md)
- - [BitbucketApiAccessDto](docs/BitbucketApiAccessDto.md)
- - [BitbucketApiAccessSpecDto](docs/BitbucketApiAccessSpecDto.md)
- - [BitbucketAuthenticationDto](docs/BitbucketAuthenticationDto.md)
- - [BitbucketCloudWebhookEvents](docs/BitbucketCloudWebhookEvents.md)
- - [BitbucketCloudWebhookEventsOrBuilder](docs/BitbucketCloudWebhookEventsOrBuilder.md)
- - [BitbucketConnectorDto](docs/BitbucketConnectorDto.md)
- - [BitbucketCredentialsDto](docs/BitbucketCredentialsDto.md)
- - [BitbucketHttpCredentialsDto](docs/BitbucketHttpCredentialsDto.md)
- - [BitbucketHttpCredentialsSpecDto](docs/BitbucketHttpCredentialsSpecDto.md)
- - [BitbucketServerWebhookEvents](docs/BitbucketServerWebhookEvents.md)
- - [BitbucketServerWebhookEventsOrBuilder](docs/BitbucketServerWebhookEventsOrBuilder.md)
- - [BitbucketSshCredentialsDto](docs/BitbucketSshCredentialsDto.md)
- - [BitbucketUsernamePasswordDto](docs/BitbucketUsernamePasswordDto.md)
- - [BitbucketUsernameTokenApiAccessDto](docs/BitbucketUsernameTokenApiAccessDto.md)
- - [BuildIdAndInstanceCount](docs/BuildIdAndInstanceCount.md)
- - [ByteString](docs/ByteString.md)
+ - [BitbucketApiAccess](docs/BitbucketApiAccess.md)
+ - [BitbucketAuthentication](docs/BitbucketAuthentication.md)
+ - [BitbucketConnector](docs/BitbucketConnector.md)
+ - [BitbucketCredentials](docs/BitbucketCredentials.md)
+ - [BitbucketHttpCredentials](docs/BitbucketHttpCredentials.md)
+ - [BitbucketHttpCredentialsSpec](docs/BitbucketHttpCredentialsSpec.md)
+ - [BitbucketSshCredentials](docs/BitbucketSshCredentials.md)
+ - [BitbucketUsernamePassword](docs/BitbucketUsernamePassword.md)
+ - [BitbucketUsernameTokenApiAccess](docs/BitbucketUsernameTokenApiAccess.md)
  - [CcmConnectorFilter](docs/CcmConnectorFilter.md)
- - [CdLicenseSummaryDto](docs/CdLicenseSummaryDto.md)
- - [CdModuleLicenseDto](docs/CdModuleLicenseDto.md)
- - [CdPipelineModuleInfo](docs/CdPipelineModuleInfo.md)
- - [CdStageModuleInfo](docs/CdStageModuleInfo.md)
+ - [CdLicenseSummary](docs/CdLicenseSummary.md)
+ - [CdModuleLicense](docs/CdModuleLicense.md)
  - [CeAwsConnectorDto](docs/CeAwsConnectorDto.md)
  - [CeAzureConnectorDto](docs/CeAzureConnectorDto.md)
  - [CeKubernetesClusterConfigDto](docs/CeKubernetesClusterConfigDto.md)
  - [CeLicenseInfo](docs/CeLicenseInfo.md)
- - [CeLicenseSummaryDto](docs/CeLicenseSummaryDto.md)
- - [CeModuleLicenseDto](docs/CeModuleLicenseDto.md)
- - [CfLicenseSummaryDto](docs/CfLicenseSummaryDto.md)
- - [CfModuleLicenseDto](docs/CfModuleLicenseDto.md)
- - [CheckExpiryResultDto](docs/CheckExpiryResultDto.md)
- - [CiLicenseSummaryDto](docs/CiLicenseSummaryDto.md)
- - [CiModuleLicenseDto](docs/CiModuleLicenseDto.md)
- - [ConnectedArgoGitOpsInfoDto](docs/ConnectedArgoGitOpsInfoDto.md)
- - [ConnectivityCheckSummaryDto](docs/ConnectivityCheckSummaryDto.md)
+ - [CeLicenseSummary](docs/CeLicenseSummary.md)
+ - [CeModuleLicense](docs/CeModuleLicense.md)
+ - [CfLicenseSummary](docs/CfLicenseSummary.md)
+ - [CfModuleLicense](docs/CfModuleLicense.md)
+ - [CiLicenseSummary](docs/CiLicenseSummary.md)
+ - [CiModuleLicense](docs/CiModuleLicense.md)
  - [Connector](docs/Connector.md)
  - [ConnectorActivityDetails](docs/ConnectorActivityDetails.md)
  - [ConnectorCatalogueItem](docs/ConnectorCatalogueItem.md)
  - [ConnectorCatalogueRespone](docs/ConnectorCatalogueRespone.md)
- - [ConnectorConfigDto](docs/ConnectorConfigDto.md)
+ - [ConnectorConfig](docs/ConnectorConfig.md)
  - [ConnectorConnectivityDetails](docs/ConnectorConnectivityDetails.md)
  - [ConnectorFilterProperties](docs/ConnectorFilterProperties.md)
- - [ConnectorInfoDto](docs/ConnectorInfoDto.md)
+ - [ConnectorInfo](docs/ConnectorInfo.md)
  - [ConnectorResponse](docs/ConnectorResponse.md)
  - [ConnectorStatistics](docs/ConnectorStatistics.md)
  - [ConnectorStatusStats](docs/ConnectorStatusStats.md)
  - [ConnectorTypeStats](docs/ConnectorTypeStats.md)
  - [ConnectorValidationParams](docs/ConnectorValidationParams.md)
  - [ConnectorValidationResult](docs/ConnectorValidationResult.md)
- - [CreateInviteDto](docs/CreateInviteDto.md)
- - [CreatePrdto](docs/CreatePrdto.md)
- - [CrossAccountAccessDto](docs/CrossAccountAccessDto.md)
- - [CustomRestrictionDto](docs/CustomRestrictionDto.md)
- - [CustomRestrictionEvaluationDto](docs/CustomRestrictionEvaluationDto.md)
- - [CustomRestrictionMetadataDto](docs/CustomRestrictionMetadataDto.md)
- - [CvLicenseSummaryDto](docs/CvLicenseSummaryDto.md)
- - [CvModuleLicenseDto](docs/CvModuleLicenseDto.md)
- - [DashboardExecutionStatusInfo](docs/DashboardExecutionStatusInfo.md)
- - [DashboardWorkloadDeployment](docs/DashboardWorkloadDeployment.md)
+ - [CreateInvite](docs/CreateInvite.md)
+ - [CreatePr](docs/CreatePr.md)
+ - [CrossAccountAccess](docs/CrossAccountAccess.md)
+ - [CustomHealthConnectorDto](docs/CustomHealthConnectorDto.md)
+ - [CustomHealthKeyAndValue](docs/CustomHealthKeyAndValue.md)
+ - [CustomRestriction](docs/CustomRestriction.md)
+ - [CustomRestrictionMetadata](docs/CustomRestrictionMetadata.md)
+ - [CvLicenseSummary](docs/CvLicenseSummary.md)
+ - [CvModuleLicense](docs/CvModuleLicense.md)
  - [DatadogConnectorDto](docs/DatadogConnectorDto.md)
- - [DecryptableEntity](docs/DecryptableEntity.md)
- - [DecryptableEntityWithEncryptionConsumers](docs/DecryptableEntityWithEncryptionConsumers.md)
  - [DelegateConfiguration](docs/DelegateConfiguration.md)
  - [DelegateProfileDetailsNg](docs/DelegateProfileDetailsNg.md)
  - [DelegateProfileFilterPropertiesDto](docs/DelegateProfileFilterPropertiesDto.md)
- - [DelegateResponseData](docs/DelegateResponseData.md)
- - [Deployment](docs/Deployment.md)
- - [DeploymentChangeRates](docs/DeploymentChangeRates.md)
- - [DeploymentCount](docs/DeploymentCount.md)
- - [DeploymentDateAndCount](docs/DeploymentDateAndCount.md)
- - [DeploymentInfo](docs/DeploymentInfo.md)
- - [DeploymentStatsSummary](docs/DeploymentStatsSummary.md)
- - [DeploymentsInfo](docs/DeploymentsInfo.md)
- - [Descriptor](docs/Descriptor.md)
- - [DescriptorProto](docs/DescriptorProto.md)
- - [DescriptorProtoOrBuilder](docs/DescriptorProtoOrBuilder.md)
- - [DockerAuthCredentialsDto](docs/DockerAuthCredentialsDto.md)
- - [DockerAuthenticationDto](docs/DockerAuthenticationDto.md)
- - [DockerBuildDetailsDto](docs/DockerBuildDetailsDto.md)
- - [DockerConnectorDto](docs/DockerConnectorDto.md)
- - [DockerRequestDto](docs/DockerRequestDto.md)
- - [DockerResponseDto](docs/DockerResponseDto.md)
- - [DockerUserNamePasswordDto](docs/DockerUserNamePasswordDto.md)
- - [DurationRestrictionDto](docs/DurationRestrictionDto.md)
- - [DurationRestrictionMetadataDto](docs/DurationRestrictionMetadataDto.md)
+ - [DockerAuthCredentials](docs/DockerAuthCredentials.md)
+ - [DockerAuthentication](docs/DockerAuthentication.md)
+ - [DockerConnector](docs/DockerConnector.md)
+ - [DockerUserNamePassword](docs/DockerUserNamePassword.md)
+ - [DurationRestriction](docs/DurationRestriction.md)
+ - [DurationRestrictionMetadata](docs/DurationRestrictionMetadata.md)
  - [DynatraceConnectorDto](docs/DynatraceConnectorDto.md)
- - [EcrBuildDetailsDto](docs/EcrBuildDetailsDto.md)
- - [EcrListImagesDto](docs/EcrListImagesDto.md)
- - [EcrRequestDto](docs/EcrRequestDto.md)
- - [EcrResponseDto](docs/EcrResponseDto.md)
- - [EditionActionDto](docs/EditionActionDto.md)
- - [EmailConfigDto](docs/EmailConfigDto.md)
+ - [EditionAction](docs/EditionAction.md)
  - [EmbeddedUser](docs/EmbeddedUser.md)
  - [EmbeddedUserDetails](docs/EmbeddedUserDetails.md)
- - [EncryptedDataDetail](docs/EncryptedDataDetail.md)
- - [EncryptedDataParams](docs/EncryptedDataParams.md)
- - [EncryptedRecordData](docs/EncryptedRecordData.md)
- - [EncryptionConfig](docs/EncryptionConfig.md)
- - [EntityDetail](docs/EntityDetail.md)
  - [EntityGitDetails](docs/EntityGitDetails.md)
  - [EntityReference](docs/EntityReference.md)
- - [EntityReferencesDto](docs/EntityReferencesDto.md)
- - [EntityReferredByPipelineSetupUsageDetail](docs/EntityReferredByPipelineSetupUsageDetail.md)
- - [EntitySetupUsageBatchDto](docs/EntitySetupUsageBatchDto.md)
- - [EntitySetupUsageDto](docs/EntitySetupUsageDto.md)
  - [EntityValidityDetails](docs/EntityValidityDetails.md)
- - [EnumDescriptor](docs/EnumDescriptor.md)
- - [EnumDescriptorProto](docs/EnumDescriptorProto.md)
- - [EnumDescriptorProtoOrBuilder](docs/EnumDescriptorProtoOrBuilder.md)
- - [EnumOptions](docs/EnumOptions.md)
- - [EnumOptionsOrBuilder](docs/EnumOptionsOrBuilder.md)
- - [EnumReservedRange](docs/EnumReservedRange.md)
- - [EnumReservedRangeOrBuilder](docs/EnumReservedRangeOrBuilder.md)
- - [EnumValueDescriptor](docs/EnumValueDescriptor.md)
- - [EnumValueDescriptorProto](docs/EnumValueDescriptorProto.md)
- - [EnumValueDescriptorProtoOrBuilder](docs/EnumValueDescriptorProtoOrBuilder.md)
- - [EnumValueOptions](docs/EnumValueOptions.md)
- - [EnumValueOptionsOrBuilder](docs/EnumValueOptionsOrBuilder.md)
- - [EnvBuildIdAndInstanceCountInfo](docs/EnvBuildIdAndInstanceCountInfo.md)
- - [EnvBuildIdAndInstanceCountInfoList](docs/EnvBuildIdAndInstanceCountInfoList.md)
- - [EnvCount](docs/EnvCount.md)
  - [EnvFilter](docs/EnvFilter.md)
- - [EnvIdCountPair](docs/EnvIdCountPair.md)
- - [EnvironmentRequestDto](docs/EnvironmentRequestDto.md)
+ - [EnvironmentRequest](docs/EnvironmentRequest.md)
  - [EnvironmentResponse](docs/EnvironmentResponse.md)
- - [EnvironmentResponseDto](docs/EnvironmentResponseDto.md)
  - [ErrorDetail](docs/ErrorDetail.md)
  - [ErrorMetadataDto](docs/ErrorMetadataDto.md)
- - [ExecutionDeployment](docs/ExecutionDeployment.md)
- - [ExecutionDeploymentInfo](docs/ExecutionDeploymentInfo.md)
- - [ExecutionStatusInfo](docs/ExecutionStatusInfo.md)
- - [ExtensionRange](docs/ExtensionRange.md)
- - [ExtensionRangeOptions](docs/ExtensionRangeOptions.md)
- - [ExtensionRangeOptionsOrBuilder](docs/ExtensionRangeOptionsOrBuilder.md)
- - [ExtensionRangeOrBuilder](docs/ExtensionRangeOrBuilder.md)
  - [Failure](docs/Failure.md)
+ - [FeatureRestrictionDetailListRequest](docs/FeatureRestrictionDetailListRequest.md)
  - [FeatureRestrictionDetailRequest](docs/FeatureRestrictionDetailRequest.md)
  - [FeatureRestrictionDetails](docs/FeatureRestrictionDetails.md)
  - [FeatureRestrictionMetadata](docs/FeatureRestrictionMetadata.md)
- - [FeatureRestrictionUsageDto](docs/FeatureRestrictionUsageDto.md)
  - [FeedbackForm](docs/FeedbackForm.md)
- - [FieldDescriptor](docs/FieldDescriptor.md)
- - [FieldDescriptorProto](docs/FieldDescriptorProto.md)
- - [FieldDescriptorProtoOrBuilder](docs/FieldDescriptorProtoOrBuilder.md)
- - [FieldOptions](docs/FieldOptions.md)
- - [FieldOptionsOrBuilder](docs/FieldOptionsOrBuilder.md)
  - [FieldValues](docs/FieldValues.md)
- - [FileDescriptor](docs/FileDescriptor.md)
- - [FileDescriptorProto](docs/FileDescriptorProto.md)
- - [FileOptions](docs/FileOptions.md)
- - [FileOptionsOrBuilder](docs/FileOptionsOrBuilder.md)
- - [FilesIdentifierBody](docs/FilesIdentifierBody.md)
  - [Filter](docs/Filter.md)
- - [FilterDto](docs/FilterDto.md)
- - [FilterPropertiesDto](docs/FilterPropertiesDto.md)
- - [FlowControlConfig](docs/FlowControlConfig.md)
+ - [FilterProperties](docs/FilterProperties.md)
  - [FormDataContentDisposition](docs/FormDataContentDisposition.md)
+ - [FullSyncRequest](docs/FullSyncRequest.md)
  - [GatewayAccountRequestDto](docs/GatewayAccountRequestDto.md)
  - [GcpBillingExportSpecDto](docs/GcpBillingExportSpecDto.md)
  - [GcpCloudCostConnectorDto](docs/GcpCloudCostConnectorDto.md)
- - [GcpConnectorCredentialDto](docs/GcpConnectorCredentialDto.md)
- - [GcpConnectorDto](docs/GcpConnectorDto.md)
- - [GcpCredentialSpecDto](docs/GcpCredentialSpecDto.md)
- - [GcpKmsConfigDto](docs/GcpKmsConfigDto.md)
+ - [GcpConnector](docs/GcpConnector.md)
+ - [GcpConnectorCredential](docs/GcpConnectorCredential.md)
+ - [GcpCredentialSpec](docs/GcpCredentialSpec.md)
  - [GcpKmsConnectorDto](docs/GcpKmsConnectorDto.md)
- - [GcpManualDetailsDto](docs/GcpManualDetailsDto.md)
+ - [GcpManualDetails](docs/GcpManualDetails.md)
  - [GcpResponse](docs/GcpResponse.md)
- - [GcrBuildDetailsDto](docs/GcrBuildDetailsDto.md)
- - [GcrRequestDto](docs/GcrRequestDto.md)
- - [GcrResponseDto](docs/GcrResponseDto.md)
  - [GenericEntityFilter](docs/GenericEntityFilter.md)
- - [GitAuthenticationDto](docs/GitAuthenticationDto.md)
- - [GitBranchDto](docs/GitBranchDto.md)
- - [GitBranchListDto](docs/GitBranchListDto.md)
- - [GitConfigDto](docs/GitConfigDto.md)
- - [GitEnabledDto](docs/GitEnabledDto.md)
- - [GitEntityBranchSummaryFilterDto](docs/GitEntityBranchSummaryFilterDto.md)
- - [GitEntitySummaryFilterDto](docs/GitEntitySummaryFilterDto.md)
+ - [GitAuthentication](docs/GitAuthentication.md)
+ - [GitBranch](docs/GitBranch.md)
+ - [GitBranchList](docs/GitBranchList.md)
+ - [GitConfig](docs/GitConfig.md)
+ - [GitEnabled](docs/GitEnabled.md)
+ - [GitEntityBranchSummaryFilter](docs/GitEntityBranchSummaryFilter.md)
+ - [GitEntitySummaryFilter](docs/GitEntitySummaryFilter.md)
  - [GitFileContent](docs/GitFileContent.md)
  - [GitHttpAuthenticationDto](docs/GitHttpAuthenticationDto.md)
- - [GitInfo](docs/GitInfo.md)
- - [GitOpsInfoDto](docs/GitOpsInfoDto.md)
- - [GitOpsProviderDto](docs/GitOpsProviderDto.md)
- - [GitOpsProviderResponseDto](docs/GitOpsProviderResponseDto.md)
  - [GitPrCreateRequest](docs/GitPrCreateRequest.md)
- - [GitSshAuthenticationDto](docs/GitSshAuthenticationDto.md)
- - [GitSyncConfigDto](docs/GitSyncConfigDto.md)
- - [GitSyncEntityDto](docs/GitSyncEntityDto.md)
- - [GitSyncEntityListDto](docs/GitSyncEntityListDto.md)
- - [GitSyncErrorAggregateByCommitDto](docs/GitSyncErrorAggregateByCommitDto.md)
- - [GitSyncErrorCountDto](docs/GitSyncErrorCountDto.md)
- - [GitSyncErrorDetailsDto](docs/GitSyncErrorDetailsDto.md)
- - [GitSyncErrorDto](docs/GitSyncErrorDto.md)
- - [GitSyncFolderConfigDto](docs/GitSyncFolderConfigDto.md)
- - [GitSyncRepoFilesDto](docs/GitSyncRepoFilesDto.md)
- - [GitSyncRepoFilesListDto](docs/GitSyncRepoFilesListDto.md)
- - [GitSyncSettingsDto](docs/GitSyncSettingsDto.md)
- - [GithubApiAccessDto](docs/GithubApiAccessDto.md)
- - [GithubApiAccessSpecDto](docs/GithubApiAccessSpecDto.md)
- - [GithubAppSpecDto](docs/GithubAppSpecDto.md)
- - [GithubAuthenticationDto](docs/GithubAuthenticationDto.md)
- - [GithubConnectorDto](docs/GithubConnectorDto.md)
- - [GithubCredentialsDto](docs/GithubCredentialsDto.md)
- - [GithubHttpCredentialsDto](docs/GithubHttpCredentialsDto.md)
- - [GithubHttpCredentialsSpecDto](docs/GithubHttpCredentialsSpecDto.md)
- - [GithubSshCredentialsDto](docs/GithubSshCredentialsDto.md)
- - [GithubTokenSpecDto](docs/GithubTokenSpecDto.md)
- - [GithubUsernamePasswordDto](docs/GithubUsernamePasswordDto.md)
- - [GithubUsernameTokenDto](docs/GithubUsernameTokenDto.md)
- - [GithubWebhookEvents](docs/GithubWebhookEvents.md)
- - [GithubWebhookEventsOrBuilder](docs/GithubWebhookEventsOrBuilder.md)
- - [GitlabApiAccessDto](docs/GitlabApiAccessDto.md)
- - [GitlabApiAccessSpecDto](docs/GitlabApiAccessSpecDto.md)
- - [GitlabAuthenticationDto](docs/GitlabAuthenticationDto.md)
- - [GitlabConnectorDto](docs/GitlabConnectorDto.md)
- - [GitlabCredentialsDto](docs/GitlabCredentialsDto.md)
- - [GitlabHttpCredentialsDto](docs/GitlabHttpCredentialsDto.md)
- - [GitlabHttpCredentialsSpecDto](docs/GitlabHttpCredentialsSpecDto.md)
- - [GitlabKerberosDto](docs/GitlabKerberosDto.md)
- - [GitlabSshCredentialsDto](docs/GitlabSshCredentialsDto.md)
- - [GitlabTokenSpecDto](docs/GitlabTokenSpecDto.md)
- - [GitlabUsernamePasswordDto](docs/GitlabUsernamePasswordDto.md)
- - [GitlabUsernameTokenDto](docs/GitlabUsernameTokenDto.md)
- - [GitlabWebhookEvents](docs/GitlabWebhookEvents.md)
- - [GitlabWebhookEventsOrBuilder](docs/GitlabWebhookEventsOrBuilder.md)
- - [HarnessServiceInfoNg](docs/HarnessServiceInfoNg.md)
- - [HealthDeploymentDashboard](docs/HealthDeploymentDashboard.md)
- - [HealthDeploymentInfo](docs/HealthDeploymentInfo.md)
- - [HttpHelmAuthCredentialsDto](docs/HttpHelmAuthCredentialsDto.md)
- - [HttpHelmAuthenticationDto](docs/HttpHelmAuthenticationDto.md)
- - [HttpHelmConnectorDto](docs/HttpHelmConnectorDto.md)
- - [HttpHelmUsernamePasswordDto](docs/HttpHelmUsernamePasswordDto.md)
- - [InfraExecutionSummary](docs/InfraExecutionSummary.md)
- - [InfrastructureDetails](docs/InfrastructureDetails.md)
- - [InputSetValidator](docs/InputSetValidator.md)
- - [InstanceCountDetailsByEnvTypeAndServiceId](docs/InstanceCountDetailsByEnvTypeAndServiceId.md)
- - [InstanceCountDetailsByEnvTypeBase](docs/InstanceCountDetailsByEnvTypeBase.md)
- - [InstanceDetailsByBuildId](docs/InstanceDetailsByBuildId.md)
- - [InstanceDetailsDto](docs/InstanceDetailsDto.md)
- - [InstancesByBuildIdList](docs/InstancesByBuildIdList.md)
+ - [GitSshAuthentication](docs/GitSshAuthentication.md)
+ - [GitSyncConfig](docs/GitSyncConfig.md)
+ - [GitSyncEntity](docs/GitSyncEntity.md)
+ - [GitSyncEntityList](docs/GitSyncEntityList.md)
+ - [GitSyncError](docs/GitSyncError.md)
+ - [GitSyncErrorAggregateByCommit](docs/GitSyncErrorAggregateByCommit.md)
+ - [GitSyncErrorCount](docs/GitSyncErrorCount.md)
+ - [GitSyncErrorDetails](docs/GitSyncErrorDetails.md)
+ - [GitSyncFolderConfig](docs/GitSyncFolderConfig.md)
+ - [GitSyncRepoFiles](docs/GitSyncRepoFiles.md)
+ - [GitSyncRepoFilesList](docs/GitSyncRepoFilesList.md)
+ - [GitSyncSettings](docs/GitSyncSettings.md)
+ - [GithubApiAccess](docs/GithubApiAccess.md)
+ - [GithubApiAccessSpec](docs/GithubApiAccessSpec.md)
+ - [GithubAppSpec](docs/GithubAppSpec.md)
+ - [GithubAuthentication](docs/GithubAuthentication.md)
+ - [GithubConnector](docs/GithubConnector.md)
+ - [GithubCredentials](docs/GithubCredentials.md)
+ - [GithubHttpCredentials](docs/GithubHttpCredentials.md)
+ - [GithubHttpCredentialsSpec](docs/GithubHttpCredentialsSpec.md)
+ - [GithubSshCredentials](docs/GithubSshCredentials.md)
+ - [GithubTokenSpec](docs/GithubTokenSpec.md)
+ - [GithubUsernamePassword](docs/GithubUsernamePassword.md)
+ - [GithubUsernameToken](docs/GithubUsernameToken.md)
+ - [GitlabApiAccess](docs/GitlabApiAccess.md)
+ - [GitlabApiAccessSpec](docs/GitlabApiAccessSpec.md)
+ - [GitlabAuthentication](docs/GitlabAuthentication.md)
+ - [GitlabConnector](docs/GitlabConnector.md)
+ - [GitlabCredentials](docs/GitlabCredentials.md)
+ - [GitlabHttpCredentials](docs/GitlabHttpCredentials.md)
+ - [GitlabHttpCredentialsSpec](docs/GitlabHttpCredentialsSpec.md)
+ - [GitlabKerberos](docs/GitlabKerberos.md)
+ - [GitlabSshCredentials](docs/GitlabSshCredentials.md)
+ - [GitlabTokenSpec](docs/GitlabTokenSpec.md)
+ - [GitlabUsernamePassword](docs/GitlabUsernamePassword.md)
+ - [GitlabUsernameToken](docs/GitlabUsernameToken.md)
+ - [HttpHelmAuthCredentials](docs/HttpHelmAuthCredentials.md)
+ - [HttpHelmAuthentication](docs/HttpHelmAuthentication.md)
+ - [HttpHelmConnector](docs/HttpHelmConnector.md)
+ - [HttpHelmUsernamePassword](docs/HttpHelmUsernamePassword.md)
+ - [Invite](docs/Invite.md)
  - [InviteAcceptResponse](docs/InviteAcceptResponse.md)
- - [InviteDto](docs/InviteDto.md)
- - [JiraConnectorDto](docs/JiraConnectorDto.md)
- - [JiraFieldAllowedValueNg](docs/JiraFieldAllowedValueNg.md)
- - [JiraFieldNg](docs/JiraFieldNg.md)
- - [JiraFieldSchemaNg](docs/JiraFieldSchemaNg.md)
- - [JiraIssueCreateMetadataNg](docs/JiraIssueCreateMetadataNg.md)
- - [JiraIssueTypeNg](docs/JiraIssueTypeNg.md)
- - [JiraIssueUpdateMetadataNg](docs/JiraIssueUpdateMetadataNg.md)
- - [JiraProjectBasicNg](docs/JiraProjectBasicNg.md)
- - [JiraProjectNg](docs/JiraProjectNg.md)
- - [JiraStatusCategoryNg](docs/JiraStatusCategoryNg.md)
- - [JiraStatusNg](docs/JiraStatusNg.md)
- - [JsonNode](docs/JsonNode.md)
- - [K8sInfrastructureDetails](docs/K8sInfrastructureDetails.md)
- - [KerberosConfigDto](docs/KerberosConfigDto.md)
- - [KubernetesAuthCredentialDto](docs/KubernetesAuthCredentialDto.md)
- - [KubernetesAuthDto](docs/KubernetesAuthDto.md)
- - [KubernetesClientKeyCertDto](docs/KubernetesClientKeyCertDto.md)
- - [KubernetesClusterConfigDto](docs/KubernetesClusterConfigDto.md)
- - [KubernetesClusterDetailsDto](docs/KubernetesClusterDetailsDto.md)
- - [KubernetesCredentialDto](docs/KubernetesCredentialDto.md)
- - [KubernetesCredentialSpecDto](docs/KubernetesCredentialSpecDto.md)
- - [KubernetesOpenIdConnectDto](docs/KubernetesOpenIdConnectDto.md)
- - [KubernetesServiceAccountDto](docs/KubernetesServiceAccountDto.md)
- - [KubernetesUserNamePasswordDto](docs/KubernetesUserNamePasswordDto.md)
- - [LastWorkloadInfo](docs/LastWorkloadInfo.md)
+ - [JiraConnector](docs/JiraConnector.md)
+ - [KubernetesAuth](docs/KubernetesAuth.md)
+ - [KubernetesAuthCredential](docs/KubernetesAuthCredential.md)
+ - [KubernetesClientKeyCert](docs/KubernetesClientKeyCert.md)
+ - [KubernetesClusterConfig](docs/KubernetesClusterConfig.md)
+ - [KubernetesClusterDetails](docs/KubernetesClusterDetails.md)
+ - [KubernetesCredential](docs/KubernetesCredential.md)
+ - [KubernetesCredentialSpec](docs/KubernetesCredentialSpec.md)
+ - [KubernetesOpenIdConnect](docs/KubernetesOpenIdConnect.md)
+ - [KubernetesServiceAccount](docs/KubernetesServiceAccount.md)
+ - [KubernetesUserNamePassword](docs/KubernetesUserNamePassword.md)
  - [LicenseInfo](docs/LicenseInfo.md)
  - [LicensesWithSummary](docs/LicensesWithSummary.md)
- - [LocalConfigDto](docs/LocalConfigDto.md)
  - [LocalConnectorDto](docs/LocalConnectorDto.md)
- - [Location](docs/Location.md)
- - [LocationOrBuilder](docs/LocationOrBuilder.md)
  - [LoginSettings](docs/LoginSettings.md)
  - [LoginTypeResponse](docs/LoginTypeResponse.md)
- - [ManagedArgoGitOpsInfoDto](docs/ManagedArgoGitOpsInfoDto.md)
- - [Message](docs/Message.md)
- - [MessageLite](docs/MessageLite.md)
- - [MessageOptions](docs/MessageOptions.md)
- - [MessageOptionsOrBuilder](docs/MessageOptionsOrBuilder.md)
- - [MethodDescriptor](docs/MethodDescriptor.md)
- - [MethodDescriptorProto](docs/MethodDescriptorProto.md)
- - [MethodDescriptorProtoOrBuilder](docs/MethodDescriptorProtoOrBuilder.md)
- - [MethodOptions](docs/MethodOptions.md)
- - [MethodOptionsOrBuilder](docs/MethodOptionsOrBuilder.md)
- - [MicrosoftTeamsConfigDto](docs/MicrosoftTeamsConfigDto.md)
  - [ModelError](docs/ModelError.md)
  - [ModuleLicense](docs/ModuleLicense.md)
- - [NamePart](docs/NamePart.md)
- - [NamePartOrBuilder](docs/NamePartOrBuilder.md)
- - [NativeEvents](docs/NativeEvents.md)
- - [NativeEventsOrBuilder](docs/NativeEventsOrBuilder.md)
  - [NewRelicConnectorDto](docs/NewRelicConnectorDto.md)
- - [NexusAuthCredentialsDto](docs/NexusAuthCredentialsDto.md)
- - [NexusAuthenticationDto](docs/NexusAuthenticationDto.md)
- - [NexusConnectorDto](docs/NexusConnectorDto.md)
- - [NexusUsernamePasswordAuthDto](docs/NexusUsernamePasswordAuthDto.md)
- - [NgAccess](docs/NgAccess.md)
- - [NgAccessWithEncryptionConsumer](docs/NgAccessWithEncryptionConsumer.md)
- - [NgActivityDto](docs/NgActivityDto.md)
- - [NgActivitySummaryDto](docs/NgActivitySummaryDto.md)
+ - [NexusAuthCredentials](docs/NexusAuthCredentials.md)
+ - [NexusAuthentication](docs/NexusAuthentication.md)
+ - [NexusConnector](docs/NexusConnector.md)
+ - [NexusUsernamePasswordAuth](docs/NexusUsernamePasswordAuth.md)
  - [NgAuthSettings](docs/NgAuthSettings.md)
- - [NgProperties](docs/NgProperties.md)
- - [NgTag](docs/NgTag.md)
- - [NgVariable](docs/NgVariable.md)
- - [NotificationChannelWrapper](docs/NotificationChannelWrapper.md)
- - [NotificationRules](docs/NotificationRules.md)
- - [NotificationSettingConfig](docs/NotificationSettingConfig.md)
- - [NotificationSettingConfigDto](docs/NotificationSettingConfigDto.md)
  - [NotificationSettings](docs/NotificationSettings.md)
- - [NumberNgVariable](docs/NumberNgVariable.md)
  - [OAuthSettings](docs/OAuthSettings.md)
- - [OAuthSignupDto](docs/OAuthSignupDto.md)
- - [OneofDescriptor](docs/OneofDescriptor.md)
- - [OneofDescriptorProto](docs/OneofDescriptorProto.md)
- - [OneofDescriptorProtoOrBuilder](docs/OneofDescriptorProtoOrBuilder.md)
- - [OneofOptions](docs/OneofOptions.md)
- - [OneofOptionsOrBuilder](docs/OneofOptionsOrBuilder.md)
- - [OrgProjectIdentifier](docs/OrgProjectIdentifier.md)
  - [Organization](docs/Organization.md)
- - [OrganizationAggregateDto](docs/OrganizationAggregateDto.md)
  - [OrganizationRequest](docs/OrganizationRequest.md)
  - [OrganizationResponse](docs/OrganizationResponse.md)
- - [PageEntitySetupUsageDto](docs/PageEntitySetupUsageDto.md)
- - [PageNgActivityDto](docs/PageNgActivityDto.md)
- - [PageNgActivitySummaryDto](docs/PageNgActivitySummaryDto.md)
- - [PageResponseApiKeyAggregateDto](docs/PageResponseApiKeyAggregateDto.md)
  - [PageResponseConnectorResponse](docs/PageResponseConnectorResponse.md)
  - [PageResponseEnvironmentResponse](docs/PageResponseEnvironmentResponse.md)
- - [PageResponseEnvironmentResponseDto](docs/PageResponseEnvironmentResponseDto.md)
- - [PageResponseFilterDto](docs/PageResponseFilterDto.md)
- - [PageResponseGitBranchDto](docs/PageResponseGitBranchDto.md)
- - [PageResponseGitOpsProviderResponseDto](docs/PageResponseGitOpsProviderResponseDto.md)
- - [PageResponseGitSyncEntityListDto](docs/PageResponseGitSyncEntityListDto.md)
- - [PageResponseGitSyncErrorAggregateByCommitDto](docs/PageResponseGitSyncErrorAggregateByCommitDto.md)
- - [PageResponseGitSyncErrorDto](docs/PageResponseGitSyncErrorDto.md)
- - [PageResponseInviteDto](docs/PageResponseInviteDto.md)
- - [PageResponseOrganizationAggregateDto](docs/PageResponseOrganizationAggregateDto.md)
+ - [PageResponseFilter](docs/PageResponseFilter.md)
+ - [PageResponseGitBranch](docs/PageResponseGitBranch.md)
+ - [PageResponseGitSyncEntityList](docs/PageResponseGitSyncEntityList.md)
+ - [PageResponseGitSyncError](docs/PageResponseGitSyncError.md)
+ - [PageResponseGitSyncErrorAggregateByCommit](docs/PageResponseGitSyncErrorAggregateByCommit.md)
+ - [PageResponseInvite](docs/PageResponseInvite.md)
  - [PageResponseOrganizationResponse](docs/PageResponseOrganizationResponse.md)
- - [PageResponseProject](docs/PageResponseProject.md)
- - [PageResponseProjectAggregateDto](docs/PageResponseProjectAggregateDto.md)
  - [PageResponseProjectResponse](docs/PageResponseProjectResponse.md)
- - [PageResponseRoleAssignmentResponse](docs/PageResponseRoleAssignmentResponse.md)
- - [PageResponseSecretResponseWrapper](docs/PageResponseSecretResponseWrapper.md)
- - [PageResponseServiceAccountAggregateDto](docs/PageResponseServiceAccountAggregateDto.md)
  - [PageResponseServiceResponse](docs/PageResponseServiceResponse.md)
- - [PageResponseServiceResponseDto](docs/PageResponseServiceResponseDto.md)
- - [PageResponseTokenAggregateDto](docs/PageResponseTokenAggregateDto.md)
- - [PageResponseUserAggregateDto](docs/PageResponseUserAggregateDto.md)
- - [PageResponseUserGroupAggregateDto](docs/PageResponseUserGroupAggregateDto.md)
- - [PageResponseUserGroupDto](docs/PageResponseUserGroupDto.md)
- - [PageResponseUserMetadataDto](docs/PageResponseUserMetadataDto.md)
- - [Pageable](docs/Pageable.md)
- - [PagerDutyConfigDto](docs/PagerDutyConfigDto.md)
  - [PagerDutyConnectorDto](docs/PagerDutyConnectorDto.md)
- - [ParameterFieldDouble](docs/ParameterFieldDouble.md)
- - [ParameterFieldNotificationChannelWrapper](docs/ParameterFieldNotificationChannelWrapper.md)
- - [ParameterFieldObject](docs/ParameterFieldObject.md)
- - [ParameterFieldSecretRefData](docs/ParameterFieldSecretRefData.md)
- - [ParameterFieldString](docs/ParameterFieldString.md)
- - [ParameterFieldTimeout](docs/ParameterFieldTimeout.md)
- - [Parser](docs/Parser.md)
- - [ParserBitbucketCloudWebhookEvents](docs/ParserBitbucketCloudWebhookEvents.md)
- - [ParserBitbucketServerWebhookEvents](docs/ParserBitbucketServerWebhookEvents.md)
- - [ParserDescriptorProto](docs/ParserDescriptorProto.md)
- - [ParserEnumDescriptorProto](docs/ParserEnumDescriptorProto.md)
- - [ParserEnumOptions](docs/ParserEnumOptions.md)
- - [ParserEnumReservedRange](docs/ParserEnumReservedRange.md)
- - [ParserEnumValueDescriptorProto](docs/ParserEnumValueDescriptorProto.md)
- - [ParserEnumValueOptions](docs/ParserEnumValueOptions.md)
- - [ParserExtensionRange](docs/ParserExtensionRange.md)
- - [ParserExtensionRangeOptions](docs/ParserExtensionRangeOptions.md)
- - [ParserFieldDescriptorProto](docs/ParserFieldDescriptorProto.md)
- - [ParserFieldOptions](docs/ParserFieldOptions.md)
- - [ParserFileDescriptorProto](docs/ParserFileDescriptorProto.md)
- - [ParserFileOptions](docs/ParserFileOptions.md)
- - [ParserGithubWebhookEvents](docs/ParserGithubWebhookEvents.md)
- - [ParserGitlabWebhookEvents](docs/ParserGitlabWebhookEvents.md)
- - [ParserLocation](docs/ParserLocation.md)
- - [ParserMessage](docs/ParserMessage.md)
- - [ParserMessageLite](docs/ParserMessageLite.md)
- - [ParserMessageOptions](docs/ParserMessageOptions.md)
- - [ParserMethodDescriptorProto](docs/ParserMethodDescriptorProto.md)
- - [ParserMethodOptions](docs/ParserMethodOptions.md)
- - [ParserNamePart](docs/ParserNamePart.md)
- - [ParserNativeEvents](docs/ParserNativeEvents.md)
- - [ParserOneofDescriptorProto](docs/ParserOneofDescriptorProto.md)
- - [ParserOneofOptions](docs/ParserOneofOptions.md)
- - [ParserReservedRange](docs/ParserReservedRange.md)
- - [ParserServiceDescriptorProto](docs/ParserServiceDescriptorProto.md)
- - [ParserServiceOptions](docs/ParserServiceOptions.md)
- - [ParserSourceCodeInfo](docs/ParserSourceCodeInfo.md)
- - [ParserUninterpretedOption](docs/ParserUninterpretedOption.md)
- - [ParserWebhookResponse](docs/ParserWebhookResponse.md)
- - [PartialSchemaDto](docs/PartialSchemaDto.md)
- - [PasswordChangeDto](docs/PasswordChangeDto.md)
  - [PasswordExpirationPolicy](docs/PasswordExpirationPolicy.md)
  - [PasswordStrengthPolicy](docs/PasswordStrengthPolicy.md)
- - [PipelineConfig](docs/PipelineConfig.md)
- - [PipelineEvent](docs/PipelineEvent.md)
- - [PipelineExecutionDashboardInfo](docs/PipelineExecutionDashboardInfo.md)
- - [PipelineInfoConfig](docs/PipelineInfoConfig.md)
- - [PipelinesExecutionDashboardInfo](docs/PipelinesExecutionDashboardInfo.md)
- - [PmsEmailChannel](docs/PmsEmailChannel.md)
- - [PmsMsTeamChannel](docs/PmsMsTeamChannel.md)
- - [PmsNotificationChannel](docs/PmsNotificationChannel.md)
- - [PmsPagerDutyChannel](docs/PmsPagerDutyChannel.md)
- - [PmsSlackChannel](docs/PmsSlackChannel.md)
- - [PollingResponseDto](docs/PollingResponseDto.md)
- - [Principal](docs/Principal.md)
  - [Project](docs/Project.md)
- - [ProjectAggregateDto](docs/ProjectAggregateDto.md)
- - [ProjectDashBoardInfo](docs/ProjectDashBoardInfo.md)
  - [ProjectRequest](docs/ProjectRequest.md)
  - [ProjectResponse](docs/ProjectResponse.md)
- - [ProjectsDashboardInfo](docs/ProjectsDashboardInfo.md)
  - [PrometheusConnectorDto](docs/PrometheusConnectorDto.md)
- - [RateLimitRestrictionDto](docs/RateLimitRestrictionDto.md)
- - [RateLimitRestrictionMetadataDto](docs/RateLimitRestrictionMetadataDto.md)
- - [ReservedRange](docs/ReservedRange.md)
- - [ReservedRangeOrBuilder](docs/ReservedRangeOrBuilder.md)
- - [ResourceGroup](docs/ResourceGroup.md)
+ - [RateLimitProtection](docs/RateLimitProtection.md)
+ - [RateLimitRestriction](docs/RateLimitRestriction.md)
+ - [RateLimitRestrictionMetadata](docs/RateLimitRestrictionMetadata.md)
  - [ResponseDtoAccount](docs/ResponseDtoAccount.md)
  - [ResponseDtoAccountLicense](docs/ResponseDtoAccountLicense.md)
- - [ResponseDtoAccountResourcesDto](docs/ResponseDtoAccountResourcesDto.md)
- - [ResponseDtoActiveProjectsCountDto](docs/ResponseDtoActiveProjectsCountDto.md)
- - [ResponseDtoActiveServiceInstanceSummary](docs/ResponseDtoActiveServiceInstanceSummary.md)
- - [ResponseDtoAddUsersResponse](docs/ResponseDtoAddUsersResponse.md)
- - [ResponseDtoApiKeyAggregateDto](docs/ResponseDtoApiKeyAggregateDto.md)
- - [ResponseDtoApiKeyDto](docs/ResponseDtoApiKeyDto.md)
  - [ResponseDtoBoolean](docs/ResponseDtoBoolean.md)
- - [ResponseDtoCheckExpiryResultDto](docs/ResponseDtoCheckExpiryResultDto.md)
- - [ResponseDtoConnectivityCheckSummaryDto](docs/ResponseDtoConnectivityCheckSummaryDto.md)
  - [ResponseDtoConnectorCatalogueRespone](docs/ResponseDtoConnectorCatalogueRespone.md)
  - [ResponseDtoConnectorResponse](docs/ResponseDtoConnectorResponse.md)
  - [ResponseDtoConnectorStatistics](docs/ResponseDtoConnectorStatistics.md)
  - [ResponseDtoConnectorValidationParams](docs/ResponseDtoConnectorValidationParams.md)
  - [ResponseDtoConnectorValidationResult](docs/ResponseDtoConnectorValidationResult.md)
- - [ResponseDtoCreatePrdto](docs/ResponseDtoCreatePrdto.md)
- - [ResponseDtoDashboardExecutionStatusInfo](docs/ResponseDtoDashboardExecutionStatusInfo.md)
- - [ResponseDtoDashboardWorkloadDeployment](docs/ResponseDtoDashboardWorkloadDeployment.md)
- - [ResponseDtoDecryptableEntity](docs/ResponseDtoDecryptableEntity.md)
- - [ResponseDtoDeploymentStatsSummary](docs/ResponseDtoDeploymentStatsSummary.md)
- - [ResponseDtoDeploymentsInfo](docs/ResponseDtoDeploymentsInfo.md)
- - [ResponseDtoDockerBuildDetailsDto](docs/ResponseDtoDockerBuildDetailsDto.md)
- - [ResponseDtoDockerResponseDto](docs/ResponseDtoDockerResponseDto.md)
- - [ResponseDtoEcrBuildDetailsDto](docs/ResponseDtoEcrBuildDetailsDto.md)
- - [ResponseDtoEcrListImagesDto](docs/ResponseDtoEcrListImagesDto.md)
- - [ResponseDtoEcrResponseDto](docs/ResponseDtoEcrResponseDto.md)
- - [ResponseDtoEntityReferencesDto](docs/ResponseDtoEntityReferencesDto.md)
- - [ResponseDtoEntitySetupUsageDto](docs/ResponseDtoEntitySetupUsageDto.md)
- - [ResponseDtoEnvBuildIdAndInstanceCountInfoList](docs/ResponseDtoEnvBuildIdAndInstanceCountInfoList.md)
- - [ResponseDtoEnvCount](docs/ResponseDtoEnvCount.md)
+ - [ResponseDtoCreatePr](docs/ResponseDtoCreatePr.md)
  - [ResponseDtoEnvironmentResponse](docs/ResponseDtoEnvironmentResponse.md)
- - [ResponseDtoEnvironmentResponseDto](docs/ResponseDtoEnvironmentResponseDto.md)
- - [ResponseDtoExecutionDeploymentInfo](docs/ResponseDtoExecutionDeploymentInfo.md)
  - [ResponseDtoFeatureRestrictionDetails](docs/ResponseDtoFeatureRestrictionDetails.md)
- - [ResponseDtoFeatureRestrictionMetadata](docs/ResponseDtoFeatureRestrictionMetadata.md)
- - [ResponseDtoFeatureRestrictionUsageDto](docs/ResponseDtoFeatureRestrictionUsageDto.md)
  - [ResponseDtoFieldValues](docs/ResponseDtoFieldValues.md)
- - [ResponseDtoFilterDto](docs/ResponseDtoFilterDto.md)
+ - [ResponseDtoFilter](docs/ResponseDtoFilter.md)
  - [ResponseDtoGcpResponse](docs/ResponseDtoGcpResponse.md)
- - [ResponseDtoGcrBuildDetailsDto](docs/ResponseDtoGcrBuildDetailsDto.md)
- - [ResponseDtoGcrResponseDto](docs/ResponseDtoGcrResponseDto.md)
- - [ResponseDtoGitBranchListDto](docs/ResponseDtoGitBranchListDto.md)
+ - [ResponseDtoGitBranchList](docs/ResponseDtoGitBranchList.md)
  - [ResponseDtoGitFileContent](docs/ResponseDtoGitFileContent.md)
- - [ResponseDtoGitOpsProviderResponseDto](docs/ResponseDtoGitOpsProviderResponseDto.md)
- - [ResponseDtoGitSyncErrorCountDto](docs/ResponseDtoGitSyncErrorCountDto.md)
- - [ResponseDtoGitSyncRepoFilesListDto](docs/ResponseDtoGitSyncRepoFilesListDto.md)
- - [ResponseDtoGitSyncSettingsDto](docs/ResponseDtoGitSyncSettingsDto.md)
- - [ResponseDtoHealthDeploymentDashboard](docs/ResponseDtoHealthDeploymentDashboard.md)
- - [ResponseDtoInstanceCountDetailsByEnvTypeAndServiceId](docs/ResponseDtoInstanceCountDetailsByEnvTypeAndServiceId.md)
- - [ResponseDtoInstancesByBuildIdList](docs/ResponseDtoInstancesByBuildIdList.md)
+ - [ResponseDtoGitSyncErrorCount](docs/ResponseDtoGitSyncErrorCount.md)
+ - [ResponseDtoGitSyncRepoFilesList](docs/ResponseDtoGitSyncRepoFilesList.md)
+ - [ResponseDtoGitSyncSettings](docs/ResponseDtoGitSyncSettings.md)
+ - [ResponseDtoInvite](docs/ResponseDtoInvite.md)
  - [ResponseDtoInviteAcceptResponse](docs/ResponseDtoInviteAcceptResponse.md)
- - [ResponseDtoInviteDto](docs/ResponseDtoInviteDto.md)
- - [ResponseDtoJiraIssueCreateMetadataNg](docs/ResponseDtoJiraIssueCreateMetadataNg.md)
- - [ResponseDtoJiraIssueUpdateMetadataNg](docs/ResponseDtoJiraIssueUpdateMetadataNg.md)
- - [ResponseDtoJsonNode](docs/ResponseDtoJsonNode.md)
  - [ResponseDtoLicensesWithSummary](docs/ResponseDtoLicensesWithSummary.md)
- - [ResponseDtoListApiKeyDto](docs/ResponseDtoListApiKeyDto.md)
  - [ResponseDtoListConnectorResponse](docs/ResponseDtoListConnectorResponse.md)
- - [ResponseDtoListEncryptedDataDetail](docs/ResponseDtoListEncryptedDataDetail.md)
- - [ResponseDtoListEntitySetupUsageDto](docs/ResponseDtoListEntitySetupUsageDto.md)
  - [ResponseDtoListEnvironmentResponse](docs/ResponseDtoListEnvironmentResponse.md)
- - [ResponseDtoListExecutionStatus](docs/ResponseDtoListExecutionStatus.md)
  - [ResponseDtoListFeatureRestrictionDetails](docs/ResponseDtoListFeatureRestrictionDetails.md)
  - [ResponseDtoListFeatureRestrictionMetadata](docs/ResponseDtoListFeatureRestrictionMetadata.md)
- - [ResponseDtoListGitSyncEntityListDto](docs/ResponseDtoListGitSyncEntityListDto.md)
+ - [ResponseDtoListGitSyncEntityList](docs/ResponseDtoListGitSyncEntityList.md)
  - [ResponseDtoListInviteOperationResponse](docs/ResponseDtoListInviteOperationResponse.md)
- - [ResponseDtoListJiraProjectBasicNg](docs/ResponseDtoListJiraProjectBasicNg.md)
- - [ResponseDtoListJiraStatusNg](docs/ResponseDtoListJiraStatusNg.md)
  - [ResponseDtoListModuleLicense](docs/ResponseDtoListModuleLicense.md)
- - [ResponseDtoListProject](docs/ResponseDtoListProject.md)
- - [ResponseDtoListRoleAssignmentResponse](docs/ResponseDtoListRoleAssignmentResponse.md)
- - [ResponseDtoListServiceAccountDto](docs/ResponseDtoListServiceAccountDto.md)
- - [ResponseDtoListServiceDefinitionType](docs/ResponseDtoListServiceDefinitionType.md)
  - [ResponseDtoListServiceResponse](docs/ResponseDtoListServiceResponse.md)
- - [ResponseDtoListSourceCodeManagerDto](docs/ResponseDtoListSourceCodeManagerDto.md)
+ - [ResponseDtoListSourceCodeManager](docs/ResponseDtoListSourceCodeManager.md)
  - [ResponseDtoListString](docs/ResponseDtoListString.md)
- - [ResponseDtoListUserGroupAggregateDto](docs/ResponseDtoListUserGroupAggregateDto.md)
- - [ResponseDtoListUserGroupDto](docs/ResponseDtoListUserGroupDto.md)
- - [ResponseDtoMapEditionSetEditionActionDto](docs/ResponseDtoMapEditionSetEditionActionDto.md)
- - [ResponseDtoMapServiceDefinitionTypeListExecutionStrategyType](docs/ResponseDtoMapServiceDefinitionTypeListExecutionStrategyType.md)
- - [ResponseDtoMapStringString](docs/ResponseDtoMapStringString.md)
+ - [ResponseDtoMapEditionSetEditionAction](docs/ResponseDtoMapEditionSetEditionAction.md)
+ - [ResponseDtoMapModuleTypeLong](docs/ResponseDtoMapModuleTypeLong.md)
  - [ResponseDtoModuleLicense](docs/ResponseDtoModuleLicense.md)
- - [ResponseDtoOptionalHarnessServiceInfoNg](docs/ResponseDtoOptionalHarnessServiceInfoNg.md)
- - [ResponseDtoOptionalInviteDto](docs/ResponseDtoOptionalInviteDto.md)
- - [ResponseDtoOrganizationAggregateDto](docs/ResponseDtoOrganizationAggregateDto.md)
+ - [ResponseDtoOptionalInvite](docs/ResponseDtoOptionalInvite.md)
  - [ResponseDtoOrganizationResponse](docs/ResponseDtoOrganizationResponse.md)
- - [ResponseDtoPageEntitySetupUsageDto](docs/ResponseDtoPageEntitySetupUsageDto.md)
- - [ResponseDtoPageNgActivityDto](docs/ResponseDtoPageNgActivityDto.md)
- - [ResponseDtoPageNgActivitySummaryDto](docs/ResponseDtoPageNgActivitySummaryDto.md)
- - [ResponseDtoPageResponseApiKeyAggregateDto](docs/ResponseDtoPageResponseApiKeyAggregateDto.md)
  - [ResponseDtoPageResponseConnectorResponse](docs/ResponseDtoPageResponseConnectorResponse.md)
  - [ResponseDtoPageResponseEnvironmentResponse](docs/ResponseDtoPageResponseEnvironmentResponse.md)
- - [ResponseDtoPageResponseEnvironmentResponseDto](docs/ResponseDtoPageResponseEnvironmentResponseDto.md)
- - [ResponseDtoPageResponseFilterDto](docs/ResponseDtoPageResponseFilterDto.md)
- - [ResponseDtoPageResponseGitOpsProviderResponseDto](docs/ResponseDtoPageResponseGitOpsProviderResponseDto.md)
- - [ResponseDtoPageResponseGitSyncEntityListDto](docs/ResponseDtoPageResponseGitSyncEntityListDto.md)
- - [ResponseDtoPageResponseGitSyncErrorAggregateByCommitDto](docs/ResponseDtoPageResponseGitSyncErrorAggregateByCommitDto.md)
- - [ResponseDtoPageResponseGitSyncErrorDto](docs/ResponseDtoPageResponseGitSyncErrorDto.md)
- - [ResponseDtoPageResponseInviteDto](docs/ResponseDtoPageResponseInviteDto.md)
- - [ResponseDtoPageResponseOrganizationAggregateDto](docs/ResponseDtoPageResponseOrganizationAggregateDto.md)
+ - [ResponseDtoPageResponseFilter](docs/ResponseDtoPageResponseFilter.md)
+ - [ResponseDtoPageResponseGitSyncEntityList](docs/ResponseDtoPageResponseGitSyncEntityList.md)
+ - [ResponseDtoPageResponseGitSyncError](docs/ResponseDtoPageResponseGitSyncError.md)
+ - [ResponseDtoPageResponseGitSyncErrorAggregateByCommit](docs/ResponseDtoPageResponseGitSyncErrorAggregateByCommit.md)
+ - [ResponseDtoPageResponseInvite](docs/ResponseDtoPageResponseInvite.md)
  - [ResponseDtoPageResponseOrganizationResponse](docs/ResponseDtoPageResponseOrganizationResponse.md)
- - [ResponseDtoPageResponseProject](docs/ResponseDtoPageResponseProject.md)
- - [ResponseDtoPageResponseProjectAggregateDto](docs/ResponseDtoPageResponseProjectAggregateDto.md)
  - [ResponseDtoPageResponseProjectResponse](docs/ResponseDtoPageResponseProjectResponse.md)
- - [ResponseDtoPageResponseRoleAssignmentResponse](docs/ResponseDtoPageResponseRoleAssignmentResponse.md)
- - [ResponseDtoPageResponseSecretResponseWrapper](docs/ResponseDtoPageResponseSecretResponseWrapper.md)
- - [ResponseDtoPageResponseServiceAccountAggregateDto](docs/ResponseDtoPageResponseServiceAccountAggregateDto.md)
  - [ResponseDtoPageResponseServiceResponse](docs/ResponseDtoPageResponseServiceResponse.md)
- - [ResponseDtoPageResponseServiceResponseDto](docs/ResponseDtoPageResponseServiceResponseDto.md)
- - [ResponseDtoPageResponseTokenAggregateDto](docs/ResponseDtoPageResponseTokenAggregateDto.md)
- - [ResponseDtoPageResponseUserAggregateDto](docs/ResponseDtoPageResponseUserAggregateDto.md)
- - [ResponseDtoPageResponseUserGroupAggregateDto](docs/ResponseDtoPageResponseUserGroupAggregateDto.md)
- - [ResponseDtoPageResponseUserGroupDto](docs/ResponseDtoPageResponseUserGroupDto.md)
- - [ResponseDtoPageResponseUserMetadataDto](docs/ResponseDtoPageResponseUserMetadataDto.md)
- - [ResponseDtoPartialSchemaDto](docs/ResponseDtoPartialSchemaDto.md)
- - [ResponseDtoPasswordChangeResponse](docs/ResponseDtoPasswordChangeResponse.md)
- - [ResponseDtoPipelineConfig](docs/ResponseDtoPipelineConfig.md)
- - [ResponseDtoPipelinesExecutionDashboardInfo](docs/ResponseDtoPipelinesExecutionDashboardInfo.md)
- - [ResponseDtoPollingResponseDto](docs/ResponseDtoPollingResponseDto.md)
- - [ResponseDtoProjectAggregateDto](docs/ResponseDtoProjectAggregateDto.md)
  - [ResponseDtoProjectResponse](docs/ResponseDtoProjectResponse.md)
- - [ResponseDtoProjectsDashboardInfo](docs/ResponseDtoProjectsDashboardInfo.md)
- - [ResponseDtoRestrictionMetadataMapResponseDto](docs/ResponseDtoRestrictionMetadataMapResponseDto.md)
- - [ResponseDtoRoleAssignmentAggregateResponse](docs/ResponseDtoRoleAssignmentAggregateResponse.md)
- - [ResponseDtoRoleAssignmentResponse](docs/ResponseDtoRoleAssignmentResponse.md)
  - [ResponseDtoSaasGitDto](docs/ResponseDtoSaasGitDto.md)
- - [ResponseDtoSecretManagerConfigDto](docs/ResponseDtoSecretManagerConfigDto.md)
- - [ResponseDtoSecretManagerMetadataDto](docs/ResponseDtoSecretManagerMetadataDto.md)
- - [ResponseDtoSecretResponseWrapper](docs/ResponseDtoSecretResponseWrapper.md)
- - [ResponseDtoSecretValidationResultDto](docs/ResponseDtoSecretValidationResultDto.md)
- - [ResponseDtoServiceAccountAggregateDto](docs/ResponseDtoServiceAccountAggregateDto.md)
- - [ResponseDtoServiceAccountDto](docs/ResponseDtoServiceAccountDto.md)
- - [ResponseDtoServiceDeploymentInfoDto](docs/ResponseDtoServiceDeploymentInfoDto.md)
- - [ResponseDtoServiceDeploymentListInfo](docs/ResponseDtoServiceDeploymentListInfo.md)
- - [ResponseDtoServiceDetailsInfoDto](docs/ResponseDtoServiceDetailsInfoDto.md)
- - [ResponseDtoServiceHeaderInfo](docs/ResponseDtoServiceHeaderInfo.md)
  - [ResponseDtoServiceResponse](docs/ResponseDtoServiceResponse.md)
- - [ResponseDtoServiceResponseDto](docs/ResponseDtoServiceResponseDto.md)
- - [ResponseDtoServicesCount](docs/ResponseDtoServicesCount.md)
- - [ResponseDtoServicesDashboardInfo](docs/ResponseDtoServicesDashboardInfo.md)
- - [ResponseDtoSourceCodeManagerDto](docs/ResponseDtoSourceCodeManagerDto.md)
- - [ResponseDtoStepCategory](docs/ResponseDtoStepCategory.md)
+ - [ResponseDtoSourceCodeManager](docs/ResponseDtoSourceCodeManager.md)
  - [ResponseDtoString](docs/ResponseDtoString.md)
- - [ResponseDtoTimeValuePairListDtoEnvIdCountPair](docs/ResponseDtoTimeValuePairListDtoEnvIdCountPair.md)
- - [ResponseDtoTimeValuePairListDtoInteger](docs/ResponseDtoTimeValuePairListDtoInteger.md)
- - [ResponseDtoTokenDto](docs/ResponseDtoTokenDto.md)
- - [ResponseDtoTwoFactorAuthSettingsInfo](docs/ResponseDtoTwoFactorAuthSettingsInfo.md)
- - [ResponseDtoUpsertWebhookResponseDto](docs/ResponseDtoUpsertWebhookResponseDto.md)
- - [ResponseDtoUserAggregateDto](docs/ResponseDtoUserAggregateDto.md)
- - [ResponseDtoUserGroupAggregateDto](docs/ResponseDtoUserGroupAggregateDto.md)
- - [ResponseDtoUserGroupDto](docs/ResponseDtoUserGroupDto.md)
- - [ResponseDtoUserInfo](docs/ResponseDtoUserInfo.md)
- - [ResponseDtoYamlSnippetsDto](docs/ResponseDtoYamlSnippetsDto.md)
- - [ResponseDtocdPipelineModuleInfo](docs/ResponseDtocdPipelineModuleInfo.md)
- - [ResponseDtocdStageModuleInfo](docs/ResponseDtocdStageModuleInfo.md)
- - [ResponseDtongActivityDto](docs/ResponseDtongActivityDto.md)
+ - [ResponseDtoTriggerFullSyncResponse](docs/ResponseDtoTriggerFullSyncResponse.md)
  - [ResponseMessage](docs/ResponseMessage.md)
  - [ResponseMessageException](docs/ResponseMessageException.md)
  - [ResponseMessageExceptionStackTrace](docs/ResponseMessageExceptionStackTrace.md)
  - [ResponseMessageExceptionSuppressed](docs/ResponseMessageExceptionSuppressed.md)
- - [RestResponse](docs/RestResponse.md)
  - [RestResponseAuthenticationSettingsResponse](docs/RestResponseAuthenticationSettingsResponse.md)
  - [RestResponseBoolean](docs/RestResponseBoolean.md)
  - [RestResponseDelegateProfileDetailsNg](docs/RestResponseDelegateProfileDetailsNg.md)
@@ -1001,143 +451,43 @@ Class | Method | HTTP request | Description
  - [RestResponsePageResponseDelegateProfileDetailsNg](docs/RestResponsePageResponseDelegateProfileDetailsNg.md)
  - [RestResponsePasswordStrengthPolicy](docs/RestResponsePasswordStrengthPolicy.md)
  - [RestResponseSsoConfig](docs/RestResponseSsoConfig.md)
- - [RestResponseUserGroup](docs/RestResponseUserGroup.md)
- - [RestResponseUserInfo](docs/RestResponseUserInfo.md)
- - [RestResponseVerifyTokenResponseDto](docs/RestResponseVerifyTokenResponseDto.md)
  - [RestResponseVoid](docs/RestResponseVoid.md)
- - [RestrictionDto](docs/RestrictionDto.md)
- - [RestrictionMetadataDto](docs/RestrictionMetadataDto.md)
- - [RestrictionMetadataMapRequestDto](docs/RestrictionMetadataMapRequestDto.md)
- - [RestrictionMetadataMapResponseDto](docs/RestrictionMetadataMapResponseDto.md)
- - [Role](docs/Role.md)
- - [RoleAssignment](docs/RoleAssignment.md)
- - [RoleAssignmentAggregateResponse](docs/RoleAssignmentAggregateResponse.md)
- - [RoleAssignmentCreateRequest](docs/RoleAssignmentCreateRequest.md)
- - [RoleAssignmentFilter](docs/RoleAssignmentFilter.md)
- - [RoleAssignmentMetadataDto](docs/RoleAssignmentMetadataDto.md)
- - [RoleAssignmentResponse](docs/RoleAssignmentResponse.md)
+ - [Restriction](docs/Restriction.md)
+ - [RestrictionMetadata](docs/RestrictionMetadata.md)
  - [RoleBinding](docs/RoleBinding.md)
- - [RoleResponse](docs/RoleResponse.md)
  - [SaasGitDto](docs/SaasGitDto.md)
- - [SamlLinkGroupRequest](docs/SamlLinkGroupRequest.md)
  - [SampleErrorMetadataDto](docs/SampleErrorMetadataDto.md)
- - [Scope](docs/Scope.md)
  - [ScopingRuleDetailsNg](docs/ScopingRuleDetailsNg.md)
  - [SearchFilter](docs/SearchFilter.md)
- - [SecretDtov2](docs/SecretDtov2.md)
- - [SecretFileSpecDto](docs/SecretFileSpecDto.md)
- - [SecretManagerConfigDto](docs/SecretManagerConfigDto.md)
- - [SecretManagerMetadataDto](docs/SecretManagerMetadataDto.md)
- - [SecretManagerMetadataRequestDto](docs/SecretManagerMetadataRequestDto.md)
- - [SecretManagerMetadataRequestSpecDto](docs/SecretManagerMetadataRequestSpecDto.md)
- - [SecretManagerMetadataSpecDto](docs/SecretManagerMetadataSpecDto.md)
- - [SecretNgVariable](docs/SecretNgVariable.md)
- - [SecretReferredByConnectorSetupUsageDetail](docs/SecretReferredByConnectorSetupUsageDetail.md)
- - [SecretRequestWrapper](docs/SecretRequestWrapper.md)
- - [SecretResourceFilterDto](docs/SecretResourceFilterDto.md)
- - [SecretResponseWrapper](docs/SecretResponseWrapper.md)
- - [SecretSpecDto](docs/SecretSpecDto.md)
- - [SecretTextSpecDto](docs/SecretTextSpecDto.md)
- - [SecretUniqueIdentifier](docs/SecretUniqueIdentifier.md)
- - [SecretValidationMetaData](docs/SecretValidationMetaData.md)
- - [SecretValidationResultDto](docs/SecretValidationResultDto.md)
- - [SecretsFilesBody](docs/SecretsFilesBody.md)
- - [ServiceAccountAggregateDto](docs/ServiceAccountAggregateDto.md)
  - [ServiceAccountConfig](docs/ServiceAccountConfig.md)
- - [ServiceAccountDto](docs/ServiceAccountDto.md)
- - [ServiceDashboardInfo](docs/ServiceDashboardInfo.md)
- - [ServiceDeployment](docs/ServiceDeployment.md)
- - [ServiceDeploymentInfo](docs/ServiceDeploymentInfo.md)
- - [ServiceDeploymentInfoDto](docs/ServiceDeploymentInfoDto.md)
- - [ServiceDeploymentListInfo](docs/ServiceDeploymentListInfo.md)
- - [ServiceDescriptor](docs/ServiceDescriptor.md)
- - [ServiceDescriptorProto](docs/ServiceDescriptorProto.md)
- - [ServiceDescriptorProtoOrBuilder](docs/ServiceDescriptorProtoOrBuilder.md)
- - [ServiceDetailsDto](docs/ServiceDetailsDto.md)
- - [ServiceDetailsInfoDto](docs/ServiceDetailsInfoDto.md)
- - [ServiceExecutionSummary](docs/ServiceExecutionSummary.md)
- - [ServiceHeaderInfo](docs/ServiceHeaderInfo.md)
- - [ServiceOptions](docs/ServiceOptions.md)
- - [ServiceOptionsOrBuilder](docs/ServiceOptionsOrBuilder.md)
- - [ServicePipelineInfo](docs/ServicePipelineInfo.md)
- - [ServiceRequestDto](docs/ServiceRequestDto.md)
+ - [ServiceRequest](docs/ServiceRequest.md)
  - [ServiceResponse](docs/ServiceResponse.md)
- - [ServiceResponseDto](docs/ServiceResponseDto.md)
- - [ServicesCount](docs/ServicesCount.md)
- - [ServicesDashboardInfo](docs/ServicesDashboardInfo.md)
- - [SetupUsageDetail](docs/SetupUsageDetail.md)
- - [SignupDto](docs/SignupDto.md)
- - [SlackConfigDto](docs/SlackConfigDto.md)
  - [SlackNotificationSetting](docs/SlackNotificationSetting.md)
- - [Sort](docs/Sort.md)
  - [SortOrder](docs/SortOrder.md)
- - [SourceCodeInfo](docs/SourceCodeInfo.md)
- - [SourceCodeInfoOrBuilder](docs/SourceCodeInfoOrBuilder.md)
+ - [SourceCodeManager](docs/SourceCodeManager.md)
  - [SourceCodeManagerAuthentication](docs/SourceCodeManagerAuthentication.md)
- - [SourceCodeManagerDto](docs/SourceCodeManagerDto.md)
  - [SplunkConnectorDto](docs/SplunkConnectorDto.md)
- - [SshAuthDto](docs/SshAuthDto.md)
- - [SshConfigDto](docs/SshConfigDto.md)
- - [SshCredentialSpecDto](docs/SshCredentialSpecDto.md)
- - [SshKeyPathCredentialDto](docs/SshKeyPathCredentialDto.md)
- - [SshKeyReferenceCredentialDto](docs/SshKeyReferenceCredentialDto.md)
- - [SshKeySpecDto](docs/SshKeySpecDto.md)
- - [SshPasswordCredentialDto](docs/SshPasswordCredentialDto.md)
  - [SsoConfig](docs/SsoConfig.md)
  - [SsoRequest](docs/SsoRequest.md)
  - [SsoSettings](docs/SsoSettings.md)
- - [StageElementWrapperConfig](docs/StageElementWrapperConfig.md)
  - [StartTrial](docs/StartTrial.md)
- - [StaticLimitRestrictionDto](docs/StaticLimitRestrictionDto.md)
- - [StaticLimitRestrictionMetadataDto](docs/StaticLimitRestrictionMetadataDto.md)
- - [StepCategory](docs/StepCategory.md)
- - [StepData](docs/StepData.md)
- - [StringNgVariable](docs/StringNgVariable.md)
+ - [StaticLimitRestriction](docs/StaticLimitRestriction.md)
+ - [StaticLimitRestrictionMetadata](docs/StaticLimitRestrictionMetadata.md)
  - [SumoLogicConnectorDto](docs/SumoLogicConnectorDto.md)
  - [TechStack](docs/TechStack.md)
- - [TgtGenerationSpecDto](docs/TgtGenerationSpecDto.md)
- - [TgtKeyTabFilePathSpecDto](docs/TgtKeyTabFilePathSpecDto.md)
- - [TgtPasswordSpecDto](docs/TgtPasswordSpecDto.md)
- - [TimeBasedDeploymentInfo](docs/TimeBasedDeploymentInfo.md)
  - [TimeUnit](docs/TimeUnit.md)
- - [TimeValuePairEnvIdCountPair](docs/TimeValuePairEnvIdCountPair.md)
- - [TimeValuePairInteger](docs/TimeValuePairInteger.md)
- - [TimeValuePairListDtoEnvIdCountPair](docs/TimeValuePairListDtoEnvIdCountPair.md)
- - [TimeValuePairListDtoInteger](docs/TimeValuePairListDtoInteger.md)
- - [TokenAggregateDto](docs/TokenAggregateDto.md)
- - [TokenDto](docs/TokenDto.md)
- - [TotalDeploymentInfo](docs/TotalDeploymentInfo.md)
  - [TrialSignupOptions](docs/TrialSignupOptions.md)
+ - [TriggerFullSyncResponse](docs/TriggerFullSyncResponse.md)
  - [TwoFactorAdminOverrideSettings](docs/TwoFactorAdminOverrideSettings.md)
- - [TwoFactorAuthSettingsInfo](docs/TwoFactorAuthSettingsInfo.md)
- - [UninterpretedOption](docs/UninterpretedOption.md)
- - [UninterpretedOptionOrBuilder](docs/UninterpretedOptionOrBuilder.md)
- - [UnknownFieldSet](docs/UnknownFieldSet.md)
- - [UpsertWebhookRequestDto](docs/UpsertWebhookRequestDto.md)
- - [UpsertWebhookResponseDto](docs/UpsertWebhookResponseDto.md)
  - [User](docs/User.md)
- - [UserAggregateDto](docs/UserAggregateDto.md)
- - [UserFilter](docs/UserFilter.md)
  - [UserGroup](docs/UserGroup.md)
- - [UserGroupAggregateDto](docs/UserGroupAggregateDto.md)
- - [UserGroupDto](docs/UserGroupDto.md)
- - [UserGroupFilterDto](docs/UserGroupFilterDto.md)
  - [UserInfo](docs/UserInfo.md)
  - [UserLockoutInfo](docs/UserLockoutInfo.md)
  - [UserLockoutPolicy](docs/UserLockoutPolicy.md)
- - [UserMetadataDto](docs/UserMetadataDto.md)
  - [UtmInfo](docs/UtmInfo.md)
  - [ValidationError](docs/ValidationError.md)
- - [VaultConfigDto](docs/VaultConfigDto.md)
  - [VaultConnectorDto](docs/VaultConnectorDto.md)
- - [VerifyTokenResponseDto](docs/VerifyTokenResponseDto.md)
- - [WebhookResponse](docs/WebhookResponse.md)
  - [WorkflowFilter](docs/WorkflowFilter.md)
- - [WorkloadCountInfo](docs/WorkloadCountInfo.md)
- - [WorkloadDateCountInfo](docs/WorkloadDateCountInfo.md)
- - [WorkloadDeploymentInfo](docs/WorkloadDeploymentInfo.md)
- - [YamlSnippetMetaDataDto](docs/YamlSnippetMetaDataDto.md)
- - [YamlSnippetsDto](docs/YamlSnippetsDto.md)
 
 ## Documentation For Authorization
  Endpoints do not require authorization.

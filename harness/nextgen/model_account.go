@@ -43,7 +43,7 @@ type Account struct {
 	ServiceAccountConfig        *ServiceAccountConfig  `json:"serviceAccountConfig,omitempty"`
 	Defaults                    map[string]string      `json:"defaults,omitempty"`
 	AuthenticationMechanism     string                 `json:"authenticationMechanism,omitempty"`
-	PovAccount                  bool                   `json:"povAccount,omitempty"`
 	HarnessSupportAccessAllowed bool                   `json:"harnessSupportAccessAllowed,omitempty"`
+	PovAccount                  bool                   `json:"povAccount,omitempty"`
 	Events                      []AccountEvent         `json:"events,omitempty"`
 }

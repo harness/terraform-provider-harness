@@ -52,17 +52,33 @@ type APIClient struct {
 
 	ConnectorsApi *ConnectorsApiService
 
-	DefaultApi *DefaultApiService
-
 	DelegateConfigurationManagementApi *DelegateConfigurationManagementApiService
 
 	DelegateConfigurationResourceApi *DelegateConfigurationResourceApiService
 
 	EnforcementApi *EnforcementApiService
 
+	EnvironmentsApi *EnvironmentsApiService
+
 	FeedbackApi *FeedbackApiService
 
+	FilterApi *FilterApiService
+
+	FullSyncApi *FullSyncApiService
+
 	GcpClustersApi *GcpClustersApiService
+
+	GitBranchesApi *GitBranchesApiService
+
+	GitSyncApi *GitSyncApiService
+
+	GitSyncEntitiesApi *GitSyncEntitiesApiService
+
+	GitSyncErrorsApi *GitSyncErrorsApiService
+
+	GitSyncSettingsApi *GitSyncSettingsApiService
+
+	InviteApi *InviteApiService
 
 	LicensesApi *LicensesApiService
 
@@ -70,6 +86,14 @@ type APIClient struct {
 
 	ProjectApi *ProjectApiService
 
+	ScmApi *ScmApiService
+
+	ServicesApi *ServicesApiService
+
+	SourceCodeManagerApi *SourceCodeManagerApiService
+
+	UsersApi *UsersApiService
+	
 	WebhookEventHandlerApi *WebhookEventHandlerApiService
 }
 
@@ -92,15 +116,27 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.AccountsApi = (*AccountsApiService)(&c.common)
 	c.AuthenticationSettingsApi = (*AuthenticationSettingsApiService)(&c.common)
 	c.ConnectorsApi = (*ConnectorsApiService)(&c.common)
-	c.DefaultApi = (*DefaultApiService)(&c.common)
 	c.DelegateConfigurationManagementApi = (*DelegateConfigurationManagementApiService)(&c.common)
 	c.DelegateConfigurationResourceApi = (*DelegateConfigurationResourceApiService)(&c.common)
 	c.EnforcementApi = (*EnforcementApiService)(&c.common)
+	c.EnvironmentsApi = (*EnvironmentsApiService)(&c.common)
 	c.FeedbackApi = (*FeedbackApiService)(&c.common)
+	c.FilterApi = (*FilterApiService)(&c.common)
+	c.FullSyncApi = (*FullSyncApiService)(&c.common)
 	c.GcpClustersApi = (*GcpClustersApiService)(&c.common)
+	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
+	c.GitSyncApi = (*GitSyncApiService)(&c.common)
+	c.GitSyncEntitiesApi = (*GitSyncEntitiesApiService)(&c.common)
+	c.GitSyncErrorsApi = (*GitSyncErrorsApiService)(&c.common)
+	c.GitSyncSettingsApi = (*GitSyncSettingsApiService)(&c.common)
+	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
 	c.OrganizationApi = (*OrganizationApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
+	c.ScmApi = (*ScmApiService)(&c.common)
+	c.ServicesApi = (*ServicesApiService)(&c.common)
+	c.SourceCodeManagerApi = (*SourceCodeManagerApiService)(&c.common)
+	c.UsersApi = (*UsersApiService)(&c.common)
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 
 	return c
@@ -504,6 +540,10 @@ func (e GenericSwaggerError) Error() string {
 
 	if len(failure.ResponseMessages) > 0 {
 		return failure.ResponseMessages[0].Message
+	}
+
+	if len(failure.Errors) > 0 {
+		return fmt.Sprintf("%s %s", failure.Errors[0].FieldId, failure.Errors[0].Error_)
 	}
 
 	return failure.Code

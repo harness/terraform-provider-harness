@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This is the view of a feature restriction detail request object defined in Harness
+// This contains a feature restriction detail request object defined in Harness
 type FeatureRestrictionDetailRequest struct {
 	Name string `json:"name"`
 }

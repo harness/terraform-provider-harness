@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *DockerAuthenticationDto) UnmarshalJSON(data []byte) error {
+func (a *DockerAuthentication) UnmarshalJSON(data []byte) error {
 
-	type Alias DockerAuthenticationDto
+	type Alias DockerAuthentication
 
 	aux := &struct {
 		*Alias
@@ -21,9 +21,9 @@ func (a *DockerAuthenticationDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case DockerAuthTypes.UsernamePassword.String():
+	case DockerAuthTypes.UsernamePassword:
 		err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
-	case DockerAuthTypes.Anonymous.String():
+	case DockerAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown docker auth method type %s", a.Type_))
@@ -32,16 +32,16 @@ func (a *DockerAuthenticationDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *DockerAuthenticationDto) MarshalJSON() ([]byte, error) {
-	type Alias DockerAuthenticationDto
+func (a *DockerAuthentication) MarshalJSON() ([]byte, error) {
+	type Alias DockerAuthentication
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case DockerAuthTypes.UsernamePassword.String():
+	case DockerAuthTypes.UsernamePassword:
 		spec, err = json.Marshal(a.UsernamePassword)
-	case DockerAuthTypes.Anonymous.String():
+	case DockerAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown docker auth method type %s", a.Type_))

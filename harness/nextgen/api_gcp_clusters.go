@@ -29,9 +29,9 @@ type GcpClustersApiService service
 /*
 GcpClustersApiService Gets gcp cluster names
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
+ * @param accountIdentifier Account Identifier for the entity
+ * @param orgIdentifier Organization Identifier for the entity
+ * @param projectIdentifier Project Identifier for the entity
  * @param optional nil or *GcpClustersApiGetClusterNamesForGcpOpts - Optional Parameters:
      * @param "ConnectorRef" (optional.String) -
 @return ResponseDtoGcpResponse

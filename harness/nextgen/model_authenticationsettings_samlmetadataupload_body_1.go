@@ -15,4 +15,5 @@ type AuthenticationsettingsSamlmetadatauploadBody1 struct {
 	GroupMembershipAttr  string                      `json:"groupMembershipAttr,omitempty"`
 	AuthorizationEnabled bool                        `json:"authorizationEnabled,omitempty"`
 	LogoutUrl            string                      `json:"logoutUrl,omitempty"`
+	EntityIdentifier     string                      `json:"entityIdentifier,omitempty"`
 }

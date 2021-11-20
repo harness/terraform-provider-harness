@@ -11,5 +11,5 @@ package nextgen
 
 // This is the view of Connector entity as defined in Harness.
 type Connector struct {
-	Connector *ConnectorInfoDto `json:"connector,omitempty"`
+	Connector *ConnectorInfo `json:"connector,omitempty"`
 }

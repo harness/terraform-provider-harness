@@ -9,7 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type AwsSecretManagerCredentialDto struct {
-	Type_ string                             `json:"type"`
-	Spec  *AwsSecretManagerCredentialSpecDto `json:"spec,omitempty"`
+	Type_         AwsSecretManagerAuthType            `json:"type"`
+	AssumeIamRole *AwsSmCredentialSpecAssumeIamdto    `json:"-"`
+	AssumeStsRole *AwsSmCredentialSpecAssumeStsdto    `json:"-"`
+	ManualConfig  *AwsSmCredentialSpecManualConfigDto `json:"-"`
+	Spec          json.RawMessage                     `json:"spec,omitempty"`
 }

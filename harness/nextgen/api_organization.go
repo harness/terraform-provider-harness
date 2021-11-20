@@ -30,8 +30,8 @@ type OrganizationApiService service
 /*
 OrganizationApiService Creates an Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Details of the Organization to be created
- * @param accountIdentifier
+ * @param body Details of the Organization to create
+ * @param accountIdentifier Account Identifier for the entity
 @return ResponseDtoOrganizationResponse
 */
 func (a *OrganizationApiService) CreateOrganization(ctx context.Context, body OrganizationRequest, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
@@ -138,8 +138,8 @@ func (a *OrganizationApiService) CreateOrganization(ctx context.Context, body Or
 /*
 OrganizationApiService Deletes Organization by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
+ * @param identifier Organization Identifier for the entity
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *OrganizationApiDeleteOrganizationOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
 @return ResponseDtoBoolean
@@ -255,8 +255,8 @@ func (a *OrganizationApiService) DeleteOrganization(ctx context.Context, identif
 /*
 OrganizationApiService Get the Organization by accountIdentifier and orgIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountIdentifier
+ * @param identifier Organization Identifier for the entity
+ * @param accountIdentifier Account Identifier for the entity
 @return ResponseDtoOrganizationResponse
 */
 func (a *OrganizationApiService) GetOrganization(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
@@ -362,10 +362,10 @@ func (a *OrganizationApiService) GetOrganization(ctx context.Context, identifier
 /*
 OrganizationApiService Get the list of organizations satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *OrganizationApiGetOrganizationListOpts - Optional Parameters:
-     * @param "Identifiers" (optional.Interface of []string) -  list of projectIdentifiers to filter results by
-     * @param "SearchTerm" (optional.String) -
+     * @param "Identifiers" (optional.Interface of []string) -  list of Project Ids for filtering results
+     * @param "SearchTerm" (optional.String) -  Search Term
      * @param "PageIndex" (optional.Int32) -
      * @param "PageSize" (optional.Int32) -
      * @param "SortOrders" (optional.Interface of []SortOrder) -
@@ -497,21 +497,20 @@ func (a *OrganizationApiService) GetOrganizationList(ctx context.Context, accoun
 /*
 OrganizationApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
+ * @param body list of ProjectIdentifiers to filter results by
+ * @param accountIdentifier Account Identifier for the entity
  * @param optional nil or *OrganizationApiListAllOrganizationsOpts - Optional Parameters:
-     * @param "Identifiers" (optional.Interface of []string) -  list of projectIdentifiers to filter results by
-     * @param "SearchTerm" (optional.String) -
+     * @param "SearchTerm" (optional.String) -  Search term
 
 */
 
 type OrganizationApiListAllOrganizationsOpts struct {
-	Identifiers optional.Interface
-	SearchTerm  optional.String
+	SearchTerm optional.String
 }
 
-func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, accountIdentifier string, localVarOptionals *OrganizationApiListAllOrganizationsOpts) (*http.Response, error) {
+func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, body []string, accountIdentifier string, localVarOptionals *OrganizationApiListAllOrganizationsOpts) (*http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
+		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
@@ -525,14 +524,11 @@ func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, accou
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.Identifiers.IsSet() {
-		localVarQueryParams.Add("identifiers", parameterToString(localVarOptionals.Identifiers.Value(), "multi"))
-	}
 	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
 		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
+	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -548,6 +544,8 @@ func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, accou
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	// body params
+	localVarPostBody = &body
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return nil, err
@@ -598,9 +596,9 @@ func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, accou
 /*
 OrganizationApiService Updates the Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body This is the updated Organization. This should have all the fields not just the updated ones
- * @param accountIdentifier
- * @param identifier
+ * @param body This is the updated Organization. Please provide values for all fields, not just the fields you are updating
+ * @param accountIdentifier Account Identifier for the entity
+ * @param identifier Organization Identifier for the entity
  * @param optional nil or *OrganizationApiPutOrganizationOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
 @return ResponseDtoOrganizationResponse

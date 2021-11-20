@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *GitConfigDto) UnmarshalJSON(data []byte) error {
+func (a *GitConfig) UnmarshalJSON(data []byte) error {
 
-	type Alias GitConfigDto
+	type Alias GitConfig
 
 	aux := &struct {
 		*Alias
@@ -21,9 +21,9 @@ func (a *GitConfigDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case GitAuthTypes.Http.String():
+	case GitAuthTypes.Http:
 		err = json.Unmarshal(aux.Spec, &a.Http)
-	case GitAuthTypes.Ssh.String():
+	case GitAuthTypes.Ssh:
 		err = json.Unmarshal(aux.Spec, &a.Ssh)
 	default:
 		panic(fmt.Sprintf("unknown git auth method type %s", a.Type_))
@@ -32,16 +32,16 @@ func (a *GitConfigDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *GitConfigDto) MarshalJSON() ([]byte, error) {
-	type Alias GitConfigDto
+func (a *GitConfig) MarshalJSON() ([]byte, error) {
+	type Alias GitConfig
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case GitAuthTypes.Http.String():
+	case GitAuthTypes.Http:
 		spec, err = json.Marshal(a.Http)
-	case GitAuthTypes.Ssh.String():
+	case GitAuthTypes.Ssh:
 		spec, err = json.Marshal(a.Ssh)
 	default:
 		panic(fmt.Sprintf("unknown git auth method type %s", a.Type_))

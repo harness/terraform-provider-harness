@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *NexusAuthenticationDto) UnmarshalJSON(data []byte) error {
+func (a *NexusAuthentication) UnmarshalJSON(data []byte) error {
 
-	type Alias NexusAuthenticationDto
+	type Alias NexusAuthentication
 
 	aux := &struct {
 		*Alias
@@ -21,9 +21,9 @@ func (a *NexusAuthenticationDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case NexusAuthTypes.UsernamePassword.String():
+	case NexusAuthTypes.UsernamePassword:
 		err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
-	case NexusAuthTypes.Anonymous.String():
+	case NexusAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown nexus auth method type %s", a.Type_))
@@ -32,16 +32,16 @@ func (a *NexusAuthenticationDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *NexusAuthenticationDto) MarshalJSON() ([]byte, error) {
-	type Alias NexusAuthenticationDto
+func (a *NexusAuthentication) MarshalJSON() ([]byte, error) {
+	type Alias NexusAuthentication
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case NexusAuthTypes.UsernamePassword.String():
+	case NexusAuthTypes.UsernamePassword:
 		spec, err = json.Marshal(a.UsernamePassword)
-	case NexusAuthTypes.Anonymous.String():
+	case NexusAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown nexus auth method type %s", a.Type_))

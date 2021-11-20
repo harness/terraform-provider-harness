@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *AwsCredentialDto) UnmarshalJSON(data []byte) error {
+func (a *AwsCredential) UnmarshalJSON(data []byte) error {
 
-	type Alias AwsCredentialDto
+	type Alias AwsCredential
 
 	aux := &struct {
 		*Alias
@@ -21,10 +21,10 @@ func (a *AwsCredentialDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case AwsAuthTypes.ManualConfig.String():
+	case AwsAuthTypes.ManualConfig:
 		err = json.Unmarshal(aux.Spec, &a.ManualConfig)
-	case AwsAuthTypes.InheritFromDelegate.String():
-	case AwsAuthTypes.Irsa.String():
+	case AwsAuthTypes.InheritFromDelegate:
+	case AwsAuthTypes.Irsa:
 		// do nothing
 	default:
 		panic(fmt.Sprintf("unknown aws auth type %s", a.Type_))
@@ -33,17 +33,17 @@ func (a *AwsCredentialDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *AwsCredentialDto) MarshalJSON() ([]byte, error) {
-	type Alias AwsCredentialDto
+func (a *AwsCredential) MarshalJSON() ([]byte, error) {
+	type Alias AwsCredential
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case AwsAuthTypes.ManualConfig.String():
+	case AwsAuthTypes.ManualConfig:
 		spec, err = json.Marshal(a.ManualConfig)
-	case AwsAuthTypes.InheritFromDelegate.String():
-	case AwsAuthTypes.Irsa.String():
+	case AwsAuthTypes.InheritFromDelegate:
+	case AwsAuthTypes.Irsa:
 		// do nothing
 	default:
 		panic(fmt.Sprintf("unknown aws auth type %s", a.Type_))

@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *ArtifactoryAuthenticationDto) UnmarshalJSON(data []byte) error {
+func (a *ArtifactoryAuthentication) UnmarshalJSON(data []byte) error {
 
-	type Alias ArtifactoryAuthenticationDto
+	type Alias ArtifactoryAuthentication
 
 	aux := &struct {
 		*Alias
@@ -21,9 +21,9 @@ func (a *ArtifactoryAuthenticationDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case ArtifactoryAuthTypes.UsernamePassword.String():
+	case ArtifactoryAuthTypes.UsernamePassword:
 		err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
-	case ArtifactoryAuthTypes.Anonymous.String():
+	case ArtifactoryAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown artifactory auth method type %s", a.Type_))
@@ -32,16 +32,16 @@ func (a *ArtifactoryAuthenticationDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *ArtifactoryAuthenticationDto) MarshalJSON() ([]byte, error) {
-	type Alias ArtifactoryAuthenticationDto
+func (a *ArtifactoryAuthentication) MarshalJSON() ([]byte, error) {
+	type Alias ArtifactoryAuthentication
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case ArtifactoryAuthTypes.UsernamePassword.String():
+	case ArtifactoryAuthTypes.UsernamePassword:
 		spec, err = json.Marshal(a.UsernamePassword)
-	case ArtifactoryAuthTypes.Anonymous.String():
+	case ArtifactoryAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown artifactory auth method type %s", a.Type_))

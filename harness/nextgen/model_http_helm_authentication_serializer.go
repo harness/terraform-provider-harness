@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *HttpHelmAuthenticationDto) UnmarshalJSON(data []byte) error {
+func (a *HttpHelmAuthentication) UnmarshalJSON(data []byte) error {
 
-	type Alias HttpHelmAuthenticationDto
+	type Alias HttpHelmAuthentication
 
 	aux := &struct {
 		*Alias
@@ -21,9 +21,9 @@ func (a *HttpHelmAuthenticationDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case HttpHelmAuthTypes.UsernamePassword.String():
+	case HttpHelmAuthTypes.UsernamePassword:
 		err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
-	case HttpHelmAuthTypes.Anonymous.String():
+	case HttpHelmAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown helm auth method type %s", a.Type_))
@@ -32,16 +32,16 @@ func (a *HttpHelmAuthenticationDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *HttpHelmAuthenticationDto) MarshalJSON() ([]byte, error) {
-	type Alias HttpHelmAuthenticationDto
+func (a *HttpHelmAuthentication) MarshalJSON() ([]byte, error) {
+	type Alias HttpHelmAuthentication
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case HttpHelmAuthTypes.UsernamePassword.String():
+	case HttpHelmAuthTypes.UsernamePassword:
 		spec, err = json.Marshal(a.UsernamePassword)
-	case HttpHelmAuthTypes.Anonymous.String():
+	case HttpHelmAuthTypes.Anonymous:
 		// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown helm auth method type %s", a.Type_))

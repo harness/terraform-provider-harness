@@ -9,7 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type AwsKmsConnectorCredentialDto struct {
-	Type_ string                   `json:"type"`
-	Spec  *AwsKmsCredentialSpecDto `json:"spec,omitempty"`
+	Type_         AwsKmsAuthType                       `json:"type"`
+	AssumeIamRole *AwsKmsCredentialSpecAssumeIamdto    `json:"-"`
+	AssumeStsRole *AwsKmsCredentialSpecAssumeStsdto    `json:"-"`
+	ManualConfig  *AwsKmsCredentialSpecManualConfigDto `json:"-"`
+	Spec          json.RawMessage                      `json:"spec,omitempty"`
 }

@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *KubernetesAuthDto) UnmarshalJSON(data []byte) error {
+func (a *KubernetesAuth) UnmarshalJSON(data []byte) error {
 
-	type Alias KubernetesAuthDto
+	type Alias KubernetesAuth
 
 	aux := &struct {
 		*Alias
@@ -21,13 +21,13 @@ func (a *KubernetesAuthDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case KubernetesAuthMethods.ClientKeyCert.String():
+	case KubernetesAuthTypes.ClientKeyCert:
 		err = json.Unmarshal(aux.Spec, &a.ClientKeyCert)
-	case KubernetesAuthMethods.UsernamePassword.String():
+	case KubernetesAuthTypes.UsernamePassword:
 		err = json.Unmarshal(aux.Spec, &a.UsernamePassword)
-	case KubernetesAuthMethods.ServiceAccount.String():
+	case KubernetesAuthTypes.ServiceAccount:
 		err = json.Unmarshal(aux.Spec, &a.ServiceAccount)
-	case KubernetesAuthMethods.OpenIdConnect.String():
+	case KubernetesAuthTypes.OpenIdConnect:
 		err = json.Unmarshal(aux.Spec, &a.OpenIdConnect)
 	default:
 		panic(fmt.Sprintf("unknown kubernetes auth method type %s", a.Type_))
@@ -36,20 +36,20 @@ func (a *KubernetesAuthDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *KubernetesAuthDto) MarshalJSON() ([]byte, error) {
-	type Alias KubernetesAuthDto
+func (a *KubernetesAuth) MarshalJSON() ([]byte, error) {
+	type Alias KubernetesAuth
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case KubernetesAuthMethods.ClientKeyCert.String():
+	case KubernetesAuthTypes.ClientKeyCert:
 		spec, err = json.Marshal(a.ClientKeyCert)
-	case KubernetesAuthMethods.UsernamePassword.String():
+	case KubernetesAuthTypes.UsernamePassword:
 		spec, err = json.Marshal(a.UsernamePassword)
-	case KubernetesAuthMethods.ServiceAccount.String():
+	case KubernetesAuthTypes.ServiceAccount:
 		spec, err = json.Marshal(a.ServiceAccount)
-	case KubernetesAuthMethods.OpenIdConnect.String():
+	case KubernetesAuthTypes.OpenIdConnect:
 		spec, err = json.Marshal(a.OpenIdConnect)
 	default:
 		panic(fmt.Sprintf("unknown kubernetes auth method type %s", a.Type_))

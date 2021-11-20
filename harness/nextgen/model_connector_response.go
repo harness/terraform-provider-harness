@@ -11,7 +11,7 @@ package nextgen
 
 // Connetor Resource along with metadata
 type ConnectorResponse struct {
-	Connector             *ConnectorInfoDto             `json:"connector,omitempty"`
+	Connector             *ConnectorInfo                `json:"connector,omitempty"`
 	CreatedAt             int64                         `json:"createdAt,omitempty"`
 	LastModifiedAt        int64                         `json:"lastModifiedAt,omitempty"`
 	Status                *ConnectorConnectivityDetails `json:"status,omitempty"`

@@ -9,12 +9,12 @@
  */
 package nextgen
 
-// This is the view of a feature restriction details object defined in Harness
+// This contains the feature restriction details object defined in Harness
 type FeatureRestrictionDetails struct {
-	Name            string          `json:"name,omitempty"`
-	Description     string          `json:"description,omitempty"`
-	ModuleType      string          `json:"moduleType,omitempty"`
-	Allowed         bool            `json:"allowed,omitempty"`
-	RestrictionType string          `json:"restrictionType,omitempty"`
-	Restriction     *RestrictionDto `json:"restriction,omitempty"`
+	Name            string       `json:"name,omitempty"`
+	Description     string       `json:"description,omitempty"`
+	ModuleType      string       `json:"moduleType,omitempty"`
+	Allowed         bool         `json:"allowed,omitempty"`
+	RestrictionType string       `json:"restrictionType,omitempty"`
+	Restriction     *Restriction `json:"restriction,omitempty"`
 }

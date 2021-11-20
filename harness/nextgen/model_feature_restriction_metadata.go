@@ -9,10 +9,10 @@
  */
 package nextgen
 
-// This is the view of a feature restriction metadata object defined in Harness
+// This contains metadata of the feature restriction object defined in Harness
 type FeatureRestrictionMetadata struct {
-	Name                string                            `json:"name,omitempty"`
-	ModuleType          string                            `json:"moduleType,omitempty"`
-	Edition             string                            `json:"edition,omitempty"`
-	RestrictionMetadata map[string]RestrictionMetadataDto `json:"restrictionMetadata,omitempty"`
+	Name                string                         `json:"name,omitempty"`
+	ModuleType          string                         `json:"moduleType,omitempty"`
+	Edition             string                         `json:"edition,omitempty"`
+	RestrictionMetadata map[string]RestrictionMetadata `json:"restrictionMetadata,omitempty"`
 }

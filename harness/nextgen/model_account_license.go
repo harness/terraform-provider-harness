@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This is the view of an Account License defined in Harness
+// This contains details of the Account License defined in Harness
 type AccountLicense struct {
 	AccountId         string                     `json:"accountId,omitempty"`
 	ModuleLicenses    map[string]ModuleLicense   `json:"moduleLicenses,omitempty"`

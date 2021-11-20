@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *GcpConnectorCredentialDto) UnmarshalJSON(data []byte) error {
+func (a *GcpConnectorCredential) UnmarshalJSON(data []byte) error {
 
-	type Alias GcpConnectorCredentialDto
+	type Alias GcpConnectorCredential
 
 	aux := &struct {
 		*Alias
@@ -21,9 +21,9 @@ func (a *GcpConnectorCredentialDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case GcpAuthTypes.ManualConfig.String():
+	case GcpAuthTypes.ManualConfig:
 		err = json.Unmarshal(aux.Spec, &a.ManualConfig)
-	case GcpAuthTypes.InheritFromDelegate.String():
+	case GcpAuthTypes.InheritFromDelegate:
 		// do nothing
 	default:
 		panic(fmt.Sprintf("unknown gcp auth type %s", a.Type_))
@@ -32,16 +32,16 @@ func (a *GcpConnectorCredentialDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *GcpConnectorCredentialDto) MarshalJSON() ([]byte, error) {
-	type Alias GcpConnectorCredentialDto
+func (a *GcpConnectorCredential) MarshalJSON() ([]byte, error) {
+	type Alias GcpConnectorCredential
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case GcpAuthTypes.ManualConfig.String():
+	case GcpAuthTypes.ManualConfig:
 		spec, err = json.Marshal(a.ManualConfig)
-	case GcpAuthTypes.InheritFromDelegate.String():
+	case GcpAuthTypes.InheritFromDelegate:
 		// do nothing
 	default:
 		panic(fmt.Sprintf("unknown gcp auth type %s", a.Type_))

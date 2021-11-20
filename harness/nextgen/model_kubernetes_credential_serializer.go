@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *KubernetesCredentialDto) UnmarshalJSON(data []byte) error {
+func (a *KubernetesCredential) UnmarshalJSON(data []byte) error {
 
-	type Alias KubernetesCredentialDto
+	type Alias KubernetesCredential
 
 	aux := &struct {
 		*Alias
@@ -21,10 +21,10 @@ func (a *KubernetesCredentialDto) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case KubernetesCredentialTypes.InheritFromDelegate.String():
+	case KubernetesCredentialTypes.InheritFromDelegate:
 		// do nothing
-	case KubernetesCredentialTypes.ManualConfig.String():
-		err = json.Unmarshal(a.Spec, &a.ManualCredentials)
+	case KubernetesCredentialTypes.ManualConfig:
+		err = json.Unmarshal(a.Spec, &a.ManualConfig)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}
@@ -32,17 +32,17 @@ func (a *KubernetesCredentialDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *KubernetesCredentialDto) MarshalJSON() ([]byte, error) {
-	type Alias KubernetesCredentialDto
+func (a *KubernetesCredential) MarshalJSON() ([]byte, error) {
+	type Alias KubernetesCredential
 
 	var spec []byte
 	var err error
 
 	switch a.Type_ {
-	case KubernetesCredentialTypes.InheritFromDelegate.String():
+	case KubernetesCredentialTypes.InheritFromDelegate:
 		// do nothing
-	case KubernetesCredentialTypes.ManualConfig.String():
-		spec, err = json.Marshal(a.ManualCredentials)
+	case KubernetesCredentialTypes.ManualConfig:
+		spec, err = json.Marshal(a.ManualConfig)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}

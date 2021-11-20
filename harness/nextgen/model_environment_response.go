@@ -10,7 +10,7 @@
 package nextgen
 
 type EnvironmentResponse struct {
-	Environment    *EnvironmentResponseDto `json:"environment,omitempty"`
-	CreatedAt      int64                   `json:"createdAt,omitempty"`
-	LastModifiedAt int64                   `json:"lastModifiedAt,omitempty"`
+	Environment    *EnvironmentResponse `json:"environment,omitempty"`
+	CreatedAt      int64                `json:"createdAt,omitempty"`
+	LastModifiedAt int64                `json:"lastModifiedAt,omitempty"`
 }

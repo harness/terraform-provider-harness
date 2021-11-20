@@ -31,7 +31,7 @@ type AuthenticationSettingsApiService service
 AuthenticationSettingsApiService Deletes Saml meta data by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiDeleteSamlMetaDataOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseSsoConfig
 */
 
@@ -144,7 +144,7 @@ func (a *AuthenticationSettingsApiService) DeleteSamlMetaData(ctx context.Contex
 AuthenticationSettingsApiService Get the authentication settings by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiGetAuthenticationSettingsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseAuthenticationSettingsResponse
 */
 
@@ -257,7 +257,7 @@ func (a *AuthenticationSettingsApiService) GetAuthenticationSettings(ctx context
 AuthenticationSettingsApiService Get the password strength settings by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiGetPasswordStrengthSettingsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponsePasswordStrengthPolicy
 */
 
@@ -370,7 +370,7 @@ func (a *AuthenticationSettingsApiService) GetPasswordStrengthSettings(ctx conte
 AuthenticationSettingsApiService Get the Saml login test by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiGetSamlLoginTestOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -
+     * @param "AccountId" (optional.String) -  Account Identifier for the entity
 @return RestResponseLoginTypeResponse
 */
 
@@ -482,10 +482,10 @@ func (a *AuthenticationSettingsApiService) GetSamlLoginTest(ctx context.Context,
 /*
 AuthenticationSettingsApiService Updates the login settings
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body This is the updated Login Settings. This should have all the fields not just the updated ones
- * @param loginSettingsId
+ * @param body This is the updated Login Settings. Please provide values for all fields, not just the fields you are updating
+ * @param loginSettingsId Login Settings Identifier
  * @param optional nil or *AuthenticationSettingsApiPutLoginSettingsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseLoginSettings
 */
 
@@ -601,7 +601,7 @@ func (a *AuthenticationSettingsApiService) PutLoginSettings(ctx context.Context,
 AuthenticationSettingsApiService Deletes Oauth mechanism by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiRemoveOauthMechanismOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseBoolean
 */
 
@@ -715,7 +715,7 @@ AuthenticationSettingsApiService set two factor auth at account lever by account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiSetTwoFactorAuthAtAccountLevelOpts - Optional Parameters:
      * @param "Body" (optional.Interface of TwoFactorAdminOverrideSettings) -
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseBoolean
 */
 
@@ -835,8 +835,8 @@ func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx co
 AuthenticationSettingsApiService Updates the Auth mechanism by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiUpdateAuthMechanismOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "AuthenticationMechanism" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "AuthenticationMechanism" (optional.String) -  Type of Authentication Mechanism SSO or NON_SSO
 @return RestResponseBoolean
 */
 
@@ -954,7 +954,7 @@ AuthenticationSettingsApiService Updates the Oauth providers by accountIdentifie
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiUpdateOauthProvidersOpts - Optional Parameters:
      * @param "Body" (optional.Interface of OAuthSettings) -
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseBoolean
 */
 
@@ -1071,7 +1071,7 @@ func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Cont
 }
 
 /*
-AuthenticationSettingsApiService Uploads the saml metadata by accountId
+AuthenticationSettingsApiService Updates the saml metadata by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiUpdateSamlMetaDataOpts - Optional Parameters:
      * @param "File" (optional.Interface of FormDataContentDisposition) -
@@ -1079,7 +1079,8 @@ AuthenticationSettingsApiService Uploads the saml metadata by accountId
      * @param "GroupMembershipAttr" (optional.String) -
      * @param "AuthorizationEnabled" (optional.Bool) -
      * @param "LogoutUrl" (optional.String) -
-     * @param "AccountId" (optional.String) -
+     * @param "EntityIdentifier" (optional.String) -
+     * @param "AccountId" (optional.String) -  Account Identifier for the entity
 @return RestResponseSsoConfig
 */
 
@@ -1089,6 +1090,7 @@ type AuthenticationSettingsApiUpdateSamlMetaDataOpts struct {
 	GroupMembershipAttr  optional.String
 	AuthorizationEnabled optional.Bool
 	LogoutUrl            optional.String
+	EntityIdentifier     optional.String
 	AccountId            optional.String
 }
 
@@ -1142,6 +1144,9 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 	}
 	if localVarOptionals != nil && localVarOptionals.LogoutUrl.IsSet() {
 		localVarFormParams.Add("logoutUrl", parameterToString(localVarOptionals.LogoutUrl.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.EntityIdentifier.IsSet() {
+		localVarFormParams.Add("entityIdentifier", parameterToString(localVarOptionals.EntityIdentifier.Value(), ""))
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1212,8 +1217,8 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 AuthenticationSettingsApiService Updates the Whitelisted domains by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiUpdateWhitelistedDomainsOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of []string) -  Set of whiteListed domains that needs to be for the account
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "Body" (optional.Interface of []string) -  Set of whitelisted domains and IPs for the account
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseBoolean
 */
 
@@ -1330,7 +1335,7 @@ func (a *AuthenticationSettingsApiService) UpdateWhitelistedDomains(ctx context.
 }
 
 /*
-AuthenticationSettingsApiService
+AuthenticationSettingsApiService Uploads the saml metadata by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *AuthenticationSettingsApiUploadSamlMetaDataOpts - Optional Parameters:
      * @param "File" (optional.Interface of FormDataContentDisposition) -
@@ -1338,8 +1343,9 @@ AuthenticationSettingsApiService
      * @param "GroupMembershipAttr" (optional.String) -
      * @param "AuthorizationEnabled" (optional.Bool) -
      * @param "LogoutUrl" (optional.String) -
-     * @param "AccountId" (optional.String) -
-
+     * @param "EntityIdentifier" (optional.String) -
+     * @param "AccountId" (optional.String) -  Account Identifier for the entity
+@return RestResponseSsoConfig
 */
 
 type AuthenticationSettingsApiUploadSamlMetaDataOpts struct {
@@ -1348,15 +1354,17 @@ type AuthenticationSettingsApiUploadSamlMetaDataOpts struct {
 	GroupMembershipAttr  optional.String
 	AuthorizationEnabled optional.Bool
 	LogoutUrl            optional.String
+	EntityIdentifier     optional.String
 	AccountId            optional.String
 }
 
-func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUploadSamlMetaDataOpts) (*http.Response, error) {
+func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUploadSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue RestResponseSsoConfig
 	)
 
 	// create path and map variables
@@ -1401,20 +1409,31 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 	if localVarOptionals != nil && localVarOptionals.LogoutUrl.IsSet() {
 		localVarFormParams.Add("logoutUrl", parameterToString(localVarOptionals.LogoutUrl.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.EntityIdentifier.IsSet() {
+		localVarFormParams.Add("entityIdentifier", parameterToString(localVarOptionals.EntityIdentifier.Value(), ""))
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
 	localVarHttpResponse.Body.Close()
 	if err != nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1427,23 +1446,33 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		return localVarHttpResponse, newErr
+		if localVarHttpResponse.StatusCode == 0 {
+			var v RestResponseSsoConfig
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
-	return localVarHttpResponse, nil
+	return localVarReturnValue, localVarHttpResponse, nil
 }

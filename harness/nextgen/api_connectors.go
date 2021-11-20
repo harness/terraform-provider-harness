@@ -30,15 +30,16 @@ type ConnectorsApiService service
 /*
 ConnectorsApiService Creates a Connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Details of the Connector to be created
+ * @param body Details of the Connector to create
  * @param optional nil or *ConnectorsApiCreateConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "RootFolder" (optional.String) -
-     * @param "FilePath" (optional.String) -
-     * @param "CommitMsg" (optional.String) -
-     * @param "BaseBranch" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RootFolder" (optional.String) -  Default Folder Path
+     * @param "FilePath" (optional.String) -  File Path
+     * @param "CommitMsg" (optional.String) -  File Path
+     * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
+     * @param "BaseBranch" (optional.String) -  Default Branch
 @return ResponseDtoConnectorResponse
 */
 
@@ -49,6 +50,7 @@ type ConnectorsApiCreateConnectorOpts struct {
 	RootFolder        optional.String
 	FilePath          optional.String
 	CommitMsg         optional.String
+	IsNewBranch       optional.Bool
 	BaseBranch        optional.String
 }
 
@@ -85,6 +87,9 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connect
 	}
 	if localVarOptionals != nil && localVarOptionals.CommitMsg.IsSet() {
 		localVarQueryParams.Add("commitMsg", parameterToString(localVarOptionals.CommitMsg.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsNewBranch.IsSet() {
+		localVarQueryParams.Add("isNewBranch", parameterToString(localVarOptionals.IsNewBranch.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.BaseBranch.IsSet() {
 		localVarQueryParams.Add("baseBranch", parameterToString(localVarOptionals.BaseBranch.Value(), ""))
@@ -176,17 +181,17 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connect
 /*
 ConnectorsApiService Deletes Connector by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param identifier
+ * @param accountIdentifier Account Identifier for the entity
+ * @param identifier Connector Identifier
  * @param optional nil or *ConnectorsApiDeleteConnectorOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "RootFolder" (optional.String) -
-     * @param "FilePath" (optional.String) -
-     * @param "CommitMsg" (optional.String) -
-     * @param "LastObjectId" (optional.String) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RootFolder" (optional.String) -  Default Folder Path
+     * @param "FilePath" (optional.String) -  File Path
+     * @param "CommitMsg" (optional.String) -  Commit Message
+     * @param "LastObjectId" (optional.String) -  Last Object Id
 @return ResponseDtoBoolean
 */
 
@@ -328,7 +333,7 @@ func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdent
 /*
 ConnectorsApiService Get the allowed field values by Connector Type
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param connectorType
+ * @param connectorType Connector type
 @return ResponseDtoFieldValues
 */
 func (a *ConnectorsApiService) GetAllAllowedFieldValues(ctx context.Context, connectorType string) (ResponseDtoFieldValues, *http.Response, error) {
@@ -434,9 +439,9 @@ func (a *ConnectorsApiService) GetAllAllowedFieldValues(ctx context.Context, con
 ConnectorsApiService Get the Template URL of connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetCEAwsTemplateOpts - Optional Parameters:
-     * @param "EventsEnabled" (optional.Bool) -
-     * @param "CurEnabled" (optional.Bool) -
-     * @param "OptimizationEnabled" (optional.Bool) -
+     * @param "EventsEnabled" (optional.Bool) -  Specify whether or not to enable events
+     * @param "CurEnabled" (optional.Bool) -  Specify whether or not to enable CUR
+     * @param "OptimizationEnabled" (optional.Bool) -  Specify whether or not to enable optimization
 @return ResponseDtoString
 */
 
@@ -556,14 +561,14 @@ func (a *ConnectorsApiService) GetCEAwsTemplate(ctx context.Context, localVarOpt
 /*
 ConnectorsApiService get the Connector by accountIdentifier and connectorIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+ * @param identifier Connector Identifier
  * @param optional nil or *ConnectorsApiGetConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoConnectorResponse
 */
 
@@ -697,7 +702,7 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, identifier stri
 ConnectorsApiService gets the connector catalogue by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetConnectorCatalogueOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return ResponseDtoConnectorCatalogueRespone
 */
 
@@ -807,21 +812,21 @@ func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localV
 }
 
 /*
-ConnectorsApiService Get the list of connectors satisfying the criteria (if any) in the request
+ConnectorsApiService Get the list of Connectors satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetConnectorListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "Type_" (optional.String) -
-     * @param "Category" (optional.String) -
-     * @param "SourceCategory" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "PageIndex" (optional.Int32) -  Page number of navigation. If left empty, default value of 0 is assumed
+     * @param "PageSize" (optional.Int32) -  Number of entries per page. If left empty, default value of 100 is assumed
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "SearchTerm" (optional.String) -  Filter Connectors by searching for this word in Name, Id, and Tag
+     * @param "Type_" (optional.String) -  Filter Connectors by type
+     * @param "Category" (optional.String) -  Filter Connectors by category
+     * @param "SourceCategory" (optional.String) -  Filter Connectors by Source Category. Available Source Categories are CLOUD_PROVIDER, SECRET_MANAGER, CLOUD_COST, ARTIFACTORY, CODE_REPO,  MONITORING and TICKETING
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPageResponseConnectorResponse
 */
 
@@ -975,22 +980,22 @@ func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, localVarOpt
 }
 
 /*
-ConnectorsApiService Get the list of connectors satisfying the criteria (if any) in the request
+ConnectorsApiService Get the list of Connectors satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the filters applied
  * @param optional nil or *ConnectorsApiGetConnectorListV2Opts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "SearchTerm" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "PageIndex" (optional.Int32) -  Page number of navigation. If left empty, default value of 0 is assumed
+     * @param "PageSize" (optional.Int32) -  Number of entries per page. If left empty, default value of 100 is assumed
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "SearchTerm" (optional.String) -  Filter Connectors based on this word in Connectors name, id and tag
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
      * @param "FilterIdentifier" (optional.String) -
-     * @param "IncludeAllConnectorsAvailableAtScope" (optional.Bool) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
-     * @param "GetDistinctFromBranches" (optional.Bool) -
+     * @param "IncludeAllConnectorsAvailableAtScope" (optional.Bool) -  Specify whether or not to include all the Connectors accessible at the scope. For eg if set as true, at the Project scope we will get org and account Connector also in the response
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
+     * @param "GetDistinctFromBranches" (optional.Bool) -  This when set to true along with GitSync enabled for the Connector, you can to get other Connectors too which are not from same repo - branch but different repo&#x27;s default branch
 @return ResponseDtoPageResponseConnectorResponse
 */
 
@@ -1149,12 +1154,12 @@ func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body Conn
 ConnectorsApiService gets the connector&#x27;s statistics by accountIdentifier, projectIdentifier and orgIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiGetConnectorStatisticsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoConnectorStatistics
 */
 
@@ -1286,11 +1291,11 @@ func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, local
 /*
 ConnectorsApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+ * @param identifier Connector Identifier
  * @param optional nil or *ConnectorsApiGetConnectorValidationParamsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
 
 */
 
@@ -1390,16 +1395,16 @@ func (a *ConnectorsApiService) GetConnectorValidationParams(ctx context.Context,
 }
 
 /*
-ConnectorsApiService Tests the connection of the connector by Identifier
+ConnectorsApiService Tests the connection of the Connector by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+ * @param identifier Connector Identifier
  * @param optional nil or *ConnectorsApiGetTestConnectionResultOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoConnectorValidationResult
 */
 
@@ -1532,12 +1537,12 @@ func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, iden
 /*
 ConnectorsApiService Tests the created Connector&#x27;s connection
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+ * @param identifier Connector Identifier
  * @param optional nil or *ConnectorsApiGetTestGitRepoConnectionResultOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "RepoURL" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "RepoURL" (optional.String) -  URL of the repository, specify only in the case of Account Type Git Connector
 @return ResponseDtoConnectorValidationResult
 */
 
@@ -1662,9 +1667,9 @@ func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Contex
 /*
 ConnectorsApiService Get the list of connectors by FQN satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body List of connectorsFQN as strings
+ * @param body List of ConnectorsFQN as strings
  * @param optional nil or *ConnectorsApiListConnectorByFQNOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return ResponseDtoListConnectorResponse
 */
 
@@ -1778,16 +1783,16 @@ func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []st
 /*
 ConnectorsApiService Updates the Connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body This is the updated Connector. This should have all the fields not just the updated ones
+ * @param body This is the updated Connector. Please provide values for all fields, not just the fields you are updating
  * @param optional nil or *ConnectorsApiPutConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "Branch" (optional.String) -
-     * @param "RepoIdentifier" (optional.String) -
-     * @param "RootFolder" (optional.String) -
-     * @param "FilePath" (optional.String) -
-     * @param "CommitMsg" (optional.String) -
-     * @param "LastObjectId" (optional.String) -
-     * @param "BaseBranch" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RootFolder" (optional.String) -  Default Folder Path
+     * @param "FilePath" (optional.String) -  Default Folder Path
+     * @param "CommitMsg" (optional.String) -  Commit Message
+     * @param "LastObjectId" (optional.String) -  Last Object Id
+     * @param "BaseBranch" (optional.String) -  Default Branch
 @return ResponseDtoConnectorResponse
 */
 
@@ -1930,10 +1935,10 @@ func (a *ConnectorsApiService) PutConnector(ctx context.Context, body Connector,
 ConnectorsApiService validate the Connector by accountIdentifier and connectorIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ConnectorsApiValidateTheIdentifierIsUniqueOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "Identifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "Identifier" (optional.String) -  Connector Identifier
 @return ResponseDtoBoolean
 */
 

@@ -12,4 +12,5 @@ package nextgen
 type DelegateConfiguration struct {
 	DelegateVersions []string `json:"delegateVersions,omitempty"`
 	Action           string   `json:"action,omitempty"`
+	AccountVersion   bool     `json:"accountVersion,omitempty"`
 }
