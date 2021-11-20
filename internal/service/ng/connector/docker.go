@@ -75,14 +75,14 @@ func getDockerRegistrySchema() *schema.Schema {
 	}
 }
 
-func expandDockerRegistry(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandDockerRegistryConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.DockerRegistry.String()
-	connector.DockerRegistry = &nextgen.DockerConnectorDto{}
+	connector.Type_ = nextgen.ConnectorTypes.DockerRegistry
+	connector.DockerRegistry = &nextgen.DockerConnector{}
 
 	if attr := config["url"].(string); attr != "" {
 		connector.DockerRegistry.DockerRegistryUrl = attr
@@ -96,14 +96,14 @@ func expandDockerRegistry(d []interface{}, connector *nextgen.ConnectorInfoDto) 
 		connector.DockerRegistry.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 	}
 
-	connector.DockerRegistry.Auth = &nextgen.DockerAuthenticationDto{
-		Type_: nextgen.DockerAuthTypes.Anonymous.String(),
+	connector.DockerRegistry.Auth = &nextgen.DockerAuthentication{
+		Type_: nextgen.DockerAuthTypes.Anonymous,
 	}
 
 	if attr := config["credentials"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.DockerRegistry.Auth.Type_ = nextgen.DockerAuthTypes.UsernamePassword.String()
-		connector.DockerRegistry.Auth.UsernamePassword = &nextgen.DockerUserNamePasswordDto{}
+		connector.DockerRegistry.Auth.Type_ = nextgen.DockerAuthTypes.UsernamePassword
+		connector.DockerRegistry.Auth.UsernamePassword = &nextgen.DockerUserNamePassword{}
 
 		if attr := config["username"].(string); attr != "" {
 			connector.DockerRegistry.Auth.UsernamePassword.Username = attr
@@ -119,8 +119,8 @@ func expandDockerRegistry(d []interface{}, connector *nextgen.ConnectorInfoDto) 
 	}
 }
 
-func flattenDockerRegistry(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.DockerRegistry.String() {
+func flattenDockerRegistryConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.DockerRegistry {
 		return nil
 	}
 
@@ -131,7 +131,7 @@ func flattenDockerRegistry(d *schema.ResourceData, connector *nextgen.ConnectorI
 	results["delegate_selectors"] = connector.DockerRegistry.DelegateSelectors
 
 	switch connector.DockerRegistry.Auth.Type_ {
-	case nextgen.DockerAuthTypes.UsernamePassword.String():
+	case nextgen.DockerAuthTypes.UsernamePassword:
 		results["credentials"] = []map[string]interface{}{
 			{
 				"username":     connector.DockerRegistry.Auth.UsernamePassword.Username,
@@ -139,7 +139,7 @@ func flattenDockerRegistry(d *schema.ResourceData, connector *nextgen.ConnectorI
 				"password_ref": connector.DockerRegistry.Auth.UsernamePassword.PasswordRef,
 			},
 		}
-	case nextgen.DockerAuthTypes.Anonymous.String():
+	case nextgen.DockerAuthTypes.Anonymous:
 		// noop
 	default:
 		return fmt.Errorf("unsupported docker registry auth type: %s", connector.DockerRegistry.Auth.Type_)

@@ -69,21 +69,21 @@ func getGcpSchema() *schema.Schema {
 	}
 }
 
-func expandGcpConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandGcpConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.Gcp.String()
-	connector.Gcp = &nextgen.GcpConnectorDto{
-		Credential: &nextgen.GcpConnectorCredentialDto{},
+	connector.Type_ = nextgen.ConnectorTypes.Gcp
+	connector.Gcp = &nextgen.GcpConnector{
+		Credential: &nextgen.GcpConnectorCredential{},
 	}
 
 	if attr := config["manual"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.ManualConfig.String()
-		connector.Gcp.Credential.ManualConfig = &nextgen.GcpManualDetailsDto{}
+		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.ManualConfig
+		connector.Gcp.Credential.ManualConfig = &nextgen.GcpManualDetails{}
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Gcp.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
@@ -96,7 +96,7 @@ func expandGcpConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 	if attr := config["inherit_from_delegate"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.InheritFromDelegate.String()
+		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.InheritFromDelegate
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Gcp.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
@@ -104,22 +104,22 @@ func expandGcpConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 	}
 }
 
-func flattenGcpConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.Gcp.String() {
+func flattenGcpConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.Gcp {
 		return nil
 	}
 
 	results := map[string]interface{}{}
 
 	switch connector.Gcp.Credential.Type_ {
-	case nextgen.GcpAuthTypes.ManualConfig.String():
+	case nextgen.GcpAuthTypes.ManualConfig:
 		results["manual"] = []map[string]interface{}{
 			{
 				"secret_key_ref":     connector.Gcp.Credential.ManualConfig.SecretKeyRef,
 				"delegate_selectors": connector.Gcp.DelegateSelectors,
 			},
 		}
-	case nextgen.GcpAuthTypes.InheritFromDelegate.String():
+	case nextgen.GcpAuthTypes.InheritFromDelegate:
 		results["inherit_from_delegate"] = []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Gcp.DelegateSelectors,

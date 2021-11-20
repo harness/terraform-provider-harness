@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -35,7 +36,7 @@ func testSweepApplications(r string) error {
 			// Only delete applications that start with 'Test'
 			if strings.HasPrefix(app.Name, "Test") {
 				if err = c.CDClient.ApplicationClient.DeleteApplication(app.Id); err != nil {
-					return err
+					fmt.Printf("[ERROR] Failed to delete application %s: %s", app.Name, err)
 				}
 			}
 		}

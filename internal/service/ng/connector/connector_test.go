@@ -207,7 +207,7 @@ func testAccConnectorDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.ConnectorInfoDto, error) {
+func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.ConnectorInfo, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID

@@ -14,15 +14,29 @@ import (
 )
 
 var connectorConfigNames = []string{
+	"app_dynamics",
 	"artifactory",
 	"aws",
 	"aws_cloudcost",
+	"aws_kms",
+	"aws_secret_manager",
+	"bitbucket",
+	"datadog",
 	"docker_registry",
+	"dynatrace",
 	"gcp",
 	"git",
+	"github",
+	"gitlab",
 	"http_helm",
+	"jira",
 	"k8s_cluster",
+	"newrelic",
 	"nexus",
+	"pagerduty",
+	"prometheus",
+	"splunk",
+	"sumologic",
 }
 
 func ResourceConnector() *schema.Resource {
@@ -81,15 +95,29 @@ func ResourceConnector() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"artifactory":     getArtifactorySchema(),
-			"aws":             getAwsSchema(),
-			"aws_cloudcost":   getAwsCCSchema(),
-			"docker_registry": getDockerRegistrySchema(),
-			"gcp":             getGcpSchema(),
-			"git":             getGitSchema(),
-			"http_helm":       getHttpHelmSchema(),
-			"k8s_cluster":     getK8sClusterSchema(),
-			"nexus":           getNexusSchema(),
+			"app_dynamics":       getAppDynamicsSchema(),
+			"artifactory":        getArtifactorySchema(),
+			"aws":                getAwsSchema(),
+			"aws_cloudcost":      getAwsCCSchema(),
+			"aws_kms":            getAwsKmsSchema(),
+			"aws_secret_manager": getAwsSecretManagerSchema(),
+			"bitbucket":          getBitBucketSchema(),
+			"datadog":            getDatadogSchema(),
+			"docker_registry":    getDockerRegistrySchema(),
+			"dynatrace":          getDynatraceSchema(),
+			"gcp":                getGcpSchema(),
+			"git":                getGitSchema(),
+			"github":             getGithubSchema(),
+			"gitlab":             getGitlabSchema(),
+			"http_helm":          getHttpHelmSchema(),
+			"jira":               getJiraSchema(),
+			"k8s_cluster":        getK8sClusterSchema(),
+			"newrelic":           getNewRelicSchema(),
+			"nexus":              getNexusSchema(),
+			"pagerduty":          getPagerDutySchema(),
+			"prometheus":         getPrometheusSchema(),
+			"splunk":             getSplunkSchema(),
+			"sumologic":          getSumoLogicSchema(),
 		},
 	}
 }
@@ -142,7 +170,10 @@ func resourceConnectorCreate(ctx context.Context, d *schema.ResourceData, meta i
 	connector := buildConnector(d)
 	options := &nextgen.ConnectorsApiCreateConnectorOpts{AccountIdentifier: optional.NewString(c.AccountId)}
 
-	resp, _, err := c.NGClient.ConnectorsApi.CreateConnector(ctx, nextgen.Connector{Connector: connector}, options)
+	cn := nextgen.Connector{Connector: connector}
+	utils.DumpJsonObject(cn)
+
+	resp, _, err := c.NGClient.ConnectorsApi.CreateConnector(ctx, cn, options)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
@@ -150,8 +181,8 @@ func resourceConnectorCreate(ctx context.Context, d *schema.ResourceData, meta i
 	return readConnector(d, resp.Data.Connector)
 }
 
-func buildConnector(d *schema.ResourceData) *nextgen.ConnectorInfoDto {
-	connector := &nextgen.ConnectorInfoDto{}
+func buildConnector(d *schema.ResourceData) *nextgen.ConnectorInfo {
+	connector := &nextgen.ConnectorInfo{}
 
 	if attr := d.Get("name").(string); attr != "" {
 		connector.Name = attr
@@ -177,6 +208,10 @@ func buildConnector(d *schema.ResourceData) *nextgen.ConnectorInfoDto {
 		connector.Tags = utils.ExpandTags(attr)
 	}
 
+	if attr, ok := d.GetOk("app_dynamics"); ok {
+		expandAppDynamicsConfig(attr.([]interface{}), connector)
+	}
+
 	if attr, ok := d.GetOk("artifactory"); ok {
 		expandArtifactoryConfig(attr.([]interface{}), connector)
 	}
@@ -189,8 +224,28 @@ func buildConnector(d *schema.ResourceData) *nextgen.ConnectorInfoDto {
 		expandAwsCCConfig(attr.([]interface{}), connector)
 	}
 
+	if attr, ok := d.GetOk("aws_kms"); ok {
+		expandAwsKmsConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("aws_secret_manager"); ok {
+		expandAwsSecretManagerConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("bitbucket"); ok {
+		expandBitBucketConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("datadog"); ok {
+		expandDatadogConfig(attr.([]interface{}), connector)
+	}
+
 	if attr, ok := d.GetOk("docker_registry"); ok {
-		expandDockerRegistry(attr.([]interface{}), connector)
+		expandDockerRegistryConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("dynatrace"); ok {
+		expandDynatraceConfig(attr.([]interface{}), connector)
 	}
 
 	if attr, ok := d.GetOk("gcp"); ok {
@@ -201,22 +256,54 @@ func buildConnector(d *schema.ResourceData) *nextgen.ConnectorInfoDto {
 		expandGitConfig(attr.([]interface{}), connector)
 	}
 
+	if attr, ok := d.GetOk("github"); ok {
+		expandGithubConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("gitlab"); ok {
+		expandGitlabConfig(attr.([]interface{}), connector)
+	}
+
 	if attr, ok := d.GetOk("http_helm"); ok {
 		expandHttpHelmConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("jira"); ok {
+		expandJiraConfig(attr.([]interface{}), connector)
 	}
 
 	if attr, ok := d.GetOk("k8s_cluster"); ok {
 		expandK8sCluster(attr.([]interface{}), connector)
 	}
 
+	if attr, ok := d.GetOk("newrelic"); ok {
+		expandNewRelicConfig(attr.([]interface{}), connector)
+	}
+
 	if attr, ok := d.GetOk("nexus"); ok {
 		expandNexusConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("pagerduty"); ok {
+		expandPagerDutyConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("prometheus"); ok {
+		expandPrometheusConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("splunk"); ok {
+		expandSplunkConfig(attr.([]interface{}), connector)
+	}
+
+	if attr, ok := d.GetOk("sumologic"); ok {
+		expandSumoLogicConfig(attr.([]interface{}), connector)
 	}
 
 	return connector
 }
 
-func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) diag.Diagnostics {
+func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfo) diag.Diagnostics {
 	d.SetId(connector.Identifier)
 	d.Set("identifier", connector.Identifier)
 	d.Set("description", connector.Description)
@@ -224,6 +311,10 @@ func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) 
 	d.Set("org_id", connector.OrgIdentifier)
 	d.Set("project_id", connector.ProjectIdentifier)
 	d.Set("tags", utils.FlattenTags(connector.Tags))
+
+	if err := flattenAppDynamicsConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
 
 	if err := flattenArtifactoryConfig(d, connector); err != nil {
 		return diag.FromErr(err)
@@ -237,7 +328,27 @@ func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) 
 		return diag.FromErr(err)
 	}
 
-	if err := flattenDockerRegistry(d, connector); err != nil {
+	if err := flattenAwsKmsConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenAwsSecretManagerConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenBitBucketConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenDatadogConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenDynatraceConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenDockerRegistryConfig(d, connector); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -249,7 +360,11 @@ func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) 
 		return diag.FromErr(err)
 	}
 
-	if err := flattenK8sCluster(d, connector); err != nil {
+	if err := flattenGithubConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenGitlabConfig(d, connector); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -257,7 +372,35 @@ func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) 
 		return diag.FromErr(err)
 	}
 
+	if err := flattenJiraConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenK8sCluster(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenNewRelicConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
 	if err := flattenNexusConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenPagerDutyConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenPrometheusConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenSplunkConfig(d, connector); err != nil {
+		return diag.FromErr(err)
+	}
+
+	if err := flattenSumoLogicConfig(d, connector); err != nil {
 		return diag.FromErr(err)
 	}
 

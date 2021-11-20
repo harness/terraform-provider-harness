@@ -48,9 +48,9 @@ func testAccInfraDefK8s(name string) string {
 	return fmt.Sprintf(`
 		resource "harness_cloudprovider_kubernetes" "test" {
 			name = "%[1]s"
-
+			skip_validation = true
 			authentication {
-				delegate_selectors = ["test-account", "k8s"]
+				delegate_selectors = ["k8s"]
 			}
 		}
 

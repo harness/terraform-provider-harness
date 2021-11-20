@@ -67,7 +67,7 @@ func testAccResourceSSHCredentialSweep(r string) error {
 	for _, cred := range creds {
 		if strings.HasPrefix(cred.Name, "Test") {
 			if err = c.CDClient.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.SSHCredential); err != nil {
-				return err
+				fmt.Printf("[ERROR] Failed to delete SSH credential: %s", err)
 			}
 		}
 	}

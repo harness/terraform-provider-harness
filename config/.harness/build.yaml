@@ -167,7 +167,7 @@ pipeline:
                     value: org.harness_account_id
                   - name: HARNESS_ENDPOINT
                     type: String
-                    value: https://app.harness.io
+                    value: https://app.harness.io/gateway/api
                   - name: GOPATH
                     type: String
                     value: /goroot

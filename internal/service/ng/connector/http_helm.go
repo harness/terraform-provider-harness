@@ -63,14 +63,14 @@ func getHttpHelmSchema() *schema.Schema {
 	}
 }
 
-func expandHttpHelmConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandHttpHelmConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.HttpHelmRepo.String()
-	connector.HttpHelm = &nextgen.HttpHelmConnectorDto{}
+	connector.Type_ = nextgen.ConnectorTypes.HttpHelmRepo
+	connector.HttpHelm = &nextgen.HttpHelmConnector{}
 
 	if attr := config["url"].(string); attr != "" {
 		connector.HttpHelm.HelmRepoUrl = attr
@@ -80,14 +80,14 @@ func expandHttpHelmConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) 
 		connector.HttpHelm.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 	}
 
-	connector.HttpHelm.Auth = &nextgen.HttpHelmAuthenticationDto{
-		Type_: nextgen.HttpHelmAuthTypes.Anonymous.String(),
+	connector.HttpHelm.Auth = &nextgen.HttpHelmAuthentication{
+		Type_: nextgen.HttpHelmAuthTypes.Anonymous,
 	}
 
 	if attr := config["credentials"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.HttpHelm.Auth.Type_ = nextgen.HttpHelmAuthTypes.UsernamePassword.String()
-		connector.HttpHelm.Auth.UsernamePassword = &nextgen.HttpHelmUsernamePasswordDto{}
+		connector.HttpHelm.Auth.Type_ = nextgen.HttpHelmAuthTypes.UsernamePassword
+		connector.HttpHelm.Auth.UsernamePassword = &nextgen.HttpHelmUsernamePassword{}
 
 		if attr := config["username"].(string); attr != "" {
 			connector.HttpHelm.Auth.UsernamePassword.Username = attr
@@ -103,8 +103,8 @@ func expandHttpHelmConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) 
 	}
 }
 
-func flattenHttpHelmConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.HttpHelmRepo.String() {
+func flattenHttpHelmConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.HttpHelmRepo {
 		return nil
 	}
 
@@ -114,7 +114,7 @@ func flattenHttpHelmConfig(d *schema.ResourceData, connector *nextgen.ConnectorI
 	results["delegate_selectors"] = connector.HttpHelm.DelegateSelectors
 
 	switch connector.HttpHelm.Auth.Type_ {
-	case nextgen.HttpHelmAuthTypes.UsernamePassword.String():
+	case nextgen.HttpHelmAuthTypes.UsernamePassword:
 		results["credentials"] = []map[string]interface{}{
 			{
 				"username":     connector.HttpHelm.Auth.UsernamePassword.Username,
@@ -122,7 +122,7 @@ func flattenHttpHelmConfig(d *schema.ResourceData, connector *nextgen.ConnectorI
 				"password_ref": connector.HttpHelm.Auth.UsernamePassword.PasswordRef,
 			},
 		}
-	case nextgen.HttpHelmAuthTypes.Anonymous.String():
+	case nextgen.HttpHelmAuthTypes.Anonymous:
 		// noop
 	default:
 		return fmt.Errorf("unsupported http helm auth type: %s", connector.HttpHelm.Auth.Type_)
