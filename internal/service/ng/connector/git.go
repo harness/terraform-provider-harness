@@ -105,14 +105,14 @@ func getGitSchema() *schema.Schema {
 	}
 }
 
-func expandGitConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandGitConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.Git.String()
-	connector.Git = &nextgen.GitConfigDto{}
+	connector.Type_ = nextgen.ConnectorTypes.Git
+	connector.Git = &nextgen.GitConfig{}
 
 	if attr, ok := config["url"]; ok {
 		connector.Git.Url = attr.(string)
@@ -135,7 +135,7 @@ func expandGitConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 		if attr := credConfig["http"].([]interface{}); len(attr) > 0 {
 			httpConfig := attr[0].(map[string]interface{})
-			connector.Git.Type_ = nextgen.GitAuthTypes.Http.String()
+			connector.Git.Type_ = nextgen.GitAuthTypes.Http
 			connector.Git.Http = &nextgen.GitHttpAuthenticationDto{}
 
 			if attr, ok := httpConfig["username"]; ok {
@@ -153,8 +153,8 @@ func expandGitConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 		if attr := credConfig["ssh"].([]interface{}); len(attr) > 0 {
 			sshConfig := attr[0].(map[string]interface{})
-			connector.Git.Type_ = nextgen.GitAuthTypes.Ssh.String()
-			connector.Git.Ssh = &nextgen.GitSshAuthenticationDto{}
+			connector.Git.Type_ = nextgen.GitAuthTypes.Ssh
+			connector.Git.Ssh = &nextgen.GitSshAuthentication{}
 
 			if attr, ok := sshConfig["ssh_key_ref"]; ok {
 				connector.Git.Ssh.SshKeyRef = attr.(string)
@@ -163,8 +163,8 @@ func expandGitConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 	}
 }
 
-func flattenGitConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.Git.String() {
+func flattenGitConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.Git {
 		return nil
 	}
 
@@ -176,7 +176,7 @@ func flattenGitConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDt
 	results["validation_repo"] = connector.Git.ValidationRepo
 
 	switch connector.Git.Type_ {
-	case nextgen.GitAuthTypes.Http.String():
+	case nextgen.GitAuthTypes.Http:
 		results["credentials"] = []map[string]interface{}{
 			{
 				"http": []map[string]interface{}{
@@ -188,7 +188,7 @@ func flattenGitConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDt
 				},
 			},
 		}
-	case nextgen.GitAuthTypes.Ssh.String():
+	case nextgen.GitAuthTypes.Ssh:
 		results["credentials"] = []map[string]interface{}{
 			{
 				"ssh": []map[string]interface{}{

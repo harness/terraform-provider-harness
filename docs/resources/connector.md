@@ -58,11 +58,14 @@ resource "harness_connector" "test" {
 - **artifactory** (Block List, Max: 1) Artifactory connector. (see [below for nested schema](#nestedblock--artifactory))
 - **aws** (Block List, Max: 1) Aws account configuration. (see [below for nested schema](#nestedblock--aws))
 - **aws_cloudcost** (Block List, Max: 1) Aws cloud cost account configuration. (see [below for nested schema](#nestedblock--aws_cloudcost))
+- **bitbucket** (Block List, Max: 1) BitBucket connector (see [below for nested schema](#nestedblock--bitbucket))
 - **branch** (String) The branch to use for the connector.
 - **description** (String) The description of the connector.
 - **docker_registry** (Block List, Max: 1) The docker registry to use for the connector. (see [below for nested schema](#nestedblock--docker_registry))
 - **gcp** (Block List, Max: 1) Gcp connector configuration. (see [below for nested schema](#nestedblock--gcp))
 - **git** (Block List, Max: 1) Git connector (see [below for nested schema](#nestedblock--git))
+- **github** (Block List, Max: 1) Github connector (see [below for nested schema](#nestedblock--github))
+- **gitlab** (Block List, Max: 1) Gitlab connector (see [below for nested schema](#nestedblock--gitlab))
 - **http_helm** (Block List, Max: 1) Helm connector. (see [below for nested schema](#nestedblock--http_helm))
 - **id** (String) The ID of this resource.
 - **k8s_cluster** (Block List, Max: 1) The k8s cluster to use for the connector. (see [below for nested schema](#nestedblock--k8s_cluster))
@@ -172,6 +175,62 @@ Required:
 
 
 
+<a id="nestedblock--bitbucket"></a>
+### Nested Schema for `bitbucket`
+
+Required:
+
+- **connection_type** (String) Whether the connection we're making is to a BitBucket repository or a BitBucket account. Valid values are Account, Repo.
+- **credentials** (Block List, Min: 1, Max: 1) Credentials to use for the connection. (see [below for nested schema](#nestedblock--bitbucket--credentials))
+- **url** (String) Url of the BitBucket repository or account.
+
+Optional:
+
+- **api_authentication** (Block List, Max: 1) Configuration for using the BitBucket api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses. (see [below for nested schema](#nestedblock--bitbucket--api_authentication))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **validation_repo** (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
+
+<a id="nestedblock--bitbucket--credentials"></a>
+### Nested Schema for `bitbucket.credentials`
+
+Optional:
+
+- **http** (Block List, Max: 1) Authenticate using Username and password over http(s) for the connection. (see [below for nested schema](#nestedblock--bitbucket--credentials--http))
+- **ssh** (Block List, Max: 1) Authenticate using SSH for the connection. (see [below for nested schema](#nestedblock--bitbucket--credentials--ssh))
+
+<a id="nestedblock--bitbucket--credentials--http"></a>
+### Nested Schema for `bitbucket.credentials.http`
+
+Optional:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
+<a id="nestedblock--bitbucket--credentials--ssh"></a>
+### Nested Schema for `bitbucket.credentials.ssh`
+
+Required:
+
+- **ssh_key_ref** (String) Reference to the Harness secret containing the ssh key.
+
+
+
+<a id="nestedblock--bitbucket--api_authentication"></a>
+### Nested Schema for `bitbucket.api_authentication`
+
+Required:
+
+- **token_ref** (String) Personal access token for interacting with the BitBucket api.
+
+Optional:
+
+- **username** (String) The username used for connecting to the api.
+- **username_ref** (String) The name of the Harness secret containing the username.
+
+
+
 <a id="nestedblock--docker_registry"></a>
 ### Nested Schema for `docker_registry`
 
@@ -267,6 +326,123 @@ Required:
 
 - **ssh_key_ref** (String) Reference to the Harness secret containing the ssh key.
 
+
+
+
+<a id="nestedblock--github"></a>
+### Nested Schema for `github`
+
+Required:
+
+- **connection_type** (String) Whether the connection we're making is to a github repository or a github account. Valid values are Account, Repo.
+- **credentials** (Block List, Min: 1, Max: 1) Credentials to use for the connection. (see [below for nested schema](#nestedblock--github--credentials))
+- **url** (String) Url of the github repository or account.
+
+Optional:
+
+- **api_authentication** (Block List, Max: 1) Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses. (see [below for nested schema](#nestedblock--github--api_authentication))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **validation_repo** (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
+
+<a id="nestedblock--github--credentials"></a>
+### Nested Schema for `github.credentials`
+
+Optional:
+
+- **http** (Block List, Max: 1) Authenticate using Username and password over http(s) for the connection. (see [below for nested schema](#nestedblock--github--credentials--http))
+- **ssh** (Block List, Max: 1) Authenticate using SSH for the connection. (see [below for nested schema](#nestedblock--github--credentials--ssh))
+
+<a id="nestedblock--github--credentials--http"></a>
+### Nested Schema for `github.credentials.http`
+
+Required:
+
+- **token_ref** (String) Reference to a secret containing the personal access to use for authentication.
+
+Optional:
+
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
+<a id="nestedblock--github--credentials--ssh"></a>
+### Nested Schema for `github.credentials.ssh`
+
+Required:
+
+- **ssh_key_ref** (String) Reference to the Harness secret containing the ssh key.
+
+
+
+<a id="nestedblock--github--api_authentication"></a>
+### Nested Schema for `github.api_authentication`
+
+Optional:
+
+- **github_app** (Block List, Max: 1) Configuration for using the github app for interacting with the github api. (see [below for nested schema](#nestedblock--github--api_authentication--github_app))
+- **token_ref** (String) Personal access token for interacting with the github api.
+
+<a id="nestedblock--github--api_authentication--github_app"></a>
+### Nested Schema for `github.api_authentication.github_app`
+
+Required:
+
+- **application_id** (String) Enter the GitHub App ID from the GitHub App General tab.
+- **installation_id** (String) Enter the Installation ID located in the URL of the installed GitHub App.
+- **private_key_ref** (String) Reference to the secret containing the private key.
+
+
+
+
+<a id="nestedblock--gitlab"></a>
+### Nested Schema for `gitlab`
+
+Required:
+
+- **connection_type** (String) Whether the connection we're making is to a gitlab repository or a gitlab account. Valid values are Account, Repo.
+- **credentials** (Block List, Min: 1, Max: 1) Credentials to use for the connection. (see [below for nested schema](#nestedblock--gitlab--credentials))
+- **url** (String) Url of the gitlab repository or account.
+
+Optional:
+
+- **api_authentication** (Block List, Max: 1) Configuration for using the gitlab api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses. (see [below for nested schema](#nestedblock--gitlab--api_authentication))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **validation_repo** (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
+
+<a id="nestedblock--gitlab--credentials"></a>
+### Nested Schema for `gitlab.credentials`
+
+Optional:
+
+- **http** (Block List, Max: 1) Authenticate using Username and password over http(s) for the connection. (see [below for nested schema](#nestedblock--gitlab--credentials--http))
+- **ssh** (Block List, Max: 1) Authenticate using SSH for the connection. (see [below for nested schema](#nestedblock--gitlab--credentials--ssh))
+
+<a id="nestedblock--gitlab--credentials--http"></a>
+### Nested Schema for `gitlab.credentials.http`
+
+Optional:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+- **token_ref** (String) Reference to a secret containing the personal access to use for authentication.
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
+<a id="nestedblock--gitlab--credentials--ssh"></a>
+### Nested Schema for `gitlab.credentials.ssh`
+
+Required:
+
+- **ssh_key_ref** (String) Reference to the Harness secret containing the ssh key.
+
+
+
+<a id="nestedblock--gitlab--api_authentication"></a>
+### Nested Schema for `gitlab.api_authentication`
+
+Required:
+
+- **token_ref** (String) Personal access token for interacting with the gitlab api.
 
 
 

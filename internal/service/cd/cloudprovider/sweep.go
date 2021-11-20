@@ -1,6 +1,7 @@
 package cloudprovider
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/harness-io/terraform-provider-harness/internal/sweep"
@@ -34,7 +35,7 @@ func testSweepCloudProviders(r string) error {
 		for _, cp := range cloudProviders {
 			if strings.HasPrefix(cp.Name, "Test") {
 				if err = c.CDClient.CloudProviderClient.DeleteCloudProvider(cp.Id); err != nil {
-					return err
+					fmt.Printf("[ERROR] Failed to delete cloud provider %s: %s\n", cp.Name, err)
 				}
 			}
 		}

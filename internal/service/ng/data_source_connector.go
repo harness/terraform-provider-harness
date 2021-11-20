@@ -254,7 +254,7 @@ func dataSourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta i
 
 }
 
-func readConnectorData(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) diag.Diagnostics {
+func readConnectorData(d *schema.ResourceData, connector *nextgen.ConnectorInfo) diag.Diagnostics {
 	d.SetId(connector.Identifier)
 	d.Set("name", connector.Name)
 	d.Set("identifier", connector.Identifier)

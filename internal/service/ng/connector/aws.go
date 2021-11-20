@@ -54,7 +54,7 @@ func getAwsSchema() *schema.Schema {
 								Required:    true,
 							},
 							"delegate_selectors": {
-								Description: "Connect only use deleagates with these tags.",
+								Description: "Connect only use delegates with these tags.",
 								Type:        schema.TypeSet,
 								Optional:    true,
 								Elem:        &schema.Schema{Type: schema.TypeString},
@@ -137,21 +137,21 @@ func getAwsSchema() *schema.Schema {
 	}
 }
 
-func expandAwsConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandAwsConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.Aws.String()
-	connector.Aws = &nextgen.AwsConnectorDto{
-		Credential: &nextgen.AwsCredentialDto{},
+	connector.Type_ = nextgen.ConnectorTypes.Aws
+	connector.Aws = &nextgen.AwsConnector{
+		Credential: &nextgen.AwsCredential{},
 	}
 
 	if attr := config["manual"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.ManualConfig.String()
-		connector.Aws.Credential.ManualConfig = &nextgen.AwsManualConfigSpecDto{}
+		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.ManualConfig
+		connector.Aws.Credential.ManualConfig = &nextgen.AwsManualConfigSpec{}
 
 		if attr := config["access_key"].(string); attr != "" {
 			connector.Aws.Credential.ManualConfig.AccessKey = attr
@@ -172,7 +172,7 @@ func expandAwsConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 	if attr := config["irsa"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.Irsa.String()
+		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.Irsa
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
@@ -181,7 +181,7 @@ func expandAwsConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 	if attr := config["inherit_from_delegate"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.InheritFromDelegate.String()
+		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.InheritFromDelegate
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
@@ -190,7 +190,7 @@ func expandAwsConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 	if attr := config["cross_account_access"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Aws.Credential.CrossAccountAccess = &nextgen.CrossAccountAccessDto{}
+		connector.Aws.Credential.CrossAccountAccess = &nextgen.CrossAccountAccess{}
 
 		if attr := config["role_arn"].(string); attr != "" {
 			connector.Aws.Credential.CrossAccountAccess.CrossAccountRoleArn = attr
@@ -202,15 +202,15 @@ func expandAwsConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 	}
 }
 
-func flattenAwsConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.Aws.String() {
+func flattenAwsConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.Aws {
 		return nil
 	}
 
 	results := map[string]interface{}{}
 
 	switch connector.Aws.Credential.Type_ {
-	case nextgen.AwsAuthTypes.ManualConfig.String():
+	case nextgen.AwsAuthTypes.ManualConfig:
 		results["manual"] = []map[string]interface{}{
 			{
 				"access_key":         connector.Aws.Credential.ManualConfig.AccessKey,
@@ -219,13 +219,13 @@ func flattenAwsConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDt
 				"delegate_selectors": connector.Aws.DelegateSelectors,
 			},
 		}
-	case nextgen.AwsAuthTypes.Irsa.String():
+	case nextgen.AwsAuthTypes.Irsa:
 		results["irsa"] = []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Aws.DelegateSelectors,
 			},
 		}
-	case nextgen.AwsAuthTypes.InheritFromDelegate.String():
+	case nextgen.AwsAuthTypes.InheritFromDelegate:
 		results["inherit_from_delegate"] = []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Aws.DelegateSelectors,

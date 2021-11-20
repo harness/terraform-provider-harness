@@ -49,7 +49,7 @@ func New(version string) func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
 				"endpoint": {
-					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
+					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway/api`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.DefaultApiUrl),
@@ -67,10 +67,10 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.ApiKey.String(), nil),
 				},
 				"ng_endpoint": {
-					Description: fmt.Sprintf("The URL of the Harness nextgen API. The default is `%s`. This can also be set using the `%s` environment variable.", api.DefaultNGApiUrl, helpers.EnvVars.NGEndpoint.String()),
+					Description: fmt.Sprintf("The URL of the Harness nextgen API. The default is `%s`. This can also be set using the `%s` environment variable.", utils.DefaultNGApiUrl, helpers.EnvVars.NGEndpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.NGEndpoint.String(), api.DefaultNGApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.NGEndpoint.String(), utils.DefaultNGApiUrl),
 				},
 				"ng_api_key": {
 					Description: fmt.Sprintf("The Harness nextgen API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.NGApiKey.String()),

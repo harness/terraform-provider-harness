@@ -63,14 +63,14 @@ func getArtifactorySchema() *schema.Schema {
 	}
 }
 
-func expandArtifactoryConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandArtifactoryConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.Artifactory.String()
-	connector.Artifactory = &nextgen.ArtifactoryConnectorDto{}
+	connector.Type_ = nextgen.ConnectorTypes.Artifactory
+	connector.Artifactory = &nextgen.ArtifactoryConnector{}
 
 	if attr := config["url"].(string); attr != "" {
 		connector.Artifactory.ArtifactoryServerUrl = attr
@@ -80,14 +80,14 @@ func expandArtifactoryConfig(d []interface{}, connector *nextgen.ConnectorInfoDt
 		connector.Artifactory.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 	}
 
-	connector.Artifactory.Auth = &nextgen.ArtifactoryAuthenticationDto{
-		Type_: nextgen.ArtifactoryAuthTypes.Anonymous.String(),
+	connector.Artifactory.Auth = &nextgen.ArtifactoryAuthentication{
+		Type_: nextgen.ArtifactoryAuthTypes.Anonymous,
 	}
 
 	if attr := config["credentials"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Artifactory.Auth.Type_ = nextgen.ArtifactoryAuthTypes.UsernamePassword.String()
-		connector.Artifactory.Auth.UsernamePassword = &nextgen.ArtifactoryUsernamePasswordAuthDto{}
+		connector.Artifactory.Auth.Type_ = nextgen.ArtifactoryAuthTypes.UsernamePassword
+		connector.Artifactory.Auth.UsernamePassword = &nextgen.ArtifactoryUsernamePasswordAuth{}
 
 		if attr := config["username"].(string); attr != "" {
 			connector.Artifactory.Auth.UsernamePassword.Username = attr
@@ -103,8 +103,8 @@ func expandArtifactoryConfig(d []interface{}, connector *nextgen.ConnectorInfoDt
 	}
 }
 
-func flattenArtifactoryConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.Artifactory.String() {
+func flattenArtifactoryConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.Artifactory {
 		return nil
 	}
 
@@ -114,7 +114,7 @@ func flattenArtifactoryConfig(d *schema.ResourceData, connector *nextgen.Connect
 	results["delegate_selectors"] = connector.Artifactory.DelegateSelectors
 
 	switch connector.Artifactory.Auth.Type_ {
-	case nextgen.ArtifactoryAuthTypes.UsernamePassword.String():
+	case nextgen.ArtifactoryAuthTypes.UsernamePassword:
 		results["credentials"] = []map[string]interface{}{
 			{
 				"username":     connector.Artifactory.Auth.UsernamePassword.Username,
@@ -122,7 +122,7 @@ func flattenArtifactoryConfig(d *schema.ResourceData, connector *nextgen.Connect
 				"password_ref": connector.Artifactory.Auth.UsernamePassword.PasswordRef,
 			},
 		}
-	case nextgen.ArtifactoryAuthTypes.Anonymous.String():
+	case nextgen.ArtifactoryAuthTypes.Anonymous:
 		// noop
 	default:
 		return fmt.Errorf("unsupported artifactory auth type: %s", connector.Artifactory.Auth.Type_)

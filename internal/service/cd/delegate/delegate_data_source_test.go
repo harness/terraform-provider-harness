@@ -30,7 +30,7 @@ func TestAccDataSourceDelegate(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", ""),
 					resource.TestCheckResourceAttrSet(resourceName, "last_heartbeat"),
 					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttr(resourceName, "version", ""),
+					resource.TestCheckResourceAttrSet(resourceName, "version"),
 				),
 			},
 		},

@@ -266,19 +266,19 @@ func getK8sClusterSchema() *schema.Schema {
 	}
 }
 
-func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.K8sCluster.String()
-	connector.K8sCluster = &nextgen.KubernetesClusterConfigDto{}
+	connector.Type_ = nextgen.ConnectorTypes.K8sCluster
+	connector.K8sCluster = &nextgen.KubernetesClusterConfig{}
 
 	if attr := config["inherit_from_delegate"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.K8sCluster.Credential = &nextgen.KubernetesCredentialDto{
-			Type_: nextgen.KubernetesCredentialTypes.InheritFromDelegate.String(),
+		connector.K8sCluster.Credential = &nextgen.KubernetesCredential{
+			Type_: nextgen.KubernetesCredentialTypes.InheritFromDelegate,
 		}
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
@@ -287,21 +287,21 @@ func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 	} else {
 
-		connector.K8sCluster.Credential = &nextgen.KubernetesCredentialDto{
-			Type_: nextgen.KubernetesCredentialTypes.ManualConfig.String(),
-			ManualCredentials: &nextgen.KubernetesClusterDetailsDto{
-				Auth: &nextgen.KubernetesAuthDto{},
+		connector.K8sCluster.Credential = &nextgen.KubernetesCredential{
+			Type_: nextgen.KubernetesCredentialTypes.ManualConfig,
+			ManualConfig: &nextgen.KubernetesClusterDetails{
+				Auth: &nextgen.KubernetesAuth{},
 			},
 		}
 
 		if attr := config["client_key_cert"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
-			clientKeyCert := &nextgen.KubernetesClientKeyCertDto{}
-			connector.K8sCluster.Credential.ManualCredentials.Auth.Type_ = nextgen.KubernetesAuthMethods.ClientKeyCert.String()
-			connector.K8sCluster.Credential.ManualCredentials.Auth.ClientKeyCert = clientKeyCert
+			clientKeyCert := &nextgen.KubernetesClientKeyCert{}
+			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.ClientKeyCert
+			connector.K8sCluster.Credential.ManualConfig.Auth.ClientKeyCert = clientKeyCert
 
 			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualCredentials.MasterUrl = attr
+				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
 			}
 
 			if attr := config["ca_cert_ref"].(string); attr != "" {
@@ -327,12 +327,12 @@ func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 		if attr := config["username_password"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
-			usernamePasswordConfig := &nextgen.KubernetesUserNamePasswordDto{}
-			connector.K8sCluster.Credential.ManualCredentials.Auth.Type_ = nextgen.KubernetesAuthMethods.UsernamePassword.String()
-			connector.K8sCluster.Credential.ManualCredentials.Auth.UsernamePassword = usernamePasswordConfig
+			usernamePasswordConfig := &nextgen.KubernetesUserNamePassword{}
+			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.UsernamePassword
+			connector.K8sCluster.Credential.ManualConfig.Auth.UsernamePassword = usernamePasswordConfig
 
 			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualCredentials.MasterUrl = attr
+				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
 			}
 
 			if attr := config["username"].(string); attr != "" {
@@ -350,12 +350,12 @@ func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 		if attr := config["service_account"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
-			saConfig := &nextgen.KubernetesServiceAccountDto{}
-			connector.K8sCluster.Credential.ManualCredentials.Auth.Type_ = nextgen.KubernetesAuthMethods.ServiceAccount.String()
-			connector.K8sCluster.Credential.ManualCredentials.Auth.ServiceAccount = saConfig
+			saConfig := &nextgen.KubernetesServiceAccount{}
+			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.ServiceAccount
+			connector.K8sCluster.Credential.ManualConfig.Auth.ServiceAccount = saConfig
 
 			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualCredentials.MasterUrl = attr
+				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
 			}
 
 			if attr := config["service_account_token_ref"].(string); attr != "" {
@@ -365,12 +365,12 @@ func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 		if attr := config["service_account"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
-			saConfig := &nextgen.KubernetesServiceAccountDto{}
-			connector.K8sCluster.Credential.ManualCredentials.Auth.Type_ = nextgen.KubernetesAuthMethods.ServiceAccount.String()
-			connector.K8sCluster.Credential.ManualCredentials.Auth.ServiceAccount = saConfig
+			saConfig := &nextgen.KubernetesServiceAccount{}
+			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.ServiceAccount
+			connector.K8sCluster.Credential.ManualConfig.Auth.ServiceAccount = saConfig
 
 			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualCredentials.MasterUrl = attr
+				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
 			}
 
 			if attr := config["service_account_token_ref"].(string); attr != "" {
@@ -380,12 +380,12 @@ func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 		if attr := config["openid_connect"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
-			oidcConfig := &nextgen.KubernetesOpenIdConnectDto{}
-			connector.K8sCluster.Credential.ManualCredentials.Auth.Type_ = nextgen.KubernetesAuthMethods.OpenIdConnect.String()
-			connector.K8sCluster.Credential.ManualCredentials.Auth.OpenIdConnect = oidcConfig
+			oidcConfig := &nextgen.KubernetesOpenIdConnect{}
+			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.OpenIdConnect
+			connector.K8sCluster.Credential.ManualConfig.Auth.OpenIdConnect = oidcConfig
 
 			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualCredentials.MasterUrl = attr
+				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
 			}
 
 			if attr := config["issuer_url"].(string); attr != "" {
@@ -419,27 +419,27 @@ func expandK8sCluster(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 	}
 }
 
-func flattenK8sCluster(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.K8sCluster.String() {
+func flattenK8sCluster(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.K8sCluster {
 		return nil
 	}
 
 	results := map[string]interface{}{}
 
 	switch connector.K8sCluster.Credential.Type_ {
-	case nextgen.KubernetesCredentialTypes.InheritFromDelegate.String():
+	case nextgen.KubernetesCredentialTypes.InheritFromDelegate:
 		results["inherit_from_delegate"] = []map[string]interface{}{
 			{
 				"delegate_selectors": connector.K8sCluster.DelegateSelectors,
 			},
 		}
-	case nextgen.KubernetesCredentialTypes.ManualConfig.String():
-		auth := connector.K8sCluster.Credential.ManualCredentials.Auth
+	case nextgen.KubernetesCredentialTypes.ManualConfig:
+		auth := connector.K8sCluster.Credential.ManualConfig.Auth
 		switch auth.Type_ {
-		case nextgen.KubernetesAuthMethods.ClientKeyCert.String():
+		case nextgen.KubernetesAuthTypes.ClientKeyCert:
 			results["client_key_cert"] = []map[string]interface{}{
 				{
-					"master_url":                connector.K8sCluster.Credential.ManualCredentials.MasterUrl,
+					"master_url":                connector.K8sCluster.Credential.ManualConfig.MasterUrl,
 					"ca_cert_ref":               auth.ClientKeyCert.CaCertRef,
 					"client_cert_ref":           auth.ClientKeyCert.ClientCertRef,
 					"client_key_ref":            auth.ClientKeyCert.ClientKeyRef,
@@ -447,26 +447,26 @@ func flattenK8sCluster(d *schema.ResourceData, connector *nextgen.ConnectorInfoD
 					"client_key_algorithm":      auth.ClientKeyCert.ClientKeyAlgo,
 				},
 			}
-		case nextgen.KubernetesAuthMethods.UsernamePassword.String():
+		case nextgen.KubernetesAuthTypes.UsernamePassword:
 			results["username_password"] = []map[string]interface{}{
 				{
-					"master_url":   connector.K8sCluster.Credential.ManualCredentials.MasterUrl,
+					"master_url":   connector.K8sCluster.Credential.ManualConfig.MasterUrl,
 					"username":     auth.UsernamePassword.Username,
 					"username_ref": auth.UsernamePassword.UsernameRef,
 					"password_ref": auth.UsernamePassword.PasswordRef,
 				},
 			}
-		case nextgen.KubernetesAuthMethods.ServiceAccount.String():
+		case nextgen.KubernetesAuthTypes.ServiceAccount:
 			results["service_account"] = []map[string]interface{}{
 				{
-					"master_url":                connector.K8sCluster.Credential.ManualCredentials.MasterUrl,
+					"master_url":                connector.K8sCluster.Credential.ManualConfig.MasterUrl,
 					"service_account_token_ref": auth.ServiceAccount.ServiceAccountTokenRef,
 				},
 			}
-		case nextgen.KubernetesAuthMethods.OpenIdConnect.String():
+		case nextgen.KubernetesAuthTypes.OpenIdConnect:
 			results["openid_connect"] = []map[string]interface{}{
 				{
-					"master_url":    connector.K8sCluster.Credential.ManualCredentials.MasterUrl,
+					"master_url":    connector.K8sCluster.Credential.ManualConfig.MasterUrl,
 					"issuer_url":    auth.OpenIdConnect.OidcIssuerUrl,
 					"username":      auth.OpenIdConnect.OidcUsername,
 					"username_ref":  auth.OpenIdConnect.OidcUsernameRef,

@@ -69,14 +69,14 @@ func getNexusSchema() *schema.Schema {
 	}
 }
 
-func expandNexusConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandNexusConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.Nexus.String()
-	connector.Nexus = &nextgen.NexusConnectorDto{}
+	connector.Type_ = nextgen.ConnectorTypes.Nexus
+	connector.Nexus = &nextgen.NexusConnector{}
 
 	if attr := config["url"].(string); attr != "" {
 		connector.Nexus.NexusServerUrl = attr
@@ -90,14 +90,14 @@ func expandNexusConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 		connector.Nexus.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 	}
 
-	connector.Nexus.Auth = &nextgen.NexusAuthenticationDto{
-		Type_: nextgen.NexusAuthTypes.Anonymous.String(),
+	connector.Nexus.Auth = &nextgen.NexusAuthentication{
+		Type_: nextgen.NexusAuthTypes.Anonymous,
 	}
 
 	if attr := config["credentials"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.Nexus.Auth.Type_ = nextgen.NexusAuthTypes.UsernamePassword.String()
-		connector.Nexus.Auth.UsernamePassword = &nextgen.NexusUsernamePasswordAuthDto{}
+		connector.Nexus.Auth.Type_ = nextgen.NexusAuthTypes.UsernamePassword
+		connector.Nexus.Auth.UsernamePassword = &nextgen.NexusUsernamePasswordAuth{}
 
 		if attr := config["username"].(string); attr != "" {
 			connector.Nexus.Auth.UsernamePassword.Username = attr
@@ -113,8 +113,8 @@ func expandNexusConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 	}
 }
 
-func flattenNexusConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.Nexus.String() {
+func flattenNexusConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.Nexus {
 		return nil
 	}
 
@@ -125,7 +125,7 @@ func flattenNexusConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	results["version"] = connector.Nexus.Version
 
 	switch connector.Nexus.Auth.Type_ {
-	case nextgen.NexusAuthTypes.UsernamePassword.String():
+	case nextgen.NexusAuthTypes.UsernamePassword:
 		results["credentials"] = []map[string]interface{}{
 			{
 				"username":     connector.Nexus.Auth.UsernamePassword.Username,
@@ -133,7 +133,7 @@ func flattenNexusConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 				"password_ref": connector.Nexus.Auth.UsernamePassword.PasswordRef,
 			},
 		}
-	case nextgen.NexusAuthTypes.Anonymous.String():
+	case nextgen.NexusAuthTypes.Anonymous:
 		// noop
 	default:
 		return fmt.Errorf("unsupported nexus auth type: %s", connector.Nexus.Auth.Type_)

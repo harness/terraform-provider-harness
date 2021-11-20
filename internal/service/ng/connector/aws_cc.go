@@ -74,15 +74,15 @@ func getAwsCCSchema() *schema.Schema {
 	}
 }
 
-func expandAwsCCConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
+func expandAwsCCConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 	if len(d) == 0 {
 		return
 	}
 
 	config := d[0].(map[string]interface{})
-	connector.Type_ = nextgen.ConnectorTypes.CEAws.String()
+	connector.Type_ = nextgen.ConnectorTypes.CEAws
 	connector.AwsCC = &nextgen.CeAwsConnectorDto{
-		CrossAccountAccess: &nextgen.CrossAccountAccessDto{},
+		CrossAccountAccess: &nextgen.CrossAccountAccess{},
 		CurAttributes:      &nextgen.AwsCurAttributesDto{},
 	}
 
@@ -108,7 +108,7 @@ func expandAwsCCConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 	if attr, ok := config["cross_account_access"]; ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		connector.AwsCC.CrossAccountAccess = &nextgen.CrossAccountAccessDto{}
+		connector.AwsCC.CrossAccountAccess = &nextgen.CrossAccountAccess{}
 
 		if attr, ok := config["role_arn"]; ok {
 			connector.AwsCC.CrossAccountAccess.CrossAccountRoleArn = attr.(string)
@@ -125,8 +125,8 @@ func expandAwsCCConfig(d []interface{}, connector *nextgen.ConnectorInfoDto) {
 
 }
 
-func flattenAwsCCConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfoDto) error {
-	if connector.Type_ != nextgen.ConnectorTypes.CEAws.String() {
+func flattenAwsCCConfig(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	if connector.Type_ != nextgen.ConnectorTypes.CEAws {
 		return nil
 	}
 
