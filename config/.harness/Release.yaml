@@ -20,7 +20,9 @@ pipeline:
                                 spec:
                                     connectorRef: org.gcp
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    command: git clone https://${GITHUB_TOKEN}@github.com/harness-io/terraform-provider-harness.git .
+                                    command: |-
+                                        git clone https://${GITHUB_TOKEN}@github.com/harness-io/terraform-provider-harness.git .
+                                        git checkout origin/<+Release.variables.BASE_BRANCH>
                                     privileged: false
                                     shell: Bash
                                 when:
@@ -117,3 +119,7 @@ pipeline:
                     type: String
                     default: "true"
                     value: <+input>.allowedValues(true,false)
+                  - name: BASE_BRANCH
+                    type: String
+                    default: main
+                    value: <+input>
