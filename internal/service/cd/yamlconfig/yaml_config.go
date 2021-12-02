@@ -118,7 +118,9 @@ func resourceYamlConfigCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 func resourceYamlConfigDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	err := c.CDClient.CloudProviderClient.DeleteCloudProvider(d.Id())
+	path := cac.YamlPath(d.Get("path").(string))
+
+	err := c.CDClient.ConfigAsCodeClient.DeleteEntity(path)
 	if err != nil {
 		return diag.FromErr(err)
 	}
