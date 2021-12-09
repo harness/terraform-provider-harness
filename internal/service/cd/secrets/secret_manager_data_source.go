@@ -75,7 +75,7 @@ func dataSourceSecretManagerRead(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	if sm == nil {
-		return diag.FromErr(errors.New("could not find secret"))
+		return diag.FromErr(errors.New("could not find secret manager"))
 	}
 
 	d.SetId(sm.Id)

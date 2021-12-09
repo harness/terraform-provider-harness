@@ -1,6 +1,7 @@
 package secrets
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
@@ -18,6 +19,11 @@ func init() {
 			"harness_ssh_credential",
 			"harness_winrm_credential",
 		},
+	})
+
+	resource.AddTestSweepers("harness_ssh_credential", &resource.Sweeper{
+		Name: "harness_ssh_credential",
+		F:    testAccResourceSSHCredentialSweep,
 	})
 }
 
@@ -45,6 +51,25 @@ func testSweepHarnessEncryptedText(r string) error {
 		}
 
 		hasMore = len(secrets) == limit
+	}
+
+	return nil
+}
+
+func testAccResourceSSHCredentialSweep(r string) error {
+	c := sweep.SweeperClient
+
+	creds, err := c.CDClient.SecretClient.ListSSHCredentials()
+	if err != nil {
+		return fmt.Errorf("error retrieving SSH credentials: %s", err)
+	}
+
+	for _, cred := range creds {
+		if strings.HasPrefix(cred.Name, "Test") {
+			if err = c.CDClient.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.SSHCredential); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
