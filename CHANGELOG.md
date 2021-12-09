@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.2...HEAD)
+
+**Merged pull requests:**
+
+- Updated nextgen connectors [\#62](https://github.com/harness-io/harness-go-sdk/pull/62) ([micahlmartin](https://github.com/micahlmartin))
+- Bump github.com/docker/docker from 20.10.10+incompatible to 20.10.11+incompatible [\#60](https://github.com/harness-io/harness-go-sdk/pull/60) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump github.com/opencontainers/image-spec from 1.0.1 to 1.0.2 [\#59](https://github.com/harness-io/harness-go-sdk/pull/59) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v0.1.2](https://github.com/harness-io/harness-go-sdk/tree/v0.1.2) (2021-11-12)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.1...v0.1.2)
+
+**Merged pull requests:**
+
+- Release version 0.1.2 11-12-2021 [\#58](https://github.com/harness-io/harness-go-sdk/pull/58) ([micahlmartin](https://github.com/micahlmartin))
+
 ## [v0.1.1](https://github.com/harness-io/harness-go-sdk/tree/v0.1.1) (2021-11-11)
 
 [Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.0...v0.1.1)
@@ -90,7 +108,6 @@
 
 **Merged pull requests:**
 
-- Release version 0.0.8 09-14-2021 [\#39](https://github.com/harness-io/harness-go-sdk/pull/39) ([micahlmartin](https://github.com/micahlmartin))
 - Added ability to upsert raw yaml [\#38](https://github.com/harness-io/harness-go-sdk/pull/38) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.7](https://github.com/harness-io/harness-go-sdk/tree/v0.0.7) (2021-09-14)
@@ -99,6 +116,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.0.8 09-14-2021 [\#39](https://github.com/harness-io/harness-go-sdk/pull/39) ([micahlmartin](https://github.com/micahlmartin))
 - Release version 0.0.7 09-14-2021 [\#37](https://github.com/harness-io/harness-go-sdk/pull/37) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed a few notfound issues [\#36](https://github.com/harness-io/harness-go-sdk/pull/36) ([micahlmartin](https://github.com/micahlmartin))
 
