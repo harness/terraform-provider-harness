@@ -2,10 +2,23 @@
 
 ## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.2...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.3...HEAD)
+
+**Implemented enhancements:**
+
+- On-prem needs the ability to override the graphql endpoint [\#64](https://github.com/harness-io/harness-go-sdk/issues/64)
 
 **Merged pull requests:**
 
+- Update the endpoint to the fully qualified api path [\#65](https://github.com/harness-io/harness-go-sdk/pull/65) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.1.3](https://github.com/harness-io/harness-go-sdk/tree/v0.1.3) (2021-12-09)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.2...v0.1.3)
+
+**Merged pull requests:**
+
+- Release version 0.1.3 12-09-2021 [\#63](https://github.com/harness-io/harness-go-sdk/pull/63) ([micahlmartin](https://github.com/micahlmartin))
 - Updated nextgen connectors [\#62](https://github.com/harness-io/harness-go-sdk/pull/62) ([micahlmartin](https://github.com/micahlmartin))
 - Bump github.com/docker/docker from 20.10.10+incompatible to 20.10.11+incompatible [\#60](https://github.com/harness-io/harness-go-sdk/pull/60) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump github.com/opencontainers/image-spec from 1.0.1 to 1.0.2 [\#59](https://github.com/harness-io/harness-go-sdk/pull/59) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -108,6 +121,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.0.8 09-14-2021 [\#39](https://github.com/harness-io/harness-go-sdk/pull/39) ([micahlmartin](https://github.com/micahlmartin))
 - Added ability to upsert raw yaml [\#38](https://github.com/harness-io/harness-go-sdk/pull/38) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.0.7](https://github.com/harness-io/harness-go-sdk/tree/v0.0.7) (2021-09-14)
@@ -116,7 +130,6 @@
 
 **Merged pull requests:**
 
-- Release version 0.0.8 09-14-2021 [\#39](https://github.com/harness-io/harness-go-sdk/pull/39) ([micahlmartin](https://github.com/micahlmartin))
 - Release version 0.0.7 09-14-2021 [\#37](https://github.com/harness-io/harness-go-sdk/pull/37) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed a few notfound issues [\#36](https://github.com/harness-io/harness-go-sdk/pull/36) ([micahlmartin](https://github.com/micahlmartin))
 
