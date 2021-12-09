@@ -57,7 +57,7 @@ func getWinRMCredentialFields() string {
 }
 
 func (c *SecretClient) ListWinRMCredentials() ([]*unpublished.Credential, error) {
-	req, err := c.ApiClient.NewAuthorizedGetRequest("gateway/api/secrets/list-values")
+	req, err := c.ApiClient.NewAuthorizedGetRequest("/secrets/list-values")
 	if err != nil {
 		return nil, err
 	}
@@ -103,5 +103,3 @@ func (c *SecretClient) ListWinRMCredentials() ([]*unpublished.Credential, error)
 
 	return winrmCreds, nil
 }
-
-// https://app.harness.io/gateway/api/secrets/list-values?accountId=UKh5Yts7THSMAbccG3HrLA

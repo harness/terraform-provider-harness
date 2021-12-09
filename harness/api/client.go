@@ -50,7 +50,7 @@ func NewClient() *Client {
 			HTTPClient:  httpClient,
 		}),
 		NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
-			BasePath: helpers.EnvVars.NGEndpoint.GetWithDefault(DefaultNGApiUrl),
+			BasePath: helpers.EnvVars.NGEndpoint.GetWithDefault(utils.DefaultNGApiUrl),
 			DefaultHeader: map[string]string{
 				helpers.EnvVars.NGApiKey.String(): helpers.EnvVars.NGApiKey.Get(),
 			},

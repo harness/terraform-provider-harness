@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 )
 
-const DefaultGraphQLApiUrl = "/gateway/api/graphql"
+const DefaultGraphQLApiUrl = "/graphql"
 
 func (m *GraphQLResponseMessage) ToError() error {
 	return fmt.Errorf("%s %s: %s", m.Level, m.Code, m.Message)

@@ -27,7 +27,7 @@ type APIVersionResponse struct {
 
 // Returns the version of Harness that we're connecting to
 func (client *ApiClient) GetAPIVersion() (*APIVersionResponse, error) {
-	req, err := client.NewAuthorizedGetRequest("/api/version")
+	req, err := client.NewAuthorizedGetRequest("/version")
 
 	if err != nil {
 		return nil, err

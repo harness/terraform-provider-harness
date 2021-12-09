@@ -24,7 +24,7 @@ func TestNewGraphQLRequest(t *testing.T) {
 	// Validate
 	require.NoError(t, err)
 	require.Equal(t, fmt.Sprintf("accountId=%s", client.Configuration.AccountId), req.URL.RawQuery)
-	require.Equal(t, client.Configuration.Endpoint, fmt.Sprintf("%s://%s", req.URL.Scheme, req.Host))
+	require.Equal(t, client.Configuration.Endpoint, fmt.Sprintf("%s://%s/gateway/api", req.URL.Scheme, req.Host))
 	require.Equal(t, client.Configuration.APIKey, req.Header.Get(helpers.HTTPHeaders.ApiKey.String()))
 	require.Equal(t, helpers.HTTPHeaders.ApplicationJson.String(), req.Header.Get(helpers.HTTPHeaders.ContentType.String()))
 	require.Equal(t, helpers.HTTPHeaders.ApplicationJson.String(), req.Header.Get(helpers.HTTPHeaders.Accept.String()))

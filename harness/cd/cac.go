@@ -56,7 +56,7 @@ func FindConfigAsCodeItemByUUID(rootItem *cac.ConfigAsCodeItem, uuid string) *ca
 }
 
 func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid string, applicationId string) (*cac.ConfigAsCodeItem, error) {
-	path := fmt.Sprintf("/gateway/api/setup-as-code/yaml/%s/%s", restName, uuid)
+	path := fmt.Sprintf("/setup-as-code/yaml/%s/%s", restName, uuid)
 	log.Printf("[DEBUG] CAC: Getting directory item content at %s", path)
 
 	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
@@ -83,7 +83,7 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 }
 
 func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.ConfigAsCodeItem, error) {
-	path := "/gateway/api/setup-as-code/yaml/directory"
+	path := "/setup-as-code/yaml/directory"
 	log.Printf("[DEBUG] CAC: Getting directory tree for app '%s'", applicationId)
 
 	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
@@ -139,7 +139,7 @@ func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (
 
 	log.Printf("[TRACE] CAC: HTTP Request Body %s", string(yaml))
 
-	req, err := c.ApiClient.NewAuthorizedPostRequest("/gateway/api/setup-as-code/yaml/upsert-entity", &b)
+	req, err := c.ApiClient.NewAuthorizedPostRequest("/setup-as-code/yaml/upsert-entity", &b)
 
 	// Set proper content header
 	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), w.FormDataContentType())
@@ -227,7 +227,7 @@ type ConfigAsCodeClient struct {
 
 func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
 	log.Printf("[DEBUG] CAC: Deleting entity at %s", filePath)
-	req, err := c.ApiClient.NewAuthorizedDeleteRequest("/gateway/api/setup-as-code/yaml/delete-entities")
+	req, err := c.ApiClient.NewAuthorizedDeleteRequest("/setup-as-code/yaml/delete-entities")
 
 	if err != nil {
 		return err
