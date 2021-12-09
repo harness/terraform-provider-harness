@@ -3,7 +3,6 @@ package secrets_test
 import (
 	"fmt"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
@@ -14,32 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )
-
-func init() {
-	resource.AddTestSweepers("harness_ssh_credential", &resource.Sweeper{
-		Name: "harness_ssh_credential",
-		F:    testAccResourceSSHCredentialSweep,
-	})
-}
-
-func testAccResourceSSHCredentialSweep(r string) error {
-	c := acctest.TestAccGetApiClientFromProvider()
-
-	creds, err := c.CDClient.SecretClient.ListSSHCredentials()
-	if err != nil {
-		return fmt.Errorf("error retrieving SSH credentials: %s", err)
-	}
-
-	for _, cred := range creds {
-		if strings.HasPrefix(cred.Name, "Test") {
-			if err = c.CDClient.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.SSHCredential); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
 
 func TestAccResourceSSHCredential_SSHAuthentication(t *testing.T) {
 
