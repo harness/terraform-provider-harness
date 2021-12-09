@@ -56,4 +56,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/harness-io/harness-go-sdk => ../harness-go-sdk
+// replace github.com/harness-io/harness-go-sdk => ../harness-go-sdk
