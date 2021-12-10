@@ -173,5 +173,5 @@ pipeline:
         build: <+input>
   projectIdentifier: harness_go_sdk
   orgIdentifier: Micahs_Projects
-  name: ci
-  identifier: ci
+  name: ci2
+  identifier: ci2
