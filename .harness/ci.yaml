@@ -5,6 +5,9 @@ pipeline:
                   - name: HARNESS_API_KEY
                     type: Secret
                     value: org.harness_api_key
+                  - name: FOO
+                    type: String
+                    value: bar
                   - name: HARNESS_ACCOUNT_ID
                     type: Secret
                     value: org.harness_account_id
