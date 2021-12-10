@@ -55,25 +55,69 @@ resource "harness_connector" "test" {
 
 ### Optional
 
+- **app_dynamics** (Block List, Max: 1) App Dynamics connector (see [below for nested schema](#nestedblock--app_dynamics))
 - **artifactory** (Block List, Max: 1) Artifactory connector. (see [below for nested schema](#nestedblock--artifactory))
 - **aws** (Block List, Max: 1) Aws account configuration. (see [below for nested schema](#nestedblock--aws))
 - **aws_cloudcost** (Block List, Max: 1) Aws cloud cost account configuration. (see [below for nested schema](#nestedblock--aws_cloudcost))
+- **aws_kms** (Block List, Max: 1) The AWS KMS configuration. (see [below for nested schema](#nestedblock--aws_kms))
+- **aws_secret_manager** (Block List, Max: 1) The AWS Secret Manager configuration. (see [below for nested schema](#nestedblock--aws_secret_manager))
 - **bitbucket** (Block List, Max: 1) BitBucket connector (see [below for nested schema](#nestedblock--bitbucket))
 - **branch** (String) The branch to use for the connector.
+- **datadog** (Block List, Max: 1) Datadog connector (see [below for nested schema](#nestedblock--datadog))
 - **description** (String) The description of the connector.
 - **docker_registry** (Block List, Max: 1) The docker registry to use for the connector. (see [below for nested schema](#nestedblock--docker_registry))
+- **dynatrace** (Block List, Max: 1) Dynatrace connector (see [below for nested schema](#nestedblock--dynatrace))
 - **gcp** (Block List, Max: 1) Gcp connector configuration. (see [below for nested schema](#nestedblock--gcp))
 - **git** (Block List, Max: 1) Git connector (see [below for nested schema](#nestedblock--git))
 - **github** (Block List, Max: 1) Github connector (see [below for nested schema](#nestedblock--github))
 - **gitlab** (Block List, Max: 1) Gitlab connector (see [below for nested schema](#nestedblock--gitlab))
 - **http_helm** (Block List, Max: 1) Helm connector. (see [below for nested schema](#nestedblock--http_helm))
 - **id** (String) The ID of this resource.
+- **jira** (Block List, Max: 1) Jira connector (see [below for nested schema](#nestedblock--jira))
 - **k8s_cluster** (Block List, Max: 1) The k8s cluster to use for the connector. (see [below for nested schema](#nestedblock--k8s_cluster))
+- **newrelic** (Block List, Max: 1) NewRelic connector (see [below for nested schema](#nestedblock--newrelic))
 - **nexus** (Block List, Max: 1) Nexus connector. (see [below for nested schema](#nestedblock--nexus))
 - **org_id** (String) The unique identifier for the organization.
+- **pagerduty** (Block List, Max: 1) PagerDuty connector (see [below for nested schema](#nestedblock--pagerduty))
 - **project_id** (String) The unique identifier for the project.
+- **prometheus** (Block List, Max: 1) Prometheus connector (see [below for nested schema](#nestedblock--prometheus))
 - **repo_id** (String) The unique identifier for the repository.
+- **splunk** (Block List, Max: 1) Splunk connector (see [below for nested schema](#nestedblock--splunk))
+- **sumologic** (Block List, Max: 1) SumoLogic connector (see [below for nested schema](#nestedblock--sumologic))
 - **tags** (Set of String) Tags associated with the connector.
+
+<a id="nestedblock--app_dynamics"></a>
+### Nested Schema for `app_dynamics`
+
+Required:
+
+- **account_name** (String) The App Dynamics account name.
+- **url** (String) Url of the App Dynamics controller.
+
+Optional:
+
+- **api_token** (Block List, Max: 1) Authenticate to App Dynamics using api token. (see [below for nested schema](#nestedblock--app_dynamics--api_token))
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **username_password** (Block List, Max: 1) Authenticate to App Dynamics using username and password. (see [below for nested schema](#nestedblock--app_dynamics--username_password))
+
+<a id="nestedblock--app_dynamics--api_token"></a>
+### Nested Schema for `app_dynamics.api_token`
+
+Required:
+
+- **client_id** (String) The client id used for connecting to App Dynamics.
+- **client_secret_ref** (String) Reference to the Harness secret containing the App Dynamics client secret.
+
+
+<a id="nestedblock--app_dynamics--username_password"></a>
+### Nested Schema for `app_dynamics.username_password`
+
+Required:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+- **username** (String) Username to use for authentication.
+
+
 
 <a id="nestedblock--artifactory"></a>
 ### Nested Schema for `artifactory`
@@ -150,7 +194,7 @@ Optional:
 
 - **access_key** (String) AWS access key.
 - **access_key_ref** (String) Reference to the Harness secret containing the aws access key.
-- **delegate_selectors** (Set of String) Connect only use deleagates with these tags.
+- **delegate_selectors** (Set of String) Connect only use delegates with these tags.
 
 
 
@@ -172,6 +216,98 @@ Required:
 
 - **external_id** (String) The external id of the role to use for cross-account access. This is a random unique value to provide additional secure authentication.
 - **role_arn** (String) The ARN of the role to use for cross-account access.
+
+
+
+<a id="nestedblock--aws_kms"></a>
+### Nested Schema for `aws_kms`
+
+Required:
+
+- **arn_ref** (String) A reference to the Harness secret containing the ARN of the AWS KMS.
+- **credentials** (Block List, Min: 1, Max: 1) The credentials to use for connecting to aws. (see [below for nested schema](#nestedblock--aws_kms--credentials))
+- **region** (String) The AWS region where the AWS Secret Manager is.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+<a id="nestedblock--aws_kms--credentials"></a>
+### Nested Schema for `aws_kms.credentials`
+
+Optional:
+
+- **assume_role** (Block List, Max: 1) Connect using STS assume role. (see [below for nested schema](#nestedblock--aws_kms--credentials--assume_role))
+- **inherit_from_delegate** (Boolean) Inherit the credentials from from the delegate.
+- **manual** (Block List, Max: 1) Specify the AWS key and secret used for authenticating. (see [below for nested schema](#nestedblock--aws_kms--credentials--manual))
+
+<a id="nestedblock--aws_kms--credentials--assume_role"></a>
+### Nested Schema for `aws_kms.credentials.assume_role`
+
+Required:
+
+- **duration** (Number) The duration, in seconds, of the role session. The value can range from 900 seconds (15 minutes) to 3600 seconds (1 hour). By default, the value is set to 3600 seconds. An expiration can also be specified in the client request body. The minimum value is 1 hour.
+- **role_arn** (String) The ARN of the role to assume.
+
+Optional:
+
+- **external_id** (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
+
+
+<a id="nestedblock--aws_kms--credentials--manual"></a>
+### Nested Schema for `aws_kms.credentials.manual`
+
+Required:
+
+- **access_key_ref** (String) The reference to the Harness secret containing the AWS access key.
+- **secret_key_ref** (String) The reference to the Harness secret containing the AWS secret key.
+
+
+
+
+<a id="nestedblock--aws_secret_manager"></a>
+### Nested Schema for `aws_secret_manager`
+
+Required:
+
+- **credentials** (Block List, Min: 1, Max: 1) The credentials to use for connecting to aws. (see [below for nested schema](#nestedblock--aws_secret_manager--credentials))
+- **region** (String) The AWS region where the AWS Secret Manager is.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **secret_name_prefix** (String) A prefix to be added to all secrets.
+
+<a id="nestedblock--aws_secret_manager--credentials"></a>
+### Nested Schema for `aws_secret_manager.credentials`
+
+Optional:
+
+- **assume_role** (Block List, Max: 1) Connect using STS assume role. (see [below for nested schema](#nestedblock--aws_secret_manager--credentials--assume_role))
+- **inherit_from_delegate** (Boolean) Inherit the credentials from from the delegate.
+- **manual** (Block List, Max: 1) Specify the AWS key and secret used for authenticating. (see [below for nested schema](#nestedblock--aws_secret_manager--credentials--manual))
+
+<a id="nestedblock--aws_secret_manager--credentials--assume_role"></a>
+### Nested Schema for `aws_secret_manager.credentials.assume_role`
+
+Required:
+
+- **duration** (Number) The duration, in seconds, of the role session. The value can range from 900 seconds (15 minutes) to 3600 seconds (1 hour). By default, the value is set to 3600 seconds. An expiration can also be specified in the client request body. The minimum value is 1 hour.
+- **role_arn** (String) The ARN of the role to assume.
+
+Optional:
+
+- **external_id** (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
+
+
+<a id="nestedblock--aws_secret_manager--credentials--manual"></a>
+### Nested Schema for `aws_secret_manager.credentials.manual`
+
+Required:
+
+- **access_key_ref** (String) The reference to the Harness secret containing the AWS access key.
+- **secret_key_ref** (String) The reference to the Harness secret containing the AWS secret key.
+
 
 
 
@@ -231,6 +367,20 @@ Optional:
 
 
 
+<a id="nestedblock--datadog"></a>
+### Nested Schema for `datadog`
+
+Required:
+
+- **api_key_ref** (String) Reference to the Harness secret containing the api key.
+- **application_key_ref** (String) Reference to the Harness secret containing the application key.
+- **url** (String) Url of the Datadog server.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+
 <a id="nestedblock--docker_registry"></a>
 ### Nested Schema for `docker_registry`
 
@@ -256,6 +406,19 @@ Optional:
 - **username** (String) The username to use for the docker registry.
 - **username_ref** (String) The reference to the username to use for the docker registry.
 
+
+
+<a id="nestedblock--dynatrace"></a>
+### Nested Schema for `dynatrace`
+
+Required:
+
+- **api_token_ref** (String) The reference to the Harness secret containing the api token.
+- **url** (String) Url of the Dynatrace server.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
 
 
 <a id="nestedblock--gcp"></a>
@@ -472,6 +635,21 @@ Optional:
 
 
 
+<a id="nestedblock--jira"></a>
+### Nested Schema for `jira`
+
+Required:
+
+- **password_ref** (String) Reference to a secret containing the password to use for authentication.
+- **url** (String) Url of the Jira server.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+- **username** (String) Username to use for authentication.
+- **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
 <a id="nestedblock--k8s_cluster"></a>
 ### Nested Schema for `k8s_cluster`
 
@@ -549,6 +727,20 @@ Optional:
 
 
 
+<a id="nestedblock--newrelic"></a>
+### Nested Schema for `newrelic`
+
+Required:
+
+- **account_id** (String) Account ID of the NewRelic account.
+- **api_key_ref** (String) Reference to the Harness secret containing the api key.
+- **url** (String) Url of the NewRelic server.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+
 <a id="nestedblock--nexus"></a>
 ### Nested Schema for `nexus`
 
@@ -573,6 +765,60 @@ Optional:
 
 - **username** (String) Username to use for authentication.
 - **username_ref** (String) Reference to a secret containing the username to use for authentication.
+
+
+
+<a id="nestedblock--pagerduty"></a>
+### Nested Schema for `pagerduty`
+
+Required:
+
+- **api_token_ref** (String) Reference to the Harness secret containing the api token.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+
+<a id="nestedblock--prometheus"></a>
+### Nested Schema for `prometheus`
+
+Required:
+
+- **url** (String) Url of the Prometheus server.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+
+<a id="nestedblock--splunk"></a>
+### Nested Schema for `splunk`
+
+Required:
+
+- **account_id** (String) Splunk account id.
+- **password_ref** (String) The reference to the Harness secret containing the Splunk password.
+- **url** (String) Url of the Splunk server.
+- **username** (String) The username used for connecting to Splunk.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
+
+
+<a id="nestedblock--sumologic"></a>
+### Nested Schema for `sumologic`
+
+Required:
+
+- **access_id_ref** (String) Reference to the Harness secret containing the access id.
+- **access_key_ref** (String) Reference to the Harness secret containing the access key.
+- **url** (String) Url of the SumoLogic server.
+
+Optional:
+
+- **delegate_selectors** (Set of String) Connect using only the delegates which have these tags.
 
 ## Import
 
