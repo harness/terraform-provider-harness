@@ -1,6 +1,6 @@
 pipeline:
-    name: Release
-    identifier: release
+    name: release2
+    identifier: release2
     projectIdentifier: harness_go_sdk
     orgIdentifier: Micahs_Projects
     tags: {}
