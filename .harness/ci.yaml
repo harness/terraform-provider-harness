@@ -2,51 +2,54 @@ pipeline:
     stages:
         - stage:
               variables:
-                  - value: org.harness_api_key
+                  - name: HARNESS_API_KEY
                     type: Secret
-                    name: HARNESS_API_KEY
-                  - value: org.harness_account_id
+                    value: org.harness_api_key
+                  - name: HARNESS_ACCOUNT_ID
                     type: Secret
-                    name: HARNESS_ACCOUNT_ID
-                  - value: https://app.harness.io/gateway/api
+                    value: org.harness_account_id
+                  - name: HARNESS_ENDPOINT
                     type: String
-                    name: HARNESS_ENDPOINT
-                  - value: /goroot
+                    value: https://app.harness.io/gateway/api
+                  - name: GOPATH
                     type: String
-                    name: GOPATH
-                  - value: "1"
+                    value: /goroot
+                  - name: TF_ACC
                     type: String
-                    name: TF_ACC
-                  - value: org.harness_ng_api_key
+                    value: "1"
+                  - name: HARNESS_NG_API_KEY
                     type: Secret
-                    name: HARNESS_NG_API_KEY
-                  - value: org.aws_access_key_id
+                    value: org.harness_ng_api_key
+                  - name: HARNESS_TEST_AWS_ACCESS_KEY_ID
                     type: Secret
-                    name: HARNESS_TEST_AWS_ACCESS_KEY_ID
-                  - value: org.aws_secret_access_key
+                    value: org.aws_access_key_id
+                  - name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
                     type: Secret
-                    name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
-                  - value: org.azure_client_id
+                    value: org.aws_secret_access_key
+                  - name: HARNESS_TEST_AZURE_CLIENT_ID
                     type: Secret
-                    name: HARNESS_TEST_AZURE_CLIENT_ID
-                  - value: org.azure_client_secret
+                    value: org.azure_client_id
+                  - name: HARNESS_TEST_AZURE_CLIENT_SECRET
                     type: Secret
-                    name: HARNESS_TEST_AZURE_CLIENT_SECRET
-                  - value: org.azure_tenant_id
+                    value: org.azure_client_secret
+                  - name: HARNESS_TEST_AZURE_TENANT_ID
                     type: Secret
-                    name: HARNESS_TEST_AZURE_TENANT_ID
-                  - value: org.spotinst_account_id
+                    value: org.azure_tenant_id
+                  - name: HARNESS_TEST_SPOT_ACCT_ID
                     type: Secret
-                    name: HARNESS_TEST_SPOT_ACCT_ID
-                  - value: org.spotinst_token
+                    value: org.spotinst_account_id
+                  - name: HARNESS_TEST_SPOT_TOKEN
                     type: Secret
-                    name: HARNESS_TEST_SPOT_TOKEN
-                  - value: org.harness_delegate_secret
+                    value: org.spotinst_token
+                  - name: HARNESS_DELEGATE_SECRET
                     type: Secret
-                    name: HARNESS_DELEGATE_SECRET
-                  - value: 60m
+                    value: org.harness_delegate_secret
+                  - name: HARNESS_TEST_DELEGATE_WAIT_TIMEOUT
                     type: String
-                    name: HARNESS_TEST_DELEGATE_WAIT_TIMEOUT
+                    value: 10m
+                  - name: TEST_TIMEOUT
+                    type: String
+                    value: 120m
               type: CI
               spec:
                   sharedPaths:
@@ -164,24 +167,24 @@ pipeline:
                                                     type: Ignore
                                 - step:
                                       type: Run
-                                      timeout: 60m
+                                      timeout: <+build.variables.TEST_TIMEOUT>
                                       spec:
-                                          resources:
-                                              limits:
-                                                  memory: 6Gi
-                                                  cpu: "2"
+                                          connectorRef: org.gcp
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          command: gotestsum --junitfile junit.xml --format testname ./... -timeout <+build.variables.TEST_TIMEOUT>  -- -cover
+                                          privileged: false
                                           reports:
                                               type: JUnit
                                               spec:
                                                   paths:
                                                       - junit.xml
-                                          privileged: false
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
                                           envVariables:
                                               TF_ACC_TERRAFORM_VERSION: 1.0.0
                                               TF_ACC: "1"
-                                          connectorRef: org.gcp
-                                          command: gotestsum --junitfile junit.xml --format testname ./... -timeout 1h  -- -cover
+                                          resources:
+                                              limits:
+                                                  memory: 6Gi
+                                                  cpu: "2"
                                       name: Test Terraform v1-0-0
                                       identifier: Test_Terraform_v100
                                       failureStrategies:
