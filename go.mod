@@ -20,7 +20,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.2.0 // indirect
-	github.com/harness-io/harness-go-sdk v0.1.4
+	github.com/harness-io/harness-go-sdk v0.1.5
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-getter v1.5.9 // indirect
 	github.com/hashicorp/go-hclog v1.0.0 // indirect
@@ -48,7 +48,7 @@ require (
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
-	golang.org/x/sys v0.0.0-20211209171907-798191bca915 // indirect
+	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.7 // indirect
 	google.golang.org/api v0.62.0 // indirect
