@@ -164,7 +164,7 @@ pipeline:
                                                     type: Ignore
                                 - step:
                                       type: Run
-                                      timeout: 30m
+                                      timeout: 60m
                                       spec:
                                           resources:
                                               limits:
