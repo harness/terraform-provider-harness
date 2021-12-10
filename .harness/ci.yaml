@@ -17,7 +17,7 @@ pipeline:
                   - value: "1"
                     type: String
                     name: TF_ACC
-                  - value: harness_ng_api_key
+                  - value: org.harness_ng_api_key
                     type: Secret
                     name: HARNESS_NG_API_KEY
                   - value: org.aws_access_key_id

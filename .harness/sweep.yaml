@@ -118,7 +118,7 @@ pipeline:
                     value: "1"
                   - name: HARNESS_NG_API_KEY
                     type: Secret
-                    value: harness_ng_api_key
+                    value: org.harness_ng_api_key
                   - name: HARNESS_TEST_AWS_ACCESS_KEY_ID
                     type: Secret
                     value: org.aws_access_key_id
