@@ -167,13 +167,10 @@ func resourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta int
 func resourceConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	connector := buildConnector(d)
+	connector := nextgen.Connector{Connector: buildConnector(d)}
 	options := &nextgen.ConnectorsApiCreateConnectorOpts{AccountIdentifier: optional.NewString(c.AccountId)}
 
-	cn := nextgen.Connector{Connector: connector}
-	utils.DumpJsonObject(cn)
-
-	resp, _, err := c.NGClient.ConnectorsApi.CreateConnector(ctx, cn, options)
+	resp, _, err := c.NGClient.ConnectorsApi.CreateConnector(ctx, connector, options)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
