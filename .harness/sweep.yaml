@@ -1,8 +1,9 @@
 pipeline:
-    name: ci
-    identifier: ci_build
-    projectIdentifier: terraform_provider_harness
+    name: sweep
+    identifier: sweep
+    projectIdentifier: tf_provider
     orgIdentifier: Micahs_Projects
+    description: Cleans up dangling resources from test runs
     tags: {}
     properties:
         ci:
@@ -19,26 +20,6 @@ pipeline:
                   cloneCodebase: true
                   execution:
                       steps:
-                          - step:
-                                type: Run
-                                name: Wait for Docker Host
-                                identifier: Wait_for_Docker_Host
-                                spec:
-                                    connectorRef: account.harnessImage
-                                    image: docker:dind
-                                    command: |-
-                                        ls -la /var/run
-                                        ls -la /var/lib/docker
-
-                                        while ! docker ps ;do
-                                            echo "Docker not availble yet"
-                                            sleep 1s
-                                        done
-                                            echo "Docker Service Ready"
-
-                                        ls -la /var/run
-                                        ls -la /var/lib/docker
-                                    privileged: false
                           - step:
                                 type: RestoreCacheGCS
                                 spec:
@@ -89,75 +70,36 @@ pipeline:
                                         limits:
                                             memory: 4Gi
                                             cpu: "1"
-                          - parallel:
-                                - step:
-                                      type: Run
-                                      spec:
-                                          connectorRef: org.gcp
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
-                                          command: golangci-lint run -v --timeout=10m
-                                          privileged: false
-                                          resources:
-                                              limits:
-                                                  memory: 2Gi
-                                                  cpu: "1"
-                                      name: Lint
-                                      identifier: lint
-                                      failureStrategies:
-                                          - onFailure:
-                                                errors:
-                                                    - AllErrors
-                                                action:
-                                                    type: Ignore
-                                - step:
-                                      type: Run
-                                      name: Test Terraform v1-0-0
-                                      identifier: Test_Terraform_v100
-                                      spec:
-                                          connectorRef: org.gcp
-                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
-                                          command: gotestsum --junitfile junit.xml --format testname ./... -timeout 1h  -- -cover
-                                          privileged: false
-                                          reports:
-                                              type: JUnit
-                                              spec:
-                                                  paths:
-                                                      - junit.xml
-                                          envVariables:
-                                              TF_ACC: "1"
-                                              TF_ACC_TERRAFORM_VERSION: 1.0.0
-                                          resources:
-                                              limits:
-                                                  memory: 6Gi
-                                                  cpu: "2"
-                                      timeout: 30m
-                                      failureStrategies:
-                                          - onFailure:
-                                                errors:
-                                                    - AllErrors
-                                                action:
-                                                    type: Ignore
+                          - step:
+                                type: Run
+                                name: Test Terraform v1-0-0
+                                identifier: Test_Terraform_v100
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    command: make sweep
+                                    privileged: false
+                                    envVariables:
+                                        TF_ACC: "1"
+                                        TF_ACC_TERRAFORM_VERSION: 1.0.0
+                                    resources:
+                                        limits:
+                                            memory: 6Gi
+                                            cpu: "2"
+                                timeout: 30m
+                                failureStrategies:
+                                    - onFailure:
+                                          errors:
+                                              - AllErrors
+                                          action:
+                                              type: Ignore
                   infrastructure:
                       type: KubernetesDirect
                       spec:
                           connectorRef: account.micahsprojects
                           namespace: micahs-projects
-                  serviceDependencies:
-                      - identifier: DockerHost
-                        name: DockerHost
-                        type: Service
-                        spec:
-                            connectorRef: account.harnessImage
-                            image: docker:dind
-                            privileged: true
-                            resources:
-                                limits:
-                                    memory: 8Gi
-                                    cpu: "2"
                   sharedPaths:
                       - /goroot
-                      - /var/run
-                      - /var/lib/docker
               variables:
                   - name: HARNESS_API_KEY
                     type: Secret
@@ -167,7 +109,7 @@ pipeline:
                     value: org.harness_account_id
                   - name: HARNESS_ENDPOINT
                     type: String
-                    value: https://app.harness.io/gateway/api
+                    value: https://app.harness.io
                   - name: GOPATH
                     type: String
                     value: /goroot
@@ -201,9 +143,6 @@ pipeline:
                   - name: HARNESS_DELEGATE_SECRET
                     type: Secret
                     value: org.harness_delegate_secret
-                  - name: HARNESS_TEST_DELEGATE_WAIT_TIMEOUT
+                  - name: HARNESS_BEARER_TOKEN
                     type: String
-                    value: 60m
-                  - name: TEST
-                    type: String
-                    value: FOO
+                    value: <+input>

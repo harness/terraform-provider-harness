@@ -1,0 +1,125 @@
+pipeline:
+    name: Release
+    identifier: release
+    projectIdentifier: tf_provider
+    orgIdentifier: Micahs_Projects
+    tags: {}
+    stages:
+        - stage:
+              name: Release
+              identifier: Release
+              type: CI
+              spec:
+                  cloneCodebase: false
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: Git clone
+                                identifier: gitclone
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    command: |-
+                                        git clone https://${GITHUB_TOKEN}@github.com/harness-io/terraform-provider-harness.git .
+                                        git checkout origin/<+Release.variables.BASE_BRANCH>
+                                    privileged: false
+                                    shell: Bash
+                                when:
+                                    stageStatus: Success
+                                failureStrategies: []
+                          - step:
+                                type: Run
+                                name: Create tag
+                                identifier: createtag
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    command: |
+                                        git tag ${VERSION}
+                                        git push --tags
+                                    privileged: false
+                                    shell: Bash
+                                when:
+                                    stageStatus: Success
+                                    condition: <+Release.variables.CREATE_TAG> == "true"
+                                failureStrategies: []
+                          - step:
+                                type: Run
+                                name: Create Release
+                                identifier: Import_GPG_Key
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    command: |
+                                        #!/bin/bash
+
+                                        set -x
+
+                                        # Start gpg-agent
+                                        gpg-agent --daemon --default-cache-ttl 7200
+
+                                        # Import the gpg key
+                                        echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --import --batch --no-tty
+
+                                        # Test signature
+                                        echo "hello world" > /tmp/temp.txt
+                                        gpg --detach-sig --yes -v --output=/dev/null --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" /tmp/temp.txt
+                                        rm /tmp/temp.txt
+
+                                        # Create release
+                                        export GPG_FINGERPRINT=$(gpg --with-colons --list-keys | awk -F: '/^pub/ { print $5 }')
+                                        export GPG_TTY=$(tty)
+                                        export GORELEASER_CURRENT_TAG=${VERSION}
+                                        goreleaser release --rm-dist
+
+                                        # Stop gpg-agent
+                                        gpgconf --kill gpg-agent
+                                    privileged: true
+                                    shell: Bash
+                                    resources:
+                                        limits:
+                                            memory: 8Gi
+                                            cpu: "4"
+                                failureStrategies: []
+                          - step:
+                                type: Plugin
+                                name: Sign Release
+                                identifier: Sign_Release
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: plugins/gpgsign
+                                    privileged: false
+                                    settings:
+                                        key: <+Release.variables.GPG_PRIVATE_KEY>
+                                        passphrase: <+Release.variables.GPG_PASSPHRASE>
+                                when:
+                                    stageStatus: Success
+                                    condition: "false"
+                  serviceDependencies: []
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: account.micahsprojects
+                          namespace: micahs-projects
+              variables:
+                  - name: GITHUB_TOKEN
+                    type: Secret
+                    value: org.githubciautomationtoken
+                  - name: GPG_PASSPHRASE
+                    type: Secret
+                    value: gpgpassphrase
+                  - name: GPG_PRIVATE_KEY
+                    type: Secret
+                    value: gpgprivatekey
+                  - name: VERSION
+                    type: String
+                    value: <+input>
+                  - name: CREATE_TAG
+                    type: String
+                    default: "true"
+                    value: <+input>.allowedValues(true,false)
+                  - name: BASE_BRANCH
+                    type: String
+                    default: main
+                    value: <+input>

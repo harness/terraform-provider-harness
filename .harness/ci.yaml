@@ -1,0 +1,206 @@
+pipeline:
+    stages:
+        - stage:
+              variables:
+                  - value: org.harness_api_key
+                    type: Secret
+                    name: HARNESS_API_KEY
+                  - value: org.harness_account_id
+                    type: Secret
+                    name: HARNESS_ACCOUNT_ID
+                  - value: https://app.harness.io/gateway/api
+                    type: String
+                    name: HARNESS_ENDPOINT
+                  - value: /goroot
+                    type: String
+                    name: GOPATH
+                  - value: "1"
+                    type: String
+                    name: TF_ACC
+                  - value: harness_ng_api_key
+                    type: Secret
+                    name: HARNESS_NG_API_KEY
+                  - value: org.aws_access_key_id
+                    type: Secret
+                    name: HARNESS_TEST_AWS_ACCESS_KEY_ID
+                  - value: org.aws_secret_access_key
+                    type: Secret
+                    name: HARNESS_TEST_AWS_SECRET_ACCESS_KEY
+                  - value: org.azure_client_id
+                    type: Secret
+                    name: HARNESS_TEST_AZURE_CLIENT_ID
+                  - value: org.azure_client_secret
+                    type: Secret
+                    name: HARNESS_TEST_AZURE_CLIENT_SECRET
+                  - value: org.azure_tenant_id
+                    type: Secret
+                    name: HARNESS_TEST_AZURE_TENANT_ID
+                  - value: org.spotinst_account_id
+                    type: Secret
+                    name: HARNESS_TEST_SPOT_ACCT_ID
+                  - value: org.spotinst_token
+                    type: Secret
+                    name: HARNESS_TEST_SPOT_TOKEN
+                  - value: org.harness_delegate_secret
+                    type: Secret
+                    name: HARNESS_DELEGATE_SECRET
+                  - value: 60m
+                    type: String
+                    name: HARNESS_TEST_DELEGATE_WAIT_TIMEOUT
+              type: CI
+              spec:
+                  sharedPaths:
+                      - /goroot
+                      - /var/run
+                      - /var/lib/docker
+                  serviceDependencies:
+                      - type: Service
+                        spec:
+                            resources:
+                                limits:
+                                    memory: 8Gi
+                                    cpu: "2"
+                            privileged: true
+                            image: docker:dind
+                            connectorRef: account.harnessImage
+                        name: DockerHost
+                        identifier: DockerHost
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          namespace: micahs-projects
+                          connectorRef: account.micahsprojects
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                spec:
+                                    privileged: false
+                                    image: docker:dind
+                                    connectorRef: account.harnessImage
+                                    command: |-
+                                        ls -la /var/run
+                                        ls -la /var/lib/docker
+
+                                        while ! docker ps ;do
+                                            echo "Docker not availble yet"
+                                            sleep 1s
+                                        done
+                                            echo "Docker Service Ready"
+
+                                        ls -la /var/run
+                                        ls -la /var/lib/docker
+                                name: Wait for Docker Host
+                                identifier: Wait_for_Docker_Host
+                          - step:
+                                type: RestoreCacheGCS
+                                spec:
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
+                                    key: terraform-provider-harness-{{ checksum "go.mod" }}
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
+                                    archiveFormat: Gzip
+                                name: Restore from cache
+                                identifier: Restore_from_cache
+                          - step:
+                                type: Run
+                                spec:
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
+                                    privileged: false
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    connectorRef: org.gcp
+                                    command: go mod vendor
+                                name: Install Dependencies
+                                identifier: installdependencies
+                          - step:
+                                type: SaveCacheGCS
+                                spec:
+                                    sourcePaths:
+                                        - ./vendor
+                                    key: terraform-provider-harness-{{ checksum "go.mod" }}
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
+                                    archiveFormat: Gzip
+                                name: Save cache
+                                identifier: Save_cache
+                          - step:
+                                type: Run
+                                spec:
+                                    resources:
+                                        limits:
+                                            memory: 4Gi
+                                            cpu: "1"
+                                    privileged: false
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    connectorRef: org.gcp
+                                    command: go build -v
+                                name: Build
+                                identifier: build
+                          - parallel:
+                                - step:
+                                      type: Run
+                                      spec:
+                                          resources:
+                                              limits:
+                                                  memory: 2Gi
+                                                  cpu: "1"
+                                          privileged: false
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                          connectorRef: org.gcp
+                                          command: golangci-lint run -v --timeout=10m
+                                      name: Lint
+                                      identifier: lint
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
+                                - step:
+                                      type: Run
+                                      timeout: 30m
+                                      spec:
+                                          resources:
+                                              limits:
+                                                  memory: 6Gi
+                                                  cpu: "2"
+                                          reports:
+                                              type: JUnit
+                                              spec:
+                                                  paths:
+                                                      - junit.xml
+                                          privileged: false
+                                          image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                          envVariables:
+                                              TF_ACC_TERRAFORM_VERSION: 1.0.0
+                                              TF_ACC: "1"
+                                          connectorRef: org.gcp
+                                          command: gotestsum --junitfile junit.xml --format testname ./... -timeout 1h  -- -cover
+                                      name: Test Terraform v1-0-0
+                                      identifier: Test_Terraform_v100
+                                      failureStrategies:
+                                          - onFailure:
+                                                errors:
+                                                    - AllErrors
+                                                action:
+                                                    type: Ignore
+                  cloneCodebase: true
+              name: Build
+              identifier: build
+    properties:
+        ci:
+            codebase:
+                repoName: terraform-provider-harness
+                connectorRef: org.githubharnessio
+                build: <+input>
+    projectIdentifier: tf_provider
+    orgIdentifier: Micahs_Projects
+    name: ci
+    identifier: ci
+    description: CI build

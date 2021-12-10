@@ -1,0 +1,65 @@
+pipeline:
+    name: PR
+    identifier: pr
+    projectIdentifier: tf_provider
+    orgIdentifier: Micahs_Projects
+    description: Pull requests testing
+    tags: {}
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.githubharnessio
+                repoName: terraform-provider-harness
+                build: <+input>
+    stages:
+        - stage:
+              name: PR Build
+              identifier: PR_Build
+              description: ""
+              type: CI
+              spec:
+                  cloneCodebase: true
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: Generate docs
+                                identifier: generate_docs
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-10
+                                    command: |
+                                        go generate
+                                    privileged: false
+                          - step:
+                                type: Plugin
+                                name: Push changes
+                                identifier: Push_changes
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: appleboy/drone-git-push
+                                    privileged: false
+                                    settings:
+                                        remote_name: origin
+                                        branch: <+PR_Build.variables.BRANCH>
+                                        commit: "true"
+                                        author_name: Harness CI
+                                        author_email: harness-ci-automation@harness.io
+                                        commit_message: "[ci] updated docs"
+                                        force: "true"
+                                    resources:
+                                        limits:
+                                            memory: 2Gi
+                                            cpu: "1"
+                                when:
+                                    stageStatus: Success
+                  serviceDependencies: []
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: account.micahsprojects
+                          namespace: micahs-projects
+              variables:
+                  - name: BRANCH
+                    type: String
+                    value: <+trigger.payload.pull_request.head.ref>
