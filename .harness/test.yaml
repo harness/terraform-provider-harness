@@ -1,7 +1,7 @@
 pipeline:
     name: test
     identifier: test
-    projectIdentifier: harness_gos_dk
+    projectIdentifier: harness_go_sdk
     orgIdentifier: Micahs_Projects
     tags: {}
     properties:
