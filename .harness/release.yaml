@@ -63,9 +63,9 @@ pipeline:
                                         echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --import --batch --no-tty
 
                                         # Test signature
-                                        echo "hello world" > /tmp/temp.txt
-                                        gpg --detach-sig --yes -v --output=/dev/null --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" /tmp/temp.txt
-                                        rm /tmp/temp.txt
+                                        #echo "hello world" > /tmp/temp.txt
+                                        #gpg --detach-sig --yes -v --output=/dev/null --pinentry-mode loopback --passphrase "$GPG_PASSPHRASE" /tmp/temp.txt
+                                        #rm /tmp/temp.txt
 
                                         # Create release
                                         export GPG_FINGERPRINT=$(gpg --with-colons --list-keys | awk -F: '/^pub/ { print $5 }')
