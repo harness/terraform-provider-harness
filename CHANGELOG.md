@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+## [v0.1.4](https://github.com/harness-io/harness-go-sdk/tree/v0.1.4) (2021-12-09)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.3...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.3...v0.1.4)
 
 **Implemented enhancements:**
 
@@ -10,6 +10,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.1.4 12-09-2021 [\#66](https://github.com/harness-io/harness-go-sdk/pull/66) ([micahlmartin](https://github.com/micahlmartin))
 - Update the endpoint to the fully qualified api path [\#65](https://github.com/harness-io/harness-go-sdk/pull/65) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.1.3](https://github.com/harness-io/harness-go-sdk/tree/v0.1.3) (2021-12-09)
