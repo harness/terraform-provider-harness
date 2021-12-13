@@ -117,7 +117,7 @@ func (a *RoleAssignmentsApiService) DeleteRoleAssignment(ctx context.Context, id
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -268,7 +268,7 @@ func (a *RoleAssignmentsApiService) GetFilteredRoleAssignmentList(ctx context.Co
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -404,7 +404,7 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentAggregateList(ctx context.C
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -552,7 +552,7 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentList(ctx context.Context, l
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -693,7 +693,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, loca
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -834,7 +834,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, loc
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -977,7 +977,7 @@ func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, ident
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1118,7 +1118,7 @@ func (a *RoleAssignmentsApiService) ValidateRoleAssignment(ctx context.Context, 
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

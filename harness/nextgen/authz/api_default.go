@@ -123,7 +123,7 @@ DefaultApiService
  * @param featureRestrictionName
 @return ResponseDtoFeatureRestrictionUsageDto
 */
-func (a *DefaultApiService) GetFeatureUsage(ctx context.Context, body RestrictionMetadataDto, accountIdentifier string, featureRestrictionName string) (ResponseDtoFeatureRestrictionUsageDto, *http.Response, error) {
+func (a *DefaultApiService) GetFeatureUsage(ctx context.Context, body RestrictionMetadata, accountIdentifier string, featureRestrictionName string) (ResponseDtoFeatureRestrictionUsageDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}

@@ -1255,6 +1255,8 @@ paths:
           - INTEGRATED_APPROVALS_WITH_JIRA
           - SECRET_MANAGERS
           - DEPLOYMENTS
+          - INITIAL_DEPLOYMENTS
+          - DEPLOYMENTS_PER_MONTH
           - SERVICES
           - BUILDS
           - SAML_SUPPORT
@@ -1263,6 +1265,10 @@ paths:
           - TWO_FACTOR_AUTH_SUPPORT
           - CUSTOM_ROLES
           - CUSTOM_RESOURCE_GROUPS
+          - MAX_TOTAL_BUILDS
+          - MAX_BUILDS_PER_MONTH
+          - ACTIVE_COMMITTERS
+          - TEST_INTELLIGENCE
           - K8S_BG_SWAP_SERVICES
           - K8S_BLUE_GREEN_DEPLOY
           - K8S_APPLY
@@ -1287,7 +1293,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RestrictionMetadataDTO'
+              $ref: '#/components/schemas/RestrictionMetadata'
         required: true
       responses:
         default:
@@ -1321,6 +1327,8 @@ paths:
           - INTEGRATED_APPROVALS_WITH_JIRA
           - SECRET_MANAGERS
           - DEPLOYMENTS
+          - INITIAL_DEPLOYMENTS
+          - DEPLOYMENTS_PER_MONTH
           - SERVICES
           - BUILDS
           - SAML_SUPPORT
@@ -1329,6 +1337,10 @@ paths:
           - TWO_FACTOR_AUTH_SUPPORT
           - CUSTOM_ROLES
           - CUSTOM_RESOURCE_GROUPS
+          - MAX_TOTAL_BUILDS
+          - MAX_BUILDS_PER_MONTH
+          - ACTIVE_COMMITTERS
+          - TEST_INTELLIGENCE
           - K8S_BG_SWAP_SERVICES
           - K8S_BLUE_GREEN_DEPLOY
           - K8S_APPLY
@@ -3752,30 +3764,34 @@ components:
           count: 0
         correlationId: correlationId
         status: SUCCESS
-    AvailabilityRestrictionMetadataDTO:
+    AvailabilityRestrictionMetadata:
       type: object
+      description: This contains metadata of the Availability Restriction in Harness
       allOf:
-      - $ref: '#/components/schemas/RestrictionMetadataDTO'
+      - $ref: '#/components/schemas/RestrictionMetadata'
       - type: object
         properties:
           enabled:
             type: boolean
-    CustomRestrictionMetadataDTO:
+    CustomRestrictionMetadata:
       type: object
+      description: This contains metadata of the Custom Restriction in Harness
       allOf:
-      - $ref: '#/components/schemas/RestrictionMetadataDTO'
-    DurationRestrictionMetadataDTO:
+      - $ref: '#/components/schemas/RestrictionMetadata'
+    DurationRestrictionMetadata:
       type: object
+      description: This contains metadata of the Duration Restriction in Harness
       allOf:
-      - $ref: '#/components/schemas/RestrictionMetadataDTO'
+      - $ref: '#/components/schemas/RestrictionMetadata'
       - type: object
         properties:
           timeUnit:
             $ref: '#/components/schemas/TimeUnit'
-    RateLimitRestrictionMetadataDTO:
+    RateLimitRestrictionMetadata:
       type: object
+      description: This contains metadata of the Rate Limit Restriction in Harness
       allOf:
-      - $ref: '#/components/schemas/RestrictionMetadataDTO'
+      - $ref: '#/components/schemas/RestrictionMetadata'
       - type: object
         properties:
           limit:
@@ -3785,7 +3801,7 @@ components:
             $ref: '#/components/schemas/TimeUnit'
           allowedIfEqual:
             type: boolean
-    RestrictionMetadataDTO:
+    RestrictionMetadata:
       type: object
       properties:
         restrictionType:
@@ -3796,12 +3812,14 @@ components:
           - RATE_LIMIT
           - CUSTOM
           - DURATION
+      description: This contains metadata of the Restriction in Harness
       discriminator:
         propertyName: restrictionType
-    StaticLimitRestrictionMetadataDTO:
+    StaticLimitRestrictionMetadata:
       type: object
+      description: This contains metadata of the Static Limit Restriction in Harness
       allOf:
-      - $ref: '#/components/schemas/RestrictionMetadataDTO'
+      - $ref: '#/components/schemas/RestrictionMetadata'
       - type: object
         properties:
           limit:
@@ -3875,6 +3893,8 @@ components:
           - INTEGRATED_APPROVALS_WITH_JIRA
           - SECRET_MANAGERS
           - DEPLOYMENTS
+          - INITIAL_DEPLOYMENTS
+          - DEPLOYMENTS_PER_MONTH
           - SERVICES
           - BUILDS
           - SAML_SUPPORT
@@ -3883,6 +3903,10 @@ components:
           - TWO_FACTOR_AUTH_SUPPORT
           - CUSTOM_ROLES
           - CUSTOM_RESOURCE_GROUPS
+          - MAX_TOTAL_BUILDS
+          - MAX_BUILDS_PER_MONTH
+          - ACTIVE_COMMITTERS
+          - TEST_INTELLIGENCE
           - K8S_BG_SWAP_SERVICES
           - K8S_BLUE_GREEN_DEPLOY
           - K8S_APPLY

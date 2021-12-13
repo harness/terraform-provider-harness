@@ -44,7 +44,7 @@ No authorization required
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **body** | [**RestrictionMetadataDto**](RestrictionMetadataDto.md)|  | 
+  **body** | [**RestrictionMetadata**](RestrictionMetadata.md)|  | 
   **featureRestrictionName** | **string**|  | 
   **accountIdentifier** | **string**|  | 
 

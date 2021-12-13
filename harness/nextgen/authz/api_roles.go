@@ -117,7 +117,7 @@ func (a *RolesApiService) DeleteRole(ctx context.Context, identifier string, loc
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -252,7 +252,7 @@ func (a *RolesApiService) GetRole(ctx context.Context, identifier string, localV
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -405,7 +405,7 @@ func (a *RolesApiService) GetRoleList(ctx context.Context, localVarOptionals *Ro
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -546,7 +546,7 @@ func (a *RolesApiService) PostRole(ctx context.Context, localVarOptionals *Roles
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -689,7 +689,7 @@ func (a *RolesApiService) PutRole(ctx context.Context, identifier string, localV
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
