@@ -10,7 +10,7 @@ pipeline:
                     value: org.harness_account_id
                   - name: HARNESS_ENDPOINT
                     type: String
-                    value: https://app.harness.io/gateway/api2
+                    value: https://app.harness.io/gateway/api
                   - name: HARNESS_TEST_SPOT_ACCT_ID
                     type: Secret
                     value: org.spotinst_account_id
