@@ -54,7 +54,7 @@ func expandSplunkConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 
 	config := d[0].(map[string]interface{})
 	connector.Type_ = nextgen.ConnectorTypes.Splunk
-	connector.Splunk = &nextgen.SplunkConnectorDto{}
+	connector.Splunk = &nextgen.SplunkConnector{}
 
 	if attr, ok := config["url"]; ok {
 		connector.Splunk.SplunkUrl = attr.(string)

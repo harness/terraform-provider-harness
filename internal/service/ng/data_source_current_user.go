@@ -88,7 +88,7 @@ func DataSourceCurrentUser() *schema.Resource {
 
 func dataSourceCurrentUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
-	resp, _, err := c.NGClient.UsersApi.GetUserInfo(ctx, c.AccountId)
+	resp, _, err := c.NGClient.UserApi.GetCurrentUserInfo(ctx)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}

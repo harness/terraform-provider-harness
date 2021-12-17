@@ -216,7 +216,7 @@ func expandGithubConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 
 		if attr, ok := config["token_ref"]; ok {
 			connector.Github.ApiAccess.Type_ = nextgen.GithubApiAccessTypes.Token
-			connector.Github.ApiAccess.Token = &nextgen.GithubTokenSpecDto{
+			connector.Github.ApiAccess.Token = &nextgen.GithubTokenSpec{
 				TokenRef: attr.(string),
 			}
 		}

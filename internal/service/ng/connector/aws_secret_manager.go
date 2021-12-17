@@ -141,7 +141,7 @@ func expandAwsSecretManagerConfig(d []interface{}, connector *nextgen.ConnectorI
 
 		if attr := config["inherit_from_delegate"].(bool); attr {
 			connector.AwsSecretManager.Credential.Type_ = nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole
-			connector.AwsSecretManager.Credential.AssumeIamRole = &nextgen.AwsSmCredentialSpecAssumeIamdto{
+			connector.AwsSecretManager.Credential.AssumeIamRole = &nextgen.AwsSmCredentialSpecAssumeIam{
 				// Spec: nil,
 			}
 		}
@@ -163,7 +163,7 @@ func expandAwsSecretManagerConfig(d []interface{}, connector *nextgen.ConnectorI
 		if attr := config["assume_role"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
 			connector.AwsSecretManager.Credential.Type_ = nextgen.AwsSecretManagerAuthTypes.AssumeSTSRole
-			connector.AwsSecretManager.Credential.AssumeStsRole = &nextgen.AwsSmCredentialSpecAssumeStsdto{}
+			connector.AwsSecretManager.Credential.AssumeStsRole = &nextgen.AwsSmCredentialSpecAssumeSts{}
 
 			if attr := config["role_arn"].(string); attr != "" {
 				connector.AwsSecretManager.Credential.AssumeStsRole.RoleArn = attr
