@@ -13,8 +13,8 @@ import "encoding/json"
 
 type AwsSecretManagerCredentialDto struct {
 	Type_         AwsSecretManagerAuthType            `json:"type"`
-	AssumeIamRole *AwsSmCredentialSpecAssumeIamdto    `json:"-"`
-	AssumeStsRole *AwsSmCredentialSpecAssumeStsdto    `json:"-"`
+	AssumeIamRole *AwsSmCredentialSpecAssumeIam       `json:"-"`
+	AssumeStsRole *AwsSmCredentialSpecAssumeSts       `json:"-"`
 	ManualConfig  *AwsSmCredentialSpecManualConfigDto `json:"-"`
 	Spec          json.RawMessage                     `json:"spec,omitempty"`
 }

@@ -1,0 +1,45 @@
+# FileDescriptorProto
+
+## Properties
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**UnknownFields** | [***UnknownFieldSet**](UnknownFieldSet.md) |  | [optional] [default to null]
+**Initialized** | **bool** |  | [optional] [default to null]
+**Options** | [***FileOptions**](FileOptions.md) |  | [optional] [default to null]
+**ExtensionCount** | **int32** |  | [optional] [default to null]
+**PublicDependencyCount** | **int32** |  | [optional] [default to null]
+**DependencyCount** | **int32** |  | [optional] [default to null]
+**MessageTypeCount** | **int32** |  | [optional] [default to null]
+**ServiceCount** | **int32** |  | [optional] [default to null]
+**EnumTypeCount** | **int32** |  | [optional] [default to null]
+**ServiceList** | [**[]ServiceDescriptorProto**](ServiceDescriptorProto.md) |  | [optional] [default to null]
+**ServiceOrBuilderList** | [**[]ServiceDescriptorProtoOrBuilder**](ServiceDescriptorProtoOrBuilder.md) |  | [optional] [default to null]
+**ExtensionList** | [**[]FieldDescriptorProto**](FieldDescriptorProto.md) |  | [optional] [default to null]
+**ExtensionOrBuilderList** | [**[]FieldDescriptorProtoOrBuilder**](FieldDescriptorProtoOrBuilder.md) |  | [optional] [default to null]
+**OptionsOrBuilder** | [***FileOptionsOrBuilder**](FileOptionsOrBuilder.md) |  | [optional] [default to null]
+**SourceCodeInfo** | [***SourceCodeInfo**](SourceCodeInfo.md) |  | [optional] [default to null]
+**SourceCodeInfoOrBuilder** | [***SourceCodeInfoOrBuilder**](SourceCodeInfoOrBuilder.md) |  | [optional] [default to null]
+**SyntaxBytes** | [***ByteString**](ByteString.md) |  | [optional] [default to null]
+**NameBytes** | [***ByteString**](ByteString.md) |  | [optional] [default to null]
+**PackageBytes** | [***ByteString**](ByteString.md) |  | [optional] [default to null]
+**DependencyList** | **[]string** |  | [optional] [default to null]
+**PublicDependencyList** | **[]int32** |  | [optional] [default to null]
+**WeakDependencyList** | **[]int32** |  | [optional] [default to null]
+**WeakDependencyCount** | **int32** |  | [optional] [default to null]
+**MessageTypeList** | [**[]DescriptorProto**](DescriptorProto.md) |  | [optional] [default to null]
+**MessageTypeOrBuilderList** | [**[]DescriptorProtoOrBuilder**](DescriptorProtoOrBuilder.md) |  | [optional] [default to null]
+**EnumTypeList** | [**[]EnumDescriptorProto**](EnumDescriptorProto.md) |  | [optional] [default to null]
+**EnumTypeOrBuilderList** | [**[]EnumDescriptorProtoOrBuilder**](EnumDescriptorProtoOrBuilder.md) |  | [optional] [default to null]
+**SerializedSize** | **int32** |  | [optional] [default to null]
+**ParserForType** | [***ParserFileDescriptorProto**](ParserFileDescriptorProto.md) |  | [optional] [default to null]
+**DefaultInstanceForType** | [***FileDescriptorProto**](FileDescriptorProto.md) |  | [optional] [default to null]
+**Syntax** | **string** |  | [optional] [default to null]
+**Name** | **string** |  | [optional] [default to null]
+**Package_** | **string** |  | [optional] [default to null]
+**AllFields** | [**map[string]interface{}**](interface{}.md) |  | [optional] [default to null]
+**InitializationErrorString** | **string** |  | [optional] [default to null]
+**DescriptorForType** | [***Descriptor**](Descriptor.md) |  | [optional] [default to null]
+**MemoizedSerializedSize** | **int32** |  | [optional] [default to null]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+

@@ -1,7 +1,7 @@
 /*
  * CD NextGen API Reference
  *
- * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub
+ * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
  * API version: 3.0
  * Contact: contact@harness.io
@@ -11,7 +11,7 @@ package nextgen
 
 import "encoding/json"
 
-// This contains details of Artifactory Authentication
+// This entity contains the details for Artifactory Authentication
 type ArtifactoryAuthentication struct {
 	Type_            ArtifactoryAuthType              `json:"type"`
 	UsernamePassword *ArtifactoryUsernamePasswordAuth `json:"-"`

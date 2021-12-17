@@ -1,7 +1,7 @@
 /*
  * CD NextGen API Reference
  *
- * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub
+ * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
  * API version: 3.0
  * Contact: contact@harness.io
@@ -48,7 +48,17 @@ type APIClient struct {
 
 	AccountsApi *AccountsApiService
 
+	AclApi *AclApiService
+
+	ApprovalsApi *ApprovalsApiService
+
 	AuthenticationSettingsApi *AuthenticationSettingsApiService
+
+	CloudCostBudgetsApi *CloudCostBudgetsApiService
+
+	CloudCostPerspectiveReportsApi *CloudCostPerspectiveReportsApiService
+
+	CloudCostPerspectivesApi *CloudCostPerspectivesApiService
 
 	ConnectorsApi *ConnectorsApiService
 
@@ -56,15 +66,15 @@ type APIClient struct {
 
 	DelegateConfigurationResourceApi *DelegateConfigurationResourceApiService
 
-	EnforcementApi *EnforcementApiService
-
 	EnvironmentsApi *EnvironmentsApiService
+
+	ExecuteApi *ExecuteApiService
+
+	ExecutionDetailsApi *ExecutionDetailsApiService
 
 	FeedbackApi *FeedbackApiService
 
 	FilterApi *FilterApiService
-
-	FullSyncApi *FullSyncApiService
 
 	GcpClustersApi *GcpClustersApiService
 
@@ -78,23 +88,43 @@ type APIClient struct {
 
 	GitSyncSettingsApi *GitSyncSettingsApiService
 
+	HarnessResourceGroupApi *HarnessResourceGroupApiService
+
+	HarnessResourceTypeApi *HarnessResourceTypeApiService
+
+	InputSetsApi *InputSetsApiService
+
 	InviteApi *InviteApiService
 
 	LicensesApi *LicensesApiService
 
 	OrganizationApi *OrganizationApiService
 
+	PermissionsApi *PermissionsApiService
+
+	PipelinesApi *PipelinesApiService
+
 	ProjectApi *ProjectApiService
+
+	RoleAssignmentsApi *RoleAssignmentsApiService
+
+	RolesApi *RolesApiService
 
 	ScmApi *ScmApiService
 
 	ServicesApi *ServicesApiService
 
+	SmtpConfigApi *SmtpConfigApiService
+
 	SourceCodeManagerApi *SourceCodeManagerApiService
 
-	UsersApi *UsersApiService
-	
+	TriggersApi *TriggersApiService
+
+	UserApi *UserApiService
+
 	WebhookEventHandlerApi *WebhookEventHandlerApiService
+
+	WebhookTriggersApi *WebhookTriggersApiService
 }
 
 type service struct {
@@ -114,30 +144,45 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 
 	// API Services
 	c.AccountsApi = (*AccountsApiService)(&c.common)
+	c.AclApi = (*AclApiService)(&c.common)
+	c.ApprovalsApi = (*ApprovalsApiService)(&c.common)
 	c.AuthenticationSettingsApi = (*AuthenticationSettingsApiService)(&c.common)
+	c.CloudCostBudgetsApi = (*CloudCostBudgetsApiService)(&c.common)
+	c.CloudCostPerspectiveReportsApi = (*CloudCostPerspectiveReportsApiService)(&c.common)
+	c.CloudCostPerspectivesApi = (*CloudCostPerspectivesApiService)(&c.common)
 	c.ConnectorsApi = (*ConnectorsApiService)(&c.common)
 	c.DelegateConfigurationManagementApi = (*DelegateConfigurationManagementApiService)(&c.common)
 	c.DelegateConfigurationResourceApi = (*DelegateConfigurationResourceApiService)(&c.common)
-	c.EnforcementApi = (*EnforcementApiService)(&c.common)
 	c.EnvironmentsApi = (*EnvironmentsApiService)(&c.common)
+	c.ExecuteApi = (*ExecuteApiService)(&c.common)
+	c.ExecutionDetailsApi = (*ExecutionDetailsApiService)(&c.common)
 	c.FeedbackApi = (*FeedbackApiService)(&c.common)
 	c.FilterApi = (*FilterApiService)(&c.common)
-	c.FullSyncApi = (*FullSyncApiService)(&c.common)
 	c.GcpClustersApi = (*GcpClustersApiService)(&c.common)
 	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
 	c.GitSyncApi = (*GitSyncApiService)(&c.common)
 	c.GitSyncEntitiesApi = (*GitSyncEntitiesApiService)(&c.common)
 	c.GitSyncErrorsApi = (*GitSyncErrorsApiService)(&c.common)
 	c.GitSyncSettingsApi = (*GitSyncSettingsApiService)(&c.common)
+	c.HarnessResourceGroupApi = (*HarnessResourceGroupApiService)(&c.common)
+	c.HarnessResourceTypeApi = (*HarnessResourceTypeApiService)(&c.common)
+	c.InputSetsApi = (*InputSetsApiService)(&c.common)
 	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
 	c.OrganizationApi = (*OrganizationApiService)(&c.common)
+	c.PermissionsApi = (*PermissionsApiService)(&c.common)
+	c.PipelinesApi = (*PipelinesApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
+	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
+	c.RolesApi = (*RolesApiService)(&c.common)
 	c.ScmApi = (*ScmApiService)(&c.common)
 	c.ServicesApi = (*ServicesApiService)(&c.common)
+	c.SmtpConfigApi = (*SmtpConfigApiService)(&c.common)
 	c.SourceCodeManagerApi = (*SourceCodeManagerApiService)(&c.common)
-	c.UsersApi = (*UsersApiService)(&c.common)
+	c.TriggersApi = (*TriggersApiService)(&c.common)
+	c.UserApi = (*UserApiService)(&c.common)
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
+	c.WebhookTriggersApi = (*WebhookTriggersApiService)(&c.common)
 
 	return c
 }
