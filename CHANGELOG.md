@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.1.5](https://github.com/harness-io/harness-go-sdk/tree/v0.1.5) (2021-12-10)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.4...v0.1.5)
+
+**Merged pull requests:**
+
+- Release version 0.1.5 12-10-2021 [\#67](https://github.com/harness-io/harness-go-sdk/pull/67) ([micahlmartin](https://github.com/micahlmartin))
+
 ## [v0.1.4](https://github.com/harness-io/harness-go-sdk/tree/v0.1.4) (2021-12-09)
 
 [Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.3...v0.1.4)
