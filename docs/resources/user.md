@@ -27,6 +27,10 @@ resource "harness_user" "john_doe" {
 - **email** (String) The email of the user.
 - **name** (String) The name of the user.
 
+### Optional
+
+- **group_ids** (Set of String) The groups the user belongs to. This is only used during the creation of the user. The groups are not updated after the user is created. When using this option you should also set `lifecycle = { ignore_changes = ["group_ids"] }`.
+
 ### Read-Only
 
 - **id** (String) Unique identifier of the user.
