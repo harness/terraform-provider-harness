@@ -98,6 +98,73 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
+func TestAccResourceUser_WithUserGroups(t *testing.T) {
+
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	expectedEmail := strings.ToLower(fmt.Sprintf("%s_%s@example.com", t.Name(), utils.RandStringBytes(4)))
+	updatedName := fmt.Sprintf("%s_updated", expectedName)
+	resourceName := "harness_user.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUser_WithUserGroups(expectedName, expectedEmail),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
+					testAccUserCreation(t, resourceName, expectedEmail),
+					func(s *terraform.State) (err error) {
+						userId := s.RootModule().Resources[resourceName].Primary.ID
+						groupId := s.RootModule().Resources["harness_user_group.test"].Primary.ID
+						acctest.TestAccConfigureProvider()
+						c := acctest.TestAccProvider.Meta().(*api.Client)
+
+						limit := 100
+						offset := 0
+						hasMore := true
+
+						for hasMore {
+							groups, _, err := c.CDClient.UserClient.ListGroupMembershipByUserId(userId, limit, offset)
+							if err != nil {
+								return err
+							}
+
+							for _, group := range groups {
+								if group.Id == groupId {
+									return nil
+								}
+							}
+
+							hasMore = len(groups) == limit
+							offset += limit
+						}
+
+						return fmt.Errorf("user %s is not a member of group %s", userId, groupId)
+					},
+				),
+			},
+			{
+				Config: testAccResourceUser(updatedName, expectedEmail),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					testAccUserCreation(t, resourceName, expectedEmail),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					return primary.Attributes["email"], nil
+				},
+			},
+		},
+	})
+}
+
 func testAccUserCreation(t *testing.T, resourceName string, email string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		user, err := testAccGetUser(resourceName, state)
@@ -133,6 +200,20 @@ func testAccResourceUser(name string, email string) string {
 		resource "harness_user" "test" {
 			name = "%[1]s"
 			email = "%[2]s"
+		}
+`, name, email)
+}
+
+func testAccResourceUser_WithUserGroups(name string, email string) string {
+	return fmt.Sprintf(`
+		resource "harness_user_group" "test" {
+			name = "%[1]s"
+		}
+
+		resource "harness_user" "test" {
+			name = "%[1]s"
+			email = "%[2]s"
+			group_ids = [harness_user_group.test.id]
 		}
 `, name, email)
 }

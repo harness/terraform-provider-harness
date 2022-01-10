@@ -7,6 +7,7 @@ import (
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -40,6 +41,12 @@ func ResourceUser() *schema.Resource {
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					return strings.EqualFold(old, new)
 				},
+			},
+			"group_ids": {
+				Description: "The groups the user belongs to. This is only used during the creation of the user. The groups are not updated after the user is created. When using this option you should also set `lifecycle = { ignore_changes = [\"group_ids\"] }`.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"is_email_verified": {
 				Description: "Flag indicating whether or not the users email has been verified.",
@@ -83,8 +90,9 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 	log.Printf("[DEBUG] Creating user %s", d.Get("email").(string))
 
 	input := &graphql.CreateUserInput{
-		Name:  d.Get("name").(string),
-		Email: d.Get("email").(string),
+		Name:         d.Get("name").(string),
+		Email:        d.Get("email").(string),
+		UserGroupIds: utils.InterfaceSliceToStringSlice(d.Get("group_ids").(*schema.Set).List()),
 	}
 
 	user, err := c.CDClient.UserClient.CreateUser(input)
