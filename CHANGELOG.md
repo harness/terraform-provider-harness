@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.6...HEAD)
+
+**Merged pull requests:**
+
+- Regenerate nextgen API's [\#70](https://github.com/harness-io/harness-go-sdk/pull/70) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.1.6](https://github.com/harness-io/harness-go-sdk/tree/v0.1.6) (2021-12-17)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.5...v0.1.6)
+
+**Merged pull requests:**
+
+- Release version 0.1.6 12-17-2021 [\#69](https://github.com/harness-io/harness-go-sdk/pull/69) ([micahlmartin](https://github.com/micahlmartin))
+
 ## [v0.1.5](https://github.com/harness-io/harness-go-sdk/tree/v0.1.5) (2021-12-10)
 
 [Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.4...v0.1.5)
