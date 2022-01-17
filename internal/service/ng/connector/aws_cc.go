@@ -81,9 +81,9 @@ func expandAwsCCConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 
 	config := d[0].(map[string]interface{})
 	connector.Type_ = nextgen.ConnectorTypes.CEAws
-	connector.AwsCC = &nextgen.CeAwsConnectorDto{
+	connector.AwsCC = &nextgen.CeAwsConnector{
 		CrossAccountAccess: &nextgen.CrossAccountAccess{},
-		CurAttributes:      &nextgen.AwsCurAttributesDto{},
+		CurAttributes:      &nextgen.AwsCurAttributes{},
 	}
 
 	if attr, ok := config["account_id"]; ok {

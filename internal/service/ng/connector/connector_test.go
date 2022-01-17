@@ -212,7 +212,7 @@ func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
 
-	options := &nextgen.ConnectorsApiGetConnectorOpts{AccountIdentifier: optional.NewString(c.AccountId)}
+	options := &nextgen.ConnectorsApiGetConnectorOpts{}
 
 	if attr := r.Primary.Attributes["org_id"]; attr != "" {
 		options.OrgIdentifier = optional.NewString(attr)
@@ -234,7 +234,7 @@ func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.
 		options.RepoIdentifier = optional.NewString(attr)
 	}
 
-	resp, _, err := c.NGClient.ConnectorsApi.GetConnector(context.Background(), id, options)
+	resp, _, err := c.NGClient.ConnectorsApi.GetConnector(context.Background(), c.AccountId, id, options)
 	if err != nil {
 		return nil, err
 	}

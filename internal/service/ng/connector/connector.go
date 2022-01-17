@@ -130,9 +130,7 @@ func resourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta int
 		id = d.Get("identifier").(string)
 	}
 
-	options := &nextgen.ConnectorsApiGetConnectorOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
-	}
+	options := &nextgen.ConnectorsApiGetConnectorOpts{}
 
 	if attr := d.Get("org_id").(string); attr != "" {
 		options.OrgIdentifier = optional.NewString(attr)
@@ -150,7 +148,7 @@ func resourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta int
 		options.RepoIdentifier = optional.NewString(attr)
 	}
 
-	resp, _, err := c.NGClient.ConnectorsApi.GetConnector(ctx, id, options)
+	resp, _, err := c.NGClient.ConnectorsApi.GetConnector(ctx, c.AccountId, id, options)
 	if err != nil {
 		e := err.(nextgen.GenericSwaggerError)
 		if e.Code() == nextgen.ErrorCodes.ResourceNotFound {
@@ -168,9 +166,9 @@ func resourceConnectorCreate(ctx context.Context, d *schema.ResourceData, meta i
 	c := meta.(*api.Client)
 
 	connector := nextgen.Connector{Connector: buildConnector(d)}
-	options := &nextgen.ConnectorsApiCreateConnectorOpts{AccountIdentifier: optional.NewString(c.AccountId)}
+	options := &nextgen.ConnectorsApiCreateConnectorOpts{}
 
-	resp, _, err := c.NGClient.ConnectorsApi.CreateConnector(ctx, connector, options)
+	resp, _, err := c.NGClient.ConnectorsApi.CreateConnector(ctx, connector, c.AccountId, options)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
@@ -408,7 +406,7 @@ func resourceConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta i
 	c := meta.(*api.Client)
 
 	connector := buildConnector(d)
-	options := &nextgen.ConnectorsApiPutConnectorOpts{AccountIdentifier: optional.NewString(c.AccountId)}
+	options := &nextgen.ConnectorsApiUpdateConnectorOpts{}
 
 	if attr := d.Get("branch").(string); attr != "" {
 		options.Branch = optional.NewString(attr)
@@ -418,7 +416,7 @@ func resourceConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		options.RepoIdentifier = optional.NewString(attr)
 	}
 
-	resp, _, err := c.NGClient.ConnectorsApi.PutConnector(ctx, nextgen.Connector{Connector: connector}, options)
+	resp, _, err := c.NGClient.ConnectorsApi.UpdateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, options)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}

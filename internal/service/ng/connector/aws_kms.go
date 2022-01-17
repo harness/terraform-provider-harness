@@ -121,7 +121,7 @@ func expandAwsKmsConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 
 	config := d[0].(map[string]interface{})
 	connector.Type_ = nextgen.ConnectorTypes.AwsKms
-	connector.AwsKms = &nextgen.AwsKmsConnectorDto{}
+	connector.AwsKms = &nextgen.AwsKmsConnector{}
 
 	if attr := config["arn_ref"].(string); attr != "" {
 		connector.AwsKms.KmsArn = attr
@@ -137,11 +137,11 @@ func expandAwsKmsConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 
 	if attr := config["credentials"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.AwsKms.Credential = &nextgen.AwsKmsConnectorCredentialDto{}
+		connector.AwsKms.Credential = &nextgen.AwsKmsConnectorCredential{}
 
 		if attr := config["inherit_from_delegate"].(bool); attr {
 			connector.AwsKms.Credential.Type_ = nextgen.AwsKmsAuthTypes.AssumeIAMRole
-			connector.AwsKms.Credential.AssumeIamRole = &nextgen.AwsKmsCredentialSpecAssumeIamdto{
+			connector.AwsKms.Credential.AssumeIamRole = &nextgen.AwsKmsCredentialSpecAssumeIam{
 				DelegateSelectors: connector.AwsKms.DelegateSelectors,
 			}
 		}
@@ -149,7 +149,7 @@ func expandAwsKmsConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 		if attr := config["manual"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
 			connector.AwsKms.Credential.Type_ = nextgen.AwsKmsAuthTypes.ManualConfig
-			connector.AwsKms.Credential.ManualConfig = &nextgen.AwsKmsCredentialSpecManualConfigDto{}
+			connector.AwsKms.Credential.ManualConfig = &nextgen.AwsKmsCredentialSpecManualConfig{}
 
 			if attr := config["access_key_ref"].(string); attr != "" {
 				connector.AwsKms.Credential.ManualConfig.AccessKey = attr
@@ -163,7 +163,7 @@ func expandAwsKmsConfig(d []interface{}, connector *nextgen.ConnectorInfo) {
 		if attr := config["assume_role"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
 			connector.AwsKms.Credential.Type_ = nextgen.AwsKmsAuthTypes.AssumeSTSRole
-			connector.AwsKms.Credential.AssumeStsRole = &nextgen.AwsKmsCredentialSpecAssumeStsdto{
+			connector.AwsKms.Credential.AssumeStsRole = &nextgen.AwsKmsCredentialSpecAssumeSts{
 				DelegateSelectors: connector.AwsKms.DelegateSelectors,
 			}
 

@@ -121,7 +121,7 @@ func expandAwsSecretManagerConfig(d []interface{}, connector *nextgen.ConnectorI
 
 	config := d[0].(map[string]interface{})
 	connector.Type_ = nextgen.ConnectorTypes.AwsSecretManager
-	connector.AwsSecretManager = &nextgen.AwsSecretManagerDto{}
+	connector.AwsSecretManager = &nextgen.AwsSecretManager{}
 
 	if attr := config["secret_name_prefix"].(string); attr != "" {
 		connector.AwsSecretManager.SecretNamePrefix = attr
@@ -137,7 +137,7 @@ func expandAwsSecretManagerConfig(d []interface{}, connector *nextgen.ConnectorI
 
 	if attr := config["credentials"].([]interface{}); len(attr) > 0 {
 		config := attr[0].(map[string]interface{})
-		connector.AwsSecretManager.Credential = &nextgen.AwsSecretManagerCredentialDto{}
+		connector.AwsSecretManager.Credential = &nextgen.AwsSecretManagerCredential{}
 
 		if attr := config["inherit_from_delegate"].(bool); attr {
 			connector.AwsSecretManager.Credential.Type_ = nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole
@@ -149,7 +149,7 @@ func expandAwsSecretManagerConfig(d []interface{}, connector *nextgen.ConnectorI
 		if attr := config["manual"].([]interface{}); len(attr) > 0 {
 			config := attr[0].(map[string]interface{})
 			connector.AwsSecretManager.Credential.Type_ = nextgen.AwsSecretManagerAuthTypes.ManualConfig
-			connector.AwsSecretManager.Credential.ManualConfig = &nextgen.AwsSmCredentialSpecManualConfigDto{}
+			connector.AwsSecretManager.Credential.ManualConfig = &nextgen.AwsSmCredentialSpecManualConfig{}
 
 			if attr := config["access_key_ref"].(string); attr != "" {
 				connector.AwsSecretManager.Credential.ManualConfig.AccessKey = attr
