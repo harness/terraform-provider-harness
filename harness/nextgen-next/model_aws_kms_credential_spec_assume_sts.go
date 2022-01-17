@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains the credential spec of AWS KMS SM for STS role
+// Returns Delegate selectors, RoleArn and STS role duration used by AWS KMS Secret Manager.
 type AwsKmsCredentialSpecAssumeSts struct {
 	DelegateSelectors     []string `json:"delegateSelectors"`
 	RoleArn               string   `json:"roleArn"`

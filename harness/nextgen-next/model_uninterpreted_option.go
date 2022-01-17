@@ -11,12 +11,6 @@ package nextgen
 
 type UninterpretedOption struct {
 	UnknownFields             *UnknownFieldSet           `json:"unknownFields,omitempty"`
-	Initialized               bool                       `json:"initialized,omitempty"`
-	StringValue               *ByteString                `json:"stringValue,omitempty"`
-	DoubleValue               float64                    `json:"doubleValue,omitempty"`
-	SerializedSize            int32                      `json:"serializedSize,omitempty"`
-	ParserForType             *ParserUninterpretedOption `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *UninterpretedOption       `json:"defaultInstanceForType,omitempty"`
 	NameList                  []NamePart                 `json:"nameList,omitempty"`
 	NameOrBuilderList         []NamePartOrBuilder        `json:"nameOrBuilderList,omitempty"`
 	IdentifierValue           string                     `json:"identifierValue,omitempty"`
@@ -25,9 +19,15 @@ type UninterpretedOption struct {
 	NegativeIntValue          int64                      `json:"negativeIntValue,omitempty"`
 	AggregateValue            string                     `json:"aggregateValue,omitempty"`
 	AggregateValueBytes       *ByteString                `json:"aggregateValueBytes,omitempty"`
+	SerializedSize            int32                      `json:"serializedSize,omitempty"`
+	ParserForType             *ParserUninterpretedOption `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *UninterpretedOption       `json:"defaultInstanceForType,omitempty"`
+	StringValue               *ByteString                `json:"stringValue,omitempty"`
+	Initialized               bool                       `json:"initialized,omitempty"`
 	NameCount                 int32                      `json:"nameCount,omitempty"`
-	AllFields                 map[string]interface{}     `json:"allFields,omitempty"`
+	DoubleValue               float64                    `json:"doubleValue,omitempty"`
 	InitializationErrorString string                     `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}     `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                      `json:"memoizedSerializedSize,omitempty"`
 }

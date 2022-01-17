@@ -149,9 +149,9 @@ func (a *GitSyncSettingsApiService) CreateGitSyncSetting(ctx context.Context, bo
 GitSyncSettingsApiService Get Git Sync Setting for the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *GitSyncSettingsApiGetGitSyncSettingsOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
 @return ResponseDtoGitSyncSettings
 */
 
@@ -282,9 +282,9 @@ func (a *GitSyncSettingsApiService) GetGitSyncSettings(ctx context.Context, loca
 }
 
 /*
-GitSyncSettingsApiService Update existing Git Sync Setting by scope. Only changing execution on delegate is allowed
+GitSyncSettingsApiService This updates the existing Git Sync settings within the scope. Only changing Connectivity Mode is allowed
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Git Sync Setting details, including: scope, executionOnDelegate
+ * @param body This contains details of Git Sync Settings
 @return ResponseDtoGitSyncSettings
 */
 func (a *GitSyncSettingsApiService) UpdateGitSyncSetting(ctx context.Context, body GitSyncSettings) (ResponseDtoGitSyncSettings, *http.Response, error) {

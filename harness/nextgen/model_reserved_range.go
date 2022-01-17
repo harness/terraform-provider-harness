@@ -11,14 +11,14 @@ package nextgen
 
 type ReservedRange struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
-	End                       int32                  `json:"end,omitempty"`
-	Start                     int32                  `json:"start,omitempty"`
 	SerializedSize            int32                  `json:"serializedSize,omitempty"`
 	ParserForType             *ParserReservedRange   `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *ReservedRange         `json:"defaultInstanceForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	Start                     int32                  `json:"start,omitempty"`
+	End                       int32                  `json:"end,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

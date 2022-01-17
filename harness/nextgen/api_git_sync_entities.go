@@ -32,12 +32,12 @@ GitSyncEntitiesApiService Lists Git Sync Entity filtered by their Type for the g
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param entityType Entity Type
  * @param optional nil or *GitSyncEntitiesApiListGitSyncEntitiesByTypeOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
      * @param "GitSyncConfigId" (optional.String) -  Git Sync Config Id
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
      * @param "ModuleType" (optional.String) -  Module Type
 @return ResponseDtoPageResponseGitSyncEntityList
@@ -193,12 +193,12 @@ func (a *GitSyncEntitiesApiService) ListGitSyncEntitiesByType(ctx context.Contex
 /*
 GitSyncEntitiesApiService Lists Git Sync Entity by product for the given Repo, Branch and list of Entity Types
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Filter Git Sync Entity based on multiple parameters
+ * @param body This filters the Git Sync Entity based on multiple parameters
  * @param branch Branch Name
  * @param optional nil or *GitSyncEntitiesApiListGitSyncEntitiesSummaryForRepoAndBranchOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
      * @param "GitSyncConfigId" (optional.String) -  Git Sync Config Id
 @return ResponseDtoListGitSyncEntityList
@@ -346,9 +346,9 @@ GitSyncEntitiesApiService Lists Git Sync Entity by product for the given list of
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Filter Git Sync Entity based on multiple parameters
  * @param optional nil or *GitSyncEntitiesApiListGitSyncEntitiesSummaryForRepoAndTypesOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
 @return ResponseDtoGitSyncRepoFilesList
 */

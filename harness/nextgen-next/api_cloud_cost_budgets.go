@@ -113,7 +113,7 @@ func (a *CloudCostBudgetsApiService) CloneBudget(ctx context.Context, accountIde
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -123,7 +123,7 @@ func (a *CloudCostBudgetsApiService) CloneBudget(ctx context.Context, accountIde
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -235,7 +235,7 @@ func (a *CloudCostBudgetsApiService) CreateBudget(ctx context.Context, body Budg
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -245,7 +245,7 @@ func (a *CloudCostBudgetsApiService) CreateBudget(ctx context.Context, body Budg
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -356,7 +356,7 @@ func (a *CloudCostBudgetsApiService) DeleteBudget(ctx context.Context, accountId
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -366,7 +366,7 @@ func (a *CloudCostBudgetsApiService) DeleteBudget(ctx context.Context, accountId
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -477,7 +477,7 @@ func (a *CloudCostBudgetsApiService) GetBudget(ctx context.Context, accountIdent
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -487,7 +487,7 @@ func (a *CloudCostBudgetsApiService) GetBudget(ctx context.Context, accountIdent
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -598,7 +598,7 @@ func (a *CloudCostBudgetsApiService) GetCostDetails(ctx context.Context, account
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -608,7 +608,7 @@ func (a *CloudCostBudgetsApiService) GetCostDetails(ctx context.Context, account
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -717,7 +717,7 @@ func (a *CloudCostBudgetsApiService) ListBudgets(ctx context.Context, accountIde
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -727,7 +727,7 @@ func (a *CloudCostBudgetsApiService) ListBudgets(ctx context.Context, accountIde
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -838,7 +838,7 @@ func (a *CloudCostBudgetsApiService) ListBudgetsForPerspective(ctx context.Conte
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -848,7 +848,7 @@ func (a *CloudCostBudgetsApiService) ListBudgetsForPerspective(ctx context.Conte
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -962,7 +962,7 @@ func (a *CloudCostBudgetsApiService) UpdateBudget(ctx context.Context, body Budg
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -972,7 +972,7 @@ func (a *CloudCostBudgetsApiService) UpdateBudget(ctx context.Context, body Budg
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

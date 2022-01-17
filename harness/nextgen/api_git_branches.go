@@ -27,14 +27,14 @@ var (
 type GitBranchesApiService service
 
 /*
-GitBranchesApiService Lists branches with their status(Synced, Unsynced) by Git Sync Config Identifier for the given scope
+GitBranchesApiService Lists branches with their status(Synced, Unsynced) by Git Sync Config Id for the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param yamlGitConfigIdentifier Git Sync Config Id
  * @param optional nil or *GitBranchesApiGetListOfBranchesWithStatusOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
      * @param "SearchTerm" (optional.String) -  Search Term
      * @param "BranchSyncStatus" (optional.String) -  Used to filter out Synced and Unsynced branches
@@ -185,13 +185,13 @@ func (a *GitBranchesApiService) GetListOfBranchesWithStatus(ctx context.Context,
 }
 
 /*
-GitBranchesApiService Sync the content of new Git Branch into harness with Git Sync Config Identifier
+GitBranchesApiService Sync the content of new Git Branch into harness with Git Sync Config Id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repoIdentifier Git Sync Config Id
  * @param optional nil or *GitBranchesApiSyncGitBranchOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
 @return ResponseDtoBoolean
 */

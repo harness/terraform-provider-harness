@@ -11,8 +11,10 @@ package nextgen
 
 // This is the view of the UserMetadata entity defined in Harness
 type UserMetadata struct {
-	Name   string `json:"name,omitempty"`
-	Email  string `json:"email,omitempty"`
-	Uuid   string `json:"uuid,omitempty"`
-	Locked bool   `json:"locked,omitempty"`
+	Name              string `json:"name,omitempty"`
+	Email             string `json:"email,omitempty"`
+	Uuid              string `json:"uuid,omitempty"`
+	Locked            bool   `json:"locked,omitempty"`
+	Disabled          bool   `json:"disabled,omitempty"`
+	ExternallyManaged bool   `json:"externallyManaged,omitempty"`
 }

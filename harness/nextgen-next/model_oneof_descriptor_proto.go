@@ -11,16 +11,16 @@ package nextgen
 
 type OneofDescriptorProto struct {
 	UnknownFields             *UnknownFieldSet            `json:"unknownFields,omitempty"`
-	Initialized               bool                        `json:"initialized,omitempty"`
-	Options                   *OneofOptions               `json:"options,omitempty"`
-	OptionsOrBuilder          *OneofOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
-	NameBytes                 *ByteString                 `json:"nameBytes,omitempty"`
 	SerializedSize            int32                       `json:"serializedSize,omitempty"`
 	ParserForType             *ParserOneofDescriptorProto `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *OneofDescriptorProto       `json:"defaultInstanceForType,omitempty"`
+	Options                   *OneofOptions               `json:"options,omitempty"`
+	Initialized               bool                        `json:"initialized,omitempty"`
 	Name                      string                      `json:"name,omitempty"`
-	AllFields                 map[string]interface{}      `json:"allFields,omitempty"`
+	NameBytes                 *ByteString                 `json:"nameBytes,omitempty"`
+	OptionsOrBuilder          *OneofOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
 	InitializationErrorString string                      `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                 `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}      `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                       `json:"memoizedSerializedSize,omitempty"`
 }

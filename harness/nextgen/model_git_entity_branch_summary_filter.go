@@ -11,7 +11,10 @@ package nextgen
 
 // This contains filters for Git Sync Entity such as Module Type, Entity Type and Search Term
 type GitEntityBranchSummaryFilter struct {
-	ModuleType  string   `json:"moduleType,omitempty"`
+	// Module Type
+	ModuleType string `json:"moduleType,omitempty"`
+	// List of Entity Types
 	EntityTypes []string `json:"entityTypes,omitempty"`
-	SearchTerm  string   `json:"searchTerm,omitempty"`
+	// Search Term
+	SearchTerm string `json:"searchTerm,omitempty"`
 }

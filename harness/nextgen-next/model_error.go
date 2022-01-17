@@ -17,5 +17,5 @@ type ModelError struct {
 	CorrelationId    string            `json:"correlationId,omitempty"`
 	DetailedMessage  string            `json:"detailedMessage,omitempty"`
 	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
-	Metadata         *ErrorMetadataDto `json:"metadata,omitempty"`
+	Metadata         *ErrorMetadata    `json:"metadata,omitempty"`
 }

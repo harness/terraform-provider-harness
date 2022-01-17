@@ -11,8 +11,12 @@ package nextgen
 
 // This contains details of Git Sync Settings
 type GitSyncSettings struct {
-	AccountIdentifier      string `json:"accountIdentifier"`
-	ProjectIdentifier      string `json:"projectIdentifier"`
+	// Account Identifier for the Entity
+	AccountIdentifier string `json:"accountIdentifier"`
+	// Project Identifier for the Entity
+	ProjectIdentifier string `json:"projectIdentifier"`
+	// Organization Identifier for the Entity
 	OrganizationIdentifier string `json:"organizationIdentifier"`
-	ExecuteOnDelegate      bool   `json:"executeOnDelegate"`
+	// Specifies Connectivity Mode for Git Sync. If True, executes through Delegate, else executes through Platform. The default value is True
+	ExecuteOnDelegate bool `json:"executeOnDelegate"`
 }

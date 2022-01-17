@@ -10,5 +10,5 @@
 package nextgen
 
 type ResourceGroupRequest struct {
-	Resourcegroup *ResourceGroupDto `json:"resourcegroup"`
+	Resourcegroup *ResourcegroupResourceGroup `json:"resourcegroup"`
 }

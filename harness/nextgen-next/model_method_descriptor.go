@@ -18,7 +18,7 @@ type MethodDescriptor struct {
 	InputType       *Descriptor            `json:"inputType,omitempty"`
 	OutputType      *Descriptor            `json:"outputType,omitempty"`
 	Options         *MethodOptions         `json:"options,omitempty"`
+	Name            string                 `json:"name,omitempty"`
 	ClientStreaming bool                   `json:"clientStreaming,omitempty"`
 	ServerStreaming bool                   `json:"serverStreaming,omitempty"`
-	Name            string                 `json:"name,omitempty"`
 }

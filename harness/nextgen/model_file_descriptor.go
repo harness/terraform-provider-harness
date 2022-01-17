@@ -19,8 +19,8 @@ type FileDescriptor struct {
 	PublicDependencies []FileDescriptor     `json:"publicDependencies,omitempty"`
 	Options            *FileOptions         `json:"options,omitempty"`
 	FullName           string               `json:"fullName,omitempty"`
-	Syntax             string               `json:"syntax,omitempty"`
 	Name               string               `json:"name,omitempty"`
 	Package_           string               `json:"package,omitempty"`
 	File               *FileDescriptor      `json:"file,omitempty"`
+	Syntax             string               `json:"syntax,omitempty"`
 }

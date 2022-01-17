@@ -30,21 +30,20 @@ type HarnessResourceGroupApiService service
 /*
 HarnessResourceGroupApiService Create a resource group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param body This contains the details required to create a Resource Group
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *HarnessResourceGroupApiCreateResourceGroupOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of ResourceGroupRequest) -  This contains the details required to create a Resource Group
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoResourceGroupResponse
 */
 
 type HarnessResourceGroupApiCreateResourceGroupOpts struct {
-	Body              optional.Interface
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *HarnessResourceGroupApiService) CreateResourceGroup(ctx context.Context, accountIdentifier string, localVarOptionals *HarnessResourceGroupApiCreateResourceGroupOpts) (ResponseDtoResourceGroupResponse, *http.Response, error) {
+func (a *HarnessResourceGroupApiService) CreateResourceGroup(ctx context.Context, body ResourceGroupRequest, accountIdentifier string, localVarOptionals *HarnessResourceGroupApiCreateResourceGroupOpts) (ResponseDtoResourceGroupResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -85,11 +84,7 @@ func (a *HarnessResourceGroupApiService) CreateResourceGroup(ctx context.Context
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -172,10 +167,10 @@ func (a *HarnessResourceGroupApiService) CreateResourceGroup(ctx context.Context
 HarnessResourceGroupApiService Delete a resource group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *HarnessResourceGroupApiDeleteResourceGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoBoolean
 */
 
@@ -307,11 +302,11 @@ func (a *HarnessResourceGroupApiService) DeleteResourceGroup(ctx context.Context
 HarnessResourceGroupApiService
 This fetches a filtered list of Resource Groups
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Filter Resource Group Entity based on multiple parameters
+ * @param body Filter Resource Groups based on multiple parameters
  * @param optional nil or *HarnessResourceGroupApiGetFilterResourceGroupListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseResourceGroupResponse
 */
 
@@ -446,11 +441,11 @@ func (a *HarnessResourceGroupApiService) GetFilterResourceGroupList(ctx context.
 /*
 HarnessResourceGroupApiService Get a resource group by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier This is the ID of the Entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param identifier This is the Identifier of the Entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *HarnessResourceGroupApiGetResourceGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoResourceGroupResponse
 */
 
@@ -581,14 +576,14 @@ func (a *HarnessResourceGroupApiService) GetResourceGroup(ctx context.Context, i
 /*
 HarnessResourceGroupApiService Get list of resource groups
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *HarnessResourceGroupApiGetResourceGroupListOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "SearchTerm" (optional.String) -  Search Term
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "SearchTerm" (optional.String) -  Details of all the resource groups having this string in their name or identifier will be returned.
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseResourceGroupResponse
 */
 
@@ -734,22 +729,21 @@ func (a *HarnessResourceGroupApiService) GetResourceGroupList(ctx context.Contex
 /*
 HarnessResourceGroupApiService Update a resource group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param body This contains the details required to create a Resource Group
+ * @param accountIdentifier Account Identifier for the Entity
  * @param identifier Identifier for the entity
  * @param optional nil or *HarnessResourceGroupApiUpdateResourceGroupOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of ResourceGroupRequest) -  This contains the details required to create a Resource Group
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoResourceGroupResponse
 */
 
 type HarnessResourceGroupApiUpdateResourceGroupOpts struct {
-	Body              optional.Interface
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *HarnessResourceGroupApiService) UpdateResourceGroup(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *HarnessResourceGroupApiUpdateResourceGroupOpts) (ResponseDtoResourceGroupResponse, *http.Response, error) {
+func (a *HarnessResourceGroupApiService) UpdateResourceGroup(ctx context.Context, body ResourceGroupRequest, accountIdentifier string, identifier string, localVarOptionals *HarnessResourceGroupApiUpdateResourceGroupOpts) (ResponseDtoResourceGroupResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -791,11 +785,7 @@ func (a *HarnessResourceGroupApiService) UpdateResourceGroup(ctx context.Context
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {

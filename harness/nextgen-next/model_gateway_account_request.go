@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This is the view of Gateway Account Request as defined in Harness.
+// Returns Gateway account request details like uuid, account name, company name, default experience, whether or not created from NextGen and whether NextGen is enabled or not.
 type GatewayAccountRequest struct {
 	Uuid              string `json:"uuid,omitempty"`
 	AccountName       string `json:"accountName,omitempty"`

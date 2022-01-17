@@ -9,7 +9,12 @@
  */
 package nextgen
 
+// This is the view of the Filter entity defined in Harness
 type Filter struct {
-	Ids   []string `json:"ids,omitempty"`
-	Type_ string   `json:"type"`
+	Name              string            `json:"name"`
+	Identifier        string            `json:"identifier"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	FilterProperties  *FilterProperties `json:"filterProperties"`
+	FilterVisibility  string            `json:"filterVisibility,omitempty"`
 }

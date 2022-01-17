@@ -15,8 +15,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -29,19 +27,13 @@ type GcpClustersApiService service
 /*
 GcpClustersApiService Gets gcp cluster names
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param orgIdentifier Organization Identifier for the entity
- * @param projectIdentifier Project Identifier for the entity
- * @param optional nil or *GcpClustersApiGetClusterNamesForGcpOpts - Optional Parameters:
-     * @param "ConnectorRef" (optional.String) -
+ * @param connectorRef GCP Connector Identifier
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param orgIdentifier Organization Identifier for the Entity
+ * @param projectIdentifier Project Identifier for the Entity
 @return ResponseDtoGcpResponse
 */
-
-type GcpClustersApiGetClusterNamesForGcpOpts struct {
-	ConnectorRef optional.String
-}
-
-func (a *GcpClustersApiService) GetClusterNamesForGcp(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *GcpClustersApiGetClusterNamesForGcpOpts) (ResponseDtoGcpResponse, *http.Response, error) {
+func (a *GcpClustersApiService) GetClusterNamesForGcp(ctx context.Context, connectorRef string, accountIdentifier string, orgIdentifier string, projectIdentifier string) (ResponseDtoGcpResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -57,9 +49,7 @@ func (a *GcpClustersApiService) GetClusterNamesForGcp(ctx context.Context, accou
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
-		localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
-	}
+	localVarQueryParams.Add("connectorRef", parameterToString(connectorRef, ""))
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))

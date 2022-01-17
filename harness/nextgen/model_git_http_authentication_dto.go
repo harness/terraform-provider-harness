@@ -11,7 +11,7 @@ package nextgen
 
 // This contains details of the Generic Git authentication information used via HTTP connections
 type GitHttpAuthenticationDto struct {
-	Type_       string `json:"-"`
+	Type_       string `json:"type"`
 	Username    string `json:"username,omitempty"`
 	UsernameRef string `json:"usernameRef,omitempty"`
 	PasswordRef string `json:"passwordRef"`

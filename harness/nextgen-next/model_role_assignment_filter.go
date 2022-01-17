@@ -10,10 +10,16 @@
 package nextgen
 
 type RoleAssignmentFilter struct {
-	ResourceGroupFilter  []string    `json:"resourceGroupFilter,omitempty"`
-	RoleFilter           []string    `json:"roleFilter,omitempty"`
-	PrincipalTypeFilter  []string    `json:"principalTypeFilter,omitempty"`
-	PrincipalFilter      []Principal `json:"principalFilter,omitempty"`
-	HarnessManagedFilter []bool      `json:"harnessManagedFilter,omitempty"`
-	DisabledFilter       []bool      `json:"disabledFilter,omitempty"`
+	// Filter role assignments based on resource group identifiers
+	ResourceGroupFilter []string `json:"resourceGroupFilter,omitempty"`
+	// Filter role assignments based on role identifiers
+	RoleFilter []string `json:"roleFilter,omitempty"`
+	// Filter role assignments based on principal type
+	PrincipalTypeFilter []string `json:"principalTypeFilter,omitempty"`
+	// Filter role assignments based on principals
+	PrincipalFilter []Principal `json:"principalFilter,omitempty"`
+	// Filter role assignments based on role assignments being harness managed
+	HarnessManagedFilter []bool `json:"harnessManagedFilter,omitempty"`
+	// Filter role assignments based on whether they are enabled or disabled
+	DisabledFilter []bool `json:"disabledFilter,omitempty"`
 }

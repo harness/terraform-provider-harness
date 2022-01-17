@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This contains the response of a Preflight Check for a Pipeline.
 type PreFlightDto struct {
 	PipelineInputWrapperResponse *PipelineWrapperResponse  `json:"pipelineInputWrapperResponse,omitempty"`
 	ConnectorWrapperResponse     *ConnectorWrapperResponse `json:"connectorWrapperResponse,omitempty"`

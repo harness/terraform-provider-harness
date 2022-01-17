@@ -30,7 +30,7 @@ type ServicesApiService service
 /*
 ServicesApiService Create a Service
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiCreateServiceV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of ServiceRequest) -  Details of the Service to be created
 @return ResponseDtoServiceResponse
@@ -161,7 +161,7 @@ func (a *ServicesApiService) CreateServiceV2(ctx context.Context, accountIdentif
 /*
 ServicesApiService Create Services
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiCreateServicesV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of []ServiceRequest) -  Details of the Services to be created
 @return ResponseDtoPageResponseServiceResponse
@@ -293,11 +293,11 @@ func (a *ServicesApiService) CreateServicesV2(ctx context.Context, accountIdenti
 ServicesApiService Delete a Service by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param serviceIdentifier Service Identifier for the entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiDeleteServiceV2Opts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoBoolean
 */
 
@@ -432,12 +432,12 @@ func (a *ServicesApiService) DeleteServiceV2(ctx context.Context, serviceIdentif
 /*
 ServicesApiService Gets Service Access list
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiGetServiceAccessListOpts - Optional Parameters:
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "SearchTerm" (optional.String) -  The word to be searched and included in the list response
      * @param "ServiceIdentifiers" (optional.Interface of []string) -  List of ServicesIds
      * @param "Sort" (optional.Interface of []string) -  Specifies the sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order
@@ -590,12 +590,12 @@ func (a *ServicesApiService) GetServiceAccessList(ctx context.Context, accountId
 /*
 ServicesApiService Gets Service list
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiGetServiceListOpts - Optional Parameters:
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "SearchTerm" (optional.String) -  The word to be searched and included in the list response
      * @param "ServiceIdentifiers" (optional.Interface of []string) -  List of ServicesIds
      * @param "Sort" (optional.Interface of []string) -  Specifies the sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order
@@ -749,10 +749,10 @@ func (a *ServicesApiService) GetServiceList(ctx context.Context, accountIdentifi
 ServicesApiService Gets a Service by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param serviceIdentifier Service Identifier for the entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiGetServiceV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Deleted" (optional.Bool) -  Specify whether Service is deleted or not
 @return ResponseDtoServiceResponse
 */
@@ -888,7 +888,7 @@ func (a *ServicesApiService) GetServiceV2(ctx context.Context, serviceIdentifier
 /*
 ServicesApiService Update a Service by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiUpdateServiceV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of ServiceRequest) -  Details of the Service to be updated
      * @param "IfMatch" (optional.String) -
@@ -1024,7 +1024,7 @@ func (a *ServicesApiService) UpdateServiceV2(ctx context.Context, accountIdentif
 /*
 ServicesApiService Upsert a Service by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ServicesApiUpsertServiceV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of ServiceRequest) -  Details of the Service to be updated
      * @param "IfMatch" (optional.String) -

@@ -13,4 +13,5 @@ package nextgen
 type InputSetTemplateWithReplacedExpressionsResponse struct {
 	InputSetTemplateYaml string   `json:"inputSetTemplateYaml,omitempty"`
 	ReplacedExpressions  []string `json:"replacedExpressions,omitempty"`
+	Modules              []string `json:"modules,omitempty"`
 }

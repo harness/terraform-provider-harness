@@ -9,6 +9,6 @@
  */
 package nextgen
 
-// This contains the credential spec of AWS KMS SM
+// This is interface that returns credentials specific to all roles for the AWS KMS Secret Manager.
 type AwsKmsCredentialSpec struct {
 }

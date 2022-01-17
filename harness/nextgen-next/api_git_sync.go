@@ -32,7 +32,7 @@ GitSyncApiService Creates Git Sync Config in given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of Git Sync Config
  * @param optional nil or *GitSyncApiCreateGitSyncConfigOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
 @return GitSyncConfig
 */
 
@@ -160,9 +160,9 @@ func (a *GitSyncApiService) CreateGitSyncConfig(ctx context.Context, body GitSyn
 GitSyncApiService Lists Git Sync Config for the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *GitSyncApiGetGitSyncConfigListOpts - Optional Parameters:
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
 @return []GitSyncConfig
 */
 
@@ -296,9 +296,9 @@ func (a *GitSyncApiService) GetGitSyncConfigList(ctx context.Context, localVarOp
 GitSyncApiService Check whether Git Sync is enabled for given scope or not
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *GitSyncApiIsGitSyncEnabledOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
 @return GitEnabled
 */
 
@@ -434,9 +434,9 @@ GitSyncApiService Update existing Git Sync Config default root folder by Identif
  * @param identifier Git Sync Config Id
  * @param folderIdentifier Folder Id
  * @param optional nil or *GitSyncApiUpdateDefaultFolderOpts - Optional Parameters:
-     * @param "ProjectId" (optional.String) -  Project Identifier for the entity
-     * @param "OrganizationId" (optional.String) -  Organization Identifier for the entity
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
+     * @param "ProjectId" (optional.String) -  Project Identifier for the Entity
+     * @param "OrganizationId" (optional.String) -  Organization Identifier for the Entity
+     * @param "AccountId" (optional.String) -  Account Identifier for the Entity
 @return GitSyncConfig
 */
 
@@ -573,7 +573,7 @@ GitSyncApiService Update existing Git Sync Config by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of Git Sync Config
  * @param optional nil or *GitSyncApiUpdateGitSyncConfigOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
 @return GitSyncConfig
 */
 

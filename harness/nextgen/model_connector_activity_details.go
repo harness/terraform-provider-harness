@@ -9,6 +9,8 @@
  */
 package nextgen
 
+// This contains details of any kind of activities corresponding to the Connector.
 type ConnectorActivityDetails struct {
+	// This specifies the time of the most recent activity on the Connector.
 	LastActivityTime int64 `json:"lastActivityTime,omitempty"`
 }

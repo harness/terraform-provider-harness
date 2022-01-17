@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains details of the branch, like Branch name, Sync Status.
+// This contains details of the branch
 type GitBranch struct {
 	BranchName       string `json:"branchName,omitempty"`
 	BranchSyncStatus string `json:"branchSyncStatus,omitempty"`

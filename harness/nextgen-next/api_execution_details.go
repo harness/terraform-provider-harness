@@ -36,20 +36,20 @@ ExecutionDetailsApiService Get the Pipeline Execution details for given PlanExec
  * @param planExecutionId Plan Execution Id for which we want to get the Execution details
  * @param optional nil or *ExecutionDetailsApiGetExecutionDetailOpts - Optional Parameters:
      * @param "StageNodeId" (optional.String) -  Stage Node Identifier to get execution stats.
-@return ResponseDtoPipelineExecutionDetailDto
+@return ResponseDtoPipelineExecutionDetail
 */
 
 type ExecutionDetailsApiGetExecutionDetailOpts struct {
 	StageNodeId optional.String
 }
 
-func (a *ExecutionDetailsApiService) GetExecutionDetail(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, planExecutionId string, localVarOptionals *ExecutionDetailsApiGetExecutionDetailOpts) (ResponseDtoPipelineExecutionDetailDto, *http.Response, error) {
+func (a *ExecutionDetailsApiService) GetExecutionDetail(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, planExecutionId string, localVarOptionals *ExecutionDetailsApiGetExecutionDetailOpts) (ResponseDtoPipelineExecutionDetail, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPipelineExecutionDetailDto
+		localVarReturnValue ResponseDtoPipelineExecutionDetail
 	)
 
 	// create path and map variables
@@ -146,7 +146,7 @@ func (a *ExecutionDetailsApiService) GetExecutionDetail(ctx context.Context, acc
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPipelineExecutionDetailDto
+			var v ResponseDtoPipelineExecutionDetail
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -304,20 +304,20 @@ ExecutionDetailsApiService Get the Input Set YAML used for given Plan Execution
  * @param planExecutionId Plan Execution Id for which we want to get the Input Set YAML
  * @param optional nil or *ExecutionDetailsApiGetInputsetYamlV2Opts - Optional Parameters:
      * @param "ResolveExpressions" (optional.Bool) -
-@return ResponseDtoInputSetYamlWithTemplateDto
+@return ResponseDtoInputSetTemplateResponse
 */
 
 type ExecutionDetailsApiGetInputsetYamlV2Opts struct {
 	ResolveExpressions optional.Bool
 }
 
-func (a *ExecutionDetailsApiService) GetInputsetYamlV2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, planExecutionId string, localVarOptionals *ExecutionDetailsApiGetInputsetYamlV2Opts) (ResponseDtoInputSetYamlWithTemplateDto, *http.Response, error) {
+func (a *ExecutionDetailsApiService) GetInputsetYamlV2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, planExecutionId string, localVarOptionals *ExecutionDetailsApiGetInputsetYamlV2Opts) (ResponseDtoInputSetTemplateResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoInputSetYamlWithTemplateDto
+		localVarReturnValue ResponseDtoInputSetTemplateResponse
 	)
 
 	// create path and map variables
@@ -414,7 +414,7 @@ func (a *ExecutionDetailsApiService) GetInputsetYamlV2(ctx context.Context, acco
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoInputSetYamlWithTemplateDto
+			var v ResponseDtoInputSetTemplateResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -447,7 +447,7 @@ ExecutionDetailsApiService Gets list of Executions of Pipelines for specific fil
      * @param "Status" (optional.Interface of []string) -
      * @param "MyDeployments" (optional.Bool) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPagePipelineExecutionSummary
 */

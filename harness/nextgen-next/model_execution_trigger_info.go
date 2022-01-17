@@ -11,7 +11,9 @@ package nextgen
 
 type ExecutionTriggerInfo struct {
 	UnknownFields             *UnknownFieldSet            `json:"unknownFields,omitempty"`
-	Initialized               bool                        `json:"initialized,omitempty"`
+	SerializedSize            int32                       `json:"serializedSize,omitempty"`
+	ParserForType             *ParserExecutionTriggerInfo `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *ExecutionTriggerInfo       `json:"defaultInstanceForType,omitempty"`
 	TriggerTypeValue          int32                       `json:"triggerTypeValue,omitempty"`
 	TriggerType               string                      `json:"triggerType,omitempty"`
 	TriggeredBy               *TriggeredBy                `json:"triggeredBy,omitempty"`
@@ -19,11 +21,9 @@ type ExecutionTriggerInfo struct {
 	IsRerun                   bool                        `json:"isRerun,omitempty"`
 	RerunInfo                 *RerunInfo                  `json:"rerunInfo,omitempty"`
 	RerunInfoOrBuilder        *RerunInfoOrBuilder         `json:"rerunInfoOrBuilder,omitempty"`
-	SerializedSize            int32                       `json:"serializedSize,omitempty"`
-	ParserForType             *ParserExecutionTriggerInfo `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *ExecutionTriggerInfo       `json:"defaultInstanceForType,omitempty"`
-	AllFields                 map[string]interface{}      `json:"allFields,omitempty"`
+	Initialized               bool                        `json:"initialized,omitempty"`
 	InitializationErrorString string                      `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                 `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}      `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                       `json:"memoizedSerializedSize,omitempty"`
 }

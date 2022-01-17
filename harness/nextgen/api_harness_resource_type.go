@@ -29,10 +29,10 @@ type HarnessResourceTypeApiService service
 /*
 HarnessResourceTypeApiService Gets all resource types available at this scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *HarnessResourceTypeApiGetResourceTypesOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoResourceType
 */
 

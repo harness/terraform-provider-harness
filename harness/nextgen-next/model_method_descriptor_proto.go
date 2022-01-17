@@ -11,22 +11,22 @@ package nextgen
 
 type MethodDescriptorProto struct {
 	UnknownFields             *UnknownFieldSet             `json:"unknownFields,omitempty"`
-	Initialized               bool                         `json:"initialized,omitempty"`
-	Options                   *MethodOptions               `json:"options,omitempty"`
-	InputType                 string                       `json:"inputType,omitempty"`
-	OutputTypeBytes           *ByteString                  `json:"outputTypeBytes,omitempty"`
-	OutputType                string                       `json:"outputType,omitempty"`
 	InputTypeBytes            *ByteString                  `json:"inputTypeBytes,omitempty"`
-	OptionsOrBuilder          *MethodOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
-	NameBytes                 *ByteString                  `json:"nameBytes,omitempty"`
+	OutputTypeBytes           *ByteString                  `json:"outputTypeBytes,omitempty"`
+	InputType                 string                       `json:"inputType,omitempty"`
 	SerializedSize            int32                        `json:"serializedSize,omitempty"`
 	ParserForType             *ParserMethodDescriptorProto `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *MethodDescriptorProto       `json:"defaultInstanceForType,omitempty"`
+	OutputType                string                       `json:"outputType,omitempty"`
+	Options                   *MethodOptions               `json:"options,omitempty"`
+	Initialized               bool                         `json:"initialized,omitempty"`
+	Name                      string                       `json:"name,omitempty"`
 	ClientStreaming           bool                         `json:"clientStreaming,omitempty"`
 	ServerStreaming           bool                         `json:"serverStreaming,omitempty"`
-	Name                      string                       `json:"name,omitempty"`
-	AllFields                 map[string]interface{}       `json:"allFields,omitempty"`
+	NameBytes                 *ByteString                  `json:"nameBytes,omitempty"`
+	OptionsOrBuilder          *MethodOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
 	InitializationErrorString string                       `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                  `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}       `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                        `json:"memoizedSerializedSize,omitempty"`
 }

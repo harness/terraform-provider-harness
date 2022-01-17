@@ -9,13 +9,20 @@
  */
 package nextgen
 
-// This is the view of the Project entity defined in Harness
+// This is the Project Entity details defined in Harness
 type Project struct {
-	OrgIdentifier string            `json:"orgIdentifier,omitempty"`
-	Identifier    string            `json:"identifier,omitempty"`
-	Name          string            `json:"name,omitempty"`
-	Color         string            `json:"color,omitempty"`
-	Modules       []string          `json:"modules,omitempty"`
-	Description   string            `json:"description,omitempty"`
-	Tags          map[string]string `json:"tags,omitempty"`
+	// Organization Identifier for the Entity
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// Project Identifier for the Entity
+	Identifier string `json:"identifier,omitempty"`
+	// Project Name for the entity
+	Name string `json:"name,omitempty"`
+	// Color
+	Color string `json:"color,omitempty"`
+	// List of modules
+	Modules []string `json:"modules,omitempty"`
+	// Description
+	Description string `json:"description,omitempty"`
+	// Tags
+	Tags map[string]string `json:"tags,omitempty"`
 }

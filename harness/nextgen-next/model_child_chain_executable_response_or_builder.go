@@ -10,17 +10,17 @@
 package nextgen
 
 type ChildChainExecutableResponseOrBuilder struct {
-	PassThroughData           *ByteString            `json:"passThroughData,omitempty"`
-	LastLink                  bool                   `json:"lastLink,omitempty"`
-	Suspend                   bool                   `json:"suspend,omitempty"`
 	NextChildId               string                 `json:"nextChildId,omitempty"`
 	NextChildIdBytes          *ByteString            `json:"nextChildIdBytes,omitempty"`
 	PreviousChildId           string                 `json:"previousChildId,omitempty"`
 	PreviousChildIdBytes      *ByteString            `json:"previousChildIdBytes,omitempty"`
+	PassThroughData           *ByteString            `json:"passThroughData,omitempty"`
+	LastLink                  bool                   `json:"lastLink,omitempty"`
+	Suspend                   bool                   `json:"suspend,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

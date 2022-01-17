@@ -15,6 +15,6 @@ type LoginTypeResponse struct {
 	IsOauthEnabled          bool        `json:"isOauthEnabled,omitempty"`
 	ShowCaptcha             bool        `json:"showCaptcha,omitempty"`
 	DefaultExperience       string      `json:"defaultExperience,omitempty"`
-	Ssorequest              *SsoRequest `json:"ssorequest,omitempty"`
 	OauthEnabled            bool        `json:"oauthEnabled,omitempty"`
+	Ssorequest              *SsoRequest `json:"ssorequest,omitempty"`
 }

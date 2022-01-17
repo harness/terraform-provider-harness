@@ -9,27 +9,22 @@
  */
 package nextgen
 
+// This is the view of the UserGroup entity defined in Harness
 type UserGroup struct {
-	Uuid                 string                `json:"uuid"`
-	AppId                string                `json:"appId"`
-	CreatedBy            *EmbeddedUser         `json:"createdBy,omitempty"`
-	CreatedAt            int64                 `json:"createdAt,omitempty"`
-	LastUpdatedBy        *EmbeddedUser         `json:"lastUpdatedBy,omitempty"`
-	LastUpdatedAt        int64                 `json:"lastUpdatedAt"`
-	Name                 string                `json:"name,omitempty"`
-	Description          string                `json:"description,omitempty"`
-	LinkedSsoType        string                `json:"linkedSsoType,omitempty"`
-	LinkedSsoId          string                `json:"linkedSsoId,omitempty"`
-	LinkedSsoDisplayName string                `json:"linkedSsoDisplayName,omitempty"`
-	SsoGroupId           string                `json:"ssoGroupId,omitempty"`
-	SsoGroupName         string                `json:"ssoGroupName,omitempty"`
-	ImportedByScim       bool                  `json:"importedByScim,omitempty"`
-	AccountId            string                `json:"accountId,omitempty"`
-	MemberIds            []string              `json:"memberIds,omitempty"`
-	Members              []User                `json:"members,omitempty"`
-	AppPermissions       []AppPermission       `json:"appPermissions,omitempty"`
-	AccountPermissions   *AccountPermissions   `json:"accountPermissions,omitempty"`
-	NotificationSettings *NotificationSettings `json:"notificationSettings,omitempty"`
-	Default_             bool                  `json:"default,omitempty"`
-	SsoLinked            bool                  `json:"ssoLinked,omitempty"`
+	AccountIdentifier    string                         `json:"accountIdentifier,omitempty"`
+	OrgIdentifier        string                         `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier    string                         `json:"projectIdentifier,omitempty"`
+	Identifier           string                         `json:"identifier"`
+	Name                 string                         `json:"name"`
+	Users                []string                       `json:"users,omitempty"`
+	NotificationConfigs  []NotificationSettingConfigDto `json:"notificationConfigs,omitempty"`
+	IsSsoLinked          bool                           `json:"isSsoLinked,omitempty"`
+	LinkedSsoId          string                         `json:"linkedSsoId,omitempty"`
+	LinkedSsoDisplayName string                         `json:"linkedSsoDisplayName,omitempty"`
+	SsoGroupId           string                         `json:"ssoGroupId,omitempty"`
+	SsoGroupName         string                         `json:"ssoGroupName,omitempty"`
+	ExternallyManaged    bool                           `json:"externallyManaged,omitempty"`
+	Description          string                         `json:"description,omitempty"`
+	Tags                 map[string]string              `json:"tags,omitempty"`
+	SsoLinked            bool                           `json:"ssoLinked,omitempty"`
 }

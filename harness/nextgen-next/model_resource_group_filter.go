@@ -9,12 +9,20 @@
  */
 package nextgen
 
+// Contains information of filters for Resource Group
 type ResourceGroupFilter struct {
-	AccountIdentifier          string                   `json:"accountIdentifier,omitempty"`
-	OrgIdentifier              string                   `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier          string                   `json:"projectIdentifier,omitempty"`
-	SearchTerm                 string                   `json:"searchTerm,omitempty"`
-	IdentifierFilter           []string                 `json:"identifierFilter,omitempty"`
+	// Filter by account identifier
+	AccountIdentifier string `json:"accountIdentifier"`
+	// Filter by organization identifier
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// Filter by project identifier
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	// Filter resource group matching by identifier/name
+	SearchTerm string `json:"searchTerm,omitempty"`
+	// Filter by resource group identifiers
+	IdentifierFilter []string `json:"identifierFilter,omitempty"`
+	// Filter based on whether it has a particular resource
 	ResourceSelectorFilterList []ResourceSelectorFilter `json:"resourceSelectorFilterList,omitempty"`
-	ManagedFilter              string                   `json:"managedFilter,omitempty"`
+	// Filter based on whether the resource group is Harness managed
+	ManagedFilter string `json:"managedFilter,omitempty"`
 }

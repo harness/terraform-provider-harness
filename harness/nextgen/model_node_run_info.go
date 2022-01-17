@@ -11,18 +11,18 @@ package nextgen
 
 type NodeRunInfo struct {
 	UnknownFields             *UnknownFieldSet           `json:"unknownFields,omitempty"`
-	Initialized               bool                       `json:"initialized,omitempty"`
-	WhenConditionBytes        *ByteString                `json:"whenConditionBytes,omitempty"`
-	ExpressionsCount          int32                      `json:"expressionsCount,omitempty"`
-	WhenCondition             string                     `json:"whenCondition,omitempty"`
 	SerializedSize            int32                      `json:"serializedSize,omitempty"`
 	ParserForType             *ParserNodeRunInfo         `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *NodeRunInfo               `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                       `json:"initialized,omitempty"`
+	EvaluatedCondition        bool                       `json:"evaluatedCondition,omitempty"`
+	WhenCondition             string                     `json:"whenCondition,omitempty"`
+	WhenConditionBytes        *ByteString                `json:"whenConditionBytes,omitempty"`
 	ExpressionsList           []ExpressionBlock          `json:"expressionsList,omitempty"`
 	ExpressionsOrBuilderList  []ExpressionBlockOrBuilder `json:"expressionsOrBuilderList,omitempty"`
-	EvaluatedCondition        bool                       `json:"evaluatedCondition,omitempty"`
-	AllFields                 map[string]interface{}     `json:"allFields,omitempty"`
+	ExpressionsCount          int32                      `json:"expressionsCount,omitempty"`
 	InitializationErrorString string                     `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}     `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                      `json:"memoizedSerializedSize,omitempty"`
 }

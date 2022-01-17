@@ -174,7 +174,7 @@ ExecuteApiService Get retry stages for failed pipeline
  * @param optional nil or *ExecuteApiGetRetryStagesOpts - Optional Parameters:
      * @param "PipelineIdentifier" (optional.String) -  Pipeline Identifier
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoRetryInfo
 */
@@ -314,32 +314,32 @@ func (a *ExecuteApiService) GetRetryStages(ctx context.Context, accountIdentifie
 }
 
 /*
-ExecuteApiService
+ExecuteApiService Get list of Stages to select for Stage executions
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
+ * @param accountIdentifier Account Identifier for the entity.
+ * @param orgIdentifier Organization Identifier for the entity.
+ * @param projectIdentifier Project Identifier for the entity.
+ * @param pipelineIdentifier Pipeline Identifier
  * @param optional nil or *ExecuteApiGetStagesExecutionListOpts - Optional Parameters:
-     * @param "PipelineIdentifier" (optional.String) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-
+@return ResponseDtoListStageExecutionResponse
 */
 
 type ExecuteApiGetStagesExecutionListOpts struct {
-	PipelineIdentifier      optional.String
 	Branch                  optional.String
 	RepoIdentifier          optional.String
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *ExecuteApiService) GetStagesExecutionList(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ExecuteApiGetStagesExecutionListOpts) (*http.Response, error) {
+func (a *ExecuteApiService) GetStagesExecutionList(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *ExecuteApiGetStagesExecutionListOpts) (ResponseDtoListStageExecutionResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoListStageExecutionResponse
 	)
 
 	// create path and map variables
@@ -352,9 +352,7 @@ func (a *ExecuteApiService) GetStagesExecutionList(ctx context.Context, accountI
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.PipelineIdentifier.IsSet() {
-		localVarQueryParams.Add("pipelineIdentifier", parameterToString(localVarOptionals.PipelineIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("pipelineIdentifier", parameterToString(pipelineIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
 		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
 	}
@@ -396,18 +394,26 @@ func (a *ExecuteApiService) GetStagesExecutionList(ctx context.Context, accountI
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
 	localVarHttpResponse.Body.Close()
 	if err != nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -420,25 +426,35 @@ func (a *ExecuteApiService) GetStagesExecutionList(ctx context.Context, accountI
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		return localVarHttpResponse, newErr
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoListStageExecutionResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
-	return localVarHttpResponse, nil
+	return localVarReturnValue, localVarHttpResponse, nil
 }
 
 /*
@@ -834,10 +850,10 @@ ExecuteApiService Execute given Stages of a Pipeline
  * @param optional nil or *ExecuteApiPostExecuteStagesOpts - Optional Parameters:
      * @param "Body" (optional.Interface of RunStageRequest) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiPostExecuteStagesOpts struct {
@@ -848,13 +864,13 @@ type ExecuteApiPostExecuteStagesOpts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) PostExecuteStages(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostExecuteStagesOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) PostExecuteStages(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostExecuteStagesOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -967,7 +983,7 @@ func (a *ExecuteApiService) PostExecuteStages(ctx context.Context, accountIdenti
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -993,10 +1009,10 @@ ExecuteApiService Execute a pipeline with input set references list
  * @param identifier Pipeline identifier for the entity. Identifier of the Pipeline to be executed
  * @param optional nil or *ExecuteApiPostPipelineExecuteWithInputSetListOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiPostPipelineExecuteWithInputSetListOpts struct {
@@ -1006,13 +1022,13 @@ type ExecuteApiPostPipelineExecuteWithInputSetListOpts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) PostPipelineExecuteWithInputSetList(ctx context.Context, body MergeInputSetRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetListOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) PostPipelineExecuteWithInputSetList(ctx context.Context, body MergeInputSetRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetListOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -1121,7 +1137,7 @@ func (a *ExecuteApiService) PostPipelineExecuteWithInputSetList(ctx context.Cont
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1147,10 +1163,10 @@ ExecuteApiService Execute a pipeline with inputSet pipeline yaml
  * @param optional nil or *ExecuteApiPostPipelineExecuteWithInputSetYamlOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiPostPipelineExecuteWithInputSetYamlOpts struct {
@@ -1161,13 +1177,13 @@ type ExecuteApiPostPipelineExecuteWithInputSetYamlOpts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYaml(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetYamlOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYaml(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetYamlOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -1280,7 +1296,7 @@ func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYaml(ctx context.Cont
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1306,10 +1322,10 @@ ExecuteApiService Execute a pipeline with inputSet pipeline yaml V2
  * @param optional nil or *ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts struct {
@@ -1320,13 +1336,13 @@ type ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYamlv2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYamlv2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -1439,7 +1455,7 @@ func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYamlv2(ctx context.Co
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1466,10 +1482,10 @@ ExecuteApiService Re-run given Stages of a Pipeline
  * @param optional nil or *ExecuteApiPostReExecuteStagesOpts - Optional Parameters:
      * @param "Body" (optional.Interface of RunStageRequest) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiPostReExecuteStagesOpts struct {
@@ -1480,13 +1496,13 @@ type ExecuteApiPostReExecuteStagesOpts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) PostReExecuteStages(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, originalExecutionId string, localVarOptionals *ExecuteApiPostReExecuteStagesOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) PostReExecuteStages(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, originalExecutionId string, localVarOptionals *ExecuteApiPostReExecuteStagesOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -1600,7 +1616,7 @@ func (a *ExecuteApiService) PostReExecuteStages(ctx context.Context, accountIden
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1753,10 +1769,10 @@ ExecuteApiService Re Execute a pipeline with inputSet pipeline yaml
  * @param optional nil or *ExecuteApiRePostPipelineExecuteWithInputSetYamlOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiRePostPipelineExecuteWithInputSetYamlOpts struct {
@@ -1767,13 +1783,13 @@ type ExecuteApiRePostPipelineExecuteWithInputSetYamlOpts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYaml(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRePostPipelineExecuteWithInputSetYamlOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYaml(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRePostPipelineExecuteWithInputSetYamlOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -1887,7 +1903,7 @@ func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYaml(ctx context.Co
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1914,10 +1930,10 @@ ExecuteApiService Re Execute a pipeline with InputSet Pipeline YAML Version 2
  * @param optional nil or *ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts struct {
@@ -1928,13 +1944,13 @@ type ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts struct {
 	UseFQNIfError           optional.Bool
 }
 
-func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYamlV2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYamlV2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -2048,7 +2064,7 @@ func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYamlV2(ctx context.
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2076,9 +2092,9 @@ ExecuteApiService Rerun a pipeline with given inputSet identifiers
  * @param identifier Pipeline Identifier
  * @param optional nil or *ExecuteApiRerunPipelineWithInputSetIdentifierListOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiRerunPipelineWithInputSetIdentifierListOpts struct {
@@ -2087,13 +2103,13 @@ type ExecuteApiRerunPipelineWithInputSetIdentifierListOpts struct {
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *ExecuteApiService) RerunPipelineWithInputSetIdentifierList(ctx context.Context, body MergeInputSetRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, useFQNIfError bool, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRerunPipelineWithInputSetIdentifierListOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) RerunPipelineWithInputSetIdentifierList(ctx context.Context, body MergeInputSetRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, useFQNIfError bool, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRerunPipelineWithInputSetIdentifierListOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -2201,7 +2217,7 @@ func (a *ExecuteApiService) RerunPipelineWithInputSetIdentifierList(ctx context.
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2355,7 +2371,7 @@ ExecuteApiService Retry a executed pipeline with inputSet pipeline yaml
  * @param optional nil or *ExecuteApiRetryPipelineOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -
      * @param "RunAllStages" (optional.Bool) -  This param provides an option to run only the failed stages when Pipeline fails at parallel group. By default, it will run all the stages in the failed parallel group.
-@return ResponseDtoPlanExecutionResponseDto
+@return ResponseDtoPlanExecutionResponse
 */
 
 type ExecuteApiRetryPipelineOpts struct {
@@ -2363,13 +2379,13 @@ type ExecuteApiRetryPipelineOpts struct {
 	RunAllStages optional.Bool
 }
 
-func (a *ExecuteApiService) RetryPipeline(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, planExecutionId string, retryStages []string, identifier string, localVarOptionals *ExecuteApiRetryPipelineOpts) (ResponseDtoPlanExecutionResponseDto, *http.Response, error) {
+func (a *ExecuteApiService) RetryPipeline(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, planExecutionId string, retryStages []string, identifier string, localVarOptionals *ExecuteApiRetryPipelineOpts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponseDto
+		localVarReturnValue ResponseDtoPlanExecutionResponse
 	)
 
 	// create path and map variables
@@ -2475,7 +2491,7 @@ func (a *ExecuteApiService) RetryPipeline(ctx context.Context, accountIdentifier
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponseDto
+			var v ResponseDtoPlanExecutionResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2597,7 +2613,7 @@ ExecuteApiService Start Preflight Checks for a Pipeline
      * @param "Body" (optional.Interface of string) -  Runtime Input YAML to be sent for Pipeline execution
      * @param "PipelineIdentifier" (optional.String) -  Pipeline Identifier
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoString
 */

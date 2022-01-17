@@ -15,6 +15,7 @@ type GitSyncError struct {
 	RepoUrl                string               `json:"repoUrl,omitempty"`
 	RepoId                 string               `json:"repoId,omitempty"`
 	BranchName             string               `json:"branchName,omitempty"`
+	Scopes                 []Scope              `json:"scopes,omitempty"`
 	ChangeType             string               `json:"changeType,omitempty"`
 	CompleteFilePath       string               `json:"completeFilePath,omitempty"`
 	EntityType             string               `json:"entityType,omitempty"`

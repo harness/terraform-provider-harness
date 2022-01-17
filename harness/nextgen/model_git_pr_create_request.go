@@ -10,12 +10,20 @@
 package nextgen
 
 type GitPrCreateRequest struct {
-	SourceBranch      string `json:"sourceBranch"`
-	TargetBranch      string `json:"targetBranch"`
-	Title             string `json:"title"`
-	YamlGitConfigRef  string `json:"yamlGitConfigRef"`
+	// Branch on which changes are done
+	SourceBranch string `json:"sourceBranch"`
+	// Branch on which changes need to be merged
+	TargetBranch string `json:"targetBranch"`
+	// PR title
+	Title string `json:"title"`
+	// Git Sync Config Id
+	YamlGitConfigRef string `json:"yamlGitConfigRef"`
+	// Account Identifier for the Entity
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
+	// Organization Identifier for the Entity
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// Project Identifier for the Entity
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	UseUserFromToken  bool   `json:"useUserFromToken,omitempty"`
+	// Specifies which token to use. If True, the SCM token will be used, else the Git Connector token will be used
+	UseUserFromToken bool `json:"useUserFromToken,omitempty"`
 }

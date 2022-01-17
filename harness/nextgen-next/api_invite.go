@@ -28,231 +28,6 @@ var (
 type InviteApiService service
 
 /*
-InviteApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param token
-
-*/
-func (a *InviteApiService) Accept(ctx context.Context, token string) (*http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/invites/accept"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("token", parameterToString(token, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		return localVarHttpResponse, newErr
-	}
-
-	return localVarHttpResponse, nil
-}
-
-/*
-InviteApiService Complete the User Invite
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *InviteApiCompleteInviteOpts - Optional Parameters:
-     * @param "Token" (optional.String) -  JWT Tokenn
-@return ResponseDtoBoolean
-*/
-
-type InviteApiCompleteInviteOpts struct {
-	Token optional.String
-}
-
-func (a *InviteApiService) CompleteInvite(ctx context.Context, localVarOptionals *InviteApiCompleteInviteOpts) (ResponseDtoBoolean, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoBoolean
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/invites/complete"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.Token.IsSet() {
-		localVarQueryParams.Add("token", parameterToString(localVarOptionals.Token.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml", "text/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoBoolean
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
 InviteApiService Delete an Invite by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param inviteId Invite Id
@@ -504,13 +279,13 @@ func (a *InviteApiService) GetInvite(ctx context.Context, localVarOptionals *Inv
 /*
 InviteApiService List all the Invites for a Project or Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *InviteApiGetInvitesOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseInvite
 */
 
@@ -652,15 +427,15 @@ func (a *InviteApiService) GetInvites(ctx context.Context, accountIdentifier str
 /*
 InviteApiService List of all the Invites pending users
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *InviteApiGetPendingUsersAggregatedOpts - Optional Parameters:
      * @param "Body" (optional.Interface of AclAggregateFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "SearchTerm" (optional.String) -  Search term
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseInvite
 */
 
@@ -814,10 +589,10 @@ func (a *InviteApiService) GetPendingUsersAggregated(ctx context.Context, accoun
 InviteApiService Send a user Invite to either Project or Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Invite to create
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *InviteApiSendInviteOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoListInviteOperationResponse
 */
 
@@ -950,17 +725,11 @@ func (a *InviteApiService) SendInvite(ctx context.Context, body CreateInvite, ac
 InviteApiService Resend the Invite email
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Updated Invite
+ * @param accountIdentifier Account Identifier for the Entity
  * @param inviteId Invite id
- * @param optional nil or *InviteApiUpdateInviteOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return ResponseDtoOptionalInvite
 */
-
-type InviteApiUpdateInviteOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *InviteApiService) UpdateInvite(ctx context.Context, body Invite, inviteId string, localVarOptionals *InviteApiUpdateInviteOpts) (ResponseDtoOptionalInvite, *http.Response, error) {
+func (a *InviteApiService) UpdateInvite(ctx context.Context, body Invite, accountIdentifier string, inviteId string) (ResponseDtoOptionalInvite, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -977,9 +746,7 @@ func (a *InviteApiService) UpdateInvite(ctx context.Context, body Invite, invite
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "text/yaml"}
 
@@ -1075,107 +842,4 @@ func (a *InviteApiService) UpdateInvite(ctx context.Context, body Invite, invite
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-InviteApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param token
- * @param accountIdentifier
- * @param email
-
-*/
-func (a *InviteApiService) VerifyInviteViaNGAuthUi(ctx context.Context, token string, accountIdentifier string, email string) (*http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/invites/verify"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("token", parameterToString(token, ""))
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("email", parameterToString(email, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		return localVarHttpResponse, newErr
-	}
-
-	return localVarHttpResponse, nil
 }

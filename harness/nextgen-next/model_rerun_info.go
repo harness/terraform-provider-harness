@@ -11,20 +11,20 @@ package nextgen
 
 type RerunInfo struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
-	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
-	SerializedSize            int32                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserRerunInfo       `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *RerunInfo             `json:"defaultInstanceForType,omitempty"`
-	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
-	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
-	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
-	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
 	PrevExecutionIdBytes      *ByteString            `json:"prevExecutionIdBytes,omitempty"`
 	PrevTriggerTypeValue      int32                  `json:"prevTriggerTypeValue,omitempty"`
 	PrevTriggerType           string                 `json:"prevTriggerType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
+	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
+	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
+	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	ParserForType             *ParserRerunInfo       `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *RerunInfo             `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
+	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

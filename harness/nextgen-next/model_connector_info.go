@@ -9,15 +9,21 @@
  */
 package nextgen
 
-// This is the view of the ConnectorInfo entity defined in Harness
-
+// This has the Connector details defined in Harness
 type ConnectorInfo struct {
-	Name              string            `json:"name"`
-	Identifier        string            `json:"identifier"`
-	Description       string            `json:"description,omitempty"`
-	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
-	Tags              map[string]string `json:"tags,omitempty"`
-	Type_             string            `json:"type"`
-	Spec              *ConnectorConfig  `json:"spec"`
+	// Name of the Connector.
+	Name string `json:"name"`
+	// Identifier of the Connector.
+	Identifier string `json:"identifier"`
+	// Description of the entity
+	Description string `json:"description,omitempty"`
+	// Organization Identifier for the Entity
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// Project Identifier for the Entity
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	// Tags
+	Tags map[string]string `json:"tags,omitempty"`
+	// Type of the Connector.
+	Type_ string           `json:"type"`
+	Spec  *ConnectorConfig `json:"spec"`
 }

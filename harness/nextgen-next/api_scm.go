@@ -149,11 +149,11 @@ func (a *ScmApiService) CreatePR(ctx context.Context, body GitPrCreateRequest) (
 ScmApiService Gets Git File Content
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param yamlGitConfigIdentifier Git Sync Config Id
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param filePath File Path
  * @param optional nil or *ScmApiGetFileContentOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
      * @param "CommitId" (optional.String) -  Commit Id
 @return ResponseDtoGitFileContent
@@ -297,11 +297,11 @@ ScmApiService Lists Branches of given Repo by referenced Connector Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ScmApiGetListOfBranchesByConnectorOpts - Optional Parameters:
      * @param "ConnectorIdentifierRef" (optional.String) -  Connector Identifier Reference
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "RepoURL" (optional.String) -  Repo Url
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
      * @param "SearchTerm" (optional.String) -  Search Term
 @return ResponseDtoListString
@@ -454,14 +454,14 @@ func (a *ScmApiService) GetListOfBranchesByConnector(ctx context.Context, localV
 }
 
 /*
-ScmApiService Lists Branches by given Git Sync Config Identifier
+ScmApiService Lists Branches by given Git Sync Config Id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *ScmApiGetListOfBranchesByGitConfigOpts - Optional Parameters:
      * @param "YamlGitConfigIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
      * @param "SearchTerm" (optional.String) -  Search Term
 @return ResponseDtoListString

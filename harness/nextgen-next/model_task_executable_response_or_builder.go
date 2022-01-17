@@ -10,20 +10,20 @@
 package nextgen
 
 type TaskExecutableResponseOrBuilder struct {
-	TaskId                    string                 `json:"taskId,omitempty"`
-	TaskName                  string                 `json:"taskName,omitempty"`
 	TaskIdBytes               *ByteString            `json:"taskIdBytes,omitempty"`
+	TaskNameBytes             *ByteString            `json:"taskNameBytes,omitempty"`
+	TaskName                  string                 `json:"taskName,omitempty"`
+	TaskCategory              string                 `json:"taskCategory,omitempty"`
+	TaskCategoryValue         int32                  `json:"taskCategoryValue,omitempty"`
 	LogKeysList               []string               `json:"logKeysList,omitempty"`
 	LogKeysCount              int32                  `json:"logKeysCount,omitempty"`
 	UnitsList                 []string               `json:"unitsList,omitempty"`
 	UnitsCount                int32                  `json:"unitsCount,omitempty"`
-	TaskNameBytes             *ByteString            `json:"taskNameBytes,omitempty"`
-	TaskCategoryValue         int32                  `json:"taskCategoryValue,omitempty"`
-	TaskCategory              string                 `json:"taskCategory,omitempty"`
+	TaskId                    string                 `json:"taskId,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

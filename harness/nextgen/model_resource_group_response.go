@@ -10,8 +10,8 @@
 package nextgen
 
 type ResourceGroupResponse struct {
-	ResourceGroup  *ResourceGroupDto `json:"resourceGroup"`
-	CreatedAt      int64             `json:"createdAt,omitempty"`
-	LastModifiedAt int64             `json:"lastModifiedAt,omitempty"`
-	HarnessManaged bool              `json:"harnessManaged,omitempty"`
+	ResourceGroup  *ResourcegroupResourceGroup `json:"resourceGroup"`
+	CreatedAt      int64                       `json:"createdAt,omitempty"`
+	LastModifiedAt int64                       `json:"lastModifiedAt,omitempty"`
+	HarnessManaged bool                        `json:"harnessManaged,omitempty"`
 }

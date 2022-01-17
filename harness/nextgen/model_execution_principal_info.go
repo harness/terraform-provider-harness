@@ -11,17 +11,17 @@ package nextgen
 
 type ExecutionPrincipalInfo struct {
 	UnknownFields             *UnknownFieldSet              `json:"unknownFields,omitempty"`
-	Initialized               bool                          `json:"initialized,omitempty"`
-	PrincipalBytes            *ByteString                   `json:"principalBytes,omitempty"`
-	PrincipalType             string                        `json:"principalType,omitempty"`
-	ShouldValidateRbac        bool                          `json:"shouldValidateRbac,omitempty"`
-	PrincipalTypeValue        int32                         `json:"principalTypeValue,omitempty"`
 	SerializedSize            int32                         `json:"serializedSize,omitempty"`
 	ParserForType             *ParserExecutionPrincipalInfo `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *ExecutionPrincipalInfo       `json:"defaultInstanceForType,omitempty"`
+	Initialized               bool                          `json:"initialized,omitempty"`
 	Principal                 string                        `json:"principal,omitempty"`
-	AllFields                 map[string]interface{}        `json:"allFields,omitempty"`
+	PrincipalBytes            *ByteString                   `json:"principalBytes,omitempty"`
+	PrincipalTypeValue        int32                         `json:"principalTypeValue,omitempty"`
+	PrincipalType             string                        `json:"principalType,omitempty"`
+	ShouldValidateRbac        bool                          `json:"shouldValidateRbac,omitempty"`
 	InitializationErrorString string                        `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                   `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}        `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                         `json:"memoizedSerializedSize,omitempty"`
 }

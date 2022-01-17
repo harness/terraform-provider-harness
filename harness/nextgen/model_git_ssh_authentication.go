@@ -11,6 +11,6 @@ package nextgen
 
 // This contains details of the Generic Git authentication information used via SSH connections
 type GitSshAuthentication struct {
-	Type_     string `json:"-"`
+	Type_     string `json:"type"`
 	SshKeyRef string `json:"sshKeyRef"`
 }

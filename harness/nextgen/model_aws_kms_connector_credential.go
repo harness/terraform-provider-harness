@@ -9,8 +9,14 @@
  */
 package nextgen
 
-// This contains the AWS KMS SM credential type and the config
+// Returns config details for the AWS KMS Secret Manager Connector.
+
+import "encoding/json"
+
 type AwsKmsConnectorCredential struct {
-	Type_ string                `json:"type"`
-	Spec  *AwsKmsCredentialSpec `json:"spec,omitempty"`
+	Type_         AwsKmsAuthType                    `json:"type"`
+	AssumeIamRole *AwsKmsCredentialSpecAssumeIam    `json:"-"`
+	AssumeStsRole *AwsKmsCredentialSpecAssumeSts    `json:"-"`
+	ManualConfig  *AwsKmsCredentialSpecManualConfig `json:"-"`
+	Spec          json.RawMessage                   `json:"spec,omitempty"`
 }

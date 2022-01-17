@@ -31,10 +31,10 @@ type ConnectorsApiService service
 ConnectorsApiService Creates a Connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Connector to create
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ConnectorsApiCreateConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  File Path
@@ -44,17 +44,16 @@ ConnectorsApiService Creates a Connector
 */
 
 type ConnectorsApiCreateConnectorOpts struct {
-	AccountIdentifier optional.String
-	Branch            optional.String
-	RepoIdentifier    optional.String
-	RootFolder        optional.String
-	FilePath          optional.String
-	CommitMsg         optional.String
-	IsNewBranch       optional.Bool
-	BaseBranch        optional.String
+	Branch         optional.String
+	RepoIdentifier optional.String
+	RootFolder     optional.String
+	FilePath       optional.String
+	CommitMsg      optional.String
+	IsNewBranch    optional.Bool
+	BaseBranch     optional.String
 }
 
-func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connector, localVarOptionals *ConnectorsApiCreateConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
+func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connector, accountIdentifier string, localVarOptionals *ConnectorsApiCreateConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -70,9 +69,7 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connect
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
 		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
 	}
@@ -192,15 +189,15 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connect
 }
 
 /*
-ConnectorsApiService Deletes Connector by identifier
+ConnectorsApiService Deletes Connector by ID
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param identifier Connector Identifier
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param identifier Connector ID
  * @param optional nil or *ConnectorsApiDeleteConnectorOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  Commit Message
@@ -611,21 +608,20 @@ func (a *ConnectorsApiService) GetCEAwsTemplate(ctx context.Context, localVarOpt
 }
 
 /*
-ConnectorsApiService get the Connector by accountIdentifier and connectorIdentifier
+ConnectorsApiService Get the Connector by accountIdentifier and connectorIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param identifier Connector Identifier
  * @param optional nil or *ConnectorsApiGetConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoConnectorResponse
 */
 
 type ConnectorsApiGetConnectorOpts struct {
-	AccountIdentifier       optional.String
 	OrgIdentifier           optional.String
 	ProjectIdentifier       optional.String
 	Branch                  optional.String
@@ -633,7 +629,7 @@ type ConnectorsApiGetConnectorOpts struct {
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *ConnectorsApiService) GetConnector(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
+func (a *ConnectorsApiService) GetConnector(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ConnectorsApiGetConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -650,9 +646,7 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, identifier stri
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -764,24 +758,18 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, identifier stri
 }
 
 /*
-ConnectorsApiService gets the connector catalogue by accountIdentifier
+ConnectorsApiService Gets the Connector catalogue by Account Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *ConnectorsApiGetConnectorCatalogueOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-@return ResponseDtoConnectorCatalogueRespone
+ * @param accountIdentifier Account Identifier for the Entity
+@return ResponseDtoConnectorCatalogueResponse
 */
-
-type ConnectorsApiGetConnectorCatalogueOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localVarOptionals *ConnectorsApiGetConnectorCatalogueOpts) (ResponseDtoConnectorCatalogueRespone, *http.Response, error) {
+func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, accountIdentifier string) (ResponseDtoConnectorCatalogueResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoConnectorCatalogueRespone
+		localVarReturnValue ResponseDtoConnectorCatalogueResponse
 	)
 
 	// create path and map variables
@@ -791,9 +779,7 @@ func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localV
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -874,7 +860,7 @@ func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localV
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoConnectorCatalogueRespone
+			var v ResponseDtoConnectorCatalogueResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -890,20 +876,20 @@ func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, localV
 }
 
 /*
-ConnectorsApiService Get the list of Connectors satisfying the criteria (if any) in the request
+ConnectorsApiService Fetches the list of Connectors corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ConnectorsApiGetConnectorListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Page number of navigation. If left empty, default value of 0 is assumed
-     * @param "PageSize" (optional.Int32) -  Number of entries per page. If left empty, default value of 100 is assumed
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "SearchTerm" (optional.String) -  Filter Connectors by searching for this word in Name, Id, and Tag
+     * @param "PageIndex" (optional.Int32) -  Page number of navigation. The default value is 0
+     * @param "PageSize" (optional.Int32) -  Number of entries per page. The default value is 100
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "SearchTerm" (optional.String) -  This would be used to filter Connectors. Any Connector having the specified string in its Name, ID and Tag would be filtered.
      * @param "Type_" (optional.String) -  Filter Connectors by type
      * @param "Category" (optional.String) -  Filter Connectors by category
      * @param "SourceCategory" (optional.String) -  Filter Connectors by Source Category. Available Source Categories are CLOUD_PROVIDER, SECRET_MANAGER, CLOUD_COST, ARTIFACTORY, CODE_REPO,  MONITORING and TICKETING
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPageResponseConnectorResponse
 */
@@ -911,7 +897,6 @@ ConnectorsApiService Get the list of Connectors satisfying the criteria (if any)
 type ConnectorsApiGetConnectorListOpts struct {
 	PageIndex               optional.Int32
 	PageSize                optional.Int32
-	AccountIdentifier       optional.String
 	OrgIdentifier           optional.String
 	ProjectIdentifier       optional.String
 	SearchTerm              optional.String
@@ -923,7 +908,7 @@ type ConnectorsApiGetConnectorListOpts struct {
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, localVarOptionals *ConnectorsApiGetConnectorListOpts) (ResponseDtoPageResponseConnectorResponse, *http.Response, error) {
+func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, accountIdentifier string, localVarOptionals *ConnectorsApiGetConnectorListOpts) (ResponseDtoPageResponseConnectorResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -945,9 +930,7 @@ func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, localVarOpt
 	if localVarOptionals != nil && localVarOptionals.PageSize.IsSet() {
 		localVarQueryParams.Add("pageSize", parameterToString(localVarOptionals.PageSize.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -1071,20 +1054,20 @@ func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, localVarOpt
 }
 
 /*
-ConnectorsApiService Get the list of Connectors satisfying the criteria (if any) in the request
+ConnectorsApiService Fetches the list of Connectors corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the filters applied
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ConnectorsApiGetConnectorListV2Opts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Page number of navigation. If left empty, default value of 0 is assumed
-     * @param "PageSize" (optional.Int32) -  Number of entries per page. If left empty, default value of 100 is assumed
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "SearchTerm" (optional.String) -  Filter Connectors based on this word in Connectors name, id and tag
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "PageIndex" (optional.Int32) -  Page number of navigation. The default value is 0
+     * @param "PageSize" (optional.Int32) -  Number of entries per page. The default value is 100
+     * @param "SearchTerm" (optional.String) -  This would be used to filter Connectors. Any Connector having the specified string in its Name, ID and Tag would be filtered.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "FilterIdentifier" (optional.String) -
      * @param "IncludeAllConnectorsAvailableAtScope" (optional.Bool) -  Specify whether or not to include all the Connectors accessible at the scope. For eg if set as true, at the Project scope we will get org and account Connector also in the response
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "GetDistinctFromBranches" (optional.Bool) -  This when set to true along with GitSync enabled for the Connector, you can to get other Connectors too which are not from same repo - branch but different repo&#x27;s default branch
 @return ResponseDtoPageResponseConnectorResponse
@@ -1093,7 +1076,6 @@ ConnectorsApiService Get the list of Connectors satisfying the criteria (if any)
 type ConnectorsApiGetConnectorListV2Opts struct {
 	PageIndex                            optional.Int32
 	PageSize                             optional.Int32
-	AccountIdentifier                    optional.String
 	SearchTerm                           optional.String
 	OrgIdentifier                        optional.String
 	ProjectIdentifier                    optional.String
@@ -1105,7 +1087,7 @@ type ConnectorsApiGetConnectorListV2Opts struct {
 	GetDistinctFromBranches              optional.Bool
 }
 
-func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body ConnectorFilterProperties, localVarOptionals *ConnectorsApiGetConnectorListV2Opts) (ResponseDtoPageResponseConnectorResponse, *http.Response, error) {
+func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body ConnectorFilterProperties, accountIdentifier string, localVarOptionals *ConnectorsApiGetConnectorListV2Opts) (ResponseDtoPageResponseConnectorResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -1127,9 +1109,7 @@ func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body Conn
 	if localVarOptionals != nil && localVarOptionals.PageSize.IsSet() {
 		localVarQueryParams.Add("pageSize", parameterToString(localVarOptionals.PageSize.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
 		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
 	}
@@ -1255,20 +1235,19 @@ func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body Conn
 }
 
 /*
-ConnectorsApiService gets the connector&#x27;s statistics by accountIdentifier, projectIdentifier and orgIdentifier
+ConnectorsApiService Gets the connector&#x27;s statistics by Account Identifier, Project Identifier and Organization Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ConnectorsApiGetConnectorStatisticsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoConnectorStatistics
 */
 
 type ConnectorsApiGetConnectorStatisticsOpts struct {
-	AccountIdentifier       optional.String
 	OrgIdentifier           optional.String
 	ProjectIdentifier       optional.String
 	Branch                  optional.String
@@ -1276,7 +1255,7 @@ type ConnectorsApiGetConnectorStatisticsOpts struct {
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, localVarOptionals *ConnectorsApiGetConnectorStatisticsOpts) (ResponseDtoConnectorStatistics, *http.Response, error) {
+func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, accountIdentifier string, localVarOptionals *ConnectorsApiGetConnectorStatisticsOpts) (ResponseDtoConnectorStatistics, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -1292,9 +1271,7 @@ func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, local
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -1406,140 +1383,20 @@ func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, local
 }
 
 /*
-ConnectorsApiService
+ConnectorsApiService Tests the connection of the Connector by ID
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Connector Identifier
- * @param optional nil or *ConnectorsApiGetConnectorValidationParamsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-
-*/
-
-type ConnectorsApiGetConnectorValidationParamsOpts struct {
-	AccountIdentifier optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *ConnectorsApiService) GetConnectorValidationParams(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetConnectorValidationParamsOpts) (*http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/connectors/{identifier}/validation-params"
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		return localVarHttpResponse, newErr
-	}
-
-	return localVarHttpResponse, nil
-}
-
-/*
-ConnectorsApiService Tests the connection of the Connector by Identifier
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Connector Identifier
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param identifier Connector ID
  * @param optional nil or *ConnectorsApiGetTestConnectionResultOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoConnectorValidationResult
 */
 
 type ConnectorsApiGetTestConnectionResultOpts struct {
-	AccountIdentifier       optional.String
 	OrgIdentifier           optional.String
 	ProjectIdentifier       optional.String
 	Branch                  optional.String
@@ -1547,7 +1404,7 @@ type ConnectorsApiGetTestConnectionResultOpts struct {
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetTestConnectionResultOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
+func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ConnectorsApiGetTestConnectionResultOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -1564,9 +1421,7 @@ func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, iden
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -1678,163 +1533,24 @@ func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, iden
 }
 
 /*
-ConnectorsApiService Tests the connection of the connector by Identifier
+ConnectorsApiService Tests the Git Repo connection
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param optional nil or *ConnectorsApiGetTestConnectionResultInternalOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-@return ResponseDtoConnectorValidationResult
-*/
-
-type ConnectorsApiGetTestConnectionResultInternalOpts struct {
-	AccountIdentifier optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *ConnectorsApiService) GetTestConnectionResultInternal(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetTestConnectionResultInternalOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoConnectorValidationResult
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/connectors/testConnectionInternal/{identifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml", "text/yaml", "text/html"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoConnectorValidationResult
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-ConnectorsApiService Tests the created Connector&#x27;s connection
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Connector Identifier
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param identifier Connector ID
  * @param optional nil or *ConnectorsApiGetTestGitRepoConnectionResultOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "RepoURL" (optional.String) -  URL of the repository, specify only in the case of Account Type Git Connector
 @return ResponseDtoConnectorValidationResult
 */
 
 type ConnectorsApiGetTestGitRepoConnectionResultOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	RepoURL           optional.String
 }
 
-func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Context, identifier string, localVarOptionals *ConnectorsApiGetTestGitRepoConnectionResultOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
+func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ConnectorsApiGetTestGitRepoConnectionResultOpts) (ResponseDtoConnectorValidationResult, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -1851,9 +1567,7 @@ func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Contex
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -1962,16 +1676,10 @@ func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Contex
 ConnectorsApiService Get the list of connectors by FQN satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body List of ConnectorsFQN as strings
- * @param optional nil or *ConnectorsApiListConnectorByFQNOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoListConnectorResponse
 */
-
-type ConnectorsApiListConnectorByFQNOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []string, localVarOptionals *ConnectorsApiListConnectorByFQNOpts) (ResponseDtoListConnectorResponse, *http.Response, error) {
+func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []string, accountIdentifier string) (ResponseDtoListConnectorResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -1987,9 +1695,7 @@ func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []st
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "text/yaml", "text/html", "text/plain"}
 
@@ -2091,10 +1797,10 @@ func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []st
 ConnectorsApiService Updates the Connector
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the updated Connector. Please provide values for all fields, not just the fields you are updating
- * @param optional nil or *ConnectorsApiPutConnectorOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param optional nil or *ConnectorsApiUpdateConnectorOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  Default Folder Path
      * @param "CommitMsg" (optional.String) -  Commit Message
@@ -2103,18 +1809,17 @@ ConnectorsApiService Updates the Connector
 @return ResponseDtoConnectorResponse
 */
 
-type ConnectorsApiPutConnectorOpts struct {
-	AccountIdentifier optional.String
-	Branch            optional.String
-	RepoIdentifier    optional.String
-	RootFolder        optional.String
-	FilePath          optional.String
-	CommitMsg         optional.String
-	LastObjectId      optional.String
-	BaseBranch        optional.String
+type ConnectorsApiUpdateConnectorOpts struct {
+	Branch         optional.String
+	RepoIdentifier optional.String
+	RootFolder     optional.String
+	FilePath       optional.String
+	CommitMsg      optional.String
+	LastObjectId   optional.String
+	BaseBranch     optional.String
 }
 
-func (a *ConnectorsApiService) PutConnector(ctx context.Context, body Connector, localVarOptionals *ConnectorsApiPutConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
+func (a *ConnectorsApiService) UpdateConnector(ctx context.Context, body Connector, accountIdentifier string, localVarOptionals *ConnectorsApiUpdateConnectorOpts) (ResponseDtoConnectorResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -2130,9 +1835,7 @@ func (a *ConnectorsApiService) PutConnector(ctx context.Context, body Connector,
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
 		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
 	}
@@ -2252,24 +1955,23 @@ func (a *ConnectorsApiService) PutConnector(ctx context.Context, body Connector,
 }
 
 /*
-ConnectorsApiService validate the Connector by accountIdentifier and connectorIdentifier
+ConnectorsApiService Validate the Connector by Account Identifier and Connector Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *ConnectorsApiValidateTheIdentifierIsUniqueOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "Identifier" (optional.String) -  Connector Identifier
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "Identifier" (optional.String) -  Connector ID
 @return ResponseDtoBoolean
 */
 
 type ConnectorsApiValidateTheIdentifierIsUniqueOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	Identifier        optional.String
 }
 
-func (a *ConnectorsApiService) ValidateTheIdentifierIsUnique(ctx context.Context, localVarOptionals *ConnectorsApiValidateTheIdentifierIsUniqueOpts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *ConnectorsApiService) ValidateTheIdentifierIsUnique(ctx context.Context, accountIdentifier string, localVarOptionals *ConnectorsApiValidateTheIdentifierIsUniqueOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -2285,9 +1987,7 @@ func (a *ConnectorsApiService) ValidateTheIdentifierIsUnique(ctx context.Context
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}

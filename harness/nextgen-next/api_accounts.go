@@ -16,8 +16,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -30,7 +28,7 @@ type AccountsApiService service
 /*
 AccountsApiService Gets an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account id to get an account.
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoAccount
 */
 func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {
@@ -148,17 +146,11 @@ func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier
 /*
 AccountsApiService Update Default Experience
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account id to update the default experience.
- * @param optional nil or *AccountsApiUpdateAccountDefaultExperienceNGOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of Account) -
+ * @param body This is details of the Account. DefaultExperience is mandatory
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoAccount
 */
-
-type AccountsApiUpdateAccountDefaultExperienceNGOpts struct {
-	Body optional.Interface
-}
-
-func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Context, accountIdentifier string, localVarOptionals *AccountsApiUpdateAccountDefaultExperienceNGOpts) (ResponseDtoAccount, *http.Response, error) {
+func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Context, body Account, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -193,11 +185,7 @@ func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Contex
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -279,17 +267,11 @@ func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Contex
 /*
 AccountsApiService Update Account Name
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account id to update an account name.
- * @param optional nil or *AccountsApiUpdateAccountNameNGOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of Account) -
+ * @param body This is details of the Account. Name is mandatory.
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoAccount
 */
-
-type AccountsApiUpdateAccountNameNGOpts struct {
-	Body optional.Interface
-}
-
-func (a *AccountsApiService) UpdateAccountNameNG(ctx context.Context, accountIdentifier string, localVarOptionals *AccountsApiUpdateAccountNameNGOpts) (ResponseDtoAccount, *http.Response, error) {
+func (a *AccountsApiService) UpdateAccountNameNG(ctx context.Context, body Account, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -324,11 +306,7 @@ func (a *AccountsApiService) UpdateAccountNameNG(ctx context.Context, accountIde
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {

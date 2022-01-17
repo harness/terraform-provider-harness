@@ -11,7 +11,6 @@ package nextgen
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -28,18 +27,12 @@ var (
 type AuthenticationSettingsApiService service
 
 /*
-AuthenticationSettingsApiService Deletes Saml meta data by accountIdentifier
+AuthenticationSettingsApiService Deletes SAML meta data by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiDeleteSamlMetaDataOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return RestResponseSsoConfig
 */
-
-type AuthenticationSettingsApiDeleteSamlMetaDataOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) DeleteSamlMetaData(ctx context.Context, localVarOptionals *AuthenticationSettingsApiDeleteSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) DeleteSamlMetaData(ctx context.Context, accountIdentifier string) (RestResponseSsoConfig, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -55,9 +48,7 @@ func (a *AuthenticationSettingsApiService) DeleteSamlMetaData(ctx context.Contex
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -156,16 +147,10 @@ func (a *AuthenticationSettingsApiService) DeleteSamlMetaData(ctx context.Contex
 /*
 AuthenticationSettingsApiService Get the authentication settings by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiGetAuthenticationSettingsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return RestResponseAuthenticationSettingsResponse
 */
-
-type AuthenticationSettingsApiGetAuthenticationSettingsOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) GetAuthenticationSettings(ctx context.Context, localVarOptionals *AuthenticationSettingsApiGetAuthenticationSettingsOpts) (RestResponseAuthenticationSettingsResponse, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) GetAuthenticationSettings(ctx context.Context, accountIdentifier string) (RestResponseAuthenticationSettingsResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -181,9 +166,7 @@ func (a *AuthenticationSettingsApiService) GetAuthenticationSettings(ctx context
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -282,16 +265,10 @@ func (a *AuthenticationSettingsApiService) GetAuthenticationSettings(ctx context
 /*
 AuthenticationSettingsApiService Get the password strength settings by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiGetPasswordStrengthSettingsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return RestResponsePasswordStrengthPolicy
 */
-
-type AuthenticationSettingsApiGetPasswordStrengthSettingsOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) GetPasswordStrengthSettings(ctx context.Context, localVarOptionals *AuthenticationSettingsApiGetPasswordStrengthSettingsOpts) (RestResponsePasswordStrengthPolicy, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) GetPasswordStrengthSettings(ctx context.Context, accountIdentifier string) (RestResponsePasswordStrengthPolicy, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -307,9 +284,7 @@ func (a *AuthenticationSettingsApiService) GetPasswordStrengthSettings(ctx conte
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -406,18 +381,12 @@ func (a *AuthenticationSettingsApiService) GetPasswordStrengthSettings(ctx conte
 }
 
 /*
-AuthenticationSettingsApiService Get the Saml login test by accountId
+AuthenticationSettingsApiService Get the SAML login test by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiGetSamlLoginTestOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
+ * @param accountId Account Identifier for the Entity
 @return RestResponseLoginTypeResponse
 */
-
-type AuthenticationSettingsApiGetSamlLoginTestOpts struct {
-	AccountId optional.String
-}
-
-func (a *AuthenticationSettingsApiService) GetSamlLoginTest(ctx context.Context, localVarOptionals *AuthenticationSettingsApiGetSamlLoginTestOpts) (RestResponseLoginTypeResponse, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) GetSamlLoginTest(ctx context.Context, accountId string) (RestResponseLoginTypeResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -433,9 +402,7 @@ func (a *AuthenticationSettingsApiService) GetSamlLoginTest(ctx context.Context,
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
+	localVarQueryParams.Add("accountId", parameterToString(accountId, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -532,149 +499,12 @@ func (a *AuthenticationSettingsApiService) GetSamlLoginTest(ctx context.Context,
 }
 
 /*
-AuthenticationSettingsApiService Updates the login settings
+AuthenticationSettingsApiService Deletes OAuth mechanism by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body This is the updated Login Settings. Please provide values for all fields, not just the fields you are updating
- * @param loginSettingsId Login Settings Identifier
- * @param optional nil or *AuthenticationSettingsApiPutLoginSettingsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-@return RestResponseLoginSettings
-*/
-
-type AuthenticationSettingsApiPutLoginSettingsOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) PutLoginSettings(ctx context.Context, body LoginSettings, loginSettingsId string, localVarOptionals *AuthenticationSettingsApiPutLoginSettingsOpts) (RestResponseLoginSettings, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue RestResponseLoginSettings
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/authentication-settings/login-settings/{loginSettingsId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"loginSettingsId"+"}", fmt.Sprintf("%v", loginSettingsId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v RestResponseLoginSettings
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-AuthenticationSettingsApiService Deletes Oauth mechanism by accountIdentifier
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiRemoveOauthMechanismOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return RestResponseBoolean
 */
-
-type AuthenticationSettingsApiRemoveOauthMechanismOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) RemoveOauthMechanism(ctx context.Context, localVarOptionals *AuthenticationSettingsApiRemoveOauthMechanismOpts) (RestResponseBoolean, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) RemoveOauthMechanism(ctx context.Context, accountIdentifier string) (RestResponseBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -690,9 +520,7 @@ func (a *AuthenticationSettingsApiService) RemoveOauthMechanism(ctx context.Cont
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -789,20 +617,13 @@ func (a *AuthenticationSettingsApiService) RemoveOauthMechanism(ctx context.Cont
 }
 
 /*
-AuthenticationSettingsApiService set two factor auth at account lever by accountIdentifier
+AuthenticationSettingsApiService Set two factor auth at account lever by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiSetTwoFactorAuthAtAccountLevelOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of TwoFactorAdminOverrideSettings) -
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param body Boolean that specify whether or not to override two factor enabled setting
+ * @param accountIdentifier Account Identifier for the Entity
 @return RestResponseBoolean
 */
-
-type AuthenticationSettingsApiSetTwoFactorAuthAtAccountLevelOpts struct {
-	Body              optional.Interface
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx context.Context, localVarOptionals *AuthenticationSettingsApiSetTwoFactorAuthAtAccountLevelOpts) (RestResponseBoolean, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx context.Context, body TwoFactorAdminOverrideSettings, accountIdentifier string) (RestResponseBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -818,9 +639,7 @@ func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx co
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"*/*"}
 
@@ -839,11 +658,7 @@ func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx co
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -925,18 +740,17 @@ func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx co
 /*
 AuthenticationSettingsApiService Updates the Auth mechanism by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *AuthenticationSettingsApiUpdateAuthMechanismOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
      * @param "AuthenticationMechanism" (optional.String) -  Type of Authentication Mechanism SSO or NON_SSO
 @return RestResponseBoolean
 */
 
 type AuthenticationSettingsApiUpdateAuthMechanismOpts struct {
-	AccountIdentifier       optional.String
 	AuthenticationMechanism optional.String
 }
 
-func (a *AuthenticationSettingsApiService) UpdateAuthMechanism(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUpdateAuthMechanismOpts) (RestResponseBoolean, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) UpdateAuthMechanism(ctx context.Context, accountIdentifier string, localVarOptionals *AuthenticationSettingsApiUpdateAuthMechanismOpts) (RestResponseBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -952,9 +766,7 @@ func (a *AuthenticationSettingsApiService) UpdateAuthMechanism(ctx context.Conte
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.AuthenticationMechanism.IsSet() {
 		localVarQueryParams.Add("authenticationMechanism", parameterToString(localVarOptionals.AuthenticationMechanism.Value(), ""))
 	}
@@ -1056,18 +868,11 @@ func (a *AuthenticationSettingsApiService) UpdateAuthMechanism(ctx context.Conte
 /*
 AuthenticationSettingsApiService Updates the Oauth providers by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *AuthenticationSettingsApiUpdateOauthProvidersOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of OAuthSettings) -
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param body This is the updated OAuthSettings. Please provide values for all fields, not just the fields you are updating
+ * @param accountIdentifier Account Identifier for the Entity
 @return RestResponseBoolean
 */
-
-type AuthenticationSettingsApiUpdateOauthProvidersOpts struct {
-	Body              optional.Interface
-	AccountIdentifier optional.String
-}
-
-func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUpdateOauthProvidersOpts) (RestResponseBoolean, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Context, body OAuthSettings, accountIdentifier string) (RestResponseBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -1083,9 +888,7 @@ func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Cont
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"*/*"}
 
@@ -1104,11 +907,7 @@ func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Cont
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -1188,30 +987,31 @@ func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Cont
 }
 
 /*
-AuthenticationSettingsApiService Updates the saml metadata by accountId
+AuthenticationSettingsApiService Updates the SAML metadata by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountId Account Identifier for the Entity
  * @param optional nil or *AuthenticationSettingsApiUpdateSamlMetaDataOpts - Optional Parameters:
-     * @param "File" (optional.Interface of FormDataContentDisposition) -
+     * @param "Inputfile" (optional.Interface of interface{}) -
+     * @param "FileMetadata" (optional.Interface of FormDataContentDisposition) -
      * @param "DisplayName" (optional.String) -
      * @param "GroupMembershipAttr" (optional.String) -
      * @param "AuthorizationEnabled" (optional.Bool) -
      * @param "LogoutUrl" (optional.String) -
      * @param "EntityIdentifier" (optional.String) -
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
 @return RestResponseSsoConfig
 */
 
 type AuthenticationSettingsApiUpdateSamlMetaDataOpts struct {
-	File                 optional.Interface
+	Inputfile            optional.Interface
+	FileMetadata         optional.Interface
 	DisplayName          optional.String
 	GroupMembershipAttr  optional.String
 	AuthorizationEnabled optional.Bool
 	LogoutUrl            optional.String
 	EntityIdentifier     optional.String
-	AccountId            optional.String
 }
 
-func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUpdateSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Context, accountId string, localVarOptionals *AuthenticationSettingsApiUpdateSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -1227,9 +1027,7 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
+	localVarQueryParams.Add("accountId", parameterToString(accountId, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"multipart/form-data"}
 
@@ -1247,8 +1045,11 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
-		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.Inputfile.IsSet() {
+		localVarFormParams.Add("Inputfile", parameterToString(localVarOptionals.Inputfile.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FileMetadata.IsSet() {
+		localVarFormParams.Add("fileMetadata", parameterToString(localVarOptionals.FileMetadata.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.DisplayName.IsSet() {
 		localVarFormParams.Add("displayName", parameterToString(localVarOptionals.DisplayName.Value(), ""))
@@ -1346,18 +1147,17 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 /*
 AuthenticationSettingsApiService Updates the Whitelisted domains by accountIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *AuthenticationSettingsApiUpdateWhitelistedDomainsOpts - Optional Parameters:
      * @param "Body" (optional.Interface of []string) -  Set of whitelisted domains and IPs for the account
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
 @return RestResponseBoolean
 */
 
 type AuthenticationSettingsApiUpdateWhitelistedDomainsOpts struct {
-	Body              optional.Interface
-	AccountIdentifier optional.String
+	Body optional.Interface
 }
 
-func (a *AuthenticationSettingsApiService) UpdateWhitelistedDomains(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUpdateWhitelistedDomainsOpts) (RestResponseBoolean, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) UpdateWhitelistedDomains(ctx context.Context, accountIdentifier string, localVarOptionals *AuthenticationSettingsApiUpdateWhitelistedDomainsOpts) (RestResponseBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -1373,9 +1173,7 @@ func (a *AuthenticationSettingsApiService) UpdateWhitelistedDomains(ctx context.
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"*/*"}
 
@@ -1478,30 +1276,31 @@ func (a *AuthenticationSettingsApiService) UpdateWhitelistedDomains(ctx context.
 }
 
 /*
-AuthenticationSettingsApiService Uploads the saml metadata by accountId
+AuthenticationSettingsApiService Uploads the SAML metadata by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountId Account Identifier for the Entity
  * @param optional nil or *AuthenticationSettingsApiUploadSamlMetaDataOpts - Optional Parameters:
-     * @param "File" (optional.Interface of FormDataContentDisposition) -
+     * @param "Inputfile" (optional.Interface of interface{}) -
+     * @param "FileMetadata" (optional.Interface of FormDataContentDisposition) -
      * @param "DisplayName" (optional.String) -
      * @param "GroupMembershipAttr" (optional.String) -
      * @param "AuthorizationEnabled" (optional.Bool) -
      * @param "LogoutUrl" (optional.String) -
      * @param "EntityIdentifier" (optional.String) -
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
 @return RestResponseSsoConfig
 */
 
 type AuthenticationSettingsApiUploadSamlMetaDataOpts struct {
-	File                 optional.Interface
+	Inputfile            optional.Interface
+	FileMetadata         optional.Interface
 	DisplayName          optional.String
 	GroupMembershipAttr  optional.String
 	AuthorizationEnabled optional.Bool
 	LogoutUrl            optional.String
 	EntityIdentifier     optional.String
-	AccountId            optional.String
 }
 
-func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Context, localVarOptionals *AuthenticationSettingsApiUploadSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
+func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Context, accountId string, localVarOptionals *AuthenticationSettingsApiUploadSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -1517,9 +1316,7 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
+	localVarQueryParams.Add("accountId", parameterToString(accountId, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"multipart/form-data"}
 
@@ -1537,8 +1334,11 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
-		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.Inputfile.IsSet() {
+		localVarFormParams.Add("Inputfile", parameterToString(localVarOptionals.Inputfile.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FileMetadata.IsSet() {
+		localVarFormParams.Add("fileMetadata", parameterToString(localVarOptionals.FileMetadata.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.DisplayName.IsSet() {
 		localVarFormParams.Add("displayName", parameterToString(localVarOptionals.DisplayName.Value(), ""))

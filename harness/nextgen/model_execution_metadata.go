@@ -11,8 +11,10 @@ package nextgen
 
 type ExecutionMetadata struct {
 	UnknownFields             *UnknownFieldSet                 `json:"unknownFields,omitempty"`
+	SerializedSize            int32                            `json:"serializedSize,omitempty"`
+	ParserForType             *ParserExecutionMetadata         `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *ExecutionMetadata               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                             `json:"initialized,omitempty"`
-	PrincipalInfo             *ExecutionPrincipalInfo          `json:"principalInfo,omitempty"`
 	RunSequence               int32                            `json:"runSequence,omitempty"`
 	TriggerInfo               *ExecutionTriggerInfo            `json:"triggerInfo,omitempty"`
 	TriggerInfoOrBuilder      *ExecutionTriggerInfoOrBuilder   `json:"triggerInfoOrBuilder,omitempty"`
@@ -20,17 +22,15 @@ type ExecutionMetadata struct {
 	PipelineIdentifierBytes   *ByteString                      `json:"pipelineIdentifierBytes,omitempty"`
 	ExecutionUuid             string                           `json:"executionUuid,omitempty"`
 	ExecutionUuidBytes        *ByteString                      `json:"executionUuidBytes,omitempty"`
-	PrincipalInfoOrBuilder    *ExecutionPrincipalInfoOrBuilder `json:"principalInfoOrBuilder,omitempty"`
 	GitSyncBranchContext      *ByteString                      `json:"gitSyncBranchContext,omitempty"`
+	PrincipalInfoOrBuilder    *ExecutionPrincipalInfoOrBuilder `json:"principalInfoOrBuilder,omitempty"`
 	ModuleType                string                           `json:"moduleType,omitempty"`
 	ModuleTypeBytes           *ByteString                      `json:"moduleTypeBytes,omitempty"`
 	RetryInfo                 *RetryExecutionInfo              `json:"retryInfo,omitempty"`
 	RetryInfoOrBuilder        *RetryExecutionInfoOrBuilder     `json:"retryInfoOrBuilder,omitempty"`
-	SerializedSize            int32                            `json:"serializedSize,omitempty"`
-	ParserForType             *ParserExecutionMetadata         `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *ExecutionMetadata               `json:"defaultInstanceForType,omitempty"`
-	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
+	PrincipalInfo             *ExecutionPrincipalInfo          `json:"principalInfo,omitempty"`
 	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                      `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                            `json:"memoizedSerializedSize,omitempty"`
 }

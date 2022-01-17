@@ -30,22 +30,21 @@ type FilterApiService service
 /*
 FilterApiService Delete a Filter by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param identifier Filter Identifier
  * @param type_ Type of Filter
  * @param optional nil or *FilterApiDeleteFilterOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoBoolean
 */
 
 type FilterApiDeleteFilterOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FilterApiService) DeleteFilter(ctx context.Context, identifier string, type_ string, localVarOptionals *FilterApiDeleteFilterOpts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *FilterApiService) DeleteFilter(ctx context.Context, accountIdentifier string, identifier string, type_ string, localVarOptionals *FilterApiDeleteFilterOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -62,9 +61,7 @@ func (a *FilterApiService) DeleteFilter(ctx context.Context, identifier string, 
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -170,13 +167,13 @@ func (a *FilterApiService) DeleteFilter(ctx context.Context, identifier string, 
 /*
 FilterApiService Get the list of Filters satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param type_ Type of Filter
  * @param optional nil or *FilterApiGetConnectorListV21Opts - Optional Parameters:
      * @param "PageIndex" (optional.Int32) -  Page number of navigation. If left empty, default value of 0 is assumed
      * @param "PageSize" (optional.Int32) -  Number of entries per page. If left empty, default value of 100 is assumed
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoPageResponseFilter
 */
 
@@ -315,22 +312,21 @@ func (a *FilterApiService) GetConnectorListV21(ctx context.Context, accountIdent
 /*
 FilterApiService Gets a Filter by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity
  * @param identifier Filter Identifier
  * @param type_ Type of Filter
  * @param optional nil or *FilterApiGetFilterOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoFilter
 */
 
 type FilterApiGetFilterOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FilterApiService) GetFilter(ctx context.Context, identifier string, type_ string, localVarOptionals *FilterApiGetFilterOpts) (ResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) GetFilter(ctx context.Context, accountIdentifier string, identifier string, type_ string, localVarOptionals *FilterApiGetFilterOpts) (ResponseDtoFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -347,9 +343,7 @@ func (a *FilterApiService) GetFilter(ctx context.Context, identifier string, typ
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -455,22 +449,21 @@ func (a *FilterApiService) GetFilter(ctx context.Context, identifier string, typ
 /*
 FilterApiService Delete a Filter by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the entity
  * @param identifier Filter Identifier
  * @param type_ Type of Filter
  * @param optional nil or *FilterApiPipelinedeleteFilterOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
 @return ResponseDtoBoolean
 */
 
 type FilterApiPipelinedeleteFilterOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FilterApiService) PipelinedeleteFilter(ctx context.Context, identifier string, type_ string, localVarOptionals *FilterApiPipelinedeleteFilterOpts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *FilterApiService) PipelinedeleteFilter(ctx context.Context, accountIdentifier string, identifier string, type_ string, localVarOptionals *FilterApiPipelinedeleteFilterOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -487,9 +480,7 @@ func (a *FilterApiService) PipelinedeleteFilter(ctx context.Context, identifier 
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -740,28 +731,27 @@ func (a *FilterApiService) PipelinegetConnectorListV2(ctx context.Context, accou
 /*
 FilterApiService Gets a Filter by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the entity
  * @param identifier Filter Identifier
  * @param type_ Type of Filter
  * @param optional nil or *FilterApiPipelinegetFilterOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-@return PipelineResponseDtoFilter
+@return ResponseDtoFilter
 */
 
 type FilterApiPipelinegetFilterOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FilterApiService) PipelinegetFilter(ctx context.Context, identifier string, type_ string, localVarOptionals *FilterApiPipelinegetFilterOpts) (PipelineResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) PipelinegetFilter(ctx context.Context, accountIdentifier string, identifier string, type_ string, localVarOptionals *FilterApiPipelinegetFilterOpts) (ResponseDtoFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue PipelineResponseDtoFilter
+		localVarReturnValue ResponseDtoFilter
 	)
 
 	// create path and map variables
@@ -772,9 +762,7 @@ func (a *FilterApiService) PipelinegetFilter(ctx context.Context, identifier str
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -862,7 +850,7 @@ func (a *FilterApiService) PipelinegetFilter(ctx context.Context, identifier str
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v PipelineResponseDtoFilter
+			var v ResponseDtoFilter
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -882,15 +870,15 @@ FilterApiService Creates a Filter
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Connector to create
  * @param accountIdentifier Account Identifier for the entity
-@return PipelineResponseDtoFilter
+@return ResponseDtoFilter
 */
-func (a *FilterApiService) PipelinepostFilter(ctx context.Context, body PipelineFilter, accountIdentifier string) (PipelineResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) PipelinepostFilter(ctx context.Context, body Filter, accountIdentifier string) (ResponseDtoFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue PipelineResponseDtoFilter
+		localVarReturnValue ResponseDtoFilter
 	)
 
 	// create path and map variables
@@ -983,7 +971,7 @@ func (a *FilterApiService) PipelinepostFilter(ctx context.Context, body Pipeline
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v PipelineResponseDtoFilter
+			var v ResponseDtoFilter
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1002,22 +990,16 @@ func (a *FilterApiService) PipelinepostFilter(ctx context.Context, body Pipeline
 FilterApiService Updates the Filter
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the updated Filter. This should have all the fields not just the updated ones
- * @param optional nil or *FilterApiPipelineupdateFilterOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
-@return PipelineResponseDtoFilter
+ * @param accountIdentifier Account Identifier for the entity
+@return ResponseDtoFilter
 */
-
-type FilterApiPipelineupdateFilterOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body PipelineFilter, localVarOptionals *FilterApiPipelineupdateFilterOpts) (PipelineResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body Filter, accountIdentifier string) (ResponseDtoFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue PipelineResponseDtoFilter
+		localVarReturnValue ResponseDtoFilter
 	)
 
 	// create path and map variables
@@ -1027,9 +1009,7 @@ func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body Pipeli
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "text/yaml", "text/html", "text/plain"}
 
@@ -1112,7 +1092,7 @@ func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body Pipeli
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v PipelineResponseDtoFilter
+			var v ResponseDtoFilter
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1131,7 +1111,7 @@ func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body Pipeli
 FilterApiService Creates a Filter
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Connector to create
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoFilter
 */
 func (a *FilterApiService) PostFilter(ctx context.Context, body Filter, accountIdentifier string) (ResponseDtoFilter, *http.Response, error) {
@@ -1252,16 +1232,10 @@ func (a *FilterApiService) PostFilter(ctx context.Context, body Filter, accountI
 FilterApiService Updates the Filter
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the updated Filter. This should have all the fields not just the updated ones
- * @param optional nil or *FilterApiUpdateFilterOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoFilter
 */
-
-type FilterApiUpdateFilterOpts struct {
-	AccountIdentifier optional.String
-}
-
-func (a *FilterApiService) UpdateFilter(ctx context.Context, body Filter, localVarOptionals *FilterApiUpdateFilterOpts) (ResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) UpdateFilter(ctx context.Context, body Filter, accountIdentifier string) (ResponseDtoFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -1277,9 +1251,7 @@ func (a *FilterApiService) UpdateFilter(ctx context.Context, body Filter, localV
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "text/yaml", "text/html", "text/plain"}
 

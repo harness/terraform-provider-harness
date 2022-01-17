@@ -11,24 +11,24 @@ package nextgen
 
 type EnumDescriptorProto struct {
 	UnknownFields              *UnknownFieldSet                    `json:"unknownFields,omitempty"`
-	Initialized                bool                                `json:"initialized,omitempty"`
-	Options                    *EnumOptions                        `json:"options,omitempty"`
-	ReservedRangeList          []EnumReservedRange                 `json:"reservedRangeList,omitempty"`
-	ReservedNameList           []string                            `json:"reservedNameList,omitempty"`
-	ValueList                  []EnumValueDescriptorProto          `json:"valueList,omitempty"`
-	ValueOrBuilderList         []EnumValueDescriptorProtoOrBuilder `json:"valueOrBuilderList,omitempty"`
-	ValueCount                 int32                               `json:"valueCount,omitempty"`
-	ReservedRangeOrBuilderList []EnumReservedRangeOrBuilder        `json:"reservedRangeOrBuilderList,omitempty"`
-	ReservedRangeCount         int32                               `json:"reservedRangeCount,omitempty"`
-	ReservedNameCount          int32                               `json:"reservedNameCount,omitempty"`
-	OptionsOrBuilder           *EnumOptionsOrBuilder               `json:"optionsOrBuilder,omitempty"`
-	NameBytes                  *ByteString                         `json:"nameBytes,omitempty"`
 	SerializedSize             int32                               `json:"serializedSize,omitempty"`
 	ParserForType              *ParserEnumDescriptorProto          `json:"parserForType,omitempty"`
 	DefaultInstanceForType     *EnumDescriptorProto                `json:"defaultInstanceForType,omitempty"`
+	Options                    *EnumOptions                        `json:"options,omitempty"`
+	Initialized                bool                                `json:"initialized,omitempty"`
 	Name                       string                              `json:"name,omitempty"`
-	AllFields                  map[string]interface{}              `json:"allFields,omitempty"`
+	ReservedRangeOrBuilderList []EnumReservedRangeOrBuilder        `json:"reservedRangeOrBuilderList,omitempty"`
+	ReservedRangeCount         int32                               `json:"reservedRangeCount,omitempty"`
+	ReservedNameCount          int32                               `json:"reservedNameCount,omitempty"`
+	ValueList                  []EnumValueDescriptorProto          `json:"valueList,omitempty"`
+	ValueOrBuilderList         []EnumValueDescriptorProtoOrBuilder `json:"valueOrBuilderList,omitempty"`
+	ValueCount                 int32                               `json:"valueCount,omitempty"`
+	NameBytes                  *ByteString                         `json:"nameBytes,omitempty"`
+	OptionsOrBuilder           *EnumOptionsOrBuilder               `json:"optionsOrBuilder,omitempty"`
+	ReservedRangeList          []EnumReservedRange                 `json:"reservedRangeList,omitempty"`
+	ReservedNameList           []string                            `json:"reservedNameList,omitempty"`
 	InitializationErrorString  string                              `json:"initializationErrorString,omitempty"`
 	DescriptorForType          *Descriptor                         `json:"descriptorForType,omitempty"`
+	AllFields                  map[string]interface{}              `json:"allFields,omitempty"`
 	MemoizedSerializedSize     int32                               `json:"memoizedSerializedSize,omitempty"`
 }

@@ -9,11 +9,17 @@
  */
 package nextgen
 
+// Details of the connectivity status of the Connector.
 type ConnectorConnectivityDetails struct {
-	Status          string        `json:"status,omitempty"`
-	ErrorSummary    string        `json:"errorSummary,omitempty"`
-	Errors          []ErrorDetail `json:"errors,omitempty"`
-	TestedAt        int64         `json:"testedAt,omitempty"`
-	LastTestedAt    int64         `json:"lastTestedAt,omitempty"`
-	LastConnectedAt int64         `json:"lastConnectedAt,omitempty"`
+	// Connectivity status of a Connector.
+	Status string `json:"status,omitempty"`
+	// Summary of errors.
+	ErrorSummary string `json:"errorSummary,omitempty"`
+	// List of errors and their details.
+	Errors []ErrorDetail `json:"errors,omitempty"`
+	// Time at which Test Connection was completed
+	TestedAt     int64 `json:"testedAt,omitempty"`
+	LastTestedAt int64 `json:"lastTestedAt,omitempty"`
+	// This is the last time at which the Connector was successfully connected.
+	LastConnectedAt int64 `json:"lastConnectedAt,omitempty"`
 }

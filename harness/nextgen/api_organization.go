@@ -28,133 +28,12 @@ var (
 type OrganizationApiService service
 
 /*
-OrganizationApiService Creates an Organization
+OrganizationApiService Deletes the Organization corresponding to the specified Organization ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Details of the Organization to create
- * @param accountIdentifier Account Identifier for the entity
-@return ResponseDtoOrganizationResponse
-*/
-func (a *OrganizationApiService) CreateOrganization(ctx context.Context, body OrganizationRequest, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoOrganizationResponse
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/organizations"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &body
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoOrganizationResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-OrganizationApiService Deletes Organization by identifier
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Organization Identifier for the entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param identifier Organization Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *OrganizationApiDeleteOrganizationOpts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -
+     * @param "IfMatch" (optional.String) -  Version number of the Organization
 @return ResponseDtoBoolean
 */
 
@@ -281,8 +160,8 @@ func (a *OrganizationApiService) DeleteOrganization(ctx context.Context, identif
 /*
 OrganizationApiService Get the Organization by accountIdentifier and orgIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Organization Identifier for the entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param identifier Organization Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoOrganizationResponse
 */
 func (a *OrganizationApiService) GetOrganization(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
@@ -399,15 +278,15 @@ func (a *OrganizationApiService) GetOrganization(ctx context.Context, identifier
 }
 
 /*
-OrganizationApiService Get the list of organizations satisfying the criteria (if any) in the request
+OrganizationApiService Get the list of Organizations satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *OrganizationApiGetOrganizationListOpts - Optional Parameters:
-     * @param "Identifiers" (optional.Interface of []string) -  list of Project Ids for filtering results
-     * @param "SearchTerm" (optional.String) -  Search Term
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "Identifiers" (optional.Interface of []string) -  This is the list of Org Key IDs. Details specific to these IDs would be fetched.
+     * @param "SearchTerm" (optional.String) -  This would be used to filter Organizations. Any Organization having the specified string in its Name, ID and Tag would be filtered.
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseOrganizationResponse
 */
 
@@ -547,38 +426,29 @@ func (a *OrganizationApiService) GetOrganizationList(ctx context.Context, accoun
 }
 
 /*
-OrganizationApiService
+OrganizationApiService Creates an Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body list of ProjectIdentifiers to filter results by
- * @param accountIdentifier Account Identifier for the entity
- * @param optional nil or *OrganizationApiListAllOrganizationsOpts - Optional Parameters:
-     * @param "SearchTerm" (optional.String) -  Search term
-
+ * @param body Details of the Organization to create
+ * @param accountIdentifier Account Identifier for the Entity
+@return ResponseDtoOrganizationResponse
 */
-
-type OrganizationApiListAllOrganizationsOpts struct {
-	SearchTerm optional.String
-}
-
-func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, body []string, accountIdentifier string, localVarOptionals *OrganizationApiListAllOrganizationsOpts) (*http.Response, error) {
+func (a *OrganizationApiService) PostOrganization(ctx context.Context, body OrganizationRequest, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoOrganizationResponse
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/organizations/all-organizations"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/organizations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
-		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
-	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -613,18 +483,26 @@ func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, body 
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
 	localVarHttpResponse.Body.Close()
 	if err != nil {
-		return localVarHttpResponse, err
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -637,35 +515,45 @@ func (a *OrganizationApiService) ListAllOrganizations(ctx context.Context, body 
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarReturnValue, localVarHttpResponse, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		return localVarHttpResponse, newErr
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoOrganizationResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
-	return localVarHttpResponse, nil
+	return localVarReturnValue, localVarHttpResponse, nil
 }
 
 /*
 OrganizationApiService Updates the Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the updated Organization. Please provide values for all fields, not just the fields you are updating
- * @param accountIdentifier Account Identifier for the entity
- * @param identifier Organization Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param identifier Organization Identifier for the Entity
  * @param optional nil or *OrganizationApiPutOrganizationOpts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -
+     * @param "IfMatch" (optional.String) -  Version number of the Organization
 @return ResponseDtoOrganizationResponse
 */
 

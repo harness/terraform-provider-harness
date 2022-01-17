@@ -11,8 +11,8 @@ package nextgen
 
 // This contains details of Root Folder
 type GitSyncFolderConfig struct {
+	// Root Folder Name
 	RootFolder string `json:"rootFolder,omitempty"`
-	IsDefault  bool   `json:"isDefault,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Enabled    bool   `json:"enabled,omitempty"`
+	// This checks if the folder is the default folder
+	IsDefault bool `json:"isDefault,omitempty"`
 }

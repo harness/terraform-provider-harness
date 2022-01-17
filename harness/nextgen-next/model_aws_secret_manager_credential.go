@@ -10,6 +10,7 @@
 package nextgen
 
 // This contains the credential type and config of the AWS SM
+
 type AwsSecretManagerCredential struct {
 	Type_ string                          `json:"type"`
 	Spec  *AwsSecretManagerCredentialSpec `json:"spec,omitempty"`

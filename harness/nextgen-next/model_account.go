@@ -9,41 +9,14 @@
  */
 package nextgen
 
+// This is the view of an Account defined in Harness
 type Account struct {
-	Uuid                        string                 `json:"uuid"`
-	AppId                       string                 `json:"appId"`
-	CreatedBy                   *EmbeddedUser          `json:"createdBy,omitempty"`
-	CreatedAt                   int64                  `json:"createdAt,omitempty"`
-	LastUpdatedBy               *EmbeddedUser          `json:"lastUpdatedBy,omitempty"`
-	LastUpdatedAt               int64                  `json:"lastUpdatedAt"`
-	CompanyName                 string                 `json:"companyName"`
-	NextGenEnabled              bool                   `json:"nextGenEnabled,omitempty"`
-	AccountName                 string                 `json:"accountName"`
-	WhitelistedDomains          []string               `json:"whitelistedDomains,omitempty"`
-	LicenseId                   string                 `json:"licenseId,omitempty"`
-	DataRetentionDurationMs     int64                  `json:"dataRetentionDurationMs,omitempty"`
-	LicenseInfo                 *LicenseInfo           `json:"licenseInfo,omitempty"`
-	CeLicenseInfo               *CeLicenseInfo         `json:"ceLicenseInfo,omitempty"`
-	AccountEvents               []AccountEvent         `json:"accountEvents,omitempty"`
-	SubdomainUrl                string                 `json:"subdomainUrl,omitempty"`
-	TwoFactorAdminEnforced      bool                   `json:"twoFactorAdminEnforced,omitempty"`
-	ForImport                   bool                   `json:"forImport,omitempty"`
-	MigratedToClusterUrl        string                 `json:"migratedToClusterUrl,omitempty"`
-	DefaultExperience           string                 `json:"defaultExperience,omitempty"`
-	CreatedFromNG               bool                   `json:"createdFromNG,omitempty"`
-	LocalEncryptionEnabled      bool                   `json:"localEncryptionEnabled,omitempty"`
-	DelegateConfiguration       *DelegateConfiguration `json:"delegateConfiguration,omitempty"`
-	TechStacks                  []TechStack            `json:"techStacks,omitempty"`
-	OauthEnabled                bool                   `json:"oauthEnabled,omitempty"`
-	AccountPreferences          *AccountPreferences    `json:"accountPreferences,omitempty"`
-	CloudCostEnabled            bool                   `json:"cloudCostEnabled,omitempty"`
-	CeAutoCollectK8sEvents      bool                   `json:"ceAutoCollectK8sEvents,omitempty"`
-	TrialSignupOptions          *TrialSignupOptions    `json:"trialSignupOptions,omitempty"`
-	ServiceGuardLimit           int64                  `json:"serviceGuardLimit,omitempty"`
-	ServiceAccountConfig        *ServiceAccountConfig  `json:"serviceAccountConfig,omitempty"`
-	Defaults                    map[string]string      `json:"defaults,omitempty"`
-	AuthenticationMechanism     string                 `json:"authenticationMechanism,omitempty"`
-	Events                      []AccountEvent         `json:"events,omitempty"`
-	HarnessSupportAccessAllowed bool                   `json:"harnessSupportAccessAllowed,omitempty"`
-	PovAccount                  bool                   `json:"povAccount,omitempty"`
+	Identifier              string                `json:"identifier,omitempty"`
+	Name                    string                `json:"name,omitempty"`
+	CompanyName             string                `json:"companyName,omitempty"`
+	Cluster                 string                `json:"cluster,omitempty"`
+	DefaultExperience       string                `json:"defaultExperience,omitempty"`
+	AuthenticationMechanism string                `json:"authenticationMechanism,omitempty"`
+	ServiceAccountConfig    *ServiceAccountConfig `json:"serviceAccountConfig,omitempty"`
+	NextGenEnabled          bool                  `json:"nextGenEnabled,omitempty"`
 }

@@ -10,16 +10,16 @@
 package nextgen
 
 type AsyncExecutableResponseOrBuilder struct {
+	CallbackIdsCount          int32                  `json:"callbackIdsCount,omitempty"`
 	LogKeysList               []string               `json:"logKeysList,omitempty"`
 	LogKeysCount              int32                  `json:"logKeysCount,omitempty"`
 	UnitsList                 []string               `json:"unitsList,omitempty"`
 	UnitsCount                int32                  `json:"unitsCount,omitempty"`
 	CallbackIdsList           []string               `json:"callbackIdsList,omitempty"`
-	CallbackIdsCount          int32                  `json:"callbackIdsCount,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

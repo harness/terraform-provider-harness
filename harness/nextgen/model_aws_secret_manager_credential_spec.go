@@ -9,6 +9,6 @@
  */
 package nextgen
 
-// This contains AWS SM credential spec according to the role using which SM is created
+// This is interface that returns credentials specific to all roles for the AWS Secret Manager.
 type AwsSecretManagerCredentialSpec struct {
 }

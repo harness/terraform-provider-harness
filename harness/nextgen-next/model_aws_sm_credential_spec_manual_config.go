@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains the secret reference accessKey and secretKey of AWS SM
+// Returns secret reference accessKey and secretKey of AWS Secret Manager
 type AwsSmCredentialSpecManualConfig struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

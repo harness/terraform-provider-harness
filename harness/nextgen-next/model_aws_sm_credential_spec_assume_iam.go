@@ -9,6 +9,5 @@
  */
 package nextgen
 
-// This contains the credential spec of AWS SM for IAM role
 type AwsSmCredentialSpecAssumeIam struct {
 }

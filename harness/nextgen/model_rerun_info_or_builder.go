@@ -10,18 +10,18 @@
 package nextgen
 
 type RerunInfoOrBuilder struct {
-	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
-	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
-	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
-	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
-	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
 	PrevExecutionIdBytes      *ByteString            `json:"prevExecutionIdBytes,omitempty"`
 	PrevTriggerTypeValue      int32                  `json:"prevTriggerTypeValue,omitempty"`
 	PrevTriggerType           string                 `json:"prevTriggerType,omitempty"`
+	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
+	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
+	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
+	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
+	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

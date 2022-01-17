@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains the credential spec of AWS KMS SM for IAM role
+// Returns the Delegate Selectors used by this AWS KMS Secret Manager Connector.
 type AwsKmsCredentialSpecAssumeIam struct {
 	DelegateSelectors []string `json:"delegateSelectors"`
 }

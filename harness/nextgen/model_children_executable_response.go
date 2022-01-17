@@ -11,15 +11,15 @@ package nextgen
 
 type ChildrenExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet                  `json:"unknownFields,omitempty"`
-	Initialized               bool                              `json:"initialized,omitempty"`
+	ChildrenList              []Child                           `json:"childrenList,omitempty"`
+	ChildrenOrBuilderList     []ChildOrBuilder                  `json:"childrenOrBuilderList,omitempty"`
+	ChildrenCount             int32                             `json:"childrenCount,omitempty"`
 	SerializedSize            int32                             `json:"serializedSize,omitempty"`
 	ParserForType             *ParserChildrenExecutableResponse `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *ChildrenExecutableResponse       `json:"defaultInstanceForType,omitempty"`
-	ChildrenOrBuilderList     []ChildOrBuilder                  `json:"childrenOrBuilderList,omitempty"`
-	ChildrenCount             int32                             `json:"childrenCount,omitempty"`
-	ChildrenList              []Child                           `json:"childrenList,omitempty"`
-	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
+	Initialized               bool                              `json:"initialized,omitempty"`
 	InitializationErrorString string                            `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                       `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                             `json:"memoizedSerializedSize,omitempty"`
 }

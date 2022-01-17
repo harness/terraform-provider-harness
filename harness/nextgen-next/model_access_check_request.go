@@ -10,6 +10,7 @@
 package nextgen
 
 type AccessCheckRequest struct {
-	Permissions []PermissionCheck `json:"permissions,omitempty"`
-	Principal   *Principal        `json:"principal,omitempty"`
+	// List of permission checks to perform
+	Permissions []PermissionCheck `json:"permissions"`
+	Principal   *Principal        `json:"principal"`
 }

@@ -10,13 +10,13 @@
 package nextgen
 
 type ChildrenExecutableResponseOrBuilder struct {
+	ChildrenList              []Child                `json:"childrenList,omitempty"`
 	ChildrenOrBuilderList     []ChildOrBuilder       `json:"childrenOrBuilderList,omitempty"`
 	ChildrenCount             int32                  `json:"childrenCount,omitempty"`
-	ChildrenList              []Child                `json:"childrenList,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

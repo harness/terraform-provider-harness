@@ -10,19 +10,19 @@
 package nextgen
 
 type FieldOptionsOrBuilder struct {
-	Weak                             bool                           `json:"weak,omitempty"`
 	Lazy                             bool                           `json:"lazy,omitempty"`
-	Packed                           bool                           `json:"packed,omitempty"`
 	Ctype                            string                         `json:"ctype,omitempty"`
 	Jstype                           string                         `json:"jstype,omitempty"`
+	Weak                             bool                           `json:"weak,omitempty"`
+	Packed                           bool                           `json:"packed,omitempty"`
 	Deprecated                       bool                           `json:"deprecated,omitempty"`
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
 	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
-	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
 }

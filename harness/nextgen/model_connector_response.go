@@ -9,14 +9,17 @@
  */
 package nextgen
 
-// Connetor Resource along with metadata
+// This has the Connector details along with its metadata.
 type ConnectorResponse struct {
-	Connector             *ConnectorInfo                `json:"connector,omitempty"`
-	CreatedAt             int64                         `json:"createdAt,omitempty"`
-	LastModifiedAt        int64                         `json:"lastModifiedAt,omitempty"`
-	Status                *ConnectorConnectivityDetails `json:"status,omitempty"`
-	ActivityDetails       *ConnectorActivityDetails     `json:"activityDetails,omitempty"`
-	HarnessManaged        bool                          `json:"harnessManaged,omitempty"`
-	GitDetails            *EntityGitDetails             `json:"gitDetails,omitempty"`
-	EntityValidityDetails *EntityValidityDetails        `json:"entityValidityDetails,omitempty"`
+	Connector *ConnectorInfo `json:"connector,omitempty"`
+	// This is the time at which the Connector was created.
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	// This is the time at which the Connector was last modified.
+	LastModifiedAt  int64                         `json:"lastModifiedAt,omitempty"`
+	Status          *ConnectorConnectivityDetails `json:"status,omitempty"`
+	ActivityDetails *ConnectorActivityDetails     `json:"activityDetails,omitempty"`
+	// This indicates if this Connector is managed by Harness or not. If True, Harness can manage and modify this Connector.
+	HarnessManaged        bool                   `json:"harnessManaged,omitempty"`
+	GitDetails            *EntityGitDetails      `json:"gitDetails,omitempty"`
+	EntityValidityDetails *EntityValidityDetails `json:"entityValidityDetails,omitempty"`
 }

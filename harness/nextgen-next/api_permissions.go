@@ -30,10 +30,10 @@ type PermissionsApiService service
 PermissionsApiService Get all permissions in a scope or all permissions in the system.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *PermissionsApiGetPermissionListOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "ScopeFilterDisabled" (optional.Bool) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "ScopeFilterDisabled" (optional.Bool) -  This is to enable or disable filtering by scope. The default value is false. If the value is true, all the permissions in the system are fetched.
 @return ResponseDtoListPermissionResponse
 */
 
@@ -171,10 +171,10 @@ func (a *PermissionsApiService) GetPermissionList(ctx context.Context, localVarO
 PermissionsApiService Get all resource types for permissions in a scope or in the system.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *PermissionsApiGetPermissionResourceTypesListOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "ScopeFilterDisabled" (optional.Bool) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "ScopeFilterDisabled" (optional.Bool) -  This is to enable or disable filtering by scope. The default value is false. If the value is true, all the permissions in the system are fetched.
 @return ResponseDtoSetString
 */
 

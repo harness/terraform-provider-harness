@@ -15,6 +15,7 @@ type GitConfig struct {
 	ValidationRepo    string             `json:"validationRepo,omitempty"`
 	BranchName        string             `json:"branchName,omitempty"`
 	DelegateSelectors []string           `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate bool               `json:"executeOnDelegate,omitempty"`
 	Type_             string             `json:"type"`
 	ConnectionType    string             `json:"connectionType"`
 	Spec              *GitAuthentication `json:"spec"`

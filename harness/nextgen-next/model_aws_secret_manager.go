@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains Aws SecretManager configuration
+// Returns AWS Secret Manager configuration details
 type AwsSecretManager struct {
 	Credential        *AwsSecretManagerCredential `json:"credential"`
 	Region            string                      `json:"region"`

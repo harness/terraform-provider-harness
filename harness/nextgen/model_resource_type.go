@@ -9,7 +9,7 @@
  */
 package nextgen
 
+// Contains list of Resource Type
 type ResourceType struct {
-	Name           string   `json:"name,omitempty"`
-	ValidatorTypes []string `json:"validatorTypes,omitempty"`
+	ResourceTypes []ResourceType `json:"resourceTypes,omitempty"`
 }

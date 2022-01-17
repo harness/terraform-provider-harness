@@ -15,4 +15,5 @@ type PmsPipelineResponse struct {
 	Version               int64                  `json:"version,omitempty"`
 	GitDetails            *EntityGitDetails      `json:"gitDetails,omitempty"`
 	EntityValidityDetails *EntityValidityDetails `json:"entityValidityDetails,omitempty"`
+	Modules               []string               `json:"modules,omitempty"`
 }

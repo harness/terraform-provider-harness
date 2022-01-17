@@ -11,24 +11,24 @@ package nextgen
 
 type TaskChainExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet                   `json:"unknownFields,omitempty"`
+	TaskIdBytes               *ByteString                        `json:"taskIdBytes,omitempty"`
+	TaskNameBytes             *ByteString                        `json:"taskNameBytes,omitempty"`
+	TaskName                  string                             `json:"taskName,omitempty"`
 	ChainEnd                  bool                               `json:"chainEnd,omitempty"`
 	PassThroughData           *ByteString                        `json:"passThroughData,omitempty"`
+	TaskCategory              string                             `json:"taskCategory,omitempty"`
+	TaskCategoryValue         int32                              `json:"taskCategoryValue,omitempty"`
+	SerializedSize            int32                              `json:"serializedSize,omitempty"`
+	ParserForType             *ParserTaskChainExecutableResponse `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *TaskChainExecutableResponse       `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                               `json:"initialized,omitempty"`
-	TaskId                    string                             `json:"taskId,omitempty"`
-	TaskName                  string                             `json:"taskName,omitempty"`
-	TaskIdBytes               *ByteString                        `json:"taskIdBytes,omitempty"`
 	LogKeysList               []string                           `json:"logKeysList,omitempty"`
 	LogKeysCount              int32                              `json:"logKeysCount,omitempty"`
 	UnitsList                 []string                           `json:"unitsList,omitempty"`
 	UnitsCount                int32                              `json:"unitsCount,omitempty"`
-	TaskNameBytes             *ByteString                        `json:"taskNameBytes,omitempty"`
-	SerializedSize            int32                              `json:"serializedSize,omitempty"`
-	ParserForType             *ParserTaskChainExecutableResponse `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *TaskChainExecutableResponse       `json:"defaultInstanceForType,omitempty"`
-	TaskCategoryValue         int32                              `json:"taskCategoryValue,omitempty"`
-	TaskCategory              string                             `json:"taskCategory,omitempty"`
-	AllFields                 map[string]interface{}             `json:"allFields,omitempty"`
+	TaskId                    string                             `json:"taskId,omitempty"`
 	InitializationErrorString string                             `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                        `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}             `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                              `json:"memoizedSerializedSize,omitempty"`
 }

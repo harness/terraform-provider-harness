@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// List of errors and their details.
 type ErrorDetail struct {
 	Reason  string `json:"reason,omitempty"`
 	Message string `json:"message,omitempty"`

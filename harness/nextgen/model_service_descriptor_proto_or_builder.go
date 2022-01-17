@@ -10,17 +10,17 @@
 package nextgen
 
 type ServiceDescriptorProtoOrBuilder struct {
-	Options                   *ServiceOptions                  `json:"options,omitempty"`
-	MethodList                []MethodDescriptorProto          `json:"methodList,omitempty"`
 	MethodOrBuilderList       []MethodDescriptorProtoOrBuilder `json:"methodOrBuilderList,omitempty"`
-	MethodCount               int32                            `json:"methodCount,omitempty"`
-	OptionsOrBuilder          *ServiceOptionsOrBuilder         `json:"optionsOrBuilder,omitempty"`
-	NameBytes                 *ByteString                      `json:"nameBytes,omitempty"`
+	Options                   *ServiceOptions                  `json:"options,omitempty"`
 	Name                      string                           `json:"name,omitempty"`
+	MethodList                []MethodDescriptorProto          `json:"methodList,omitempty"`
+	NameBytes                 *ByteString                      `json:"nameBytes,omitempty"`
+	OptionsOrBuilder          *ServiceOptionsOrBuilder         `json:"optionsOrBuilder,omitempty"`
+	MethodCount               int32                            `json:"methodCount,omitempty"`
+	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                      `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet                 `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message                         `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor                      `json:"descriptorForType,omitempty"`
 	Initialized               bool                             `json:"initialized,omitempty"`
 }

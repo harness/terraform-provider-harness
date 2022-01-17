@@ -10,7 +10,8 @@
 package nextgen
 
 type AuthenticationsettingsSamlmetadatauploadBody1 struct {
-	File                 *FormDataContentDisposition `json:"file,omitempty"`
+	Inputfile            *interface{}                `json:"Inputfile,omitempty"`
+	FileMetadata         *FormDataContentDisposition `json:"fileMetadata,omitempty"`
 	DisplayName          string                      `json:"displayName,omitempty"`
 	GroupMembershipAttr  string                      `json:"groupMembershipAttr,omitempty"`
 	AuthorizationEnabled bool                        `json:"authorizationEnabled,omitempty"`

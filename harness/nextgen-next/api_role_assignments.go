@@ -30,11 +30,11 @@ type RoleAssignmentsApiService service
 /*
 RoleAssignmentsApiService Delete an existing role assignment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+ * @param identifier Identifier for role assignment
  * @param optional nil or *RoleAssignmentsApiDeleteRoleAssignmentOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoRoleAssignmentResponse
 */
 
@@ -180,12 +180,12 @@ RoleAssignmentsApiService List role assignments in the scope according to the gi
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Filter role assignments based on multiple parameters.
  * @param optional nil or *RoleAssignmentsApiGetFilteredRoleAssignmentListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoPageResponseRoleAssignmentResponse
 */
 
@@ -344,9 +344,9 @@ RoleAssignmentsApiService List role assignments in the scope according to the gi
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Filter role assignments based on multiple parameters.
  * @param optional nil or *RoleAssignmentsApiGetRoleAssignmentAggregateListOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoRoleAssignmentAggregateResponse
 */
 
@@ -492,12 +492,12 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentAggregateList(ctx context.C
 RoleAssignmentsApiService List role assignments in the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *RoleAssignmentsApiGetRoleAssignmentListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoPageResponseRoleAssignmentResponse
 */
 
@@ -650,24 +650,23 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentList(ctx context.Context, l
 }
 
 /*
-RoleAssignmentsApiService Create role assignment in the given scope
+RoleAssignmentsApiService Creates role assignment within the specified scope.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body These are details for the role assignment to create.
  * @param optional nil or *RoleAssignmentsApiPostRoleAssignmentOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignment) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoRoleAssignmentResponse
 */
 
 type RoleAssignmentsApiPostRoleAssignmentOpts struct {
-	Body              optional.Interface
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, localVarOptionals *RoleAssignmentsApiPostRoleAssignmentOpts) (ResponseDtoRoleAssignmentResponse, *http.Response, error) {
+func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, body RoleAssignment, localVarOptionals *RoleAssignmentsApiPostRoleAssignmentOpts) (ResponseDtoRoleAssignmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -710,11 +709,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, loca
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -806,22 +801,21 @@ func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, loca
 /*
 RoleAssignmentsApiService Create multiple role assignments in a scope. Returns all successfully created role assignments. Ignores failures and duplicates.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body List of role assignments to create
  * @param optional nil or *RoleAssignmentsApiPostRoleAssignmentsOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignmentCreateRequest) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoListRoleAssignmentResponse
 */
 
 type RoleAssignmentsApiPostRoleAssignmentsOpts struct {
-	Body              optional.Interface
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, localVarOptionals *RoleAssignmentsApiPostRoleAssignmentsOpts) (ResponseDtoListRoleAssignmentResponse, *http.Response, error) {
+func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, body RoleAssignmentCreateRequest, localVarOptionals *RoleAssignmentsApiPostRoleAssignmentsOpts) (ResponseDtoListRoleAssignmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -864,11 +858,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, loc
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -960,23 +950,22 @@ func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, loc
 /*
 RoleAssignmentsApiService Update existing role assignment by identifier and scope. Only changing the disabled/enabled state is allowed.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+ * @param body This has the details of the updated role assignment.
+ * @param identifier Identifier of the role assignment to update
  * @param optional nil or *RoleAssignmentsApiPutRoleAssignmentOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignment) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoRoleAssignmentResponse
 */
 
 type RoleAssignmentsApiPutRoleAssignmentOpts struct {
-	Body              optional.Interface
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, identifier string, localVarOptionals *RoleAssignmentsApiPutRoleAssignmentOpts) (ResponseDtoRoleAssignmentResponse, *http.Response, error) {
+func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, body RoleAssignment, identifier string, localVarOptionals *RoleAssignmentsApiPutRoleAssignmentOpts) (ResponseDtoRoleAssignmentResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -1020,11 +1009,7 @@ func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, ident
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -1116,22 +1101,21 @@ func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, ident
 /*
 RoleAssignmentsApiService Check whether a proposed role assignment is valid.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body This is the details of the role assignment for validation.
  * @param optional nil or *RoleAssignmentsApiValidateRoleAssignmentOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of RoleAssignmentValidationRequest) -
-     * @param "AccountIdentifier" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoRoleAssignmentValidationResponse
 */
 
 type RoleAssignmentsApiValidateRoleAssignmentOpts struct {
-	Body              optional.Interface
 	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *RoleAssignmentsApiService) ValidateRoleAssignment(ctx context.Context, localVarOptionals *RoleAssignmentsApiValidateRoleAssignmentOpts) (ResponseDtoRoleAssignmentValidationResponse, *http.Response, error) {
+func (a *RoleAssignmentsApiService) ValidateRoleAssignment(ctx context.Context, body RoleAssignmentValidationRequest, localVarOptionals *RoleAssignmentsApiValidateRoleAssignmentOpts) (ResponseDtoRoleAssignmentValidationResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -1174,11 +1158,7 @@ func (a *RoleAssignmentsApiService) ValidateRoleAssignment(ctx context.Context, 
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {

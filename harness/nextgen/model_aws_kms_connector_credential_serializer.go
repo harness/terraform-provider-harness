@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *AwsKmsConnectorCredentialDto) UnmarshalJSON(data []byte) error {
+func (a *AwsKmsConnectorCredential) UnmarshalJSON(data []byte) error {
 
-	type Alias AwsKmsConnectorCredentialDto
+	type Alias AwsKmsConnectorCredential
 
 	aux := &struct {
 		*Alias
@@ -34,8 +34,8 @@ func (a *AwsKmsConnectorCredentialDto) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *AwsKmsConnectorCredentialDto) MarshalJSON() ([]byte, error) {
-	type Alias AwsKmsConnectorCredentialDto
+func (a *AwsKmsConnectorCredential) MarshalJSON() ([]byte, error) {
+	type Alias AwsKmsConnectorCredential
 
 	var spec []byte
 	var err error

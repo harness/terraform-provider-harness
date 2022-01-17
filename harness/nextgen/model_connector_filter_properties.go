@@ -9,14 +9,21 @@
  */
 package nextgen
 
-// This is the Connector Filter Properties entity as defined in harness
+// Properties of the Connector Filter defined in Harness
 type ConnectorFilterProperties struct {
-	ConnectorNames                    []string            `json:"connectorNames,omitempty"`
-	ConnectorIdentifiers              []string            `json:"connectorIdentifiers,omitempty"`
-	Description                       string              `json:"description,omitempty"`
-	Types                             []string            `json:"types,omitempty"`
-	Categories                        []string            `json:"categories,omitempty"`
-	ConnectivityStatuses              []string            `json:"connectivityStatuses,omitempty"`
+	// This is the list of the Connector names on which the filter will be applied.
+	ConnectorNames []string `json:"connectorNames,omitempty"`
+	// This is the list of the Connector identifiers on which the filter will be applied.
+	ConnectorIdentifiers []string `json:"connectorIdentifiers,omitempty"`
+	// Description of filter created.
+	Description string `json:"description,omitempty"`
+	// This is the list of the Connector types on which the filter will be applied.
+	Types []string `json:"types,omitempty"`
+	// This is the list of the Connector category on which the filter will be applied.
+	Categories []string `json:"categories,omitempty"`
+	// This is the list of the Connector status on which the filter will be applied.
+	ConnectivityStatuses []string `json:"connectivityStatuses,omitempty"`
+	// Boolean value to indicate if the Connector is using credentials from the Delegate to connect.
 	InheritingCredentialsFromDelegate bool                `json:"inheritingCredentialsFromDelegate,omitempty"`
 	CcmConnectorFilter                *CcmConnectorFilter `json:"ccmConnectorFilter,omitempty"`
 	Tags                              map[string]string   `json:"tags,omitempty"`

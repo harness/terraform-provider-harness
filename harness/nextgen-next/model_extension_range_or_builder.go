@@ -10,14 +10,14 @@
 package nextgen
 
 type ExtensionRangeOrBuilder struct {
-	Options                   *ExtensionRangeOptions          `json:"options,omitempty"`
-	End                       int32                           `json:"end,omitempty"`
 	Start                     int32                           `json:"start,omitempty"`
+	End                       int32                           `json:"end,omitempty"`
+	Options                   *ExtensionRangeOptions          `json:"options,omitempty"`
 	OptionsOrBuilder          *ExtensionRangeOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
+	InitializationErrorString string                          `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor                     `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet                `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message                        `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                          `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor                     `json:"descriptorForType,omitempty"`
 	Initialized               bool                            `json:"initialized,omitempty"`
 }

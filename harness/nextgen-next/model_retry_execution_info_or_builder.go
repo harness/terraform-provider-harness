@@ -10,15 +10,15 @@
 package nextgen
 
 type RetryExecutionInfoOrBuilder struct {
-	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
 	IsRetry                   bool                   `json:"isRetry,omitempty"`
 	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
 	ParentRetryId             string                 `json:"parentRetryId,omitempty"`
 	ParentRetryIdBytes        *ByteString            `json:"parentRetryIdBytes,omitempty"`
+	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

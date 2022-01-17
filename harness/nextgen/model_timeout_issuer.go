@@ -11,14 +11,14 @@ package nextgen
 
 type TimeoutIssuer struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
-	TimeoutInstanceId         string                 `json:"timeoutInstanceId,omitempty"`
 	SerializedSize            int32                  `json:"serializedSize,omitempty"`
 	ParserForType             *ParserTimeoutIssuer   `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *TimeoutIssuer         `json:"defaultInstanceForType,omitempty"`
+	TimeoutInstanceId         string                 `json:"timeoutInstanceId,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
 	TimeoutInstanceIdBytes    *ByteString            `json:"timeoutInstanceIdBytes,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

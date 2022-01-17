@@ -30,15 +30,15 @@ type InputSetsApiService service
 /*
 InputSetsApiService Delete the Input Set by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param inputSetIdentifier Identifier for the Input Set that needs to be deleted. An Input Set corresponding to this identifier should exist.
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
+ * @param inputSetIdentifier This is the Id of the Input Set that needs to be deleted. An error is thrown if no Input Set exists for this Id.
+ * @param accountIdentifier Account Identifier for the entity.
+ * @param orgIdentifier Organization Identifier for the entity.
+ * @param projectIdentifier Project Identifier for the entity.
  * @param pipelineIdentifier Pipeline identifier for the Input Set. Input Set will be deleted for the Pipeline corresponding to this Identifier
  * @param optional nil or *InputSetsApiDeleteInputSetOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  Commit Message
@@ -196,33 +196,31 @@ func (a *InputSetsApiService) DeleteInputSet(ctx context.Context, inputSetIdenti
 /*
 InputSetsApiService Gets Input Set for a given identifier. Throws error if no Input Set exists for the given identifier.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param inputSetIdentifier
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
- * @param pipelineIdentifier Pipeline identifier for the input set. The input set will work only for the pipeline corresponding to this identifier.
+ * @param inputSetIdentifier Identifier of the Input Set
+ * @param accountIdentifier Account Identifier for the entity.
+ * @param orgIdentifier Organization Identifier for the entity.
+ * @param projectIdentifier Project Identifier for the entity.
+ * @param pipelineIdentifier Pipeline ID for the Input Set. The Input Set will work only for the Pipeline corresponding to this identifier.
  * @param optional nil or *InputSetsApiGetInputSetOpts - Optional Parameters:
-     * @param "Deleted" (optional.Bool) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-@return ResponseDtoInputSetResponseDtopms
+@return ResponseDtoInputSetResponse
 */
 
 type InputSetsApiGetInputSetOpts struct {
-	Deleted                 optional.Bool
 	Branch                  optional.String
 	RepoIdentifier          optional.String
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiGetInputSetOpts) (ResponseDtoInputSetResponseDtopms, *http.Response, error) {
+func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiGetInputSetOpts) (ResponseDtoInputSetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoInputSetResponseDtopms
+		localVarReturnValue ResponseDtoInputSetResponse
 	)
 
 	// create path and map variables
@@ -237,9 +235,6 @@ func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifie
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	localVarQueryParams.Add("pipelineIdentifier", parameterToString(pipelineIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.Deleted.IsSet() {
-		localVarQueryParams.Add("deleted", parameterToString(localVarOptionals.Deleted.Value(), ""))
-	}
 	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
 		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
 	}
@@ -329,7 +324,7 @@ func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifie
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoInputSetResponseDtopms
+			var v ResponseDtoInputSetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -347,33 +342,31 @@ func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifie
 /*
 InputSetsApiService Gets an Overlay Input Set by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param inputSetIdentifier
+ * @param inputSetIdentifier Identifier of the Overlay Input Set
  * @param accountIdentifier Account Identifier for the entity.
  * @param orgIdentifier Organization Identifier for the entity.
  * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline identifier for the Overlay Input Set. The Overlay Input Set only for the Pipeline corresponding to this identifier will be returned.
+ * @param pipelineIdentifier This is the Pipeline Id specific to the Overlay Input Set. Overlay Input Set corresponding to the Pipeline with this Id would be fetched
  * @param optional nil or *InputSetsApiGetOverlayInputSetOpts - Optional Parameters:
-     * @param "Deleted" (optional.Bool) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-@return ResponseDtoOverlayInputSetResponseDtopms
+@return ResponseDtoOverlayInputSetResponse
 */
 
 type InputSetsApiGetOverlayInputSetOpts struct {
-	Deleted                 optional.Bool
 	Branch                  optional.String
 	RepoIdentifier          optional.String
 	GetDefaultFromOtherRepo optional.Bool
 }
 
-func (a *InputSetsApiService) GetOverlayInputSet(ctx context.Context, inputSetIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiGetOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponseDtopms, *http.Response, error) {
+func (a *InputSetsApiService) GetOverlayInputSet(ctx context.Context, inputSetIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiGetOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoOverlayInputSetResponseDtopms
+		localVarReturnValue ResponseDtoOverlayInputSetResponse
 	)
 
 	// create path and map variables
@@ -388,9 +381,6 @@ func (a *InputSetsApiService) GetOverlayInputSet(ctx context.Context, inputSetId
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	localVarQueryParams.Add("pipelineIdentifier", parameterToString(pipelineIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.Deleted.IsSet() {
-		localVarQueryParams.Add("deleted", parameterToString(localVarOptionals.Deleted.Value(), ""))
-	}
 	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
 		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
 	}
@@ -480,7 +470,7 @@ func (a *InputSetsApiService) GetOverlayInputSet(ctx context.Context, inputSetId
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoOverlayInputSetResponseDtopms
+			var v ResponseDtoOverlayInputSetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -503,13 +493,13 @@ InputSetsApiService List all Input Sets for a pipeline
  * @param projectIdentifier Project Identifier for the entity.
  * @param pipelineIdentifier Pipeline identifier for which we need the Input Sets list.
  * @param optional nil or *InputSetsApiListInputSetOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
+     * @param "PageIndex" (optional.Int32) -  The number of the page to fetch
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
      * @param "InputSetType" (optional.String) -  Type of Input Set needed: \&quot;INPUT_SET\&quot;, or \&quot;OVERLAY_INPUT_SET\&quot;, or \&quot;ALL\&quot;. If nothing is sent, ALL is considered.
-     * @param "SearchTerm" (optional.String) -
-     * @param "SortOrders" (optional.Interface of []string) -
+     * @param "SearchTerm" (optional.String) -  Search term to filter out Input Sets based on name, identifier, tags.
+     * @param "SortOrders" (optional.Interface of []string) -  Sort criteria for the elements.
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPageResponseInputSetSummaryResponse
 */
@@ -676,7 +666,7 @@ InputSetsApiService Merge given Input Sets into a single Runtime Input YAML
      * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline to which the Input Sets belong
      * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline to which the Input Sets belong
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoMergeInputSetResponse
 */
@@ -833,7 +823,7 @@ InputSetsApiService Merge given Runtime Input YAML into the Pipeline
      * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline to which the Input Sets belong
      * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline to which the Input Sets belong
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoMergeInputSetResponse
 */
@@ -982,21 +972,21 @@ func (a *InputSetsApiService) MergeRuntimeInputIntoPipeline(ctx context.Context,
 InputSetsApiService Create an Input Set for a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Input set YAML to be created. The account, org, project, and pipeline identifiers inside the YAML should match the query parameters
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
+ * @param accountIdentifier Account Identifier for the entity.
+ * @param orgIdentifier Organization Identifier for the entity.
+ * @param projectIdentifier Project Identifier for the entity.
  * @param pipelineIdentifier Pipeline identifier for the input set. The input set will work only for the pipeline corresponding to this identifier.
  * @param optional nil or *InputSetsApiPostInputSetOpts - Optional Parameters:
-     * @param "PipelineBranch" (optional.String) -
-     * @param "PipelineRepoID" (optional.String) -
+     * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline for which the Input Set is to be created
+     * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline for which the Input Set is to be created
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  File Path
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
      * @param "BaseBranch" (optional.String) -  Default Branch
-@return ResponseDtoInputSetResponseDtopms
+@return ResponseDtoInputSetResponse
 */
 
 type InputSetsApiPostInputSetOpts struct {
@@ -1011,13 +1001,13 @@ type InputSetsApiPostInputSetOpts struct {
 	BaseBranch     optional.String
 }
 
-func (a *InputSetsApiService) PostInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiPostInputSetOpts) (ResponseDtoInputSetResponseDtopms, *http.Response, error) {
+func (a *InputSetsApiService) PostInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiPostInputSetOpts) (ResponseDtoInputSetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoInputSetResponseDtopms
+		localVarReturnValue ResponseDtoInputSetResponse
 	)
 
 	// create path and map variables
@@ -1140,7 +1130,7 @@ func (a *InputSetsApiService) PostInputSet(ctx context.Context, body string, acc
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoInputSetResponseDtopms
+			var v ResponseDtoInputSetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1165,13 +1155,13 @@ InputSetsApiService Create an Overlay Input Set for a pipeline
  * @param pipelineIdentifier Pipeline identifier for the overlay input set. The Overlay Input Set will work only for the Pipeline corresponding to this identifier.
  * @param optional nil or *InputSetsApiPostOverlayInputSetOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  File Path
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
      * @param "BaseBranch" (optional.String) -  Default Branch
-@return ResponseDtoOverlayInputSetResponseDtopms
+@return ResponseDtoOverlayInputSetResponse
 */
 
 type InputSetsApiPostOverlayInputSetOpts struct {
@@ -1184,13 +1174,13 @@ type InputSetsApiPostOverlayInputSetOpts struct {
 	BaseBranch     optional.String
 }
 
-func (a *InputSetsApiService) PostOverlayInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiPostOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponseDtopms, *http.Response, error) {
+func (a *InputSetsApiService) PostOverlayInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *InputSetsApiPostOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoOverlayInputSetResponseDtopms
+		localVarReturnValue ResponseDtoOverlayInputSetResponse
 	)
 
 	// create path and map variables
@@ -1307,7 +1297,7 @@ func (a *InputSetsApiService) PostOverlayInputSet(ctx context.Context, body stri
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoOverlayInputSetResponseDtopms
+			var v ResponseDtoOverlayInputSetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1325,24 +1315,24 @@ func (a *InputSetsApiService) PostOverlayInputSet(ctx context.Context, body stri
 /*
 InputSetsApiService Update Input Set for Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Input set YAML to be updated. The account, org, project, and pipeline identifiers inside the YAML should match the query parameters
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
- * @param pipelineIdentifier Pipeline identifier for the Input Set. The Input Set will work only for the Pipeline corresponding to this identifier.
+ * @param body Input set YAML to be updated. The Account, Org, Project, and Pipeline Ids inside the YAML should match the query parameters
+ * @param accountIdentifier Account Identifier for the entity.
+ * @param orgIdentifier Organization Identifier for the entity.
+ * @param projectIdentifier Project Identifier for the entity.
+ * @param pipelineIdentifier Pipeline Id for the Input Set. The Input Set will work only for the Pipeline corresponding to this Id.
  * @param inputSetIdentifier Identifier for the Input Set that needs to be updated. An Input Set corresponding to this identifier should already exist.
  * @param optional nil or *InputSetsApiPutInputSetOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version of entity to match
-     * @param "PipelineBranch" (optional.String) -
-     * @param "PipelineRepoID" (optional.String) -
+     * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline for which the Input Set is to be created
+     * @param "PipelineRepoID" (optional.String) -  Github Repo Id of the Pipeline for which the Input Set is to be created
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  Default Folder Path
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
      * @param "BaseBranch" (optional.String) -  Default Branch
-@return ResponseDtoInputSetResponseDtopms
+@return ResponseDtoInputSetResponse
 */
 
 type InputSetsApiPutInputSetOpts struct {
@@ -1358,13 +1348,13 @@ type InputSetsApiPutInputSetOpts struct {
 	BaseBranch     optional.String
 }
 
-func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, inputSetIdentifier string, localVarOptionals *InputSetsApiPutInputSetOpts) (ResponseDtoInputSetResponseDtopms, *http.Response, error) {
+func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, inputSetIdentifier string, localVarOptionals *InputSetsApiPutInputSetOpts) (ResponseDtoInputSetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoInputSetResponseDtopms
+		localVarReturnValue ResponseDtoInputSetResponse
 	)
 
 	// create path and map variables
@@ -1491,7 +1481,7 @@ func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, acco
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoInputSetResponseDtopms
+			var v ResponseDtoInputSetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1518,13 +1508,13 @@ InputSetsApiService Update an Overlay Input Set for a pipeline
  * @param optional nil or *InputSetsApiPutOverlayInputSetOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  Default Folder Path
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
      * @param "BaseBranch" (optional.String) -  Default Branch
-@return ResponseDtoOverlayInputSetResponseDtopms
+@return ResponseDtoOverlayInputSetResponse
 */
 
 type InputSetsApiPutOverlayInputSetOpts struct {
@@ -1538,13 +1528,13 @@ type InputSetsApiPutOverlayInputSetOpts struct {
 	BaseBranch     optional.String
 }
 
-func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, inputSetIdentifier string, localVarOptionals *InputSetsApiPutOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponseDtopms, *http.Response, error) {
+func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, inputSetIdentifier string, localVarOptionals *InputSetsApiPutOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoOverlayInputSetResponseDtopms
+		localVarReturnValue ResponseDtoOverlayInputSetResponse
 	)
 
 	// create path and map variables
@@ -1665,7 +1655,7 @@ func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body strin
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoOverlayInputSetResponseDtopms
+			var v ResponseDtoOverlayInputSetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1690,7 +1680,7 @@ InputSetsApiService Fetch Runtime Input Template for a Pipeline
  * @param optional nil or *InputSetsApiRuntimeInputTemplateOpts - Optional Parameters:
      * @param "Body" (optional.Interface of InputSetTemplateRequest) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoInputSetTemplateWithReplacedExpressionsResponse
 */

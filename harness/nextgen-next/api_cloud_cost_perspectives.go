@@ -113,7 +113,7 @@ func (a *CloudCostPerspectivesApiService) CreatePerspective(ctx context.Context,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -123,7 +123,7 @@ func (a *CloudCostPerspectivesApiService) CreatePerspective(ctx context.Context,
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -234,7 +234,7 @@ func (a *CloudCostPerspectivesApiService) DeletePerspective(ctx context.Context,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -244,7 +244,7 @@ func (a *CloudCostPerspectivesApiService) DeletePerspective(ctx context.Context,
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -355,7 +355,7 @@ func (a *CloudCostPerspectivesApiService) GetForecastCostV2(ctx context.Context,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -365,7 +365,7 @@ func (a *CloudCostPerspectivesApiService) GetForecastCostV2(ctx context.Context,
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -476,7 +476,7 @@ func (a *CloudCostPerspectivesApiService) GetLastMonthCostV2(ctx context.Context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -486,7 +486,7 @@ func (a *CloudCostPerspectivesApiService) GetLastMonthCostV2(ctx context.Context
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -597,7 +597,7 @@ func (a *CloudCostPerspectivesApiService) GetPerspective(ctx context.Context, ac
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -607,7 +607,7 @@ func (a *CloudCostPerspectivesApiService) GetPerspective(ctx context.Context, ac
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -719,7 +719,7 @@ func (a *CloudCostPerspectivesApiService) UpdatePerspective(ctx context.Context,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v CcmFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -729,7 +729,7 @@ func (a *CloudCostPerspectivesApiService) UpdatePerspective(ctx context.Context,
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v CcmError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

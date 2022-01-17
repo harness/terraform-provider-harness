@@ -9,7 +9,10 @@
  */
 package nextgen
 
+// This has details of the Connector Catalogue in Harness.
 type ConnectorCatalogueItem struct {
-	Category   string   `json:"category,omitempty"`
+	// Category of this Connector.
+	Category string `json:"category,omitempty"`
+	// List of Connector types corresponding to a specific category.
 	Connectors []string `json:"connectors,omitempty"`
 }

@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// Filter based on whether it has a particular resource
 type ResourceSelectorFilter struct {
 	ResourceType       string `json:"resourceType"`
 	ResourceIdentifier string `json:"resourceIdentifier,omitempty"`

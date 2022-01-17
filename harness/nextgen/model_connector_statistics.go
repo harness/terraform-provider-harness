@@ -9,7 +9,10 @@
  */
 package nextgen
 
+// This has the count for all Connector Types and Status defined in Harness
 type ConnectorStatistics struct {
-	TypeStats   []ConnectorTypeStats   `json:"typeStats,omitempty"`
+	// Count of Connectors grouped by type.
+	TypeStats []ConnectorTypeStats `json:"typeStats,omitempty"`
+	// Count of Connectors grouped by status.
 	StatusStats []ConnectorStatusStats `json:"statusStats,omitempty"`
 }

@@ -11,15 +11,13 @@ package nextgen
 
 type DescriptorProto struct {
 	UnknownFields               *UnknownFieldSet                `json:"unknownFields,omitempty"`
-	Initialized                 bool                            `json:"initialized,omitempty"`
+	SerializedSize              int32                           `json:"serializedSize,omitempty"`
+	ParserForType               *ParserDescriptorProto          `json:"parserForType,omitempty"`
+	DefaultInstanceForType      *DescriptorProto                `json:"defaultInstanceForType,omitempty"`
 	Options                     *MessageOptions                 `json:"options,omitempty"`
-	ExtensionCount              int32                           `json:"extensionCount,omitempty"`
-	ExtensionRangeList          []ExtensionRange                `json:"extensionRangeList,omitempty"`
-	ReservedRangeList           []ReservedRange                 `json:"reservedRangeList,omitempty"`
-	ReservedNameList            []string                        `json:"reservedNameList,omitempty"`
-	OneofDeclCount              int32                           `json:"oneofDeclCount,omitempty"`
-	NestedTypeCount             int32                           `json:"nestedTypeCount,omitempty"`
-	EnumTypeCount               int32                           `json:"enumTypeCount,omitempty"`
+	Initialized                 bool                            `json:"initialized,omitempty"`
+	FieldCount                  int32                           `json:"fieldCount,omitempty"`
+	Name                        string                          `json:"name,omitempty"`
 	FieldList                   []FieldDescriptorProto          `json:"fieldList,omitempty"`
 	FieldOrBuilderList          []FieldDescriptorProtoOrBuilder `json:"fieldOrBuilderList,omitempty"`
 	NestedTypeList              []DescriptorProto               `json:"nestedTypeList,omitempty"`
@@ -31,19 +29,21 @@ type DescriptorProto struct {
 	ReservedRangeOrBuilderList  []ReservedRangeOrBuilder        `json:"reservedRangeOrBuilderList,omitempty"`
 	ReservedRangeCount          int32                           `json:"reservedRangeCount,omitempty"`
 	ReservedNameCount           int32                           `json:"reservedNameCount,omitempty"`
-	FieldCount                  int32                           `json:"fieldCount,omitempty"`
-	ExtensionList               []FieldDescriptorProto          `json:"extensionList,omitempty"`
-	ExtensionOrBuilderList      []FieldDescriptorProtoOrBuilder `json:"extensionOrBuilderList,omitempty"`
-	OptionsOrBuilder            *MessageOptionsOrBuilder        `json:"optionsOrBuilder,omitempty"`
+	OneofDeclCount              int32                           `json:"oneofDeclCount,omitempty"`
 	NameBytes                   *ByteString                     `json:"nameBytes,omitempty"`
 	EnumTypeList                []EnumDescriptorProto           `json:"enumTypeList,omitempty"`
 	EnumTypeOrBuilderList       []EnumDescriptorProtoOrBuilder  `json:"enumTypeOrBuilderList,omitempty"`
-	SerializedSize              int32                           `json:"serializedSize,omitempty"`
-	ParserForType               *ParserDescriptorProto          `json:"parserForType,omitempty"`
-	DefaultInstanceForType      *DescriptorProto                `json:"defaultInstanceForType,omitempty"`
-	Name                        string                          `json:"name,omitempty"`
-	AllFields                   map[string]interface{}          `json:"allFields,omitempty"`
+	ExtensionList               []FieldDescriptorProto          `json:"extensionList,omitempty"`
+	ExtensionOrBuilderList      []FieldDescriptorProtoOrBuilder `json:"extensionOrBuilderList,omitempty"`
+	OptionsOrBuilder            *MessageOptionsOrBuilder        `json:"optionsOrBuilder,omitempty"`
+	ExtensionRangeList          []ExtensionRange                `json:"extensionRangeList,omitempty"`
+	ReservedRangeList           []ReservedRange                 `json:"reservedRangeList,omitempty"`
+	ReservedNameList            []string                        `json:"reservedNameList,omitempty"`
+	NestedTypeCount             int32                           `json:"nestedTypeCount,omitempty"`
+	EnumTypeCount               int32                           `json:"enumTypeCount,omitempty"`
+	ExtensionCount              int32                           `json:"extensionCount,omitempty"`
 	InitializationErrorString   string                          `json:"initializationErrorString,omitempty"`
 	DescriptorForType           *Descriptor                     `json:"descriptorForType,omitempty"`
+	AllFields                   map[string]interface{}          `json:"allFields,omitempty"`
 	MemoizedSerializedSize      int32                           `json:"memoizedSerializedSize,omitempty"`
 }

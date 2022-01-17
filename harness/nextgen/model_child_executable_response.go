@@ -11,18 +11,18 @@ package nextgen
 
 type ChildExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	SerializedSize            int32                          `json:"serializedSize,omitempty"`
+	ParserForType             *ParserChildExecutableResponse `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *ChildExecutableResponse       `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                           `json:"initialized,omitempty"`
+	ChildNodeIdBytes          *ByteString                    `json:"childNodeIdBytes,omitempty"`
 	LogKeysList               []string                       `json:"logKeysList,omitempty"`
 	LogKeysCount              int32                          `json:"logKeysCount,omitempty"`
 	UnitsList                 []string                       `json:"unitsList,omitempty"`
 	UnitsCount                int32                          `json:"unitsCount,omitempty"`
 	ChildNodeId               string                         `json:"childNodeId,omitempty"`
-	SerializedSize            int32                          `json:"serializedSize,omitempty"`
-	ParserForType             *ParserChildExecutableResponse `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *ChildExecutableResponse       `json:"defaultInstanceForType,omitempty"`
-	ChildNodeIdBytes          *ByteString                    `json:"childNodeIdBytes,omitempty"`
-	AllFields                 map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                    `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}         `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                          `json:"memoizedSerializedSize,omitempty"`
 }

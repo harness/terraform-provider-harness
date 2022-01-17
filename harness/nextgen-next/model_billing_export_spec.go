@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains Billing details like storageAccountName, containerName, directoryName, reportName and subscription Id
+// Returns Billing details like StorageAccount's Name, container's Name, directory's Name, report Name and subscription Id
 type BillingExportSpec struct {
 	StorageAccountName string `json:"storageAccountName"`
 	ContainerName      string `json:"containerName"`

@@ -11,16 +11,16 @@ package nextgen
 
 type ExtensionRange struct {
 	UnknownFields             *UnknownFieldSet                `json:"unknownFields,omitempty"`
-	Initialized               bool                            `json:"initialized,omitempty"`
-	Options                   *ExtensionRangeOptions          `json:"options,omitempty"`
-	End                       int32                           `json:"end,omitempty"`
-	Start                     int32                           `json:"start,omitempty"`
-	OptionsOrBuilder          *ExtensionRangeOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
 	SerializedSize            int32                           `json:"serializedSize,omitempty"`
 	ParserForType             *ParserExtensionRange           `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *ExtensionRange                 `json:"defaultInstanceForType,omitempty"`
-	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
+	Start                     int32                           `json:"start,omitempty"`
+	End                       int32                           `json:"end,omitempty"`
+	Options                   *ExtensionRangeOptions          `json:"options,omitempty"`
+	Initialized               bool                            `json:"initialized,omitempty"`
+	OptionsOrBuilder          *ExtensionRangeOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
 	InitializationErrorString string                          `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                     `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                           `json:"memoizedSerializedSize,omitempty"`
 }

@@ -278,7 +278,7 @@ func (a *SmtpConfigApiService) DeleteSmtpConfig(ctx context.Context, identifier 
 SmtpConfigApiService Gets Smtp config by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *SmtpConfigApiGetSmtpConfigOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
+     * @param "AccountId" (optional.String) -  Account Identifier for the Entity
 @return ResponseDtoNgSmtp
 */
 
@@ -533,7 +533,7 @@ func (a *SmtpConfigApiService) UpdateSmtp(ctx context.Context, localVarOptionals
 SmtpConfigApiService Tests the config&#x27;s connectivity by sending a test email
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Attribute uuid
- * @param accountId Account Identifier for the entity
+ * @param accountId Account Identifier for the Entity
  * @param to
  * @param subject
  * @param body
@@ -658,18 +658,17 @@ func (a *SmtpConfigApiService) ValidateConnectivity(ctx context.Context, identif
 /*
 SmtpConfigApiService Checks whether other connectors exist with the same name
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountId Account Identifier for the Entity
  * @param optional nil or *SmtpConfigApiValidateNameOpts - Optional Parameters:
      * @param "Name" (optional.String) -  The name of Config
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
 @return ResponseDtoValidationResult
 */
 
 type SmtpConfigApiValidateNameOpts struct {
-	Name      optional.String
-	AccountId optional.String
+	Name optional.String
 }
 
-func (a *SmtpConfigApiService) ValidateName(ctx context.Context, localVarOptionals *SmtpConfigApiValidateNameOpts) (ResponseDtoValidationResult, *http.Response, error) {
+func (a *SmtpConfigApiService) ValidateName(ctx context.Context, accountId string, localVarOptionals *SmtpConfigApiValidateNameOpts) (ResponseDtoValidationResult, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -688,9 +687,7 @@ func (a *SmtpConfigApiService) ValidateName(ctx context.Context, localVarOptiona
 	if localVarOptionals != nil && localVarOptionals.Name.IsSet() {
 		localVarQueryParams.Add("name", parameterToString(localVarOptionals.Name.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.AccountId.IsSet() {
-		localVarQueryParams.Add("accountId", parameterToString(localVarOptionals.AccountId.Value(), ""))
-	}
+	localVarQueryParams.Add("accountId", parameterToString(accountId, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 

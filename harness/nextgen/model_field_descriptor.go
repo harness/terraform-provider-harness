@@ -22,17 +22,17 @@ type FieldDescriptor struct {
 	ContainingOneof *OneofDescriptor      `json:"containingOneof,omitempty"`
 	EnumType        *EnumDescriptor       `json:"enumType,omitempty"`
 	DefaultValue    *interface{}          `json:"defaultValue,omitempty"`
-	Options         *FieldOptions         `json:"options,omitempty"`
-	Optional        bool                  `json:"optional,omitempty"`
-	Packed          bool                  `json:"packed,omitempty"`
-	JavaType        string                `json:"javaType,omitempty"`
-	LiteType        string                `json:"liteType,omitempty"`
-	Extension       bool                  `json:"extension,omitempty"`
-	Required        bool                  `json:"required,omitempty"`
-	LiteJavaType    string                `json:"liteJavaType,omitempty"`
-	Packable        bool                  `json:"packable,omitempty"`
-	MapField        bool                  `json:"mapField,omitempty"`
 	Repeated        bool                  `json:"repeated,omitempty"`
+	JavaType        string                `json:"javaType,omitempty"`
+	MapField        bool                  `json:"mapField,omitempty"`
+	Options         *FieldOptions         `json:"options,omitempty"`
+	Required        bool                  `json:"required,omitempty"`
+	Optional        bool                  `json:"optional,omitempty"`
 	Name            string                `json:"name,omitempty"`
 	Number          int32                 `json:"number,omitempty"`
+	Extension       bool                  `json:"extension,omitempty"`
+	LiteType        string                `json:"liteType,omitempty"`
+	Packed          bool                  `json:"packed,omitempty"`
+	LiteJavaType    string                `json:"liteJavaType,omitempty"`
+	Packable        bool                  `json:"packable,omitempty"`
 }

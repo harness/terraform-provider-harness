@@ -31,10 +31,10 @@ type UserApiService service
 UserApiService Add user(s) to given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiAddUsersOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoAddUsersResponse
 */
 
@@ -295,11 +295,11 @@ func (a *UserApiService) ChangeUserPassword(ctx context.Context, localVarOptiona
 /*
 UserApiService Boolean status whether the user is last admin at scope or not
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiCheckIfLastAdminOpts - Optional Parameters:
-     * @param "UserId" (optional.String) -  user Identifier
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "UserId" (optional.String) -  User identifier
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoBoolean
 */
 
@@ -431,129 +431,10 @@ func (a *UserApiService) CheckIfLastAdmin(ctx context.Context, accountIdentifier
 }
 
 /*
-UserApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param optional nil or *UserApiCheckUserMembershipOpts - Optional Parameters:
-     * @param "UserId" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-
-*/
-
-type UserApiCheckUserMembershipOpts struct {
-	UserId            optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *UserApiService) CheckUserMembership(ctx context.Context, accountIdentifier string, localVarOptionals *UserApiCheckUserMembershipOpts) (*http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/user/usermembership"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if localVarOptionals != nil && localVarOptionals.UserId.IsSet() {
-		localVarQueryParams.Add("userId", parameterToString(localVarOptionals.UserId.Value(), ""))
-	}
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		return localVarHttpResponse, newErr
-	}
-
-	return localVarHttpResponse, nil
-}
-
-/*
 UserApiService Disables two-factor-auth for an user in an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiDisableTTwoFactorAuthOpts - Optional Parameters:
-     * @param "RoutingId" (optional.String) -  Account Identifier for the entity
+     * @param "RoutingId" (optional.String) -  Account Identifier for the Entity
 @return ResponseDtoUserInfo
 */
 
@@ -680,7 +561,7 @@ UserApiService Enables two-factor-auth for an user in an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiEnableTwoFactorAuthOpts - Optional Parameters:
      * @param "Body" (optional.Interface of TwoFactorAuthSettingsInfo) -
-     * @param "RoutingId" (optional.String) -  Account Identifier for the entity
+     * @param "RoutingId" (optional.String) -  Account Identifier for the Entity
 @return ResponseDtoUserInfo
 */
 
@@ -810,10 +691,10 @@ func (a *UserApiService) EnableTwoFactorAuth(ctx context.Context, localVarOption
 }
 
 /*
-UserApiService count of projects that are accessible to a user filtered by CreatedAt time
+UserApiService Count of projects that are accessible to a user filtered by CreatedAt time
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiGetAccessibleProjectsCountOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
      * @param "UserId" (optional.String) -  user Identifier
      * @param "StartTime" (optional.Int64) -  Start time to Filter projects by CreatedAt time
      * @param "EndTime" (optional.Int64) -  End time to Filter projects by CreatedAt time
@@ -954,11 +835,11 @@ func (a *UserApiService) GetAccessibleProjectsCount(ctx context.Context, localVa
 UserApiService Returns the user metadata along with rolesAssignments by userId and scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userId user Identifier
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiGetAggregatedUserOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-@return ResponseDtoUserAggregateDto
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+@return ResponseDtoUserAggregate
 */
 
 type UserApiGetAggregatedUserOpts struct {
@@ -966,13 +847,13 @@ type UserApiGetAggregatedUserOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *UserApiService) GetAggregatedUser(ctx context.Context, userId string, accountIdentifier string, localVarOptionals *UserApiGetAggregatedUserOpts) (ResponseDtoUserAggregateDto, *http.Response, error) {
+func (a *UserApiService) GetAggregatedUser(ctx context.Context, userId string, accountIdentifier string, localVarOptionals *UserApiGetAggregatedUserOpts) (ResponseDtoUserAggregate, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoUserAggregateDto
+		localVarReturnValue ResponseDtoUserAggregate
 	)
 
 	// create path and map variables
@@ -1070,7 +951,7 @@ func (a *UserApiService) GetAggregatedUser(ctx context.Context, userId string, a
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoUserAggregateDto
+			var v ResponseDtoUserAggregate
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1086,18 +967,18 @@ func (a *UserApiService) GetAggregatedUser(ctx context.Context, userId string, a
 }
 
 /*
-UserApiService list of all the user&#x27;s metadata along with rolesAssignments who have access to given scope
+UserApiService List of all the user&#x27;s metadata along with rolesAssignments who have access to given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiGetAggregatedUsersOpts - Optional Parameters:
      * @param "Body" (optional.Interface of AclAggregateFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "SearchTerm" (optional.String) -  Search term
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
-@return ResponseDtoPageResponseUserAggregateDto
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+@return ResponseDtoPageResponseUserAggregate
 */
 
 type UserApiGetAggregatedUsersOpts struct {
@@ -1110,13 +991,13 @@ type UserApiGetAggregatedUsersOpts struct {
 	SortOrders        optional.Interface
 }
 
-func (a *UserApiService) GetAggregatedUsers(ctx context.Context, accountIdentifier string, localVarOptionals *UserApiGetAggregatedUsersOpts) (ResponseDtoPageResponseUserAggregateDto, *http.Response, error) {
+func (a *UserApiService) GetAggregatedUsers(ctx context.Context, accountIdentifier string, localVarOptionals *UserApiGetAggregatedUsersOpts) (ResponseDtoPageResponseUserAggregate, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseUserAggregateDto
+		localVarReturnValue ResponseDtoPageResponseUserAggregate
 	)
 
 	// create path and map variables
@@ -1231,7 +1112,7 @@ func (a *UserApiService) GetAggregatedUsers(ctx context.Context, accountIdentifi
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseUserAggregateDto
+			var v ResponseDtoPageResponseUserAggregate
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1247,14 +1128,14 @@ func (a *UserApiService) GetAggregatedUsers(ctx context.Context, accountIdentifi
 }
 
 /*
-UserApiService list of current gen users with the given account Id
+UserApiService List of current gen users with the given Account Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier This is the Account Identifier. Users corresponding to this Account will be retrieved.
  * @param optional nil or *UserApiGetCurrentGenUsersOpts - Optional Parameters:
-     * @param "SearchString" (optional.String) -  Search term
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "SearchString" (optional.String) -  This string will be used to filter the search results. Details of all the users having this string in their name or email address will be filtered.
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserMetadata
 */
 
@@ -1508,7 +1389,7 @@ func (a *UserApiService) GetCurrentUserInfo(ctx context.Context) (ResponseDtoUse
 /*
 UserApiService Gets two factor authentication settings information of the current logged in user
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param authMechanism
+ * @param authMechanism This is the authentication mechanism for the logged-in User. Two-Factor Authentication settings will be fetched for this mechanism.
 @return ResponseDtoTwoFactorAuthSettingsInfo
 */
 func (a *UserApiService) GetTwoFactorAuthSettings(ctx context.Context, authMechanism string) (ResponseDtoTwoFactorAuthSettingsInfo, *http.Response, error) {
@@ -1627,8 +1508,8 @@ func (a *UserApiService) GetTwoFactorAuthSettings(ctx context.Context, authMecha
 UserApiService list of project(s) of current user in the passed account Id in form of List
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiGetUserAllProjectsInfoOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
-     * @param "UserId" (optional.String) -  user Identifier
+     * @param "AccountId" (optional.String) -  Account Identifier for the Entity
+     * @param "UserId" (optional.String) -  User Identifier
 @return ResponseDtoListProject
 */
 
@@ -1755,13 +1636,13 @@ func (a *UserApiService) GetUserAllProjectsInfo(ctx context.Context, localVarOpt
 }
 
 /*
-UserApiService list of project(s) of current user in the passed account Id in form of page response
+UserApiService Retrieves the list of projects of the current user corresponding to the specified Account Identifier.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiGetUserProjectInfoOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -  Account Identifier for the entity
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "AccountId" (optional.String) -  This is the Account Identifier. Details of all the Projects within the scope of this Account will be fetched.
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseProject
 */
 
@@ -1896,16 +1777,16 @@ func (a *UserApiService) GetUserProjectInfo(ctx context.Context, localVarOptiona
 }
 
 /*
-UserApiService list of user&#x27;s Metadata for a given scope
+UserApiService List of user&#x27;s Metadata for a given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiGetUsersOpts - Optional Parameters:
      * @param "Body" (optional.Interface of UserFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
-     * @param "PageIndex" (optional.Int32) -
-     * @param "PageSize" (optional.Int32) -
-     * @param "SortOrders" (optional.Interface of []SortOrder) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
+     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserMetadata
 */
 
@@ -2055,10 +1936,10 @@ func (a *UserApiService) GetUsers(ctx context.Context, accountIdentifier string,
 UserApiService Remove user as the collaborator from the scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userId user Identifier
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiRemoveUserOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoBoolean
 */
 
@@ -2187,134 +2068,13 @@ func (a *UserApiService) RemoveUser(ctx context.Context, userId string, accountI
 }
 
 /*
-UserApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userId
- * @param accountIdentifier
- * @param optional nil or *UserApiRemoveUserInternalOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -
-     * @param "ProjectIdentifier" (optional.String) -
-     * @param "RemoveUserFilter" (optional.String) -
-
-*/
-
-type UserApiRemoveUserInternalOpts struct {
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-	RemoveUserFilter  optional.String
-}
-
-func (a *UserApiService) RemoveUserInternal(ctx context.Context, userId string, accountIdentifier string, localVarOptionals *UserApiRemoveUserInternalOpts) (*http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/user/internal/{userId}"
-	localVarPath = strings.Replace(localVarPath, "{"+"userId"+"}", fmt.Sprintf("%v", userId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.RemoveUserFilter.IsSet() {
-		localVarQueryParams.Add("removeUserFilter", parameterToString(localVarOptionals.RemoveUserFilter.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarHttpResponse, newErr
-		}
-		return localVarHttpResponse, newErr
-	}
-
-	return localVarHttpResponse, nil
-}
-
-/*
 UserApiService unlock user in a given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userId user Identifier
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *UserApiUnlockUserOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoUserInfo
 */
 

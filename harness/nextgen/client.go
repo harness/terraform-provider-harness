@@ -50,6 +50,8 @@ type APIClient struct {
 
 	AclApi *AclApiService
 
+	ApiKeyApi *ApiKeyApiService
+
 	ApprovalsApi *ApprovalsApiService
 
 	AuthenticationSettingsApi *AuthenticationSettingsApiService
@@ -71,8 +73,6 @@ type APIClient struct {
 	ExecuteApi *ExecuteApiService
 
 	ExecutionDetailsApi *ExecutionDetailsApiService
-
-	FeedbackApi *FeedbackApiService
 
 	FilterApi *FilterApiService
 
@@ -104,13 +104,23 @@ type APIClient struct {
 
 	PipelinesApi *PipelinesApiService
 
+	PipelinesDashboardApi *PipelinesDashboardApiService
+
 	ProjectApi *ProjectApiService
 
 	RoleAssignmentsApi *RoleAssignmentsApiService
 
 	RolesApi *RolesApiService
 
+	SCIMApi *SCIMApiService
+
 	ScmApi *ScmApiService
+
+	SecretManagersApi *SecretManagersApiService
+
+	SecretsApi *SecretsApiService
+
+	ServiceAccountApi *ServiceAccountApiService
 
 	ServicesApi *ServicesApiService
 
@@ -118,9 +128,15 @@ type APIClient struct {
 
 	SourceCodeManagerApi *SourceCodeManagerApiService
 
+	TokenApi *TokenApiService
+
 	TriggersApi *TriggersApiService
 
+	UsageApi *UsageApiService
+
 	UserApi *UserApiService
+
+	UserGroupApi *UserGroupApiService
 
 	WebhookEventHandlerApi *WebhookEventHandlerApiService
 
@@ -145,6 +161,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	// API Services
 	c.AccountsApi = (*AccountsApiService)(&c.common)
 	c.AclApi = (*AclApiService)(&c.common)
+	c.ApiKeyApi = (*ApiKeyApiService)(&c.common)
 	c.ApprovalsApi = (*ApprovalsApiService)(&c.common)
 	c.AuthenticationSettingsApi = (*AuthenticationSettingsApiService)(&c.common)
 	c.CloudCostBudgetsApi = (*CloudCostBudgetsApiService)(&c.common)
@@ -156,7 +173,6 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.EnvironmentsApi = (*EnvironmentsApiService)(&c.common)
 	c.ExecuteApi = (*ExecuteApiService)(&c.common)
 	c.ExecutionDetailsApi = (*ExecutionDetailsApiService)(&c.common)
-	c.FeedbackApi = (*FeedbackApiService)(&c.common)
 	c.FilterApi = (*FilterApiService)(&c.common)
 	c.GcpClustersApi = (*GcpClustersApiService)(&c.common)
 	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
@@ -172,15 +188,23 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.OrganizationApi = (*OrganizationApiService)(&c.common)
 	c.PermissionsApi = (*PermissionsApiService)(&c.common)
 	c.PipelinesApi = (*PipelinesApiService)(&c.common)
+	c.PipelinesDashboardApi = (*PipelinesDashboardApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
 	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
 	c.RolesApi = (*RolesApiService)(&c.common)
+	c.SCIMApi = (*SCIMApiService)(&c.common)
 	c.ScmApi = (*ScmApiService)(&c.common)
+	c.SecretManagersApi = (*SecretManagersApiService)(&c.common)
+	c.SecretsApi = (*SecretsApiService)(&c.common)
+	c.ServiceAccountApi = (*ServiceAccountApiService)(&c.common)
 	c.ServicesApi = (*ServicesApiService)(&c.common)
 	c.SmtpConfigApi = (*SmtpConfigApiService)(&c.common)
 	c.SourceCodeManagerApi = (*SourceCodeManagerApiService)(&c.common)
+	c.TokenApi = (*TokenApiService)(&c.common)
 	c.TriggersApi = (*TriggersApiService)(&c.common)
+	c.UsageApi = (*UsageApiService)(&c.common)
 	c.UserApi = (*UserApiService)(&c.common)
+	c.UserGroupApi = (*UserGroupApiService)(&c.common)
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 	c.WebhookTriggersApi = (*WebhookTriggersApiService)(&c.common)
 

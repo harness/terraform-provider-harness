@@ -10,20 +10,20 @@
 package nextgen
 
 type MethodDescriptorProtoOrBuilder struct {
-	Options                   *MethodOptions          `json:"options,omitempty"`
-	InputType                 string                  `json:"inputType,omitempty"`
-	OutputTypeBytes           *ByteString             `json:"outputTypeBytes,omitempty"`
-	OutputType                string                  `json:"outputType,omitempty"`
 	InputTypeBytes            *ByteString             `json:"inputTypeBytes,omitempty"`
-	OptionsOrBuilder          *MethodOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
-	NameBytes                 *ByteString             `json:"nameBytes,omitempty"`
+	OutputTypeBytes           *ByteString             `json:"outputTypeBytes,omitempty"`
+	InputType                 string                  `json:"inputType,omitempty"`
+	OutputType                string                  `json:"outputType,omitempty"`
+	Options                   *MethodOptions          `json:"options,omitempty"`
+	Name                      string                  `json:"name,omitempty"`
 	ClientStreaming           bool                    `json:"clientStreaming,omitempty"`
 	ServerStreaming           bool                    `json:"serverStreaming,omitempty"`
-	Name                      string                  `json:"name,omitempty"`
+	NameBytes                 *ByteString             `json:"nameBytes,omitempty"`
+	OptionsOrBuilder          *MethodOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
+	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet        `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message                `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
 	Initialized               bool                    `json:"initialized,omitempty"`
 }

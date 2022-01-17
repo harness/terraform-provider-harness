@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This contains info about a Pipeline Stage needed for stage execution.
 type StageExecutionResponse struct {
 	StageIdentifier string   `json:"stageIdentifier,omitempty"`
 	StageName       string   `json:"stageName,omitempty"`

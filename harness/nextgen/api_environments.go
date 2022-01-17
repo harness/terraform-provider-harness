@@ -30,7 +30,7 @@ type EnvironmentsApiService service
 /*
 EnvironmentsApiService Create an Environment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiCreateEnvironmentV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of EnvironmentRequest) -  Details of the Environment to be created
 @return ResponseDtoEnvironmentResponse
@@ -162,11 +162,11 @@ func (a *EnvironmentsApiService) CreateEnvironmentV2(ctx context.Context, accoun
 EnvironmentsApiService Delete an Environment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param environmentIdentifier Environment Identifier for the entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiDeleteEnvironmentV2Opts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
 @return ResponseDtoBoolean
 */
 
@@ -301,12 +301,12 @@ func (a *EnvironmentsApiService) DeleteEnvironmentV2(ctx context.Context, enviro
 /*
 EnvironmentsApiService Gets Environment Access list
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiGetEnvironmentAccessListOpts - Optional Parameters:
      * @param "Page" (optional.Int32) -  page
      * @param "Size" (optional.Int32) -  size
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "SearchTerm" (optional.String) -  The word to be searched and included in the list response
      * @param "EnvIdentifiers" (optional.Interface of []string) -  List of EnvironmentIds
      * @param "Sort" (optional.Interface of []string) -  Specifies sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order
@@ -459,12 +459,12 @@ func (a *EnvironmentsApiService) GetEnvironmentAccessList(ctx context.Context, a
 /*
 EnvironmentsApiService Gets Environment list for a project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiGetEnvironmentListOpts - Optional Parameters:
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "SearchTerm" (optional.String) -  The word to be searched and included in the list response
      * @param "EnvIdentifiers" (optional.Interface of []string) -  List of EnvironmentIds
      * @param "Sort" (optional.Interface of []string) -  Specifies sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order
@@ -618,10 +618,10 @@ func (a *EnvironmentsApiService) GetEnvironmentList(ctx context.Context, account
 EnvironmentsApiService Gets an Environment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param environmentIdentifier Environment Identifier for the entity
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiGetEnvironmentV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Deleted" (optional.Bool) -  Specify whether Environment is deleted or not
 @return ResponseDtoEnvironmentResponse
 */
@@ -757,7 +757,7 @@ func (a *EnvironmentsApiService) GetEnvironmentV2(ctx context.Context, environme
 /*
 EnvironmentsApiService Update an Environment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiUpdateEnvironmentV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of EnvironmentRequest) -  Details of the Environment to be updated
      * @param "IfMatch" (optional.String) -
@@ -893,7 +893,7 @@ func (a *EnvironmentsApiService) UpdateEnvironmentV2(ctx context.Context, accoun
 /*
 EnvironmentsApiService Upsert an Environment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *EnvironmentsApiUpsertEnvironmentV2Opts - Optional Parameters:
      * @param "Body" (optional.Interface of EnvironmentRequest) -  Details of the Environment to be updated
      * @param "IfMatch" (optional.String) -

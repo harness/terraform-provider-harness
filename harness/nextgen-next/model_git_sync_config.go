@@ -11,13 +11,22 @@ package nextgen
 
 // Contains information of Git Sync Config
 type GitSyncConfig struct {
-	Identifier              string                `json:"identifier,omitempty"`
-	Name                    string                `json:"name,omitempty"`
-	ProjectIdentifier       string                `json:"projectIdentifier,omitempty"`
-	OrgIdentifier           string                `json:"orgIdentifier,omitempty"`
-	GitConnectorRef         string                `json:"gitConnectorRef,omitempty"`
-	Repo                    string                `json:"repo,omitempty"`
-	Branch                  string                `json:"branch,omitempty"`
-	GitConnectorType        string                `json:"gitConnectorType"`
+	// Git Sync Config Id
+	Identifier string `json:"identifier,omitempty"`
+	// Repo Name
+	Name string `json:"name,omitempty"`
+	// Project Identifier for the Entity
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	// Organization Identifier for the Entity
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// Referenced Connector Identifier
+	GitConnectorRef string `json:"gitConnectorRef,omitempty"`
+	// Repo Url
+	Repo string `json:"repo,omitempty"`
+	// Branch Name
+	Branch string `json:"branch,omitempty"`
+	// Connector Type
+	GitConnectorType string `json:"gitConnectorType"`
+	// List of all Root Folder Details
 	GitSyncFolderConfigDTOs []GitSyncFolderConfig `json:"gitSyncFolderConfigDTOs,omitempty"`
 }

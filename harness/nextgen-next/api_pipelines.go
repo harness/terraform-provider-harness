@@ -162,7 +162,7 @@ PipelinesApiService Deletes a Pipeline
  * @param optional nil or *PipelinesApiDeletePipelineOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  Commit Message
@@ -441,6 +441,150 @@ func (a *PipelinesApiService) GetExecutionNode(ctx context.Context, accountIdent
 }
 
 /*
+PipelinesApiService Gets Pipeline JSON with extra info for some fields
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the entity.
+ * @param orgIdentifier Organization Identifier for the entity.
+ * @param projectIdentifier Project Identifier for the entity.
+ * @param pipelineIdentifier Pipeline Identifier
+ * @param optional nil or *PipelinesApiGetExpandedPipelineJSONOpts - Optional Parameters:
+     * @param "Branch" (optional.String) -  Branch Name
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
+@return ResponseDtoPipelineExpandedJson
+*/
+
+type PipelinesApiGetExpandedPipelineJSONOpts struct {
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
+}
+
+func (a *PipelinesApiService) GetExpandedPipelineJSON(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *PipelinesApiGetExpandedPipelineJSONOpts) (ResponseDtoPipelineExpandedJson, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoPipelineExpandedJson
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/expandedJSON/{pipelineIdentifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"pipelineIdentifier"+"}", fmt.Sprintf("%v", pipelineIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
+		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RepoIdentifier.IsSet() {
+		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.GetDefaultFromOtherRepo.IsSet() {
+		localVarQueryParams.Add("getDefaultFromOtherRepo", parameterToString(localVarOptionals.GetDefaultFromOtherRepo.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoPipelineExpandedJson
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
 PipelinesApiService
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
@@ -546,7 +690,7 @@ PipelinesApiService Gets a Pipeline by identifier
  * @param pipelineIdentifier Pipeline Identifier
  * @param optional nil or *PipelinesApiGetPipelineOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtopmsPipelineResponse
 */
@@ -682,136 +826,6 @@ func (a *PipelinesApiService) GetPipeline(ctx context.Context, accountIdentifier
 }
 
 /*
-PipelinesApiService Get pipeline execution
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
- * @param pipelineIdentifier
- * @param moduleInfo
- * @param startTime
- * @param endTime
-@return ResponseDashboardPipelineExecutionInfo
-*/
-func (a *PipelinesApiService) GetPipelineExecution(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, moduleInfo string, startTime int64, endTime int64) (ResponseDashboardPipelineExecutionInfo, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDashboardPipelineExecutionInfo
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/pipelineExecution"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
-	localVarQueryParams.Add("pipelineIdentifier", parameterToString(pipelineIdentifier, ""))
-	localVarQueryParams.Add("moduleInfo", parameterToString(moduleInfo, ""))
-	localVarQueryParams.Add("startTime", parameterToString(startTime, ""))
-	localVarQueryParams.Add("endTime", parameterToString(endTime, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v ResponseDashboardPipelineExecutionInfo
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
 PipelinesApiService List of pipelines
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the entity.
@@ -821,12 +835,12 @@ PipelinesApiService List of pipelines
      * @param "Body" (optional.Interface of FilterProperties) -  This is the body for the filter properties for listing pipelines.
      * @param "Page" (optional.Int32) -  The number of the page to fetch
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
-     * @param "Sort" (optional.Interface of []string) -
+     * @param "Sort" (optional.Interface of []string) -  Sort criteria for the elements.
      * @param "SearchTerm" (optional.String) -  Search term to filter out pipelines based on pipeline name, identifier, tags.
      * @param "Module" (optional.String) -
      * @param "FilterIdentifier" (optional.String) -
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "GetDistinctFromBranches" (optional.Bool) -  Boolean flag to get distinct pipelines from all branches.
 @return ResponseDtoPagePmsPipelineSummaryResponse
@@ -1002,10 +1016,10 @@ PipelinesApiService Gets pipeline summary by pipeline identifier
  * @param accountIdentifier Account Identifier for the entity.
  * @param orgIdentifier Organization Identifier for the entity.
  * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier
+ * @param pipelineIdentifier Pipeline Identifier
  * @param optional nil or *PipelinesApiGetPipelineSummaryOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtopmsPipelineSummaryResponse
 */
@@ -1138,6 +1152,208 @@ func (a *PipelinesApiService) GetPipelineSummary(ctx context.Context, accountIde
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+PipelinesApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
+ * @param accountIdentifier
+ * @param startTime
+ * @param endTime
+@return ResponseDtoPipelinesCount
+*/
+func (a *PipelinesApiService) GetPipelinesCount(ctx context.Context, body LandingDashboardRequestPms, accountIdentifier string, startTime int64, endTime int64) (ResponseDtoPipelinesCount, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoPipelinesCount
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/landingDashboards/pipelinesCount"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("startTime", parameterToString(startTime, ""))
+	localVarQueryParams.Add("endTime", parameterToString(endTime, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoPipelinesCount
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+PipelinesApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+*/
+func (a *PipelinesApiService) GetPmsStepNodes(ctx context.Context) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/dummy-pmsSteps-api"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
 }
 
 /*
@@ -1392,6 +1608,103 @@ func (a *PipelinesApiService) GetStepsV2(ctx context.Context, body StepPalleteFi
 }
 
 /*
+PipelinesApiService
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+
+*/
+func (a *PipelinesApiService) GetTemplateStepNode(ctx context.Context) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/dummy-templateStep-api"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
+}
+
+/*
 PipelinesApiService Create a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Pipeline YAML
@@ -1400,7 +1713,7 @@ PipelinesApiService Create a Pipeline
  * @param projectIdentifier Project Identifier for the entity.
  * @param optional nil or *PipelinesApiPostPipelineOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  File Path
@@ -1565,7 +1878,7 @@ PipelinesApiService Create a Pipeline API (V2 Version)
  * @param projectIdentifier Project Identifier for the entity.
  * @param optional nil or *PipelinesApiPostPipelineV2Opts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  File Path
      * @param "CommitMsg" (optional.String) -  File Path
@@ -1722,6 +2035,124 @@ func (a *PipelinesApiService) PostPipelineV2(ctx context.Context, body string, a
 }
 
 /*
+PipelinesApiService Refresh the feature flag cache
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the entity.
+@return ResponseDtoBoolean
+*/
+func (a *PipelinesApiService) RefreshFFCache(ctx context.Context, accountIdentifier string) (ResponseDtoBoolean, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoBoolean
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/ffCache/refresh"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoBoolean
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
 PipelinesApiService Update a Pipeline by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Pipeline YAML to be updated
@@ -1732,7 +2163,7 @@ PipelinesApiService Update a Pipeline by identifier
  * @param optional nil or *PipelinesApiUpdatePipelineOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  Default Folder Path
      * @param "CommitMsg" (optional.String) -  Commit Message
@@ -1904,7 +2335,7 @@ PipelinesApiService Updates a Pipeline by identifier (V2 Version)
  * @param optional nil or *PipelinesApiUpdatePipelineV2Opts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Identifier
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "RootFolder" (optional.String) -  Default Folder Path
      * @param "FilePath" (optional.String) -  Default Folder Path
      * @param "CommitMsg" (optional.String) -  Commit Message

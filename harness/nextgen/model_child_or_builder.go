@@ -10,12 +10,12 @@
 package nextgen
 
 type ChildOrBuilder struct {
-	ChildNodeId               string                 `json:"childNodeId,omitempty"`
 	ChildNodeIdBytes          *ByteString            `json:"childNodeIdBytes,omitempty"`
+	ChildNodeId               string                 `json:"childNodeId,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

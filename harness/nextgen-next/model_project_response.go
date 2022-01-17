@@ -9,9 +9,11 @@
  */
 package nextgen
 
-// Project resource along with metadata. Generally, Used to power UI.
+// This has Project details along with its metadata as defined in Harness .
 type ProjectResponse struct {
-	Project        *Project `json:"project"`
-	CreatedAt      int64    `json:"createdAt,omitempty"`
-	LastModifiedAt int64    `json:"lastModifiedAt,omitempty"`
+	Project *Project `json:"project"`
+	// This specifies the time at which project was created.
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	// This specifies the time at which project was last modified.
+	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
 }

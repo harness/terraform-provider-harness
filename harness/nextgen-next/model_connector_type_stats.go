@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// Count of Connectors grouped by type.
 type ConnectorTypeStats struct {
 	Type_ string `json:"type,omitempty"`
 	Count int32  `json:"count,omitempty"`

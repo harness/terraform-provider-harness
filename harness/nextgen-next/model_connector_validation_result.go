@@ -9,10 +9,16 @@
  */
 package nextgen
 
+// This has validation details for the Connector defined in Harness.
 type ConnectorValidationResult struct {
-	Status       string        `json:"status,omitempty"`
-	Errors       []ErrorDetail `json:"errors,omitempty"`
-	ErrorSummary string        `json:"errorSummary,omitempty"`
-	TestedAt     int64         `json:"testedAt,omitempty"`
-	DelegateId   string        `json:"delegateId,omitempty"`
+	// Connectivity status of a Connector.
+	Status string `json:"status,omitempty"`
+	// List of errors and their details.
+	Errors []ErrorDetail `json:"errors,omitempty"`
+	// Summary of errors.
+	ErrorSummary string `json:"errorSummary,omitempty"`
+	// Time at which Test Connection was completed
+	TestedAt int64 `json:"testedAt,omitempty"`
+	// ID of Delegate on which Test Connection is executed.
+	DelegateId string `json:"delegateId,omitempty"`
 }

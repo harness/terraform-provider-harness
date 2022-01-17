@@ -10,16 +10,15 @@
 package nextgen
 
 type PolicyMetadataOrBuilder struct {
-	Identifier                string                 `json:"identifier,omitempty"`
-	Severity                  string                 `json:"severity,omitempty"`
-	Error_                    string                 `json:"error,omitempty"`
-	Updated                   int64                  `json:"updated,omitempty"`
-	Created                   int64                  `json:"created,omitempty"`
+	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
 	Status                    string                 `json:"status,omitempty"`
-	PolicyName                string                 `json:"policyName,omitempty"`
+	Error_                    string                 `json:"error,omitempty"`
 	PolicyId                  string                 `json:"policyId,omitempty"`
+	OrgId                     string                 `json:"orgId,omitempty"`
 	PolicyIdBytes             *ByteString            `json:"policyIdBytes,omitempty"`
+	PolicyName                string                 `json:"policyName,omitempty"`
 	PolicyNameBytes           *ByteString            `json:"policyNameBytes,omitempty"`
+	Severity                  string                 `json:"severity,omitempty"`
 	SeverityBytes             *ByteString            `json:"severityBytes,omitempty"`
 	DenyMessagesList          []string               `json:"denyMessagesList,omitempty"`
 	DenyMessagesCount         int32                  `json:"denyMessagesCount,omitempty"`
@@ -29,13 +28,14 @@ type PolicyMetadataOrBuilder struct {
 	OrgIdBytes                *ByteString            `json:"orgIdBytes,omitempty"`
 	ProjectId                 string                 `json:"projectId,omitempty"`
 	ProjectIdBytes            *ByteString            `json:"projectIdBytes,omitempty"`
+	Created                   int64                  `json:"created,omitempty"`
+	Updated                   int64                  `json:"updated,omitempty"`
 	ErrorBytes                *ByteString            `json:"errorBytes,omitempty"`
-	OrgId                     string                 `json:"orgId,omitempty"`
-	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
+	Identifier                string                 `json:"identifier,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

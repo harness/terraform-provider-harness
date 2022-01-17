@@ -21,8 +21,10 @@ type UserInfo struct {
 	TwoFactorAuthenticationEnabled bool                    `json:"twoFactorAuthenticationEnabled,omitempty"`
 	EmailVerified                  bool                    `json:"emailVerified,omitempty"`
 	Locked                         bool                    `json:"locked,omitempty"`
+	Disabled                       bool                    `json:"disabled,omitempty"`
 	SignupAction                   string                  `json:"signupAction,omitempty"`
 	Edition                        string                  `json:"edition,omitempty"`
 	BillingFrequency               string                  `json:"billingFrequency,omitempty"`
 	UtmInfo                        *UtmInfo                `json:"utmInfo,omitempty"`
+	ExternallyManaged              bool                    `json:"externallyManaged,omitempty"`
 }

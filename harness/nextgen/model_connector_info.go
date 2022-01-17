@@ -9,7 +9,8 @@
  */
 package nextgen
 
-// This is the view of the ConnectorInfo entity defined in Harness
+// This has the Connector details defined in Harness
+
 import (
 	"encoding/json"
 )
@@ -25,9 +26,9 @@ type ConnectorInfo struct {
 	AppDynamics       *AppDynamicsConnectorDto `json:"-"`
 	Artifactory       *ArtifactoryConnector    `json:"-"`
 	Aws               *AwsConnector            `json:"-"`
-	AwsCC             *CeAwsConnectorDto       `json:"-"`
-	AwsKms            *AwsKmsConnectorDto      `json:"-"`
-	AwsSecretManager  *AwsSecretManagerDto     `json:"-"`
+	AwsCC             *CeAwsConnector          `json:"-"`
+	AwsKms            *AwsKmsConnector         `json:"-"`
+	AwsSecretManager  *AwsSecretManager        `json:"-"`
 	BitBucket         *BitbucketConnector      `json:"-"`
 	Datadog           *DatadogConnectorDto     `json:"-"`
 	DockerRegistry    *DockerConnector         `json:"-"`

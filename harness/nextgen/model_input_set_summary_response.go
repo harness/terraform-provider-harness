@@ -24,4 +24,6 @@ type InputSetSummaryResponse struct {
 	IsOutdated             bool                        `json:"isOutdated,omitempty"`
 	InputSetErrorDetails   *InputSetErrorWrapperDtopms `json:"inputSetErrorDetails,omitempty"`
 	OverlaySetErrorDetails map[string]string           `json:"overlaySetErrorDetails,omitempty"`
+	EntityValidityDetails  *EntityValidityDetails      `json:"entityValidityDetails,omitempty"`
+	Modules                []string                    `json:"modules,omitempty"`
 }

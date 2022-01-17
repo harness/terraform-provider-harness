@@ -10,18 +10,18 @@
 package nextgen
 
 type ManualIssuerOrBuilder struct {
-	Identifier                string                 `json:"identifier,omitempty"`
 	UserId                    string                 `json:"userId,omitempty"`
-	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
 	TypeBytes                 *ByteString            `json:"typeBytes,omitempty"`
-	EmailId                   string                 `json:"emailId,omitempty"`
+	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
+	Type_                     string                 `json:"type,omitempty"`
 	EmailIdBytes              *ByteString            `json:"emailIdBytes,omitempty"`
 	UserIdBytes               *ByteString            `json:"userIdBytes,omitempty"`
-	Type_                     string                 `json:"type,omitempty"`
+	EmailId                   string                 `json:"emailId,omitempty"`
+	Identifier                string                 `json:"identifier,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

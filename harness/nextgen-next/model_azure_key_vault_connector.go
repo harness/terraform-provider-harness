@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains of Azure KeyVault SecretManager configuration
+// Returns Azure KeyVault Secret Manager configuration
 type AzureKeyVaultConnector struct {
 	ClientId             string   `json:"clientId"`
 	SecretKey            string   `json:"secretKey"`

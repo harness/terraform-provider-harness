@@ -10,12 +10,12 @@
 package nextgen
 
 type SkipTaskExecutableResponseOrBuilder struct {
-	MessageBytes              *ByteString            `json:"messageBytes,omitempty"`
 	Message                   string                 `json:"message,omitempty"`
+	MessageBytes              *ByteString            `json:"messageBytes,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

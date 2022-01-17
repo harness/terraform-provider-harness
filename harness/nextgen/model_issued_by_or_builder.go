@@ -10,21 +10,21 @@
 package nextgen
 
 type IssuedByOrBuilder struct {
-	TriggerIssuer             *TriggerIssuer          `json:"triggerIssuer,omitempty"`
+	IssueTime                 *Timestamp              `json:"issueTime,omitempty"`
+	IssueTimeOrBuilder        *TimestampOrBuilder     `json:"issueTimeOrBuilder,omitempty"`
+	ManualIssuer              *ManualIssuer           `json:"manualIssuer,omitempty"`
+	ManualIssuerOrBuilder     *ManualIssuerOrBuilder  `json:"manualIssuerOrBuilder,omitempty"`
 	AdviserIssuer             *AdviserIssuer          `json:"adviserIssuer,omitempty"`
-	AdviserIssuerOrBuilder    *AdviserIssuerOrBuilder `json:"adviserIssuerOrBuilder,omitempty"`
 	TimeoutIssuer             *TimeoutIssuer          `json:"timeoutIssuer,omitempty"`
 	TimeoutIssuerOrBuilder    *TimeoutIssuerOrBuilder `json:"timeoutIssuerOrBuilder,omitempty"`
 	TriggerIssuerOrBuilder    *TriggerIssuerOrBuilder `json:"triggerIssuerOrBuilder,omitempty"`
+	AdviserIssuerOrBuilder    *AdviserIssuerOrBuilder `json:"adviserIssuerOrBuilder,omitempty"`
 	IssuerCase                string                  `json:"issuerCase,omitempty"`
-	IssueTimeOrBuilder        *TimestampOrBuilder     `json:"issueTimeOrBuilder,omitempty"`
-	IssueTime                 *Timestamp              `json:"issueTime,omitempty"`
-	ManualIssuer              *ManualIssuer           `json:"manualIssuer,omitempty"`
-	ManualIssuerOrBuilder     *ManualIssuerOrBuilder  `json:"manualIssuerOrBuilder,omitempty"`
+	TriggerIssuer             *TriggerIssuer          `json:"triggerIssuer,omitempty"`
+	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
+	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
 	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet        `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message                `json:"defaultInstanceForType,omitempty"`
-	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
 	Initialized               bool                    `json:"initialized,omitempty"`
 }

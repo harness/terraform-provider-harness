@@ -22,7 +22,7 @@ type GraphLayoutNode struct {
 	ModuleInfo     map[string]map[string]interface{} `json:"moduleInfo,omitempty"`
 	StartTs        int64                             `json:"startTs,omitempty"`
 	EndTs          int64                             `json:"endTs,omitempty"`
-	EdgeLayoutList *EdgeLayoutListDto                `json:"edgeLayoutList,omitempty"`
+	EdgeLayoutList *EdgeLayoutList                   `json:"edgeLayoutList,omitempty"`
 	SkipInfo       *SkipInfo                         `json:"skipInfo,omitempty"`
 	NodeRunInfo    *NodeRunInfo                      `json:"nodeRunInfo,omitempty"`
 	BarrierFound   bool                              `json:"barrierFound,omitempty"`

@@ -11,17 +11,19 @@ package nextgen
 
 type PolicyMetadata struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	Identifier                string                 `json:"identifier,omitempty"`
-	Severity                  string                 `json:"severity,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	ParserForType             *ParserPolicyMetadata  `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *PolicyMetadata        `json:"defaultInstanceForType,omitempty"`
+	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
+	Status                    string                 `json:"status,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 	Error_                    string                 `json:"error,omitempty"`
-	Updated                   int64                  `json:"updated,omitempty"`
-	Created                   int64                  `json:"created,omitempty"`
-	Status                    string                 `json:"status,omitempty"`
-	PolicyName                string                 `json:"policyName,omitempty"`
 	PolicyId                  string                 `json:"policyId,omitempty"`
+	OrgId                     string                 `json:"orgId,omitempty"`
 	PolicyIdBytes             *ByteString            `json:"policyIdBytes,omitempty"`
+	PolicyName                string                 `json:"policyName,omitempty"`
 	PolicyNameBytes           *ByteString            `json:"policyNameBytes,omitempty"`
+	Severity                  string                 `json:"severity,omitempty"`
 	SeverityBytes             *ByteString            `json:"severityBytes,omitempty"`
 	DenyMessagesList          []string               `json:"denyMessagesList,omitempty"`
 	DenyMessagesCount         int32                  `json:"denyMessagesCount,omitempty"`
@@ -31,14 +33,12 @@ type PolicyMetadata struct {
 	OrgIdBytes                *ByteString            `json:"orgIdBytes,omitempty"`
 	ProjectId                 string                 `json:"projectId,omitempty"`
 	ProjectIdBytes            *ByteString            `json:"projectIdBytes,omitempty"`
+	Created                   int64                  `json:"created,omitempty"`
+	Updated                   int64                  `json:"updated,omitempty"`
 	ErrorBytes                *ByteString            `json:"errorBytes,omitempty"`
-	OrgId                     string                 `json:"orgId,omitempty"`
-	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
-	SerializedSize            int32                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserPolicyMetadata  `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *PolicyMetadata        `json:"defaultInstanceForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
+	Identifier                string                 `json:"identifier,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }
