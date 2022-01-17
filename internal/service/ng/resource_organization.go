@@ -80,7 +80,7 @@ func resourceOrganizationCreate(ctx context.Context, d *schema.ResourceData, met
 
 	org := buildOrganization(d)
 
-	resp, _, err := c.NGClient.OrganizationApi.CreateOrganization(ctx, nextgen.OrganizationRequest{Organization: org}, c.AccountId)
+	resp, _, err := c.NGClient.OrganizationApi.PostOrganization(ctx, nextgen.OrganizationRequest{Organization: org}, c.AccountId)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}

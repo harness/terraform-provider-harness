@@ -166,9 +166,8 @@ func dataSourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	searchOptions := &nextgen.ConnectorsApiGetConnectorListV2Opts{
-		PageIndex:         optional.NewInt32(0),
-		PageSize:          optional.NewInt32(2),
-		AccountIdentifier: optional.NewString(c.AccountId),
+		PageIndex: optional.NewInt32(0),
+		PageSize:  optional.NewInt32(2),
 		// Body:              optional.NewInterface(filterProperties),
 	}
 
@@ -236,7 +235,7 @@ func dataSourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta i
 		filterProperties.CcmConnectorFilter = expandCcmConnectorFilter(attr)
 	}
 
-	resp, _, err := c.NGClient.ConnectorsApi.GetConnectorListV2(ctx, filterProperties, searchOptions)
+	resp, _, err := c.NGClient.ConnectorsApi.GetConnectorListV2(ctx, filterProperties, c.AccountId, searchOptions)
 
 	if err != nil {
 		return diag.FromErr(err)
