@@ -384,7 +384,7 @@ func (c *ConfigAsCodeClient) GetYamlDetails(item *cac.ConfigAsCodeItem, filePath
 }
 
 func (c *ConfigAsCodeClient) ParseObject(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string, obj interface{}) error {
-	log.Printf("[DEBUG] CAC: Prase yaml entity %s", filePath)
+	log.Printf("[DEBUG] CAC: Parse yaml entity %s", filePath)
 	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
 	if err != nil {
 		return err
