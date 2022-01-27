@@ -55,7 +55,6 @@ func TestAccResourceConnector_awssm_inherit(t *testing.T) {
 		},
 	})
 }
-
 func TestAccResourceConnector_awssm_manual(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
