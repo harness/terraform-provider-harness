@@ -114,6 +114,31 @@ func TestAccApproveDelegate(t *testing.T) {
 	})
 }
 
+func TestAccApproveDelegate_DelegateNotFound(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(7))
+		resourceName = "harness_delegate_approval.test"
+	)
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+		},
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testaccDelegateApproval(name, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "status", graphql.DelegateStatusTypes.Enabled.String()),
+				),
+				ExpectError: regexp.MustCompile(`.*delegate .* not found.*`),
+			},
+		},
+	})
+}
+
 func testaccDelegateApproval(name string, approve bool) string {
 	return fmt.Sprintf(`
 		resource "harness_delegate_approval" "test" {

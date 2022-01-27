@@ -2,6 +2,7 @@ package delegate
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/harness-io/harness-go-sdk/harness/api"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
@@ -83,6 +84,10 @@ func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.Resou
 	delegate, err := c.CDClient.DelegateClient.GetDelegateByName(name)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	if delegate == nil {
+		return diag.FromErr(fmt.Errorf("delegate %s not found", name))
 	}
 
 	if delegate.Status != graphql.DelegateStatusTypes.WaitingForApproval.String() {
