@@ -128,6 +128,7 @@ func New(version string) func() *schema.Provider {
 				"harness_service_winrm":             service.ResourceWinRMService(),
 				"harness_ssh_credential":            secrets.ResourceSSHCredential(),
 				"harness_user_group":                user.ResourceUserGroup(),
+				"harness_user_group_permissions":    user.ResourceUserGroupPermissionsPermissions(),
 				"harness_user":                      user.ResourceUser(),
 				"harness_yaml_config":               yamlconfig.ResourceYamlConfig(),
 			},
