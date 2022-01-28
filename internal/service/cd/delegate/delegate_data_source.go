@@ -21,10 +21,15 @@ func DataSourceDelegate() *schema.Resource {
 			"id": {
 				Description: "Unique identifier of the delegate",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
 			},
 			"name": {
 				Description: "The name of the delegate to query for.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"hostname": {
+				Description: "The hostname of the delegate.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -50,11 +55,6 @@ func DataSourceDelegate() *schema.Resource {
 			},
 			"description": {
 				Description: "The description of the delegate.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"host_name": {
-				Description: "The host name of the delegate.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -89,30 +89,41 @@ func dataSourceDelegateRead(ctx context.Context, d *schema.ResourceData, meta in
 	name := d.Get("name").(string)
 	status := d.Get("status").(string)
 	delegateType := d.Get("type").(string)
+	hostname := d.Get("hostname").(string)
 
-	delegates, _, err := c.CDClient.DelegateClient.GetDelegateWithFilters(1, 0, name, graphql.DelegateStatus(status), graphql.DelegateType(delegateType))
+	var foundDelegate *graphql.Delegate
+	var err error
 
-	if err != nil {
-		return diag.FromErr(err)
+	if hostname != "" {
+		foundDelegate, err = c.CDClient.DelegateClient.GetDelegateByHostName(hostname)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	} else {
+		var delegates []*graphql.Delegate
+		delegates, _, err = c.CDClient.DelegateClient.ListDelegatesWithFilters(1, 0, name, graphql.DelegateStatus(status), graphql.DelegateType(delegateType))
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		if len(delegates) == 0 {
+			return diag.Errorf("no delegate found with name %s, status %s, type %s", name, status, delegateType)
+		}
+
+		foundDelegate = delegates[0]
 	}
 
-	if len(delegates) == 0 {
-		return diag.Errorf("no delegate found with name %s, status %s, type %s", name, status, delegateType)
-	}
-
-	delegate := delegates[0]
-
-	d.SetId(delegate.UUID)
-	d.Set("name", delegate.DelegateName)
-	d.Set("status", delegate.Status)
-	d.Set("type", delegate.DelegateType)
-	d.Set("account_id", delegate.AccountId)
-	d.Set("profile_id", delegate.DelegateProfileId)
-	d.Set("description", delegate.Description)
-	d.Set("host_name", delegate.HostName)
-	d.Set("ip", delegate.Ip)
-	d.Set("last_heartbeat", delegate.LastHeartBeat)
-	d.Set("version", delegate.Version)
+	d.SetId(foundDelegate.UUID)
+	d.Set("name", foundDelegate.DelegateName)
+	d.Set("status", foundDelegate.Status)
+	d.Set("type", foundDelegate.DelegateType)
+	d.Set("account_id", foundDelegate.AccountId)
+	d.Set("profile_id", foundDelegate.DelegateProfileId)
+	d.Set("description", foundDelegate.Description)
+	d.Set("hostname", foundDelegate.HostName)
+	d.Set("ip", foundDelegate.Ip)
+	d.Set("last_heartbeat", foundDelegate.LastHeartBeat)
+	d.Set("version", foundDelegate.Version)
 
 	return nil
 }

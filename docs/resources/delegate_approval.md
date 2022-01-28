@@ -13,9 +13,13 @@ Resource for approving or rejecting delegates.
 ## Example Usage
 
 ```terraform
+data "harness_delegate" "test" {
+  name = "my-delegate"
+}
+
 resource "harness_delegate_approval" "test" {
-  name    = "mydelegate"
-  approve = true
+  delegate_id = data.harness_delegate.test.id
+  approve     = true
 }
 ```
 
@@ -25,11 +29,14 @@ resource "harness_delegate_approval" "test" {
 ### Required
 
 - **approve** (Boolean) Whether or not to approve the delegate.
-- **name** (String) The name of the delegate to approve or reject.
+- **delegate_id** (String) The id of the delegate.
+
+### Optional
+
+- **id** (String) The ID of this resource.
 
 ### Read-Only
 
-- **id** (String) The id of the delegate.
 - **status** (String) The status of the delegate.
 
 ## Import
@@ -38,5 +45,5 @@ Import is supported using the following syntax:
 
 ```shell
 # Import the status of the delegate approval.
-terraform import harness_delegate_approval.example <delegate_name>
+terraform import harness_delegate_approval.example <delegate_id>
 ```

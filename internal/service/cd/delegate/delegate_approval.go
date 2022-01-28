@@ -18,8 +18,8 @@ func ResourceDelegateApproval() *schema.Resource {
 		UpdateContext: resourceDelegateApprovalCreateOrUpdate,
 		DeleteContext: resourceDelegateApprovalDelete,
 		Schema: map[string]*schema.Schema{
-			"name": {
-				Description: "The name of the delegate to approve or reject.",
+			"delegate_id": {
+				Description: "The id of the delegate.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -28,11 +28,6 @@ func ResourceDelegateApproval() *schema.Resource {
 				Type:        schema.TypeBool,
 				Required:    true,
 			},
-			"id": {
-				Description: "The id of the delegate.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
 			"status": {
 				Description: "The status of the delegate.",
 				Type:        schema.TypeString,
@@ -40,8 +35,8 @@ func ResourceDelegateApproval() *schema.Resource {
 			},
 		},
 		Importer: &schema.ResourceImporter{
-			State: func(d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
-				d.Set("name", d.Id())
+			StateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+				d.Set("delegate_id", d.Id())
 				return []*schema.ResourceData{d}, nil
 			},
 		},
@@ -51,11 +46,15 @@ func ResourceDelegateApproval() *schema.Resource {
 func resourceDelegateApprovalRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*api.Client)
 
-	name := d.Get("name").(string)
-	delegate, err := c.CDClient.DelegateClient.GetDelegateByName(name)
+	id := d.Get("delegate_id").(string)
+	delegate, err := c.CDClient.DelegateClient.GetDelegateById(id)
 
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	if delegate == nil {
+		return diag.FromErr(fmt.Errorf("delegate %s not found", id))
 	}
 
 	d.SetId(delegate.UUID)
@@ -80,14 +79,14 @@ func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.Resou
 		return diag.Errorf("the delegate approval status has already been changed.")
 	}
 
-	name := d.Get("name").(string)
-	delegate, err := c.CDClient.DelegateClient.GetDelegateByName(name)
+	id := d.Get("delegate_id").(string)
+	delegate, err := c.CDClient.DelegateClient.GetDelegateById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if delegate == nil {
-		return diag.FromErr(fmt.Errorf("delegate %s not found", name))
+		return diag.FromErr(fmt.Errorf("delegate %s not found", id))
 	}
 
 	if delegate.Status != graphql.DelegateStatusTypes.WaitingForApproval.String() {

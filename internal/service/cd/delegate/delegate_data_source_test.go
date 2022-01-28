@@ -1,46 +1,73 @@
 package delegate_test
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceDelegate(t *testing.T) {
+func TestAccDataSourceDelegate_hostname(t *testing.T) {
 
-	var (
-		resourceName = "data.harness_delegate.test"
-	)
+	delegateName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	resourceName := "data.harness_delegate.test"
+
+	defer deleteDelegate(t, delegateName)
+
+	acctest.TestAccPreCheck(t)
+	delegate := createDelegateContainer(t, delegateName)
 
 	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceDelegate(),
+				Config: testAccDataSourceDelegate_hostname(delegate.HostName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "harness-delegate"),
-					resource.TestCheckResourceAttrSet(resourceName, "ip"),
-					resource.TestCheckResourceAttr(resourceName, "host_name", "harness-delegate-ukhyts-1"),
-					resource.TestCheckResourceAttr(resourceName, "id", "ZAgU6QnGSAa1vbsZLgdqcQ"),
-					resource.TestCheckResourceAttr(resourceName, "account_id", "UKh5Yts7THSMAbccG3HrLA"),
-					resource.TestCheckResourceAttr(resourceName, "profile_id", "wVhjS1xATpqGrO-uuRrYEw"),
-					resource.TestCheckResourceAttr(resourceName, "type", "KUBERNETES"),
-					resource.TestCheckResourceAttr(resourceName, "description", ""),
-					resource.TestCheckResourceAttrSet(resourceName, "last_heartbeat"),
-					resource.TestCheckResourceAttr(resourceName, "status", "ENABLED"),
-					resource.TestCheckResourceAttrSet(resourceName, "version"),
+					resource.TestCheckResourceAttr(resourceName, "name", delegateName),
+					resource.TestCheckResourceAttr(resourceName, "hostname", delegate.HostName),
 				),
 			},
 		},
 	})
 }
 
-func testAccDataSourceDelegate() string {
-	return `
+func TestAccDataSourceDelegate_name(t *testing.T) {
+
+	delegateName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	resourceName := "data.harness_delegate.test"
+
+	defer deleteDelegate(t, delegateName)
+
+	acctest.TestAccPreCheck(t)
+	delegate := createDelegateContainer(t, delegateName)
+
+	resource.UnitTest(t, resource.TestCase{
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceDelegate_name(delegate.DelegateName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", delegateName),
+				),
+			},
+		},
+	})
+}
+
+func testAccDataSourceDelegate_hostname(hostname string) string {
+	return fmt.Sprintf(`
 		data "harness_delegate" "test" {
-			name = "harness-delegate"
+			hostname = "%[1]s"
 		}
-	`
+	`, hostname)
+}
+
+func testAccDataSourceDelegate_name(name string) string {
+	return fmt.Sprintf(`
+		data "harness_delegate" "test" {
+			name = "%[1]s"
+		}
+	`, name)
 }
