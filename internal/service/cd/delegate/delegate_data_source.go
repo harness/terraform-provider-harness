@@ -22,6 +22,9 @@ func DataSourceDelegate() *schema.Resource {
 				Description: "Unique identifier of the delegate",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ConflictsWith: []string{
+					"name", "status", "type", "hostname",
+				},
 			},
 			"name": {
 				Description: "The name of the delegate to query for.",
@@ -32,6 +35,9 @@ func DataSourceDelegate() *schema.Resource {
 				Description: "The hostname of the delegate.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ConflictsWith: []string{
+					"name", "status", "type", "id",
+				},
 			},
 			"status": {
 				Description: fmt.Sprintf("The status of the delegate to query for. Valid values are %s", strings.Join(graphql.DelegateStatusSlice, ", ")),
@@ -86,6 +92,7 @@ func dataSourceDelegateRead(ctx context.Context, d *schema.ResourceData, meta in
 	// use the meta value to retrieve your client from the provider configure method
 	c := meta.(*api.Client)
 
+	id := d.Get("id").(string)
 	name := d.Get("name").(string)
 	status := d.Get("status").(string)
 	delegateType := d.Get("type").(string)
@@ -94,7 +101,12 @@ func dataSourceDelegateRead(ctx context.Context, d *schema.ResourceData, meta in
 	var foundDelegate *graphql.Delegate
 	var err error
 
-	if hostname != "" {
+	if id != "" {
+		foundDelegate, err = c.CDClient.DelegateClient.GetDelegateById(id)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+	} else if hostname != "" {
 		foundDelegate, err = c.CDClient.DelegateClient.GetDelegateByHostName(hostname)
 		if err != nil {
 			return diag.FromErr(err)

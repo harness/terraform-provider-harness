@@ -84,6 +84,7 @@ func New(version string) func() *schema.Provider {
 				"harness_connector":      ng.DataSourceConnector(),
 				"harness_current_user":   ng.DataSourceCurrentUser(),
 				"harness_delegate":       delegate.DataSourceDelegate(),
+				"harness_delegate_ids":   delegate.DataSourceDelegateIds(),
 				"harness_encrypted_text": secrets.DataSourceEncryptedText(),
 				"harness_environment":    environment.DataSourceEnvironment(),
 				"harness_git_connector":  cd_connector.DataSourceGitConnector(),
