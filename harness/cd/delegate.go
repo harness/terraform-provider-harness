@@ -115,6 +115,37 @@ func (c *DelegateClient) GetDelegatesByName(name string) ([]*graphql.Delegate, e
 	return delegateList, nil
 }
 
+func (c *DelegateClient) GetDelegateById(id string) (*graphql.Delegate, error) {
+
+	hasmore := true
+	offset := 0
+	limit := 100
+
+	for hasmore {
+
+		delegateList, pagination, err := c.ListDelegatesWithFilters(limit, offset, "", "", "")
+
+		if err != nil {
+			return nil, err
+		}
+
+		if len(delegateList) == 0 {
+			return nil, nil
+		}
+
+		for _, delegate := range delegateList {
+			if delegate.UUID == id {
+				return delegate, nil
+			}
+		}
+
+		hasmore = pagination.HasMore
+		offset += limit
+	}
+
+	return nil, nil
+}
+
 func (c *DelegateClient) GetDelegateByHostName(hostName string) (*graphql.Delegate, error) {
 
 	hasmore := true

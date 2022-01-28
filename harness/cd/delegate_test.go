@@ -190,3 +190,18 @@ func TestGetDelegateByHostName(t *testing.T) {
 	require.NoError(t, err, "Failed to get delegate: %s", err)
 	require.Equal(t, delegate.HostName, delegateLookup.HostName, "Delegate hostname should be %s", delegate.HostName)
 }
+
+func TestGetDelegateById(t *testing.T) {
+	client := getClient()
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+
+	delegate := createDelegateContainer(t, name)
+
+	defer func() {
+		deleteDelegate(t, name)
+	}()
+
+	delegateLookup, err := client.DelegateClient.GetDelegateById(delegate.UUID)
+	require.NoError(t, err, "Failed to get delegate: %s", err)
+	require.Equal(t, delegate.UUID, delegateLookup.UUID, "Delegate id should be %s", delegate.UUID)
+}
