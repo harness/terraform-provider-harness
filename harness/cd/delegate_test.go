@@ -171,7 +171,22 @@ func TestGetDelegateByName_NotFound(t *testing.T) {
 
 func TestGetDelegateByStatus(t *testing.T) {
 	client := getClient()
-	delegateList, _, err := client.DelegateClient.GetDelegateWithFilters(1, 0, "", graphql.DelegateStatusList.Enabled, "")
+	delegateList, _, err := client.DelegateClient.ListDelegatesWithFilters(1, 0, "", graphql.DelegateStatusList.Enabled, "")
 	require.NoError(t, err, "Failed to get delegate: %s", err)
 	require.GreaterOrEqual(t, len(delegateList), 1, "Delegate list should have at least 1 delegate")
+}
+
+func TestGetDelegateByHostName(t *testing.T) {
+	client := getClient()
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+
+	delegate := createDelegateContainer(t, name)
+
+	defer func() {
+		deleteDelegate(t, name)
+	}()
+
+	delegateLookup, err := client.DelegateClient.GetDelegateByHostName(delegate.HostName)
+	require.NoError(t, err, "Failed to get delegate: %s", err)
+	require.Equal(t, delegate.HostName, delegateLookup.HostName, "Delegate hostname should be %s", delegate.HostName)
 }

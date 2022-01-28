@@ -101,8 +101,53 @@ func (c *DelegateClient) UpdateDelegateApprovalStatus(input *graphql.DelegateApp
 	return &res.DelegateApproveReject.Delegate, nil
 }
 
+func (c *DelegateClient) GetDelegatesByName(name string) ([]*graphql.Delegate, error) {
+	delegateList, _, err := c.ListDelegatesWithFilters(1, 0, name, "", "")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(delegateList) == 0 {
+		return nil, nil
+	}
+
+	return delegateList, nil
+}
+
+func (c *DelegateClient) GetDelegateByHostName(hostName string) (*graphql.Delegate, error) {
+
+	hasmore := true
+	offset := 0
+	limit := 100
+
+	for hasmore {
+
+		delegateList, pagination, err := c.ListDelegatesWithFilters(limit, offset, "", "", "")
+
+		if err != nil {
+			return nil, err
+		}
+
+		if len(delegateList) == 0 {
+			return nil, nil
+		}
+
+		for _, delegate := range delegateList {
+			if delegate.HostName == hostName {
+				return delegate, nil
+			}
+		}
+
+		hasmore = pagination.HasMore
+		offset += limit
+	}
+
+	return nil, nil
+}
+
 func (c *DelegateClient) GetDelegateByName(name string) (*graphql.Delegate, error) {
-	delegateList, _, err := c.GetDelegateWithFilters(1, 0, name, "", "")
+	delegateList, _, err := c.ListDelegatesWithFilters(1, 0, name, "", "")
 
 	if err != nil {
 		return nil, err
@@ -115,7 +160,7 @@ func (c *DelegateClient) GetDelegateByName(name string) (*graphql.Delegate, erro
 	return delegateList[0], nil
 }
 
-func (c *DelegateClient) GetDelegateWithFilters(limit int, offset int, name string, status graphql.DelegateStatus, delegateType graphql.DelegateType) ([]*graphql.Delegate, *graphql.PageInfo, error) {
+func (c *DelegateClient) ListDelegatesWithFilters(limit int, offset int, name string, status graphql.DelegateStatus, delegateType graphql.DelegateType) ([]*graphql.Delegate, *graphql.PageInfo, error) {
 
 	filters := []string{}
 
@@ -164,31 +209,7 @@ func (c *DelegateClient) GetDelegateWithFilters(limit int, offset int, name stri
 }
 
 func (c *DelegateClient) ListDelegates(limit int, offset int) ([]*graphql.Delegate, *graphql.PageInfo, error) {
-	query := &GraphQLQuery{
-		Query: fmt.Sprintf(`query {
-			delegateList(limit: %[3]d, offset: %[4]d) {
-				nodes {
-					%[1]s
-				}
-				%[2]s
-			}
-		}`, standardDelegateFields, paginationFields, limit, offset),
-	}
-
-	res := struct {
-		DelegateList struct {
-			Nodes    []*graphql.Delegate `json:"nodes"`
-			PageInfo *graphql.PageInfo
-		}
-	}{}
-
-	err := c.ApiClient.ExecuteGraphQLQuery(query, &res)
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return res.DelegateList.Nodes, res.DelegateList.PageInfo, nil
+	return c.ListDelegatesWithFilters(limit, offset, "", "", "")
 }
 
 const standardDelegateFields = `
