@@ -35,9 +35,10 @@ func DataSourceDelegateIds() *schema.Resource {
 				Optional:    true,
 			},
 			"delegate_ids": {
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: "A list of delegate ID's matching the specified search criteria.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 		},
 	}

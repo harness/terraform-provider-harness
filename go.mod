@@ -5,6 +5,7 @@ go 1.15
 require (
 	cloud.google.com/go v0.99.0 // indirect
 	cloud.google.com/go/storage v1.18.2 // indirect
+	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/antihax/optional v1.0.0

@@ -30,6 +30,6 @@ data "harness_delegate_ds" "example" {
 
 ### Read-Only
 
-- **delegate_ids** (List of String)
+- **delegate_ids** (List of String) A list of delegate ID's matching the specified search criteria.
 
 
