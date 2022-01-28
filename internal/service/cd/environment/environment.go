@@ -61,7 +61,7 @@ func ResourceEnvironment() *schema.Resource {
 						"service_name": {
 							Description: "The name of the service",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 						"value": {
 							Description: "The value of the service variable",

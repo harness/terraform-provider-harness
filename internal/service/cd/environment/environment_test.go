@@ -166,7 +166,6 @@ func testAccResourceEnvironment(name string, envType cac.EnvironmentType) string
 			}
 
 			variable_override {
-				service_name = harness_service_kubernetes.test.name
 				name = "test2"
 				value = "override2"
 				type = "TEXT"

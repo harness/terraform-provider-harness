@@ -81,9 +81,12 @@ resource "harness_environment" "test" {
 Required:
 
 - **name** (String) The name of the variable
-- **service_name** (String) The name of the service
 - **type** (String) The type of the service variable. Valid values are `TEXT` and `ENCRYPTED_TEXT`
 - **value** (String) The value of the service variable
+
+Optional:
+
+- **service_name** (String) The name of the service
 
 ## Import
 
