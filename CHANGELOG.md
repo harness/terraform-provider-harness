@@ -1,11 +1,12 @@
 # Changelog
 
-## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+## [v0.1.7](https://github.com/harness-io/harness-go-sdk/tree/v0.1.7) (2022-01-17)
 
-[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.6...HEAD)
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.6...v0.1.7)
 
 **Merged pull requests:**
 
+- Release version 0.1.7 01-17-2022 [\#71](https://github.com/harness-io/harness-go-sdk/pull/71) ([micahlmartin](https://github.com/micahlmartin))
 - Regenerate nextgen API's [\#70](https://github.com/harness-io/harness-go-sdk/pull/70) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.1.6](https://github.com/harness-io/harness-go-sdk/tree/v0.1.6) (2021-12-17)
@@ -185,7 +186,6 @@
 - Release version 0.0.4 08-20-2021 [\#31](https://github.com/harness-io/harness-go-sdk/pull/31) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed tests and linting issues [\#30](https://github.com/harness-io/harness-go-sdk/pull/30) ([micahlmartin](https://github.com/micahlmartin))
 - Add support for Users and User Groups [\#29](https://github.com/harness-io/harness-go-sdk/pull/29) ([micahlmartin](https://github.com/micahlmartin))
-- Config as code environments [\#28](https://github.com/harness-io/harness-go-sdk/pull/28) ([micahlmartin](https://github.com/micahlmartin))
 - Config-as-Code Cloud Provider Implementation [\#27](https://github.com/harness-io/harness-go-sdk/pull/27) ([micahlmartin](https://github.com/micahlmartin))
 - Format Files + add golangci-lint [\#26](https://github.com/harness-io/harness-go-sdk/pull/26) ([vyas-n](https://github.com/vyas-n))
 
@@ -204,6 +204,7 @@
 
 **Merged pull requests:**
 
+- Config as code environments [\#28](https://github.com/harness-io/harness-go-sdk/pull/28) ([micahlmartin](https://github.com/micahlmartin))
 - Release version 0.0.2 06-29-2021 [\#23](https://github.com/harness-io/harness-go-sdk/pull/23) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - CloudProvider functionality [\#22](https://github.com/harness-io/harness-go-sdk/pull/22) ([micahlmartin](https://github.com/micahlmartin))
 
