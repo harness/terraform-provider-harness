@@ -56,7 +56,7 @@ func NewSession(opt *SessionOptions) *Session {
 			Logger:     opt.Logger,
 		}),
 		NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
-			BasePath: fmt.Sprintf("%s%s", opt.Endpoint, utils.DefaultNGApiUrl),
+			BasePath: opt.Endpoint,
 			DefaultHeader: map[string]string{
 				helpers.HTTPHeaders.ApiKey.String(): helpers.EnvVars.NGApiKey.Get(),
 			},
