@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/antihax/optional"
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
@@ -184,7 +184,7 @@ func TestAccResourceConnector_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*api.Client)
+					c := acctest.TestAccProvider.Meta().(*sdk.Session)
 					_, _, err := c.NGClient.ConnectorsApi.DeleteConnector(context.Background(), c.AccountId, id, nil)
 					require.NoError(t, err)
 				},

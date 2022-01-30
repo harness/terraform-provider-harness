@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -43,7 +43,7 @@ func DataSourceSecretManager() *schema.Resource {
 }
 
 func dataSourceSecretManagerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	// If we're looking up the default secret manager, then we'll just get the
 	// ID of the default secret manager and not set any other fields.

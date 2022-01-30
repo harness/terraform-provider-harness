@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -64,7 +64,7 @@ func TestAccResourceApplication_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*api.Client)
+					c := acctest.TestAccProvider.Meta().(*sdk.Session)
 					app, err := c.CDClient.ApplicationClient.GetApplicationByName(expectedName)
 					require.NoError(t, err)
 					require.NotNil(t, app)

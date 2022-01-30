@@ -3,7 +3,7 @@ package sweep_test
 import (
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	_ "github.com/harness-io/terraform-provider-harness/internal/service/cd/application"
 	_ "github.com/harness-io/terraform-provider-harness/internal/service/cd/cloudprovider"
 	_ "github.com/harness-io/terraform-provider-harness/internal/service/cd/secrets"
@@ -12,6 +12,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	sweep.SweeperClient = api.NewClient()
+	sweep.SweeperClient = sdk.NewSession(&sdk.SessionOptions{})
 	resource.TestMain(m)
 }

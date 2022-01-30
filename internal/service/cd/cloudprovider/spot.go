@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
@@ -48,7 +48,7 @@ func ResourceCloudProviderSpot() *schema.Resource {
 }
 
 func resourceCloudProviderSpotRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.SpotInstCloudProvider{}
 	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -62,7 +62,7 @@ func resourceCloudProviderSpotRead(ctx context.Context, d *schema.ResourceData, 
 	return readCloudProviderSpot(c, d, cp)
 }
 
-func readCloudProviderSpot(c *api.Client, d *schema.ResourceData, cp *cac.SpotInstCloudProvider) diag.Diagnostics {
+func readCloudProviderSpot(c *sdk.Session, d *schema.ResourceData, cp *cac.SpotInstCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("account_id", cp.AccountId)
@@ -75,7 +75,7 @@ func readCloudProviderSpot(c *api.Client, d *schema.ResourceData, cp *cac.SpotIn
 }
 
 func resourceCloudProviderSpotCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.SpotInstCloudProvider
 	var err error

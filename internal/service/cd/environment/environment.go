@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -93,7 +93,7 @@ func ResourceEnvironment() *schema.Resource {
 }
 
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var env *cac.Environment
 	var err error
@@ -128,7 +128,7 @@ func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnost
 }
 
 func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	appId := d.Get("app_id").(string)
 	id := d.Get("id").(string)
@@ -208,7 +208,7 @@ func expandVariableOverrides(d []interface{}) []*cac.VariableOverride {
 }
 
 func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	envName := d.Get("name").(string)
 	appId := d.Get("app_id").(string)

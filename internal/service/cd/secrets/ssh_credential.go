@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -194,7 +194,7 @@ func ResourceSSHCredential() *schema.Resource {
 }
 
 func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *graphql.SSHCredential
 	var err error
@@ -233,7 +233,7 @@ func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	credId := d.Get("id").(string)
 
@@ -272,7 +272,7 @@ func readSSHCredential(d *schema.ResourceData, secret *graphql.SSHCredential) di
 }
 
 func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.SSHCredential)
 

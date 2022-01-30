@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -65,7 +65,7 @@ func ResourceYamlConfig() *schema.Resource {
 }
 
 func resourceYamlConfigRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	app_id := d.Get("app_id").(string)
 	path := cac.YamlPath(d.Get("path").(string))
@@ -92,7 +92,7 @@ func readYamlConfig(d *schema.ResourceData, entity *cac.YamlEntity) diag.Diagnos
 }
 
 func resourceYamlConfigCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	path := cac.YamlPath(d.Get("path").(string))
 	app_id := d.Get("app_id").(string)
@@ -116,7 +116,7 @@ func resourceYamlConfigCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceYamlConfigDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	path := cac.YamlPath(d.Get("path").(string))
 

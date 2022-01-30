@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
@@ -70,7 +70,7 @@ func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*api.Client)
+					c := acctest.TestAccProvider.Meta().(*sdk.Session)
 					resp, _, err := c.NGClient.OrganizationApi.DeleteOrganization(context.Background(), id, c.AccountId, nil)
 					require.NoError(t, err)
 					require.True(t, resp.Data)

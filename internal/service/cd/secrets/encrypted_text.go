@@ -3,7 +3,7 @@ package secrets
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -72,7 +72,7 @@ func ResourceEncryptedText() *schema.Resource {
 }
 
 func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	secretId := d.Get("id").(string)
 
@@ -101,7 +101,7 @@ func readEncryptedText(d *schema.ResourceData, secret *graphql.EncryptedText) di
 }
 
 func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	input := &graphql.CreateSecretInput{
 		EncryptedText: &graphql.EncryptedTextInput{},
@@ -146,7 +146,7 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	input := &graphql.UpdateSecretInput{
 		SecretId:      d.Id(),
@@ -188,7 +188,7 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
 

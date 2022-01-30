@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
@@ -59,7 +59,7 @@ func TestAccResourceSSHCredential_SSHAuthentication_DeleteUnderlyingResource(t *
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*api.Client)
+					c := acctest.TestAccProvider.Meta().(*sdk.Session)
 
 					secret, err := c.CDClient.SecretClient.GetSSHCredentialByName(name)
 					require.NoError(t, err)

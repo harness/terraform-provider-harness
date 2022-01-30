@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
@@ -249,7 +249,7 @@ func ResourceCloudProviderK8s() *schema.Resource {
 }
 
 func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.KubernetesCloudProvider{}
 	id := d.Id()
@@ -267,7 +267,7 @@ func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, m
 	return readCloudProviderK8s(c, d, cp)
 }
 
-func readCloudProviderK8s(c *api.Client, d *schema.ResourceData, cp *cac.KubernetesCloudProvider) diag.Diagnostics {
+func readCloudProviderK8s(c *sdk.Session, d *schema.ResourceData, cp *cac.KubernetesCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("skip_validation", cp.SkipValidation)
@@ -283,7 +283,7 @@ func readCloudProviderK8s(c *api.Client, d *schema.ResourceData, cp *cac.Kuberne
 }
 
 func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.KubernetesCloudProvider
 	var err error

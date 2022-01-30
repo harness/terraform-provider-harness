@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -27,7 +27,7 @@ func ResourceAMIService() *schema.Resource {
 }
 
 func resourceAMIServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
@@ -60,7 +60,7 @@ func readServiceAmi(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics {
 }
 
 func resourceAMIServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.Service
 	var err error

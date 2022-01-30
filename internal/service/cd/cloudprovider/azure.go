@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
@@ -63,7 +63,7 @@ func ResourceCloudProviderAzure() *schema.Resource {
 }
 
 func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.AzureCloudProvider{}
 	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -78,7 +78,7 @@ func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.AzureCloudProvider
 	var err error
@@ -124,7 +124,7 @@ func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.Res
 	return readCloudProviderAzure(c, d, cp)
 }
 
-func readCloudProviderAzure(c *api.Client, d *schema.ResourceData, cp *cac.AzureCloudProvider) diag.Diagnostics {
+func readCloudProviderAzure(c *sdk.Session, d *schema.ResourceData, cp *cac.AzureCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("environment_type", cp.AzureEnvironmentType)
