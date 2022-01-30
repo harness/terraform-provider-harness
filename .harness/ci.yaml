@@ -10,7 +10,7 @@ pipeline:
                     value: org.harness_account_id
                   - name: HARNESS_ENDPOINT
                     type: String
-                    value: https://app.harness.io/gateway/api
+                    value: https://app.harness.io/gateway
                   - name: HARNESS_TEST_SPOT_ACCT_ID
                     type: Secret
                     value: org.spotinst_account_id
@@ -165,7 +165,7 @@ pipeline:
             codebase:
                 repoName: harness-go-sdk
                 connectorRef: org.githubharnessio
-                build: <+input> 
+                build: <+input>
     projectIdentifier: harness_go_sdk
     orgIdentifier: Micahs_Projects
     name: ci
