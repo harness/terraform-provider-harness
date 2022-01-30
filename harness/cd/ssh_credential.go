@@ -3,7 +3,6 @@ package cd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
@@ -157,8 +156,6 @@ func (c *SecretClient) ListSSHCredentials() ([]*unpublished.Credential, error) {
 	query := req.URL.Query()
 	query.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.Configuration.AccountId)
 	req.URL.RawQuery = query.Encode()
-
-	log.Printf("[DEBUG] url: %s", req.URL)
 
 	resp, err := c.ApiClient.Configuration.HTTPClient.Do(req)
 	if err != nil {

@@ -1,12 +1,17 @@
 package cd
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness-io/harness-go-sdk/logging"
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
+	log "github.com/sirupsen/logrus"
 )
 
 type service struct {
@@ -14,12 +19,14 @@ type service struct {
 }
 
 type Configuration struct {
-	AccountId   string
-	APIKey      string
-	BearerToken string
-	Endpoint    string
-	HTTPClient  *retryablehttp.Client
-	UserAgent   string
+	AccountId      string
+	APIKey         string
+	Endpoint       string
+	HTTPClient     *retryablehttp.Client
+	UserAgent      string
+	DefaultHeaders map[string]string
+	DebugLogging   bool
+	Logger         *log.Logger
 }
 
 type ApiClient struct {
@@ -33,14 +40,34 @@ type ApiClient struct {
 	SecretClient        *SecretClient
 	SSOClient           *SSOClient
 	UserClient          *UserClient
+	Log                 *log.Logger
 }
 
 func NewClient(cfg *Configuration) *ApiClient {
-	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = retryablehttp.NewClient()
+	cfg.Endpoint = utils.CoalesceStr(cfg.Endpoint, helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl))
+
+	validateConfig(cfg)
+
+	if cfg.Logger == nil {
+		cfg.Logger = logging.GetDefaultLogger(cfg.DebugLogging)
 	}
 
+	if cfg.HTTPClient == nil {
+		cfg.HTTPClient = utils.GetDefaultHttpClient(cfg.Logger)
+	}
+
+	if cfg.DefaultHeaders == nil {
+		cfg.DefaultHeaders = map[string]string{}
+	}
+
+	// Set default headers for all requests
+	cfg.DefaultHeaders[helpers.HTTPHeaders.UserAgent.String()] = cfg.UserAgent
+	cfg.DefaultHeaders[helpers.HTTPHeaders.Accept.String()] = helpers.HTTPHeaders.ApplicationJson.String()
+	cfg.DefaultHeaders[helpers.HTTPHeaders.ContentType.String()] = helpers.HTTPHeaders.ApplicationJson.String()
+	cfg.DefaultHeaders[helpers.HTTPHeaders.ApiKey.String()] = cfg.APIKey
+
 	c := &ApiClient{}
+	c.Log = cfg.Logger
 	c.Configuration = cfg
 	c.common.ApiClient = c
 
@@ -57,6 +84,20 @@ func NewClient(cfg *Configuration) *ApiClient {
 	return c
 }
 
+func validateConfig(cfg *Configuration) {
+	if cfg == nil {
+		panic("Configuration is required")
+	}
+
+	if cfg.Endpoint == "" {
+		panic("Endpoint must be set")
+	}
+
+	if cfg.APIKey == "" {
+		panic("APIKey must be set")
+	}
+}
+
 func (client *ApiClient) NewAuthorizedGetRequest(path string) (*retryablehttp.Request, error) {
 	return client.NewAuthorizedRequest(path, http.MethodGet, nil)
 }
@@ -69,22 +110,42 @@ func (client *ApiClient) NewAuthorizedDeleteRequest(path string) (*retryablehttp
 	return client.NewAuthorizedRequest(path, http.MethodDelete, nil)
 }
 
-func (client *ApiClient) NewAuthorizedRequest(path string, method string, rawBody interface{}) (*retryablehttp.Request, error) {
-	url := strings.Join([]string{client.Configuration.Endpoint, path}, "")
+func (c *ApiClient) NewAuthorizedRequest(path string, method string, rawBody interface{}) (*retryablehttp.Request, error) {
+	url := strings.Join([]string{c.Configuration.Endpoint, path}, "")
 	req, err := retryablehttp.NewRequest(method, url, rawBody)
 
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set(helpers.HTTPHeaders.UserAgent.String(), client.Configuration.UserAgent)
-	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), helpers.HTTPHeaders.ApplicationJson.String())
-	req.Header.Set(helpers.HTTPHeaders.Accept.String(), helpers.HTTPHeaders.ApplicationJson.String())
-	req.Header.Set(helpers.HTTPHeaders.ApiKey.String(), client.Configuration.APIKey)
-
-	if client.Configuration.BearerToken != "" {
-		req.Header.Set(helpers.HTTPHeaders.Authorization.String(), fmt.Sprintf("Bearer %s", client.Configuration.BearerToken))
+	for key, value := range c.Configuration.DefaultHeaders {
+		req.Header.Set(key, value)
 	}
 
 	return req, err
+}
+
+func (c *ApiClient) getJson(req *retryablehttp.Request, obj interface{}) error {
+	res, err := c.Configuration.HTTPClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	if res.StatusCode == http.StatusUnauthorized {
+		return errors.New("unauthorized")
+	}
+
+	defer res.Body.Close()
+
+	// Unmarshal into our response object
+	if err := json.NewDecoder(res.Body).Decode(obj); err != nil {
+		return fmt.Errorf("error decoding response: %s", err)
+	}
+
+	if res.StatusCode == http.StatusUnauthorized {
+		return errors.New("unauthorized")
+	}
+
+	return nil
 }

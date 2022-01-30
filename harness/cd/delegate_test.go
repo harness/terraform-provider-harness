@@ -152,12 +152,18 @@ func TestListDelegates(t *testing.T) {
 
 func TestGetDelegateByName(t *testing.T) {
 	client := getClient()
-	delegateName := "harness-delegate"
 
-	delegate, err := client.DelegateClient.GetDelegateByName(delegateName)
+	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	delegate := createDelegateContainer(t, name)
+
+	defer func() {
+		deleteDelegate(t, name)
+	}()
+
+	delegate, err := client.DelegateClient.GetDelegateByName(name)
 	require.NoError(t, err, "Failed to get delegate: %s", err)
 	require.NotNil(t, delegate, "Delegate should not be nil")
-	require.Equal(t, delegateName, delegate.DelegateName, "Delegate name should be %s", delegateName)
+	require.Equal(t, name, delegate.DelegateName, "Delegate name should be %s", name)
 }
 
 func TestGetDelegateByName_NotFound(t *testing.T) {

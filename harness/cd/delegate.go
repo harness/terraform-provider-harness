@@ -3,7 +3,6 @@ package cd
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -29,10 +28,10 @@ func (c *DelegateClient) WaitForDelegate(ctx context.Context, delegateName strin
 
 		select {
 		case <-ctx.Done():
-			log.Printf("[ERROR] Timedout waitingWaiting for delegate %s", delegateName)
+			c.ApiClient.Log.Errorf("Timedout waitingWaiting for delegate %s", delegateName)
 			return nil, ctx.Err()
 		case <-time.After(pollInterval):
-			log.Printf("[INFO] Waiting for delegate %s", delegateName)
+			c.ApiClient.Log.Infof("Waiting for delegate %s", delegateName)
 		}
 	}
 }

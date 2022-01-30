@@ -10,7 +10,7 @@ type GraphQLQuery struct {
 }
 
 type GraphQLStandardResponse struct {
-	Data             *json.RawMessage
+	Data             *json.RawMessage         `json:"data"`
 	Metadata         interface{}              `json:"metadata"`
 	Resource         string                   `json:"resource"`
 	ResponseMessages []GraphQLResponseMessage `json:"responseMessages"`

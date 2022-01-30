@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
+	"path"
 	"strings"
 
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
@@ -56,8 +56,9 @@ func FindConfigAsCodeItemByUUID(rootItem *cac.ConfigAsCodeItem, uuid string) *ca
 }
 
 func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid string, applicationId string) (*cac.ConfigAsCodeItem, error) {
-	path := fmt.Sprintf("/setup-as-code/yaml/%s/%s", restName, uuid)
-	log.Printf("[DEBUG] CAC: Getting directory item content at %s", path)
+	path := getCacPath(fmt.Sprintf("/%s/%s", restName, uuid))
+
+	c.ApiClient.Log.Debugf("Getting directory item content at %s", path)
 
 	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
 
@@ -82,11 +83,14 @@ func (c *ConfigAsCodeClient) GetDirectoryItemContent(restName string, uuid strin
 	return item, nil
 }
 
-func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.ConfigAsCodeItem, error) {
-	path := "/setup-as-code/yaml/directory"
-	log.Printf("[DEBUG] CAC: Getting directory tree for app '%s'", applicationId)
+func getCacPath(apiPath string) string {
+	return path.Join(utils.DefaultCacApiUrl, apiPath)
+}
 
-	req, err := c.ApiClient.NewAuthorizedGetRequest(path)
+func (c *ConfigAsCodeClient) GetDirectoryTree(applicationId string) (*cac.ConfigAsCodeItem, error) {
+	c.ApiClient.Log.Debugf("Getting directory tree for app '%s'", applicationId)
+
+	req, err := c.ApiClient.NewAuthorizedGetRequest(getCacPath("/directory"))
 
 	if err != nil {
 		return nil, err
@@ -120,7 +124,7 @@ func (c *ConfigAsCodeClient) UpsertYamlEntity(filePath cac.YamlPath, entity inte
 }
 
 func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (*cac.ConfigAsCodeItem, error) {
-	log.Printf("[DEBUG] CAC: Upserting yaml at %s", filePath)
+	c.ApiClient.Log.Debugf("Upserting yaml at %s", filePath)
 
 	// Setup form fields
 	var b bytes.Buffer
@@ -137,9 +141,7 @@ func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (
 
 	w.Close()
 
-	log.Printf("[TRACE] CAC: HTTP Request Body %s", string(yaml))
-
-	req, err := c.ApiClient.NewAuthorizedPostRequest("/setup-as-code/yaml/upsert-entity", &b)
+	req, err := c.ApiClient.NewAuthorizedPostRequest(getCacPath("/upsert-entity"), &b)
 
 	// Set proper content header
 	req.Header.Set(helpers.HTTPHeaders.ContentType.String(), w.FormDataContentType())
@@ -164,8 +166,6 @@ func (c *ConfigAsCodeClient) UpsertRawYaml(filePath cac.YamlPath, yaml []byte) (
 
 func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*cac.ConfigAsCodeItem, error) {
 
-	log.Printf("[TRACE] CAC: Request url %s", request.URL)
-
 	res, err := c.ApiClient.Configuration.HTTPClient.Do(request)
 	if err != nil {
 		return nil, err
@@ -182,10 +182,6 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*ca
 	if _, err := io.Copy(&buf, res.Body); err != nil {
 		return nil, fmt.Errorf("error reading body: %s", err)
 	}
-
-	// Check for request throttling
-	responseString := buf.String()
-	log.Printf("[TRACE] CAC: HTTP response %d - %s", res.StatusCode, responseString)
 
 	responseObj := &cac.Response{}
 
@@ -226,8 +222,8 @@ type ConfigAsCodeClient struct {
 }
 
 func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
-	log.Printf("[DEBUG] CAC: Deleting entity at %s", filePath)
-	req, err := c.ApiClient.NewAuthorizedDeleteRequest("/setup-as-code/yaml/delete-entities")
+	c.ApiClient.Log.Debugf("Deleting entity at %s", filePath)
+	req, err := c.ApiClient.NewAuthorizedDeleteRequest(getCacPath("/delete-entities"))
 
 	if err != nil {
 		return err
@@ -238,8 +234,6 @@ func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
 	q.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.Configuration.AccountId)
 	q.Add(helpers.QueryParameters.FilePaths.String(), string(filePath))
 	req.URL.RawQuery = q.Encode()
-
-	log.Printf("[DEBUG] Url: %s", req.URL)
 
 	resp, err := c.ExecuteRequest(req)
 	if err != nil {
@@ -268,13 +262,10 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 	}
 
 	// Upsert the yaml document
-	resp, err := c.UpsertYamlEntity(filePath, input)
+	_, err := c.UpsertYamlEntity(filePath, input)
 	if err != nil {
 		return err
 	}
-
-	log.Printf("[TRACE] UUID: %s", resp.UUID)
-	log.Printf("[TRACE] EntityId: %s", resp.EntityId)
 
 	appId, ok := utils.TryGetFieldValue(input, "ApplicationId")
 	if !ok {
@@ -293,7 +284,7 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 // Typically this is needed just after an Upsert command. The Upsert API unfortunately does not
 // return the Id of the newly created object.
 func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac.YamlPath, obj interface{}) error {
-	log.Printf("[DEBUG] CAC: Finding object by path %s", filePath)
+	c.ApiClient.Log.Debugf("Finding object by path %s", filePath)
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return err
@@ -301,7 +292,7 @@ func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac
 
 	item := FindConfigAsCodeItemByPath(rootItem, filePath)
 	if item == nil {
-		log.Printf("unable to find item at `%s`", filePath)
+		c.ApiClient.Log.Debugf("unable to find item at `%s`", filePath)
 		return nil
 	}
 
@@ -309,7 +300,7 @@ func (c *ConfigAsCodeClient) FindObjectByPath(applicationId string, filePath cac
 }
 
 func (c *ConfigAsCodeClient) FindYamlByPath(applicationId string, filePath cac.YamlPath) (*cac.YamlEntity, error) {
-	log.Printf("[DEBUG] CAC: Find yaml by path %s", filePath)
+	c.ApiClient.Log.Debugf("Find yaml by path %s", filePath)
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return nil, err
@@ -317,7 +308,7 @@ func (c *ConfigAsCodeClient) FindYamlByPath(applicationId string, filePath cac.Y
 
 	item := FindConfigAsCodeItemByPath(rootItem, filePath)
 	if item == nil {
-		log.Printf("unable to find item at `%s`", filePath)
+		c.ApiClient.Log.Debugf("unable to find item at `%s`", filePath)
 		return nil, nil
 	}
 
@@ -325,7 +316,7 @@ func (c *ConfigAsCodeClient) FindYamlByPath(applicationId string, filePath cac.Y
 }
 
 func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId string, out interface{}) error {
-	log.Printf("[DEBUG] CAC: Find object by id %s", objectId)
+	c.ApiClient.Log.Debugf("Find object by id %s", objectId)
 	rootItem, err := c.GetDirectoryTree(applicationId)
 	if err != nil {
 		return err
@@ -333,7 +324,7 @@ func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId strin
 
 	i := FindConfigAsCodeItemByUUID(rootItem, objectId)
 	if i == nil {
-		log.Printf("[DEBUG] cannot find obj with id: " + objectId)
+		c.ApiClient.Log.Debugf("cannot find obj with id: " + objectId)
 		return nil
 	}
 
@@ -341,7 +332,7 @@ func (c *ConfigAsCodeClient) FindObjectById(applicationId string, objectId strin
 }
 
 func (c *ConfigAsCodeClient) FindRootAccountObjectByName(name string) (*cac.ConfigAsCodeItem, error) {
-	log.Printf("[DEBUG] CAC: Finding account by name %s", name)
+	c.ApiClient.Log.Debugf("Finding account by name %s", name)
 	root, err := c.GetDirectoryTree("")
 	if err != nil || root == nil {
 		return root, err
@@ -366,7 +357,7 @@ func (c *ConfigAsCodeClient) GetTemplateLibraryRootPathName() (cac.YamlPath, err
 }
 
 func (c *ConfigAsCodeClient) GetYamlDetails(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string) (*cac.YamlEntity, error) {
-	log.Printf("[DEBUG] CAC: Get yaml details %s", filePath)
+	c.ApiClient.Log.Debugf("Get yaml details %s", filePath)
 	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
 	if err != nil {
 		return nil, err
@@ -384,7 +375,7 @@ func (c *ConfigAsCodeClient) GetYamlDetails(item *cac.ConfigAsCodeItem, filePath
 }
 
 func (c *ConfigAsCodeClient) ParseObject(item *cac.ConfigAsCodeItem, filePath cac.YamlPath, applicationId string, obj interface{}) error {
-	log.Printf("[DEBUG] CAC: Parse yaml entity %s", filePath)
+	c.ApiClient.Log.Debugf("Parse yaml entity %s", filePath)
 	itemContent, err := c.GetDirectoryItemContent(item.RestName, item.UUID, applicationId)
 	if err != nil {
 		return err

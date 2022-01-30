@@ -3,7 +3,6 @@ package delegate
 import (
 	"context"
 	"io"
-	"log"
 	"os"
 
 	"github.com/docker/docker/api/types"
@@ -13,6 +12,7 @@ import (
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -116,20 +116,20 @@ func RunDelegateContainer(ctx context.Context, cfg *DockerDelegateConfig) (strin
 		return "", errors.Wrap(err, "failed to create docker client")
 	}
 
-	log.Printf("[INFO] Pulling docker image %s", cfg.Image)
+	log.Infof("Pulling docker image %s", cfg.Image)
 	reader, err := cli.ImagePull(ctx, cfg.Image, types.ImagePullOptions{All: true})
 	if err != nil {
 		return "", errors.Wrap(err, "failed to pull docker image")
 	}
 	io.Copy(os.Stdout, reader)
 
-	log.Printf("[INFO] Creating docker container %s", cfg.ContainerName)
+	log.Infof("Creating docker container %s", cfg.ContainerName)
 	cont, err := cli.ContainerCreate(ctx, containerConfig, cfg.HostConfig, cfg.NetworkingConfig, cfg.Platform, cfg.ContainerName)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to create docker container")
 	}
 
-	log.Printf("[INFO] Starting docker container %s", cont.ID)
+	log.Infof("Starting docker container %s", cont.ID)
 	err = cli.ContainerStart(ctx, cont.ID, cfg.ContainerStartOptions)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to start delegate container: %s")
@@ -144,13 +144,13 @@ func RemoveDelegateContainer(ctx context.Context, cfg *DockerDelegateConfig, con
 		return errors.Wrap(err, "failed to create docker client")
 	}
 
-	log.Printf("[INFO] Stopping docker container %s", containerId)
+	log.Infof("Stopping docker container %s", containerId)
 	err = cli.ContainerStop(ctx, containerId, nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to stop delegate container")
 	}
 
-	log.Printf("[INFO] Removing docker container %s", containerId)
+	log.Infof("Removing docker container %s", containerId)
 	err = cli.ContainerRemove(ctx, containerId, cfg.ContainerRemoveOptions)
 	if err != nil {
 		return errors.Wrap(err, "failed to remove delegate container")

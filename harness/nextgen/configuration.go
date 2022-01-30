@@ -11,6 +11,7 @@ package nextgen
 
 import (
 	"github.com/hashicorp/go-retryablehttp"
+	log "github.com/sirupsen/logrus"
 )
 
 // contextKeys are used to identify the type of value in the context.
@@ -56,6 +57,7 @@ type Configuration struct {
 	DefaultHeader map[string]string `json:"defaultHeader,omitempty"`
 	UserAgent     string            `json:"userAgent,omitempty"`
 	HTTPClient    *retryablehttp.Client
+	Logger        *log.Logger
 }
 
 func NewConfiguration() *Configuration {

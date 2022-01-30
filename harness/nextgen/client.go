@@ -29,6 +29,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/go-retryablehttp"
 	"golang.org/x/oauth2"
 )
@@ -151,7 +152,7 @@ type service struct {
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(cfg *Configuration) *APIClient {
 	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = retryablehttp.NewClient()
+		cfg.HTTPClient = utils.GetDefaultHttpClient(cfg.Logger)
 	}
 
 	c := &APIClient{}

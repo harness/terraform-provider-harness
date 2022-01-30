@@ -5,15 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
 
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/go-retryablehttp"
 )
 
-const DefaultGraphQLApiUrl = "/graphql"
+const DefaultGraphQLApiUrl = "/api/graphql"
 
 func (m *GraphQLResponseMessage) ToError() error {
 	return fmt.Errorf("%s %s: %s", m.Level, m.Code, m.Message)
@@ -32,8 +29,6 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.
 		return nil, err
 	}
 
-	log.Printf("[DEBUG] GraphQL: Query %s", requestBody.String())
-
 	req, err := client.NewAuthorizedPostRequest(DefaultGraphQLApiUrl, &requestBody)
 
 	if err != nil {
@@ -49,8 +44,8 @@ func (client *ApiClient) NewGraphQLRequest(query *GraphQLQuery) (*retryablehttp.
 }
 
 // Executes a GraphQL query
-func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj interface{}) error {
-	req, err := client.NewGraphQLRequest(query)
+func (c *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj interface{}) error {
+	req, err := c.NewGraphQLRequest(query)
 
 	if err != nil {
 		return err
@@ -58,35 +53,15 @@ func (client *ApiClient) ExecuteGraphQLQuery(query *GraphQLQuery, responseObj in
 
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println(r)
+			c.Log.Info(r)
 		}
 	}()
 
-	res, err := client.Configuration.HTTPClient.Do(req)
+	gqlResponse := &GraphQLStandardResponse{}
+	err = c.getJson(req, gqlResponse)
 
 	if err != nil {
 		return err
-	}
-
-	if res.StatusCode == http.StatusUnauthorized {
-		return errors.New("unauthorized")
-	}
-
-	defer res.Body.Close()
-
-	// Make sure we can parse the body properly
-	var buf bytes.Buffer
-	if _, err := io.Copy(&buf, res.Body); err != nil {
-		return fmt.Errorf("error reading body: %s", err)
-	}
-
-	log.Printf("[TRACE] GraphQL response: %s", buf.String())
-
-	gqlResponse := &GraphQLStandardResponse{}
-
-	// Unmarshal into our response object
-	if err := json.NewDecoder(&buf).Decode(&gqlResponse); err != nil {
-		return fmt.Errorf("error decoding response: %s", err)
 	}
 
 	// Check if there are any errors
