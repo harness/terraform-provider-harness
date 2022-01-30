@@ -8,9 +8,6 @@ pipeline:
                   - name: HARNESS_ACCOUNT_ID
                     type: Secret
                     value: org.harness_account_id
-                  - name: HARNESS_ENDPOINT
-                    type: String
-                    value: https://app.harness.io/gateway/api
                   - name: GOPATH
                     type: String
                     value: /goroot
@@ -71,8 +68,8 @@ pipeline:
                   infrastructure:
                       type: KubernetesDirect
                       spec:
-                          namespace: micahs-projects
                           connectorRef: account.micahsprojects
+                          namespace: micahs-projects
                   execution:
                       steps:
                           - step:
