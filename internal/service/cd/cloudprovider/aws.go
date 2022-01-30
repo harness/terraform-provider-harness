@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
@@ -97,7 +97,7 @@ func ResourceCloudProviderAws() *schema.Resource {
 }
 
 func resourceCloudProviderAwsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.AwsCloudProvider{}
 	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -112,7 +112,7 @@ func resourceCloudProviderAwsRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceCloudProviderAwsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.AwsCloudProvider
 	var err error
@@ -195,7 +195,7 @@ func resourceCloudProviderAwsCreateOrUpdate(ctx context.Context, d *schema.Resou
 	return readCloudProviderAws(c, d, cp)
 }
 
-func readCloudProviderAws(c *api.Client, d *schema.ResourceData, cp *cac.AwsCloudProvider) diag.Diagnostics {
+func readCloudProviderAws(c *sdk.Session, d *schema.ResourceData, cp *cac.AwsCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("access_key_id", cp.AccessKey)

@@ -3,7 +3,7 @@ package application
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -58,7 +58,7 @@ func ResourceApplicationGitSync() *schema.Resource {
 }
 
 func resourceApplicationGitSyncCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	input := &graphql.UpdateApplicationGitSyncConfigInput{}
 
@@ -109,7 +109,7 @@ func readGitSyncConfig(d *schema.ResourceData, config *graphql.GitSyncConfig) {
 }
 
 func resourceApplicationGitSyncRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	appId := d.Get("app_id").(string)
 
@@ -131,7 +131,7 @@ func resourceApplicationGitSyncRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceApplicationGitSyncDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	if err := c.CDClient.ApplicationClient.RemoveGitSyncConfig(d.Get("app_id").(string)); err != nil {
 		return diag.FromErr(err)

@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
@@ -57,7 +57,7 @@ func ResourceCloudProviderGcp() *schema.Resource {
 }
 
 func resourceCloudProviderGcpRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.GcpCloudProvider{}
 	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -71,7 +71,7 @@ func resourceCloudProviderGcpRead(ctx context.Context, d *schema.ResourceData, m
 	return readCloudProviderGcp(c, d, cp)
 }
 
-func readCloudProviderGcp(c *api.Client, d *schema.ResourceData, cp *cac.GcpCloudProvider) diag.Diagnostics {
+func readCloudProviderGcp(c *sdk.Session, d *schema.ResourceData, cp *cac.GcpCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("skip_validation", cp.SkipValidation)
@@ -91,7 +91,7 @@ func readCloudProviderGcp(c *api.Client, d *schema.ResourceData, cp *cac.GcpClou
 }
 
 func resourceCloudProviderGcpCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.GcpCloudProvider
 	var err error

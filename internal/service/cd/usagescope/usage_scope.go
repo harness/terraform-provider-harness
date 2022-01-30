@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -96,7 +96,7 @@ func validateUsageScopeSettings(scopeData map[string]interface{}) (bool, error) 
 	return true, nil
 }
 
-func ExpandUsageRestrictions(c *api.Client, d []interface{}, ur *cac.UsageRestrictions) error {
+func ExpandUsageRestrictions(c *sdk.Session, d []interface{}, ur *cac.UsageRestrictions) error {
 	if len(d) == 0 {
 		return nil
 	}
@@ -182,7 +182,7 @@ func FlattenUsageScope(uc *graphql.UsageScope) []map[string]interface{} {
 	return results
 }
 
-func FlattenUsageRestrictions(c *api.Client, ur *cac.UsageRestrictions) ([]map[string]interface{}, error) {
+func FlattenUsageRestrictions(c *sdk.Session, ur *cac.UsageRestrictions) ([]map[string]interface{}, error) {
 	if ur == nil {
 		return make([]map[string]interface{}, 0), nil
 	}
@@ -210,7 +210,7 @@ func FlattenUsageRestrictions(c *api.Client, ur *cac.UsageRestrictions) ([]map[s
 	return results, nil
 }
 
-func FlattenAppFilterEntityName(c *api.Client, filter *cac.AppFilter) (string, error) {
+func FlattenAppFilterEntityName(c *sdk.Session, filter *cac.AppFilter) (string, error) {
 	if len(filter.EntityNames) == 0 {
 		return "", nil
 	}
@@ -232,7 +232,7 @@ func FlattenAppFilterEntityName(c *api.Client, filter *cac.AppFilter) (string, e
 // 	}
 // }
 
-func FlattenEnvFilterEntityName(c *api.Client, filter *cac.EnvFilter, applicationId string) (string, error) {
+func FlattenEnvFilterEntityName(c *sdk.Session, filter *cac.EnvFilter, applicationId string) (string, error) {
 	if len(filter.EntityNames) == 0 {
 		return "", nil
 	}

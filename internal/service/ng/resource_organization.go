@@ -3,7 +3,7 @@ package ng
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -51,7 +51,7 @@ func ResourceOrganization() *schema.Resource {
 }
 
 func resourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	id := d.Id()
 	if id == "" {
@@ -76,7 +76,7 @@ func resourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceOrganizationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	org := buildOrganization(d)
 
@@ -100,7 +100,7 @@ func buildOrganization(d *schema.ResourceData) *nextgen.Organization {
 }
 
 func resourceOrganizationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	org := buildOrganization(d)
 
@@ -115,7 +115,7 @@ func resourceOrganizationUpdate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceOrganizationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	_, _, err := c.NGClient.OrganizationApi.DeleteOrganization(ctx, d.Id(), c.AccountId, nil)
 	if err != nil {

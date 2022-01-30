@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -14,7 +14,7 @@ import (
 
 func TestDefaultProvider_default_configuration(t *testing.T) {
 	// Setup
-	p := provider.New("dev")()
+	p := provider.Provider("dev")()
 
 	// verify
 	// diag := p.Configure(context.TODO(), nil)
@@ -27,13 +27,13 @@ func TestProvider_configure_url(t *testing.T) {
 	// Setup provider
 	const expectedEndpoint = "http://localhost:8200"
 	rc := terraform.NewResourceConfigRaw(map[string]interface{}{"endpoint": expectedEndpoint})
-	p := provider.New("dev")()
+	p := provider.Provider("dev")()
 	diags := p.Configure(context.TODO(), rc)
 
 	// Verify
 	require.False(t, diags.HasError())
 	require.NoError(t, p.InternalValidate())
-	c := p.Meta().(*api.Client)
+	c := p.Meta().(*sdk.Session)
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }
 
@@ -52,12 +52,12 @@ func TestProvider_configure_url_env(t *testing.T) {
 
 	// Create provider
 	rc := terraform.NewResourceConfigRaw(map[string]interface{}{})
-	p := provider.New("dev")()
+	p := provider.Provider("dev")()
 	diags := p.Configure(context.TODO(), rc)
 
 	// Verify
 	require.False(t, diags.HasError())
 	require.NoError(t, p.InternalValidate())
-	c := p.Meta().(*api.Client)
+	c := p.Meta().(*sdk.Session)
 	require.Equal(t, expectedEndpoint, c.Endpoint)
 }

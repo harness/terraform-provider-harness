@@ -3,7 +3,7 @@ package secrets
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -40,7 +40,7 @@ func DataSourceEncryptedText() *schema.Resource {
 
 func dataSourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var secret *graphql.EncryptedText
 	var err error

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/antihax/optional"
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -123,7 +123,7 @@ func ResourceConnector() *schema.Resource {
 }
 
 func resourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	id := d.Id()
 	if id == "" {
@@ -163,7 +163,7 @@ func resourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	connector := nextgen.Connector{Connector: buildConnector(d)}
 	options := &nextgen.ConnectorsApiCreateConnectorOpts{}
@@ -403,7 +403,7 @@ func readConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfo) dia
 }
 
 func resourceConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	connector := buildConnector(d)
 	options := &nextgen.ConnectorsApiUpdateConnectorOpts{}
@@ -425,7 +425,7 @@ func resourceConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	options := nextgen.ConnectorsApiDeleteConnectorOpts{}
 

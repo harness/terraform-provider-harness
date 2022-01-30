@@ -3,7 +3,7 @@ package ng
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -87,7 +87,7 @@ func DataSourceCurrentUser() *schema.Resource {
 }
 
 func dataSourceCurrentUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 	resp, _, err := c.NGClient.UserApi.GetCurrentUserInfo(ctx)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())

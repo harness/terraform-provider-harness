@@ -3,13 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"time"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
-	"github.com/harness-io/harness-go-sdk/harness/cd"
+	sdk "github.com/harness-io/harness-go-sdk"
+	"github.com/harness-io/harness-go-sdk/harness"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
-	"github.com/harness-io/harness-go-sdk/harness/nextgen"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/application"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/cloudprovider"
@@ -23,8 +20,10 @@ import (
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness-io/terraform-provider-harness/internal/service/ng"
 	"github.com/harness-io/terraform-provider-harness/internal/service/ng/connector"
+	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -44,15 +43,15 @@ func init() {
 	// }
 }
 
-func New(version string) func() *schema.Provider {
+func Provider(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
 			Schema: map[string]*schema.Schema{
 				"endpoint": {
-					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway/api`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
+					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
 					Type:        schema.TypeString,
 					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.DefaultApiUrl),
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.BaseUrl),
 				},
 				"account_id": {
 					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.AccountId.String()),
@@ -65,12 +64,6 @@ func New(version string) func() *schema.Provider {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.ApiKey.String(), nil),
-				},
-				"ng_endpoint": {
-					Description: fmt.Sprintf("The URL of the Harness nextgen API. The default is `%s`. This can also be set using the `%s` environment variable.", utils.DefaultNGApiUrl, helpers.EnvVars.NGEndpoint.String()),
-					Type:        schema.TypeString,
-					Required:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.NGEndpoint.String(), utils.DefaultNGApiUrl),
 				},
 				"ng_api_key": {
 					Description: fmt.Sprintf("The Harness nextgen API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.NGApiKey.String()),
@@ -140,49 +133,24 @@ func New(version string) func() *schema.Provider {
 	}
 }
 
+func getHttpClient() *retryablehttp.Client {
+	httpClient := retryablehttp.NewClient()
+	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.RetryMax = 10
+	return httpClient
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 
-		httpClient := &retryablehttp.Client{
-			RetryMax:     125,
-			RetryWaitMin: 5 * time.Second,
-			RetryWaitMax: 30 * time.Second,
-			HTTPClient: &http.Client{
-				Timeout: 30 * time.Second,
-			},
-			Backoff: retryablehttp.DefaultBackoff,
-			CheckRetry: func(ctx context.Context, resp *http.Response, err error) (bool, error) {
-				if resp.StatusCode == http.StatusInternalServerError {
-					return false, err
-				}
-				return retryablehttp.ErrorPropagatedRetryPolicy(ctx, resp, err)
-			},
-		}
+		session := sdk.NewSession(&sdk.SessionOptions{
+			AccountId:    d.Get("account_id").(string),
+			Endpoint:     d.Get("endpoint").(string),
+			DebugLogging: logging.IsDebugOrHigher(),
+			HTTPClient:   getHttpClient(),
+		})
 
-		userAgent := p.UserAgent("terraform-provider-harness", version)
-		cfg := &cd.Configuration{
-			AccountId:  d.Get("account_id").(string),
-			APIKey:     d.Get("api_key").(string),
-			Endpoint:   d.Get("endpoint").(string),
-			UserAgent:  userAgent,
-			HTTPClient: httpClient,
-		}
-
-		client := &api.Client{
-			AccountId: cfg.AccountId,
-			Endpoint:  cfg.Endpoint,
-			CDClient:  cd.NewClient(cfg),
-			NGClient: nextgen.NewAPIClient(&nextgen.Configuration{
-				BasePath: d.Get("ng_endpoint").(string),
-				DefaultHeader: map[string]string{
-					helpers.HTTPHeaders.ApiKey.String(): d.Get("ng_api_key").(string),
-				},
-				UserAgent:  userAgent,
-				HTTPClient: httpClient,
-			}),
-		}
-
-		return client, nil
+		return session, nil
 	}
 }

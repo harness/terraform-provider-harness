@@ -2,8 +2,10 @@ package application
 
 import (
 	"context"
+	"fmt"
+	"os"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -59,8 +61,8 @@ func ResourceApplication() *schema.Resource {
 }
 
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
-
+	c := meta.(*sdk.Session)
+	fmt.Println(os.Environ())
 	input := &graphql.Application{
 		Name:                      d.Get("name").(string),
 		Description:               d.Get("description").(string),
@@ -78,7 +80,7 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	appId := d.Get("id").(string)
 
@@ -118,7 +120,7 @@ func applicationRead(d *schema.ResourceData, app *graphql.Application) {
 }
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	input := &graphql.UpdateApplicationInput{
 		ApplicationId:             d.Id(),
@@ -138,7 +140,7 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	if err := c.CDClient.ApplicationClient.DeleteApplication(d.Id()); err != nil {
 		return diag.FromErr(err)

@@ -20,8 +20,9 @@ terraform {
     }
   }
 }
+
 provider "harness" {
-  endpoint   = "https://app.harness.io/gateway/api"
+  endpoint   = "https://app.harness.io/gateway"
   account_id = "...."
   api_key    = "......"
 }
@@ -34,6 +35,5 @@ provider "harness" {
 
 - **account_id** (String) The Harness account id. This can also be set using the `HARNESS_ACCOUNT_ID` environment variable.
 - **api_key** (String) The Harness API key. This can also be set using the `HARNESS_API_KEY` environment variable.
-- **endpoint** (String) The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway/api`. This can also be set using the `HARNESS_ENDPOINT` environment variable.
+- **endpoint** (String) The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway`. This can also be set using the `HARNESS_ENDPOINT` environment variable.
 - **ng_api_key** (String) The Harness nextgen API key. This can also be set using the `HARNESS_NG_API_KEY` environment variable.
-- **ng_endpoint** (String) The URL of the Harness nextgen API. The default is `https://app.harness.io/gateway/ng/api`. This can also be set using the `HARNESS_NG_ENDPOINT` environment variable.

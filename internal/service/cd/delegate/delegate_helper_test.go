@@ -8,7 +8,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/delegate"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
@@ -33,7 +33,7 @@ func getDelegateTimeout() time.Duration {
 
 func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 	ctx := context.Background()
-	c := acctest.TestAccProvider.Meta().(*api.Client)
+	c := acctest.TestAccProvider.Meta().(*sdk.Session)
 
 	cfg := &delegate.DockerDelegateConfig{
 		AccountId:     c.AccountId,
@@ -55,7 +55,7 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 }
 
 func deleteDelegate(t *testing.T, name string) {
-	c := acctest.TestAccProvider.Meta().(*api.Client)
+	c := acctest.TestAccProvider.Meta().(*sdk.Session)
 	delegate, err := c.CDClient.DelegateClient.GetDelegateByName(name)
 	require.NoError(t, err, "Failed to get delegate: %s", err)
 	require.NotNil(t, delegate, "Delegate should not be nil")
