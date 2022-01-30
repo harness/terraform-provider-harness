@@ -3,13 +3,13 @@ package acctest
 import (
 	"context"
 	"fmt"
-	"os"
 	"sync"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/helpers"
+	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -26,13 +26,13 @@ const (
 
 func TestAccConfigureProvider() {
 	TestAccProviderConfigure.Do(func() {
-		TestAccProvider = provider.New("dev")()
+		TestAccProvider = provider.Provider("dev")()
 
 		config := map[string]interface{}{
-			"endpoint":   os.Getenv(helpers.EnvVars.Endpoint.String()),
-			"account_id": os.Getenv(helpers.EnvVars.AccountId.String()),
-			"api_key":    os.Getenv(helpers.EnvVars.ApiKey.String()),
-			"ng_api_key": os.Getenv(helpers.EnvVars.NGApiKey.String()),
+			"endpoint":   helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl),
+			"account_id": helpers.EnvVars.AccountId.Get(),
+			"api_key":    helpers.EnvVars.ApiKey.Get(),
+			"ng_api_key": helpers.EnvVars.NGApiKey.Get(),
 		}
 
 		TestAccProvider.Configure(context.Background(), terraform.NewResourceConfigRaw(config))
@@ -51,8 +51,8 @@ func TestAccGetResource(resourceName string, state *terraform.State) *terraform.
 	return rm.Resources[resourceName]
 }
 
-func TestAccGetApiClientFromProvider() *api.Client {
-	return TestAccProvider.Meta().(*api.Client)
+func TestAccGetApiClientFromProvider() *sdk.Session {
+	return TestAccProvider.Meta().(*sdk.Session)
 }
 
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
@@ -68,7 +68,7 @@ func TestAccGetApplication(resourceName string, state *terraform.State) (*graphq
 // to create a provider server to which the CLI can reattach.
 var ProviderFactories = map[string]func() (*schema.Provider, error){
 	"harness": func() (*schema.Provider, error) {
-		return provider.New("dev")(), nil
+		return provider.Provider("dev")(), nil
 	},
 }
 

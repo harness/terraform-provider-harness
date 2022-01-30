@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/helpers"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
@@ -66,7 +66,7 @@ func ResourceCloudProviderTanzu() *schema.Resource {
 }
 
 func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.PcfCloudProvider{}
 	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -81,7 +81,7 @@ func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData,
 
 }
 
-func readCloudProviderTanzu(c *api.Client, d *schema.ResourceData, cp *cac.PcfCloudProvider) diag.Diagnostics {
+func readCloudProviderTanzu(c *sdk.Session, d *schema.ResourceData, cp *cac.PcfCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("endpoint", cp.EndpointUrl)
@@ -98,7 +98,7 @@ func readCloudProviderTanzu(c *api.Client, d *schema.ResourceData, cp *cac.PcfCl
 }
 
 func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.PcfCloudProvider
 	var err error

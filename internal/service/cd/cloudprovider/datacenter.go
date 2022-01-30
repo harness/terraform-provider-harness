@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
@@ -31,7 +31,7 @@ func ResourceCloudProviderDataCenter() *schema.Resource {
 }
 
 func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	cp := &cac.PhysicalDatacenterCloudProvider{}
 	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -45,7 +45,7 @@ func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.Resource
 	return readCloudProviderDataCenter(c, d, cp)
 }
 
-func readCloudProviderDataCenter(c *api.Client, d *schema.ResourceData, cp *cac.PhysicalDatacenterCloudProvider) diag.Diagnostics {
+func readCloudProviderDataCenter(c *sdk.Session, d *schema.ResourceData, cp *cac.PhysicalDatacenterCloudProvider) diag.Diagnostics {
 
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
@@ -60,7 +60,7 @@ func readCloudProviderDataCenter(c *api.Client, d *schema.ResourceData, cp *cac.
 }
 
 func resourceCloudProviderDataCenterCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.PhysicalDatacenterCloudProvider
 	var err error

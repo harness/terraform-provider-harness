@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -220,7 +220,7 @@ func ResourceInfraDefinition() *schema.Resource {
 }
 
 func resourceInfraDefinitionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	id := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
@@ -242,7 +242,7 @@ func resourceInfraDefinitionRead(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceInfraDefinitionDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	id := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
@@ -258,7 +258,7 @@ func resourceInfraDefinitionDelete(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceInfraDefinitionCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	var input *cac.InfrastructureDefinition
 	var err error

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
@@ -81,7 +81,7 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*api.Client)
+					c := acctest.TestAccProvider.Meta().(*sdk.Session)
 
 					usr, err := c.CDClient.UserClient.GetUserByEmail(expectedEmail)
 					require.NoError(t, err)
@@ -119,7 +119,7 @@ func TestAccResourceUser_WithUserGroups(t *testing.T) {
 						userId := s.RootModule().Resources[resourceName].Primary.ID
 						groupId := s.RootModule().Resources["harness_user_group.test"].Primary.ID
 						acctest.TestAccConfigureProvider()
-						c := acctest.TestAccProvider.Meta().(*api.Client)
+						c := acctest.TestAccProvider.Meta().(*sdk.Session)
 
 						limit := 100
 						offset := 0

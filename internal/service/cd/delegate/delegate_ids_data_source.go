@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -46,7 +46,7 @@ func DataSourceDelegateIds() *schema.Resource {
 
 func dataSourceDelegateIdsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	name := d.Get("name").(string)
 	status := d.Get("status").(string)
