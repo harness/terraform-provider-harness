@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/harness-io/harness-go-sdk/tree/HEAD)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.8...HEAD)
+
+**Merged pull requests:**
+
+- Refactored logging and client configuration [\#75](https://github.com/harness-io/harness-go-sdk/pull/75) ([micahlmartin](https://github.com/micahlmartin))
+
+## [v0.1.8](https://github.com/harness-io/harness-go-sdk/tree/v0.1.8) (2022-01-28)
+
+[Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.7...v0.1.8)
+
+**Merged pull requests:**
+
+- Release version 0.1.8 01-28-2022 [\#73](https://github.com/harness-io/harness-go-sdk/pull/73) ([micahlmartin](https://github.com/micahlmartin))
+
 ## [v0.1.7](https://github.com/harness-io/harness-go-sdk/tree/v0.1.7) (2022-01-17)
 
 [Full Changelog](https://github.com/harness-io/harness-go-sdk/compare/v0.1.6...v0.1.7)
