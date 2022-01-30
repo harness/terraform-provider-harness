@@ -4,7 +4,7 @@ pipeline:
               variables:
                   - name: HARNESS_API_KEY
                     type: Secret
-                    value: org.harness_api_key
+                    value: harness_api_key
                   - name: HARNESS_ACCOUNT_ID
                     type: Secret
                     value: org.harness_account_id
@@ -16,7 +16,7 @@ pipeline:
                     value: "1"
                   - name: HARNESS_NG_API_KEY
                     type: Secret
-                    value: org.harness_ng_api_key
+                    value: harness_ng_api_key
                   - name: HARNESS_TEST_AWS_ACCESS_KEY_ID
                     type: Secret
                     value: org.aws_access_key_id
