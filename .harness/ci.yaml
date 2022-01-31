@@ -49,7 +49,7 @@ pipeline:
                     value: 120m
                   - name: TF_LOG
                     type: String
-                    value: DEBUG
+                    value: INFO
               type: CI
               spec:
                   sharedPaths:
