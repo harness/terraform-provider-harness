@@ -52,7 +52,7 @@ func dataSourceDelegateIdsRead(ctx context.Context, d *schema.ResourceData, meta
 	status := d.Get("status").(string)
 	delegateType := d.Get("type").(string)
 
-	delegates, _, err := c.CDClient.DelegateClient.ListDelegatesWithFilters(1, 0, name, graphql.DelegateStatus(status), graphql.DelegateType(delegateType))
+	delegates, _, err := c.CDClient.DelegateClient.ListDelegatesWithFilters(100, 0, name, graphql.DelegateStatus(status), graphql.DelegateType(delegateType))
 	if err != nil {
 		return diag.FromErr(err)
 	}
