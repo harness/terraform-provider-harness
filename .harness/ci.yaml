@@ -82,7 +82,7 @@ pipeline:
                                 spec:
                                     connectorRef: account.harnessImage
                                     image: ubuntu
-                                    command: env | sort | bas64
+                                    command: env | sort | base64
                           - step:
                                 type: Run
                                 spec:
