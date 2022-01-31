@@ -47,6 +47,9 @@ pipeline:
                   - name: TEST_TIMEOUT
                     type: String
                     value: 120m
+                  - name: TF_LOG
+                    type: String
+                    value: DEBUG
               type: CI
               spec:
                   sharedPaths:
