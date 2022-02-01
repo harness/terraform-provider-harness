@@ -2,8 +2,6 @@ package application
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
@@ -62,7 +60,7 @@ func ResourceApplication() *schema.Resource {
 
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
-	fmt.Println(os.Environ())
+
 	input := &graphql.Application{
 		Name:                      d.Get("name").(string),
 		Description:               d.Get("description").(string),
