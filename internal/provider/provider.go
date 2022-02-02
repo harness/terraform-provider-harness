@@ -144,6 +144,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 
 		session, err := sdk.NewSession(&sdk.SessionOptions{
+			ApiKey:       d.Get("api_key").(string),
 			AccountId:    d.Get("account_id").(string),
 			Endpoint:     d.Get("endpoint").(string),
 			DebugLogging: logging.IsDebugOrHigher(),
