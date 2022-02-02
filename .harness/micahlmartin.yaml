@@ -1,12 +1,12 @@
 connector:
-  name: micahlmartin
+  name: micahlmartin-terraform-provider-harness
   identifier: micahlmartin
   description:
   orgIdentifier: Micahs_Projects
   projectIdentifier: tf_provider
   type: Github
   spec:
-    url: https://github.com/micahlmartin
+    url: https://github.com/micahlmartin/terraform-provider-harness
     authentication:
       type: Http
       spec:
