@@ -4,10 +4,10 @@ pipeline:
               variables:
                   - name: HARNESS_API_KEY
                     type: Secret
-                    value: org.harness_api_key
+                    value: harness_api_key
                   - name: HARNESS_ACCOUNT_ID
                     type: Secret
-                    value: org.harness_account_id
+                    value: harness_acount_id
                   - name: HARNESS_ENDPOINT
                     type: String
                     value: https://app.harness.io/gateway
