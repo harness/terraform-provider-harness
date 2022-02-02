@@ -14,7 +14,7 @@ var (
 
 func GetDefaultHttpClient(logger *log.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
-	httpClient.Logger = retryablehttp.LeveledLogger(&logging.LeveledLogger{Logger: logger})
+	httpClient.Logger = retryablehttp.LeveledLogger(&logging.Logger{Logger: logger})
 	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = defaultRetryMax
 	return httpClient

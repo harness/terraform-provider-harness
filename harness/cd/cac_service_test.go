@@ -81,7 +81,7 @@ func TestGetServiceById(t *testing.T) {
 
 	// Create application
 	c := getClient()
-	appName := fmt.Sprintf("app_%s_%s", t.Name(), utils.RandStringBytes(4))
+	appName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	app, err := createApplication(appName)
 	require.NotNil(t, app)
 	require.NoError(t, err)

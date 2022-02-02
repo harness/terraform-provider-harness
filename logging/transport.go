@@ -17,6 +17,7 @@ type transport struct {
 	transport http.RoundTripper
 }
 
+// RoundTrip impelements the http.RoundTripper interface and adds rich debug logging.
 func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if IsDebugOrHigher(t.logger) {
 		reqData, err := httputil.DumpRequestOut(req, true)

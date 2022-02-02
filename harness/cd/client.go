@@ -18,7 +18,7 @@ type service struct {
 	ApiClient *ApiClient
 }
 
-type Configuration struct {
+type Config struct {
 	AccountId      string
 	APIKey         string
 	Endpoint       string
@@ -31,7 +31,7 @@ type Configuration struct {
 
 type ApiClient struct {
 	common              service // Reuse a single struct instead of allocating one for each service on the heap.
-	Configuration       *Configuration
+	Configuration       *Config
 	ApplicationClient   *ApplicationClient
 	CloudProviderClient *CloudProviderClient
 	ConfigAsCodeClient  *ConfigAsCodeClient
@@ -43,21 +43,36 @@ type ApiClient struct {
 	Log                 *log.Logger
 }
 
-func NewClient(cfg *Configuration) *ApiClient {
+func NewClient(cfg *Config) (*ApiClient, error) {
+	cfg.AccountId = utils.CoalesceStr(cfg.AccountId, helpers.EnvVars.AccountId.Get())
+	if cfg.AccountId == "" {
+		return nil, cfg.NewInvalidConfigError("AccountId", nil)
+	}
+
+	cfg.APIKey = utils.CoalesceStr(cfg.APIKey, helpers.EnvVars.ApiKey.Get())
+	if cfg.APIKey == "" {
+		return nil, cfg.NewInvalidConfigError("ApiKey", nil)
+	}
+
 	cfg.Endpoint = utils.CoalesceStr(cfg.Endpoint, helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl))
 
-	validateConfig(cfg)
-
 	if cfg.Logger == nil {
-		cfg.Logger = logging.GetDefaultLogger(cfg.DebugLogging)
+		logger := logging.NewLogger()
+
+		if cfg.DebugLogging {
+			logger.SetLevel(log.DebugLevel)
+		}
+
+		cfg.Logger = logger
 	}
 
 	if cfg.HTTPClient == nil {
 		cfg.HTTPClient = utils.GetDefaultHttpClient(cfg.Logger)
 	}
 
+	// defaultHeaders
 	if cfg.DefaultHeaders == nil {
-		cfg.DefaultHeaders = map[string]string{}
+		cfg.DefaultHeaders = make(map[string]string)
 	}
 
 	// Set default headers for all requests
@@ -81,21 +96,7 @@ func NewClient(cfg *Configuration) *ApiClient {
 	c.SSOClient = (*SSOClient)(&c.common)
 	c.UserClient = (*UserClient)(&c.common)
 
-	return c
-}
-
-func validateConfig(cfg *Configuration) {
-	if cfg == nil {
-		panic("Configuration is required")
-	}
-
-	if cfg.Endpoint == "" {
-		panic("Endpoint must be set")
-	}
-
-	if cfg.APIKey == "" {
-		panic("APIKey must be set")
-	}
+	return c, nil
 }
 
 func (client *ApiClient) NewAuthorizedGetRequest(path string) (*retryablehttp.Request, error) {
