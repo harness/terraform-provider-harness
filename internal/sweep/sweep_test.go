@@ -12,6 +12,11 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	sweep.SweeperClient = sdk.NewSession(&sdk.SessionOptions{})
+	client, err := sdk.NewSession(&sdk.SessionOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	sweep.SweeperClient = client
 	resource.TestMain(m)
 }
