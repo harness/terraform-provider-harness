@@ -1,0 +1,22 @@
+connector:
+  name: micahlmartin-terraform-provider-harness
+  identifier: micahlmartinterraformproviderharness
+  description:
+  orgIdentifier: Micahs_Projects
+  projectIdentifier: tf_provider
+  type: Github
+  spec:
+    url: https://github.com/micahlmartin/terraform-provider-harness.git
+    authentication:
+      type: Http
+      spec:
+        type: UsernameToken
+        spec:
+          username: micahlmartin
+          tokenRef: account.micah_github
+    apiAccess:
+      type: Token
+      spec:
+        tokenRef: account.micah_github
+    executeOnDelegate: false
+    type: Repo
