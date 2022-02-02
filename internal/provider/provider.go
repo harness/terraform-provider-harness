@@ -143,12 +143,16 @@ func getHttpClient() *retryablehttp.Client {
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 
-		session := sdk.NewSession(&sdk.SessionOptions{
+		session, err := sdk.NewSession(&sdk.SessionOptions{
 			AccountId:    d.Get("account_id").(string),
 			Endpoint:     d.Get("endpoint").(string),
 			DebugLogging: logging.IsDebugOrHigher(),
 			HTTPClient:   getHttpClient(),
 		})
+
+		if err != nil {
+			return nil, diag.FromErr(err)
+		}
 
 		return session, nil
 	}
