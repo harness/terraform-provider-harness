@@ -27,7 +27,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/harness-io/harness-go-sdk v0.1.10
+	github.com/harness-io/harness-go-sdk v0.1.11
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-getter v1.5.9 // indirect
