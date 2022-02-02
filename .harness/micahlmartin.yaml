@@ -1,0 +1,22 @@
+connector:
+  name: micahlmartin
+  identifier: micahlmartin
+  description:
+  orgIdentifier: Micahs_Projects
+  projectIdentifier: tf_provider
+  type: Github
+  spec:
+    url: https://github.com/micahlmartin
+    authentication:
+      type: Http
+      spec:
+        type: UsernameToken
+        spec:
+          username: micahlmartin
+          tokenRef: account.githubmicahlmartinpat
+    apiAccess:
+      type: Token
+      spec:
+        tokenRef: account.githubmicahlmartinpat
+    executeOnDelegate: false
+    type: Repo
