@@ -1,0 +1,62 @@
+pipeline:
+    name: generate_changelog
+    identifier: generate_changelog
+    allowStageExecutions: false
+    projectIdentifier: tf_provider
+    orgIdentifier: Micahs_Projects
+    tags: {}
+    stages:
+        - stage:
+              name: generate-changelog
+              identifier: generate_changelog
+              type: CI
+              spec:
+                  cloneCodebase: false
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: account.micahsprojects
+                          namespace: micahs-projects
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: git clone
+                                identifier: gitfetch
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    command: |-
+                                        set -x
+
+                                        git clone https://<+pipeline.variables.GITHUB_TOKEN>@github.com/harness-io/terraform-provider-harness.git .
+                                    shell: Bash
+                          - step:
+                                type: Run
+                                name: generate changelog
+                                identifier: generate
+                                spec:
+                                    connectorRef: org.gcp
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-8
+                                    command: |-
+                                        $(cd tools && go install github.com/hashicorp/go-changelog/cmd/changelog-build)
+
+                                        ./scripts/generate-changelog.sh
+
+                                        if [[ `git status --porcelain` ]]; then
+                                            if [[ "<+trigger.payload.pull_request.number>" == "null" ]]; then
+                                               MSG="Update CHANGELOG.md (Manual Trigger)"
+                                            else
+                                                MSG="Update CHANGELOG.md for #<+trigger.payload.pull_request.number>"
+                                            fi
+                                            git config --local user.email changelogbot@harness.io
+                                            git config --local user.name changelogbot
+                                            git add CHANGELOG.md
+                                            git commit -m "$MSG" 
+                                            git push
+                                        fi
+                                    shell: Bash
+    variables:
+        - name: GITHUB_TOKEN
+          type: Secret
+          value: org.githubciautomationtoken
