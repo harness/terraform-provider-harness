@@ -52,7 +52,7 @@ func DataSourceCurrentUser() *schema.Resource {
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
-			"2fa_enabled": {
+			"is_two_factor_auth_enabled": {
 				Description: "Whether 2FA is enabled for the user.",
 				Type:        schema.TypeBool,
 				Computed:    true,
@@ -102,7 +102,7 @@ func dataSourceCurrentUserRead(ctx context.Context, d *schema.ResourceData, meta
 	d.Set("default_account_id", user.DefaultAccountId)
 	d.Set("intent", user.Intent)
 	d.Set("admin", user.Admin)
-	d.Set("2fa_enabled", user.TwoFactorAuthenticationEnabled)
+	d.Set("is_two_factor_auth_enabled", user.TwoFactorAuthenticationEnabled)
 	d.Set("email_verified", user.EmailVerified)
 	d.Set("locked", user.Locked)
 	d.Set("signup_action", user.SignupAction)

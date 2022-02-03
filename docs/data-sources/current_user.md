@@ -21,7 +21,7 @@ description: |-
 
 ### Read-Only
 
-- **2fa_enabled** (Boolean) Whether 2FA is enabled for the user.
+- **is_two_factor_auth_enabled** (Boolean) Whether 2FA is enabled for the user.
 - **admin** (Boolean) Whether the user is an administrator.
 - **billing_frequency** (String) Billing frequency of the user.
 - **default_account_id** (String) Default account ID of the user.
