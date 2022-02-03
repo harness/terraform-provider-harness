@@ -17,7 +17,7 @@ func (c *Config) NewInvalidConfigError(field string, err error) InvalidConfigErr
 }
 
 func (e InvalidConfigError) Error() string {
-	return fmt.Sprintf("invalid config: %s must be set %s", e.Field, e.Err)
+	return fmt.Sprintf("invalid config: %s must be set", e.Field)
 }
 
 func (e InvalidConfigError) Unwrap() error {
