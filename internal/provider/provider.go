@@ -151,7 +151,6 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			DebugLogging: logging.IsDebugOrHigher(),
 			HTTPClient:   getHttpClient(),
 		})
-
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}
