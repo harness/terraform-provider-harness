@@ -1,0 +1,3 @@
+```release-note:enhancement
+data-source/harness_current_user: Change `2fa_enabled` to `is_two_factor_auth_enabled` to support `cdk` usage.
+```
