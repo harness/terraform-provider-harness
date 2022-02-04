@@ -2,8 +2,11 @@ package user_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
+	sdk "github.com/harness-io/harness-go-sdk"
+	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness-io/harness-go-sdk/harness/utils"
 	"github.com/harness-io/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -16,211 +19,244 @@ func TestAccResourceUserGroupPermissions_AccountPermissions(t *testing.T) {
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
 	resourceName := "harness_user_group_permissions.test"
 
+	defer func() {
+		c := acctest.TestAccGetApiClientFromProvider()
+		ug, err := c.CDClient.UserClient.GetUserGroupByName(expectedName)
+		require.NoError(t, err)
+		require.NotNil(t, ug)
+		c.CDClient.UserClient.DeleteUserGroup(ug.Id)
+	}()
+
 	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			c := acctest.TestAccGetApiClientFromProvider()
+			c.CDClient.UserClient.CreateUserGroup(&graphql.UserGroup{
+				Name: expectedName,
+			})
+		},
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		CheckDestroy:      testAccUserGroupPermissionsDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceUserGroupPermissions_AccountPermissions(expectedName),
 				Check: resource.ComposeTestCheckFunc(
-					// resource.TestCheckResourceAttr(resourceName, "name", expectedName),
-					testAccUserGroupPermissionCreation(t, resourceName, expectedName),
-					// func (state *terraform.State) error {
-
-					// }
+					resource.TestCheckResourceAttr(resourceName, "account_permissions.#", "2"),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					return primary.Attributes["user_group_id"], nil
+				},
 			},
 		},
 	})
 }
 
-// func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceUserGroupPermissions_DeleteUnderlyingResource(t *testing.T) {
 
-// 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-// 	resourceName := "harness_user_group.test"
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
 
-// 	resource.UnitTest(t, resource.TestCase{
-// 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-// 		ProviderFactories: acctest.ProviderFactories,
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccResourceUserGroupAccountPermissions(expectedName),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
-// 				),
-// 			},
-// 			{
-// 				PreConfig: func() {
-// 					acctest.TestAccConfigureProvider()
-// 					c := acctest.TestAccProvider.Meta().(*api.Client)
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			c := acctest.TestAccGetApiClientFromProvider()
+			c.CDClient.UserClient.CreateUserGroup(&graphql.UserGroup{
+				Name: expectedName,
+			})
+		},
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUserGroupPermissions_AccountPermissions(expectedName),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c := acctest.TestAccProvider.Meta().(*sdk.Session)
 
-// 					grp, err := c.CDClient.UserClient.GetUserGroupByName(expectedName)
-// 					require.NoError(t, err)
-// 					require.NotNil(t, grp)
+					grp, err := c.CDClient.UserClient.GetUserGroupByName(expectedName)
+					require.NoError(t, err)
+					require.NotNil(t, grp)
 
-// 					err = c.CDClient.UserClient.DeleteUserGroup(grp.Id)
-// 					require.NoError(t, err)
-// 				},
-// 				Config:             testAccResourceUserGroupAccountPermissions(expectedName),
-// 				PlanOnly:           true,
-// 				ExpectNonEmptyPlan: true,
-// 			},
-// 		},
-// 	})
-// }
-
-// func TestAccResourceUserGroup_AppPermissions(t *testing.T) {
-
-// 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
-// 	resourceName := "harness_user_group.test"
-
-// 	resource.UnitTest(t, resource.TestCase{
-// 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-// 		ProviderFactories: acctest.ProviderFactories,
-// 		CheckDestroy:      testAccUserGroupDestroy(resourceName),
-// 		Steps: []resource.TestStep{
-// 			{
-// 				Config: testAccResourceUserGroupAppPermissions(expectedName),
-// 				Check: resource.ComposeTestCheckFunc(
-// 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
-// 					testAccUserGroupPermissionCreation(t, resourceName, expectedName),
-// 				),
-// 			},
-// 			{
-// 				ResourceName:      resourceName,
-// 				ImportState:       true,
-// 				ImportStateVerify: true,
-// 			},
-// 		},
-// 	})
-// }
-
-func testAccUserGroupPermissionCreation(t *testing.T, resourceName string, name string) resource.TestCheckFunc {
-	return func(state *terraform.State) error {
-		group, err := testAccGetUserGroup(resourceName, state)
-		require.NoError(t, err)
-		require.NotNil(t, group)
-		// require.Equal(t, name, group.Name)
-
-		return nil
-	}
+					err = c.CDClient.UserClient.DeleteUserGroup(grp.Id)
+					require.NoError(t, err)
+				},
+				Config:   testAccResourceUserGroupAccountPermissions(expectedName),
+				PlanOnly: true,
+				// ExpectNonEmptyPlan: true,
+				ExpectError: regexp.MustCompile("user group .* does not exist"),
+			},
+		},
+	})
 }
 
-// func testAccGetUserGroup(resourceName string, state *terraform.State) (*graphql.UserGroup, error) {
-// 	r := acctest.TestAccGetResource(resourceName, state)
-// 	c := acctest.TestAccGetApiClientFromProvider()
-// 	id := r.Primary.ID
+func TestAccResourceUserGroupPermissions_AppPermissions(t *testing.T) {
 
-// 	return c.CDClient.UserClient.GetUserGroupById(id)
-// }
+	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	resourceName := "harness_user_group_permissions.test"
 
-// func testAccUserGroupDestroy(resourceName string) resource.TestCheckFunc {
-// 	return func(state *terraform.State) error {
-// 		app, _ := testAccGetUserGroup(resourceName, state)
-// 		if app != nil {
-// 			return fmt.Errorf("Found user group: %s", app.Id)
-// 		}
+	defer func() {
+		c := acctest.TestAccGetApiClientFromProvider()
+		ug, err := c.CDClient.UserClient.GetUserGroupByName(expectedName)
+		require.NoError(t, err)
+		require.NotNil(t, ug)
+		c.CDClient.UserClient.DeleteUserGroup(ug.Id)
+	}()
 
-// 		return nil
-// 	}
-// }
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			c := acctest.TestAccGetApiClientFromProvider()
+			c.CDClient.UserClient.CreateUserGroup(&graphql.UserGroup{
+				Name: expectedName,
+			})
+		},
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupPermissionsDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUserGroupPermissionsAppPermissions(expectedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.all.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.deployment.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.environment.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.pipeline.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.provisioner.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.service.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.template.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "app_permissions.0.workflow.#", "2"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					return primary.Attributes["user_group_id"], nil
+				},
+			},
+		},
+	})
+}
 
-// func testAccResourceUserGroupAppPermissions(name string) string {
-// 	return fmt.Sprintf(`
-// 		resource "harness_user_group" "test" {
-// 			name = "%s"
-// 			description = "my description"
+func testAccResourceUserGroupPermissionsAppPermissions(name string) string {
+	return fmt.Sprintf(`
+		data "harness_user_group" "test" {
+			name = "%s"
+		}
 
-// 			permissions {
-// 				app_permissions {
+		resource "harness_user_group_permissions" "test" {
+			user_group_id = data.harness_user_group.test.id
 
-// 					all {
-// 						app_ids = []
-// 						actions = ["CREATE", "READ", "UPDATE", "DELETE"]
-// 					}
+			app_permissions {
 
-// 					deployment {
-// 						actions = ["READ", "ROLLBACK_WORKFLOW", "EXECUTE_PIPELINE", "EXECUTE_WORKFLOW"]
-// 						filters = ["NON_PRODUCTION_ENVIRONMENTS"]
-// 					}
+				all {
+					app_ids = []
+					actions = ["CREATE", "READ", "UPDATE", "DELETE"]
+				}
 
-// 					deployment {
-// 						actions = ["READ"]
-// 						filters = ["PRODUCTION_ENVIRONMENTS"]
-// 					}
+				deployment {
+					actions = ["READ", "ROLLBACK_WORKFLOW", "EXECUTE_PIPELINE", "EXECUTE_WORKFLOW"]
+					filters = ["NON_PRODUCTION_ENVIRONMENTS"]
+				}
 
-// 					environment {
-// 						actions = ["CREATE", "READ", "UPDATE", "DELETE"]
-// 						filters = ["NON_PRODUCTION_ENVIRONMENTS"]
-// 					}
+				deployment {
+					actions = ["READ"]
+					filters = ["PRODUCTION_ENVIRONMENTS"]
+				}
 
-// 					environment {
-// 						actions = ["READ"]
-// 						filters = ["PRODUCTION_ENVIRONMENTS"]
-// 					}
+				environment {
+					actions = ["CREATE", "READ", "UPDATE", "DELETE"]
+					filters = ["NON_PRODUCTION_ENVIRONMENTS"]
+				}
 
-// 					pipeline {
-// 						actions = ["CREATE", "READ", "UPDATE", "DELETE"]
-// 						filters = ["NON_PRODUCTION_PIPELINES"]
-// 					}
+				environment {
+					actions = ["READ"]
+					filters = ["PRODUCTION_ENVIRONMENTS"]
+				}
 
-// 					pipeline {
-// 						actions = ["READ"]
-// 						filters = ["PRODUCTION_PIPELINES"]
-// 					}
+				pipeline {
+					actions = ["CREATE", "READ", "UPDATE", "DELETE"]
+					filters = ["NON_PRODUCTION_PIPELINES"]
+				}
 
-// 					provisioner {
-// 						actions = ["UPDATE", "DELETE"]
-// 					}
+				pipeline {
+					actions = ["READ"]
+					filters = ["PRODUCTION_PIPELINES"]
+				}
 
-// 					provisioner {
-// 						actions = ["CREATE", "READ"]
-// 					}
+				provisioner {
+					actions = ["UPDATE", "DELETE"]
+				}
 
-// 					service {
-// 						actions = ["UPDATE", "DELETE"]
-// 					}
+				provisioner {
+					actions = ["CREATE", "READ"]
+				}
 
-// 					service {
-// 						actions = ["UPDATE", "DELETE"]
-// 					}
+				service {
+					actions = ["UPDATE", "DELETE"]
+				}
 
-// 					template {
-// 						actions = ["CREATE", "READ", "UPDATE", "DELETE"]
-// 					}
+				service {
+					actions = ["CREATE", "READ"]
+				}
 
-// 					workflow {
-// 						actions = ["UPDATE", "DELETE"]
-// 						filters = ["NON_PRODUCTION_WORKFLOWS",]
-// 					}
+				template {
+					actions = ["CREATE", "READ", "UPDATE", "DELETE"]
+				}
 
-// 					workflow {
-// 						actions = ["CREATE", "READ"]
-// 						filters = ["PRODUCTION_WORKFLOWS", "WORKFLOW_TEMPLATES"]
-// 					}
+				workflow {
+					actions = ["UPDATE", "DELETE"]
+					filters = ["NON_PRODUCTION_WORKFLOWS",]
+				}
 
-// 				}
-// 			}
-// 		}
-// `, name)
-// }
+				workflow {
+					actions = ["CREATE", "READ"]
+					filters = ["PRODUCTION_WORKFLOWS", "WORKFLOW_TEMPLATES"]
+				}
+
+			}
+		}
+`, name)
+}
 
 func testAccResourceUserGroupPermissions_AccountPermissions(name string) string {
 	return fmt.Sprintf(`
-		resource "harness_user_group" "test" {
+		data "harness_user_group" "test" {
 			name = "%s"
 		}
 		
 		resource "harness_user_group_permissions" "test" {
-			user_group_id = harness_user_group.test.id
+			user_group_id = data.harness_user_group.test.id
 
 			account_permissions = ["ADMINISTER_OTHER_ACCOUNT_FUNCTIONS", "MANAGE_API_KEYS"]
 		}
 `, name)
+}
+
+func testAccUserGroupPermissionsDestroy(resourceName string) resource.TestCheckFunc {
+	return func(state *terraform.State) error {
+		r := acctest.TestAccGetResource(resourceName, state)
+		c := acctest.TestAccGetApiClientFromProvider()
+
+		id := r.Primary.ID
+
+		ug, err := c.CDClient.UserClient.GetUserGroupById(id)
+		if err != nil {
+			return err
+		}
+
+		if len(ug.Permissions.AccountPermissions.AccountPermissionTypes) == 0 && len(ug.Permissions.AppPermissions) == 0 {
+			return nil
+		}
+
+		return fmt.Errorf("User group permissions not destroyed: %s", ug.Id)
+	}
 }

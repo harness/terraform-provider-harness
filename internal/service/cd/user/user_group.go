@@ -97,7 +97,7 @@ func ResourceUserGroup() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"account_permissions": getUserGroupAccountPermissionsSchema(),
-						"app_permissions":     getUserGroupAccountPermissionsSchema(),
+						"app_permissions":     getUserGroupAppPermissionsSchema(),
 					},
 				},
 			},
@@ -689,7 +689,7 @@ func expandPermissions(d *schema.ResourceData, input *graphql.UserGroup) {
 	input.Permissions = &graphql.UserGroupPermissions{}
 
 	expandAccountPermissions(permissionConfig["account_permissions"].(*schema.Set).List(), input.Permissions)
-	expandAppPermissions(permissionConfig["app_permissions"].([]interface{}), input.Permissions)
+	expandAppPermissions(permissionConfig["app_permissions"].(*schema.Set).List(), input.Permissions)
 
 }
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/api"
+	sdk "github.com/harness-io/harness-go-sdk"
 	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,15 +26,20 @@ func ResourceUserGroupPermissionsPermissions() *schema.Resource {
 				Required:    true,
 			},
 			"account_permissions": getUserGroupAccountPermissionsSchema(),
-			"app_permissions":     getUserGroupAccountPermissionsSchema(),
+			"app_permissions":     getUserGroupAppPermissionsSchema(),
 		},
 
-		Importer: &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
+		Importer: &schema.ResourceImporter{
+			State: func(d *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+				d.Set("user_group_id", d.Id())
+				return []*schema.ResourceData{d}, nil
+			},
+		},
 	}
 }
 
 func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	id := d.Get("user_group_id").(string)
 	ug, err := c.CDClient.UserClient.GetUserGroupById(id)
@@ -46,15 +51,17 @@ func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.R
 		return diag.FromErr(fmt.Errorf("user group %s does not exist", id))
 	}
 
+	permissions := &graphql.UserGroupPermissions{}
+
+	expandAccountPermissions(d.Get("account_permissions").(*schema.Set).List(), permissions)
+	expandAppPermissions(d.Get("app_permissions").([]interface{}), permissions)
+
 	input := &graphql.UserGroup{
 		Id:          ug.Id,
-		Permissions: &graphql.UserGroupPermissions{},
+		Permissions: permissions,
 	}
 
-	expandAccountPermissions(d.Get("account_permissions").(*schema.Set).List(), input.Permissions)
-	expandAppPermissions(d.Get("app_permissions").(*schema.Set).List(), input.Permissions)
-
-	updatedUg, err := c.CDClient.UserClient.UpdateUserGroup(ug)
+	updatedUg, err := c.CDClient.UserClient.UpdateUserGroup(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -66,7 +73,7 @@ func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.R
 }
 
 func resourceUserGroupPermissionsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
 	id := d.Get("user_group_id").(string)
 
@@ -76,6 +83,8 @@ func resourceUserGroupPermissionsRead(ctx context.Context, d *schema.ResourceDat
 	}
 
 	if userGroup == nil {
+		d.SetId("")
+		d.MarkNewResource()
 		return diag.FromErr(fmt.Errorf("user group %s does not exist", id))
 	}
 
@@ -97,11 +106,18 @@ func readUserGroupPermissions(d *schema.ResourceData, userGroup *graphql.UserGro
 }
 
 func resourceUserGroupPermissionsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*api.Client)
+	c := meta.(*sdk.Session)
 
-	ug, err := c.CDClient.UserClient.GetUserGroupById(d.Id())
+	id := d.Id()
+
+	ug, err := c.CDClient.UserClient.GetUserGroupById(id)
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	if ug == nil {
+		d.SetId("")
+		return nil
 	}
 
 	ug.Permissions.AccountPermissions = &graphql.AccountPermissions{}
