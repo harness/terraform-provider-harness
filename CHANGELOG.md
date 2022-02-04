@@ -1,5 +1,9 @@
 # 0.1.13 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `user_group_permissions` ([#80](https://github.com/hashicorp/terraform-provider-aws/issues/80))
+
 ENHANCEMENTS:
 
 * data-source/harness_current_user: Change `2fa_enabled` to `is_two_factor_auth_enabled` to support `cdk` usage. ([#75](https://github.com/hashicorp/terraform-provider-aws/issues/75))
