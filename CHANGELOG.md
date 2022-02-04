@@ -1,5 +1,10 @@
 # 0.1.13 (Unreleased)
 
+BUG FIXES:
+
+* Added configuration for auto generating the changelog ([#78](https://github.com/hashicorp/terraform-provider-aws/issues/78))
+* Fixed missing nextgen auth configuration in the provider. ([#76](https://github.com/hashicorp/terraform-provider-aws/issues/76))
+
 # 0.1.12
 
 BUG FIXES:
