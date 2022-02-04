@@ -6,12 +6,12 @@ FEATURES:
 
 ENHANCEMENTS:
 
-* data-source/harness_current_user: Change `2fa_enabled` to `is_two_factor_auth_enabled` to support `cdk` usage. ([#75](https://github.com/hashicorp/terraform-provider-aws/issues/75))
+* data-source/harness_current_user: Change `2fa_enabled` to `is_two_factor_auth_enabled` to support `cdk` usage. ([#75](https://github.com/hashicorp/terraform-provider-harness/issues/75))
 
 BUG FIXES:
 
-* Added configuration for auto generating the changelog ([#78](https://github.com/hashicorp/terraform-provider-aws/issues/78))
-* Fixed missing nextgen auth configuration in the provider. ([#76](https://github.com/hashicorp/terraform-provider-aws/issues/76))
+* Added configuration for auto generating the changelog ([#78](https://github.com/hashicorp/terraform-provider-harness/issues/78))
+* Fixed missing nextgen auth configuration in the provider. ([#76](https://github.com/hashicorp/terraform-provider-harness/issues/76))
 
 # 0.1.12
 
