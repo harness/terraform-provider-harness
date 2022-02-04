@@ -1,6 +1,6 @@
 pipeline:
-    name: generate_changelog
-    identifier: generate_changelog
+    name: changelog_generate
+    identifier: changelog_generate
     allowStageExecutions: false
     projectIdentifier: tf_provider
     orgIdentifier: Micahs_Projects
@@ -8,7 +8,7 @@ pipeline:
     stages:
         - stage:
               name: generate-changelog
-              identifier: generate_changelog
+              identifier: changelog_generate
               type: CI
               spec:
                   cloneCodebase: false
