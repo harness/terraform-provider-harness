@@ -133,6 +133,19 @@ pipeline:
                                 name: Save cache
                                 identifier: Save_cache
                           - step:
+                                type: RestoreCacheGCS
+                                spec:
+                                    resources:
+                                        limits:
+                                            memory: 1Gi
+                                            cpu: "1"
+                                    key: terraform-provider-harness-{{ checksum "internal/**" }}
+                                    connectorRef: org.gcp
+                                    bucket: harness-micah-test
+                                    archiveFormat: Gzip
+                                name: Restore from build cache
+                                identifier: Restore_from_build_cache
+                          - step:
                                 type: Run
                                 spec:
                                     resources:
