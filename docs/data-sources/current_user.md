@@ -21,7 +21,6 @@ description: |-
 
 ### Read-Only
 
-- **is_two_factor_auth_enabled** (Boolean) Whether 2FA is enabled for the user.
 - **admin** (Boolean) Whether the user is an administrator.
 - **billing_frequency** (String) Billing frequency of the user.
 - **default_account_id** (String) Default account ID of the user.
@@ -29,6 +28,7 @@ description: |-
 - **email** (String) Email address of the user.
 - **email_verified** (Boolean) Whether the user's email address has been verified.
 - **intent** (String) Intent of the user.
+- **is_two_factor_auth_enabled** (Boolean) Whether 2FA is enabled for the user.
 - **locked** (Boolean) Whether or not the user account is locked.
 - **name** (String) Name of the user.
 - **signup_action** (String) Signup action of the user.
