@@ -96,19 +96,6 @@ pipeline:
                                 name: Wait for Docker Host
                                 identifier: Wait_for_Docker_Host
                           - step:
-                                type: RestoreCacheGCS
-                                spec:
-                                    resources:
-                                        limits:
-                                            memory: 1Gi
-                                            cpu: "1"
-                                    key: terraform-provider-harness-{{ checksum "go.mod" }}
-                                    connectorRef: org.gcp
-                                    bucket: harness-micah-test
-                                    archiveFormat: Gzip
-                                name: Restore from cache
-                                identifier: Restore_from_cache
-                          - step:
                                 type: Run
                                 spec:
                                     resources:
@@ -121,30 +108,6 @@ pipeline:
                                     command: go mod vendor
                                 name: Install Dependencies
                                 identifier: installdependencies
-                          - step:
-                                type: SaveCacheGCS
-                                spec:
-                                    sourcePaths:
-                                        - ./vendor
-                                    key: terraform-provider-harness-{{ checksum "go.mod" }}
-                                    connectorRef: org.gcp
-                                    bucket: harness-micah-test
-                                    archiveFormat: Gzip
-                                name: Save cache
-                                identifier: Save_cache
-                          - step:
-                                type: RestoreCacheGCS
-                                spec:
-                                    resources:
-                                        limits:
-                                            memory: 1Gi
-                                            cpu: "1"
-                                    key: terraform-provider-harness-{{ checksum "internal/**" }}
-                                    connectorRef: org.gcp
-                                    bucket: harness-micah-test
-                                    archiveFormat: Gzip
-                                name: Restore from build cache
-                                identifier: Restore_from_build_cache
                           - step:
                                 type: Run
                                 spec:
