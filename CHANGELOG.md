@@ -1,4 +1,4 @@
-# 0.1.14 (Unreleased)
+# 0.1.14
 
 ENHANCEMENTS:
 
