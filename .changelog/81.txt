@@ -1,0 +1,3 @@
+```release-note:enhancement
+data-source/harness_environment: Replaces `id` field with `environment_id` so `id` field can be marked as computed.
+```

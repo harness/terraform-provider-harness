@@ -21,12 +21,13 @@ Data source for retrieving a Harness service
 
 ### Optional
 
-- **id** (String) The id of the environment.
+- **environment_id** (String) The id of the environment.
 - **name** (String) The name of the environment.
 
 ### Read-Only
 
 - **description** (String) The description of the environment.
+- **id** (String) The id of the environment.
 - **type** (String) The type of the environment. Valid values are `PROD` and `NON_PROD`
 - **variable_override** (Block Set) Override for a service variable (see [below for nested schema](#nestedblock--variable_override))
 

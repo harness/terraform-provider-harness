@@ -18,10 +18,15 @@ func DataSourceEnvironment() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"id": {
+				Description: "The id of the environment.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"environment_id": {
 				Description:   "The id of the environment.",
 				Type:          schema.TypeString,
 				Optional:      true,
-				AtLeastOneOf:  []string{"id", "name"},
+				AtLeastOneOf:  []string{"environment_id", "name"},
 				ConflictsWith: []string{"name"},
 			},
 			"app_id": {
@@ -33,8 +38,8 @@ func DataSourceEnvironment() *schema.Resource {
 				Description:   "The name of the environment.",
 				Type:          schema.TypeString,
 				Optional:      true,
-				AtLeastOneOf:  []string{"id", "name"},
-				ConflictsWith: []string{"id"},
+				AtLeastOneOf:  []string{"environment_id", "name"},
+				ConflictsWith: []string{"environment_id"},
 			},
 			"description": {
 				Description: "The description of the environment.",
@@ -88,7 +93,7 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 
 	appId := d.Get("app_id").(string)
 
-	if id := d.Get("id").(string); id != "" {
+	if id := d.Get("environment_id").(string); id != "" {
 		env, err = c.CDClient.ConfigAsCodeClient.GetEnvironmentById(appId, id)
 		if err != nil {
 			return diag.FromErr(err)
@@ -105,6 +110,7 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	d.SetId(env.Id)
+	d.Set("environment_id", env.Id)
 	d.Set("app_id", env.ApplicationId)
 	d.Set("name", env.Name)
 	d.Set("type", env.EnvironmentType)
