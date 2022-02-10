@@ -1,5 +1,9 @@
 # 0.1.14 (Unreleased)
 
+ENHANCEMENTS:
+
+* data-source/harness_environment: Replaces `id` field with `environment_id` so `id` field can be marked as computed. ([#81](https://github.com/hashicorp/terraform-provider-harness/issues/81))
+
 # 0.1.13
 
 FEATURES:
