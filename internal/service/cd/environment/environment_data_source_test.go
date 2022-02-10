@@ -66,7 +66,7 @@ func testAccDataSourceEnvironmentById(name string, envType cac.EnvironmentType) 
 
 	data "harness_environment" "test" {
 		app_id = harness_application.test.id
-		id = harness_environment.test.id
+		environment_id = harness_environment.test.id
 	}
 
 	`, name, envType)
