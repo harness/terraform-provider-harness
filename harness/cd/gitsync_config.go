@@ -3,7 +3,7 @@ package cd
 import (
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 )
 
 func (c *ApplicationClient) UpdateGitSyncConfig(config *graphql.UpdateApplicationGitSyncConfigInput) (*graphql.GitSyncConfig, error) {

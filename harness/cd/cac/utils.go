@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/jinzhu/copier"
 	"gopkg.in/yaml.v3"
 )

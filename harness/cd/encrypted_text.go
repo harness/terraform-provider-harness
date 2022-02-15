@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
-	"github.com/harness-io/harness-go-sdk/harness/cd/unpublished"
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/cd/unpublished"
+	"github.com/harness/harness-go-sdk/harness/helpers"
 )
 
 func (c *SecretClient) CreateEncryptedText(input *graphql.CreateSecretInput) (*graphql.EncryptedText, error) {

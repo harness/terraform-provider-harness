@@ -4,7 +4,7 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/utils"
 )
 
 type Entity interface {

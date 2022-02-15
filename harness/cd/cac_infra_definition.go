@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
 )
 
 func (c *ConfigAsCodeClient) UpsertInfraDefinition(input *cac.InfrastructureDefinition) (*cac.InfrastructureDefinition, error) {

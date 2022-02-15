@@ -3,7 +3,7 @@ package cd
 import (
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
 )
 
 func (c *ConfigAsCodeClient) GetServiceById(applicationId string, serviceId string) (*cac.Service, error) {

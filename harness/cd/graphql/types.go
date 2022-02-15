@@ -1,7 +1,7 @@
 package graphql
 
 import (
-	"github.com/harness-io/harness-go-sdk/harness/time"
+	"github.com/harness/harness-go-sdk/harness/time"
 )
 
 type CommonMetadata struct {

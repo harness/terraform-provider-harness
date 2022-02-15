@@ -120,7 +120,7 @@ pipeline:
                     value: org.githubciautomationtoken
                   - name: GITHUB_OWNER
                     type: String
-                    value: harness-io
+                    value: harness
                   - name: GITHUB_REPO
                     type: String
                     value: harness-go-sdk

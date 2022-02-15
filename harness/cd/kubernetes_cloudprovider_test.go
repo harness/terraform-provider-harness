@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
 

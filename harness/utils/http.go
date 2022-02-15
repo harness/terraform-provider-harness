@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/harness-io/harness-go-sdk/harness"
-	"github.com/harness-io/harness-go-sdk/logging"
+	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/logging"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	log "github.com/sirupsen/logrus"

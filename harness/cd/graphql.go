@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/hashicorp/go-retryablehttp"
 )
 

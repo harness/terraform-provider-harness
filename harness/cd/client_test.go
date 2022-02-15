@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/stretchr/testify/require"
 )
 

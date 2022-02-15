@@ -10,9 +10,9 @@ import (
 	"path"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"gopkg.in/yaml.v3"
 )

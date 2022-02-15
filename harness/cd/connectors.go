@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 )
 
 type ConnectorClient struct {

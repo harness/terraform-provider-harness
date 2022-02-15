@@ -1,4 +1,4 @@
-module github.com/harness-io/harness-go-sdk
+module github.com/harness/harness-go-sdk
 
 go 1.16
 

@@ -3,12 +3,12 @@ package sdk
 import (
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness"
-	"github.com/harness-io/harness-go-sdk/harness/cd"
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
-	"github.com/harness-io/harness-go-sdk/harness/nextgen"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
-	"github.com/harness-io/harness-go-sdk/logging"
+	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/logging"
 	"github.com/hashicorp/go-retryablehttp"
 	log "github.com/sirupsen/logrus"
 )

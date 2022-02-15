@@ -3,8 +3,8 @@ package cd
 import (
 	"errors"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/utils"
 )
 
 func (c *ConfigAsCodeClient) UpsertSpotInstCloudProvider(input *cac.SpotInstCloudProvider) (*cac.SpotInstCloudProvider, error) {

@@ -1,7 +1,7 @@
 package cd
 
 import (
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
 )
 
 func (c *ConfigAsCodeClient) GetApplicationById(applicationId string) (*cac.Application, error) {

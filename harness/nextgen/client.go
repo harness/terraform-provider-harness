@@ -29,7 +29,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/hashicorp/go-retryablehttp"
 	"golang.org/x/oauth2"
 )

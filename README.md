@@ -4,7 +4,7 @@ This project is a Harness SDK for the go programming language. It provides go cl
 
 ## Disclaimer
 
-This product is not supported by the Harness Customer support team. If you have any questions please open a [new issue](https://github.com/harness-io/harness-go-sdk/issues/new) or join our slack [channel](https://harnesscommunity.slack.com/archives/C02G9CUNF1S).
+This product is not supported by the Harness Customer support team. If you have any questions please open a [new issue](https://github.com/harness/harness-go-sdk/issues/new) or join our slack [channel](https://harnesscommunity.slack.com/archives/C02G9CUNF1S).
 
 ## Getting Started
 
@@ -13,13 +13,13 @@ This product is not supported by the Harness Customer support team. If you have 
 Use `go get` to retrieve the SDK to add it to your `GOPATH` workspace, or project's Go module dependencies.
 
 ```bash
-go get github.com/harness-io/harness-go-sdk
+go get github.com/harness/harness-go-sdk
 ```
 
 To update the SDK use `go get -u` to retrieve the latest version of the SDK.
 
 ```bash
-go get -u github.com/harness-io/harness-go-sdk
+go get -u github.com/harness/harness-go-sdk
 ```
 
 ### Dependencies
@@ -31,13 +31,13 @@ The metadata of the SDK's dependencies can be found in the Go module file `go.mo
 If you are using Go modules, your go get will default to the latest tagged release version of the SDK. To get a specific release version of the SDK use @\<tag\> in your go get command.
 
 ```bash
-go get github.com/harness-io/harness-go-sdk@v0.2.11
+go get github.com/harness/harness-go-sdk@v0.2.11
 ```
 
 To get the latest SDK repository change use @latest.
 
 ```bash
-go get github.com/harness-io/harness-go-sdk@latest
+go get github.com/harness/harness-go-sdk@latest
 ```
 
 ## Quick Examples

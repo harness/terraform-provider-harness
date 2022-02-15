@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/utils"
 )
 
 func (c *ConfigAsCodeClient) UpsertEnvironment(input *cac.Environment) (*cac.Environment, error) {
