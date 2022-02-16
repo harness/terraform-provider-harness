@@ -1,11 +1,12 @@
 # Changelog
 
-## [Unreleased](https://github.com/harness/harness-go-sdk/tree/HEAD)
+## [v0.1.11](https://github.com/harness/harness-go-sdk/tree/v0.1.11) (2022-02-02)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.10...HEAD)
+[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.10...v0.1.11)
 
 **Merged pull requests:**
 
+- Release version 0.1.11 02-02-2022 [\#79](https://github.com/harness/harness-go-sdk/pull/79) ([micahlmartin](https://github.com/micahlmartin))
 - Fixed auth configuration issue [\#78](https://github.com/harness/harness-go-sdk/pull/78) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.1.10](https://github.com/harness/harness-go-sdk/tree/v0.1.10) (2022-01-30)
@@ -24,7 +25,6 @@
 
 - Release version 0.1.9 01-30-2022 [\#76](https://github.com/harness/harness-go-sdk/pull/76) ([micahlmartin](https://github.com/micahlmartin))
 - Refactored logging and client configuration [\#75](https://github.com/harness/harness-go-sdk/pull/75) ([micahlmartin](https://github.com/micahlmartin))
-- Release version 0.1.6 12-17-2021 [\#69](https://github.com/harness/harness-go-sdk/pull/69) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.1.8](https://github.com/harness/harness-go-sdk/tree/v0.1.8) (2022-01-28)
 
@@ -46,6 +46,10 @@
 ## [v0.1.6](https://github.com/harness/harness-go-sdk/tree/v0.1.6) (2021-12-17)
 
 [Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.5...v0.1.6)
+
+**Merged pull requests:**
+
+- Release version 0.1.6 12-17-2021 [\#69](https://github.com/harness/harness-go-sdk/pull/69) ([micahlmartin](https://github.com/micahlmartin))
 
 ## [v0.1.5](https://github.com/harness/harness-go-sdk/tree/v0.1.5) (2021-12-10)
 
@@ -228,7 +232,6 @@
 
 - Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
 - Added Update functions for Cloud Providers [\#24](https://github.com/harness/harness-go-sdk/pull/24) ([micahlmartin](https://github.com/micahlmartin))
-- Release version 0.0.1-testing 06-22-2021 [\#19](https://github.com/harness/harness-go-sdk/pull/19) ([harness-ci-automation](https://github.com/harness-ci-automation))
 
 ## [v0.0.2](https://github.com/harness/harness-go-sdk/tree/v0.0.2) (2021-06-29)
 
