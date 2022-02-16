@@ -123,3 +123,9 @@ pipeline:
                     type: String
                     default: main
                     value: <+input>
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.harnessorg
+                repoName: terraform-provider-harness
+                build: <+input>
