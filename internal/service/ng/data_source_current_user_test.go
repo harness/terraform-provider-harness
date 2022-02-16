@@ -3,7 +3,7 @@ package ng_test
 import (
 	"testing"
 
-	"github.com/harness-io/terraform-provider-harness/internal/acctest"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 

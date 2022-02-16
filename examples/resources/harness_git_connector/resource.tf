@@ -10,7 +10,7 @@ resource "harness_encrypted_text" "example" {
 
 resource "harness_git_connector" "example" {
   name                 = "example"
-  url                  = "https://github.com/harness-io/terraform-provider-harness"
+  url                  = "https://github.com/harness/terraform-provider-harness"
   branch               = "master"
   generate_webhook_url = true
   password_secret_id   = harness_encrypted_text.example.id

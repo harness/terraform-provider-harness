@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/harness-io/terraform-provider-harness/internal/provider"
+	"github.com/harness/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
 
@@ -37,7 +37,7 @@ func main() {
 	opts := &plugin.ServeOpts{ProviderFunc: provider.Provider(version)}
 
 	if debugMode {
-		err := plugin.Debug(context.Background(), "harness-io/harness", opts)
+		err := plugin.Debug(context.Background(), "harness/harness", opts)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

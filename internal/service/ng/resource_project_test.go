@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/antihax/optional"
-	"github.com/harness-io/harness-go-sdk/harness/nextgen"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
-	"github.com/harness-io/terraform-provider-harness/internal/acctest"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
