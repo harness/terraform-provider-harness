@@ -163,8 +163,8 @@ pipeline:
     properties:
         ci:
             codebase:
+                connectorRef: org.harnessorg
                 repoName: harness-go-sdk
-                connectorRef: org.githubharnessio
                 build: <+input>
     projectIdentifier: harness_go_sdk
     orgIdentifier: Micahs_Projects
