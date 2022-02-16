@@ -8,7 +8,7 @@ pipeline:
     properties:
         ci:
             codebase:
-                connectorRef: org.githubharnessio
+                connectorRef: org.harnessorg
                 repoName: terraform-provider-harness
                 build: <+input>
     stages:
