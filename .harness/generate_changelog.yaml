@@ -60,3 +60,9 @@ pipeline:
         - name: GITHUB_TOKEN
           type: Secret
           value: org.githubciautomationtoken
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.harnessorg
+                repoName: terraform-provider-harness
+                build: <+input>
