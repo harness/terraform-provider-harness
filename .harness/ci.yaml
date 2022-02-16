@@ -176,8 +176,8 @@ pipeline:
     properties:
         ci:
             codebase:
+                connectorRef: org.harnessorg
                 repoName: terraform-provider-harness
-                connectorRef: org.githubharnessio
                 build: <+input>
     projectIdentifier: tf_provider
     orgIdentifier: Micahs_Projects
