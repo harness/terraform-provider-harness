@@ -29,7 +29,7 @@ pipeline:
                                     command: |-
                                         set -x
 
-                                        git clone https://<+pipeline.variables.GITHUB_TOKEN>@github.com/harness-io/terraform-provider-harness.git .
+                                        git clone https://<+pipeline.variables.GITHUB_TOKEN>@github.com/harness/terraform-provider-harness.git .
                                     shell: Bash
                           - step:
                                 type: Run

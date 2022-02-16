@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness-io/harness-go-sdk"
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
-	"github.com/harness-io/terraform-provider-harness/internal/utils"
+	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )

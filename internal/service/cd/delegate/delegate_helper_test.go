@@ -8,11 +8,11 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	sdk "github.com/harness-io/harness-go-sdk"
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
-	"github.com/harness-io/harness-go-sdk/harness/delegate"
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
-	"github.com/harness-io/terraform-provider-harness/internal/acctest"
+	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/delegate"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/stretchr/testify/require"
 )
 

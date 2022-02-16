@@ -6,11 +6,11 @@ import (
 	"sync"
 	"testing"
 
-	sdk "github.com/harness-io/harness-go-sdk"
-	"github.com/harness-io/harness-go-sdk/harness/cd/graphql"
-	"github.com/harness-io/harness-go-sdk/harness/helpers"
-	"github.com/harness-io/harness-go-sdk/harness/utils"
-	"github.com/harness-io/terraform-provider-harness/internal/provider"
+	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )

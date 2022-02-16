@@ -3,8 +3,8 @@ package service_test
 import (
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
-	"github.com/harness-io/terraform-provider-harness/internal/acctest"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )

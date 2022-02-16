@@ -1,5 +1,5 @@
 
-module github.com/harness-io/terraform-provider-harness
+module github.com/harness/terraform-provider-harness
 
 go 1.15
 

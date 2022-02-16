@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness-io/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
