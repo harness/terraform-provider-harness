@@ -44,7 +44,8 @@ func (a *AwsSecretManagerCredential) MarshalJSON() ([]byte, error) {
 	case AwsSecretManagerAuthTypes.ManualConfig:
 		spec, err = json.Marshal(a.ManualConfig)
 	case AwsSecretManagerAuthTypes.AssumeIAMRole:
-		spec, err = json.Marshal(a.AssumeIamRole)
+		// spec, err = json.Marshal(a.AssumeIamRole)
+		// noop
 	case AwsSecretManagerAuthTypes.AssumeSTSRole:
 		spec, err = json.Marshal(a.AssumeStsRole)
 	default:
