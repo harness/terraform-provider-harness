@@ -44,8 +44,6 @@ func ResourcePipeline() *schema.Resource {
 			},
 		},
 
-		//accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *
-		//func (a *PipelinesApiService) PostPipelineV2(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *PipelinesApiPostPipelineV2Opts) (ResponseDtoPipelineSaveResponse, *http.Response, error) {
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Unique identifier of the pipeline.",
@@ -65,8 +63,7 @@ func ResourcePipeline() *schema.Resource {
 			"pipeline_yaml": {
 				Description: "YAML of the pipeline.",
 				Type:        schema.TypeString,
-				//Optional:    true,
-				Computed:    true,
+				Required:	 true,
 			},
 		},
 	}
@@ -89,85 +86,62 @@ func readPipeline(d *schema.ResourceData, pipeline *Pipeline) {
 	d.Set("pipeline_yaml", pipeline.PipelineYAML)
 }
 
-//func (a *PipelinesApiService) GetPipeline(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *PipelinesApiGetPipelineOpts) (ResponseDtopmsPipelineResponse, *http.Response, error) {
 func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	id := d.Id()
-	if id == "" {
-		id = d.Get("identifier").(string)
-	}
+	pipeline := buildPipeline(d)
 
-	orgId := d.Get("org_id").(string)
-	projectId := d.Get("project_id").(string)
-
-	resp, _, err := c.NGClient.PipelineApi.GetPipeline(ctx, c.AccountId, orgIdentifier, projectIdentifier, id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.NGClient.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
 
-	readPipeline(d, resp.Data.Pipeline)
+	pipeline.PipelineYAML = resp.Data.YamlPipeline
+
+	readPipeline(d, pipeline)
 
 	return nil
 }
 
-//func (a *PipelinesApiService) PostPipelineV2(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *PipelinesApiPostPipelineV2Opts) (ResponseDtoPipelineSaveResponse, *http.Response, error) {
 func resourcePipelineCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
 	pipeline := buildPipeline(d)
 
-	pipelineYAML := d.Get("pipeline_yaml").(string)
-	orgId := d.Get("org_id").(string)
-	projectId := d.Get("project_id").(string)
-
-
-	resp, _, err := c.NGClient.PipelineApi.PostPipelineV2(ctx, pipelineYAML, c.AccountId, orgId, projectId, &nextgen.PipelinesApiPostPipelineV2Opts{})
+	_, _, err := c.NGClient.PipelinesApi.PostPipelineV2(ctx, pipeline.PipelineYAML, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, &nextgen.PipelinesApiPostPipelineV2Opts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
 
-	readPipeline(d, resp.Data.Pipeline)
+	readPipeline(d, pipeline)
 
 	return nil
 }
 
-//func (a *PipelinesApiService) UpdatePipeline(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *PipelinesApiUpdatePipelineOpts) (ResponseDtoString, *http.Response, error) {
 func resourcePipelineUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
 	pipeline := buildPipeline(d)
 
-	pipelineYAML := d.Get("pipeline_yaml").(string)
-	orgId := d.Get("org_id").(string)
-	projectId := d.Get("project_id").(string)
-
-	resp, _, err := c.NGClient.PipelineApi.UpdatePipeline(ctx, pipelineYAML, c.AccountId, orgId, projectId, id, &nextgen.PipelinesApiUpdatePipelineOpts{})
+	_, _, err := c.NGClient.PipelinesApi.UpdatePipeline(ctx, pipeline.PipelineYAML, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiUpdatePipelineOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
-
-	readPipeline(d, resp.Data.Pipeline)
 
 	return nil
 }
 
-//func (a *PipelinesApiService) DeletePipeline(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, localVarOptionals *PipelinesApiDeletePipelineOpts) (ResponseDtoBoolean, *http.Response, error) {
 func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	id := d.Id()
-	if id == "" {
-		id = d.Get("identifier").(string)
-	}
-	orgId := d.Get("org_id").(string)
-	projectId := d.Get("project_id").(string)
+	pipeline := buildPipeline(d)
 
-	//_, _, err := c.NGClient.PipelineApi.DeletePipeline(ctx, c.AccountId, orgId, projectId, id, &nextgen.PipelinesApiDeletePipelineOpts{OrgIdentifier: optional.NewString(d.Get("org_id").(string))})
-	_, _, err := c.NGClient.PipelineApi.DeletePipeline(ctx, c.AccountId, orgId, projectId, id, &nextgen.PipelinesApiDeletePipelineOpts{})
+	_, _, err := c.NGClient.PipelinesApi.DeletePipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiDeletePipelineOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
+
+	d.SetId("")
 
 	return nil
 }

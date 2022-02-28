@@ -36,8 +36,7 @@ func DataSourcePipeline() *schema.Resource {
 			"pipeline_yaml": {
 				Description: "YAML of the pipeline.",
 				Type:        schema.TypeString,
-				//Optional:    true,
-				Computed:    true,
+				Required:	 true,
 			},
 		},
 	}
@@ -46,15 +45,16 @@ func DataSourcePipeline() *schema.Resource {
 func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	id := d.Get("identifier").(string)
-	orgId := d.Get("org_id").(string)
+	pipeline := buildPipeline(d)
 
-	resp, _, err := c.NGClient.PipelineApi.GetPipeline(ctx, c.AccountId, orgIdentifier, projectIdentifier, id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.NGClient.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	readPipeline(d, resp.Data.Pipeline)
+	pipeline.PipelineYAML = resp.Data.YamlPipeline
+
+	readPipeline(d, pipeline)
 
 	return nil
 }
