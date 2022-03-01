@@ -7,7 +7,7 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/docker/docker v20.10.12+incompatible
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/harness/harness-go-sdk v0.1.12
+	github.com/harness/harness-go-sdk v0.1.13
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.0
