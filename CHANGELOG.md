@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased](https://github.com/harness/harness-go-sdk/tree/HEAD)
+
+[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.12...HEAD)
+
+**Closed issues:**
+
+- Deserializer Issues on API calls  [\#82](https://github.com/harness/harness-go-sdk/issues/82)
+
+## [v0.1.12](https://github.com/harness/harness-go-sdk/tree/v0.1.12) (2022-02-16)
+
+[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.11...v0.1.12)
+
+**Merged pull requests:**
+
+- Release version 0.1.12 02-16-2022 [\#81](https://github.com/harness/harness-go-sdk/pull/81) ([micahlmartin](https://github.com/micahlmartin))
+
 ## [v0.1.11](https://github.com/harness/harness-go-sdk/tree/v0.1.11) (2022-02-02)
 
 [Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.10...v0.1.11)
@@ -97,7 +113,6 @@
 
 **Merged pull requests:**
 
-- Release version 0.1.1 11-11-2021 [\#57](https://github.com/harness/harness-go-sdk/pull/57) ([micahlmartin](https://github.com/micahlmartin))
 - Add support for approving delegates [\#56](https://github.com/harness/harness-go-sdk/pull/56) ([micahlmartin](https://github.com/micahlmartin))
 - Update pipeline ci [\#55](https://github.com/harness/harness-go-sdk/pull/55) ([micahlmartin](https://github.com/micahlmartin))
 
@@ -107,6 +122,7 @@
 
 **Merged pull requests:**
 
+- Release version 0.1.1 11-11-2021 [\#57](https://github.com/harness/harness-go-sdk/pull/57) ([micahlmartin](https://github.com/micahlmartin))
 - Release version 0.1.0 11-10-2021 [\#54](https://github.com/harness/harness-go-sdk/pull/54) ([micahlmartin](https://github.com/micahlmartin))
 - Refactored CD api [\#53](https://github.com/harness/harness-go-sdk/pull/53) ([micahlmartin](https://github.com/micahlmartin))
 
