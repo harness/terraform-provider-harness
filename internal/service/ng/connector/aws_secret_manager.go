@@ -3,8 +3,8 @@ package connector
 import (
 	"fmt"
 
-	"github.com/harness-io/harness-go-sdk/harness/nextgen"
-	"github.com/harness-io/terraform-provider-harness/internal/utils"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -141,9 +141,7 @@ func expandAwsSecretManagerConfig(d []interface{}, connector *nextgen.ConnectorI
 
 		if attr := config["inherit_from_delegate"].(bool); attr {
 			connector.AwsSecretManager.Credential.Type_ = nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole
-			connector.AwsSecretManager.Credential.AssumeIamRole = &nextgen.AwsSmCredentialSpecAssumeIam{
-				// Spec: nil,
-			}
+			connector.AwsSecretManager.Credential.AssumeIamRole = &nextgen.AwsSmCredentialSpecAssumeIam{}
 		}
 
 		if attr := config["manual"].([]interface{}); len(attr) > 0 {

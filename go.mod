@@ -1,4 +1,4 @@
-module github.com/harness-io/terraform-provider-harness
+module github.com/harness/terraform-provider-harness
 
 go 1.15
 
@@ -27,7 +27,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/harness-io/harness-go-sdk v0.1.11
+	github.com/harness/harness-go-sdk v0.1.12
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-getter v1.5.9 // indirect
@@ -38,12 +38,12 @@ require (
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/hashicorp/go-version v1.4.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.11.1 // indirect
-	github.com/hashicorp/terraform-exec v0.15.0 // indirect
+	github.com/hashicorp/terraform-exec v0.16.0 // indirect
 	github.com/hashicorp/terraform-plugin-docs v0.4.0
-	github.com/hashicorp/terraform-plugin-go v0.7.0 // indirect
+	github.com/hashicorp/terraform-plugin-go v0.7.1 // indirect
 	github.com/hashicorp/terraform-plugin-log v0.2.1 // indirect
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
-	github.com/hashicorp/terraform-registry-address v0.0.0-20210816115301-cb2034eba045 // indirect
+	github.com/hashicorp/terraform-registry-address v0.0.0-20220131103327-5c1c5e123275 // indirect
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
 	github.com/jinzhu/copier v0.3.5 // indirect
 	github.com/klauspost/compress v1.14.2 // indirect
@@ -60,18 +60,18 @@ require (
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/zclconf/go-cty v1.10.0 // indirect
-	golang.org/x/crypto v0.0.0-20220128200615-198e4374d7ed // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
-	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
+	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.7 // indirect
 	google.golang.org/api v0.62.0 // indirect
-	google.golang.org/genproto v0.0.0-20220126215142-9970aeb2e350 // indirect
+	google.golang.org/genproto v0.0.0-20220218161850-94dd64e39d7c // indirect
 	google.golang.org/grpc v1.44.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-// replace github.com/harness-io/harness-go-sdk => ../harness-go-sdk
+// replace github.com/harness/harness-go-sdk => ../harness-go-sdk

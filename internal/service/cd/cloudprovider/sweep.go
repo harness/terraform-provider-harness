@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness-io/terraform-provider-harness/internal/sweep"
+	"github.com/harness/terraform-provider-harness/internal/sweep"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 

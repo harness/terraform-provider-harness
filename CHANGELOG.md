@@ -29,7 +29,7 @@ BUG FIXES:
 
 BUG FIXES:
 
-* Upgraded harness-go-sdk to v0.1.11 to fix authentication configuration bug [71](https://github.com/harness-io/terraform-provider-harness/issues/71)
+* Upgraded harness-go-sdk to v0.1.11 to fix authentication configuration bug [71](https://github.com/harness/terraform-provider-harness/issues/71)
 
 ## 0.1.10
 
@@ -67,4 +67,4 @@ ENHANCEMENTS:
 BUG FIXES:
 
 * resource/harness_environment: Variable override field `service_name` is now optional. This allows a variable override to apply to all services when being deployed to an environment.
-* Fixes delegate not found panic [#64](https://github.com/harness-io/terraform-provider-harness/issues/64)
+* Fixes delegate not found panic [#64](https://github.com/harness/terraform-provider-harness/issues/64)

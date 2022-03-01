@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness-io/harness-go-sdk/harness/utils"
-	"github.com/harness-io/terraform-provider-harness/internal/acctest"
-	"github.com/harness-io/terraform-provider-harness/internal/service/cd/environment"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
+	"github.com/harness/terraform-provider-harness/internal/service/cd/environment"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 

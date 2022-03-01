@@ -3,7 +3,7 @@ package utils_test
 import (
 	"testing"
 
-	"github.com/harness-io/terraform-provider-harness/internal/utils"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/stretchr/testify/require"
 )
 
