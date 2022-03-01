@@ -273,8 +273,7 @@ type EnvFilter struct {
 }
 
 type SecretRef struct {
-	SecretManagerType SecretManagerType
-	Name              string
+	Name string
 }
 
 type YamlPath string

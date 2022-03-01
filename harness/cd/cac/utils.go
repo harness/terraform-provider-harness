@@ -105,11 +105,7 @@ func (r *SecretRef) MarshalYAML() (interface{}, error) {
 		return nil, errors.New("name must be set")
 	}
 
-	if r.SecretManagerType == "" {
-		return r.Name, nil
-	}
-
-	return fmt.Sprintf("%s:%s", r.SecretManagerType, r.Name), nil
+	return fmt.Sprintf("secretName:%s", r.Name), nil
 }
 
 func (r *SecretRef) UnmarshalYAML(unmarshal func(interface{}) error) error {
@@ -127,7 +123,6 @@ func (r *SecretRef) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if len(parts) == 1 {
 		r.Name = parts[0]
 	} else if len(parts) == 2 {
-		r.SecretManagerType = SecretManagerType(parts[0])
 		r.Name = parts[1]
 	}
 

@@ -66,8 +66,7 @@ func TestCacSpotInstCloudProvider(t *testing.T) {
 	cpInput.Name = expectedName
 	cpInput.AccountId = helpers.TestEnvVars.SpotInstAccountId.Get()
 	cpInput.Token = &cac.SecretRef{
-		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		Name:              secret.Name,
+		Name: secret.Name,
 	}
 
 	c := getClient()
@@ -76,7 +75,6 @@ func TestCacSpotInstCloudProvider(t *testing.T) {
 	require.NotNil(t, cp)
 
 	cpInput.Id = cp.Id
-	cp.Token.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
 	err = c.CloudProviderClient.DeleteCloudProvider(cpInput.Id)
@@ -95,8 +93,7 @@ func TestCacPcfCloudProvider(t *testing.T) {
 	cpInput.EndpointUrl = "https://example.com"
 	cpInput.Username = "username"
 	cpInput.Password = &cac.SecretRef{
-		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		Name:              secret.Name,
+		Name: secret.Name,
 	}
 
 	c := getClient()
@@ -105,7 +102,6 @@ func TestCacPcfCloudProvider(t *testing.T) {
 	require.NotNil(t, cp)
 
 	cpInput.Id = cp.Id
-	cp.Password.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
 	err = c.CloudProviderClient.DeleteCloudProvider(cpInput.Id)
@@ -123,8 +119,7 @@ func TestCacKubernetesCloudProvider(t *testing.T) {
 	cpInput.SkipValidation = true
 	cpInput.MasterUrl = "https://example.com"
 	cpInput.ServiceAccountToken = &cac.SecretRef{
-		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		Name:              secret.Name,
+		Name: secret.Name,
 	}
 
 	c := getClient()
@@ -133,7 +128,6 @@ func TestCacKubernetesCloudProvider(t *testing.T) {
 	require.NotNil(t, cp)
 
 	cpInput.Id = cp.Id
-	cp.ServiceAccountToken.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
 	err = c.CloudProviderClient.DeleteCloudProvider(cpInput.Id)
@@ -152,8 +146,7 @@ func TestCacUpsertAzureCloudProvider(t *testing.T) {
 	cpInput.ClientId = helpers.TestEnvVars.AzureClientId.Get()
 	cpInput.TenantId = helpers.TestEnvVars.AzureTenantId.Get()
 	cpInput.Key = &cac.SecretRef{
-		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		Name:              secret.Name,
+		Name: secret.Name,
 	}
 
 	c := getClient()
@@ -162,7 +155,6 @@ func TestCacUpsertAzureCloudProvider(t *testing.T) {
 	require.NotNil(t, cp)
 
 	cpInput.Id = cp.Id
-	cp.Key.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
 	err = c.CloudProviderClient.DeleteCloudProvider(cpInput.Id)
@@ -216,8 +208,7 @@ func TestUpsertAwsCloudProvider(t *testing.T) {
 	cpInput.Name = expectedName
 	cpInput.AccessKey = helpers.TestEnvVars.AwsAccessKeyId.Get()
 	cpInput.SecretKey = &cac.SecretRef{
-		SecretManagerType: cac.SecretManagerTypes.GcpKMS,
-		Name:              secret.Name,
+		Name: secret.Name,
 	}
 
 	c := getClient()
@@ -226,7 +217,6 @@ func TestUpsertAwsCloudProvider(t *testing.T) {
 	require.NoError(t, err)
 
 	cpInput.Id = cp.Id
-	cp.SecretKey.SecretManagerType = cac.SecretManagerTypes.GcpKMS
 	require.Equal(t, cpInput, cp)
 
 	err = c.CloudProviderClient.DeleteCloudProvider(cpInput.Id)

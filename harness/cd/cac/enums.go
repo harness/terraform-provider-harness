@@ -267,28 +267,6 @@ var EnvironmentFilterTypes = &struct {
 	Selected: "SELECTED",
 }
 
-type SecretManagerType string
-
-func (v SecretManagerType) String() string {
-	return string(v)
-}
-
-var SecretManagerTypes = &struct {
-	GcpKMS            SecretManagerType
-	AwsSecretsManager SecretManagerType
-	AwsKMS            SecretManagerType
-	AzureKeyVault     SecretManagerType
-	CyberArk          SecretManagerType
-	HashicorpVault    SecretManagerType
-}{
-	GcpKMS:            "gcpkms",
-	AwsSecretsManager: "awssecretsmanager",
-	AwsKMS:            "amazonkms",
-	AzureKeyVault:     "azurekeyvault",
-	CyberArk:          "cyberark",
-	HashicorpVault:    "hashicorpvault",
-}
-
 type EnvironmentType string
 
 func (v EnvironmentType) String() string {

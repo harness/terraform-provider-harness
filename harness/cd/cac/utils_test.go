@@ -41,7 +41,6 @@ func TestSecretRefUnmarshalYaml(t *testing.T) {
 
 	require.NoError(t, err)
 	require.Equal(t, "secretname", secretRef.Name)
-	require.Equal(t, SecretManagerTypes.GcpKMS, secretRef.SecretManagerType)
 
 	yamlString = `secretname`
 
@@ -50,5 +49,4 @@ func TestSecretRefUnmarshalYaml(t *testing.T) {
 
 	require.NoError(t, err)
 	require.Equal(t, "secretname", secretRef.Name)
-	require.Equal(t, SecretManagerType(""), secretRef.SecretManagerType)
 }

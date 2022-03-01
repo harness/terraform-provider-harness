@@ -37,8 +37,7 @@ func TestSpotInstCloudProviderSerialization(t *testing.T) {
 	testObj := NewEntity(ObjectTypes.SpotInstCloudProvider).(*SpotInstCloudProvider)
 	testObj.AccountId = "accountId"
 	testObj.Token = &SecretRef{
-		SecretManagerType: SecretManagerTypes.GcpKMS,
-		Name:              "secret_name",
+		Name: "secret_name",
 	}
 
 	expectedObjYaml := `
@@ -75,19 +74,16 @@ func TestKubernetesCLoudProviderSerialization(t *testing.T) {
 	}
 	testObj.MasterUrl = "masterurl"
 	testObj.OIDCClientId = &SecretRef{
-		SecretManagerType: SecretManagerTypes.GcpKMS,
-		Name:              "secret_name",
+		Name: "secret_name",
 	}
 	testObj.OIDCIdentityProviderUrl = "providerUrl"
 	testObj.OIDCPassword = &SecretRef{
-		SecretManagerType: SecretManagerTypes.GcpKMS,
-		Name:              "secret_name",
+		Name: "secret_name",
 	}
 	testObj.OIDCScopes = "scope1 scope2"
 	testObj.OIDCUsername = "username"
 	testObj.ServiceAccountToken = &SecretRef{
-		SecretManagerType: SecretManagerTypes.GcpKMS,
-		Name:              "token",
+		Name: "token",
 	}
 	testObj.SkipValidation = true
 	testObj.UseEncryptedUsername = true
@@ -136,8 +132,7 @@ func TestAwsCloudProviderSerialization(t *testing.T) {
 		ExternalId:          "externalId",
 	}
 	testObj.SecretKey = &SecretRef{
-		SecretManagerType: SecretManagerTypes.GcpKMS,
-		Name:              "secret_name",
+		Name: "secret_name",
 	}
 	testObj.UseEc2IamCredentials = true
 	testObj.UseIRSA = true
@@ -167,8 +162,7 @@ func TestAzureCloudProviderSerialization(t *testing.T) {
 	testObj := NewEntity(ObjectTypes.AzureCloudProvider).(*AzureCloudProvider)
 	testObj.ClientId = "clientId"
 	testObj.Key = &SecretRef{
-		SecretManagerType: SecretManagerTypes.GcpKMS,
-		Name:              "secret_name",
+		Name: "secret_name",
 	}
 	testObj.TenantId = "tenantId"
 	testObj.AzureEnvironmentType = AzureEnvironmentTypes.AzureGlobal
@@ -193,8 +187,7 @@ func TestPcfCloudProviderSerialization(t *testing.T) {
 	testObj := NewEntity(ObjectTypes.PcfCloudProvider).(*PcfCloudProvider)
 	testObj.EndpointUrl = "http://endpoint.com"
 	testObj.Password = &SecretRef{
-		SecretManagerType: SecretManagerTypes.AwsKMS,
-		Name:              "secret_name",
+		Name: "secret_name",
 	}
 	testObj.SkipValidation = true
 	testObj.Username = "username"
@@ -234,8 +227,7 @@ func TestGcpCloudProviderSerialization(t *testing.T) {
 		DelegateSelectors: []string{"primary"},
 		SkipValidation:    true,
 		ServiceAccountKeyFileContent: &SecretRef{
-			SecretManagerType: SecretManagerTypes.AwsKMS,
-			Name:              "abc123",
+			Name: "abc123",
 		},
 		UsageRestrictions: &UsageRestrictions{
 			AppEnvRestrictions: []*AppEnvRestriction{
@@ -301,20 +293,18 @@ func TestSecretRefMarshalYaml(t *testing.T) {
 
 	testStruct := &TestSecretRefMarshal{
 		SecretKeyId: &SecretRef{
-			SecretManagerType: SecretManagerTypes.AwsKMS,
-			Name:              "abc123",
+			Name: "abc123",
 		},
 	}
 
 	bytes, err := yaml.Marshal(&testStruct)
 	require.NoError(t, err)
 	fmt.Println(string(bytes))
-	require.Equal(t, "secretKeyId: amazonkms:abc123\n", string(bytes))
+	require.Equal(t, "secretKeyId: secretName:abc123\n", string(bytes))
 
 	newStruct := &TestSecretRefMarshal{}
 	err = yaml.Unmarshal(bytes, newStruct)
 	require.NoError(t, err)
-	require.Equal(t, testStruct.SecretKeyId.SecretManagerType, newStruct.SecretKeyId.SecretManagerType)
 	require.Equal(t, testStruct.SecretKeyId.Name, newStruct.SecretKeyId.Name)
 
 }
