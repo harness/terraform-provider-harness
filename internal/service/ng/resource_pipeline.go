@@ -12,19 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// This is the Pipeline Entity details defined in Harness
-type Pipeline struct {
-	// Organization Identifier for the Entity
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	// Pipeline Identifier for the Entity
-	Identifier string `json:"identifier,omitempty"`
-	// Project Identifier for the entity
-	ProjectIdentifier string `json:"name,omitempty"`
-	// YAML contents of the pipeline
-	PipelineYAML string `json:"color,omitempty"`
-}
-
-
 func ResourcePipeline() *schema.Resource {
 	return &schema.Resource{
 		Description: utils.GetNextgenDescription("Resource for creating a Harness pipeline."),
@@ -69,36 +56,24 @@ func ResourcePipeline() *schema.Resource {
 	}
 }
 
-func buildPipeline(d *schema.ResourceData) *Pipeline {
-	return &Pipeline{
-		Identifier:    d.Get("identifier").(string),
-		OrgIdentifier: d.Get("org_id").(string),
-		ProjectIdentifier: d.Get("project_id").(string),
-		PipelineYAML:  d.Get("pipeline_yaml").(string),
-	}
-}
-
-func readPipeline(d *schema.ResourceData, pipeline *Pipeline) {
-	d.SetId(pipeline.Identifier)
-	d.Set("identifier", pipeline.Identifier)
-	d.Set("org_id", pipeline.OrgIdentifier)
-	d.Set("project_id", pipeline.ProjectIdentifier)
-	d.Set("pipeline_yaml", pipeline.PipelineYAML)
+func readPipeline(d *schema.ResourceData, PmsPipelineResponse *nextgen.PmsPipelineResponse) {
+	d.Set("pipeline_yaml", PmsPipelineResponse.YamlPipeline)
 }
 
 func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	pipeline := buildPipeline(d)
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
+	}
 
-	resp, _, err := c.NGClient.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.NGClient.PipelinesApi.GetPipeline(ctx, c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), id, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
 
-	pipeline.PipelineYAML = resp.Data.YamlPipeline
-
-	readPipeline(d, pipeline)
+	readPipeline(d, resp.Data)
 
 	return nil
 }
@@ -106,14 +81,17 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 func resourcePipelineCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	pipeline := buildPipeline(d)
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
+	}
 
-	_, _, err := c.NGClient.PipelinesApi.PostPipelineV2(ctx, pipeline.PipelineYAML, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, &nextgen.PipelinesApiPostPipelineV2Opts{})
+	_, _, err := c.NGClient.PipelinesApi.PostPipelineV2(ctx, d.Get("pipeline_yaml").(string), c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), &nextgen.PipelinesApiPostPipelineV2Opts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
 
-	readPipeline(d, pipeline)
+	d.SetId(id)
 
 	return nil
 }
@@ -121,9 +99,12 @@ func resourcePipelineCreate(ctx context.Context, d *schema.ResourceData, meta in
 func resourcePipelineUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	pipeline := buildPipeline(d)
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
+	}
 
-	_, _, err := c.NGClient.PipelinesApi.UpdatePipeline(ctx, pipeline.PipelineYAML, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiUpdatePipelineOpts{})
+	_, _, err := c.NGClient.PipelinesApi.UpdatePipeline(ctx, d.Get("pipeline_yaml").(string), c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), id, &nextgen.PipelinesApiUpdatePipelineOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
@@ -134,9 +115,12 @@ func resourcePipelineUpdate(ctx context.Context, d *schema.ResourceData, meta in
 func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	pipeline := buildPipeline(d)
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
+	}
 
-	_, _, err := c.NGClient.PipelinesApi.DeletePipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiDeletePipelineOpts{})
+	_, _, err := c.NGClient.PipelinesApi.DeletePipeline(ctx, c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), id, &nextgen.PipelinesApiDeletePipelineOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
