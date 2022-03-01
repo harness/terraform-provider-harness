@@ -37,6 +37,7 @@ type ApiClient struct {
 	ConfigAsCodeClient  *ConfigAsCodeClient
 	ConnectorClient     *ConnectorClient
 	DelegateClient      *DelegateClient
+	ExecutionClient     *ExecutionClient
 	SecretClient        *SecretClient
 	SSOClient           *SSOClient
 	UserClient          *UserClient
@@ -92,6 +93,7 @@ func NewClient(cfg *Config) (*ApiClient, error) {
 	c.ConfigAsCodeClient = (*ConfigAsCodeClient)(&c.common)
 	c.ConnectorClient = (*ConnectorClient)(&c.common)
 	c.DelegateClient = (*DelegateClient)(&c.common)
+	c.ExecutionClient = (*ExecutionClient)(&c.common)
 	c.SecretClient = (*SecretClient)(&c.common)
 	c.SSOClient = (*SSOClient)(&c.common)
 	c.UserClient = (*UserClient)(&c.common)
