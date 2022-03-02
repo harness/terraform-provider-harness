@@ -1,56 +1,76 @@
 pipeline:
-    name: Release
-    identifier: release
-    projectIdentifier: tf_provider
-    orgIdentifier: Micahs_Projects
-    tags: {}
     stages:
         - stage:
-              name: Release
-              identifier: Release
+              variables:
+                  - value: org.githubciautomationtoken
+                    type: Secret
+                    name: GITHUB_TOKEN
+                  - value: gpgpassphrase
+                    type: Secret
+                    name: GPG_PASSPHRASE
+                  - value: gpgprivatekey
+                    type: Secret
+                    name: GPG_PRIVATE_KEY
+                  - value: <+input>
+                    type: String
+                    name: VERSION
+                  - value: <+input>.allowedValues(true,false)
+                    type: String
+                    name: CREATE_TAG
+                    default: "true"
+                  - value: <+input>
+                    type: String
+                    name: BASE_BRANCH
+                    default: main
               type: CI
               spec:
-                  cloneCodebase: false
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          namespace: micahs-projects
+                          connectorRef: account.micahsprojects
                   execution:
                       steps:
                           - step:
+                                when:
+                                    stageStatus: Success
                                 type: Run
-                                name: Git clone
-                                identifier: gitclone
                                 spec:
-                                    connectorRef: org.gcp
+                                    shell: Bash
+                                    privileged: false
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    connectorRef: org.gcp
                                     command: |-
                                         git clone https://${GITHUB_TOKEN}@github.com/harness/terraform-provider-harness.git .
                                         git checkout origin/<+Release.variables.BASE_BRANCH>
-                                    privileged: false
-                                    shell: Bash
-                                when:
-                                    stageStatus: Success
-                                failureStrategies: []
+                                name: Git clone
+                                identifier: gitclone
                           - step:
-                                type: Run
-                                name: Create tag
-                                identifier: createtag
-                                spec:
-                                    connectorRef: org.gcp
-                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
-                                    command: |
-                                        git tag ${VERSION}
-                                        git push --tags
-                                    privileged: false
-                                    shell: Bash
                                 when:
                                     stageStatus: Success
                                     condition: <+Release.variables.CREATE_TAG> == "true"
-                                failureStrategies: []
+                                type: Run
+                                spec:
+                                    shell: Bash
+                                    privileged: false
+                                    image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    connectorRef: org.gcp
+                                    command: |
+                                        git tag ${VERSION}
+                                        git push --tags
+                                name: Create tag
+                                identifier: createtag
                           - step:
                                 type: Run
-                                name: Create Release
-                                identifier: Import_GPG_Key
                                 spec:
-                                    connectorRef: org.gcp
+                                    shell: Bash
+                                    resources:
+                                        limits:
+                                            memory: 8Gi
+                                            cpu: "4"
+                                    privileged: true
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
+                                    connectorRef: org.gcp
                                     command: |
                                         #!/bin/bash
 
@@ -75,57 +95,32 @@ pipeline:
 
                                         # Stop gpg-agent
                                         gpgconf --kill gpg-agent
-                                    privileged: true
-                                    shell: Bash
-                                    resources:
-                                        limits:
-                                            memory: 8Gi
-                                            cpu: "4"
-                                failureStrategies: []
+                                name: Create Release
+                                identifier: Import_GPG_Key
                           - step:
-                                type: Plugin
-                                name: Sign Release
-                                identifier: Sign_Release
-                                spec:
-                                    connectorRef: account.harnessImage
-                                    image: plugins/gpgsign
-                                    privileged: false
-                                    settings:
-                                        key: <+Release.variables.GPG_PRIVATE_KEY>
-                                        passphrase: <+Release.variables.GPG_PASSPHRASE>
                                 when:
                                     stageStatus: Success
                                     condition: "false"
-                  serviceDependencies: []
-                  infrastructure:
-                      type: KubernetesDirect
-                      spec:
-                          connectorRef: account.micahsprojects
-                          namespace: micahs-projects
-              variables:
-                  - name: GITHUB_TOKEN
-                    type: Secret
-                    value: org.githubciautomationtoken
-                  - name: GPG_PASSPHRASE
-                    type: Secret
-                    value: gpgpassphrase
-                  - name: GPG_PRIVATE_KEY
-                    type: Secret
-                    value: gpgprivatekey
-                  - name: VERSION
-                    type: String
-                    value: <+input>
-                  - name: CREATE_TAG
-                    type: String
-                    default: "true"
-                    value: <+input>.allowedValues(true,false)
-                  - name: BASE_BRANCH
-                    type: String
-                    default: main
-                    value: <+input>
+                                type: Plugin
+                                spec:
+                                    settings:
+                                        passphrase: <+Release.variables.GPG_PASSPHRASE>
+                                        key: <+Release.variables.GPG_PRIVATE_KEY>
+                                    privileged: false
+                                    image: plugins/gpgsign
+                                    connectorRef: account.harnessImage
+                                name: Sign Release
+                                identifier: Sign_Release
+                  cloneCodebase: false
+              name: Release
+              identifier: Release
     properties:
         ci:
             codebase:
-                connectorRef: org.harnessorg
                 repoName: terraform-provider-harness
+                connectorRef: org.harnessorg
                 build: <+input>
+    projectIdentifier: tf_provider
+    orgIdentifier: Micahs_Projects
+    name: Release
+    identifier: release
