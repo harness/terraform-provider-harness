@@ -32,4 +32,13 @@ pipeline:
                                 spec:
                                     connectorRef: account.harnessImage
                                     image: ubuntu
-                                    command: echo "test"
+                                    command: |-
+                                        echo "key--->"
+                                        echo "<+pipeline."
+    variables:
+        - name: gpg_password
+          type: Secret
+          value: gpgpassphrase
+        - name: gpg_key
+          type: Secret
+          value: gpgprivatekey
