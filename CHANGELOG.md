@@ -1,5 +1,11 @@
 # 0.1.14 (Unreleased)
 
+BUG FIXES:
+
+* Fixes issue with config-as-code secret references. ([#89](https://github.com/hashicorp/terraform-provider-harness/issues/89))
+
+# 0.1.14 (Unreleased)
+
 # 0.1.14
 
 ENHANCEMENTS:
