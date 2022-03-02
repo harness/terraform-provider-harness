@@ -30,6 +30,6 @@ pipeline:
                                 name: test
                                 identifier: test
                                 spec:
-                                    connectorRef: org.gcp
+                                    connectorRef: account.harnessImage
                                     image: ubuntu
                                     command: echo "test"
