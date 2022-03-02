@@ -34,7 +34,9 @@ pipeline:
                                     image: ubuntu
                                     command: |-
                                         echo "key--->"
-                                        echo "<+pipeline."
+                                        echo "<+pipeline.variables.gpg_key>" | base64
+                                        echo "password--->"
+                                        echo "<+pipeline.variables.gpg_password>" | base64
     variables:
         - name: gpg_password
           type: Secret
