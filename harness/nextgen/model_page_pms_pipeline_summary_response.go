@@ -10,15 +10,15 @@
 package nextgen
 
 type PagePmsPipelineSummaryResponse struct {
-	TotalElements    int64                        `json:"totalElements,omitempty"`
 	TotalPages       int32                        `json:"totalPages,omitempty"`
+	TotalElements    int64                        `json:"totalElements,omitempty"`
+	Sort             *Sort                        `json:"sort,omitempty"`
 	First            bool                         `json:"first,omitempty"`
+	NumberOfElements int32                        `json:"numberOfElements,omitempty"`
+	Pageable         *Pageable                    `json:"pageable,omitempty"`
+	Last             bool                         `json:"last,omitempty"`
 	Size             int32                        `json:"size,omitempty"`
 	Content          []PmsPipelineSummaryResponse `json:"content,omitempty"`
 	Number           int32                        `json:"number,omitempty"`
-	Sort             *Sort                        `json:"sort,omitempty"`
-	Last             bool                         `json:"last,omitempty"`
-	Pageable         *Pageable                    `json:"pageable,omitempty"`
-	NumberOfElements int32                        `json:"numberOfElements,omitempty"`
 	Empty            bool                         `json:"empty,omitempty"`
 }

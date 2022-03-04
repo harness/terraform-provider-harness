@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This contains details of the Organization.
 type OrganizationRequest struct {
 	Organization *Organization `json:"organization"`
 }

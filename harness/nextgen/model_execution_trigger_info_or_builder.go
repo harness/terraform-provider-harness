@@ -17,9 +17,9 @@ type ExecutionTriggerInfoOrBuilder struct {
 	IsRerun                   bool                   `json:"isRerun,omitempty"`
 	RerunInfo                 *RerunInfo             `json:"rerunInfo,omitempty"`
 	RerunInfoOrBuilder        *RerunInfoOrBuilder    `json:"rerunInfoOrBuilder,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

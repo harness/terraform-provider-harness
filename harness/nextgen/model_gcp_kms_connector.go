@@ -9,13 +9,18 @@
  */
 package nextgen
 
-// This contains GCP KMS SecretManager configuration
+// This contains GCP KMS SecretManager configuration.
 type GcpKmsConnector struct {
-	ProjectId         string   `json:"projectId,omitempty"`
-	Region            string   `json:"region,omitempty"`
-	KeyRing           string   `json:"keyRing,omitempty"`
-	KeyName           string   `json:"keyName,omitempty"`
-	Credentials       string   `json:"credentials"`
+	// ID of the project on GCP.
+	ProjectId string `json:"projectId,omitempty"`
+	// Region.
+	Region string `json:"region,omitempty"`
+	// Name of the Key Ring where Google Cloud Symmetric Key is created.
+	KeyRing string `json:"keyRing,omitempty"`
+	// Name of the Google Cloud Symmetric Key.
+	KeyName     string `json:"keyName,omitempty"`
+	Credentials string `json:"credentials"`
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 	Default_          bool     `json:"default,omitempty"`
 }

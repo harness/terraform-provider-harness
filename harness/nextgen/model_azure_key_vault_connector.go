@@ -9,15 +9,22 @@
  */
 package nextgen
 
-// Returns Azure KeyVault Secret Manager configuration
+// Returns configuration details for the Azure Key Vault Secret Manager.
 type AzureKeyVaultConnector struct {
-	ClientId             string   `json:"clientId"`
-	SecretKey            string   `json:"secretKey"`
-	TenantId             string   `json:"tenantId"`
-	VaultName            string   `json:"vaultName"`
-	Subscription         string   `json:"subscription"`
-	IsDefault            bool     `json:"isDefault,omitempty"`
-	AzureEnvironmentType string   `json:"azureEnvironmentType,omitempty"`
-	DelegateSelectors    []string `json:"delegateSelectors,omitempty"`
-	Default_             bool     `json:"default,omitempty"`
+	// Application ID of the Azure App.
+	ClientId  string `json:"clientId"`
+	SecretKey string `json:"secretKey"`
+	// The Azure Active Directory (AAD) directory ID where you created your application.
+	TenantId string `json:"tenantId"`
+	// The Azure Active Directory (AAD) directory ID where you created your application.
+	VaultName string `json:"vaultName"`
+	// Azure Subscription ID.
+	Subscription string `json:"subscription"`
+	// Boolean value to indicate if the Secret Manager is your default Secret Manager.
+	IsDefault bool `json:"isDefault,omitempty"`
+	// This specifies the Azure Environment type, which is AZURE by default.
+	AzureEnvironmentType string `json:"azureEnvironmentType,omitempty"`
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
+	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	Default_          bool     `json:"default,omitempty"`
 }

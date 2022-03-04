@@ -9,11 +9,15 @@
  */
 package nextgen
 
-// This is the view of the SecretResourceFilter entity defined in Harness
+// This has the filter information for the Secret in Harness.
 type SecretResourceFilter struct {
-	Identifiers                     []string `json:"identifiers,omitempty"`
-	SearchTerm                      string   `json:"searchTerm,omitempty"`
-	SecretTypes                     []string `json:"secretTypes,omitempty"`
-	SourceCategory                  string   `json:"sourceCategory,omitempty"`
-	IncludeSecretsFromEverySubScope bool     `json:"includeSecretsFromEverySubScope,omitempty"`
+	// This is the list of Entity Identifiers on which the filter will be applied.
+	Identifiers []string `json:"identifiers,omitempty"`
+	// Text to search/filter the Entity.
+	SearchTerm string `json:"searchTerm,omitempty"`
+	// This is the list of the ENTITY types on which the filter will be applied.
+	SecretTypes    []string `json:"secretTypes,omitempty"`
+	SourceCategory string   `json:"sourceCategory,omitempty"`
+	// This is true if secrets are filtered at every subsequent scope. Otherwise, it is false.
+	IncludeSecretsFromEverySubScope bool `json:"includeSecretsFromEverySubScope,omitempty"`
 }

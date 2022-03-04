@@ -11,20 +11,20 @@ package nextgen
 
 type EnumDescriptorProtoOrBuilder struct {
 	Options                    *EnumOptions                        `json:"options,omitempty"`
-	Name                       string                              `json:"name,omitempty"`
+	OptionsOrBuilder           *EnumOptionsOrBuilder               `json:"optionsOrBuilder,omitempty"`
+	ReservedRangeList          []EnumReservedRange                 `json:"reservedRangeList,omitempty"`
+	ReservedNameList           []string                            `json:"reservedNameList,omitempty"`
+	ValueCount                 int32                               `json:"valueCount,omitempty"`
 	ReservedRangeOrBuilderList []EnumReservedRangeOrBuilder        `json:"reservedRangeOrBuilderList,omitempty"`
 	ReservedRangeCount         int32                               `json:"reservedRangeCount,omitempty"`
 	ReservedNameCount          int32                               `json:"reservedNameCount,omitempty"`
 	ValueList                  []EnumValueDescriptorProto          `json:"valueList,omitempty"`
 	ValueOrBuilderList         []EnumValueDescriptorProtoOrBuilder `json:"valueOrBuilderList,omitempty"`
-	ValueCount                 int32                               `json:"valueCount,omitempty"`
 	NameBytes                  *ByteString                         `json:"nameBytes,omitempty"`
-	OptionsOrBuilder           *EnumOptionsOrBuilder               `json:"optionsOrBuilder,omitempty"`
-	ReservedRangeList          []EnumReservedRange                 `json:"reservedRangeList,omitempty"`
-	ReservedNameList           []string                            `json:"reservedNameList,omitempty"`
+	Name                       string                              `json:"name,omitempty"`
+	AllFields                  map[string]interface{}              `json:"allFields,omitempty"`
 	InitializationErrorString  string                              `json:"initializationErrorString,omitempty"`
 	DescriptorForType          *Descriptor                         `json:"descriptorForType,omitempty"`
-	AllFields                  map[string]interface{}              `json:"allFields,omitempty"`
 	UnknownFields              *UnknownFieldSet                    `json:"unknownFields,omitempty"`
 	DefaultInstanceForType     *Message                            `json:"defaultInstanceForType,omitempty"`
 	Initialized                bool                                `json:"initialized,omitempty"`

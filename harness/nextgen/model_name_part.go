@@ -11,15 +11,15 @@ package nextgen
 
 type NamePart struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	NamePartBytes             *ByteString            `json:"namePartBytes,omitempty"`
-	NamePart                  string                 `json:"namePart,omitempty"`
-	IsExtension               bool                   `json:"isExtension,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
 	SerializedSize            int32                  `json:"serializedSize,omitempty"`
 	ParserForType             *ParserNamePart        `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *NamePart              `json:"defaultInstanceForType,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
+	NamePart                  string                 `json:"namePart,omitempty"`
+	NamePartBytes             *ByteString            `json:"namePartBytes,omitempty"`
+	IsExtension               bool                   `json:"isExtension,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

@@ -31,7 +31,7 @@ type TokenApiService service
 TokenApiService Creates a Token
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *TokenApiCreateTokenOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of TokenDto) -
+     * @param "Body" (optional.Interface of Token) -
 @return ResponseDtoString
 */
 
@@ -121,7 +121,7 @@ func (a *TokenApiService) CreateToken(ctx context.Context, localVarOptionals *To
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -262,7 +262,7 @@ func (a *TokenApiService) DeleteToken(ctx context.Context, identifier string, ac
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -312,7 +312,7 @@ TokenApiService Fetches the list of Aggregated Tokens corresponding to the reque
      * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
      * @param "SearchTerm" (optional.String) -  This would be used to filter Tokens. Any Token having the specified string in its Name, ID and Tag would be filtered.
-@return ResponseDtoPageResponseTokenAggregateDto
+@return ResponseDtoPageResponseTokenAggregate
 */
 
 type TokenApiListAggregatedTokensOpts struct {
@@ -325,13 +325,13 @@ type TokenApiListAggregatedTokensOpts struct {
 	SearchTerm        optional.String
 }
 
-func (a *TokenApiService) ListAggregatedTokens(ctx context.Context, accountIdentifier string, apiKeyType string, parentIdentifier string, apiKeyIdentifier string, localVarOptionals *TokenApiListAggregatedTokensOpts) (ResponseDtoPageResponseTokenAggregateDto, *http.Response, error) {
+func (a *TokenApiService) ListAggregatedTokens(ctx context.Context, accountIdentifier string, apiKeyType string, parentIdentifier string, apiKeyIdentifier string, localVarOptionals *TokenApiListAggregatedTokensOpts) (ResponseDtoPageResponseTokenAggregate, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseTokenAggregateDto
+		localVarReturnValue ResponseDtoPageResponseTokenAggregate
 	)
 
 	// create path and map variables
@@ -426,7 +426,7 @@ func (a *TokenApiService) ListAggregatedTokens(ctx context.Context, accountIdent
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -446,7 +446,7 @@ func (a *TokenApiService) ListAggregatedTokens(ctx context.Context, accountIdent
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseTokenAggregateDto
+			var v ResponseDtoPageResponseTokenAggregate
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -572,7 +572,7 @@ func (a *TokenApiService) RotateToken(ctx context.Context, identifier string, ac
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -612,21 +612,21 @@ TokenApiService Updates a Token by ID
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Token ID
  * @param optional nil or *TokenApiUpdateTokenOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of TokenDto) -
-@return ResponseDtoTokenDto
+     * @param "Body" (optional.Interface of Token) -
+@return ResponseDtoToken
 */
 
 type TokenApiUpdateTokenOpts struct {
 	Body optional.Interface
 }
 
-func (a *TokenApiService) UpdateToken(ctx context.Context, identifier string, localVarOptionals *TokenApiUpdateTokenOpts) (ResponseDtoTokenDto, *http.Response, error) {
+func (a *TokenApiService) UpdateToken(ctx context.Context, identifier string, localVarOptionals *TokenApiUpdateTokenOpts) (ResponseDtoToken, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoTokenDto
+		localVarReturnValue ResponseDtoToken
 	)
 
 	// create path and map variables
@@ -703,7 +703,7 @@ func (a *TokenApiService) UpdateToken(ctx context.Context, identifier string, lo
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -723,7 +723,7 @@ func (a *TokenApiService) UpdateToken(ctx context.Context, identifier string, lo
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoTokenDto
+			var v ResponseDtoToken
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

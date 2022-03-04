@@ -9,8 +9,10 @@
  */
 package nextgen
 
-// This contains the count of all Git To Harness errors and connectivity errors
+// This is the total number of Git sync and connectivity errors
 type GitSyncErrorCount struct {
+	// This is the number of Git to Harness errors
 	GitToHarnessErrorCount int64 `json:"gitToHarnessErrorCount,omitempty"`
+	// This is the number of connectivity errors
 	ConnectivityErrorCount int64 `json:"connectivityErrorCount,omitempty"`
 }

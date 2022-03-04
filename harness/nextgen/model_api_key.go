@@ -9,16 +9,26 @@
  */
 package nextgen
 
-// This is the view of the ApiKey entity defined in Harness
+// This has API Key details defined in Harness.
 type ApiKey struct {
-	Identifier               string            `json:"identifier,omitempty"`
-	Name                     string            `json:"name,omitempty"`
-	Description              string            `json:"description,omitempty"`
-	Tags                     map[string]string `json:"tags,omitempty"`
-	ApiKeyType               string            `json:"apiKeyType,omitempty"`
-	ParentIdentifier         string            `json:"parentIdentifier,omitempty"`
-	DefaultTimeToExpireToken int64             `json:"defaultTimeToExpireToken,omitempty"`
-	AccountIdentifier        string            `json:"accountIdentifier,omitempty"`
-	ProjectIdentifier        string            `json:"projectIdentifier,omitempty"`
-	OrgIdentifier            string            `json:"orgIdentifier,omitempty"`
+	// Identifier of the API Key
+	Identifier string `json:"identifier,omitempty"`
+	// Name of the API Key
+	Name string `json:"name,omitempty"`
+	// Description of the API Key
+	Description string `json:"description,omitempty"`
+	// Tags for the API Key
+	Tags map[string]string `json:"tags,omitempty"`
+	// Type of the API Key
+	ApiKeyType string `json:"apiKeyType,omitempty"`
+	// Parent Entity Identifier of the API Key
+	ParentIdentifier string `json:"parentIdentifier,omitempty"`
+	// Default expiration time of the Token within API Key.
+	DefaultTimeToExpireToken int64 `json:"defaultTimeToExpireToken,omitempty"`
+	// Account Identifier for the Entity
+	AccountIdentifier string `json:"accountIdentifier,omitempty"`
+	// Project Identifier for the Entity
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	// Organization Identifier for the Entity
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
 }

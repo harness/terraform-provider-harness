@@ -11,17 +11,29 @@ package nextgen
 
 // This contains Git Sync Error Details
 type GitSyncError struct {
-	AccountIdentifier      string               `json:"accountIdentifier,omitempty"`
-	RepoUrl                string               `json:"repoUrl,omitempty"`
-	RepoId                 string               `json:"repoId,omitempty"`
-	BranchName             string               `json:"branchName,omitempty"`
-	Scopes                 []Scope              `json:"scopes,omitempty"`
-	ChangeType             string               `json:"changeType,omitempty"`
-	CompleteFilePath       string               `json:"completeFilePath,omitempty"`
-	EntityType             string               `json:"entityType,omitempty"`
-	FailureReason          string               `json:"failureReason,omitempty"`
-	Status                 string               `json:"status,omitempty"`
+	// Account Identifier for the Entity
+	AccountIdentifier string `json:"accountIdentifier,omitempty"`
+	// Repo URL
+	RepoUrl string `json:"repoUrl,omitempty"`
+	// Git Sync Config Id
+	RepoId string `json:"repoId,omitempty"`
+	// Branch Name
+	BranchName string `json:"branchName,omitempty"`
+	// List of scope of the Git Sync Error
+	Scopes []Scope `json:"scopes,omitempty"`
+	// Type of operation done in file
+	ChangeType string `json:"changeType,omitempty"`
+	// Complete File Path of the Entity
+	CompleteFilePath string `json:"completeFilePath,omitempty"`
+	// Entity Type
+	EntityType string `json:"entityType,omitempty"`
+	// Error Message
+	FailureReason string `json:"failureReason,omitempty"`
+	// Status of Git Sync Error
+	Status string `json:"status,omitempty"`
+	// Type of Git Sync Error
 	ErrorType              string               `json:"errorType,omitempty"`
 	AdditionalErrorDetails *GitSyncErrorDetails `json:"additionalErrorDetails,omitempty"`
-	CreatedAt              int64                `json:"createdAt,omitempty"`
+	// Time at which the Git Sync error was logged
+	CreatedAt int64 `json:"createdAt,omitempty"`
 }

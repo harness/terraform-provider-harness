@@ -16,12 +16,19 @@ import (
 )
 
 type ConnectorInfo struct {
+	// Name of the Connector.
 	Name              string                   `json:"name"`
+	// Identifier of the Connector.
 	Identifier        string                   `json:"identifier"`
+	// Description of the entity
 	Description       string                   `json:"description,omitempty"`
+	// Organization Identifier for the Entity
 	OrgIdentifier     string                   `json:"orgIdentifier,omitempty"`
+	// Project Identifier for the Entity
 	ProjectIdentifier string                   `json:"projectIdentifier,omitempty"`
+	// Tags
 	Tags              map[string]string        `json:"tags,omitempty"`
+	// Type of the Connector.
 	Type_             ConnectorType            `json:"type"`
 	AppDynamics       *AppDynamicsConnectorDto `json:"-"`
 	Artifactory       *ArtifactoryConnector    `json:"-"`

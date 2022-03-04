@@ -10,5 +10,5 @@
 package nextgen
 
 type SecretRequestWrapper struct {
-	Secret *SecretDtov2 `json:"secret"`
+	Secret *Secret `json:"secret"`
 }

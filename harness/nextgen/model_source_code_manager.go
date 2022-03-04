@@ -11,12 +11,19 @@ package nextgen
 
 // This contains details of Source Code Manager
 type SourceCodeManager struct {
-	Id                string                           `json:"id,omitempty"`
-	UserIdentifier    string                           `json:"userIdentifier,omitempty"`
-	AccountIdentifier string                           `json:"accountIdentifier,omitempty"`
-	Name              string                           `json:"name"`
-	CreatedAt         int64                            `json:"createdAt,omitempty"`
-	LastModifiedAt    int64                            `json:"lastModifiedAt,omitempty"`
-	Authentication    *SourceCodeManagerAuthentication `json:"authentication,omitempty"`
-	Type_             string                           `json:"type,omitempty"`
+	// Source Code Manager Identifier
+	Id string `json:"id,omitempty"`
+	// Id of the User
+	UserIdentifier string `json:"userIdentifier,omitempty"`
+	// Account Identifier for the Entity
+	AccountIdentifier string `json:"accountIdentifier,omitempty"`
+	// Name of Source Code Manager
+	Name string `json:"name"`
+	// Time at which this Source Code Manager was created
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	// Time at which this Source Code Manager was last Updated
+	LastModifiedAt int64                            `json:"lastModifiedAt,omitempty"`
+	Authentication *SourceCodeManagerAuthentication `json:"authentication,omitempty"`
+	// Type of SCM
+	Type_ string `json:"type,omitempty"`
 }

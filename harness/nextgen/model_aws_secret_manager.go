@@ -9,11 +9,14 @@
  */
 package nextgen
 
-// Returns AWS Secret Manager configuration details
+// Returns AWS Secret Manager configuration details.
 type AwsSecretManager struct {
-	Credential        *AwsSecretManagerCredential `json:"credential"`
-	Region            string                      `json:"region"`
-	SecretNamePrefix  string                      `json:"secretNamePrefix,omitempty"`
-	DelegateSelectors []string                    `json:"delegateSelectors,omitempty"`
-	Default_          bool                        `json:"default,omitempty"`
+	Credential *AwsSecretManagerCredential `json:"credential"`
+	// Region for AWS Secret Manager.
+	Region string `json:"region"`
+	// Text that is appended to the Secret as a prefix.
+	SecretNamePrefix string `json:"secretNamePrefix,omitempty"`
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
+	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	Default_          bool     `json:"default,omitempty"`
 }

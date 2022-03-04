@@ -11,20 +11,20 @@ package nextgen
 
 type ManualIssuer struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Identifier                string                 `json:"identifier,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
 	UserId                    string                 `json:"userId,omitempty"`
+	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
 	TypeBytes                 *ByteString            `json:"typeBytes,omitempty"`
 	SerializedSize            int32                  `json:"serializedSize,omitempty"`
 	ParserForType             *ParserManualIssuer    `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *ManualIssuer          `json:"defaultInstanceForType,omitempty"`
-	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
-	Type_                     string                 `json:"type,omitempty"`
+	EmailId                   string                 `json:"emailId,omitempty"`
 	EmailIdBytes              *ByteString            `json:"emailIdBytes,omitempty"`
 	UserIdBytes               *ByteString            `json:"userIdBytes,omitempty"`
-	EmailId                   string                 `json:"emailId,omitempty"`
-	Identifier                string                 `json:"identifier,omitempty"`
+	Type_                     string                 `json:"type,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

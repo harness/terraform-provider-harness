@@ -13,6 +13,6 @@ package nextgen
 type NgSmtp struct {
 	Uuid      string      `json:"uuid,omitempty"`
 	AccountId string      `json:"accountId,omitempty"`
-	Name      string      `json:"name,omitempty"`
-	Value     *SmtpConfig `json:"value,omitempty"`
+	Name      string      `json:"name"`
+	Value     *SmtpConfig `json:"value"`
 }

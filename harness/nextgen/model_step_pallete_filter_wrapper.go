@@ -9,7 +9,8 @@
  */
 package nextgen
 
-// This is the view of Step Pallete Filter.
+// This has details of the Step Palette Filter.
 type StepPalleteFilterWrapper struct {
+	// List of Step Pallete Module Info
 	StepPalleteModuleInfos []StepPalleteModuleInfo `json:"stepPalleteModuleInfos,omitempty"`
 }

@@ -9,13 +9,20 @@
  */
 package nextgen
 
-// This contains a list of Git Sync Error details for a particular Commit
+// This contains a list of Git Sync Error details for a given Commit Id
 type GitSyncErrorAggregateByCommit struct {
-	GitCommitId          string         `json:"gitCommitId,omitempty"`
-	FailedCount          int32          `json:"failedCount,omitempty"`
-	RepoId               string         `json:"repoId,omitempty"`
-	BranchName           string         `json:"branchName,omitempty"`
-	CommitMessage        string         `json:"commitMessage,omitempty"`
-	CreatedAt            int64          `json:"createdAt,omitempty"`
+	// Commit Id
+	GitCommitId string `json:"gitCommitId,omitempty"`
+	// The number of active errors in a commit
+	FailedCount int32 `json:"failedCount,omitempty"`
+	// Git Sync Config Id
+	RepoId string `json:"repoId,omitempty"`
+	// Branch Name
+	BranchName string `json:"branchName,omitempty"`
+	// Commit Message
+	CommitMessage string `json:"commitMessage,omitempty"`
+	// This is the time at which the Git Sync error was logged
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	// This has the list of Git Sync errors corresponding to a specific Commit Id
 	ErrorsForSummaryView []GitSyncError `json:"errorsForSummaryView,omitempty"`
 }

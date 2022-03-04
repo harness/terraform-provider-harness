@@ -127,7 +127,7 @@ func (a *SecretsApiService) DeleteSecretV2(ctx context.Context, identifier strin
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -170,7 +170,7 @@ SecretsApiService Get the Secret by ID and Scope
  * @param optional nil or *SecretsApiGetSecretV2Opts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiGetSecretV2Opts struct {
@@ -178,13 +178,13 @@ type SecretsApiGetSecretV2Opts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *SecretsApiService) GetSecretV2(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *SecretsApiGetSecretV2Opts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) GetSecretV2(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *SecretsApiGetSecretV2Opts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -262,7 +262,7 @@ func (a *SecretsApiService) GetSecretV2(ctx context.Context, identifier string, 
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -282,7 +282,7 @@ func (a *SecretsApiService) GetSecretV2(ctx context.Context, identifier string, 
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -312,7 +312,7 @@ SecretsApiService Fetches the list of Secrets corresponding to the request&#x27;
      * @param "IncludeSecretsFromEverySubScope" (optional.Bool) -  Specify whether or not to include secrets from all the sub-scopes of the given Scope
      * @param "PageIndex" (optional.Int32) -  Page number of navigation. The default value is 0
      * @param "PageSize" (optional.Int32) -  Number of entries per page. The default value is 100
-@return ResponseDtoPageResponseSecretResponseWrapper
+@return ResponseDtoPageResponseSecretResponse
 */
 
 type SecretsApiListSecretsV2Opts struct {
@@ -328,13 +328,13 @@ type SecretsApiListSecretsV2Opts struct {
 	PageSize                        optional.Int32
 }
 
-func (a *SecretsApiService) ListSecretsV2(ctx context.Context, accountIdentifier string, localVarOptionals *SecretsApiListSecretsV2Opts) (ResponseDtoPageResponseSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) ListSecretsV2(ctx context.Context, accountIdentifier string, localVarOptionals *SecretsApiListSecretsV2Opts) (ResponseDtoPageResponseSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseSecretResponseWrapper
+		localVarReturnValue ResponseDtoPageResponseSecretResponse
 	)
 
 	// create path and map variables
@@ -435,7 +435,7 @@ func (a *SecretsApiService) ListSecretsV2(ctx context.Context, accountIdentifier
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -455,7 +455,7 @@ func (a *SecretsApiService) ListSecretsV2(ctx context.Context, accountIdentifier
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseSecretResponseWrapper
+			var v ResponseDtoPageResponseSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -480,7 +480,7 @@ SecretsApiService Fetches the list of Secrets corresponding to the request&#x27;
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "PageIndex" (optional.Int32) -  Page number of navigation. The default value of 0
      * @param "PageSize" (optional.Int32) -  Number of entries per page. The default value is 100
-@return ResponseDtoPageResponseSecretResponseWrapper
+@return ResponseDtoPageResponseSecretResponse
 */
 
 type SecretsApiListSecretsV3Opts struct {
@@ -491,13 +491,13 @@ type SecretsApiListSecretsV3Opts struct {
 	PageSize          optional.Int32
 }
 
-func (a *SecretsApiService) ListSecretsV3(ctx context.Context, accountIdentifier string, localVarOptionals *SecretsApiListSecretsV3Opts) (ResponseDtoPageResponseSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) ListSecretsV3(ctx context.Context, accountIdentifier string, localVarOptionals *SecretsApiListSecretsV3Opts) (ResponseDtoPageResponseSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseSecretResponseWrapper
+		localVarReturnValue ResponseDtoPageResponseSecretResponse
 	)
 
 	// create path and map variables
@@ -586,7 +586,7 @@ func (a *SecretsApiService) ListSecretsV3(ctx context.Context, accountIdentifier
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -606,7 +606,7 @@ func (a *SecretsApiService) ListSecretsV3(ctx context.Context, accountIdentifier
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseSecretResponseWrapper
+			var v ResponseDtoPageResponseSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -630,7 +630,7 @@ SecretsApiService Creates a Secret at given Scope
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "PrivateSecret" (optional.Bool) -  This is a boolean value to specify if the Secret is Private. The default value is False.
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiPostSecretOpts struct {
@@ -639,13 +639,13 @@ type SecretsApiPostSecretOpts struct {
 	PrivateSecret     optional.Bool
 }
 
-func (a *SecretsApiService) PostSecret(ctx context.Context, body SecretRequestWrapper, accountIdentifier string, localVarOptionals *SecretsApiPostSecretOpts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) PostSecret(ctx context.Context, body SecretRequestWrapper, accountIdentifier string, localVarOptionals *SecretsApiPostSecretOpts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -727,7 +727,7 @@ func (a *SecretsApiService) PostSecret(ctx context.Context, body SecretRequestWr
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -747,7 +747,7 @@ func (a *SecretsApiService) PostSecret(ctx context.Context, body SecretRequestWr
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -772,7 +772,7 @@ SecretsApiService Creates a Secret File
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "PrivateSecret" (optional.Bool) -  This is a boolean value to specify if the Secret is Private. The default value is False.
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiPostSecretFileV2Opts struct {
@@ -783,13 +783,13 @@ type SecretsApiPostSecretFileV2Opts struct {
 	PrivateSecret     optional.Bool
 }
 
-func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentifier string, localVarOptionals *SecretsApiPostSecretFileV2Opts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentifier string, localVarOptionals *SecretsApiPostSecretFileV2Opts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -875,7 +875,7 @@ func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentif
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -895,7 +895,7 @@ func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentif
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -919,7 +919,7 @@ SecretsApiService Creates a secret via YAML
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "PrivateSecret" (optional.Bool) -  This is a boolean value to specify if the Secret is Private. The default value is False.
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiPostSecretViaYamlOpts struct {
@@ -928,13 +928,13 @@ type SecretsApiPostSecretViaYamlOpts struct {
 	PrivateSecret     optional.Bool
 }
 
-func (a *SecretsApiService) PostSecretViaYaml(ctx context.Context, body SecretRequestWrapper, accountIdentifier string, localVarOptionals *SecretsApiPostSecretViaYamlOpts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) PostSecretViaYaml(ctx context.Context, body SecretRequestWrapper, accountIdentifier string, localVarOptionals *SecretsApiPostSecretViaYamlOpts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -1016,7 +1016,7 @@ func (a *SecretsApiService) PostSecretViaYaml(ctx context.Context, body SecretRe
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1036,7 +1036,7 @@ func (a *SecretsApiService) PostSecretViaYaml(ctx context.Context, body SecretRe
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1060,7 +1060,7 @@ SecretsApiService Updates the Secret by ID and Scope
      * @param "Body" (optional.Interface of SecretRequestWrapper) -
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiPutSecretOpts struct {
@@ -1069,13 +1069,13 @@ type SecretsApiPutSecretOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *SecretsApiService) PutSecret(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *SecretsApiPutSecretOpts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) PutSecret(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *SecretsApiPutSecretOpts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -1159,7 +1159,7 @@ func (a *SecretsApiService) PutSecret(ctx context.Context, accountIdentifier str
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1179,7 +1179,7 @@ func (a *SecretsApiService) PutSecret(ctx context.Context, accountIdentifier str
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1204,7 +1204,7 @@ SecretsApiService Updates the Secret file by ID and Scope
      * @param "Spec" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiPutSecretFileV2Opts struct {
@@ -1214,13 +1214,13 @@ type SecretsApiPutSecretFileV2Opts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *SecretsApiService) PutSecretFileV2(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *SecretsApiPutSecretFileV2Opts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) PutSecretFileV2(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *SecretsApiPutSecretFileV2Opts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -1304,7 +1304,7 @@ func (a *SecretsApiService) PutSecretFileV2(ctx context.Context, accountIdentifi
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1324,7 +1324,7 @@ func (a *SecretsApiService) PutSecretFileV2(ctx context.Context, accountIdentifi
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1348,7 +1348,7 @@ SecretsApiService Updates the Secret by ID and Scope via YAML
  * @param optional nil or *SecretsApiPutSecretViaYamlOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoSecretResponseWrapper
+@return ResponseDtoSecretResponse
 */
 
 type SecretsApiPutSecretViaYamlOpts struct {
@@ -1356,13 +1356,13 @@ type SecretsApiPutSecretViaYamlOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *SecretsApiService) PutSecretViaYaml(ctx context.Context, body SecretRequestWrapper, accountIdentifier string, identifier string, localVarOptionals *SecretsApiPutSecretViaYamlOpts) (ResponseDtoSecretResponseWrapper, *http.Response, error) {
+func (a *SecretsApiService) PutSecretViaYaml(ctx context.Context, body SecretRequestWrapper, accountIdentifier string, identifier string, localVarOptionals *SecretsApiPutSecretViaYamlOpts) (ResponseDtoSecretResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretResponseWrapper
+		localVarReturnValue ResponseDtoSecretResponse
 	)
 
 	// create path and map variables
@@ -1442,7 +1442,7 @@ func (a *SecretsApiService) PutSecretViaYaml(ctx context.Context, body SecretReq
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1462,7 +1462,7 @@ func (a *SecretsApiService) PutSecretViaYaml(ctx context.Context, body SecretReq
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretResponseWrapper
+			var v ResponseDtoSecretResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1486,7 +1486,7 @@ SecretsApiService Validates Secret with the provided ID and Scope
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Identifier" (optional.String) -  Secret ID
-@return ResponseDtoSecretValidationResultDto
+@return ResponseDtoSecretValidationResult
 */
 
 type SecretsApiValidateSecretOpts struct {
@@ -1495,13 +1495,13 @@ type SecretsApiValidateSecretOpts struct {
 	Identifier        optional.String
 }
 
-func (a *SecretsApiService) ValidateSecret(ctx context.Context, body SecretValidationMetaData, accountIdentifier string, localVarOptionals *SecretsApiValidateSecretOpts) (ResponseDtoSecretValidationResultDto, *http.Response, error) {
+func (a *SecretsApiService) ValidateSecret(ctx context.Context, body SecretValidationMetaData, accountIdentifier string, localVarOptionals *SecretsApiValidateSecretOpts) (ResponseDtoSecretValidationResult, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoSecretValidationResultDto
+		localVarReturnValue ResponseDtoSecretValidationResult
 	)
 
 	// create path and map variables
@@ -1583,7 +1583,7 @@ func (a *SecretsApiService) ValidateSecret(ctx context.Context, body SecretValid
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1603,7 +1603,7 @@ func (a *SecretsApiService) ValidateSecret(ctx context.Context, body SecretValid
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoSecretValidationResultDto
+			var v ResponseDtoSecretValidationResult
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1718,7 +1718,7 @@ func (a *SecretsApiService) ValidateSecretIdentifierIsUnique(ctx context.Context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

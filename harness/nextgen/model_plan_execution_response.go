@@ -11,6 +11,6 @@ package nextgen
 
 // This contains info about the Pipeline Execution
 type PlanExecutionResponse struct {
-	PlanExecution *PlanExecution    `json:"planExecution,omitempty"`
-	GitDetails    *EntityGitDetails `json:"gitDetails,omitempty"`
+	PlanExecution *PlanExecution            `json:"planExecution,omitempty"`
+	GitDetails    *PipelineEntityGitDetails `json:"gitDetails,omitempty"`
 }

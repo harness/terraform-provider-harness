@@ -10,12 +10,12 @@
 package nextgen
 
 type AppDynamicsConnectorDto struct {
-	Username          string              `json:"username,omitempty"`
-	Accountname       string              `json:"accountname"`
-	ControllerUrl     string              `json:"controllerUrl"`
-	DelegateSelectors []string            `json:"delegateSelectors,omitempty"`
-	PasswordRef       string              `json:"passwordRef,omitempty"`
-	ClientSecretRef   string              `json:"clientSecretRef,omitempty"`
-	ClientId          string              `json:"clientId,omitempty"`
-	AuthType          AppDynamicsAuthType `json:"authType,omitempty"`
+	Username          string   `json:"username,omitempty"`
+	Accountname       string   `json:"accountname"`
+	ControllerUrl     string   `json:"controllerUrl"`
+	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	PasswordRef       string   `json:"passwordRef,omitempty"`
+	ClientSecretRef   string   `json:"clientSecretRef,omitempty"`
+	ClientId          string   `json:"clientId,omitempty"`
+	AuthType          string   `json:"authType,omitempty"`
 }

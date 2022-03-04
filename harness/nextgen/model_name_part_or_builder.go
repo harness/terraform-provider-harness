@@ -10,12 +10,12 @@
 package nextgen
 
 type NamePartOrBuilder struct {
-	NamePartBytes             *ByteString            `json:"namePartBytes,omitempty"`
 	NamePart                  string                 `json:"namePart,omitempty"`
+	NamePartBytes             *ByteString            `json:"namePartBytes,omitempty"`
 	IsExtension               bool                   `json:"isExtension,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

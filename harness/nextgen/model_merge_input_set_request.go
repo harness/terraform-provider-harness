@@ -11,7 +11,10 @@ package nextgen
 
 // Contains list of Input Set references and Stage Ids
 type MergeInputSetRequest struct {
-	InputSetReferences     []string `json:"inputSetReferences,omitempty"`
-	WithMergedPipelineYaml bool     `json:"withMergedPipelineYaml,omitempty"`
-	StageIdentifiers       []string `json:"stageIdentifiers,omitempty"`
+	// List of Input Set References to be merged
+	InputSetReferences []string `json:"inputSetReferences,omitempty"`
+	// This is a boolean value that indicates if the response must contain the YAML for the merged Pipeline. The default value is False.
+	WithMergedPipelineYaml bool `json:"withMergedPipelineYaml,omitempty"`
+	// List of Stage Ids. Input Sets corresponding to these Ids will be merged.
+	StageIdentifiers []string `json:"stageIdentifiers,omitempty"`
 }

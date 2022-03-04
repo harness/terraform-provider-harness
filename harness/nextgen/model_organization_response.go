@@ -9,10 +9,13 @@
  */
 package nextgen
 
-// Organization resource along with metadata. Generally, Used to power UI.
+// This has details of the Organization along with its metadata in Harness.
 type OrganizationResponse struct {
-	Organization   *Organization `json:"organization"`
-	CreatedAt      int64         `json:"createdAt,omitempty"`
-	LastModifiedAt int64         `json:"lastModifiedAt,omitempty"`
-	HarnessManaged bool          `json:"harnessManaged,omitempty"`
+	Organization *Organization `json:"organization"`
+	// This is the time at which Organization was created.
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	// This is the time at which Organization was last modified.
+	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
+	// This indicates if this Organization is managed by Harness or not. If True, Harness can manage and modify this Organization.
+	HarnessManaged bool `json:"harnessManaged,omitempty"`
 }

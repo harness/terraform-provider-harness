@@ -11,17 +11,17 @@ package nextgen
 
 type EnumValueDescriptorProto struct {
 	UnknownFields             *UnknownFieldSet                `json:"unknownFields,omitempty"`
+	Initialized               bool                            `json:"initialized,omitempty"`
+	Options                   *EnumValueOptions               `json:"options,omitempty"`
+	OptionsOrBuilder          *EnumValueOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
 	SerializedSize            int32                           `json:"serializedSize,omitempty"`
 	ParserForType             *ParserEnumValueDescriptorProto `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *EnumValueDescriptorProto       `json:"defaultInstanceForType,omitempty"`
-	Options                   *EnumValueOptions               `json:"options,omitempty"`
-	Initialized               bool                            `json:"initialized,omitempty"`
+	NameBytes                 *ByteString                     `json:"nameBytes,omitempty"`
 	Name                      string                          `json:"name,omitempty"`
 	Number                    int32                           `json:"number,omitempty"`
-	NameBytes                 *ByteString                     `json:"nameBytes,omitempty"`
-	OptionsOrBuilder          *EnumValueOptionsOrBuilder      `json:"optionsOrBuilder,omitempty"`
+	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
 	InitializationErrorString string                          `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                     `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}          `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                           `json:"memoizedSerializedSize,omitempty"`
 }

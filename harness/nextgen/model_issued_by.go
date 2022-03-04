@@ -11,23 +11,23 @@ package nextgen
 
 type IssuedBy struct {
 	UnknownFields             *UnknownFieldSet        `json:"unknownFields,omitempty"`
-	IssueTime                 *Timestamp              `json:"issueTime,omitempty"`
-	IssueTimeOrBuilder        *TimestampOrBuilder     `json:"issueTimeOrBuilder,omitempty"`
+	Initialized               bool                    `json:"initialized,omitempty"`
+	TriggerIssuer             *TriggerIssuer          `json:"triggerIssuer,omitempty"`
 	ManualIssuer              *ManualIssuer           `json:"manualIssuer,omitempty"`
 	ManualIssuerOrBuilder     *ManualIssuerOrBuilder  `json:"manualIssuerOrBuilder,omitempty"`
 	AdviserIssuer             *AdviserIssuer          `json:"adviserIssuer,omitempty"`
+	AdviserIssuerOrBuilder    *AdviserIssuerOrBuilder `json:"adviserIssuerOrBuilder,omitempty"`
 	TimeoutIssuer             *TimeoutIssuer          `json:"timeoutIssuer,omitempty"`
 	TimeoutIssuerOrBuilder    *TimeoutIssuerOrBuilder `json:"timeoutIssuerOrBuilder,omitempty"`
 	TriggerIssuerOrBuilder    *TriggerIssuerOrBuilder `json:"triggerIssuerOrBuilder,omitempty"`
-	AdviserIssuerOrBuilder    *AdviserIssuerOrBuilder `json:"adviserIssuerOrBuilder,omitempty"`
 	IssuerCase                string                  `json:"issuerCase,omitempty"`
+	IssueTime                 *Timestamp              `json:"issueTime,omitempty"`
+	IssueTimeOrBuilder        *TimestampOrBuilder     `json:"issueTimeOrBuilder,omitempty"`
 	SerializedSize            int32                   `json:"serializedSize,omitempty"`
 	ParserForType             *ParserIssuedBy         `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *IssuedBy               `json:"defaultInstanceForType,omitempty"`
-	Initialized               bool                    `json:"initialized,omitempty"`
-	TriggerIssuer             *TriggerIssuer          `json:"triggerIssuer,omitempty"`
+	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
 	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                   `json:"memoizedSerializedSize,omitempty"`
 }

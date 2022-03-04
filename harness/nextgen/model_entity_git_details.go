@@ -9,10 +9,10 @@
  */
 package nextgen
 
+// This contains Validity Details of the Entity
 type EntityGitDetails struct {
-	ObjectId       string `json:"objectId,omitempty"`
-	Branch         string `json:"branch,omitempty"`
-	RepoIdentifier string `json:"repoIdentifier,omitempty"`
-	RootFolder     string `json:"rootFolder,omitempty"`
-	FilePath       string `json:"filePath,omitempty"`
+	// Indicates if the Entity is valid
+	Valid bool `json:"valid,omitempty"`
+	// This has the Git File content if the entity is invalid
+	InvalidYaml string `json:"invalidYaml,omitempty"`
 }

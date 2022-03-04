@@ -9,11 +9,13 @@
  */
 package nextgen
 
-// This contains AWS KMS SM connectors config details
+// This has configuration details for the AWS KMS Secret Manager.
 type AwsKmsConnector struct {
-	Credential        *AwsKmsConnectorCredential `json:"credential,omitempty"`
-	KmsArn            string                     `json:"kmsArn"`
-	Region            string                     `json:"region,omitempty"`
-	DelegateSelectors []string                   `json:"delegateSelectors,omitempty"`
-	Default_          bool                       `json:"default,omitempty"`
+	Credential *AwsKmsConnectorCredential `json:"credential,omitempty"`
+	KmsArn     string                     `json:"kmsArn"`
+	// Region for AWS KMS.
+	Region string `json:"region,omitempty"`
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
+	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	Default_          bool     `json:"default,omitempty"`
 }

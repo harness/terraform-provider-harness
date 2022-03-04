@@ -9,9 +9,11 @@
  */
 package nextgen
 
-// This contains details of mode of connectivity and Git Sync Enablement
+// This contains details of connectivity mode and whether Git Sync is enabled
 type GitEnabled struct {
-	IsGitSyncEnabled bool   `json:"isGitSyncEnabled,omitempty"`
+	// This checks if Git Sync is enabled for a given scope
+	IsGitSyncEnabled bool `json:"isGitSyncEnabled,omitempty"`
+	// This is the Git Sync connectivity mode
 	ConnectivityMode string `json:"connectivityMode,omitempty"`
 	GitSyncEnabled   bool   `json:"gitSyncEnabled,omitempty"`
 }

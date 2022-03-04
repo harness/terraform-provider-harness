@@ -10,14 +10,14 @@
 package nextgen
 
 type ExpressionBlockOrBuilder struct {
-	ExpressionBytes           *ByteString            `json:"expressionBytes,omitempty"`
-	ExpressionValue           string                 `json:"expressionValue,omitempty"`
 	Count                     int32                  `json:"count,omitempty"`
+	ExpressionValue           string                 `json:"expressionValue,omitempty"`
 	Expression                string                 `json:"expression,omitempty"`
+	ExpressionBytes           *ByteString            `json:"expressionBytes,omitempty"`
 	ExpressionValueBytes      *ByteString            `json:"expressionValueBytes,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

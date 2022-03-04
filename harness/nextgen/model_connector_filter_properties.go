@@ -26,6 +26,8 @@ type ConnectorFilterProperties struct {
 	// Boolean value to indicate if the Connector is using credentials from the Delegate to connect.
 	InheritingCredentialsFromDelegate bool                `json:"inheritingCredentialsFromDelegate,omitempty"`
 	CcmConnectorFilter                *CcmConnectorFilter `json:"ccmConnectorFilter,omitempty"`
-	Tags                              map[string]string   `json:"tags,omitempty"`
-	FilterType                        string              `json:"filterType,omitempty"`
+	// Filter tags as a key-value pair.
+	Tags map[string]string `json:"tags,omitempty"`
+	// This specifies the corresponding Entity of the filter.
+	FilterType string `json:"filterType,omitempty"`
 }

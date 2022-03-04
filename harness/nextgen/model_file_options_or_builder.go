@@ -11,9 +11,9 @@ package nextgen
 
 type FileOptionsOrBuilder struct {
 	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
+	JavaPackage                      string                         `json:"javaPackage,omitempty"`
 	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
 	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
-	JavaPackage                      string                         `json:"javaPackage,omitempty"`
 	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
 	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
 	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
@@ -44,9 +44,9 @@ type FileOptionsOrBuilder struct {
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
 	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
 }

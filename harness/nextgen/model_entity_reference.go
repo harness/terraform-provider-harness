@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This contains details about the Entity’s Scope and its Identifier
 type EntityReference struct {
 	Branch            string `json:"branch,omitempty"`
 	RepoIdentifier    string `json:"repoIdentifier,omitempty"`

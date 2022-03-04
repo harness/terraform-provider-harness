@@ -9,24 +9,43 @@
  */
 package nextgen
 
-// This contains the Vault Connector configuration
+// This contains the Vault Connector configuration.
 type VaultConnector struct {
-	AuthToken                      string   `json:"authToken,omitempty"`
-	BasePath                       string   `json:"basePath,omitempty"`
-	VaultUrl                       string   `json:"vaultUrl,omitempty"`
-	IsReadOnly                     bool     `json:"isReadOnly,omitempty"`
-	RenewalIntervalMinutes         int64    `json:"renewalIntervalMinutes,omitempty"`
-	SecretEngineManuallyConfigured bool     `json:"secretEngineManuallyConfigured,omitempty"`
-	SecretEngineName               string   `json:"secretEngineName,omitempty"`
-	AppRoleId                      string   `json:"appRoleId,omitempty"`
-	SecretId                       string   `json:"secretId,omitempty"`
-	IsDefault                      bool     `json:"isDefault,omitempty"`
-	SecretEngineVersion            int32    `json:"secretEngineVersion,omitempty"`
-	DelegateSelectors              []string `json:"delegateSelectors,omitempty"`
-	Namespace                      string   `json:"namespace,omitempty"`
-	SinkPath                       string   `json:"sinkPath,omitempty"`
-	UseVaultAgent                  bool     `json:"useVaultAgent,omitempty"`
-	Default_                       bool     `json:"default,omitempty"`
-	AccessType                     string   `json:"accessType,omitempty"`
-	ReadOnly                       bool     `json:"readOnly,omitempty"`
+	AuthToken string `json:"authToken,omitempty"`
+	// This is the location of the Vault directory where Secret will be stored.
+	BasePath string `json:"basePath,omitempty"`
+	// URL of the Vault.
+	VaultUrl string `json:"vaultUrl,omitempty"`
+	// Boolean value to indicate if the Secret Manager created is read only.
+	IsReadOnly bool `json:"isReadOnly,omitempty"`
+	// This is the time interval for token renewal.
+	RenewalIntervalMinutes int64 `json:"renewalIntervalMinutes,omitempty"`
+	// Manually entered Secret Engine.
+	SecretEngineManuallyConfigured bool `json:"secretEngineManuallyConfigured,omitempty"`
+	// Name of the Secret Engine.
+	SecretEngineName string `json:"secretEngineName,omitempty"`
+	// ID of App Role.
+	AppRoleId string `json:"appRoleId,omitempty"`
+	SecretId  string `json:"secretId,omitempty"`
+	IsDefault bool   `json:"isDefault,omitempty"`
+	// Version of Secret Engine.
+	SecretEngineVersion int32 `json:"secretEngineVersion,omitempty"`
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
+	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	// This is the Vault namespace where Secret will be created.
+	Namespace string `json:"namespace,omitempty"`
+	// This is the location at which auth token is to be read from.
+	SinkPath string `json:"sinkPath,omitempty"`
+	// Boolean value to indicate if Vault Agent is used for authentication.
+	UseVaultAgent bool `json:"useVaultAgent,omitempty"`
+	// Boolean value to indicate if Aws Iam is used for authentication.
+	UseAwsIam bool `json:"useAwsIam,omitempty"`
+	// This is the Aws region where aws iam auth will happen.
+	AwsRegion string `json:"awsRegion,omitempty"`
+	// This is the Vault role defined to bind to aws iam account/role being accessed.
+	VaultAwsIamRole      string `json:"vaultAwsIamRole,omitempty"`
+	XvaultAwsIamServerId string `json:"xvaultAwsIamServerId,omitempty"`
+	Default_             bool   `json:"default,omitempty"`
+	AccessType           string `json:"accessType,omitempty"`
+	ReadOnly             bool   `json:"readOnly,omitempty"`
 }

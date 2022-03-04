@@ -23,6 +23,6 @@ type PmsPipelineSummaryResponse struct {
 	ExecutionSummaryInfo  *ExecutionSummaryInfo             `json:"executionSummaryInfo,omitempty"`
 	Filters               map[string]map[string]interface{} `json:"filters,omitempty"`
 	StageNames            []string                          `json:"stageNames,omitempty"`
-	GitDetails            *EntityGitDetails                 `json:"gitDetails,omitempty"`
-	EntityValidityDetails *EntityValidityDetails            `json:"entityValidityDetails,omitempty"`
+	GitDetails            *PipelineEntityGitDetails         `json:"gitDetails,omitempty"`
+	EntityValidityDetails *PipelineEntityGitDetails         `json:"entityValidityDetails,omitempty"`
 }

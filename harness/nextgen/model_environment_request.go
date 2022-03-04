@@ -19,5 +19,4 @@ type EnvironmentRequest struct {
 	Description       string            `json:"description,omitempty"`
 	Color             string            `json:"color,omitempty"`
 	Type_             string            `json:"type,omitempty"`
-	Version           int64             `json:"version,omitempty"`
 }

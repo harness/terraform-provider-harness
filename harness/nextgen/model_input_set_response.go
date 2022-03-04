@@ -24,8 +24,8 @@ type InputSetResponse struct {
 	IsErrorResponse       bool                        `json:"isErrorResponse,omitempty"`
 	InputSetErrorWrapper  *InputSetErrorWrapperDtopms `json:"inputSetErrorWrapper,omitempty"`
 	Version               int64                       `json:"version,omitempty"`
-	GitDetails            *EntityGitDetails           `json:"gitDetails,omitempty"`
-	EntityValidityDetails *EntityValidityDetails      `json:"entityValidityDetails,omitempty"`
-	Outdated              bool                        `json:"outdated,omitempty"`
+	GitDetails            *PipelineEntityGitDetails   `json:"gitDetails,omitempty"`
+	EntityValidityDetails *PipelineEntityGitDetails   `json:"entityValidityDetails,omitempty"`
 	ErrorResponse         bool                        `json:"errorResponse,omitempty"`
+	Outdated              bool                        `json:"outdated,omitempty"`
 }

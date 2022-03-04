@@ -17,5 +17,4 @@ type ServiceRequest struct {
 	Name              string            `json:"name,omitempty"`
 	Description       string            `json:"description,omitempty"`
 	Tags              map[string]string `json:"tags,omitempty"`
-	Version           int64             `json:"version,omitempty"`
 }

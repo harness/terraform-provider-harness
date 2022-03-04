@@ -9,8 +9,10 @@
  */
 package nextgen
 
-// This contains a list of Entities with a specific Git Sync Config Id
+// This contains a list of Entities corresponding to a specific Git Sync Config Id
 type GitSyncRepoFiles struct {
-	GitSyncConfigIdentifier string              `json:"gitSyncConfigIdentifier,omitempty"`
-	GitSyncEntityLists      []GitSyncEntityList `json:"gitSyncEntityLists,omitempty"`
+	// Git Sync Config Id
+	GitSyncConfigIdentifier string `json:"gitSyncConfigIdentifier,omitempty"`
+	// List of all Git Sync Entities based on their Type specific to the given Repo
+	GitSyncEntityLists []GitSyncEntityList `json:"gitSyncEntityLists,omitempty"`
 }

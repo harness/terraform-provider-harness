@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains the secret reference accessKey and secretKey of AWS KMS SM
+// This contains the AWS KMS Secret Manager's secret reference access key and secret key.
 type AwsKmsCredentialSpecManualConfig struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

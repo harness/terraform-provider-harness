@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This has the details of Authentication Settings supported in NG.
 type NgAuthSettings struct {
 	SettingsType string `json:"settingsType,omitempty"`
 }

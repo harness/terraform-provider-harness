@@ -11,5 +11,6 @@ package nextgen
 
 // Returns the Delegate Selectors used by this AWS KMS Secret Manager Connector.
 type AwsKmsCredentialSpecAssumeIam struct {
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 	DelegateSelectors []string `json:"delegateSelectors"`
 }

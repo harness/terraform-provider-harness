@@ -10,15 +10,15 @@
 package nextgen
 
 type MethodOptionsOrBuilder struct {
-	IdempotencyLevel                 string                         `json:"idempotencyLevel,omitempty"`
 	Deprecated                       bool                           `json:"deprecated,omitempty"`
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
+	IdempotencyLevel                 string                         `json:"idempotencyLevel,omitempty"`
 	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
 }

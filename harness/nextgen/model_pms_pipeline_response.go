@@ -11,9 +11,9 @@ package nextgen
 
 // This contains pipeline yaml with the version.
 type PmsPipelineResponse struct {
-	YamlPipeline          string                 `json:"yamlPipeline,omitempty"`
-	Version               int64                  `json:"version,omitempty"`
-	GitDetails            *EntityGitDetails      `json:"gitDetails,omitempty"`
-	EntityValidityDetails *EntityValidityDetails `json:"entityValidityDetails,omitempty"`
-	Modules               []string               `json:"modules,omitempty"`
+	YamlPipeline          string                    `json:"yamlPipeline,omitempty"`
+	Version               int64                     `json:"version,omitempty"`
+	GitDetails            *PipelineEntityGitDetails `json:"gitDetails,omitempty"`
+	EntityValidityDetails *PipelineEntityGitDetails `json:"entityValidityDetails,omitempty"`
+	Modules               []string                  `json:"modules,omitempty"`
 }

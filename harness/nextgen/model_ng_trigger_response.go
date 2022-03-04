@@ -11,15 +11,17 @@ package nextgen
 
 // This contains the trigger details
 type NgTriggerResponse struct {
-	Name              string `json:"name,omitempty"`
-	Identifier        string `json:"identifier,omitempty"`
-	Description       string `json:"description,omitempty"`
-	Type_             string `json:"type,omitempty"`
-	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	TargetIdentifier  string `json:"targetIdentifier,omitempty"`
-	Yaml              string `json:"yaml,omitempty"`
-	Version           int64  `json:"version,omitempty"`
-	Enabled           bool   `json:"enabled,omitempty"`
+	Name              string                       `json:"name,omitempty"`
+	Identifier        string                       `json:"identifier,omitempty"`
+	Description       string                       `json:"description,omitempty"`
+	Type_             string                       `json:"type,omitempty"`
+	AccountIdentifier string                       `json:"accountIdentifier,omitempty"`
+	OrgIdentifier     string                       `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string                       `json:"projectIdentifier,omitempty"`
+	TargetIdentifier  string                       `json:"targetIdentifier,omitempty"`
+	Yaml              string                       `json:"yaml,omitempty"`
+	Version           int64                        `json:"version,omitempty"`
+	Enabled           bool                         `json:"enabled,omitempty"`
+	Errors            map[string]map[string]string `json:"errors,omitempty"`
+	ErrorResponse     bool                         `json:"errorResponse,omitempty"`
 }

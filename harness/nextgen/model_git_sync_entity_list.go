@@ -9,9 +9,12 @@
  */
 package nextgen
 
-// Contains list of Entities based on Entity Type
+// This contains list of Entities based on Entity Type
 type GitSyncEntityList struct {
-	EntityType      string          `json:"entityType,omitempty"`
-	Count           int64           `json:"count,omitempty"`
+	// Entity Type
+	EntityType string `json:"entityType,omitempty"`
+	// This is the number of Git Sync entities corresponding to a given entity type
+	Count int64 `json:"count,omitempty"`
+	// This is the list of all the Git Sync entities corresponding to a given entity type
 	GitSyncEntities []GitSyncEntity `json:"gitSyncEntities,omitempty"`
 }

@@ -11,19 +11,19 @@ package nextgen
 
 type ServiceDescriptorProto struct {
 	UnknownFields             *UnknownFieldSet                 `json:"unknownFields,omitempty"`
+	Initialized               bool                             `json:"initialized,omitempty"`
+	Options                   *ServiceOptions                  `json:"options,omitempty"`
+	MethodList                []MethodDescriptorProto          `json:"methodList,omitempty"`
+	OptionsOrBuilder          *ServiceOptionsOrBuilder         `json:"optionsOrBuilder,omitempty"`
 	MethodOrBuilderList       []MethodDescriptorProtoOrBuilder `json:"methodOrBuilderList,omitempty"`
 	SerializedSize            int32                            `json:"serializedSize,omitempty"`
 	ParserForType             *ParserServiceDescriptorProto    `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *ServiceDescriptorProto          `json:"defaultInstanceForType,omitempty"`
-	Options                   *ServiceOptions                  `json:"options,omitempty"`
-	Initialized               bool                             `json:"initialized,omitempty"`
-	Name                      string                           `json:"name,omitempty"`
-	MethodList                []MethodDescriptorProto          `json:"methodList,omitempty"`
-	NameBytes                 *ByteString                      `json:"nameBytes,omitempty"`
-	OptionsOrBuilder          *ServiceOptionsOrBuilder         `json:"optionsOrBuilder,omitempty"`
 	MethodCount               int32                            `json:"methodCount,omitempty"`
+	NameBytes                 *ByteString                      `json:"nameBytes,omitempty"`
+	Name                      string                           `json:"name,omitempty"`
+	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
 	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                      `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                            `json:"memoizedSerializedSize,omitempty"`
 }

@@ -11,15 +11,15 @@ package nextgen
 
 type SkipInfo struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	SerializedSize            int32                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserSkipInfo        `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *SkipInfo              `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 	SkipCondition             string                 `json:"skipCondition,omitempty"`
 	SkipConditionBytes        *ByteString            `json:"skipConditionBytes,omitempty"`
 	EvaluatedCondition        bool                   `json:"evaluatedCondition,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	ParserForType             *ParserSkipInfo        `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *SkipInfo              `json:"defaultInstanceForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

@@ -10,17 +10,17 @@
 package nextgen
 
 type RerunInfoOrBuilder struct {
+	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
 	PrevExecutionIdBytes      *ByteString            `json:"prevExecutionIdBytes,omitempty"`
 	PrevTriggerTypeValue      int32                  `json:"prevTriggerTypeValue,omitempty"`
 	PrevTriggerType           string                 `json:"prevTriggerType,omitempty"`
-	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
+	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
+	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
 	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
 	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
-	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
-	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

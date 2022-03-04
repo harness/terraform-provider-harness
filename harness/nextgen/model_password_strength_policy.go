@@ -9,11 +9,18 @@
  */
 package nextgen
 
+// This has information about the password strength policy in Harness.
 type PasswordStrengthPolicy struct {
-	Enabled                        bool  `json:"enabled,omitempty"`
-	MinNumberOfCharacters          int32 `json:"minNumberOfCharacters,omitempty"`
+	// This value is true if the password strength policy is enabled. Otherwise, it is false.
+	Enabled bool `json:"enabled,omitempty"`
+	// Minimum number of characters required in a password.
+	MinNumberOfCharacters int32 `json:"minNumberOfCharacters,omitempty"`
+	// Minimum number of uppercase characters required in a password.
 	MinNumberOfUppercaseCharacters int32 `json:"minNumberOfUppercaseCharacters,omitempty"`
+	// Minimum number of lower characters required in a password.
 	MinNumberOfLowercaseCharacters int32 `json:"minNumberOfLowercaseCharacters,omitempty"`
-	MinNumberOfSpecialCharacters   int32 `json:"minNumberOfSpecialCharacters,omitempty"`
-	MinNumberOfDigits              int32 `json:"minNumberOfDigits,omitempty"`
+	// Minimum number of special characters required in a password.
+	MinNumberOfSpecialCharacters int32 `json:"minNumberOfSpecialCharacters,omitempty"`
+	// Minimum number of digits required in a password.
+	MinNumberOfDigits int32 `json:"minNumberOfDigits,omitempty"`
 }

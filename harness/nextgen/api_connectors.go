@@ -35,9 +35,9 @@ ConnectorsApiService Creates a Connector
  * @param optional nil or *ConnectorsApiCreateConnectorOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  File Path
-     * @param "CommitMsg" (optional.String) -  File Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  File Path of the Entity
+     * @param "CommitMsg" (optional.String) -  File Path of the Entity
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
      * @param "BaseBranch" (optional.String) -  Default Branch
 @return ResponseDtoConnectorResponse
@@ -153,7 +153,7 @@ func (a *ConnectorsApiService) CreateConnector(ctx context.Context, body Connect
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -198,8 +198,8 @@ ConnectorsApiService Deletes Connector by ID
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  File Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  File Path of the Entity
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
 @return ResponseDtoBoolean
@@ -318,7 +318,7 @@ func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdent
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -436,7 +436,7 @@ func (a *ConnectorsApiService) GetAllAllowedFieldValues(ctx context.Context, con
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -572,7 +572,7 @@ func (a *ConnectorsApiService) GetCEAwsTemplate(ctx context.Context, localVarOpt
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -722,7 +722,7 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, accountIdentifi
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -840,7 +840,7 @@ func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, accoun
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1018,7 +1018,7 @@ func (a *ConnectorsApiService) GetConnectorList(ctx context.Context, accountIden
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1069,7 +1069,7 @@ ConnectorsApiService Fetches the list of Connectors corresponding to the request
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-     * @param "GetDistinctFromBranches" (optional.Bool) -  This when set to true along with GitSync enabled for the Connector, you can to get other Connectors too which are not from same repo - branch but different repo&#x27;s default branch
+     * @param "GetDistinctFromBranches" (optional.Bool) -  This when set to true along with GitSync enabled for the Connector, you can get one connector entity from each identifier. The connector entity can belong to any branch
 @return ResponseDtoPageResponseConnectorResponse
 */
 
@@ -1199,7 +1199,7 @@ func (a *ConnectorsApiService) GetConnectorListV2(ctx context.Context, body Conn
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1347,7 +1347,7 @@ func (a *ConnectorsApiService) GetConnectorStatistics(ctx context.Context, accou
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1497,7 +1497,7 @@ func (a *ConnectorsApiService) GetTestConnectionResult(ctx context.Context, acco
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1637,7 +1637,7 @@ func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Contex
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1758,7 +1758,7 @@ func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []st
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1801,8 +1801,8 @@ ConnectorsApiService Updates the Connector
  * @param optional nil or *ConnectorsApiUpdateConnectorOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  Default Folder Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  Root Folder Path of the Entity
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
      * @param "BaseBranch" (optional.String) -  Default Branch
@@ -1919,7 +1919,7 @@ func (a *ConnectorsApiService) UpdateConnector(ctx context.Context, body Connect
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2057,7 +2057,7 @@ func (a *ConnectorsApiService) ValidateTheIdentifierIsUnique(ctx context.Context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

@@ -30,9 +30,10 @@ type GitSyncSettingsApiService service
 GitSyncSettingsApiService Creates Git Sync Setting in a scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This contains details of Git Sync settings like - (scope, executionOnDelegate)
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoGitSyncSettings
 */
-func (a *GitSyncSettingsApiService) CreateGitSyncSetting(ctx context.Context, body GitSyncSettings) (ResponseDtoGitSyncSettings, *http.Response, error) {
+func (a *GitSyncSettingsApiService) CreateGitSyncSetting(ctx context.Context, body GitSyncSettings, accountIdentifier string) (ResponseDtoGitSyncSettings, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -48,6 +49,7 @@ func (a *GitSyncSettingsApiService) CreateGitSyncSetting(ctx context.Context, bo
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "text/yaml", "text/html"}
 
@@ -110,7 +112,7 @@ func (a *GitSyncSettingsApiService) CreateGitSyncSetting(ctx context.Context, bo
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -246,7 +248,7 @@ func (a *GitSyncSettingsApiService) GetGitSyncSettings(ctx context.Context, loca
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -285,9 +287,10 @@ func (a *GitSyncSettingsApiService) GetGitSyncSettings(ctx context.Context, loca
 GitSyncSettingsApiService This updates the existing Git Sync settings within the scope. Only changing Connectivity Mode is allowed
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This contains details of Git Sync Settings
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoGitSyncSettings
 */
-func (a *GitSyncSettingsApiService) UpdateGitSyncSetting(ctx context.Context, body GitSyncSettings) (ResponseDtoGitSyncSettings, *http.Response, error) {
+func (a *GitSyncSettingsApiService) UpdateGitSyncSetting(ctx context.Context, body GitSyncSettings, accountIdentifier string) (ResponseDtoGitSyncSettings, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -303,6 +306,7 @@ func (a *GitSyncSettingsApiService) UpdateGitSyncSetting(ctx context.Context, bo
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "text/yaml", "text/html"}
 
@@ -365,7 +369,7 @@ func (a *GitSyncSettingsApiService) UpdateGitSyncSetting(ctx context.Context, bo
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

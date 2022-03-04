@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// Contains information of Git Sync Config
+// This contains details of Git Sync Config
 type GitSyncConfig struct {
 	// Git Sync Config Id
 	Identifier string `json:"identifier,omitempty"`
@@ -19,9 +19,9 @@ type GitSyncConfig struct {
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 	// Organization Identifier for the Entity
 	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	// Referenced Connector Identifier
+	// Id of the Connector referenced in Git
 	GitConnectorRef string `json:"gitConnectorRef,omitempty"`
-	// Repo Url
+	// Repo URL
 	Repo string `json:"repo,omitempty"`
 	// Branch Name
 	Branch string `json:"branch,omitempty"`

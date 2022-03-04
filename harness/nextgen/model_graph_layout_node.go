@@ -28,4 +28,5 @@ type GraphLayoutNode struct {
 	BarrierFound   bool                              `json:"barrierFound,omitempty"`
 	FailureInfo    *ExecutionErrorInfo               `json:"failureInfo,omitempty"`
 	FailureInfoDTO *FailureInfoDto                   `json:"failureInfoDTO,omitempty"`
+	StepDetails    map[string]map[string]interface{} `json:"stepDetails,omitempty"`
 }

@@ -9,9 +9,12 @@
  */
 package nextgen
 
-// Returns credentials like RoleArn and externalId and STS role duration specific to IAM role for the AWS Secret Manager.
+// Returns credentials for the AWS Secret Manager for the IAM role.
 type AwsSmCredentialSpecAssumeSts struct {
-	RoleArn               string `json:"roleArn"`
-	ExternalId            string `json:"externalId,omitempty"`
-	AssumeStsRoleDuration int32  `json:"assumeStsRoleDuration,omitempty"`
+	// Role ARN for the Delegate with STS Role.
+	RoleArn string `json:"roleArn"`
+	// External Name.
+	ExternalId string `json:"externalId,omitempty"`
+	// This is the time duration for STS Role.
+	AssumeStsRoleDuration int32 `json:"assumeStsRoleDuration,omitempty"`
 }

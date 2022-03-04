@@ -1,7 +1,7 @@
 /*
  * CD NextGen API Reference
  *
- * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub
+ * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
  * API version: 3.0
  * Contact: contact@harness.io
@@ -11,7 +11,7 @@ package nextgen
 
 import "encoding/json"
 
-// This contains the credential type and config of the AWS SM
+// This contains the credential type and configuration of the AWS Secret Manager.
 type AwsSecretManagerCredential struct {
 	Type_         AwsSecretManagerAuthType         `json:"type"`
 	AssumeIamRole *AwsSmCredentialSpecAssumeIam    `json:"-"`

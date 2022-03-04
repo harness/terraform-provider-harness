@@ -9,6 +9,8 @@
  */
 package nextgen
 
+// This contains the information about the Two Factor Admin Override in Harness.
 type TwoFactorAdminOverrideSettings struct {
+	// This value is true if Admin Override for Two Factor Authentication is enabled. Otherwise, it is false.
 	AdminOverrideTwoFactorEnabled bool `json:"adminOverrideTwoFactorEnabled,omitempty"`
 }

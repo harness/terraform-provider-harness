@@ -9,5 +9,6 @@
  */
 package nextgen
 
+// Authentication Details of Source Code Manager
 type SourceCodeManagerAuthentication struct {
 }

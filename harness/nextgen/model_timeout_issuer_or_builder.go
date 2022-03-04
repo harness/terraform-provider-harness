@@ -12,9 +12,9 @@ package nextgen
 type TimeoutIssuerOrBuilder struct {
 	TimeoutInstanceId         string                 `json:"timeoutInstanceId,omitempty"`
 	TimeoutInstanceIdBytes    *ByteString            `json:"timeoutInstanceIdBytes,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

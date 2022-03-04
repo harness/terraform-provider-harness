@@ -20,9 +20,9 @@ type LocationOrBuilder struct {
 	TrailingCommentsBytes        *ByteString            `json:"trailingCommentsBytes,omitempty"`
 	LeadingDetachedCommentsList  []string               `json:"leadingDetachedCommentsList,omitempty"`
 	LeadingDetachedCommentsCount int32                  `json:"leadingDetachedCommentsCount,omitempty"`
+	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString    string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType            *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields                *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType       *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized                  bool                   `json:"initialized,omitempty"`

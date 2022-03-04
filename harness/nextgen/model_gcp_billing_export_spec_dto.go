@@ -11,4 +11,5 @@ package nextgen
 
 type GcpBillingExportSpecDto struct {
 	DatasetId string `json:"datasetId"`
+	TableId   string `json:"tableId"`
 }

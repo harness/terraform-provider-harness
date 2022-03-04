@@ -11,6 +11,10 @@ package nextgen
 
 type Location struct {
 	UnknownFields                *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Initialized                  bool                   `json:"initialized,omitempty"`
+	SerializedSize               int32                  `json:"serializedSize,omitempty"`
+	ParserForType                *ParserLocation        `json:"parserForType,omitempty"`
+	DefaultInstanceForType       *Location              `json:"defaultInstanceForType,omitempty"`
 	PathList                     []int32                `json:"pathList,omitempty"`
 	PathCount                    int32                  `json:"pathCount,omitempty"`
 	SpanList                     []int32                `json:"spanList,omitempty"`
@@ -21,12 +25,8 @@ type Location struct {
 	TrailingCommentsBytes        *ByteString            `json:"trailingCommentsBytes,omitempty"`
 	LeadingDetachedCommentsList  []string               `json:"leadingDetachedCommentsList,omitempty"`
 	LeadingDetachedCommentsCount int32                  `json:"leadingDetachedCommentsCount,omitempty"`
-	SerializedSize               int32                  `json:"serializedSize,omitempty"`
-	ParserForType                *ParserLocation        `json:"parserForType,omitempty"`
-	DefaultInstanceForType       *Location              `json:"defaultInstanceForType,omitempty"`
-	Initialized                  bool                   `json:"initialized,omitempty"`
+	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString    string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType            *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize       int32                  `json:"memoizedSerializedSize,omitempty"`
 }

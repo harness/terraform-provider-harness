@@ -18,12 +18,12 @@ type InputSetSummaryResponse struct {
 	InputSetType           string                      `json:"inputSetType,omitempty"`
 	Tags                   map[string]string           `json:"tags,omitempty"`
 	Version                int64                       `json:"version,omitempty"`
-	GitDetails             *EntityGitDetails           `json:"gitDetails,omitempty"`
+	GitDetails             *PipelineEntityGitDetails   `json:"gitDetails,omitempty"`
 	CreatedAt              int64                       `json:"createdAt,omitempty"`
 	LastUpdatedAt          int64                       `json:"lastUpdatedAt,omitempty"`
 	IsOutdated             bool                        `json:"isOutdated,omitempty"`
 	InputSetErrorDetails   *InputSetErrorWrapperDtopms `json:"inputSetErrorDetails,omitempty"`
 	OverlaySetErrorDetails map[string]string           `json:"overlaySetErrorDetails,omitempty"`
-	EntityValidityDetails  *EntityValidityDetails      `json:"entityValidityDetails,omitempty"`
+	EntityValidityDetails  *PipelineEntityGitDetails   `json:"entityValidityDetails,omitempty"`
 	Modules                []string                    `json:"modules,omitempty"`
 }

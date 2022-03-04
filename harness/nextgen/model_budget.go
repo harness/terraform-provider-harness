@@ -27,8 +27,10 @@ type Budget struct {
 	EmailAddresses  []string         `json:"emailAddresses,omitempty"`
 	UserGroupIds    []string         `json:"userGroupIds,omitempty"`
 	NotifyOnSlack   bool             `json:"notifyOnSlack,omitempty"`
+	IsNgBudget      bool             `json:"isNgBudget,omitempty"`
 	StartTime       int64            `json:"startTime,omitempty"`
 	EndTime         int64            `json:"endTime,omitempty"`
 	CreatedAt       int64            `json:"createdAt,omitempty"`
 	LastUpdatedAt   int64            `json:"lastUpdatedAt,omitempty"`
+	NgBudget        bool             `json:"ngBudget,omitempty"`
 }

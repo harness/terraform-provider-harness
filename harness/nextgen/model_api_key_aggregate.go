@@ -9,10 +9,13 @@
  */
 package nextgen
 
-// This is the view of the ApiKeyAggregate entity defined in Harness
+// This has API Key details and metadata.
 type ApiKeyAggregate struct {
-	ApiKey         *ApiKey `json:"apiKey"`
-	CreatedAt      int64   `json:"createdAt"`
-	LastModifiedAt int64   `json:"lastModifiedAt"`
-	TokensCount    int32   `json:"tokensCount,omitempty"`
+	ApiKey *ApiKey `json:"apiKey"`
+	// This is the time at which API Key was created.
+	CreatedAt int64 `json:"createdAt"`
+	// This is the time at which API Key was last modified.
+	LastModifiedAt int64 `json:"lastModifiedAt"`
+	// The number of tokens within an API Key.
+	TokensCount int32 `json:"tokensCount,omitempty"`
 }

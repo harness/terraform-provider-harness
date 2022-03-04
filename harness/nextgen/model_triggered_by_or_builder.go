@@ -10,16 +10,16 @@
 package nextgen
 
 type TriggeredByOrBuilder struct {
-	Uuid                      string                 `json:"uuid,omitempty"`
+	Identifier                string                 `json:"identifier,omitempty"`
 	UuidBytes                 *ByteString            `json:"uuidBytes,omitempty"`
 	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
 	ExtraInfoCount            int32                  `json:"extraInfoCount,omitempty"`
 	ExtraInfo                 map[string]string      `json:"extraInfo,omitempty"`
 	ExtraInfoMap              map[string]string      `json:"extraInfoMap,omitempty"`
-	Identifier                string                 `json:"identifier,omitempty"`
+	Uuid                      string                 `json:"uuid,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

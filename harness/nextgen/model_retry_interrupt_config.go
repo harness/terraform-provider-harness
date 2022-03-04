@@ -11,14 +11,14 @@ package nextgen
 
 type RetryInterruptConfig struct {
 	UnknownFields             *UnknownFieldSet            `json:"unknownFields,omitempty"`
-	RetryIdBytes              *ByteString                 `json:"retryIdBytes,omitempty"`
+	Initialized               bool                        `json:"initialized,omitempty"`
 	RetryId                   string                      `json:"retryId,omitempty"`
+	RetryIdBytes              *ByteString                 `json:"retryIdBytes,omitempty"`
 	SerializedSize            int32                       `json:"serializedSize,omitempty"`
 	ParserForType             *ParserRetryInterruptConfig `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *RetryInterruptConfig       `json:"defaultInstanceForType,omitempty"`
-	Initialized               bool                        `json:"initialized,omitempty"`
+	AllFields                 map[string]interface{}      `json:"allFields,omitempty"`
 	InitializationErrorString string                      `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                 `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}      `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                       `json:"memoizedSerializedSize,omitempty"`
 }

@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This contains details of all the branches of given repo
 type PageResponseGitBranch struct {
 	TotalPages    int64       `json:"totalPages,omitempty"`
 	TotalItems    int64       `json:"totalItems,omitempty"`

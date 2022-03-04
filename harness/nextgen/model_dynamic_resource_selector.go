@@ -10,6 +10,7 @@
 package nextgen
 
 type DynamicResourceSelector struct {
-	Type_        string `json:"type"`
-	ResourceType string `json:"resourceType"`
+	Type_              string `json:"type"`
+	ResourceType       string `json:"resourceType"`
+	IncludeChildScopes bool   `json:"includeChildScopes,omitempty"`
 }

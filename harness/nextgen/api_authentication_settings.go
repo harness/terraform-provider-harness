@@ -109,7 +109,7 @@ func (a *AuthenticationSettingsApiService) DeleteSamlMetaData(ctx context.Contex
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -227,7 +227,7 @@ func (a *AuthenticationSettingsApiService) GetAuthenticationSettings(ctx context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -345,7 +345,7 @@ func (a *AuthenticationSettingsApiService) GetPasswordStrengthSettings(ctx conte
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -463,7 +463,7 @@ func (a *AuthenticationSettingsApiService) GetSamlLoginTest(ctx context.Context,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -581,7 +581,7 @@ func (a *AuthenticationSettingsApiService) RemoveOauthMechanism(ctx context.Cont
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -702,7 +702,7 @@ func (a *AuthenticationSettingsApiService) SetTwoFactorAuthAtAccountLevel(ctx co
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -830,7 +830,7 @@ func (a *AuthenticationSettingsApiService) UpdateAuthMechanism(ctx context.Conte
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -951,7 +951,7 @@ func (a *AuthenticationSettingsApiService) UpdateOauthProviders(ctx context.Cont
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -991,24 +991,30 @@ AuthenticationSettingsApiService Updates the SAML metadata by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountId Account Identifier for the Entity
  * @param optional nil or *AuthenticationSettingsApiUpdateSamlMetaDataOpts - Optional Parameters:
-     * @param "Inputfile" (optional.Interface of interface{}) -
+     * @param "File" (optional.Interface of interface{}) -
      * @param "FileMetadata" (optional.Interface of FormDataContentDisposition) -
      * @param "DisplayName" (optional.String) -
      * @param "GroupMembershipAttr" (optional.String) -
      * @param "AuthorizationEnabled" (optional.Bool) -
      * @param "LogoutUrl" (optional.String) -
      * @param "EntityIdentifier" (optional.String) -
+     * @param "SamlProviderType" (optional.String) -
+     * @param "ClientId" (optional.String) -
+     * @param "ClientSecret" (optional.String) -
 @return RestResponseSsoConfig
 */
 
 type AuthenticationSettingsApiUpdateSamlMetaDataOpts struct {
-	Inputfile            optional.Interface
+	File                 optional.Interface
 	FileMetadata         optional.Interface
 	DisplayName          optional.String
 	GroupMembershipAttr  optional.String
 	AuthorizationEnabled optional.Bool
 	LogoutUrl            optional.String
 	EntityIdentifier     optional.String
+	SamlProviderType     optional.String
+	ClientId             optional.String
+	ClientSecret         optional.String
 }
 
 func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Context, accountId string, localVarOptionals *AuthenticationSettingsApiUpdateSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
@@ -1045,8 +1051,8 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-	if localVarOptionals != nil && localVarOptionals.Inputfile.IsSet() {
-		localVarFormParams.Add("Inputfile", parameterToString(localVarOptionals.Inputfile.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
+		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.FileMetadata.IsSet() {
 		localVarFormParams.Add("fileMetadata", parameterToString(localVarOptionals.FileMetadata.Value(), ""))
@@ -1065,6 +1071,15 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 	}
 	if localVarOptionals != nil && localVarOptionals.EntityIdentifier.IsSet() {
 		localVarFormParams.Add("entityIdentifier", parameterToString(localVarOptionals.EntityIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SamlProviderType.IsSet() {
+		localVarFormParams.Add("samlProviderType", parameterToString(localVarOptionals.SamlProviderType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ClientId.IsSet() {
+		localVarFormParams.Add("clientId", parameterToString(localVarOptionals.ClientId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ClientSecret.IsSet() {
+		localVarFormParams.Add("clientSecret", parameterToString(localVarOptionals.ClientSecret.Value(), ""))
 	}
 	if ctx != nil {
 		// API Key Authentication
@@ -1109,7 +1124,7 @@ func (a *AuthenticationSettingsApiService) UpdateSamlMetaData(ctx context.Contex
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1240,7 +1255,7 @@ func (a *AuthenticationSettingsApiService) UpdateWhitelistedDomains(ctx context.
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1280,24 +1295,30 @@ AuthenticationSettingsApiService Uploads the SAML metadata by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountId Account Identifier for the Entity
  * @param optional nil or *AuthenticationSettingsApiUploadSamlMetaDataOpts - Optional Parameters:
-     * @param "Inputfile" (optional.Interface of interface{}) -
+     * @param "File" (optional.Interface of interface{}) -
      * @param "FileMetadata" (optional.Interface of FormDataContentDisposition) -
      * @param "DisplayName" (optional.String) -
      * @param "GroupMembershipAttr" (optional.String) -
      * @param "AuthorizationEnabled" (optional.Bool) -
      * @param "LogoutUrl" (optional.String) -
      * @param "EntityIdentifier" (optional.String) -
+     * @param "SamlProviderType" (optional.String) -
+     * @param "ClientId" (optional.String) -
+     * @param "ClientSecret" (optional.String) -
 @return RestResponseSsoConfig
 */
 
 type AuthenticationSettingsApiUploadSamlMetaDataOpts struct {
-	Inputfile            optional.Interface
+	File                 optional.Interface
 	FileMetadata         optional.Interface
 	DisplayName          optional.String
 	GroupMembershipAttr  optional.String
 	AuthorizationEnabled optional.Bool
 	LogoutUrl            optional.String
 	EntityIdentifier     optional.String
+	SamlProviderType     optional.String
+	ClientId             optional.String
+	ClientSecret         optional.String
 }
 
 func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Context, accountId string, localVarOptionals *AuthenticationSettingsApiUploadSamlMetaDataOpts) (RestResponseSsoConfig, *http.Response, error) {
@@ -1334,8 +1355,8 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
-	if localVarOptionals != nil && localVarOptionals.Inputfile.IsSet() {
-		localVarFormParams.Add("Inputfile", parameterToString(localVarOptionals.Inputfile.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
+		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.FileMetadata.IsSet() {
 		localVarFormParams.Add("fileMetadata", parameterToString(localVarOptionals.FileMetadata.Value(), ""))
@@ -1354,6 +1375,15 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 	}
 	if localVarOptionals != nil && localVarOptionals.EntityIdentifier.IsSet() {
 		localVarFormParams.Add("entityIdentifier", parameterToString(localVarOptionals.EntityIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SamlProviderType.IsSet() {
+		localVarFormParams.Add("samlProviderType", parameterToString(localVarOptionals.SamlProviderType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ClientId.IsSet() {
+		localVarFormParams.Add("clientId", parameterToString(localVarOptionals.ClientId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ClientSecret.IsSet() {
+		localVarFormParams.Add("clientSecret", parameterToString(localVarOptionals.ClientSecret.Value(), ""))
 	}
 	if ctx != nil {
 		// API Key Authentication
@@ -1398,7 +1428,7 @@ func (a *AuthenticationSettingsApiService) UploadSamlMetaData(ctx context.Contex
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

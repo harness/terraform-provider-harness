@@ -10,12 +10,12 @@
 package nextgen
 
 type TriggerIssuerOrBuilder struct {
+	AbortPrevConcurrentExecution bool                   `json:"abortPrevConcurrentExecution,omitempty"`
 	TriggerRef                   string                 `json:"triggerRef,omitempty"`
 	TriggerRefBytes              *ByteString            `json:"triggerRefBytes,omitempty"`
-	AbortPrevConcurrentExecution bool                   `json:"abortPrevConcurrentExecution,omitempty"`
+	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString    string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType            *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields                *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType       *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized                  bool                   `json:"initialized,omitempty"`

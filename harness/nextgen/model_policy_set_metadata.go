@@ -11,31 +11,31 @@ package nextgen
 
 type PolicySetMetadata struct {
 	UnknownFields               *UnknownFieldSet          `json:"unknownFields,omitempty"`
-	SerializedSize              int32                     `json:"serializedSize,omitempty"`
-	ParserForType               *ParserPolicySetMetadata  `json:"parserForType,omitempty"`
-	DefaultInstanceForType      *PolicySetMetadata        `json:"defaultInstanceForType,omitempty"`
-	IdentifierBytes             *ByteString               `json:"identifierBytes,omitempty"`
+	Identifier                  string                    `json:"identifier,omitempty"`
+	Initialized                 bool                      `json:"initialized,omitempty"`
+	Created                     int64                     `json:"created,omitempty"`
 	Status                      string                    `json:"status,omitempty"`
+	AccountId                   string                    `json:"accountId,omitempty"`
 	PolicySetId                 string                    `json:"policySetId,omitempty"`
 	PolicySetIdBytes            *ByteString               `json:"policySetIdBytes,omitempty"`
-	Deny                        bool                      `json:"deny,omitempty"`
 	PolicyMetadataList          []PolicyMetadata          `json:"policyMetadataList,omitempty"`
 	PolicyMetadataOrBuilderList []PolicyMetadataOrBuilder `json:"policyMetadataOrBuilderList,omitempty"`
 	PolicyMetadataCount         int32                     `json:"policyMetadataCount,omitempty"`
 	PolicySetName               string                    `json:"policySetName,omitempty"`
 	PolicySetNameBytes          *ByteString               `json:"policySetNameBytes,omitempty"`
-	Initialized                 bool                      `json:"initialized,omitempty"`
+	IdentifierBytes             *ByteString               `json:"identifierBytes,omitempty"`
 	OrgId                       string                    `json:"orgId,omitempty"`
 	StatusBytes                 *ByteString               `json:"statusBytes,omitempty"`
-	AccountId                   string                    `json:"accountId,omitempty"`
 	AccountIdBytes              *ByteString               `json:"accountIdBytes,omitempty"`
 	OrgIdBytes                  *ByteString               `json:"orgIdBytes,omitempty"`
 	ProjectId                   string                    `json:"projectId,omitempty"`
 	ProjectIdBytes              *ByteString               `json:"projectIdBytes,omitempty"`
-	Created                     int64                     `json:"created,omitempty"`
-	Identifier                  string                    `json:"identifier,omitempty"`
+	SerializedSize              int32                     `json:"serializedSize,omitempty"`
+	Deny                        bool                      `json:"deny,omitempty"`
+	ParserForType               *ParserPolicySetMetadata  `json:"parserForType,omitempty"`
+	DefaultInstanceForType      *PolicySetMetadata        `json:"defaultInstanceForType,omitempty"`
+	AllFields                   map[string]interface{}    `json:"allFields,omitempty"`
 	InitializationErrorString   string                    `json:"initializationErrorString,omitempty"`
 	DescriptorForType           *Descriptor               `json:"descriptorForType,omitempty"`
-	AllFields                   map[string]interface{}    `json:"allFields,omitempty"`
 	MemoizedSerializedSize      int32                     `json:"memoizedSerializedSize,omitempty"`
 }

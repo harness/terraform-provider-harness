@@ -126,7 +126,7 @@ func (a *ExecutionDetailsApiService) GetExecutionDetail(ctx context.Context, acc
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -260,7 +260,7 @@ func (a *ExecutionDetailsApiService) GetInputsetYaml(ctx context.Context, accoun
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -394,7 +394,7 @@ func (a *ExecutionDetailsApiService) GetInputsetYamlV2(ctx context.Context, acco
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -439,7 +439,7 @@ ExecutionDetailsApiService Gets list of Executions of Pipelines for specific fil
      * @param "Body" (optional.Interface of FilterProperties) -
      * @param "SearchTerm" (optional.String) -  Search term to filter out pipelines based on pipeline name, identifier, tags.
      * @param "PipelineIdentifier" (optional.String) -  Pipeline Identifier filter if exact pipelines needs to be filtered.
-     * @param "Page" (optional.Int32) -  The number of the page to fetch
+     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "Size" (optional.Int32) -  The number of the elements to fetch
      * @param "Sort" (optional.Interface of []string) -  Sort criteria for the elements.
      * @param "FilterIdentifier" (optional.String) -
@@ -589,7 +589,7 @@ func (a *ExecutionDetailsApiService) GetListOfExecutions(ctx context.Context, ac
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

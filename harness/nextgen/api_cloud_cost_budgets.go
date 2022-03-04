@@ -26,12 +26,12 @@ var (
 type CloudCostBudgetsApiService service
 
 /*
-CloudCostBudgetsApiService Clone an existing Budget
-Clone an existing Budget using an existing Budget identifier
+CloudCostBudgetsApiService Clone a budget
+Clone a Cloud Cost Budget using the given Budget ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param id The identifier of the Budget
- * @param cloneName The name of the new Budget created after cloning operation
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param id Unique identifier for the budget
+ * @param cloneName Name of the new budget
 @return ResponseDtoString
 */
 func (a *CloudCostBudgetsApiService) CloneBudget(ctx context.Context, accountIdentifier string, id string, cloneName string) (ResponseDtoString, *http.Response, error) {
@@ -113,7 +113,7 @@ func (a *CloudCostBudgetsApiService) CloneBudget(ctx context.Context, accountIde
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -123,7 +123,7 @@ func (a *CloudCostBudgetsApiService) CloneBudget(ctx context.Context, accountIde
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -150,10 +150,10 @@ func (a *CloudCostBudgetsApiService) CloneBudget(ctx context.Context, accountIde
 
 /*
 CloudCostBudgetsApiService Create a Budget
-Creates a Budget from the Budget object passed as a request body
+Create a Budget to set and receive alerts when your costs exceed (or are forecasted to exceed) your budget amount.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body The Budget definition
- * @param accountIdentifier Account Identifier for the entity
+ * @param body Budget definition
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoString
 */
 func (a *CloudCostBudgetsApiService) CreateBudget(ctx context.Context, body Budget, accountIdentifier string) (ResponseDtoString, *http.Response, error) {
@@ -235,7 +235,7 @@ func (a *CloudCostBudgetsApiService) CreateBudget(ctx context.Context, body Budg
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -245,7 +245,7 @@ func (a *CloudCostBudgetsApiService) CreateBudget(ctx context.Context, body Budg
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -271,11 +271,11 @@ func (a *CloudCostBudgetsApiService) CreateBudget(ctx context.Context, body Budg
 }
 
 /*
-CloudCostBudgetsApiService Delete an existing Budget
-Delete an existing Cloud Cost Budget by identifier
+CloudCostBudgetsApiService Delete a budget
+Delete a Cloud Cost Budget for the given Budget ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param id The identifier of the Budget
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param id Unique identifier for the budget
 @return ResponseDtoString
 */
 func (a *CloudCostBudgetsApiService) DeleteBudget(ctx context.Context, accountIdentifier string, id string) (ResponseDtoString, *http.Response, error) {
@@ -356,7 +356,7 @@ func (a *CloudCostBudgetsApiService) DeleteBudget(ctx context.Context, accountId
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -366,7 +366,7 @@ func (a *CloudCostBudgetsApiService) DeleteBudget(ctx context.Context, accountId
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -392,11 +392,11 @@ func (a *CloudCostBudgetsApiService) DeleteBudget(ctx context.Context, accountId
 }
 
 /*
-CloudCostBudgetsApiService Get a Budget
-Get a Cloud Cost Budget by an identifier
+CloudCostBudgetsApiService Fetch Budget details
+Fetch details of a Cloud Cost Budget for the given Budget ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param id The identifier of an existing Budget
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param id Unique identifier for the budget
 @return ResponseDtoBudget
 */
 func (a *CloudCostBudgetsApiService) GetBudget(ctx context.Context, accountIdentifier string, id string) (ResponseDtoBudget, *http.Response, error) {
@@ -477,7 +477,7 @@ func (a *CloudCostBudgetsApiService) GetBudget(ctx context.Context, accountIdent
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -487,7 +487,7 @@ func (a *CloudCostBudgetsApiService) GetBudget(ctx context.Context, accountIdent
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -513,11 +513,11 @@ func (a *CloudCostBudgetsApiService) GetBudget(ctx context.Context, accountIdent
 }
 
 /*
-CloudCostBudgetsApiService Get the cost details associated with a Budget
-Get the cost details associated with a Cloud Cost Budget identifier
+CloudCostBudgetsApiService Fetch the cost details of a Budget
+Fetch the cost details of a Cloud Cost Budget for the given Budget ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param id The identifier of the Budget
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param id Unique identifier for the Budget
 @return ResponseDtoBudgetData
 */
 func (a *CloudCostBudgetsApiService) GetCostDetails(ctx context.Context, accountIdentifier string, id string) (ResponseDtoBudgetData, *http.Response, error) {
@@ -598,7 +598,7 @@ func (a *CloudCostBudgetsApiService) GetCostDetails(ctx context.Context, account
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -608,7 +608,7 @@ func (a *CloudCostBudgetsApiService) GetCostDetails(ctx context.Context, account
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -635,9 +635,9 @@ func (a *CloudCostBudgetsApiService) GetCostDetails(ctx context.Context, account
 
 /*
 CloudCostBudgetsApiService List all the Budgets
-List all the Cloud Cost Budgets
+List all the Cloud Cost Budgets.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoListBudget
 */
 func (a *CloudCostBudgetsApiService) ListBudgets(ctx context.Context, accountIdentifier string) (ResponseDtoListBudget, *http.Response, error) {
@@ -717,7 +717,7 @@ func (a *CloudCostBudgetsApiService) ListBudgets(ctx context.Context, accountIde
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -727,7 +727,7 @@ func (a *CloudCostBudgetsApiService) ListBudgets(ctx context.Context, accountIde
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -754,10 +754,10 @@ func (a *CloudCostBudgetsApiService) ListBudgets(ctx context.Context, accountIde
 
 /*
 CloudCostBudgetsApiService List all the Budgets associated with a Perspective
-List all the Cloud Cost Budgets associated with a Cloud Cost Perspective identifier
+List all the Cloud Cost Budgets associated for the given Perspective ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
- * @param perspectiveId The identifier of an existing Perspective
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param perspectiveId Unique identifier for the Perspective
 @return ResponseDtoListBudget
 */
 func (a *CloudCostBudgetsApiService) ListBudgetsForPerspective(ctx context.Context, accountIdentifier string, perspectiveId string) (ResponseDtoListBudget, *http.Response, error) {
@@ -838,7 +838,7 @@ func (a *CloudCostBudgetsApiService) ListBudgetsForPerspective(ctx context.Conte
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -848,7 +848,7 @@ func (a *CloudCostBudgetsApiService) ListBudgetsForPerspective(ctx context.Conte
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -874,12 +874,12 @@ func (a *CloudCostBudgetsApiService) ListBudgetsForPerspective(ctx context.Conte
 }
 
 /*
-CloudCostBudgetsApiService Update an existing Budget
-Update an existing Budget using the identifier passed as a path param
+CloudCostBudgetsApiService Update an existing budget
+Update an existing Cloud Cost Budget for the given Budget ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body The Budget object as a request body
- * @param accountIdentifier Account Identifier for the entity
- * @param id The identifier of an existing Budget
+ * @param body The Budget object
+ * @param accountIdentifier Account Identifier for the Entity
+ * @param id Unique identifier for the budget
 @return ResponseDtoString
 */
 func (a *CloudCostBudgetsApiService) UpdateBudget(ctx context.Context, body Budget, accountIdentifier string, id string) (ResponseDtoString, *http.Response, error) {
@@ -962,7 +962,7 @@ func (a *CloudCostBudgetsApiService) UpdateBudget(ctx context.Context, body Budg
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -972,7 +972,7 @@ func (a *CloudCostBudgetsApiService) UpdateBudget(ctx context.Context, body Budg
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

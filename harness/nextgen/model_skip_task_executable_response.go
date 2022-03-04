@@ -11,14 +11,14 @@ package nextgen
 
 type SkipTaskExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet                  `json:"unknownFields,omitempty"`
+	Initialized               bool                              `json:"initialized,omitempty"`
 	SerializedSize            int32                             `json:"serializedSize,omitempty"`
+	MessageBytes              *ByteString                       `json:"messageBytes,omitempty"`
 	ParserForType             *ParserSkipTaskExecutableResponse `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *SkipTaskExecutableResponse       `json:"defaultInstanceForType,omitempty"`
-	Initialized               bool                              `json:"initialized,omitempty"`
 	Message                   string                            `json:"message,omitempty"`
-	MessageBytes              *ByteString                       `json:"messageBytes,omitempty"`
+	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
 	InitializationErrorString string                            `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                       `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                             `json:"memoizedSerializedSize,omitempty"`
 }

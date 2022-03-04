@@ -9,16 +9,25 @@
  */
 package nextgen
 
-// Contains information of Git Sync Entity
+// This contains details of the Git Sync Entity
 type GitSyncEntity struct {
-	EntityName       string           `json:"entityName,omitempty"`
-	EntityType       string           `json:"entityType,omitempty"`
-	EntityIdentifier string           `json:"entityIdentifier,omitempty"`
-	GitConnectorId   string           `json:"gitConnectorId,omitempty"`
-	RepoUrl          string           `json:"repoUrl,omitempty"`
-	Branch           string           `json:"branch,omitempty"`
-	FolderPath       string           `json:"folderPath,omitempty"`
-	EntityGitPath    string           `json:"entityGitPath,omitempty"`
+	// Name of the Entity
+	EntityName string `json:"entityName,omitempty"`
+	// Entity Type
+	EntityType string `json:"entityType,omitempty"`
+	// Id of the Entity
+	EntityIdentifier string `json:"entityIdentifier,omitempty"`
+	// Id of the Connector referenced in Git
+	GitConnectorId string `json:"gitConnectorId,omitempty"`
+	// Repo URL
+	RepoUrl string `json:"repoUrl,omitempty"`
+	// Branch Name
+	Branch string `json:"branch,omitempty"`
+	// Root Folder Path of the Entity
+	FolderPath string `json:"folderPath,omitempty"`
+	// File Path of the Entity
+	EntityGitPath string `json:"entityGitPath,omitempty"`
+	// Type of Git Repo Provider
 	RepoProviderType string           `json:"repoProviderType,omitempty"`
 	EntityReference  *EntityReference `json:"entityReference,omitempty"`
 	AccountId        string           `json:"accountId,omitempty"`

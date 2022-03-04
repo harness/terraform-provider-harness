@@ -9,10 +9,14 @@
  */
 package nextgen
 
-// This is the view of the Step Pallete
+// This has details of the Step Palette.
 type StepPalleteModuleInfo struct {
-	Module                string `json:"module,omitempty"`
-	Category              string `json:"category,omitempty"`
-	ShouldShowCommonSteps bool   `json:"shouldShowCommonSteps,omitempty"`
-	CommonStepCategory    string `json:"commonStepCategory,omitempty"`
+	// Module Type like CD/CI etc
+	Module string `json:"module,omitempty"`
+	// Step Category like Approval/Provisioner etc
+	Category string `json:"category,omitempty"`
+	// Whether Pallete should list the common Steps
+	ShouldShowCommonSteps bool `json:"shouldShowCommonSteps,omitempty"`
+	// Category for common Steps
+	CommonStepCategory string `json:"commonStepCategory,omitempty"`
 }

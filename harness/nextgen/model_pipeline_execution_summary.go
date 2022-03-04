@@ -34,9 +34,10 @@ type PipelineExecutionSummary struct {
 	RunningStagesCount    int64                             `json:"runningStagesCount,omitempty"`
 	FailedStagesCount     int64                             `json:"failedStagesCount,omitempty"`
 	TotalStagesCount      int64                             `json:"totalStagesCount,omitempty"`
-	GitDetails            *EntityGitDetails                 `json:"gitDetails,omitempty"`
+	GitDetails            *PipelineEntityGitDetails         `json:"gitDetails,omitempty"`
 	IsStagesExecution     bool                              `json:"isStagesExecution,omitempty"`
 	StagesExecuted        []string                          `json:"stagesExecuted,omitempty"`
 	StagesExecutedNames   map[string]string                 `json:"stagesExecutedNames,omitempty"`
+	AllowStageExecutions  bool                              `json:"allowStageExecutions,omitempty"`
 	StagesExecution       bool                              `json:"stagesExecution,omitempty"`
 }

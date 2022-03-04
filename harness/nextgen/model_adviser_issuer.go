@@ -11,14 +11,14 @@ package nextgen
 
 type AdviserIssuer struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
 	SerializedSize            int32                  `json:"serializedSize,omitempty"`
 	ParserForType             *ParserAdviserIssuer   `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *AdviserIssuer         `json:"defaultInstanceForType,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
 	AdviserTypeValue          int32                  `json:"adviserTypeValue,omitempty"`
 	AdviserType               string                 `json:"adviserType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

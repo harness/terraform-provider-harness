@@ -10,12 +10,12 @@
 package nextgen
 
 type SourceCodeInfoOrBuilder struct {
-	LocationList              []Location             `json:"locationList,omitempty"`
 	LocationCount             int32                  `json:"locationCount,omitempty"`
 	LocationOrBuilderList     []LocationOrBuilder    `json:"locationOrBuilderList,omitempty"`
+	LocationList              []Location             `json:"locationList,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

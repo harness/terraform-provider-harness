@@ -11,12 +11,12 @@ package nextgen
 
 type OneofDescriptorProtoOrBuilder struct {
 	Options                   *OneofOptions          `json:"options,omitempty"`
-	Name                      string                 `json:"name,omitempty"`
-	NameBytes                 *ByteString            `json:"nameBytes,omitempty"`
 	OptionsOrBuilder          *OneofOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
+	NameBytes                 *ByteString            `json:"nameBytes,omitempty"`
+	Name                      string                 `json:"name,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

@@ -17,10 +17,10 @@ type FileDescriptor struct {
 	Extensions         []FieldDescriptor    `json:"extensions,omitempty"`
 	Dependencies       []FileDescriptor     `json:"dependencies,omitempty"`
 	PublicDependencies []FileDescriptor     `json:"publicDependencies,omitempty"`
-	Options            *FileOptions         `json:"options,omitempty"`
 	FullName           string               `json:"fullName,omitempty"`
+	Options            *FileOptions         `json:"options,omitempty"`
+	Syntax             string               `json:"syntax,omitempty"`
 	Name               string               `json:"name,omitempty"`
 	Package_           string               `json:"package,omitempty"`
 	File               *FileDescriptor      `json:"file,omitempty"`
-	Syntax             string               `json:"syntax,omitempty"`
 }

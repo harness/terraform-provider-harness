@@ -47,33 +47,45 @@ type APIClient struct {
 
 	// API Services
 
-	AccountsApi *AccountsApiService
+	APIKeysApi *APIKeysApiService
 
-	AclApi *AclApiService
+	AccessControlListApi *AccessControlListApiService
+
+	AccountSettingApi *AccountSettingApiService
+
+	AccountsApi *AccountsApiService
 
 	ApiKeyApi *ApiKeyApiService
 
-	ApprovalsApi *ApprovalsApiService
-
 	AuthenticationSettingsApi *AuthenticationSettingsApiService
 
+	CloudCostAutoStoppingFixedSchedulesApi *CloudCostAutoStoppingFixedSchedulesApiService
+
+	CloudCostAutoStoppingLoadBalancersApi *CloudCostAutoStoppingLoadBalancersApiService
+
+	CloudCostAutoStoppingRulesApi *CloudCostAutoStoppingRulesApiService
+
 	CloudCostBudgetsApi *CloudCostBudgetsApiService
+
+	CloudCostDetailsApi *CloudCostDetailsApiService
 
 	CloudCostPerspectiveReportsApi *CloudCostPerspectiveReportsApiService
 
 	CloudCostPerspectivesApi *CloudCostPerspectivesApiService
 
+	CloudCostRecommendationsApi *CloudCostRecommendationsApiService
+
+	CloudCostRecommendationsDetailsApi *CloudCostRecommendationsDetailsApiService
+
 	ConnectorsApi *ConnectorsApiService
-
-	DelegateConfigurationManagementApi *DelegateConfigurationManagementApiService
-
-	DelegateConfigurationResourceApi *DelegateConfigurationResourceApiService
 
 	EnvironmentsApi *EnvironmentsApiService
 
 	ExecuteApi *ExecuteApiService
 
 	ExecutionDetailsApi *ExecutionDetailsApiService
+
+	FeatureFlagsApi *FeatureFlagsApiService
 
 	FilterApi *FilterApiService
 
@@ -115,7 +127,9 @@ type APIClient struct {
 
 	SCIMApi *SCIMApiService
 
-	ScmApi *ScmApiService
+	SCMApi *SCMApiService
+
+	SMTPApi *SMTPApiService
 
 	SecretManagersApi *SecretManagersApiService
 
@@ -125,9 +139,11 @@ type APIClient struct {
 
 	ServicesApi *ServicesApiService
 
-	SmtpConfigApi *SmtpConfigApiService
-
 	SourceCodeManagerApi *SourceCodeManagerApiService
+
+	TargetGroupsApi *TargetGroupsApiService
+
+	TargetsApi *TargetsApiService
 
 	TokenApi *TokenApiService
 
@@ -160,20 +176,26 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.common.client = c
 
 	// API Services
+	c.APIKeysApi = (*APIKeysApiService)(&c.common)
+	c.AccessControlListApi = (*AccessControlListApiService)(&c.common)
+	c.AccountSettingApi = (*AccountSettingApiService)(&c.common)
 	c.AccountsApi = (*AccountsApiService)(&c.common)
-	c.AclApi = (*AclApiService)(&c.common)
 	c.ApiKeyApi = (*ApiKeyApiService)(&c.common)
-	c.ApprovalsApi = (*ApprovalsApiService)(&c.common)
 	c.AuthenticationSettingsApi = (*AuthenticationSettingsApiService)(&c.common)
+	c.CloudCostAutoStoppingFixedSchedulesApi = (*CloudCostAutoStoppingFixedSchedulesApiService)(&c.common)
+	c.CloudCostAutoStoppingLoadBalancersApi = (*CloudCostAutoStoppingLoadBalancersApiService)(&c.common)
+	c.CloudCostAutoStoppingRulesApi = (*CloudCostAutoStoppingRulesApiService)(&c.common)
 	c.CloudCostBudgetsApi = (*CloudCostBudgetsApiService)(&c.common)
+	c.CloudCostDetailsApi = (*CloudCostDetailsApiService)(&c.common)
 	c.CloudCostPerspectiveReportsApi = (*CloudCostPerspectiveReportsApiService)(&c.common)
 	c.CloudCostPerspectivesApi = (*CloudCostPerspectivesApiService)(&c.common)
+	c.CloudCostRecommendationsApi = (*CloudCostRecommendationsApiService)(&c.common)
+	c.CloudCostRecommendationsDetailsApi = (*CloudCostRecommendationsDetailsApiService)(&c.common)
 	c.ConnectorsApi = (*ConnectorsApiService)(&c.common)
-	c.DelegateConfigurationManagementApi = (*DelegateConfigurationManagementApiService)(&c.common)
-	c.DelegateConfigurationResourceApi = (*DelegateConfigurationResourceApiService)(&c.common)
 	c.EnvironmentsApi = (*EnvironmentsApiService)(&c.common)
 	c.ExecuteApi = (*ExecuteApiService)(&c.common)
 	c.ExecutionDetailsApi = (*ExecutionDetailsApiService)(&c.common)
+	c.FeatureFlagsApi = (*FeatureFlagsApiService)(&c.common)
 	c.FilterApi = (*FilterApiService)(&c.common)
 	c.GcpClustersApi = (*GcpClustersApiService)(&c.common)
 	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
@@ -194,13 +216,15 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
 	c.RolesApi = (*RolesApiService)(&c.common)
 	c.SCIMApi = (*SCIMApiService)(&c.common)
-	c.ScmApi = (*ScmApiService)(&c.common)
+	c.SCMApi = (*SCMApiService)(&c.common)
+	c.SMTPApi = (*SMTPApiService)(&c.common)
 	c.SecretManagersApi = (*SecretManagersApiService)(&c.common)
 	c.SecretsApi = (*SecretsApiService)(&c.common)
 	c.ServiceAccountApi = (*ServiceAccountApiService)(&c.common)
 	c.ServicesApi = (*ServicesApiService)(&c.common)
-	c.SmtpConfigApi = (*SmtpConfigApiService)(&c.common)
 	c.SourceCodeManagerApi = (*SourceCodeManagerApiService)(&c.common)
+	c.TargetGroupsApi = (*TargetGroupsApiService)(&c.common)
+	c.TargetsApi = (*TargetsApiService)(&c.common)
 	c.TokenApi = (*TokenApiService)(&c.common)
 	c.TriggersApi = (*TriggersApiService)(&c.common)
 	c.UsageApi = (*UsageApiService)(&c.common)

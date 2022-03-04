@@ -9,8 +9,10 @@
  */
 package nextgen
 
-// This contains a list of Repo Files with a specific ModuleType
+// This contains a list of repo files with a specific Module Type
 type GitSyncRepoFilesList struct {
-	ModuleType           string             `json:"moduleType,omitempty"`
+	// Module Type
+	ModuleType string `json:"moduleType,omitempty"`
+	// List of all the repo files specific to the given Module Type
 	GitSyncRepoFilesList []GitSyncRepoFiles `json:"gitSyncRepoFilesList,omitempty"`
 }

@@ -11,18 +11,18 @@ package nextgen
 
 type EnumOptions struct {
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
+	AllowAlias                       bool                           `json:"allowAlias,omitempty"`
 	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
 	ParserForType                    *ParserEnumOptions             `json:"parserForType,omitempty"`
 	DefaultInstanceForType           *EnumOptions                   `json:"defaultInstanceForType,omitempty"`
-	Initialized                      bool                           `json:"initialized,omitempty"`
-	AllowAlias                       bool                           `json:"allowAlias,omitempty"`
 	Deprecated                       bool                           `json:"deprecated,omitempty"`
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
 	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

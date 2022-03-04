@@ -12,4 +12,5 @@ package nextgen
 type InputSetErrorWrapperDtopms struct {
 	ErrorPipelineYaml      string                                 `json:"errorPipelineYaml,omitempty"`
 	UuidToErrorResponseMap map[string]InputSetErrorResponseDtopms `json:"uuidToErrorResponseMap,omitempty"`
+	Type_                  string                                 `json:"type,omitempty"`
 }

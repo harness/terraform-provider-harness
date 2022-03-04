@@ -28,5 +28,4 @@ type PlanExecution struct {
 	Version            int64               `json:"version,omitempty"`
 	NextIteration      int64               `json:"nextIteration,omitempty"`
 	NodeType           string              `json:"nodeType,omitempty"`
-	NodeId             string              `json:"nodeId,omitempty"`
 }

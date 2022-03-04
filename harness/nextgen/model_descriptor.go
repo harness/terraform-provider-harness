@@ -21,6 +21,6 @@ type Descriptor struct {
 	Extensions     []FieldDescriptor `json:"extensions,omitempty"`
 	Oneofs         []OneofDescriptor `json:"oneofs,omitempty"`
 	Options        *MessageOptions   `json:"options,omitempty"`
-	Name           string            `json:"name,omitempty"`
 	Extendable     bool              `json:"extendable,omitempty"`
+	Name           string            `json:"name,omitempty"`
 }

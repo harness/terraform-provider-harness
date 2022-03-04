@@ -11,14 +11,14 @@ package nextgen
 
 type FileOptions struct {
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
+	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
 	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
 	ParserForType                    *ParserFileOptions             `json:"parserForType,omitempty"`
 	DefaultInstanceForType           *FileOptions                   `json:"defaultInstanceForType,omitempty"`
-	Initialized                      bool                           `json:"initialized,omitempty"`
-	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
+	JavaPackage                      string                         `json:"javaPackage,omitempty"`
 	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
 	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
-	JavaPackage                      string                         `json:"javaPackage,omitempty"`
 	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
 	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
 	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
@@ -48,9 +48,9 @@ type FileOptions struct {
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
 	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

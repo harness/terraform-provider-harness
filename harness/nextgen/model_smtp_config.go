@@ -9,10 +9,10 @@
  */
 package nextgen
 
-// This is the view of SmtpConfig entity defined in Harness
+// This has the SMTP configuration details defined in Harness.
 type SmtpConfig struct {
-	Host        string   `json:"host,omitempty"`
-	Port        int32    `json:"port,omitempty"`
+	Host        string   `json:"host"`
+	Port        int32    `json:"port"`
 	FromAddress string   `json:"fromAddress,omitempty"`
 	UseSSL      bool     `json:"useSSL,omitempty"`
 	StartTLS    bool     `json:"startTLS,omitempty"`

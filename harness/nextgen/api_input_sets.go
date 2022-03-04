@@ -39,8 +39,8 @@ InputSetsApiService Delete the Input Set by Identifier
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  File Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  File Path of the Entity
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
 @return ResponseDtoBoolean
@@ -158,7 +158,7 @@ func (a *InputSetsApiService) DeleteInputSet(ctx context.Context, inputSetIdenti
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -304,7 +304,7 @@ func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifie
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -450,7 +450,7 @@ func (a *InputSetsApiService) GetOverlayInputSet(ctx context.Context, inputSetId
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -493,7 +493,7 @@ InputSetsApiService List all Input Sets for a pipeline
  * @param projectIdentifier Project Identifier for the entity.
  * @param pipelineIdentifier Pipeline identifier for which we need the Input Sets list.
  * @param optional nil or *InputSetsApiListInputSetOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  The number of the page to fetch
+     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
      * @param "InputSetType" (optional.String) -  Type of Input Set needed: \&quot;INPUT_SET\&quot;, or \&quot;OVERLAY_INPUT_SET\&quot;, or \&quot;ALL\&quot;. If nothing is sent, ALL is considered.
      * @param "SearchTerm" (optional.String) -  Search term to filter out Input Sets based on name, identifier, tags.
@@ -619,7 +619,7 @@ func (a *InputSetsApiService) ListInputSet(ctx context.Context, accountIdentifie
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -776,7 +776,7 @@ func (a *InputSetsApiService) MergeInputSets(ctx context.Context, body MergeInpu
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -933,7 +933,7 @@ func (a *InputSetsApiService) MergeRuntimeInputIntoPipeline(ctx context.Context,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -981,9 +981,9 @@ InputSetsApiService Create an Input Set for a Pipeline
      * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline for which the Input Set is to be created
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  File Path
-     * @param "CommitMsg" (optional.String) -  File Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  File Path of the Entity
+     * @param "CommitMsg" (optional.String) -  File Path of the Entity
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
      * @param "BaseBranch" (optional.String) -  Default Branch
 @return ResponseDtoInputSetResponse
@@ -1110,7 +1110,7 @@ func (a *InputSetsApiService) PostInputSet(ctx context.Context, body string, acc
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1156,9 +1156,9 @@ InputSetsApiService Create an Overlay Input Set for a pipeline
  * @param optional nil or *InputSetsApiPostOverlayInputSetOpts - Optional Parameters:
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  File Path
-     * @param "CommitMsg" (optional.String) -  File Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  File Path of the Entity
+     * @param "CommitMsg" (optional.String) -  File Path of the Entity
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
      * @param "BaseBranch" (optional.String) -  Default Branch
 @return ResponseDtoOverlayInputSetResponse
@@ -1277,7 +1277,7 @@ func (a *InputSetsApiService) PostOverlayInputSet(ctx context.Context, body stri
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1327,8 +1327,8 @@ InputSetsApiService Update Input Set for Pipeline
      * @param "PipelineRepoID" (optional.String) -  Github Repo Id of the Pipeline for which the Input Set is to be created
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  Default Folder Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  Root Folder Path of the Entity
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
      * @param "BaseBranch" (optional.String) -  Default Branch
@@ -1461,7 +1461,7 @@ func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, acco
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1509,8 +1509,8 @@ InputSetsApiService Update an Overlay Input Set for a pipeline
      * @param "IfMatch" (optional.String) -  Version of entity to match
      * @param "Branch" (optional.String) -  Branch Name
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Default Folder Path
-     * @param "FilePath" (optional.String) -  Default Folder Path
+     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
+     * @param "FilePath" (optional.String) -  Root Folder Path of the Entity
      * @param "CommitMsg" (optional.String) -  Commit Message
      * @param "LastObjectId" (optional.String) -  Last Object Id
      * @param "BaseBranch" (optional.String) -  Default Branch
@@ -1635,7 +1635,7 @@ func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body strin
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1787,7 +1787,7 @@ func (a *InputSetsApiService) RuntimeInputTemplate(ctx context.Context, accountI
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

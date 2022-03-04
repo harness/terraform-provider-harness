@@ -11,22 +11,22 @@ package nextgen
 
 // This contains Overlay Input Set details.
 type OverlayInputSetResponse struct {
-	AccountId                 string                 `json:"accountId,omitempty"`
-	OrgIdentifier             string                 `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier         string                 `json:"projectIdentifier,omitempty"`
-	PipelineIdentifier        string                 `json:"pipelineIdentifier,omitempty"`
-	Identifier                string                 `json:"identifier,omitempty"`
-	Name                      string                 `json:"name,omitempty"`
-	Description               string                 `json:"description,omitempty"`
-	InputSetReferences        []string               `json:"inputSetReferences,omitempty"`
-	OverlayInputSetYaml       string                 `json:"overlayInputSetYaml,omitempty"`
-	Tags                      map[string]string      `json:"tags,omitempty"`
-	IsOutdated                bool                   `json:"isOutdated,omitempty"`
-	IsErrorResponse           bool                   `json:"isErrorResponse,omitempty"`
-	InvalidInputSetReferences map[string]string      `json:"invalidInputSetReferences,omitempty"`
-	Version                   int64                  `json:"version,omitempty"`
-	GitDetails                *EntityGitDetails      `json:"gitDetails,omitempty"`
-	EntityValidityDetails     *EntityValidityDetails `json:"entityValidityDetails,omitempty"`
-	Outdated                  bool                   `json:"outdated,omitempty"`
-	ErrorResponse             bool                   `json:"errorResponse,omitempty"`
+	AccountId                 string                    `json:"accountId,omitempty"`
+	OrgIdentifier             string                    `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier         string                    `json:"projectIdentifier,omitempty"`
+	PipelineIdentifier        string                    `json:"pipelineIdentifier,omitempty"`
+	Identifier                string                    `json:"identifier,omitempty"`
+	Name                      string                    `json:"name,omitempty"`
+	Description               string                    `json:"description,omitempty"`
+	InputSetReferences        []string                  `json:"inputSetReferences,omitempty"`
+	OverlayInputSetYaml       string                    `json:"overlayInputSetYaml,omitempty"`
+	Tags                      map[string]string         `json:"tags,omitempty"`
+	IsOutdated                bool                      `json:"isOutdated,omitempty"`
+	IsErrorResponse           bool                      `json:"isErrorResponse,omitempty"`
+	InvalidInputSetReferences map[string]string         `json:"invalidInputSetReferences,omitempty"`
+	Version                   int64                     `json:"version,omitempty"`
+	GitDetails                *PipelineEntityGitDetails `json:"gitDetails,omitempty"`
+	EntityValidityDetails     *PipelineEntityGitDetails `json:"entityValidityDetails,omitempty"`
+	ErrorResponse             bool                      `json:"errorResponse,omitempty"`
+	Outdated                  bool                      `json:"outdated,omitempty"`
 }

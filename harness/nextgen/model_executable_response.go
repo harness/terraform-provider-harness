@@ -11,18 +11,15 @@ package nextgen
 
 type ExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet                       `json:"unknownFields,omitempty"`
-	SerializedSize            int32                                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserExecutableResponse              `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *ExecutableResponse                    `json:"defaultInstanceForType,omitempty"`
+	Async                     *AsyncExecutableResponse               `json:"async,omitempty"`
 	Initialized               bool                                   `json:"initialized,omitempty"`
+	Children                  *ChildrenExecutableResponse            `json:"children,omitempty"`
 	Task                      *TaskExecutableResponse                `json:"task,omitempty"`
 	Sync                      *SyncExecutableResponse                `json:"sync,omitempty"`
 	Child                     *ChildExecutableResponse               `json:"child,omitempty"`
-	Async                     *AsyncExecutableResponse               `json:"async,omitempty"`
 	ResponseCase              string                                 `json:"responseCase,omitempty"`
 	AsyncOrBuilder            *AsyncExecutableResponseOrBuilder      `json:"asyncOrBuilder,omitempty"`
 	ChildOrBuilder            *ChildExecutableResponseOrBuilder      `json:"childOrBuilder,omitempty"`
-	Children                  *ChildrenExecutableResponse            `json:"children,omitempty"`
 	ChildrenOrBuilder         *ChildrenExecutableResponseOrBuilder   `json:"childrenOrBuilder,omitempty"`
 	ChildChain                *ChildChainExecutableResponse          `json:"childChain,omitempty"`
 	ChildChainOrBuilder       *ChildChainExecutableResponseOrBuilder `json:"childChainOrBuilder,omitempty"`
@@ -32,8 +29,11 @@ type ExecutableResponse struct {
 	SyncOrBuilder             *SyncExecutableResponseOrBuilder       `json:"syncOrBuilder,omitempty"`
 	SkipTask                  *SkipTaskExecutableResponse            `json:"skipTask,omitempty"`
 	SkipTaskOrBuilder         *SkipTaskExecutableResponseOrBuilder   `json:"skipTaskOrBuilder,omitempty"`
+	SerializedSize            int32                                  `json:"serializedSize,omitempty"`
+	ParserForType             *ParserExecutableResponse              `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *ExecutableResponse                    `json:"defaultInstanceForType,omitempty"`
+	AllFields                 map[string]interface{}                 `json:"allFields,omitempty"`
 	InitializationErrorString string                                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}                 `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                                  `json:"memoizedSerializedSize,omitempty"`
 }

@@ -9,9 +9,14 @@
  */
 package nextgen
 
+// This contains information on the Authentication Settings defined in Harness.
 type AuthenticationSettingsResponse struct {
-	NgAuthSettings          []NgAuthSettings `json:"ngAuthSettings,omitempty"`
-	WhitelistedDomains      []string         `json:"whitelistedDomains,omitempty"`
-	AuthenticationMechanism string           `json:"authenticationMechanism,omitempty"`
-	TwoFactorEnabled        bool             `json:"twoFactorEnabled,omitempty"`
+	// List of Auth Settings configured for an Account.
+	NgAuthSettings []NgAuthSettings `json:"ngAuthSettings,omitempty"`
+	// List of the whitelisted domains.
+	WhitelistedDomains []string `json:"whitelistedDomains,omitempty"`
+	// Indicates if the Authentication Mechanism is SSO or NON-SSO.
+	AuthenticationMechanism string `json:"authenticationMechanism,omitempty"`
+	// If Two Factor Authentication is enabled, this value is true. Otherwise, it is false.
+	TwoFactorEnabled bool `json:"twoFactorEnabled,omitempty"`
 }

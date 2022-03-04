@@ -128,7 +128,7 @@ func (a *HarnessResourceGroupApiService) CreateResourceGroup(ctx context.Context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -263,7 +263,7 @@ func (a *HarnessResourceGroupApiService) DeleteResourceGroup(ctx context.Context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -303,6 +303,7 @@ HarnessResourceGroupApiService
 This fetches a filtered list of Resource Groups
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Filter Resource Groups based on multiple parameters
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *HarnessResourceGroupApiGetFilterResourceGroupListOpts - Optional Parameters:
      * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
      * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
@@ -316,7 +317,7 @@ type HarnessResourceGroupApiGetFilterResourceGroupListOpts struct {
 	SortOrders optional.Interface
 }
 
-func (a *HarnessResourceGroupApiService) GetFilterResourceGroupList(ctx context.Context, body ResourceGroupFilter, localVarOptionals *HarnessResourceGroupApiGetFilterResourceGroupListOpts) (ResponseDtoPageResponseResourceGroupResponse, *http.Response, error) {
+func (a *HarnessResourceGroupApiService) GetFilterResourceGroupList(ctx context.Context, body ResourceGroupFilter, accountIdentifier string, localVarOptionals *HarnessResourceGroupApiGetFilterResourceGroupListOpts) (ResponseDtoPageResponseResourceGroupResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -332,6 +333,7 @@ func (a *HarnessResourceGroupApiService) GetFilterResourceGroupList(ctx context.
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.PageIndex.IsSet() {
 		localVarQueryParams.Add("pageIndex", parameterToString(localVarOptionals.PageIndex.Value(), ""))
 	}
@@ -403,7 +405,7 @@ func (a *HarnessResourceGroupApiService) GetFilterResourceGroupList(ctx context.
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -538,7 +540,7 @@ func (a *HarnessResourceGroupApiService) GetResourceGroup(ctx context.Context, i
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -691,7 +693,7 @@ func (a *HarnessResourceGroupApiService) GetResourceGroupList(ctx context.Contex
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -829,7 +831,7 @@ func (a *HarnessResourceGroupApiService) UpdateResourceGroup(ctx context.Context
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

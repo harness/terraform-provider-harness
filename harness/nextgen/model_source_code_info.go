@@ -11,15 +11,15 @@ package nextgen
 
 type SourceCodeInfo struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
+	LocationCount             int32                  `json:"locationCount,omitempty"`
+	LocationOrBuilderList     []LocationOrBuilder    `json:"locationOrBuilderList,omitempty"`
 	SerializedSize            int32                  `json:"serializedSize,omitempty"`
 	ParserForType             *ParserSourceCodeInfo  `json:"parserForType,omitempty"`
 	DefaultInstanceForType    *SourceCodeInfo        `json:"defaultInstanceForType,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
 	LocationList              []Location             `json:"locationList,omitempty"`
-	LocationCount             int32                  `json:"locationCount,omitempty"`
-	LocationOrBuilderList     []LocationOrBuilder    `json:"locationOrBuilderList,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

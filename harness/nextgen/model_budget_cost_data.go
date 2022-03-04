@@ -11,6 +11,7 @@ package nextgen
 
 type BudgetCostData struct {
 	Time                     int64   `json:"time,omitempty"`
+	EndTime                  int64   `json:"endTime,omitempty"`
 	ActualCost               float64 `json:"actualCost,omitempty"`
 	Budgeted                 float64 `json:"budgeted,omitempty"`
 	BudgetVariance           float64 `json:"budgetVariance,omitempty"`

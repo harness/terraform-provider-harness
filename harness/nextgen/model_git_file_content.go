@@ -9,7 +9,10 @@
  */
 package nextgen
 
+// This contains content of Git File
 type GitFileContent struct {
-	Content  string `json:"content,omitempty"`
+	// Git File Content
+	Content string `json:"content,omitempty"`
+	// Object Id of the Git File
 	ObjectId string `json:"objectId,omitempty"`
 }

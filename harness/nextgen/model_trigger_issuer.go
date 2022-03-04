@@ -11,15 +11,15 @@ package nextgen
 
 type TriggerIssuer struct {
 	UnknownFields                *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	Initialized                  bool                   `json:"initialized,omitempty"`
+	AbortPrevConcurrentExecution bool                   `json:"abortPrevConcurrentExecution,omitempty"`
 	TriggerRef                   string                 `json:"triggerRef,omitempty"`
 	SerializedSize               int32                  `json:"serializedSize,omitempty"`
 	ParserForType                *ParserTriggerIssuer   `json:"parserForType,omitempty"`
 	DefaultInstanceForType       *TriggerIssuer         `json:"defaultInstanceForType,omitempty"`
-	Initialized                  bool                   `json:"initialized,omitempty"`
 	TriggerRefBytes              *ByteString            `json:"triggerRefBytes,omitempty"`
-	AbortPrevConcurrentExecution bool                   `json:"abortPrevConcurrentExecution,omitempty"`
+	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString    string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType            *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                    map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize       int32                  `json:"memoizedSerializedSize,omitempty"`
 }

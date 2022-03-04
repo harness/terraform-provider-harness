@@ -9,8 +9,10 @@
  */
 package nextgen
 
+// This contains the information about OAuth settings defined in Harness.
 type OAuthSettings struct {
-	Filter           string   `json:"filter,omitempty"`
+	Filter string `json:"filter,omitempty"`
+	// This is the list of OAuth Providers that are supported.
 	AllowedProviders []string `json:"allowedProviders,omitempty"`
 	SettingsType     string   `json:"settingsType,omitempty"`
 }

@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// Returns config details for the AWS KMS Secret Manager Connector.
+// Returns the configuration details for the AWS KMS Secret Manager.
 
 import "encoding/json"
 

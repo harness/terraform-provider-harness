@@ -10,6 +10,7 @@
 package nextgen
 
 type UninterpretedOptionOrBuilder struct {
+	StringValue               *ByteString            `json:"stringValue,omitempty"`
 	NameList                  []NamePart             `json:"nameList,omitempty"`
 	NameOrBuilderList         []NamePartOrBuilder    `json:"nameOrBuilderList,omitempty"`
 	IdentifierValue           string                 `json:"identifierValue,omitempty"`
@@ -18,12 +19,11 @@ type UninterpretedOptionOrBuilder struct {
 	NegativeIntValue          int64                  `json:"negativeIntValue,omitempty"`
 	AggregateValue            string                 `json:"aggregateValue,omitempty"`
 	AggregateValueBytes       *ByteString            `json:"aggregateValueBytes,omitempty"`
-	StringValue               *ByteString            `json:"stringValue,omitempty"`
-	NameCount                 int32                  `json:"nameCount,omitempty"`
 	DoubleValue               float64                `json:"doubleValue,omitempty"`
+	NameCount                 int32                  `json:"nameCount,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`

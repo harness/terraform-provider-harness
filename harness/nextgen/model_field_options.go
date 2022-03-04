@@ -11,22 +11,22 @@ package nextgen
 
 type FieldOptions struct {
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
+	Packed                           bool                           `json:"packed,omitempty"`
+	Jstype                           string                         `json:"jstype,omitempty"`
+	Ctype                            string                         `json:"ctype,omitempty"`
 	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
 	ParserForType                    *ParserFieldOptions            `json:"parserForType,omitempty"`
 	DefaultInstanceForType           *FieldOptions                  `json:"defaultInstanceForType,omitempty"`
-	Initialized                      bool                           `json:"initialized,omitempty"`
-	Lazy                             bool                           `json:"lazy,omitempty"`
-	Ctype                            string                         `json:"ctype,omitempty"`
-	Jstype                           string                         `json:"jstype,omitempty"`
-	Weak                             bool                           `json:"weak,omitempty"`
-	Packed                           bool                           `json:"packed,omitempty"`
 	Deprecated                       bool                           `json:"deprecated,omitempty"`
+	Lazy                             bool                           `json:"lazy,omitempty"`
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
+	Weak                             bool                           `json:"weak,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
 	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

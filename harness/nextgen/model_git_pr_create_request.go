@@ -10,9 +10,9 @@
 package nextgen
 
 type GitPrCreateRequest struct {
-	// Branch on which changes are done
+	// Source Branch for pull request
 	SourceBranch string `json:"sourceBranch"`
-	// Branch on which changes need to be merged
+	// Target Branch for pull request
 	TargetBranch string `json:"targetBranch"`
 	// PR title
 	Title string `json:"title"`

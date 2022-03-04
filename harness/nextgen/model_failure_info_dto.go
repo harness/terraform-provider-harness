@@ -10,7 +10,7 @@
 package nextgen
 
 type FailureInfoDto struct {
-	Message          string                    `json:"message,omitempty"`
-	FailureTypeList  []string                  `json:"failureTypeList,omitempty"`
-	ResponseMessages []PipelineResponseMessage `json:"responseMessages,omitempty"`
+	Message          string            `json:"message,omitempty"`
+	FailureTypeList  []string          `json:"failureTypeList,omitempty"`
+	ResponseMessages []ResponseMessage `json:"responseMessages,omitempty"`
 }

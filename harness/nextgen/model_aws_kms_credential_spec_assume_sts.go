@@ -9,10 +9,14 @@
  */
 package nextgen
 
-// Returns Delegate selectors, RoleArn and STS role duration used by AWS KMS Secret Manager.
+// Returns Delegate selectors, Role ARN and STS role duration used by AWS KMS Secret Manager.
 type AwsKmsCredentialSpecAssumeSts struct {
-	DelegateSelectors     []string `json:"delegateSelectors"`
-	RoleArn               string   `json:"roleArn"`
-	ExternalName          string   `json:"externalName,omitempty"`
-	AssumeStsRoleDuration int32    `json:"assumeStsRoleDuration,omitempty"`
+	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
+	DelegateSelectors []string `json:"delegateSelectors"`
+	// Role ARN for the Delegate with STS Role.
+	RoleArn string `json:"roleArn"`
+	// External Name.
+	ExternalName string `json:"externalName,omitempty"`
+	// This is the time duration for STS Role.
+	AssumeStsRoleDuration int32 `json:"assumeStsRoleDuration,omitempty"`
 }

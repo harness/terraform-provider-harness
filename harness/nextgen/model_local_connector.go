@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains the Local connector information
+// This contains the local connector information.
 type LocalConnector struct {
 	Default_ bool `json:"default,omitempty"`
 }

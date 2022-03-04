@@ -11,17 +11,17 @@ package nextgen
 
 type InterruptConfig struct {
 	UnknownFields                 *UnknownFieldSet               `json:"unknownFields,omitempty"`
-	SerializedSize                int32                          `json:"serializedSize,omitempty"`
-	ParserForType                 *ParserInterruptConfig         `json:"parserForType,omitempty"`
-	DefaultInstanceForType        *InterruptConfig               `json:"defaultInstanceForType,omitempty"`
 	Initialized                   bool                           `json:"initialized,omitempty"`
 	ConfigCase                    string                         `json:"configCase,omitempty"`
 	IssuedBy                      *IssuedBy                      `json:"issuedBy,omitempty"`
 	IssuedByOrBuilder             *IssuedByOrBuilder             `json:"issuedByOrBuilder,omitempty"`
 	RetryInterruptConfig          *RetryInterruptConfig          `json:"retryInterruptConfig,omitempty"`
 	RetryInterruptConfigOrBuilder *RetryInterruptConfigOrBuilder `json:"retryInterruptConfigOrBuilder,omitempty"`
+	SerializedSize                int32                          `json:"serializedSize,omitempty"`
+	ParserForType                 *ParserInterruptConfig         `json:"parserForType,omitempty"`
+	DefaultInstanceForType        *InterruptConfig               `json:"defaultInstanceForType,omitempty"`
+	AllFields                     map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString     string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType             *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                     map[string]interface{}         `json:"allFields,omitempty"`
 	MemoizedSerializedSize        int32                          `json:"memoizedSerializedSize,omitempty"`
 }

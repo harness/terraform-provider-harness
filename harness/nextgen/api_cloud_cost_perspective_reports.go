@@ -28,11 +28,11 @@ var (
 type CloudCostPerspectiveReportsApiService service
 
 /*
-CloudCostPerspectiveReportsApiService Create Report Setting
-Create setting by Report identifier or by Perspective identifier, by sending CEReportSchedule as request body
+CloudCostPerspectiveReportsApiService Create a schedule for a Report
+Create a report schedule for the given Report ID or a Perspective ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body CEReportSchedule object to be saved
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoListCeReportSchedule
 */
 func (a *CloudCostPerspectiveReportsApiService) CreateReportSetting(ctx context.Context, body CeReportSchedule, accountIdentifier string) (ResponseDtoListCeReportSchedule, *http.Response, error) {
@@ -114,7 +114,7 @@ func (a *CloudCostPerspectiveReportsApiService) CreateReportSetting(ctx context.
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -124,7 +124,7 @@ func (a *CloudCostPerspectiveReportsApiService) CreateReportSetting(ctx context.
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -150,13 +150,13 @@ func (a *CloudCostPerspectiveReportsApiService) CreateReportSetting(ctx context.
 }
 
 /*
-CloudCostPerspectiveReportsApiService Delete setting by Report identifier or by Perspective identifier
-Delete setting by Report identifier or by Perspective identifier
+CloudCostPerspectiveReportsApiService Delete cost Perspective report
+Delete cost Perspective Report for the given Report ID or a Perspective ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *CloudCostPerspectiveReportsApiDeleteReportSettingOpts - Optional Parameters:
-     * @param "ReportId" (optional.String) -  The Report Identifier
-     * @param "PerspectiveId" (optional.String) -  The Perspective Identifier
+     * @param "ReportId" (optional.String) -  Unique identifier for the Report
+     * @param "PerspectiveId" (optional.String) -  Unique identifier for the Perspective
 @return ResponseDtoString
 */
 
@@ -248,7 +248,7 @@ func (a *CloudCostPerspectiveReportsApiService) DeleteReportSetting(ctx context.
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -258,7 +258,7 @@ func (a *CloudCostPerspectiveReportsApiService) DeleteReportSetting(ctx context.
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -284,13 +284,13 @@ func (a *CloudCostPerspectiveReportsApiService) DeleteReportSetting(ctx context.
 }
 
 /*
-CloudCostPerspectiveReportsApiService Get Reports by Report identifier or by Perspective identifier
-Get Reports by Report identifier or by Perspective identifier
+CloudCostPerspectiveReportsApiService Fetch details of a cost Report
+Fetch cost Report details for the given Report ID or a Perspective ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
  * @param optional nil or *CloudCostPerspectiveReportsApiGetReportSettingOpts - Optional Parameters:
-     * @param "PerspectiveId" (optional.String) -  The identifier of the Perspective
-     * @param "ReportId" (optional.String) -  The identifier of the Report
+     * @param "PerspectiveId" (optional.String) -  Unique identifier for the Perspective
+     * @param "ReportId" (optional.String) -  Unique identifier for the Report
 @return ResponseDtoListCeReportSchedule
 */
 
@@ -382,7 +382,7 @@ func (a *CloudCostPerspectiveReportsApiService) GetReportSetting(ctx context.Con
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -392,7 +392,7 @@ func (a *CloudCostPerspectiveReportsApiService) GetReportSetting(ctx context.Con
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -418,11 +418,11 @@ func (a *CloudCostPerspectiveReportsApiService) GetReportSetting(ctx context.Con
 }
 
 /*
-CloudCostPerspectiveReportsApiService Update perspective reports
-Update perspective reports by sending CEReportSchedule as request body
+CloudCostPerspectiveReportsApiService Update a cost Perspective Report
+Update cost Perspective Reports.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body CEReportSchedule object to be updated
- * @param accountIdentifier Account Identifier for the entity
+ * @param accountIdentifier Account Identifier for the Entity
 @return ResponseDtoListCeReportSchedule
 */
 func (a *CloudCostPerspectiveReportsApiService) UpdateReportSetting(ctx context.Context, body CeReportSchedule, accountIdentifier string) (ResponseDtoListCeReportSchedule, *http.Response, error) {
@@ -504,7 +504,7 @@ func (a *CloudCostPerspectiveReportsApiService) UpdateReportSetting(ctx context.
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v CcmFailure
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -514,7 +514,7 @@ func (a *CloudCostPerspectiveReportsApiService) UpdateReportSetting(ctx context.
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v CcmError
+			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

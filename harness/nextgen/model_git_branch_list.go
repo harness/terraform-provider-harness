@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This contains the details of branches and the default branch
+// This contains details of the default and other branch
 type GitBranchList struct {
 	DefaultBranch *GitBranch             `json:"defaultBranch,omitempty"`
 	Branches      *PageResponseGitBranch `json:"branches,omitempty"`

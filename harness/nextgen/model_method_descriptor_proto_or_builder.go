@@ -10,19 +10,19 @@
 package nextgen
 
 type MethodDescriptorProtoOrBuilder struct {
-	InputTypeBytes            *ByteString             `json:"inputTypeBytes,omitempty"`
-	OutputTypeBytes           *ByteString             `json:"outputTypeBytes,omitempty"`
-	InputType                 string                  `json:"inputType,omitempty"`
-	OutputType                string                  `json:"outputType,omitempty"`
-	Options                   *MethodOptions          `json:"options,omitempty"`
-	Name                      string                  `json:"name,omitempty"`
 	ClientStreaming           bool                    `json:"clientStreaming,omitempty"`
 	ServerStreaming           bool                    `json:"serverStreaming,omitempty"`
-	NameBytes                 *ByteString             `json:"nameBytes,omitempty"`
+	Options                   *MethodOptions          `json:"options,omitempty"`
 	OptionsOrBuilder          *MethodOptionsOrBuilder `json:"optionsOrBuilder,omitempty"`
+	OutputType                string                  `json:"outputType,omitempty"`
+	InputType                 string                  `json:"inputType,omitempty"`
+	NameBytes                 *ByteString             `json:"nameBytes,omitempty"`
+	InputTypeBytes            *ByteString             `json:"inputTypeBytes,omitempty"`
+	OutputTypeBytes           *ByteString             `json:"outputTypeBytes,omitempty"`
+	Name                      string                  `json:"name,omitempty"`
+	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
 	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
 	UnknownFields             *UnknownFieldSet        `json:"unknownFields,omitempty"`
 	DefaultInstanceForType    *Message                `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                    `json:"initialized,omitempty"`

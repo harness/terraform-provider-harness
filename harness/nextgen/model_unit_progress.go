@@ -11,18 +11,18 @@ package nextgen
 
 type UnitProgress struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	SerializedSize            int32                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserUnitProgress    `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *UnitProgress          `json:"defaultInstanceForType,omitempty"`
+	StartTime                 int64                  `json:"startTime,omitempty"`
+	Initialized               bool                   `json:"initialized,omitempty"`
+	EndTime                   int64                  `json:"endTime,omitempty"`
+	Status                    string                 `json:"status,omitempty"`
 	UnitName                  string                 `json:"unitName,omitempty"`
 	UnitNameBytes             *ByteString            `json:"unitNameBytes,omitempty"`
 	StatusValue               int32                  `json:"statusValue,omitempty"`
-	Status                    string                 `json:"status,omitempty"`
-	StartTime                 int64                  `json:"startTime,omitempty"`
-	EndTime                   int64                  `json:"endTime,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	ParserForType             *ParserUnitProgress    `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *UnitProgress          `json:"defaultInstanceForType,omitempty"`
+	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

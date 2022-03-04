@@ -10,17 +10,17 @@
 package nextgen
 
 type MessageOptionsOrBuilder struct {
-	NoStandardDescriptorAccessor     bool                           `json:"noStandardDescriptorAccessor,omitempty"`
-	MessageSetWireFormat             bool                           `json:"messageSetWireFormat,omitempty"`
 	MapEntry                         bool                           `json:"mapEntry,omitempty"`
+	MessageSetWireFormat             bool                           `json:"messageSetWireFormat,omitempty"`
 	Deprecated                       bool                           `json:"deprecated,omitempty"`
+	NoStandardDescriptorAccessor     bool                           `json:"noStandardDescriptorAccessor,omitempty"`
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
 	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
 }

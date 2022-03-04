@@ -11,18 +11,27 @@ package nextgen
 
 type FileDescriptorProto struct {
 	UnknownFields             *UnknownFieldSet                  `json:"unknownFields,omitempty"`
-	SerializedSize            int32                             `json:"serializedSize,omitempty"`
-	ParserForType             *ParserFileDescriptorProto        `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *FileDescriptorProto              `json:"defaultInstanceForType,omitempty"`
-	Options                   *FileOptions                      `json:"options,omitempty"`
 	Initialized               bool                              `json:"initialized,omitempty"`
-	Name                      string                            `json:"name,omitempty"`
-	Package_                  string                            `json:"package,omitempty"`
+	Options                   *FileOptions                      `json:"options,omitempty"`
+	OptionsOrBuilder          *FileOptionsOrBuilder             `json:"optionsOrBuilder,omitempty"`
+	SourceCodeInfo            *SourceCodeInfo                   `json:"sourceCodeInfo,omitempty"`
+	SourceCodeInfoOrBuilder   *SourceCodeInfoOrBuilder          `json:"sourceCodeInfoOrBuilder,omitempty"`
+	SyntaxBytes               *ByteString                       `json:"syntaxBytes,omitempty"`
+	Syntax                    string                            `json:"syntax,omitempty"`
+	EnumTypeCount             int32                             `json:"enumTypeCount,omitempty"`
 	PublicDependencyCount     int32                             `json:"publicDependencyCount,omitempty"`
 	DependencyCount           int32                             `json:"dependencyCount,omitempty"`
 	MessageTypeCount          int32                             `json:"messageTypeCount,omitempty"`
 	ServiceCount              int32                             `json:"serviceCount,omitempty"`
-	Syntax                    string                            `json:"syntax,omitempty"`
+	EnumTypeOrBuilderList     []EnumDescriptorProtoOrBuilder    `json:"enumTypeOrBuilderList,omitempty"`
+	ServiceList               []ServiceDescriptorProto          `json:"serviceList,omitempty"`
+	ServiceOrBuilderList      []ServiceDescriptorProtoOrBuilder `json:"serviceOrBuilderList,omitempty"`
+	ExtensionList             []FieldDescriptorProto            `json:"extensionList,omitempty"`
+	ExtensionOrBuilderList    []FieldDescriptorProtoOrBuilder   `json:"extensionOrBuilderList,omitempty"`
+	ExtensionCount            int32                             `json:"extensionCount,omitempty"`
+	SerializedSize            int32                             `json:"serializedSize,omitempty"`
+	ParserForType             *ParserFileDescriptorProto        `json:"parserForType,omitempty"`
+	DefaultInstanceForType    *FileDescriptorProto              `json:"defaultInstanceForType,omitempty"`
 	NameBytes                 *ByteString                       `json:"nameBytes,omitempty"`
 	PackageBytes              *ByteString                       `json:"packageBytes,omitempty"`
 	DependencyList            []string                          `json:"dependencyList,omitempty"`
@@ -32,19 +41,10 @@ type FileDescriptorProto struct {
 	MessageTypeList           []DescriptorProto                 `json:"messageTypeList,omitempty"`
 	MessageTypeOrBuilderList  []DescriptorProtoOrBuilder        `json:"messageTypeOrBuilderList,omitempty"`
 	EnumTypeList              []EnumDescriptorProto             `json:"enumTypeList,omitempty"`
-	EnumTypeOrBuilderList     []EnumDescriptorProtoOrBuilder    `json:"enumTypeOrBuilderList,omitempty"`
-	ServiceList               []ServiceDescriptorProto          `json:"serviceList,omitempty"`
-	ServiceOrBuilderList      []ServiceDescriptorProtoOrBuilder `json:"serviceOrBuilderList,omitempty"`
-	ExtensionList             []FieldDescriptorProto            `json:"extensionList,omitempty"`
-	ExtensionOrBuilderList    []FieldDescriptorProtoOrBuilder   `json:"extensionOrBuilderList,omitempty"`
-	OptionsOrBuilder          *FileOptionsOrBuilder             `json:"optionsOrBuilder,omitempty"`
-	SourceCodeInfo            *SourceCodeInfo                   `json:"sourceCodeInfo,omitempty"`
-	SourceCodeInfoOrBuilder   *SourceCodeInfoOrBuilder          `json:"sourceCodeInfoOrBuilder,omitempty"`
-	SyntaxBytes               *ByteString                       `json:"syntaxBytes,omitempty"`
-	EnumTypeCount             int32                             `json:"enumTypeCount,omitempty"`
-	ExtensionCount            int32                             `json:"extensionCount,omitempty"`
+	Name                      string                            `json:"name,omitempty"`
+	Package_                  string                            `json:"package,omitempty"`
+	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
 	InitializationErrorString string                            `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                       `json:"descriptorForType,omitempty"`
-	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
 	MemoizedSerializedSize    int32                             `json:"memoizedSerializedSize,omitempty"`
 }

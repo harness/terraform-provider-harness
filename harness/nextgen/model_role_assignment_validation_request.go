@@ -10,8 +10,11 @@
 package nextgen
 
 type RoleAssignmentValidationRequest struct {
-	RoleAssignment        *RoleAssignment `json:"roleAssignment"`
-	ValidatePrincipal     bool            `json:"validatePrincipal,omitempty"`
-	ValidateRole          bool            `json:"validateRole,omitempty"`
-	ValidateResourceGroup bool            `json:"validateResourceGroup,omitempty"`
+	RoleAssignment *RoleAssignment `json:"roleAssignment"`
+	// Set it to true if the principal needs to be validated
+	ValidatePrincipal bool `json:"validatePrincipal,omitempty"`
+	// Set it to true if the role needs to be validated
+	ValidateRole bool `json:"validateRole,omitempty"`
+	// Set it to true if the resource group needs to be validated
+	ValidateResourceGroup bool `json:"validateResourceGroup,omitempty"`
 }

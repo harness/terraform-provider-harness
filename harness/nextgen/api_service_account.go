@@ -35,7 +35,7 @@ ServiceAccountApiService Creates a Service Account
  * @param optional nil or *ServiceAccountApiCreateServiceAccountOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoServiceAccountDto
+@return ResponseDtoServiceAccount
 */
 
 type ServiceAccountApiCreateServiceAccountOpts struct {
@@ -43,13 +43,13 @@ type ServiceAccountApiCreateServiceAccountOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *ServiceAccountApiService) CreateServiceAccount(ctx context.Context, body ServiceAccountDto, accountIdentifier string, localVarOptionals *ServiceAccountApiCreateServiceAccountOpts) (ResponseDtoServiceAccountDto, *http.Response, error) {
+func (a *ServiceAccountApiService) CreateServiceAccount(ctx context.Context, body ServiceAccount, accountIdentifier string, localVarOptionals *ServiceAccountApiCreateServiceAccountOpts) (ResponseDtoServiceAccount, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoServiceAccountDto
+		localVarReturnValue ResponseDtoServiceAccount
 	)
 
 	// create path and map variables
@@ -128,7 +128,7 @@ func (a *ServiceAccountApiService) CreateServiceAccount(ctx context.Context, bod
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -148,7 +148,7 @@ func (a *ServiceAccountApiService) CreateServiceAccount(ctx context.Context, bod
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoServiceAccountDto
+			var v ResponseDtoServiceAccount
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -263,7 +263,7 @@ func (a *ServiceAccountApiService) DeleteServiceAccount(ctx context.Context, acc
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -306,7 +306,7 @@ ServiceAccountApiService Get the Service Account by accountIdentifier and Servic
  * @param optional nil or *ServiceAccountApiGetAggregatedServiceAccountOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoServiceAccountAggregateDto
+@return ResponseDtoServiceAccountAggregate
 */
 
 type ServiceAccountApiGetAggregatedServiceAccountOpts struct {
@@ -314,13 +314,13 @@ type ServiceAccountApiGetAggregatedServiceAccountOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *ServiceAccountApiService) GetAggregatedServiceAccount(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ServiceAccountApiGetAggregatedServiceAccountOpts) (ResponseDtoServiceAccountAggregateDto, *http.Response, error) {
+func (a *ServiceAccountApiService) GetAggregatedServiceAccount(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ServiceAccountApiGetAggregatedServiceAccountOpts) (ResponseDtoServiceAccountAggregate, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoServiceAccountAggregateDto
+		localVarReturnValue ResponseDtoServiceAccountAggregate
 	)
 
 	// create path and map variables
@@ -398,7 +398,7 @@ func (a *ServiceAccountApiService) GetAggregatedServiceAccount(ctx context.Conte
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -418,7 +418,7 @@ func (a *ServiceAccountApiService) GetAggregatedServiceAccount(ctx context.Conte
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoServiceAccountAggregateDto
+			var v ResponseDtoServiceAccountAggregate
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -445,7 +445,7 @@ ServiceAccountApiService Fetches the list of Aggregated Service Accounts corresp
      * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
      * @param "SearchTerm" (optional.String) -  This would be used to filter Service Accounts. Any Service Account having the specified string in its Name, ID and Tag would be filtered.
-@return ResponseDtoPageResponseServiceAccountAggregateDto
+@return ResponseDtoPageResponseServiceAccountAggregate
 */
 
 type ServiceAccountApiListAggregatedServiceAccountsOpts struct {
@@ -458,13 +458,13 @@ type ServiceAccountApiListAggregatedServiceAccountsOpts struct {
 	SearchTerm        optional.String
 }
 
-func (a *ServiceAccountApiService) ListAggregatedServiceAccounts(ctx context.Context, accountIdentifier string, localVarOptionals *ServiceAccountApiListAggregatedServiceAccountsOpts) (ResponseDtoPageResponseServiceAccountAggregateDto, *http.Response, error) {
+func (a *ServiceAccountApiService) ListAggregatedServiceAccounts(ctx context.Context, accountIdentifier string, localVarOptionals *ServiceAccountApiListAggregatedServiceAccountsOpts) (ResponseDtoPageResponseServiceAccountAggregate, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPageResponseServiceAccountAggregateDto
+		localVarReturnValue ResponseDtoPageResponseServiceAccountAggregate
 	)
 
 	// create path and map variables
@@ -556,7 +556,7 @@ func (a *ServiceAccountApiService) ListAggregatedServiceAccounts(ctx context.Con
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -576,7 +576,7 @@ func (a *ServiceAccountApiService) ListAggregatedServiceAccounts(ctx context.Con
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPageResponseServiceAccountAggregateDto
+			var v ResponseDtoPageResponseServiceAccountAggregate
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -599,7 +599,7 @@ ServiceAccountApiService Fetches the list of Service Accounts corresponding to t
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
      * @param "Identifiers" (optional.Interface of []string) -  This is the list of Service Account IDs. Details specific to these IDs would be fetched.
-@return ResponseDtoListServiceAccountDto
+@return ResponseDtoListServiceAccount
 */
 
 type ServiceAccountApiListServiceAccountOpts struct {
@@ -608,13 +608,13 @@ type ServiceAccountApiListServiceAccountOpts struct {
 	Identifiers       optional.Interface
 }
 
-func (a *ServiceAccountApiService) ListServiceAccount(ctx context.Context, accountIdentifier string, localVarOptionals *ServiceAccountApiListServiceAccountOpts) (ResponseDtoListServiceAccountDto, *http.Response, error) {
+func (a *ServiceAccountApiService) ListServiceAccount(ctx context.Context, accountIdentifier string, localVarOptionals *ServiceAccountApiListServiceAccountOpts) (ResponseDtoListServiceAccount, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoListServiceAccountDto
+		localVarReturnValue ResponseDtoListServiceAccount
 	)
 
 	// create path and map variables
@@ -694,7 +694,7 @@ func (a *ServiceAccountApiService) ListServiceAccount(ctx context.Context, accou
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -714,7 +714,7 @@ func (a *ServiceAccountApiService) ListServiceAccount(ctx context.Context, accou
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoListServiceAccountDto
+			var v ResponseDtoListServiceAccount
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -738,7 +738,7 @@ ServiceAccountApiService Updates the Service Account.
  * @param optional nil or *ServiceAccountApiUpdateServiceAccountOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-@return ResponseDtoServiceAccountDto
+@return ResponseDtoServiceAccount
 */
 
 type ServiceAccountApiUpdateServiceAccountOpts struct {
@@ -746,13 +746,13 @@ type ServiceAccountApiUpdateServiceAccountOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *ServiceAccountApiService) UpdateServiceAccount(ctx context.Context, body ServiceAccountDto, accountIdentifier string, identifier string, localVarOptionals *ServiceAccountApiUpdateServiceAccountOpts) (ResponseDtoServiceAccountDto, *http.Response, error) {
+func (a *ServiceAccountApiService) UpdateServiceAccount(ctx context.Context, body ServiceAccount, accountIdentifier string, identifier string, localVarOptionals *ServiceAccountApiUpdateServiceAccountOpts) (ResponseDtoServiceAccount, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoServiceAccountDto
+		localVarReturnValue ResponseDtoServiceAccount
 	)
 
 	// create path and map variables
@@ -832,7 +832,7 @@ func (a *ServiceAccountApiService) UpdateServiceAccount(ctx context.Context, bod
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v ModelError
+			var v Failure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -852,7 +852,7 @@ func (a *ServiceAccountApiService) UpdateServiceAccount(ctx context.Context, bod
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoServiceAccountDto
+			var v ResponseDtoServiceAccount
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

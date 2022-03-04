@@ -9,8 +9,10 @@
  */
 package nextgen
 
-// This is the view of the Filter Properties entity defined in Harness
+// Properties of the Filter entity defined in Harness.
 type FilterProperties struct {
-	Tags       map[string]string `json:"tags,omitempty"`
-	FilterType string            `json:"filterType,omitempty"`
+	// Filter tags as a key-value pair.
+	Tags map[string]string `json:"tags,omitempty"`
+	// This specifies the corresponding Entity of the filter.
+	FilterType string `json:"filterType,omitempty"`
 }
