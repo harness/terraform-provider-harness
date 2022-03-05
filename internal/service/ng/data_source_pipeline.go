@@ -18,20 +18,15 @@ func DataSourcePipeline() *schema.Resource {
 		ReadContext: dataSourcePipelineRead,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Unique identifier of the pipeline.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"org_id": {
 				Description: "Unique identifier of the organization.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"project_id": {
 				Description: "Unique identifier of the project.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"pipeline_yaml": {
 				Description: "YAML of the pipeline.",
@@ -45,12 +40,9 @@ func DataSourcePipeline() *schema.Resource {
 func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*sdk.Session)
 
-	id := d.Id()
-	if id == "" {
-		id = d.Get("identifier").(string)
-	}
+	pipeline := buildPipeline(d)
 
-	resp, _, err := c.NGClient.PipelinesApi.GetPipeline(ctx, c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.NGClient.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.Pipeline.OrgIdentifier, pipeline.Pipeline.ProjectIdentifier, pipeline.Pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return diag.FromErr(err)
 	}
