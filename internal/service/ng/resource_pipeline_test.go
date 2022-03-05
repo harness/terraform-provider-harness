@@ -14,9 +14,6 @@ import (
 )
 
 func TestAccResourcePipeline(t *testing.T) {
-
-	//name := t.Name()
-	//id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	updatedId := fmt.Sprintf("%s_updated", id)
 	orgId := "testOrg"
