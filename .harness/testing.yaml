@@ -1,0 +1,46 @@
+pipeline:
+    name: testing
+    identifier: testing
+    allowStageExecutions: false
+    projectIdentifier: tf_provider
+    orgIdentifier: Micahs_Projects
+    tags: {}
+    properties:
+        ci:
+            codebase:
+                connectorRef: org.harnessorg
+                repoName: terraform-provider-harness
+                build: <+input>
+    stages:
+        - stage:
+              name: test
+              identifier: test
+              type: CI
+              spec:
+                  cloneCodebase: true
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: account.micahsprojects
+                          namespace: micahs-projects
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: test
+                                identifier: test
+                                spec:
+                                    connectorRef: account.harnessImage
+                                    image: ubuntu
+                                    command: |-
+                                        echo "key--->"
+                                        echo "<+pipeline.variables.gpg_key>" | base64
+                                        echo "password--->"
+                                        echo "<+pipeline.variables.gpg_password>" | base64
+    variables:
+        - name: gpg_password
+          type: Secret
+          value: gpgpassphrase
+        - name: gpg_key
+          type: Secret
+          value: gpgprivatekey
