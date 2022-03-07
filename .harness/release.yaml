@@ -41,7 +41,7 @@ pipeline:
                                     image: us.gcr.io/sales-209522/micah/go-build-tools:1.16-stretch-9
                                     connectorRef: org.gcp
                                     command: |-
-                                        git clone https://${GITHUB_TOKEN}@github.com/harness/terraform-provider-harness.git .
+                                        git clone https://${GITHUB_TOKEN}@github.com/harness-io/terraform-provider-harness.git .
                                         git checkout origin/<+Release.variables.BASE_BRANCH>
                                 name: Git clone
                                 identifier: gitclone
@@ -117,8 +117,8 @@ pipeline:
     properties:
         ci:
             codebase:
+                connectorRef: org.githubharnessio
                 repoName: terraform-provider-harness
-                connectorRef: org.harnessorg
                 build: <+input>
     projectIdentifier: tf_provider
     orgIdentifier: Micahs_Projects
