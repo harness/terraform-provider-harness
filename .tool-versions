@@ -1,4 +1,4 @@
-golang 1.16.5
+golang 1.17.6
 direnv 2.28.0
 terraform 0.15.5
 goreleaser 0.168.0
