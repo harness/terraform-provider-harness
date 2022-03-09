@@ -30,7 +30,9 @@ import (
 	"unicode/utf8"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/logging"
 	"github.com/hashicorp/go-retryablehttp"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
 
@@ -44,6 +46,9 @@ var (
 type APIClient struct {
 	cfg    *Configuration
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
+
+	AccountId string
+	Endpoint  string
 
 	// API Services
 
@@ -171,9 +176,18 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 		cfg.HTTPClient = utils.GetDefaultHttpClient(cfg.Logger)
 	}
 
+	if cfg.Logger == nil {
+		cfg.Logger = logging.NewLogger()
+		if cfg.DebugLogging {
+			cfg.Logger.SetLevel(log.DebugLevel)
+		}
+	}
+
 	c := &APIClient{}
 	c.cfg = cfg
 	c.common.client = c
+	c.AccountId = cfg.AccountId
+	c.Endpoint = cfg.BasePath
 
 	// API Services
 	c.APIKeysApi = (*APIKeysApiService)(&c.common)
@@ -627,14 +641,14 @@ type GenericSwaggerError struct {
 
 // Error returns non-empty string if there was an error.
 func (e GenericSwaggerError) Error() string {
-	failure := e.model.(ModelError)
+	failure := e.model.(Failure)
 	if failure.Message != "" {
 		return failure.Message
 	}
 
-	if len(failure.ResponseMessages) > 0 {
-		return failure.ResponseMessages[0].Message
-	}
+	// if len(failure.ResponseMessages) > 0 {
+	// 	return failure.ResponseMessages[0].Message
+	// }
 
 	if len(failure.Errors) > 0 {
 		return fmt.Sprintf("%s %s", failure.Errors[0].FieldId, failure.Errors[0].Error_)
@@ -644,7 +658,7 @@ func (e GenericSwaggerError) Error() string {
 }
 
 func (e GenericSwaggerError) Code() ErrorCode {
-	return ErrorCode(e.model.(ModelError).Code)
+	return ErrorCode(e.model.(Failure).Code)
 }
 
 // Body returns the raw bytes of the response

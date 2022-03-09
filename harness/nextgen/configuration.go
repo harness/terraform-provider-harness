@@ -51,6 +51,7 @@ type APIKey struct {
 }
 
 type Configuration struct {
+	AccountId     string            `json:"accountId,omitempty"`
 	BasePath      string            `json:"basePath,omitempty"`
 	Host          string            `json:"host,omitempty"`
 	Scheme        string            `json:"scheme,omitempty"`
@@ -58,6 +59,7 @@ type Configuration struct {
 	UserAgent     string            `json:"userAgent,omitempty"`
 	HTTPClient    *retryablehttp.Client
 	Logger        *log.Logger
+	DebugLogging  bool
 }
 
 func NewConfiguration() *Configuration {

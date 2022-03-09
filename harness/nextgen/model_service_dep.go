@@ -9,8 +9,5 @@
  */
 package nextgen
 
-// This contains metadata of the Duration Restriction in Harness
-type DurationRestrictionMetadata struct {
-	RestrictionType string    `json:"restrictionType,omitempty"`
-	TimeUnit        *TimeUnit `json:"timeUnit,omitempty"`
+type ServiceDep struct {
 }

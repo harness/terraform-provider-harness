@@ -9,14 +9,18 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains details of the Generic Git connector
 type GitConfig struct {
-	Url               string             `json:"url"`
-	ValidationRepo    string             `json:"validationRepo,omitempty"`
-	BranchName        string             `json:"branchName,omitempty"`
-	DelegateSelectors []string           `json:"delegateSelectors,omitempty"`
+	Url               string                    `json:"url"`
+	ValidationRepo    string                    `json:"validationRepo,omitempty"`
+	BranchName        string                    `json:"branchName,omitempty"`
+	DelegateSelectors []string                  `json:"delegateSelectors,omitempty"`
 	ExecuteOnDelegate bool               `json:"executeOnDelegate,omitempty"`
-	Type_             string             `json:"type"`
-	ConnectionType    string             `json:"connectionType"`
-	Spec              *GitAuthentication `json:"spec"`
+	Type_             GitAuthType               `json:"type"`
+	Http              *GitHttpAuthenticationDto `json:"-"`
+	Ssh               *GitSshAuthentication     `json:"-"`
+	ConnectionType    string                    `json:"connectionType"`
+	Spec              json.RawMessage           `json:"spec"`
 }
