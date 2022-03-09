@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/git-chglog/git-chglog v0.15.1
-	github.com/golangci/golangci-lint v1.44.2
+	github.com/golangci/golangci-lint v1.44.3-0.20220307223046-93a0015cfc0b
 	gotest.tools/gotestsum v1.7.0
 )
 
@@ -38,6 +38,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/daixiang0/gci v0.3.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/denis-tingaikin/go-header v0.4.3 // indirect
 	github.com/denis-tingajkin/go-header v0.4.2 // indirect
 	github.com/dnephin/pflag v1.0.7 // indirect
 	github.com/esimonov/ifshort v1.0.4 // indirect
