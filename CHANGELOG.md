@@ -1,273 +1,662 @@
-# Changelog
 
-## [Unreleased](https://github.com/harness/harness-go-sdk/tree/HEAD)
+<a name="0.1.14"></a>
+## [0.1.14](https://github.com/harness/harness-go-sdk/compare/v0.1.13...0.1.14) (2022-03-09)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.12...HEAD)
+### Added
 
-**Closed issues:**
+* Added changelog setup
+* Added execution api's
 
-- Deserializer Issues on API calls  [\#82](https://github.com/harness/harness-go-sdk/issues/82)
+### Refactored
 
-## [v0.1.12](https://github.com/harness/harness-go-sdk/tree/v0.1.12) (2022-02-16)
+* refactored client setup
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.11...v0.1.12)
+### Regen
 
-**Merged pull requests:**
+* Regen NG API's
 
-- Release version 0.1.12 02-16-2022 [\#81](https://github.com/harness/harness-go-sdk/pull/81) ([micahlmartin](https://github.com/micahlmartin))
+### Updated
 
-## [v0.1.11](https://github.com/harness/harness-go-sdk/tree/v0.1.11) (2022-02-02)
+* Updated tooling configuration
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.10...v0.1.11)
 
-**Merged pull requests:**
+<a name="v0.1.13"></a>
+## [v0.1.13](https://github.com/harness/harness-go-sdk/compare/v0.1.12...v0.1.13) (2022-03-01)
 
-- Release version 0.1.11 02-02-2022 [\#79](https://github.com/harness/harness-go-sdk/pull/79) ([micahlmartin](https://github.com/micahlmartin))
-- Fixed auth configuration issue [\#78](https://github.com/harness/harness-go-sdk/pull/78) ([micahlmartin](https://github.com/micahlmartin))
+### Fix
 
-## [v0.1.10](https://github.com/harness/harness-go-sdk/tree/v0.1.10) (2022-01-30)
+* Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.9...v0.1.10)
+### Fixed
 
-**Merged pull requests:**
+* Fixed ng secret manager serializer
 
-- Release version 0.1.10 01-30-2022 [\#77](https://github.com/harness/harness-go-sdk/pull/77) ([micahlmartin](https://github.com/micahlmartin))
+### Release
 
-## [v0.1.9](https://github.com/harness/harness-go-sdk/tree/v0.1.9) (2022-01-30)
+* Release version 0.1.13 03-01-2022
+* Release v0.1.13
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.8...v0.1.9)
+### Update
 
-**Merged pull requests:**
+* Update pipeline ci
 
-- Release version 0.1.9 01-30-2022 [\#76](https://github.com/harness/harness-go-sdk/pull/76) ([micahlmartin](https://github.com/micahlmartin))
-- Refactored logging and client configuration [\#75](https://github.com/harness/harness-go-sdk/pull/75) ([micahlmartin](https://github.com/micahlmartin))
+### Updated
 
-## [v0.1.8](https://github.com/harness/harness-go-sdk/tree/v0.1.8) (2022-01-28)
+* Updated dependencies
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.7...v0.1.8)
 
-**Merged pull requests:**
+<a name="v0.1.12"></a>
+## [v0.1.12](https://github.com/harness/harness-go-sdk/compare/v0.1.11...v0.1.12) (2022-02-16)
 
-- Release version 0.1.8 01-28-2022 [\#73](https://github.com/harness/harness-go-sdk/pull/73) ([micahlmartin](https://github.com/micahlmartin))
+### Added
 
-## [v0.1.7](https://github.com/harness/harness-go-sdk/tree/v0.1.7) (2022-01-17)
+* added release2 pipeline
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.6...v0.1.7)
+### Create
 
-**Merged pull requests:**
+* Create pipeline release3
 
-- Release version 0.1.7 01-17-2022 [\#71](https://github.com/harness/harness-go-sdk/pull/71) ([micahlmartin](https://github.com/micahlmartin))
-- Regenerate nextgen API's [\#70](https://github.com/harness/harness-go-sdk/pull/70) ([micahlmartin](https://github.com/micahlmartin))
+### Fixed
 
-## [v0.1.6](https://github.com/harness/harness-go-sdk/tree/v0.1.6) (2021-12-17)
+* fixed error message
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.5...v0.1.6)
+### Moved
 
-**Merged pull requests:**
+* Moved to harness organization
 
-- Release version 0.1.6 12-17-2021 [\#69](https://github.com/harness/harness-go-sdk/pull/69) ([micahlmartin](https://github.com/micahlmartin))
+### Release
 
-## [v0.1.5](https://github.com/harness/harness-go-sdk/tree/v0.1.5) (2021-12-10)
+* Release version 0.1.12 02-16-2022
+* Release v0.1.12
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.4...v0.1.5)
+### Update
 
-**Merged pull requests:**
+* Update pipeline ci
+* Update pipeline ci
 
-- Release version 0.1.5 12-10-2021 [\#67](https://github.com/harness/harness-go-sdk/pull/67) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.1.4](https://github.com/harness/harness-go-sdk/tree/v0.1.4) (2021-12-09)
+<a name="v0.1.11"></a>
+## [v0.1.11](https://github.com/harness/harness-go-sdk/compare/v0.1.10...v0.1.11) (2022-02-01)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.3...v0.1.4)
+### Fixed
 
-**Implemented enhancements:**
+* Fixed auth configuration issue
 
-- On-prem needs the ability to override the graphql endpoint [\#64](https://github.com/harness/harness-go-sdk/issues/64)
+### Release
 
-**Merged pull requests:**
+* Release version 0.1.11 02-02-2022
+* Release v0.1.11
 
-- Release version 0.1.4 12-09-2021 [\#66](https://github.com/harness/harness-go-sdk/pull/66) ([micahlmartin](https://github.com/micahlmartin))
-- Update the endpoint to the fully qualified api path [\#65](https://github.com/harness/harness-go-sdk/pull/65) ([micahlmartin](https://github.com/micahlmartin))
+### Update
 
-## [v0.1.3](https://github.com/harness/harness-go-sdk/tree/v0.1.3) (2021-12-09)
+* Update pipeline ci
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.2...v0.1.3)
 
-**Merged pull requests:**
+<a name="v0.1.10"></a>
+## [v0.1.10](https://github.com/harness/harness-go-sdk/compare/v0.1.9...v0.1.10) (2022-01-30)
 
-- Release version 0.1.3 12-09-2021 [\#63](https://github.com/harness/harness-go-sdk/pull/63) ([micahlmartin](https://github.com/micahlmartin))
-- Updated nextgen connectors [\#62](https://github.com/harness/harness-go-sdk/pull/62) ([micahlmartin](https://github.com/micahlmartin))
-- Bump github.com/docker/docker from 20.10.10+incompatible to 20.10.11+incompatible [\#60](https://github.com/harness/harness-go-sdk/pull/60) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump github.com/opencontainers/image-spec from 1.0.1 to 1.0.2 [\#59](https://github.com/harness/harness-go-sdk/pull/59) ([dependabot[bot]](https://github.com/apps/dependabot))
+### Fixed
 
-## [v0.1.2](https://github.com/harness/harness-go-sdk/tree/v0.1.2) (2021-11-12)
+* fixed ng endpoint configuration
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.1...v0.1.2)
+### Release
 
-**Merged pull requests:**
+* Release version 0.1.10 01-30-2022
+* Release v0.1.10
 
-- Release version 0.1.2 11-12-2021 [\#58](https://github.com/harness/harness-go-sdk/pull/58) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.1.1](https://github.com/harness/harness-go-sdk/tree/v0.1.1) (2021-11-11)
+<a name="v0.1.9"></a>
+## [v0.1.9](https://github.com/harness/harness-go-sdk/compare/v0.1.8...v0.1.9) (2022-01-30)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.1.0...v0.1.1)
+### Refactored
 
-**Merged pull requests:**
+* Refactored logging and client configuration
 
-- Add support for approving delegates [\#56](https://github.com/harness/harness-go-sdk/pull/56) ([micahlmartin](https://github.com/micahlmartin))
-- Update pipeline ci [\#55](https://github.com/harness/harness-go-sdk/pull/55) ([micahlmartin](https://github.com/micahlmartin))
+### Release
 
-## [v0.1.0](https://github.com/harness/harness-go-sdk/tree/v0.1.0) (2021-11-10)
+* Release version 0.1.9 01-30-2022
+* Release v0.1.9
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.15...v0.1.0)
+### Update
 
-**Merged pull requests:**
+* Update pipeline ci
 
-- Release version 0.1.1 11-11-2021 [\#57](https://github.com/harness/harness-go-sdk/pull/57) ([micahlmartin](https://github.com/micahlmartin))
-- Release version 0.1.0 11-10-2021 [\#54](https://github.com/harness/harness-go-sdk/pull/54) ([micahlmartin](https://github.com/micahlmartin))
-- Refactored CD api [\#53](https://github.com/harness/harness-go-sdk/pull/53) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.0.15](https://github.com/harness/harness-go-sdk/tree/v0.0.15) (2021-11-03)
+<a name="v0.1.8"></a>
+## [v0.1.8](https://github.com/harness/harness-go-sdk/compare/v0.1.7...v0.1.8) (2022-01-28)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.14...v0.0.15)
+### Added
 
-**Merged pull requests:**
+* Added delegate lookups by id and hostname
+* Added support for finding delegate by hostname
 
-- Release version 0.0.15 11-03-2021 [\#52](https://github.com/harness/harness-go-sdk/pull/52) ([micahlmartin](https://github.com/micahlmartin))
-- Nextgen API code generation [\#51](https://github.com/harness/harness-go-sdk/pull/51) ([micahlmartin](https://github.com/micahlmartin))
+### Fixed
 
-## [v0.0.14](https://github.com/harness/harness-go-sdk/tree/v0.0.14) (2021-10-19)
+* fixed ng models
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.13...v0.0.14)
+### Release
 
-**Merged pull requests:**
+* Release version 0.1.8 01-28-2022
+* Release v0.1.8
 
-- Release version 0.0.14 10-19-2021 [\#50](https://github.com/harness/harness-go-sdk/pull/50) ([micahlmartin](https://github.com/micahlmartin))
-- Cleanup logging [\#49](https://github.com/harness/harness-go-sdk/pull/49) ([micahlmartin](https://github.com/micahlmartin))
+### Updated
 
-## [v0.0.13](https://github.com/harness/harness-go-sdk/tree/v0.0.13) (2021-10-08)
+* Updated deps
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.12...v0.0.13)
+### Upgraded
 
-**Merged pull requests:**
+* Upgraded containerd
 
-- Release version 0.0.13 10-08-2021 [\#48](https://github.com/harness/harness-go-sdk/pull/48) ([micahlmartin](https://github.com/micahlmartin))
-- Added environment description [\#47](https://github.com/harness/harness-go-sdk/pull/47) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.0.12](https://github.com/harness/harness-go-sdk/tree/v0.0.12) (2021-10-08)
+<a name="v0.1.7"></a>
+## [v0.1.7](https://github.com/harness/harness-go-sdk/compare/v0.1.6...v0.1.7) (2022-01-17)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.11...v0.0.12)
+### Fixed
 
-**Implemented enhancements:**
+* fixed ci
 
-- Added support for querying delegates [\#45](https://github.com/harness/harness-go-sdk/pull/45) ([micahlmartin](https://github.com/micahlmartin))
+### Release
 
-**Merged pull requests:**
+* Release version 0.1.7 01-17-2022
+* Release v0.1.7
 
-- Release version 0.0.12 10-08-2021 [\#46](https://github.com/harness/harness-go-sdk/pull/46) ([micahlmartin](https://github.com/micahlmartin))
+### Updated
 
-## [v0.0.11](https://github.com/harness/harness-go-sdk/tree/v0.0.11) (2021-09-28)
+* updated nextgen api's
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.10...v0.0.11)
+### Updated
 
-**Merged pull requests:**
+* Updated dependencies
 
-- Release version 0.0.11 09-28-2021 [\#44](https://github.com/harness/harness-go-sdk/pull/44) ([micahlmartin](https://github.com/micahlmartin))
-- Added support for TEMPLATE in user group permissions [\#43](https://github.com/harness/harness-go-sdk/pull/43) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.0.10](https://github.com/harness/harness-go-sdk/tree/v0.0.10) (2021-09-28)
+<a name="v0.1.6"></a>
+## [v0.1.6](https://github.com/harness/harness-go-sdk/compare/v0.1.5...v0.1.6) (2021-12-17)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.9...v0.0.10)
+### Nextgen
 
-**Merged pull requests:**
+* nextgen regen
 
-- Release version 0.0.10 09-28-2021 [\#42](https://github.com/harness/harness-go-sdk/pull/42) ([micahlmartin](https://github.com/micahlmartin))
+### Regen
 
-## [v0.0.9](https://github.com/harness/harness-go-sdk/tree/v0.0.9) (2021-09-22)
+* Regen authz
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.8...v0.0.9)
+### Release
 
-**Merged pull requests:**
+* Release version 0.1.6 12-17-2021
+* Release v0.1.6
 
-- Release version 0.0.9 09-22-2021 [\#41](https://github.com/harness/harness-go-sdk/pull/41) ([micahlmartin](https://github.com/micahlmartin))
-- Added support for gitsync configuration [\#40](https://github.com/harness/harness-go-sdk/pull/40) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.0.8](https://github.com/harness/harness-go-sdk/tree/v0.0.8) (2021-09-14)
+<a name="v0.1.5"></a>
+## [v0.1.5](https://github.com/harness/harness-go-sdk/compare/v0.1.4...v0.1.5) (2021-12-10)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.7...v0.0.8)
+### Create
 
-**Merged pull requests:**
+* Create pipeline release
+* Create pipeline ci
+* Create pipeline testing
+* Create pipeline test
 
-- Release version 0.0.8 09-14-2021 [\#39](https://github.com/harness/harness-go-sdk/pull/39) ([micahlmartin](https://github.com/micahlmartin))
-- Added ability to upsert raw yaml [\#38](https://github.com/harness/harness-go-sdk/pull/38) ([micahlmartin](https://github.com/micahlmartin))
+### Delete
 
-## [v0.0.7](https://github.com/harness/harness-go-sdk/tree/v0.0.7) (2021-09-14)
+* Delete ci2
+* Delete testing
+* Delete test
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.6...v0.0.7)
+### Fixed
 
-**Merged pull requests:**
+* fixed ng connector serialization
 
-- Release version 0.0.7 09-14-2021 [\#37](https://github.com/harness/harness-go-sdk/pull/37) ([micahlmartin](https://github.com/micahlmartin))
-- Fixed a few notfound issues [\#36](https://github.com/harness/harness-go-sdk/pull/36) ([micahlmartin](https://github.com/micahlmartin))
+### Release
 
-## [v0.0.6](https://github.com/harness/harness-go-sdk/tree/v0.0.6) (2021-09-09)
+* Release version 0.1.5 12-10-2021
+* Release v0.1.5
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.5...v0.0.6)
+### Update
 
-**Merged pull requests:**
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline test
+* Update test.yaml
+* Update test.yaml
+* Update ci.yaml
 
-- Release version 0.0.6 09-09-2021 [\#35](https://github.com/harness/harness-go-sdk/pull/35) ([micahlmartin](https://github.com/micahlmartin))
-- Added better handling for when entities do not exist [\#34](https://github.com/harness/harness-go-sdk/pull/34) ([micahlmartin](https://github.com/micahlmartin))
+### Update
 
-## [v0.0.5](https://github.com/harness/harness-go-sdk/tree/v0.0.5) (2021-09-02)
+* update ci
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.4...v0.0.5)
+### Updated
 
-**Merged pull requests:**
+* updated ci
+* updated ci
+* updated ci
+* updated ci
+* updated ci
+* updated ci
+* updated ci
 
-- Release version 0.0.5 09-02-2021 [\#33](https://github.com/harness/harness-go-sdk/pull/33) ([micahlmartin](https://github.com/micahlmartin))
-- Added support for Infrastructure Definitions [\#32](https://github.com/harness/harness-go-sdk/pull/32) ([micahlmartin](https://github.com/micahlmartin))
+### Updated
 
-## [v0.0.4](https://github.com/harness/harness-go-sdk/tree/v0.0.4) (2021-08-20)
+* Updated ci pipelines
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.3...v0.0.4)
 
-**Merged pull requests:**
+<a name="v0.1.4"></a>
+## [v0.1.4](https://github.com/harness/harness-go-sdk/compare/v0.1.3...v0.1.4) (2021-12-09)
 
-- Release version 0.0.4 08-20-2021 [\#31](https://github.com/harness/harness-go-sdk/pull/31) ([micahlmartin](https://github.com/micahlmartin))
-- Fixed tests and linting issues [\#30](https://github.com/harness/harness-go-sdk/pull/30) ([micahlmartin](https://github.com/micahlmartin))
-- Add support for Users and User Groups [\#29](https://github.com/harness/harness-go-sdk/pull/29) ([micahlmartin](https://github.com/micahlmartin))
-- Config as code environments [\#28](https://github.com/harness/harness-go-sdk/pull/28) ([micahlmartin](https://github.com/micahlmartin))
-- Config-as-Code Cloud Provider Implementation [\#27](https://github.com/harness/harness-go-sdk/pull/27) ([micahlmartin](https://github.com/micahlmartin))
-- Format Files + add golangci-lint [\#26](https://github.com/harness/harness-go-sdk/pull/26) ([vyas-n](https://github.com/vyas-n))
+### Release
 
-## [v0.0.3](https://github.com/harness/harness-go-sdk/tree/v0.0.3) (2021-06-30)
+* Release version 0.1.4 12-09-2021
+* Release v0.1.4
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.2...v0.0.3)
+### Update
 
-**Merged pull requests:**
+* Update the endpoint to the fully qualified api path
+* Update pipeline ci
 
-- Release version 0.0.3 06-30-2021 [\#25](https://github.com/harness/harness-go-sdk/pull/25) ([harness-ci-automation](https://github.com/harness-ci-automation))
-- Added Update functions for Cloud Providers [\#24](https://github.com/harness/harness-go-sdk/pull/24) ([micahlmartin](https://github.com/micahlmartin))
 
-## [v0.0.2](https://github.com/harness/harness-go-sdk/tree/v0.0.2) (2021-06-29)
+<a name="v0.1.3"></a>
+## [v0.1.3](https://github.com/harness/harness-go-sdk/compare/v0.1.2...v0.1.3) (2021-12-09)
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/v0.0.1...v0.0.2)
+### Added
 
-**Merged pull requests:**
+* Added nextgen connectors
 
-- Release version 0.0.2 06-29-2021 [\#23](https://github.com/harness/harness-go-sdk/pull/23) ([harness-ci-automation](https://github.com/harness-ci-automation))
-- CloudProvider functionality [\#22](https://github.com/harness/harness-go-sdk/pull/22) ([micahlmartin](https://github.com/micahlmartin))
+### Bump
 
-## [v0.0.1](https://github.com/harness/harness-go-sdk/tree/v0.0.1) (2021-06-22)
+* Bump github.com/opencontainers/image-spec from 1.0.1 to 1.0.2 ([#59](https://github.com/harness/harness-go-sdk/issues/59))
+* Bump github.com/docker/docker ([#60](https://github.com/harness/harness-go-sdk/issues/60))
 
-[Full Changelog](https://github.com/harness/harness-go-sdk/compare/7f3b995434a7083e0f44a778ff0f14d818d82135...v0.0.1)
+### Refactored
 
-**Merged pull requests:**
+* Refactored serializers
 
-- Release version 0.0.1 06-22-2021 [\#21](https://github.com/harness/harness-go-sdk/pull/21) ([harness-ci-automation](https://github.com/harness-ci-automation))
-- Release version 0.1.1 06-22-2021 [\#20](https://github.com/harness/harness-go-sdk/pull/20) ([harness-ci-automation](https://github.com/harness-ci-automation))
-- initial build automation setup [\#4](https://github.com/harness/harness-go-sdk/pull/4) ([micahlmartin](https://github.com/micahlmartin))
+### Regenerated
 
+* Regenerated nextgen API
 
+### Release
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
+* Release version 0.1.3 12-09-2021
+* Release v0.1.3
+
+### Updated
+
+* Updated dependencies
+
+
+<a name="v0.1.2"></a>
+## [v0.1.2](https://github.com/harness/harness-go-sdk/compare/v0.1.1...v0.1.2) (2021-11-11)
+
+### Release
+
+* Release version 0.1.2 11-12-2021
+* Release v0.1.2
+
+### Updated
+
+* Updated docker env vars
+
+
+<a name="v0.1.1"></a>
+## [v0.1.1](https://github.com/harness/harness-go-sdk/compare/v0.1.0...v0.1.1) (2021-11-11)
+
+### Added
+
+* Added ability to create docker delegates and approve/reject them ([#56](https://github.com/harness/harness-go-sdk/issues/56))
+
+### Release
+
+* Release version 0.1.1 11-11-2021
+* Release v0.1.1
+
+### Update
+
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci
+* Update pipeline ci ([#55](https://github.com/harness/harness-go-sdk/issues/55))
+* Update pipeline ci
+
+
+<a name="v0.1.0"></a>
+## [v0.1.0](https://github.com/harness/harness-go-sdk/compare/v0.0.15...v0.1.0) (2021-11-09)
+
+### Refactored
+
+* Refactored CD api
+
+### Release
+
+* Release version 0.1.0 11-10-2021
+* Release v0.1.0
+
+### Updated
+
+* Updated nextgen models
+
+
+<a name="v0.0.15"></a>
+## [v0.0.15](https://github.com/harness/harness-go-sdk/compare/v0.0.14...v0.0.15) (2021-11-03)
+
+### Added
+
+* Added linting config
+
+### Nextgen
+
+* Nextgen API code generation
+
+### Release
+
+* Release version 0.0.15 11-03-2021
+* Release v0.0.15
+
+### Update
+
+* Update pipeline ci
+* Update pipeline ci
+
+
+<a name="v0.0.14"></a>
+## [v0.0.14](https://github.com/harness/harness-go-sdk/compare/v0.0.13...v0.0.14) (2021-10-19)
+
+### Catch
+
+* Catch edgecase
+
+### Cleanup
+
+* Cleanup logging
+
+### Release
+
+* Release version 0.0.14 10-19-2021
+* Release v0.0.14
+
+
+<a name="v0.0.13"></a>
+## [v0.0.13](https://github.com/harness/harness-go-sdk/compare/v0.0.12...v0.0.13) (2021-10-08)
+
+### Added
+
+* Added environment description
+
+### Release
+
+* Release version 0.0.13 10-08-2021
+* Release v0.0.13
+
+
+<a name="v0.0.12"></a>
+## [v0.0.12](https://github.com/harness/harness-go-sdk/compare/v0.0.11...v0.0.12) (2021-10-07)
+
+### Added
+
+* Added support for querying delegates
+* Added license and updated readme
+
+### Release
+
+* Release version 0.0.12 10-08-2021
+* Release v0.0.12
+
+### Update
+
+* Update pipeline ci
+
+
+<a name="v0.0.11"></a>
+## [v0.0.11](https://github.com/harness/harness-go-sdk/compare/v0.0.10...v0.0.11) (2021-09-28)
+
+### Added
+
+* Added support for TEMPLATE in user group permissions
+
+### Release
+
+* Release version 0.0.11 09-28-2021
+* Release v0.0.11
+
+
+<a name="v0.0.10"></a>
+## [v0.0.10](https://github.com/harness/harness-go-sdk/compare/v0.0.9...v0.0.10) (2021-09-27)
+
+### Fixed
+
+* Fixed user_group test
+
+### Release
+
+* Release version 0.0.10 09-28-2021
+* Release v0.0.10
+
+
+<a name="v0.0.9"></a>
+## [v0.0.9](https://github.com/harness/harness-go-sdk/compare/v0.0.8...v0.0.9) (2021-09-22)
+
+### Added
+
+* Added support for gitsync configuration
+
+### Fixed
+
+* Fixed test
+* Fixed linting
+
+### Release
+
+* Release version 0.0.9 09-22-2021
+* Release v0.0.9
+
+
+<a name="v0.0.8"></a>
+## [v0.0.8](https://github.com/harness/harness-go-sdk/compare/v0.0.7...v0.0.8) (2021-09-14)
+
+### Added
+
+* Added ability to upsert raw yaml
+
+### Release
+
+* Release version 0.0.8 09-14-2021
+* Release v0.0.8
+
+
+<a name="v0.0.7"></a>
+## [v0.0.7](https://github.com/harness/harness-go-sdk/compare/v0.0.6...v0.0.7) (2021-09-14)
+
+### Minor
+
+* minor fixes
+
+### Release
+
+* Release version 0.0.7 09-14-2021
+* Release v0.0.7
+
+
+<a name="v0.0.6"></a>
+## [v0.0.6](https://github.com/harness/harness-go-sdk/compare/v0.0.5...v0.0.6) (2021-09-09)
+
+### Better
+
+* Better handling when entities are not found
+
+### Fix
+
+* Fix test
+
+### Release
+
+* Release version 0.0.6 09-09-2021
+* Release v0.0.6
+
+### Update
+
+* Update pipeline ci
+
+
+<a name="v0.0.5"></a>
+## [v0.0.5](https://github.com/harness/harness-go-sdk/compare/v0.0.4...v0.0.5) (2021-09-02)
+
+### Added
+
+* Added support for infrastructure definitions
+
+### Fixed
+
+* Fixed linting
+
+### Release
+
+* Release version 0.0.5 09-02-2021
+* Release v0.0.5
+
+### Updated
+
+* Updated ci.yaml
+
+
+<a name="v0.0.4"></a>
+## [v0.0.4](https://github.com/harness/harness-go-sdk/compare/v0.0.3...v0.0.4) (2021-08-19)
+
+### Add
+
+* Add support for Users and User Groups ([#29](https://github.com/harness/harness-go-sdk/issues/29))
+
+### Config
+
+* Config as code environments ([#28](https://github.com/harness/harness-go-sdk/issues/28))
+
+### Delete
+
+* Delete Pipeline ci
+* Delete test.yaml
+* Delete Pipeline asdfasfasdf
+* Delete Pipeline wtf
+* Delete Pipeline CI
+* Delete Pipeline asdfasdfas
+* Delete Pipeline test
+
+### Fixed
+
+* Fixed tests and linting issues ([#30](https://github.com/harness/harness-go-sdk/issues/30))
+
+### Format
+
+* Format Files + add golangci-lint ([#26](https://github.com/harness/harness-go-sdk/issues/26))
+
+### Refactored
+
+* Refactored ENUM Types
+
+### Release
+
+* Release version 0.0.4 08-20-2021
+* Release v0.0.4
+
+### Update
+
+* Update pipeline Release
+* Update pipeline Release
+* Update ci
+* Update ci
+* Update ci
+* Update ci
+* Update ci
+* Update ci
+* Update ci
+* Update Release pipeline
+* Update ci
+* Update ci
+* Update testing
+* Update testing
+* Update testing
+* Update testing
+* Update testing
+* Update testing
+* Update testing
+* Update testing
+* Update asdfasfasdf
+* Update test
+* Update CI
+* Update CI
+* Update wtf
+* Update CI
+* Update CI
+* Update CI
+* Update asdfasdfas
+* Update ci
+* Update test
+
+
+<a name="v0.0.3"></a>
+## [v0.0.3](https://github.com/harness/harness-go-sdk/compare/v0.0.2...v0.0.3) (2021-06-30)
+
+### Added
+
+* Added cloudprovider update functions ([#24](https://github.com/harness/harness-go-sdk/issues/24))
+
+### Release
+
+* Release version 0.0.3 06-30-2021
+* Release v0.0.3
+
+
+<a name="v0.0.2"></a>
+## [v0.0.2](https://github.com/harness/harness-go-sdk/compare/v0.0.1...v0.0.2) (2021-06-29)
+
+### Added
+
+* Added dependabot config
+
+### CloudProvider
+
+* CloudProvider functionality ([#22](https://github.com/harness/harness-go-sdk/issues/22))
+
+### Release
+
+* Release version 0.0.2 06-29-2021
+* Release v0.0.2
+
+
+<a name="v0.0.1"></a>
+## [v0.0.1](https://github.com/harness/harness-go-sdk/compare/test...v0.0.1) (2021-06-22)
+
+### Release
+
+* Release version 0.0.1 06-22-2021
+* Release v0.0.1
+* Release version 0.1.1 06-22-2021
+* Release v0.1.1
+
+
+<a name="test"></a>
+## [test](https://github.com/harness/harness-go-sdk/compare/0.0.1...test) (2021-06-21)
+
+### Initial
+
+* initial build automation setup ([#4](https://github.com/harness/harness-go-sdk/issues/4))
+
+
+<a name="0.0.1"></a>
+## 0.0.1 (2021-06-21)
+
+### Initial
+
+* Initial checkin
+
+### Updated
+
+* Updated README
+* Updated readme
+
+### Reverts
+
+* Updated README
+
