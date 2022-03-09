@@ -30,7 +30,7 @@ func TestCreateEncryptedText(t *testing.T) {
 	require.NotNil(t, s)
 	require.Equal(t, expectedName, s.Name)
 	require.Equal(t, graphql.SecretTypes.EncryptedText, s.SecretType)
-	require.Equal(t, client.Configuration.AccountId, s.SecretManagerId)
+	require.Equal(t, secretManagerId, s.SecretManagerId)
 	require.NotNil(t, s.UsageScope)
 	require.Len(t, s.UsageScope.AppEnvScopes, 1)
 	require.Equal(t, graphql.ApplicationFilterTypes.All, s.UsageScope.AppEnvScopes[0].Application.FilterType)
