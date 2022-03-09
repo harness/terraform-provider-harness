@@ -70,6 +70,10 @@ func deleteDelegate(t *testing.T, name string) {
 }
 
 func TestCreateDelegate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
 	delegate := createDelegateContainer(t, name)
@@ -82,6 +86,10 @@ func TestCreateDelegate(t *testing.T) {
 }
 
 func TestApproveDelegate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
 	delegate := createDelegateContainer(t, name)
@@ -108,6 +116,10 @@ func TestApproveDelegate(t *testing.T) {
 }
 
 func TestRejectDelegate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
 	delegate := createDelegateContainer(t, name)
@@ -151,6 +163,10 @@ func TestListDelegates(t *testing.T) {
 }
 
 func TestGetDelegateByName(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	client := getClient()
 
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
@@ -183,6 +199,10 @@ func TestGetDelegateByStatus(t *testing.T) {
 }
 
 func TestGetDelegateByHostName(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	client := getClient()
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
@@ -198,6 +218,10 @@ func TestGetDelegateByHostName(t *testing.T) {
 }
 
 func TestGetDelegateById(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
+
 	client := getClient()
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
