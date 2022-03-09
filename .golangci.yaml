@@ -8,6 +8,5 @@ output:
 linters-settings:
   errcheck:
     exclude-functions:
-      - io/ioutil.ReadFile
-      - io.Copy(*bytes.Buffer)
       - io.Copy(os.Stdout)
+      - encoding/json.Indent

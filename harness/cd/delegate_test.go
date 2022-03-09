@@ -154,7 +154,7 @@ func TestGetDelegateByName(t *testing.T) {
 	client := getClient()
 
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-	delegate := createDelegateContainer(t, name)
+	_ = createDelegateContainer(t, name)
 
 	defer func() {
 		deleteDelegate(t, name)
