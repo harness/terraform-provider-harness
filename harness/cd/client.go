@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/harness-go-sdk/logging"
@@ -44,31 +45,43 @@ type ApiClient struct {
 	Log                 *log.Logger
 }
 
+func DefaultConfig() *Config {
+	logger := logging.NewLogger()
+	if helpers.EnvVars.DebugEnabled.Get() == "true" {
+		logger.SetLevel(log.DebugLevel)
+	}
+
+	cfg := &Config{
+		AccountId:  helpers.EnvVars.AccountId.Get(),
+		APIKey:     helpers.EnvVars.ApiKey.Get(),
+		Endpoint:   helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl),
+		Logger:     logger,
+		HTTPClient: utils.GetDefaultHttpClient(logger),
+		UserAgent:  fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
+	}
+
+	return cfg
+}
+
 func NewClient(cfg *Config) (*ApiClient, error) {
-	cfg.AccountId = utils.CoalesceStr(cfg.AccountId, helpers.EnvVars.AccountId.Get())
+	if cfg == nil {
+		return nil, errors.New("config is is required")
+	}
+
 	if cfg.AccountId == "" {
 		return nil, cfg.NewInvalidConfigError("AccountId", nil)
 	}
 
-	cfg.APIKey = utils.CoalesceStr(cfg.APIKey, helpers.EnvVars.ApiKey.Get())
 	if cfg.APIKey == "" {
 		return nil, cfg.NewInvalidConfigError("ApiKey", nil)
 	}
 
-	cfg.Endpoint = utils.CoalesceStr(cfg.Endpoint, helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl))
-
-	if cfg.Logger == nil {
-		logger := logging.NewLogger()
-
-		if cfg.DebugLogging {
-			logger.SetLevel(log.DebugLevel)
-		}
-
-		cfg.Logger = logger
+	if cfg.Endpoint == "" {
+		return nil, cfg.NewInvalidConfigError("Endpoint", nil)
 	}
 
 	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = utils.GetDefaultHttpClient(cfg.Logger)
+		return nil, cfg.NewInvalidConfigError("Endpoint", nil)
 	}
 
 	// defaultHeaders
@@ -77,7 +90,7 @@ func NewClient(cfg *Config) (*ApiClient, error) {
 	}
 
 	// Set default headers for all requests
-	cfg.DefaultHeaders[helpers.HTTPHeaders.UserAgent.String()] = cfg.UserAgent
+	cfg.DefaultHeaders[helpers.HTTPHeaders.UserAgent.String()] = utils.CoalesceStr(cfg.UserAgent, fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion))
 	cfg.DefaultHeaders[helpers.HTTPHeaders.Accept.String()] = helpers.HTTPHeaders.ApplicationJson.String()
 	cfg.DefaultHeaders[helpers.HTTPHeaders.ContentType.String()] = helpers.HTTPHeaders.ApplicationJson.String()
 	cfg.DefaultHeaders[helpers.HTTPHeaders.ApiKey.String()] = cfg.APIKey

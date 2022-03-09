@@ -1,107 +1,65 @@
 package cd
 
 import (
-	"os"
 	"sync"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/stretchr/testify/require"
 )
 
-var AccTestConfigureClient sync.Once
-var Client *ApiClient
+var configureClient sync.Once
+var apiClient *ApiClient
 
 func getClient() *ApiClient {
-	AccTestConfigureClient.Do(func() {
+	configureClient.Do(func() {
 		var err error
-		Client, err = NewClient(&Config{
-			AccountId:    helpers.EnvVars.AccountId.Get(),
-			APIKey:       helpers.EnvVars.ApiKey.Get(),
-			DebugLogging: helpers.EnvVars.DebugEnabled.Get() == "true",
-		})
+
+		apiClient, err = NewClient(DefaultConfig())
 
 		if err != nil {
 			panic(err)
 		}
 	})
 
-	return Client
+	return apiClient
 }
 
 func GetUnauthorizedClient() *ApiClient {
-	c, _ := NewClient(&Config{
-		AccountId: helpers.EnvVars.AccountId.Get(),
-		APIKey:    "BAD KEY",
-	})
+	cfg := DefaultConfig()
+	cfg.APIKey = "INVALID_API_KEY"
 
+	c, _ := NewClient(cfg)
 	return c
 }
 
 func TestClientRequireApiKey_Config(t *testing.T) {
-	os.Clearenv()
+	cfg := DefaultConfig()
+	cfg.APIKey = ""
 
-	cfg := &Config{
-		AccountId: "ACCOUNT_ID",
-	}
 	_, err := NewClient(cfg)
 
 	require.Error(t, err, InvalidConfigError{})
 	require.Equal(t, "ApiKey", err.(InvalidConfigError).Field)
 
-	cfg = &Config{
-		AccountId: "ACCOUNT_ID",
-		APIKey:    "APIKEY",
-	}
+	cfg.APIKey = "APIKEY"
 	c, err := NewClient(cfg)
 
 	require.Equal(t, c.Configuration.APIKey, cfg.APIKey)
 	require.NoError(t, err)
 }
 
-func TestClientRequireApiKey_Envvar(t *testing.T) {
-	os.Clearenv()
-	os.Setenv(helpers.EnvVars.ApiKey.String(), "APIKEY")
-
-	cfg := &Config{
-		AccountId: "ACCOUNT_ID",
-	}
-	c, err := NewClient(cfg)
-
-	require.NoError(t, err, InvalidConfigError{})
-	require.Equal(t, "APIKEY", c.Configuration.APIKey)
-}
-
 func TestClientRequireAccountId_Config(t *testing.T) {
-	os.Clearenv()
+	cfg := DefaultConfig()
+	cfg.AccountId = ""
 
-	cfg := &Config{
-		APIKey: "APIKEY",
-	}
 	_, err := NewClient(cfg)
 
 	require.Error(t, err, InvalidConfigError{})
 	require.Equal(t, "AccountId", err.(InvalidConfigError).Field)
 
-	cfg = &Config{
-		AccountId: "ACCOUNT_ID",
-		APIKey:    "APIKEY",
-	}
+	cfg.AccountId = "ACCOUNT_ID"
 	c, err := NewClient(cfg)
 
 	require.Equal(t, c.Configuration.AccountId, cfg.AccountId)
 	require.NoError(t, err)
-}
-
-func TestClientRequireAccountId_Envvar(t *testing.T) {
-	os.Clearenv()
-	os.Setenv(helpers.EnvVars.AccountId.String(), "ACCOUNT_ID")
-
-	cfg := &Config{
-		APIKey: "APIKEY",
-	}
-	c, err := NewClient(cfg)
-
-	require.NoError(t, err, InvalidConfigError{})
-	require.Equal(t, "ACCOUNT_ID", c.Configuration.AccountId)
 }
