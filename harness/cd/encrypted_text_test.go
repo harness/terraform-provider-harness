@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
-	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
@@ -14,11 +13,13 @@ func TestCreateEncryptedText(t *testing.T) {
 	client := getClient()
 
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	secretManagerId, err := client.SecretClient.GetDefaultSecretManagerId()
+	require.NoError(t, err)
 
 	input := &graphql.CreateSecretInput{
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            expectedName,
-			SecretManagerId: helpers.EnvVars.AccountId.Get(),
+			SecretManagerId: secretManagerId,
 			Value:           "someval",
 			UsageScope:      getExampleUsageScopes(),
 		},
@@ -41,13 +42,15 @@ func TestDeleteSecret_EncryptedText(t *testing.T) {
 	// Setup
 	client := getClient()
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+	secretManagerId, err := client.SecretClient.GetDefaultSecretManagerId()
+	require.NoError(t, err)
 
 	// Create a secret first
 	input := &graphql.CreateSecretInput{
 		SecretType: graphql.SecretTypes.EncryptedText,
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            expectedName,
-			SecretManagerId: helpers.EnvVars.AccountId.Get(),
+			SecretManagerId: secretManagerId,
 			Value:           "someval",
 		},
 	}
