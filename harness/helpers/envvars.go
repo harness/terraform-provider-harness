@@ -11,6 +11,7 @@ var EnvVars = struct {
 	DelegateSecret EnvVar
 	Endpoint       EnvVar
 	NGApiKey       EnvVar
+	DebugEnabled   EnvVar
 }{
 	AccountId:      "HARNESS_ACCOUNT_ID",
 	ApiKey:         "HARNESS_API_KEY",
@@ -18,6 +19,7 @@ var EnvVars = struct {
 	DelegateSecret: "HARNESS_DELEGATE_SECRET",
 	Endpoint:       "HARNESS_ENDPOINT",
 	NGApiKey:       "HARNESS_NG_API_KEY",
+	DebugEnabled:   "HARNESS_DEBUG_ENABLED",
 }
 
 func (e EnvVar) String() string {

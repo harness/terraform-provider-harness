@@ -18,7 +18,7 @@ func getClient() *ApiClient {
 		Client, err = NewClient(&Config{
 			AccountId:    helpers.EnvVars.AccountId.Get(),
 			APIKey:       helpers.EnvVars.ApiKey.Get(),
-			DebugLogging: true,
+			DebugLogging: helpers.EnvVars.DebugEnabled.Get() == "true",
 		})
 
 		if err != nil {
