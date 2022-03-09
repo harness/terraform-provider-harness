@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/cd/unpublished"
@@ -101,32 +102,38 @@ func (c *SecretClient) ListSecretManagers() ([]*unpublished.SecretManager, error
 	return secretManagers, nil
 }
 
+var defaultSecretManagerId string
+var defaultSecretManagerLookupError error
+var configSecretManagerId sync.Once
+
 // Currently there is no way to find the Id of the default secret manager
 // directly through the API. Instead, this method creates a temporary secret
 // without specifying which secret manager to use. Once it's created we can
 // then read back the id of the secret manager that is automatically assigned.
 func (c *SecretClient) GetDefaultSecretManagerId() (string, error) {
-	input := &graphql.CreateSecretInput{
-		EncryptedText: &graphql.EncryptedTextInput{},
-	}
-	input.EncryptedText.Name = "__temp__" + utils.RandStringBytes(6)
-	input.EncryptedText.Value = "test"
+	configSecretManagerId.Do(func() {
+		var secret *graphql.EncryptedText
 
-	secret, err := c.CreateEncryptedText(input)
-	if err != nil {
-		return "", err
-	}
-
-	if secret == nil {
-		return "", errors.New("could not create secret")
-	}
-
-	defer func() {
-		err := c.DeleteSecret(secret.Id, graphql.SecretTypes.EncryptedText)
-		if err != nil {
-			panic(err)
+		input := &graphql.CreateSecretInput{
+			EncryptedText: &graphql.EncryptedTextInput{},
 		}
-	}()
+		input.EncryptedText.Name = "__temp__" + utils.RandStringBytes(6)
+		input.EncryptedText.Value = "test"
 
-	return secret.SecretManagerId, nil
+		secret, defaultSecretManagerLookupError = c.CreateEncryptedText(input)
+		if defaultSecretManagerLookupError != nil {
+			return
+		}
+
+		if secret == nil {
+			defaultSecretManagerLookupError = errors.New("could not create secret")
+			return
+		}
+
+		defaultSecretManagerId = secret.SecretManagerId
+
+		_ = c.DeleteSecret(secret.Id, graphql.SecretTypes.EncryptedText)
+	})
+
+	return defaultSecretManagerId, defaultSecretManagerLookupError
 }

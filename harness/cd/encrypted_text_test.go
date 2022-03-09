@@ -189,11 +189,16 @@ func TestListEncryptedText(t *testing.T) {
 func createEncryptedTextSecret(name string, value string) (*graphql.EncryptedText, error) {
 	client := getClient()
 
+	secretManagerId, err := client.SecretClient.GetDefaultSecretManagerId()
+	if err != nil {
+		return nil, err
+	}
+
 	input := &graphql.CreateSecretInput{
 		SecretType: graphql.SecretTypes.EncryptedText,
 		EncryptedText: &graphql.EncryptedTextInput{
 			Name:            name,
-			SecretManagerId: helpers.EnvVars.AccountId.Get(),
+			SecretManagerId: secretManagerId,
 			Value:           value,
 		},
 	}

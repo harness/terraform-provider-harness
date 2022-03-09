@@ -2,20 +2,31 @@ package cd
 
 import (
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/stretchr/testify/require"
 )
 
+var AccTestConfigureClient sync.Once
+var Client *ApiClient
+
 func getClient() *ApiClient {
-	c, _ := NewClient(&Config{
-		AccountId:    helpers.EnvVars.AccountId.Get(),
-		APIKey:       helpers.EnvVars.ApiKey.Get(),
-		DebugLogging: false,
+	AccTestConfigureClient.Do(func() {
+		var err error
+		Client, err = NewClient(&Config{
+			AccountId:    helpers.EnvVars.AccountId.Get(),
+			APIKey:       helpers.EnvVars.ApiKey.Get(),
+			DebugLogging: true,
+		})
+
+		if err != nil {
+			panic(err)
+		}
 	})
 
-	return c
+	return Client
 }
 
 func GetUnauthorizedClient() *ApiClient {
