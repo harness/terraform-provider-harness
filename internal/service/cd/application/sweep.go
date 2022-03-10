@@ -25,7 +25,7 @@ func testSweepApplications(r string) error {
 
 	for hasMore {
 
-		apps, _, err := c.CDClient.ApplicationClient.ListApplications(limit, offset)
+		apps, _, err := c.ApplicationClient.ListApplications(limit, offset)
 		if err != nil {
 			return err
 		}
@@ -35,7 +35,7 @@ func testSweepApplications(r string) error {
 		for _, app := range apps {
 			// Only delete applications that start with 'Test'
 			if strings.HasPrefix(app.Name, "Test") {
-				if err = c.CDClient.ApplicationClient.DeleteApplication(app.Id); err != nil {
+				if err = c.ApplicationClient.DeleteApplication(app.Id); err != nil {
 					fmt.Printf("[ERROR] Failed to delete application %s: %s", app.Name, err)
 				}
 			}

@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -49,19 +49,19 @@ func ResourceAddUserToGroup() *schema.Resource {
 }
 
 func resourceAddUserToGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	userId := d.Get("user_id").(string)
 	groupId := d.Get("group_id").(string)
 
 	log.Printf("[DEBUG] Check if user is already in group")
-	ok, err := c.CDClient.UserClient.IsUserInGroup(userId, groupId)
+	ok, err := c.UserClient.IsUserInGroup(userId, groupId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	if !ok {
 		log.Printf("[DEBUG] User is not in group, adding user to group")
-		ok, err := c.CDClient.UserClient.AddUserToGroup(userId, groupId)
+		ok, err := c.UserClient.AddUserToGroup(userId, groupId)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -76,12 +76,12 @@ func resourceAddUserToGroupCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceAddUserToGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	userId := d.Get("user_id").(string)
 	groupId := d.Get("group_id").(string)
 
-	ok, err := c.CDClient.UserClient.IsUserInGroup(userId, groupId)
+	ok, err := c.UserClient.IsUserInGroup(userId, groupId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -97,12 +97,12 @@ func resourceAddUserToGroupRead(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceAddUserToGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	userId := d.Get("user_id").(string)
 	groupId := d.Get("group_id").(string)
 
-	ok, err := c.CDClient.UserClient.RemoveUserFromGroup(userId, groupId)
+	ok, err := c.UserClient.RemoveUserFromGroup(userId, groupId)
 	if err != nil {
 		return diag.FromErr(err)
 	}

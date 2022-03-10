@@ -3,7 +3,7 @@ package sweep_test
 import (
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	_ "github.com/harness/terraform-provider-harness/internal/service/cd/application"
 	_ "github.com/harness/terraform-provider-harness/internal/service/cd/cloudprovider"
 	_ "github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
@@ -12,7 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	client, err := sdk.NewSession(&sdk.SessionOptions{})
+	client, err := cd.NewClient(&cd.Config{})
 	if err != nil {
 		panic(err)
 	}

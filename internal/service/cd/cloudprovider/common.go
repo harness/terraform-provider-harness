@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,10 +29,10 @@ func commonCloudProviderSchema() map[string]*schema.Schema {
 
 func resourceCloudProviderDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[DEBUG] Deleting cloud provider %s", d.Get("name"))
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("id").(string)
-	err := c.CDClient.CloudProviderClient.DeleteCloudProvider(id)
+	err := c.CloudProviderClient.DeleteCloudProvider(id)
 
 	if err != nil {
 		return diag.FromErr(err)

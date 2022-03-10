@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -115,15 +115,15 @@ func DataSourceGitConnector() *schema.Resource {
 }
 
 func dataSourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var conn *graphql.GitConnector
 	var err error
 
 	if id, ok := d.GetOk("id"); ok {
-		conn, err = c.CDClient.ConnectorClient.GetGitConnectorById(id.(string))
+		conn, err = c.ConnectorClient.GetGitConnectorById(id.(string))
 	} else if name, ok := d.GetOk("name"); ok {
-		conn, err = c.CDClient.ConnectorClient.GetGitConnectorByName(name.(string))
+		conn, err = c.ConnectorClient.GetGitConnectorByName(name.(string))
 	} else {
 		return diag.Errorf("Must specify either `id` or `name`.")
 	}

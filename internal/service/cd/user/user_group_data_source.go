@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,20 +41,20 @@ func DataSourceUserGroup() *schema.Resource {
 
 func dataSourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var userGroup *graphql.UserGroup
 	var err error
 
 	if id := d.Get("id").(string); id != "" {
 		// Try lookup by Id first
-		userGroup, err = c.CDClient.UserClient.GetUserGroupById(id)
+		userGroup, err = c.UserClient.GetUserGroupById(id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 	} else if name := d.Get("name").(string); name != "" {
 		// Fallback to lookup by name
-		userGroup, err = c.CDClient.UserClient.GetUserGroupByName(name)
+		userGroup, err = c.UserClient.GetUserGroupByName(name)
 		if err != nil {
 			return diag.FromErr(err)
 		}

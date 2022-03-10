@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
@@ -63,10 +63,10 @@ func ResourceCloudProviderAzure() *schema.Resource {
 }
 
 func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	cp := &cac.AzureCloudProvider{}
-	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
+	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		d.SetId("")
@@ -78,7 +78,7 @@ func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var input *cac.AzureCloudProvider
 	var err error
@@ -87,7 +87,7 @@ func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.Res
 		input = cac.NewEntity(cac.ObjectTypes.AzureCloudProvider).(*cac.AzureCloudProvider)
 	} else {
 		input = &cac.AzureCloudProvider{}
-		if err = c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
+		if err = c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
 			return diag.FromErr(err)
 		} else if input.IsEmpty() {
 			d.SetId("")
@@ -115,7 +115,7 @@ func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.Res
 		}
 	}
 
-	cp, err := c.CDClient.ConfigAsCodeClient.UpsertAzureCloudProvider(input)
+	cp, err := c.ConfigAsCodeClient.UpsertAzureCloudProvider(input)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -124,7 +124,7 @@ func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.Res
 	return readCloudProviderAzure(c, d, cp)
 }
 
-func readCloudProviderAzure(c *sdk.Session, d *schema.ResourceData, cp *cac.AzureCloudProvider) diag.Diagnostics {
+func readCloudProviderAzure(c *cd.ApiClient, d *schema.ResourceData, cp *cac.AzureCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("environment_type", cp.AzureEnvironmentType)

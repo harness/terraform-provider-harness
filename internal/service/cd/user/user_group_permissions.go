@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,10 +39,10 @@ func ResourceUserGroupPermissions() *schema.Resource {
 }
 
 func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("user_group_id").(string)
-	ug, err := c.CDClient.UserClient.GetUserGroupById(id)
+	ug, err := c.UserClient.GetUserGroupById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -61,7 +61,7 @@ func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.R
 		Permissions: permissions,
 	}
 
-	updatedUg, err := c.CDClient.UserClient.UpdateUserGroup(input)
+	updatedUg, err := c.UserClient.UpdateUserGroup(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -73,11 +73,11 @@ func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.R
 }
 
 func resourceUserGroupPermissionsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("user_group_id").(string)
 
-	userGroup, err := c.CDClient.UserClient.GetUserGroupById(id)
+	userGroup, err := c.UserClient.GetUserGroupById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -106,11 +106,11 @@ func readUserGroupPermissions(d *schema.ResourceData, userGroup *graphql.UserGro
 }
 
 func resourceUserGroupPermissionsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Id()
 
-	ug, err := c.CDClient.UserClient.GetUserGroupById(id)
+	ug, err := c.UserClient.GetUserGroupById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -123,7 +123,7 @@ func resourceUserGroupPermissionsDelete(ctx context.Context, d *schema.ResourceD
 	ug.Permissions.AccountPermissions = &graphql.AccountPermissions{}
 	ug.Permissions.AppPermissions = []*graphql.AppPermission{}
 
-	updatedUg, err := c.CDClient.UserClient.UpdateUserGroup(ug)
+	updatedUg, err := c.UserClient.UpdateUserGroup(ug)
 	if err != nil {
 		return diag.FromErr(err)
 	}

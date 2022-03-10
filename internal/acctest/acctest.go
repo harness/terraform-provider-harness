@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -51,8 +51,8 @@ func TestAccGetResource(resourceName string, state *terraform.State) *terraform.
 	return rm.Resources[resourceName]
 }
 
-func TestAccGetApiClientFromProvider() *sdk.Session {
-	return TestAccProvider.Meta().(*sdk.Session)
+func TestAccGetApiClientFromProvider() *cd.ApiClient {
+	return TestAccProvider.Meta().(*cd.ApiClient)
 }
 
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
@@ -60,7 +60,7 @@ func TestAccGetApplication(resourceName string, state *terraform.State) (*graphq
 	c := TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
 
-	return c.CDClient.ApplicationClient.GetApplicationById(id)
+	return c.ApplicationClient.GetApplicationById(id)
 }
 
 // providerFactories are used to instantiate a provider during acceptance testing.

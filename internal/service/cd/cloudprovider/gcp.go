@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
@@ -57,10 +57,10 @@ func ResourceCloudProviderGcp() *schema.Resource {
 }
 
 func resourceCloudProviderGcpRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	cp := &cac.GcpCloudProvider{}
-	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
+	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		d.SetId("")
@@ -71,7 +71,7 @@ func resourceCloudProviderGcpRead(ctx context.Context, d *schema.ResourceData, m
 	return readCloudProviderGcp(c, d, cp)
 }
 
-func readCloudProviderGcp(c *sdk.Session, d *schema.ResourceData, cp *cac.GcpCloudProvider) diag.Diagnostics {
+func readCloudProviderGcp(c *cd.ApiClient, d *schema.ResourceData, cp *cac.GcpCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("skip_validation", cp.SkipValidation)
@@ -91,7 +91,7 @@ func readCloudProviderGcp(c *sdk.Session, d *schema.ResourceData, cp *cac.GcpClo
 }
 
 func resourceCloudProviderGcpCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var input *cac.GcpCloudProvider
 	var err error
@@ -100,7 +100,7 @@ func resourceCloudProviderGcpCreateOrUpdate(ctx context.Context, d *schema.Resou
 		input = cac.NewEntity(cac.ObjectTypes.GcpCloudProvider).(*cac.GcpCloudProvider)
 	} else {
 		input = &cac.GcpCloudProvider{}
-		if err = c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
+		if err = c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
 			return diag.FromErr(err)
 		} else if input.IsEmpty() {
 			d.SetId("")
@@ -131,7 +131,7 @@ func resourceCloudProviderGcpCreateOrUpdate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(err)
 	}
 
-	cp, err := c.CDClient.ConfigAsCodeClient.UpsertGcpCloudProvider(input)
+	cp, err := c.ConfigAsCodeClient.UpsertGcpCloudProvider(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}

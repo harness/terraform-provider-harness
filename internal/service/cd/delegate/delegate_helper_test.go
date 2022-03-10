@@ -8,7 +8,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/delegate"
 	"github.com/harness/harness-go-sdk/harness/helpers"
@@ -33,7 +33,7 @@ func getDelegateTimeout() time.Duration {
 
 func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 	ctx := context.Background()
-	c := acctest.TestAccProvider.Meta().(*sdk.Session)
+	c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
 
 	cfg := &delegate.DockerDelegateConfig{
 		AccountId:     c.AccountId,
@@ -47,7 +47,7 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 	_, err := delegate.RunDelegateContainer(ctx, cfg)
 	require.NoError(t, err, "failed to create delegate container: %s", err)
 
-	delegate, err := c.CDClient.DelegateClient.WaitForDelegate(ctx, name, getDelegateTimeout())
+	delegate, err := c.DelegateClient.WaitForDelegate(ctx, name, getDelegateTimeout())
 	require.NoError(t, err, "failed to wait for delegate: %s", err)
 	require.NotNil(t, delegate, "delegate should not be nil")
 
@@ -55,8 +55,8 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 }
 
 func deleteDelegate(t *testing.T, name string) {
-	c := acctest.TestAccProvider.Meta().(*sdk.Session)
-	delegate, err := c.CDClient.DelegateClient.GetDelegateByName(name)
+	c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+	delegate, err := c.DelegateClient.GetDelegateByName(name)
 	require.NoError(t, err, "Failed to get delegate: %s", err)
 	require.NotNil(t, delegate, "Delegate should not be nil")
 

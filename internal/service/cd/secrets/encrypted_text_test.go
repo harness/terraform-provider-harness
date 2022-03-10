@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -133,12 +133,12 @@ func TestAccResourceEncryptedText_secretmanagerid_DeleteUnderlyingResource(t *te
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
-					secret, err := c.CDClient.SecretClient.GetEncryptedTextByName(name)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					secret, err := c.SecretClient.GetEncryptedTextByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, secret)
 
-					err = c.CDClient.SecretClient.DeleteSecret(secret.Id, secret.SecretType)
+					err = c.SecretClient.DeleteSecret(secret.Id, secret.SecretType)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceEncryptedText(name, value, ""),
@@ -284,5 +284,5 @@ func testAccGetEncryptedText(resourceName string, state *terraform.State) (*grap
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
 
-	return c.CDClient.SecretClient.GetEncryptedTextById(id)
+	return c.SecretClient.GetEncryptedTextById(id)
 }

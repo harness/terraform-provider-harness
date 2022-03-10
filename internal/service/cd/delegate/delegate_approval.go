@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -44,10 +44,10 @@ func ResourceDelegateApproval() *schema.Resource {
 }
 
 func resourceDelegateApprovalRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("delegate_id").(string)
-	delegate, err := c.CDClient.DelegateClient.GetDelegateById(id)
+	delegate, err := c.DelegateClient.GetDelegateById(id)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -72,7 +72,7 @@ func resourceDelegateApprovalRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	// Don't attempt to do anything if we've already done this once.
 	if !d.IsNewResource() {
@@ -80,7 +80,7 @@ func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.Resou
 	}
 
 	id := d.Get("delegate_id").(string)
-	delegate, err := c.CDClient.DelegateClient.GetDelegateById(id)
+	delegate, err := c.DelegateClient.GetDelegateById(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -98,8 +98,8 @@ func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.Resou
 		approvaltype = graphql.DelegateApprovalTypes.Reject
 	}
 
-	delegate, err = c.CDClient.DelegateClient.UpdateDelegateApprovalStatus(&graphql.DelegateApprovalRejectInput{
-		AccountId:        c.AccountId,
+	delegate, err = c.DelegateClient.UpdateDelegateApprovalStatus(&graphql.DelegateApprovalRejectInput{
+		AccountId:        c.Configuration.AccountId,
 		DelegateApproval: approvaltype,
 		DelegateId:       delegate.UUID,
 	})

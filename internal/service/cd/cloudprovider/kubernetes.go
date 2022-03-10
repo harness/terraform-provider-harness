@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
@@ -249,13 +249,13 @@ func ResourceCloudProviderK8s() *schema.Resource {
 }
 
 func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	cp := &cac.KubernetesCloudProvider{}
 	id := d.Id()
 
 	log.Printf("[DEBUG] Terraform: Reading Kubernetes cloud provider %s", id)
-	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(id, cp); err != nil {
+	if err := c.ConfigAsCodeClient.GetCloudProviderById(id, cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		log.Printf("[DEBUG] Terraform: Could not find cloud provider %s. Marking as new resource", id)
@@ -267,7 +267,7 @@ func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, m
 	return readCloudProviderK8s(c, d, cp)
 }
 
-func readCloudProviderK8s(c *sdk.Session, d *schema.ResourceData, cp *cac.KubernetesCloudProvider) diag.Diagnostics {
+func readCloudProviderK8s(c *cd.ApiClient, d *schema.ResourceData, cp *cac.KubernetesCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("skip_validation", cp.SkipValidation)
@@ -283,7 +283,7 @@ func readCloudProviderK8s(c *sdk.Session, d *schema.ResourceData, cp *cac.Kubern
 }
 
 func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var input *cac.KubernetesCloudProvider
 	var err error
@@ -294,7 +294,7 @@ func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.Resou
 	} else {
 		log.Printf("[DEBUG] Terraform: Updating Kubernetes cloud provider %s", d.Get("name"))
 		input = &cac.KubernetesCloudProvider{}
-		if err = c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
+		if err = c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
 			return diag.FromErr(err)
 		} else if input.IsEmpty() {
 			log.Printf("[DEBUG] Terraform: Could not find cloud provider. Marking as new resource.")
@@ -317,7 +317,7 @@ func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.Resou
 		return diag.FromErr(err)
 	}
 
-	cp, err := c.CDClient.ConfigAsCodeClient.UpsertKubernetesCloudProvider(input)
+	cp, err := c.ConfigAsCodeClient.UpsertKubernetesCloudProvider(input)
 
 	if err != nil {
 		return diag.FromErr(err)

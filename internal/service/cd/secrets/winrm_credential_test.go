@@ -14,14 +14,14 @@ func init() {
 func testAccResourceWinRMCredentialSweep(r string) error {
 	// c := testAccGetApiClientFromProvider()
 
-	// creds, err := c.CDClient.SecretClient.ListWinRMCredentials()
+	// creds, err := c.SecretClient.ListWinRMCredentials()
 	// if err != nil {
 	// 	return fmt.Errorf("error retrieving WinRM credentials: %s", err)
 	// }
 
 	// for _, cred := range creds {
 	// 	if strings.HasPrefix(cred.Name, "Test") {
-	// 		if err = c.CDClient.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.WinRMCredential); err != nil {
+	// 		if err = c.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.WinRMCredential); err != nil {
 	// 			return err
 	// 		}
 	// 	}

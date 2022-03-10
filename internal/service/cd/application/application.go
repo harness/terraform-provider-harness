@@ -3,7 +3,7 @@ package application
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -59,7 +59,7 @@ func ResourceApplication() *schema.Resource {
 }
 
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	input := &graphql.Application{
 		Name:                      d.Get("name").(string),
@@ -67,7 +67,7 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 		IsManualTriggerAuthorized: d.Get("is_manual_trigger_authorized").(bool),
 	}
 
-	app, err := c.CDClient.ApplicationClient.CreateApplication(input)
+	app, err := c.ApplicationClient.CreateApplication(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -78,11 +78,11 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	appId := d.Get("id").(string)
 
-	app, err := c.CDClient.ApplicationClient.GetApplicationById(appId)
+	app, err := c.ApplicationClient.GetApplicationById(appId)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -118,7 +118,7 @@ func applicationRead(d *schema.ResourceData, app *graphql.Application) {
 }
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	input := &graphql.UpdateApplicationInput{
 		ApplicationId:             d.Id(),
@@ -127,7 +127,7 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 		Name:                      d.Get("name").(string),
 	}
 
-	app, err := c.CDClient.ApplicationClient.UpdateApplication(input)
+	app, err := c.ApplicationClient.UpdateApplication(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -138,9 +138,9 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
-	if err := c.CDClient.ApplicationClient.DeleteApplication(d.Id()); err != nil {
+	if err := c.ApplicationClient.DeleteApplication(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 

@@ -77,7 +77,7 @@ func testAccGetUserInGroupStatus(t *testing.T, state *terraform.State, resourceN
 	require.NotNil(t, group)
 
 	c := acctest.TestAccGetApiClientFromProvider()
-	ok, err := c.CDClient.UserClient.IsUserInGroup(user.Id, group.Id)
+	ok, err := c.UserClient.IsUserInGroup(user.Id, group.Id)
 	require.NoError(t, err)
 
 	return ok
@@ -90,7 +90,7 @@ func testAccAddUserToGroupDestroy(resourceName string) resource.TestCheckFunc {
 		userId := r.Primary.Attributes["user_id"]
 
 		c := acctest.TestAccGetApiClientFromProvider()
-		ok, err := c.CDClient.UserClient.IsUserInGroup(userId, groupId)
+		ok, err := c.UserClient.IsUserInGroup(userId, groupId)
 		if err != nil {
 			return err
 		}
