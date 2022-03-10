@@ -10,6 +10,12 @@
 package nextgen
 
 import (
+	"fmt"
+
+	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/logging"
 	"github.com/hashicorp/go-retryablehttp"
 	log "github.com/sirupsen/logrus"
 )
@@ -52,6 +58,7 @@ type APIKey struct {
 
 type Configuration struct {
 	AccountId     string            `json:"accountId,omitempty"`
+	ApiKey        string            `json:"apiKey,omitempty"`
 	BasePath      string            `json:"basePath,omitempty"`
 	Host          string            `json:"host,omitempty"`
 	Scheme        string            `json:"scheme,omitempty"`
@@ -62,12 +69,22 @@ type Configuration struct {
 	DebugLogging  bool
 }
 
-func NewConfiguration() *Configuration {
-	cfg := &Configuration{
-		BasePath:      "https://app.harness.io/gateway",
-		DefaultHeader: make(map[string]string),
-		UserAgent:     "Swagger-Codegen/1.0.0/go",
+func DefaultConfiguration() *Configuration {
+	logger := logging.NewLogger()
+	if helpers.EnvVars.DebugEnabled.Get() == "true" {
+		logger.SetLevel(log.DebugLevel)
 	}
+
+	cfg := &Configuration{
+		AccountId:     helpers.EnvVars.AccountId.Get(),
+		ApiKey:        helpers.EnvVars.ApiKey.Get(),
+		BasePath:      helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl),
+		DefaultHeader: make(map[string]string),
+		HTTPClient:    utils.GetDefaultHttpClient(logger),
+		Logger:        logger,
+		UserAgent:     fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
+	}
+
 	return cfg
 }
 

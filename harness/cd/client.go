@@ -52,12 +52,13 @@ func DefaultConfig() *Config {
 	}
 
 	cfg := &Config{
-		AccountId:  helpers.EnvVars.AccountId.Get(),
-		APIKey:     helpers.EnvVars.ApiKey.Get(),
-		Endpoint:   helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl),
-		Logger:     logger,
-		HTTPClient: utils.GetDefaultHttpClient(logger),
-		UserAgent:  fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
+		AccountId:      helpers.EnvVars.AccountId.Get(),
+		APIKey:         helpers.EnvVars.ApiKey.Get(),
+		DefaultHeaders: make(map[string]string),
+		Endpoint:       helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl),
+		HTTPClient:     utils.GetDefaultHttpClient(logger),
+		Logger:         logger,
+		UserAgent:      fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
 	}
 
 	return cfg
@@ -82,11 +83,6 @@ func NewClient(cfg *Config) (*ApiClient, error) {
 
 	if cfg.HTTPClient == nil {
 		return nil, cfg.NewInvalidConfigError("Endpoint", nil)
-	}
-
-	// defaultHeaders
-	if cfg.DefaultHeaders == nil {
-		cfg.DefaultHeaders = make(map[string]string)
 	}
 
 	// Set default headers for all requests

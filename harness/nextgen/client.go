@@ -29,10 +29,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/harness/harness-go-sdk/harness/utils"
-	"github.com/harness/harness-go-sdk/logging"
 	"github.com/hashicorp/go-retryablehttp"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )
 
@@ -48,6 +45,7 @@ type APIClient struct {
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
 	AccountId string
+	ApiKey    string
 	Endpoint  string
 
 	// API Services
@@ -172,20 +170,12 @@ type service struct {
 // NewAPIClient creates a new API client. Requires a userAgent string describing your application.
 // optionally a custom http.Client to allow for advanced features such as caching.
 func NewAPIClient(cfg *Configuration) *APIClient {
-	if cfg.HTTPClient == nil {
-		cfg.HTTPClient = utils.GetDefaultHttpClient(cfg.Logger)
-	}
-
-	if cfg.Logger == nil {
-		cfg.Logger = logging.NewLogger()
-		if cfg.DebugLogging {
-			cfg.Logger.SetLevel(log.DebugLevel)
-		}
-	}
-
 	c := &APIClient{}
 	c.cfg = cfg
 	c.common.client = c
+
+	// Api Config
+	c.ApiKey = cfg.ApiKey
 	c.AccountId = cfg.AccountId
 	c.Endpoint = cfg.BasePath
 
