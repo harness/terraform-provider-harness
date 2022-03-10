@@ -12,7 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	client, err := cd.NewClient(&cd.Config{})
+	client, err := cd.NewClient(cd.DefaultConfig())
 	if err != nil {
 		panic(err)
 	}
