@@ -529,6 +529,8 @@ github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgf
 github.com/grpc-ecosystem/grpc-gateway v1.9.0/go.mod h1:vNeuVxBJEsws4ogUvrchl83t/GYV9WGTSLVdBhOQFDY=
 github.com/grpc-ecosystem/grpc-gateway v1.9.5/go.mod h1:vNeuVxBJEsws4ogUvrchl83t/GYV9WGTSLVdBhOQFDY=
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
+github.com/harness/harness-go-sdk v0.1.14 h1:4kUn6po9wLM/UCk3loJqGjHYd8BVInKJ0F8XhM+bfFs=
+github.com/harness/harness-go-sdk v0.1.14/go.mod h1:AbzjdD/FiUNp/MdZlsD6Km2xmXWeytgHNml/HJxoFdA=
 github.com/harness/harness-go-sdk v0.1.15-0.20220309231024-9205252e10f2 h1:xF883lcLbgedNCae7BOPhFZoVF8XUnvZudq4QXZpS1E=
 github.com/harness/harness-go-sdk v0.1.15-0.20220309231024-9205252e10f2/go.mod h1:ZqyTYKApEw2u8wKSLYHJ96eztGedw+XcEBNQGeOPbms=
 github.com/hashicorp/consul/api v1.1.0/go.mod h1:VmuI/Lkw1nC05EYQWNKwWGbkg+FbDBtguAZLlVdkD9Q=
