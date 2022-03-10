@@ -13,7 +13,9 @@ import (
 )
 
 func TestAccApproveDelegate(t *testing.T) {
-	t.Skip("Skipping until we figure out how to get the tests passing properly in CI")
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(7))

@@ -10,7 +10,9 @@ import (
 )
 
 func TestAccDataSourceDelegate_hostname(t *testing.T) {
-	t.Skip("Skipping until we figure out how to get the tests passing properly in CI")
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
 
 	delegateName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	resourceName := "data.harness_delegate.test"
@@ -35,7 +37,9 @@ func TestAccDataSourceDelegate_hostname(t *testing.T) {
 }
 
 func TestAccDataSourceDelegate_name(t *testing.T) {
-	t.Skip("Skipping until we figure out how to get the tests passing properly in CI")
+	if testing.Short() {
+		t.Skip("skipping test in short mode")
+	}
 
 	delegateName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	resourceName := "data.harness_delegate.test"

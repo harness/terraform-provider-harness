@@ -36,7 +36,7 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 	c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
 
 	cfg := &delegate.DockerDelegateConfig{
-		AccountId:     c.AccountId,
+		AccountId:     c.Configuration.AccountId,
 		AccountSecret: helpers.TestEnvVars.DelegateSecret.Get(),
 		DelegateName:  name,
 		ContainerName: name,
