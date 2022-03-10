@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -36,7 +36,7 @@ func ResourceSSHService() *schema.Resource {
 }
 
 func resourceSSHServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
@@ -44,7 +44,7 @@ func resourceSSHServiceRead(ctx context.Context, d *schema.ResourceData, meta in
 	var svc *cac.Service
 	var err error
 
-	if svc, err = c.CDClient.ConfigAsCodeClient.GetServiceById(appId, svcId); err != nil {
+	if svc, err = c.ConfigAsCodeClient.GetServiceById(appId, svcId); err != nil {
 		return diag.FromErr(err)
 	} else if svc == nil {
 		d.SetId("")
@@ -70,7 +70,7 @@ func readServiceSSH(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics {
 }
 
 func resourceSSHServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var input *cac.Service
 	var err error
@@ -78,7 +78,7 @@ func resourceSSHServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	if d.IsNewResource() {
 		input = cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
 	} else {
-		if input, err = c.CDClient.ConfigAsCodeClient.GetServiceById(d.Get("app_id").(string), d.Id()); err != nil {
+		if input, err = c.ConfigAsCodeClient.GetServiceById(d.Get("app_id").(string), d.Id()); err != nil {
 			return diag.FromErr(err)
 		} else if input == nil {
 			d.SetId("")
@@ -98,7 +98,7 @@ func resourceSSHServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	}
 
 	// Create Service
-	newSvc, err := c.CDClient.ConfigAsCodeClient.UpsertService(input)
+	newSvc, err := c.ConfigAsCodeClient.UpsertService(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}

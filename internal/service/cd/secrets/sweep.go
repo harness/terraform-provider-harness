@@ -36,7 +36,7 @@ func testSweepHarnessEncryptedText(r string) error {
 
 	for hasMore {
 
-		secrets, _, err := c.CDClient.SecretClient.ListEncryptedTextSecrets(limit, offset)
+		secrets, _, err := c.SecretClient.ListEncryptedTextSecrets(limit, offset)
 
 		if err != nil {
 			return err
@@ -44,7 +44,7 @@ func testSweepHarnessEncryptedText(r string) error {
 
 		for _, secret := range secrets {
 			if strings.HasPrefix(secret.Name, "Test") {
-				if err = c.CDClient.SecretClient.DeleteSecret(secret.UUID, graphql.SecretTypes.EncryptedText); err != nil {
+				if err = c.SecretClient.DeleteSecret(secret.UUID, graphql.SecretTypes.EncryptedText); err != nil {
 					return err
 				}
 			}
@@ -59,14 +59,14 @@ func testSweepHarnessEncryptedText(r string) error {
 func testAccResourceSSHCredentialSweep(r string) error {
 	c := sweep.SweeperClient
 
-	creds, err := c.CDClient.SecretClient.ListSSHCredentials()
+	creds, err := c.SecretClient.ListSSHCredentials()
 	if err != nil {
 		return fmt.Errorf("error retrieving SSH credentials: %s", err)
 	}
 
 	for _, cred := range creds {
 		if strings.HasPrefix(cred.Name, "Test") {
-			if err = c.CDClient.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.SSHCredential); err != nil {
+			if err = c.SecretClient.DeleteSecret(cred.UUID, graphql.SecretTypes.SSHCredential); err != nil {
 				fmt.Printf("[ERROR] Failed to delete SSH credential: %s", err)
 			}
 		}

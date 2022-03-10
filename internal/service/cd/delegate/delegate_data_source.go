@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -90,7 +90,7 @@ func DataSourceDelegate() *schema.Resource {
 
 func dataSourceDelegateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("id").(string)
 	name := d.Get("name").(string)
@@ -102,18 +102,18 @@ func dataSourceDelegateRead(ctx context.Context, d *schema.ResourceData, meta in
 	var err error
 
 	if id != "" {
-		foundDelegate, err = c.CDClient.DelegateClient.GetDelegateById(id)
+		foundDelegate, err = c.DelegateClient.GetDelegateById(id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 	} else if hostname != "" {
-		foundDelegate, err = c.CDClient.DelegateClient.GetDelegateByHostName(hostname)
+		foundDelegate, err = c.DelegateClient.GetDelegateByHostName(hostname)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 	} else {
 		var delegates []*graphql.Delegate
-		delegates, _, err = c.CDClient.DelegateClient.ListDelegatesWithFilters(1, 0, name, graphql.DelegateStatus(status), graphql.DelegateType(delegateType))
+		delegates, _, err = c.DelegateClient.ListDelegatesWithFilters(1, 0, name, graphql.DelegateStatus(status), graphql.DelegateType(delegateType))
 		if err != nil {
 			return diag.FromErr(err)
 		}

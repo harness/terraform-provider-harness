@@ -3,7 +3,7 @@ package yamlconfig
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,12 +46,12 @@ func DataSourceYamlConfig() *schema.Resource {
 }
 
 func dataSourceYamlConfigRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	app_id := d.Get("app_id").(string)
 	path := cac.YamlPath(d.Get("path").(string))
 
-	entity, err := c.CDClient.ConfigAsCodeClient.FindYamlByPath(app_id, path)
+	entity, err := c.ConfigAsCodeClient.FindYamlByPath(app_id, path)
 	if err != nil {
 		return diag.FromErr(err)
 	} else if entity == nil {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/harness/terraform-provider-harness/internal/utils"
@@ -126,11 +126,11 @@ func ResourceGitConnector() *schema.Resource {
 }
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	connId := d.Get("id").(string)
 
-	conn, err := c.CDClient.ConnectorClient.GetGitConnectorById(connId)
+	conn, err := c.ConnectorClient.GetGitConnectorById(connId)
 	if err != nil {
 		return diag.FromErr(err)
 	} else if conn == nil {
@@ -203,7 +203,7 @@ func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnect
 }
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	connInput := &graphql.GitConnectorInput{}
 	err := setGitConnectorConfig(d, connInput, false)
@@ -211,7 +211,7 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 		return diag.FromErr(err)
 	}
 
-	conn, err := c.CDClient.ConnectorClient.CreateGitConnector(connInput)
+	conn, err := c.ConnectorClient.CreateGitConnector(connInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -220,7 +220,7 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("id").(string)
 
@@ -230,7 +230,7 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 		return diag.FromErr(err)
 	}
 
-	conn, err := c.CDClient.ConnectorClient.UpdateGitConnector(id, connInput)
+	conn, err := c.ConnectorClient.UpdateGitConnector(id, connInput)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -239,11 +239,11 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	id := d.Get("id").(string)
 
-	err := c.CDClient.ConnectorClient.DeleteConnector(id)
+	err := c.ConnectorClient.DeleteConnector(id)
 
 	if err != nil {
 		return diag.FromErr(err)

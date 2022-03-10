@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -75,16 +75,16 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
-					app, err := c.CDClient.ApplicationClient.GetApplicationByName(name)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					app, err := c.ApplicationClient.GetApplicationByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, app)
 
-					env, err := c.CDClient.ConfigAsCodeClient.GetEnvironmentByName(app.Id, name)
+					env, err := c.ConfigAsCodeClient.GetEnvironmentByName(app.Id, name)
 					require.NoError(t, err)
 					require.NotNil(t, env)
 
-					err = c.CDClient.ConfigAsCodeClient.DeleteEnvironment(app.Name, env.Name)
+					err = c.ConfigAsCodeClient.DeleteEnvironment(app.Name, env.Name)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceEnvironment(name, cac.EnvironmentTypes.NonProd),
@@ -101,7 +101,7 @@ func testAccGetEnvironment(resourceName string, state *terraform.State) (*cac.En
 	svcId := r.Primary.ID
 	appId := r.Primary.Attributes["app_id"]
 
-	return c.CDClient.ConfigAsCodeClient.GetEnvironmentById(appId, svcId)
+	return c.ConfigAsCodeClient.GetEnvironmentById(appId, svcId)
 }
 
 func testAccCheckEnvironmentExists(t *testing.T, resourceName string, name string, envType cac.EnvironmentType) resource.TestCheckFunc {

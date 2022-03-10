@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -39,15 +39,15 @@ func DataSourceSshCredential() *schema.Resource {
 }
 
 func dataSourceSshCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var sshCred *graphql.SSHCredential
 	var err error
 
 	if id := d.Get("id").(string); id != "" {
-		sshCred, err = c.CDClient.SecretClient.GetSSHCredentialById(id)
+		sshCred, err = c.SecretClient.GetSSHCredentialById(id)
 	} else if name := d.Get("name").(string); name != "" {
-		sshCred, err = c.CDClient.SecretClient.GetSSHCredentialByName(name)
+		sshCred, err = c.SecretClient.GetSSHCredentialByName(name)
 	} else if err != nil {
 		return diag.FromErr(err)
 	}

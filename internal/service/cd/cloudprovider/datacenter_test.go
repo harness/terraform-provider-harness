@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -70,12 +70,12 @@ func TestAccResourceDataCenterCloudProviderConnector_DeleteUnderlyingResource(t 
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
-					cp, err := c.CDClient.CloudProviderClient.GetPhysicalDatacenterCloudProviderByName(name)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					cp, err := c.CloudProviderClient.GetPhysicalDatacenterCloudProviderByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, cp)
 
-					err = c.CDClient.CloudProviderClient.DeleteCloudProvider(cp.Id)
+					err = c.CloudProviderClient.DeleteCloudProvider(cp.Id)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceDataCenterCloudProvider(name),
@@ -122,7 +122,7 @@ func testAccGetCloudProvider(resourceName string, state *terraform.State, respOb
 	c := acctest.TestAccGetApiClientFromProvider()
 	name := r.Primary.Attributes["name"]
 
-	err := c.CDClient.ConfigAsCodeClient.GetCloudProviderByName(name, respObj)
+	err := c.ConfigAsCodeClient.GetCloudProviderByName(name, respObj)
 	if err != nil {
 		return err
 	}

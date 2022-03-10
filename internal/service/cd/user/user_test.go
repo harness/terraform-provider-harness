@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -81,13 +81,13 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
 
-					usr, err := c.CDClient.UserClient.GetUserByEmail(expectedEmail)
+					usr, err := c.UserClient.GetUserByEmail(expectedEmail)
 					require.NoError(t, err)
 					require.NotNil(t, usr)
 
-					err = c.CDClient.UserClient.DeleteUser(usr.Id)
+					err = c.UserClient.DeleteUser(usr.Id)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceUser(expectedName, expectedEmail),
@@ -119,14 +119,14 @@ func TestAccResourceUser_WithUserGroups(t *testing.T) {
 						userId := s.RootModule().Resources[resourceName].Primary.ID
 						groupId := s.RootModule().Resources["harness_user_group.test"].Primary.ID
 						acctest.TestAccConfigureProvider()
-						c := acctest.TestAccProvider.Meta().(*sdk.Session)
+						c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
 
 						limit := 100
 						offset := 0
 						hasMore := true
 
 						for hasMore {
-							groups, _, err := c.CDClient.UserClient.ListGroupMembershipByUserId(userId, limit, offset)
+							groups, _, err := c.UserClient.ListGroupMembershipByUserId(userId, limit, offset)
 							if err != nil {
 								return err
 							}
@@ -181,7 +181,7 @@ func testAccGetUser(resourceName string, state *terraform.State) (*graphql.User,
 	c := acctest.TestAccGetApiClientFromProvider()
 	email := r.Primary.Attributes["email"]
 
-	return c.CDClient.UserClient.GetUserByEmail(email)
+	return c.UserClient.GetUserByEmail(email)
 }
 
 func testAccUserDestroy(resourceName string) resource.TestCheckFunc {
@@ -227,7 +227,7 @@ func testSweepUsers(r string) error {
 
 	for hasMore {
 
-		users, _, err := c.CDClient.UserClient.ListUsers(limit, offset)
+		users, _, err := c.UserClient.ListUsers(limit, offset)
 		if err != nil {
 			return err
 		}
@@ -235,7 +235,7 @@ func testSweepUsers(r string) error {
 		for _, user := range users {
 			// Only delete users that have an email that starts with 'test'
 			if strings.HasPrefix(user.Email, "test") {
-				if err = c.CDClient.UserClient.DeleteUser(user.Id); err != nil {
+				if err = c.UserClient.DeleteUser(user.Id); err != nil {
 					return err
 				}
 			}

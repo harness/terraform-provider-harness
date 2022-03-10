@@ -1,5 +1,5 @@
 package sweep
 
-import sdk "github.com/harness/harness-go-sdk"
+import "github.com/harness/harness-go-sdk/harness/cd"
 
-var SweeperClient *sdk.Session
+var SweeperClient *cd.ApiClient

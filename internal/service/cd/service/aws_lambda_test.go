@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -80,12 +80,12 @@ func TestAccResourceAWSLambdaService_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
-					svc, err := c.CDClient.ConfigAsCodeClient.GetServiceById(appId, serviceId)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					svc, err := c.ConfigAsCodeClient.GetServiceById(appId, serviceId)
 					require.NoError(t, err)
 					require.NotNil(t, svc)
 
-					err = c.CDClient.ConfigAsCodeClient.DeleteService(svc.ApplicationId, svc.Id)
+					err = c.ConfigAsCodeClient.DeleteService(svc.ApplicationId, svc.Id)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceAWSLambdaService(name, description),

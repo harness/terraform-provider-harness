@@ -27,14 +27,14 @@ func testSweepCloudProviders(r string) error {
 
 	for hasMore {
 
-		cloudProviders, _, err := c.CDClient.CloudProviderClient.ListCloudProviders(limit, offset)
+		cloudProviders, _, err := c.CloudProviderClient.ListCloudProviders(limit, offset)
 		if err != nil {
 			return err
 		}
 
 		for _, cp := range cloudProviders {
 			if strings.HasPrefix(cp.Name, "Test") {
-				if err = c.CDClient.CloudProviderClient.DeleteCloudProvider(cp.Id); err != nil {
+				if err = c.CloudProviderClient.DeleteCloudProvider(cp.Id); err != nil {
 					fmt.Printf("[ERROR] Failed to delete cloud provider %s: %s\n", cp.Name, err)
 				}
 			}

@@ -70,7 +70,7 @@ func testAccGetInfraDef(resourceName string, state *terraform.State) (*cac.Infra
 	appId := r.Primary.Attributes["app_id"]
 	envId := r.Primary.Attributes["env_id"]
 
-	return c.CDClient.ConfigAsCodeClient.GetInfraDefinitionById(appId, envId, id)
+	return c.ConfigAsCodeClient.GetInfraDefinitionById(appId, envId, id)
 }
 
 func testAccInfraDefDestroy(resourceName string) resource.TestCheckFunc {

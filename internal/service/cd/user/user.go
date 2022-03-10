@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -85,7 +85,7 @@ func ResourceUser() *schema.Resource {
 }
 
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	log.Printf("[DEBUG] Creating user %s", d.Get("email").(string))
 
@@ -95,7 +95,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		UserGroupIds: utils.InterfaceSliceToStringSlice(d.Get("group_ids").(*schema.Set).List()),
 	}
 
-	user, err := c.CDClient.UserClient.CreateUser(input)
+	user, err := c.UserClient.CreateUser(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -104,13 +104,13 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	email := d.Get("email").(string)
 
 	log.Printf("[DEBUG] Looking for user by email %s", email)
 
-	user, err := c.CDClient.UserClient.GetUserByEmail(email)
+	user, err := c.UserClient.GetUserByEmail(email)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -138,7 +138,7 @@ func readUser(d *schema.ResourceData, user *graphql.User) diag.Diagnostics {
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	log.Printf("[DEBUG] Updating user %s", d.Id())
 
@@ -147,7 +147,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		Id:   d.Id(),
 	}
 
-	user, err := c.CDClient.UserClient.UpdateUser(input)
+	user, err := c.UserClient.UpdateUser(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -156,9 +156,9 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
-	if err := c.CDClient.UserClient.DeleteUser(d.Id()); err != nil {
+	if err := c.UserClient.DeleteUser(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
 

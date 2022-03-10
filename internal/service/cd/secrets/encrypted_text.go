@@ -3,7 +3,7 @@ package secrets
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -72,11 +72,11 @@ func ResourceEncryptedText() *schema.Resource {
 }
 
 func resourceEncryptedTextRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	secretId := d.Get("id").(string)
 
-	secret, err := c.CDClient.SecretClient.GetEncryptedTextById(secretId)
+	secret, err := c.SecretClient.GetEncryptedTextById(secretId)
 	if err != nil {
 		return diag.FromErr(err)
 	} else if secret == nil {
@@ -101,7 +101,7 @@ func readEncryptedText(d *schema.ResourceData, secret *graphql.EncryptedText) di
 }
 
 func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	input := &graphql.CreateSecretInput{
 		EncryptedText: &graphql.EncryptedTextInput{},
@@ -137,7 +137,7 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 	input.EncryptedText.UsageScope = usageScope
 
-	secret, err := c.CDClient.SecretClient.CreateEncryptedText(input)
+	secret, err := c.SecretClient.CreateEncryptedText(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -146,7 +146,7 @@ func resourceEncryptedTextCreate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	input := &graphql.UpdateSecretInput{
 		SecretId:      d.Id(),
@@ -179,7 +179,7 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 	}
 	input.EncryptedText.UsageScope = usageScope
 
-	secret, err := c.CDClient.SecretClient.UpdateEncryptedText(input)
+	secret, err := c.SecretClient.UpdateEncryptedText(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -188,9 +188,9 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
-	err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
+	err := c.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
 
 	if err != nil {
 		return diag.FromErr(err)

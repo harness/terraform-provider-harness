@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -144,13 +144,13 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
 
-					grp, err := c.CDClient.UserClient.GetUserGroupByName(expectedName)
+					grp, err := c.UserClient.GetUserGroupByName(expectedName)
 					require.NoError(t, err)
 					require.NotNil(t, grp)
 
-					err = c.CDClient.UserClient.DeleteUserGroup(grp.Id)
+					err = c.UserClient.DeleteUserGroup(grp.Id)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceUserGroupAccountPermissions(expectedName),
@@ -203,7 +203,7 @@ func testAccGetUserGroup(resourceName string, state *terraform.State) (*graphql.
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
 
-	return c.CDClient.UserClient.GetUserGroupById(id)
+	return c.UserClient.GetUserGroupById(id)
 }
 
 func testAccUserGroupDestroy(resourceName string) resource.TestCheckFunc {
@@ -374,7 +374,7 @@ func testSweepUserGroups(r string) error {
 
 	for hasMore {
 
-		groups, _, err := c.CDClient.UserClient.ListUserGroups(limit, offset)
+		groups, _, err := c.UserClient.ListUserGroups(limit, offset)
 		if err != nil {
 			return err
 		}
@@ -382,7 +382,7 @@ func testSweepUserGroups(r string) error {
 		for _, group := range groups {
 			// Only delete user groups that start with 'Test'
 			if strings.HasPrefix(group.Name, "Test") {
-				if err = c.CDClient.UserClient.DeleteUserGroup(group.Id); err != nil {
+				if err = c.UserClient.DeleteUserGroup(group.Id); err != nil {
 					return err
 				}
 			}

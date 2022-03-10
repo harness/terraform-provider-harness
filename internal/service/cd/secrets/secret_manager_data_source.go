@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -43,14 +43,14 @@ func DataSourceSecretManager() *schema.Resource {
 }
 
 func dataSourceSecretManagerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	// If we're looking up the default secret manager, then we'll just get the
 	// ID of the default secret manager and not set any other fields.
 	// This is done because the default secret manager details are not
 	// available through the API
 	if useDefault := d.Get("default").(bool); useDefault {
-		id, err := c.CDClient.SecretClient.GetDefaultSecretManagerId()
+		id, err := c.SecretClient.GetDefaultSecretManagerId()
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -63,9 +63,9 @@ func dataSourceSecretManagerRead(ctx context.Context, d *schema.ResourceData, me
 	var err error
 
 	if id := d.Get("id").(string); id != "" {
-		sm, err = c.CDClient.SecretClient.GetSecretManagerById(id)
+		sm, err = c.SecretClient.GetSecretManagerById(id)
 	} else if name := d.Get("name").(string); name != "" {
-		sm, err = c.CDClient.SecretClient.GetSecretManagerByName(name)
+		sm, err = c.SecretClient.GetSecretManagerByName(name)
 	} else if err != nil {
 		return diag.FromErr(err)
 	}

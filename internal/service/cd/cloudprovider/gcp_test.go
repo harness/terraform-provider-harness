@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -69,12 +69,12 @@ func TestAccResourceGcpCloudProviderConnector_DeleteUnderlyingResource(t *testin
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*sdk.Session)
-					cp, err := c.CDClient.CloudProviderClient.GetGcpCloudProviderByName(name)
+					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					cp, err := c.CloudProviderClient.GetGcpCloudProviderByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, cp)
 
-					err = c.CDClient.CloudProviderClient.DeleteCloudProvider(cp.Id)
+					err = c.CloudProviderClient.DeleteCloudProvider(cp.Id)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceGcpCloudProvider(name),

@@ -3,7 +3,7 @@ package environment
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -86,7 +86,7 @@ func DataSourceEnvironment() *schema.Resource {
 }
 
 func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var env *cac.Environment
 	var err error
@@ -94,12 +94,12 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 	appId := d.Get("app_id").(string)
 
 	if id := d.Get("environment_id").(string); id != "" {
-		env, err = c.CDClient.ConfigAsCodeClient.GetEnvironmentById(appId, id)
+		env, err = c.ConfigAsCodeClient.GetEnvironmentById(appId, id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
 	} else if name := d.Get("name").(string); name != "" {
-		env, err = c.CDClient.ConfigAsCodeClient.GetEnvironmentByName(appId, name)
+		env, err = c.ConfigAsCodeClient.GetEnvironmentByName(appId, name)
 		if err != nil {
 			return diag.FromErr(err)
 		}

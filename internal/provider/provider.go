@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	sdk "github.com/harness/harness-go-sdk"
 	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/application"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/cloudprovider"
-	cd_connector "github.com/harness/terraform-provider-harness/internal/service/cd/connector"
+	"github.com/harness/terraform-provider-harness/internal/service/cd/connector"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/delegate"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/environment"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
@@ -18,8 +18,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
-	"github.com/harness/terraform-provider-harness/internal/service/ng"
-	"github.com/harness/terraform-provider-harness/internal/service/ng/connector"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -65,24 +63,14 @@ func Provider(version string) func() *schema.Provider {
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.ApiKey.String(), nil),
 				},
-				"ng_api_key": {
-					Description: fmt.Sprintf("The Harness nextgen API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.NGApiKey.String()),
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.NGApiKey.String(), nil),
-				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"harness_application":    application.DataSourceApplication(),
-				"harness_connector":      ng.DataSourceConnector(),
-				"harness_current_user":   ng.DataSourceCurrentUser(),
 				"harness_delegate":       delegate.DataSourceDelegate(),
 				"harness_delegate_ids":   delegate.DataSourceDelegateIds(),
 				"harness_encrypted_text": secrets.DataSourceEncryptedText(),
 				"harness_environment":    environment.DataSourceEnvironment(),
-				"harness_git_connector":  cd_connector.DataSourceGitConnector(),
-				"harness_organization":   ng.DataSourceOrganization(),
-				"harness_project":        ng.DataSourceProject(),
+				"harness_git_connector":  connector.DataSourceGitConnector(),
 				"harness_secret_manager": secrets.DataSourceSecretManager(),
 				"harness_service":        service.DataSourceService(),
 				"harness_ssh_credential": secrets.DataSourceSshCredential(),
@@ -103,13 +91,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cloudprovider_kubernetes":  cloudprovider.ResourceCloudProviderK8s(),
 				"harness_cloudprovider_spot":        cloudprovider.ResourceCloudProviderSpot(),
 				"harness_cloudprovider_tanzu":       cloudprovider.ResourceCloudProviderTanzu(),
-				"harness_connector":                 connector.ResourceConnector(),
 				"harness_encrypted_text":            secrets.ResourceEncryptedText(),
 				"harness_environment":               environment.ResourceEnvironment(),
-				"harness_git_connector":             cd_connector.ResourceGitConnector(),
+				"harness_git_connector":             connector.ResourceGitConnector(),
 				"harness_infrastructure_definition": environment.ResourceInfraDefinition(),
-				"harness_organization":              ng.ResourceOrganization(),
-				"harness_project":                   ng.ResourceProject(),
 				"harness_service_ami":               service.ResourceAMIService(),
 				"harness_service_aws_codedeploy":    service.ResourceAWSCodeDeployService(),
 				"harness_service_aws_lambda":        service.ResourceAWSLambdaService(),
@@ -143,19 +128,20 @@ func getHttpClient() *retryablehttp.Client {
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		cfg := cd.DefaultConfig()
+		cfg.AccountId = d.Get("account_id").(string)
+		cfg.Endpoint = d.Get("endpoint").(string)
+		cfg.APIKey = d.Get("api_key").(string)
+		cfg.UserAgent = fmt.Sprintf("terraform-provider-harness-%s", version)
+		cfg.HTTPClient = getHttpClient()
+		cfg.DebugLogging = logging.IsDebugOrHigher()
 
-		session, err := sdk.NewSession(&sdk.SessionOptions{
-			ApiKey:       d.Get("api_key").(string),
-			NGApiKey:     d.Get("ng_api_key").(string),
-			AccountId:    d.Get("account_id").(string),
-			Endpoint:     d.Get("endpoint").(string),
-			DebugLogging: logging.IsDebugOrHigher(),
-			HTTPClient:   getHttpClient(),
-		})
+		client, err := cd.NewClient(cfg)
+
 		if err != nil {
 			return nil, diag.FromErr(err)
 		}
 
-		return session, nil
+		return client, nil
 	}
 }

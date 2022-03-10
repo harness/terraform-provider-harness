@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/harness/terraform-provider-harness/internal/utils"
@@ -31,10 +31,10 @@ func ResourceCloudProviderDataCenter() *schema.Resource {
 }
 
 func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	cp := &cac.PhysicalDatacenterCloudProvider{}
-	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
+	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		d.SetId("")
@@ -45,7 +45,7 @@ func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.Resource
 	return readCloudProviderDataCenter(c, d, cp)
 }
 
-func readCloudProviderDataCenter(c *sdk.Session, d *schema.ResourceData, cp *cac.PhysicalDatacenterCloudProvider) diag.Diagnostics {
+func readCloudProviderDataCenter(c *cd.ApiClient, d *schema.ResourceData, cp *cac.PhysicalDatacenterCloudProvider) diag.Diagnostics {
 
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
@@ -60,7 +60,7 @@ func readCloudProviderDataCenter(c *sdk.Session, d *schema.ResourceData, cp *cac
 }
 
 func resourceCloudProviderDataCenterCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var input *cac.PhysicalDatacenterCloudProvider
 	var err error
@@ -69,7 +69,7 @@ func resourceCloudProviderDataCenterCreateOrUpdate(ctx context.Context, d *schem
 		input = cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
 	} else {
 		input = &cac.PhysicalDatacenterCloudProvider{}
-		if err = c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
+		if err = c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
 			return diag.FromErr(err)
 		} else if input.IsEmpty() {
 			d.SetId("")
@@ -88,7 +88,7 @@ func resourceCloudProviderDataCenterCreateOrUpdate(ctx context.Context, d *schem
 		return diag.FromErr(err)
 	}
 
-	cp, err := c.CDClient.ConfigAsCodeClient.UpsertPhysicalDataCenterCloudProvider(input)
+	cp, err := c.ConfigAsCodeClient.UpsertPhysicalDataCenterCloudProvider(input)
 
 	if err != nil {
 		return diag.FromErr(err)

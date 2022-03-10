@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"context"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal/utils"
@@ -66,10 +66,10 @@ func ResourceCloudProviderTanzu() *schema.Resource {
 }
 
 func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	cp := &cac.PcfCloudProvider{}
-	if err := c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
+	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
 	} else if cp.IsEmpty() {
 		d.SetId("")
@@ -81,7 +81,7 @@ func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData,
 
 }
 
-func readCloudProviderTanzu(c *sdk.Session, d *schema.ResourceData, cp *cac.PcfCloudProvider) diag.Diagnostics {
+func readCloudProviderTanzu(c *cd.ApiClient, d *schema.ResourceData, cp *cac.PcfCloudProvider) diag.Diagnostics {
 	d.SetId(cp.Id)
 	d.Set("name", cp.Name)
 	d.Set("endpoint", cp.EndpointUrl)
@@ -98,7 +98,7 @@ func readCloudProviderTanzu(c *sdk.Session, d *schema.ResourceData, cp *cac.PcfC
 }
 
 func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*sdk.Session)
+	c := meta.(*cd.ApiClient)
 
 	var input *cac.PcfCloudProvider
 	var err error
@@ -107,7 +107,7 @@ func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.Res
 		input = cac.NewEntity(cac.ObjectTypes.PcfCloudProvider).(*cac.PcfCloudProvider)
 	} else {
 		input = &cac.PcfCloudProvider{}
-		if err = c.CDClient.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
+		if err = c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), input); err != nil {
 			return diag.FromErr(err)
 		} else if input.IsEmpty() {
 			d.SetId("")
@@ -131,7 +131,7 @@ func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.Res
 		Name: d.Get("password_secret_name").(string),
 	}
 
-	cp, err := c.CDClient.ConfigAsCodeClient.UpsertPcfCloudProvider(input)
+	cp, err := c.ConfigAsCodeClient.UpsertPcfCloudProvider(input)
 
 	if err != nil {
 		return diag.FromErr(err)

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	sdk "github.com/harness/harness-go-sdk"
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -96,7 +96,7 @@ func validateUsageScopeSettings(scopeData map[string]interface{}) (bool, error) 
 	return true, nil
 }
 
-func ExpandUsageRestrictions(c *sdk.Session, d []interface{}, ur *cac.UsageRestrictions) error {
+func ExpandUsageRestrictions(c *cd.ApiClient, d []interface{}, ur *cac.UsageRestrictions) error {
 	if len(d) == 0 {
 		return nil
 	}
@@ -118,7 +118,7 @@ func ExpandUsageRestrictions(c *sdk.Session, d []interface{}, ur *cac.UsageRestr
 		var err error
 
 		if attr, ok := scopeData["application_id"]; ok && attr != "" {
-			app, err = c.CDClient.ApplicationClient.GetApplicationById(attr.(string))
+			app, err = c.ApplicationClient.GetApplicationById(attr.(string))
 			if err != nil {
 				return nil
 			}
@@ -134,7 +134,7 @@ func ExpandUsageRestrictions(c *sdk.Session, d []interface{}, ur *cac.UsageRestr
 		}
 
 		if attr, ok := scopeData["environment_id"]; ok && attr != "" {
-			env, err := c.CDClient.ConfigAsCodeClient.GetEnvironmentById(app.Id, attr.(string))
+			env, err := c.ConfigAsCodeClient.GetEnvironmentById(app.Id, attr.(string))
 			if err != nil {
 				return err
 			} else if env.IsEmpty() {
@@ -182,7 +182,7 @@ func FlattenUsageScope(uc *graphql.UsageScope) []map[string]interface{} {
 	return results
 }
 
-func FlattenUsageRestrictions(c *sdk.Session, ur *cac.UsageRestrictions) ([]map[string]interface{}, error) {
+func FlattenUsageRestrictions(c *cd.ApiClient, ur *cac.UsageRestrictions) ([]map[string]interface{}, error) {
 	if ur == nil {
 		return make([]map[string]interface{}, 0), nil
 	}
@@ -210,13 +210,13 @@ func FlattenUsageRestrictions(c *sdk.Session, ur *cac.UsageRestrictions) ([]map[
 	return results, nil
 }
 
-func FlattenAppFilterEntityName(c *sdk.Session, filter *cac.AppFilter) (string, error) {
+func FlattenAppFilterEntityName(c *cd.ApiClient, filter *cac.AppFilter) (string, error) {
 	if len(filter.EntityNames) == 0 {
 		return "", nil
 	}
 
 	name := filter.EntityNames[0]
-	app, err := c.CDClient.ApplicationClient.GetApplicationByName(name)
+	app, err := c.ApplicationClient.GetApplicationByName(name)
 	if err != nil {
 		return "", err
 	}
@@ -232,13 +232,13 @@ func FlattenAppFilterEntityName(c *sdk.Session, filter *cac.AppFilter) (string, 
 // 	}
 // }
 
-func FlattenEnvFilterEntityName(c *sdk.Session, filter *cac.EnvFilter, applicationId string) (string, error) {
+func FlattenEnvFilterEntityName(c *cd.ApiClient, filter *cac.EnvFilter, applicationId string) (string, error) {
 	if len(filter.EntityNames) == 0 {
 		return "", nil
 	}
 
 	name := filter.EntityNames[0]
-	env, err := c.CDClient.ConfigAsCodeClient.GetEnvironmentByName(applicationId, name)
+	env, err := c.ConfigAsCodeClient.GetEnvironmentByName(applicationId, name)
 	if err != nil {
 		return "", err
 	}
