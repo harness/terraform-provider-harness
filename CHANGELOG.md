@@ -1,12 +1,5 @@
 # 0.1.16 (Unreleased)
 
-BREAKING CHANGES:
-
-* Separate Nextgen codebase and Current Gen codebase
-Upgrade to golang 1.17 ([#98](https://github.com/hashicorp/terraform-provider-harness/issues/98))
-
-# 0.1.16 (Unreleased)
-
 # 0.1.15
 
 BUG FIXES:
