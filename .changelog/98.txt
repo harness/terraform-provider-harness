@@ -1,4 +1,4 @@
-```release-note
+```release-note:breaking-change
 Separate Nextgen codebase and Current Gen codebase
 ```
 
