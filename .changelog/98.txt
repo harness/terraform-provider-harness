@@ -2,6 +2,6 @@
 Separate Nextgen codebase and Current Gen codebase
 ```
 
-```release-note
+```release-note:enhancement
 Upgraded to golang 1.17
 ```
