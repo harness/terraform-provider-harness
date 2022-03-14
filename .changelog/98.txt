@@ -1,4 +1,7 @@
 ```release-note:breaking-change
 Separate Nextgen codebase and Current Gen codebase
-Upgrade to golang 1.17
+```
+
+```release-note
+Upgraded to golang 1.17
 ```
