@@ -631,6 +631,10 @@ type GenericSwaggerError struct {
 
 // Error returns non-empty string if there was an error.
 func (e GenericSwaggerError) Error() string {
+	if e.model == nil {
+		return e.error
+	}
+
 	failure := e.model.(Failure)
 	if failure.Message != "" {
 		return failure.Message
