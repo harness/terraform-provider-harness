@@ -10,7 +10,7 @@
 package nextgen
 
 type ServiceResponse struct {
-	Service        *ServiceResponse `json:"service,omitempty"`
-	CreatedAt      int64            `json:"createdAt,omitempty"`
-	LastModifiedAt int64            `json:"lastModifiedAt,omitempty"`
+	Service        *ServiceRequest `json:"service,omitempty"`
+	CreatedAt      int64           `json:"createdAt,omitempty"`
+	LastModifiedAt int64           `json:"lastModifiedAt,omitempty"`
 }

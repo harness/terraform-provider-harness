@@ -18,7 +18,7 @@ type ConnectorResponse struct {
 	LastModifiedAt  int64                         `json:"lastModifiedAt,omitempty"`
 	Status          *ConnectorConnectivityDetails `json:"status,omitempty"`
 	ActivityDetails *ConnectorActivityDetails     `json:"activityDetails,omitempty"`
-	// This indicates if this Connector is managed by Harness or not. If True, Harness can manage and modify this Connector.
+	// This indicates if this Connector is managed by Harness or not.	 If True, Harness can manage and modify this Connector.
 	HarnessManaged        bool              `json:"harnessManaged,omitempty"`
 	GitDetails            *EntityGitDetails `json:"gitDetails,omitempty"`
 	EntityValidityDetails *EntityGitDetails `json:"entityValidityDetails,omitempty"`
