@@ -214,6 +214,10 @@ func createService(applicationId string, applicationName string, serviceName str
 		return nil, err
 	}
 
+	if svc.IsEmpty() {
+		return nil, fmt.Errorf("Failed to create service: %s", serviceName)
+	}
+
 	return svc, nil
 }
 
