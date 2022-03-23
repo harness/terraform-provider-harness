@@ -11,5 +11,5 @@ package nextgen
 
 // This contains details of the information such as references of token needed for Github API access
 type GithubTokenSpec struct {
-	TokenRef string `json:"tokenRef"`
+	TokenRef string `json:"tokenRef,omitempty"`
 }
