@@ -31,13 +31,16 @@ func TestAccResourceK8sCloudProviderConnector_delegate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					testAccCheckK8sCloudProviderExists(t, resourceName, name),
+					resource.TestCheckResourceAttr(resourceName, "authentication.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "authentication.0.delegate_selectors.0", "test"),
 				),
 			},
 			{
-				Config: testAccResourceK8sCloudProvider_delegate(updatedName),
+				Config: testAccResourceK8sCloudProvider_delegate_updateselectors(updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					testAccCheckK8sCloudProviderExists(t, resourceName, updatedName),
+					resource.TestCheckResourceAttr(resourceName, "authentication.0.delegate_selectors.0", "primary"),
 				),
 			},
 			{
@@ -214,6 +217,27 @@ func testAccResourceK8sCloudProvider_delegate(name string) string {
 
 			authentication {
 				delegate_selectors = ["test"]
+			}
+
+			usage_scope {
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+			
+			usage_scope {
+				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
+			}
+		}
+`, name)
+}
+
+func testAccResourceK8sCloudProvider_delegate_updateselectors(name string) string {
+	return fmt.Sprintf(`
+		resource "harness_cloudprovider_kubernetes" "test" {
+			name = "%[1]s"
+			skip_validation = true
+
+			authentication {
+				delegate_selectors = ["primary"]
 			}
 
 			usage_scope {
