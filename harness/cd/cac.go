@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"path"
 	"strings"
 
@@ -198,11 +199,22 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*ca
 		return nil, responseObj.ResponseMessages[0].ToError()
 	}
 
-	if responseObj.Resource.Status != "" && responseObj.Resource.Status != statusSuccess {
-		return nil, fmt.Errorf("%s: %s", responseObj.Resource.Status, responseObj.Resource.ErrorMessage)
+	if responseObj.Resource != nil {
+
+		if responseObj.Resource.Status != "" && responseObj.Resource.Status != statusSuccess {
+			return nil, fmt.Errorf("%s: %s", responseObj.Resource.Status, responseObj.Resource.ErrorMessage)
+		}
+
+		if responseObj.Resource.ErrorMessage != "" {
+			return nil, fmt.Errorf("%s", responseObj.Resource.ErrorMessage)
+		}
+
+		if responseObj.Resource.ErrorMssg != "" {
+			return nil, fmt.Errorf("%s", responseObj.Resource.ErrorMssg)
+		}
 	}
 
-	return &responseObj.Resource, nil
+	return responseObj.Resource, nil
 }
 
 const (
@@ -219,6 +231,45 @@ func checkStatusCode(statusCode int) (bool, error) {
 
 type ConfigAsCodeClient struct {
 	ApiClient *ApiClient
+}
+
+func (c *ConfigAsCodeClient) DeleteEntityV2(filePath cac.YamlPath, yamlContent string) error {
+	c.ApiClient.Log.Debugf("Deleting entity at %s", filePath)
+
+	var requestBody bytes.Buffer
+
+	body := []*struct {
+		FilePath    string `json:"filePath"`
+		FileContent string `json:"fileContent"`
+	}{
+		{
+			FilePath:    filePath.String(),
+			FileContent: yamlContent,
+		},
+	}
+
+	// JSON encode our body payload
+	if err := json.NewEncoder(&requestBody).Encode(body); err != nil {
+		return err
+	}
+
+	req, err := c.ApiClient.NewAuthorizedRequest(getCacPath("/delete-entities-v2"), http.MethodDelete, &requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	// Add the account ID to the query string
+	q := req.URL.Query()
+	q.Add(helpers.QueryParameters.AccountId.String(), c.ApiClient.Configuration.AccountId)
+	req.URL.RawQuery = q.Encode()
+
+	_, err = c.ExecuteRequest(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {

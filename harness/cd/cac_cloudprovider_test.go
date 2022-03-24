@@ -31,7 +31,6 @@ func TestGetCloudProviderById(t *testing.T) {
 }
 
 func TestDeleteCloudProvider(t *testing.T) {
-	t.Skip("Currently blocked by https://harness.atlassian.net/browse/SWAT-5060")
 	expectedName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	cpInput := cac.NewEntity(cac.ObjectTypes.PhysicalDataCenterCloudProvider).(*cac.PhysicalDatacenterCloudProvider)
 	cpInput.Name = expectedName
@@ -47,7 +46,7 @@ func TestDeleteCloudProvider(t *testing.T) {
 
 	require.Equal(t, cp, testCP)
 
-	err = c.CloudProviderClient.DeleteCloudProvider(cpInput.Id)
+	err = c.ConfigAsCodeClient.DeleteCloudProvider(expectedName)
 	require.NoError(t, err)
 
 	foundCP := &cac.PhysicalDatacenterCloudProvider{}

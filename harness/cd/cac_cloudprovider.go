@@ -2,6 +2,7 @@ package cd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -125,7 +126,16 @@ func (c *ConfigAsCodeClient) GetCloudProviderByName(name string, obj interface{}
 	return c.FindObjectByPath("", filePath, obj)
 }
 
-// func (c *ConfigAsCodeClient) DeleteCloudProvider(name string) error {
-// 	filePath := cac.GetCloudProviderYamlPath(name)
-// 	return c.DeleteEntity(filePath)
-// }
+func (c *ConfigAsCodeClient) DeleteCloudProvider(name string) error {
+	filePath := cac.GetCloudProviderYamlPath(name)
+	entity, err := c.FindYamlByPath("", filePath)
+	if err != nil {
+		return err
+	}
+
+	if entity == nil {
+		return fmt.Errorf("cannot find cloud provider with name: %s", name)
+	}
+
+	return c.DeleteEntityV2(filePath, entity.Content)
+}

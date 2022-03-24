@@ -38,8 +38,8 @@ type Tag struct {
 }
 
 type Response struct {
-	Metadata         ResponseMetadata  `json:"metaData"`
-	Resource         ConfigAsCodeItem  `json:"resource"`
+	Metadata         *ResponseMetadata `json:"metaData"`
+	Resource         *ConfigAsCodeItem `json:"resource"`
 	ResponseMessages []ResponseMessage `json:"responseMessages"`
 }
 
@@ -59,7 +59,8 @@ type ConfigAsCodeItem struct {
 	YamlVersionType string              `json:"yamlVersionType,omitempty"`
 	YamlFilePath    string              `json:"yamlFilePath,omitempty"`
 	Status          string              `json:"status,omitempty"`
-	ErrorMessage    string              `json:"errorMssg,omitempty"`
+	ErrorMessage    string              `json:"errorMessage,omitempty"`
+	ErrorMssg       string              `json:"errorMssg,omitempty"`
 	Yaml            string              `json:"yaml"`
 	EntityId        string              `json:"entityId,omitempty"`
 }
@@ -277,6 +278,10 @@ type SecretRef struct {
 }
 
 type YamlPath string
+
+func (y YamlPath) String() string {
+	return string(y)
+}
 
 type Environment struct {
 	HarnessApiVersion                  HarnessApiVersion       `yaml:"harnessApiVersion" json:"harnessApiVersion"`

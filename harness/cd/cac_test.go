@@ -120,7 +120,7 @@ usernameSecretId: gcpkms:TestAccResourceK8sCloudProviderConnector_service_accoun
 	require.Equal(t, path, yamlItem.Path)
 	require.NotEmpty(t, yamlItem.Id)
 
-	err = c.ConfigAsCodeClient.DeleteEntity(path)
+	err = c.ConfigAsCodeClient.DeleteEntityV2(path, rawYaml)
 	require.NoError(t, err)
 }
 
@@ -161,7 +161,7 @@ usageRestrictions:
 	require.Equal(t, path, yamlItem.Path)
 	require.NotEmpty(t, yamlItem.Id)
 
-	err = c.ConfigAsCodeClient.DeleteEntity(path)
+	err = c.ConfigAsCodeClient.DeleteEntityV2(path, rawYaml)
 	require.NoError(t, err)
 }
 
@@ -197,7 +197,7 @@ username: someuser
 	require.Equal(t, rawYaml, strings.TrimSpace(yamlItem.Content))
 	require.NotEmpty(t, yamlItem.Id)
 
-	err = c.ConfigAsCodeClient.DeleteEntity(path)
+	err = c.ConfigAsCodeClient.DeleteEntityV2(path, rawYaml)
 	require.NoError(t, err)
 }
 
@@ -245,7 +245,7 @@ variables:
 	require.Equal(t, rawYaml, strings.TrimSpace(yamlItem.Content))
 	require.NotEmpty(t, yamlItem.Id)
 
-	err = c.ConfigAsCodeClient.DeleteEntity(path)
+	err = c.ConfigAsCodeClient.DeleteEntityV2(path, rawYaml)
 	require.NoError(t, err)
 }
 

@@ -32,7 +32,7 @@ func (i *ConfigAsCodeItem) IsEmpty() bool {
 // Indicates an error condition
 func (r *Response) IsEmpty() bool {
 	// return true
-	return r.Metadata == ResponseMetadata{} && r.Resource.IsEmpty() && len(r.ResponseMessages) == 0
+	return r.Metadata != nil && r.Resource.IsEmpty() && len(r.ResponseMessages) == 0
 }
 
 func (m *ResponseMessage) ToError() error {
