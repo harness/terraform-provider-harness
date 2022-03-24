@@ -1,0 +1,3 @@
+```release-note:bug
+Fixes issue deleted account-level yaml config resources 
+```
