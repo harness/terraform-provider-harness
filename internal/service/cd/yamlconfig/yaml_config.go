@@ -119,8 +119,9 @@ func resourceYamlConfigDelete(ctx context.Context, d *schema.ResourceData, meta 
 	c := meta.(*cd.ApiClient)
 
 	path := cac.YamlPath(d.Get("path").(string))
+	content := d.Get("content").(string)
 
-	err := c.ConfigAsCodeClient.DeleteEntity(path)
+	err := c.ConfigAsCodeClient.DeleteEntityV2(path, content)
 	if err != nil {
 		return diag.FromErr(err)
 	}
