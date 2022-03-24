@@ -1,6 +1,6 @@
 
-<a name="0.1.16"></a>
-## 0.1.16 (2022-03-17)
+<a name="0.1.17"></a>
+## 0.1.17 (2022-03-24)
 
 ### Added
 
@@ -25,6 +25,14 @@
 
 * error handling
 
+### Extra
+
+* Extra check in test
+
+### Fix
+
+* fix json serialization
+
 ### Fix
 
 * Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
@@ -43,11 +51,14 @@
 * fixed error message
 * fixed ng endpoint configuration
 * fixed ng models
-* fixed ci
 
 ### Gitsync
 
 * Gitsync setup
+
+### Implement
+
+* Implement new cac delete method
 
 ### Moved
 
@@ -69,6 +80,8 @@
 
 ### Release
 
+* Release version 0.1.16 03-17-2022
+* Release v0.1.16
 * Release version 0.1.13 03-01-2022
 * Release v0.1.13
 * Release version 0.1.12 02-16-2022
@@ -82,8 +95,6 @@
 * Release version 0.1.8 01-28-2022
 * Release v0.1.8
 * Release version 0.1.7 01-17-2022
-* Release v0.1.7
-* Release version 0.1.6 12-17-2021
 
 ### Skip
 
@@ -104,7 +115,6 @@
 ### Updated
 
 * updated changelog
-* updated nextgen api's
 
 ### Updated
 
@@ -112,7 +122,6 @@
 * Updated tooling configuration
 * Updated dependencies
 * Updated deps
-* Updated dependencies
 
 ### Upgraded
 
