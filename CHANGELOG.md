@@ -1,3 +1,9 @@
+# 0.2.1
+
+BUG FIXES:
+
+* Fixes issue deleted account-level yaml config resources ([#106](https://github.com/hashicorp/terraform-provider-harness/issues/106))
+
 # 0.2.0
 
 BREAKING CHANGES:

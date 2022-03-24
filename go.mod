@@ -7,7 +7,7 @@ require (
 	github.com/harness/harness-go-sdk v0.1.17
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.11.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
 	github.com/stretchr/testify v1.7.0
 )
 
@@ -50,7 +50,7 @@ require (
 	github.com/hashicorp/hc-install v0.3.1 // indirect
 	github.com/hashicorp/hcl/v2 v2.11.1 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
-	github.com/hashicorp/terraform-exec v0.16.0 // indirect
+	github.com/hashicorp/terraform-exec v0.15.0 // indirect
 	github.com/hashicorp/terraform-json v0.13.0 // indirect
 	github.com/hashicorp/terraform-plugin-docs v0.5.1 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.8.0 // indirect
