@@ -1,6 +1,6 @@
 
-<a name="0.1.17"></a>
-## 0.1.17 (2022-03-24)
+<a name="v0.1.18"></a>
+## v0.1.18 (2022-03-25)
 
 ### Added
 
@@ -11,7 +11,10 @@
 * Added changelog setup
 * Added execution api's
 * Added delegate lookups by id and hostname
-* Added support for finding delegate by hostname
+
+### Bump
+
+* Bump github.com/docker/docker
 
 ### Configurable
 
@@ -39,18 +42,18 @@
 
 ### Fixed
 
+* fixed tests
+* fixed error message
+* fixed ng endpoint configuration
+
+### Fixed
+
+* Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
 * Fixed ng secret manager serializer
 * Fixed auth configuration issue
-
-### Fixed
-
-* fixed tests
-* fixed error message
-* fixed ng endpoint configuration
-* fixed ng models
 
 ### Gitsync
 
@@ -66,13 +69,13 @@
 
 ### Refactored
 
-* Refactored client config and validation
-* Refactored logging and client configuration
+* refactored ng client
+* refactored client setup
 
 ### Refactored
 
-* refactored ng client
-* refactored client setup
+* Refactored client config and validation
+* Refactored logging and client configuration
 
 ### Regen
 
@@ -80,6 +83,8 @@
 
 ### Release
 
+* Release version 0.1.17 03-24-2022
+* Release v0.1.17
 * Release version 0.1.16 03-17-2022
 * Release v0.1.16
 * Release version 0.1.13 03-01-2022
@@ -94,7 +99,6 @@
 * Release v0.1.9
 * Release version 0.1.8 01-28-2022
 * Release v0.1.8
-* Release version 0.1.7 01-17-2022
 
 ### Skip
 
