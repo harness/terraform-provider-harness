@@ -1,5 +1,7 @@
 package graphql
 
+import "github.com/harness/harness-go-sdk/harness/time"
+
 type Delegate struct {
 	AccountId          string       `json:"accountId,omitempty"`
 	DelegateName       string       `json:"delegateName,omitempty"`
@@ -8,7 +10,7 @@ type Delegate struct {
 	Description        string       `json:"description,omitempty"`
 	HostName           string       `json:"hostName,omitempty"`
 	Ip                 string       `json:"ip,omitempty"`
-	LastHeartBeat      string       `json:"lastHeartBeat,omitempty"`
+	LastHeartBeat      *time.Time   `json:"lastHeartBeat,omitempty"`
 	PollingModeEnabled bool         `json:"pollingModeEnabled,omitempty"`
 	Status             string       `json:"status,omitempty"`
 	UUID               string       `json:"uuid,omitempty"`
