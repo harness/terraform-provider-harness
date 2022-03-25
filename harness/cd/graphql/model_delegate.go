@@ -1,6 +1,10 @@
 package graphql
 
-import "github.com/harness/harness-go-sdk/harness/time"
+import (
+	"encoding/json"
+
+	"github.com/harness/harness-go-sdk/harness/time"
+)
 
 type Delegate struct {
 	AccountId          string       `json:"accountId,omitempty"`
@@ -15,4 +19,28 @@ type Delegate struct {
 	Status             string       `json:"status,omitempty"`
 	UUID               string       `json:"uuid,omitempty"`
 	Version            string       `json:"version,omitempty"`
+}
+
+func (a *Delegate) UnmarshalJSON(data []byte) error {
+
+	type Alias Delegate
+
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(a),
+	}
+
+	err := json.Unmarshal(data, &aux)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (a *Delegate) MarshalJSON() ([]byte, error) {
+	type Alias Delegate
+
+	return json.Marshal((*Alias)(a))
 }
