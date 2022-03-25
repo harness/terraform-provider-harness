@@ -1,6 +1,6 @@
 
-<a name="v0.1.18"></a>
-## v0.1.18 (2022-03-25)
+<a name="0.1.18"></a>
+## 0.1.18 (2022-03-25)
 
 ### Added
 
@@ -10,7 +10,6 @@
 
 * Added changelog setup
 * Added execution api's
-* Added delegate lookups by id and hostname
 
 ### Bump
 
@@ -38,6 +37,7 @@
 
 ### Fix
 
+* Fix timestamp parsing for delegate query
 * Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
 
 ### Fixed
@@ -83,6 +83,8 @@
 
 ### Release
 
+* Release version v0.1.18 03-25-2022
+* Release vv0.1.18
 * Release version 0.1.17 03-24-2022
 * Release v0.1.17
 * Release version 0.1.16 03-17-2022
@@ -118,14 +120,13 @@
 
 ### Updated
 
-* updated changelog
-
-### Updated
-
 * Updated environmens
 * Updated tooling configuration
 * Updated dependencies
-* Updated deps
+
+### Updated
+
+* updated changelog
 
 ### Upgraded
 
