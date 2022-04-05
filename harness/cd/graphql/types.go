@@ -660,6 +660,7 @@ type AwsCloudProvider struct {
 	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
 	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
 	ManualCredentials      *AwsManualCredentials      `json:"manualCredentials,omitempty"`
+	IrsaCredentials        *AwsIrsaCredentials        `json:"irsaCredentials,omitempty"`
 }
 
 type UpdateAwsCloudProviderInput struct {
@@ -668,10 +669,16 @@ type UpdateAwsCloudProviderInput struct {
 	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
 	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
 	ManualCredentials      *AwsManualCredentials      `json:"manualCredentials,omitempty"`
+	IrsaCredentials        *AwsIrsaCredentials        `json:"irsaCredentials,omitempty"`
 	Name                   string                     `json:"name,omitempty"`
 }
 
 type Ec2IamCredentials struct {
+	DelegateSelector string      `json:"delegateSelector"`
+	UsageScope       *UsageScope `json:"usageScope,omitempty"`
+}
+
+type AwsIrsaCredentials struct {
 	DelegateSelector string      `json:"delegateSelector"`
 	UsageScope       *UsageScope `json:"usageScope,omitempty"`
 }
