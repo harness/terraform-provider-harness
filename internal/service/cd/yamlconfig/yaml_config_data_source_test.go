@@ -35,6 +35,8 @@ func testAccDataSourceYamlConfigCloudProvider(name string) string {
 			content = <<EOF
 harnessApiVersion: '1.0'
 type: KUBERNETES_CLUSTER
+continuousEfficiencyConfig:
+  continuousEfficiencyEnabled: false
 delegateSelectors:
 - k8s
 skipValidation: true

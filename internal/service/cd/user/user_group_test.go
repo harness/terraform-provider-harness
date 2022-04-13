@@ -304,7 +304,7 @@ func testAccResourceUserGroupAccountPermissions(name string) string {
 			description = "my description"
 
 			permissions {
-				account_permissions = ["ADMINISTER_OTHER_ACCOUNT_FUNCTIONS", "MANAGE_API_KEYS"]
+				account_permissions = ["VIEW_CE", "ADMINISTER_OTHER_ACCOUNT_FUNCTIONS", "MANAGE_API_KEYS"]
 			}
 		}
 `, name)
