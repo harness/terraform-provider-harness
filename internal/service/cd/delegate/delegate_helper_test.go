@@ -8,10 +8,10 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/delegate"
 	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/stretchr/testify/require"
 )
@@ -31,9 +31,9 @@ func getDelegateTimeout() time.Duration {
 	return defaultDelegateTimeout
 }
 
-func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
+func createDelegateContainer(t *testing.T, name string, pullImage bool) *graphql.Delegate {
 	ctx := context.Background()
-	c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+	c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 
 	cfg := &delegate.DockerDelegateConfig{
 		AccountId:     c.Configuration.AccountId,
@@ -44,7 +44,7 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 	}
 
 	t.Logf("Starting delegate %s", name)
-	_, err := delegate.RunDelegateContainer(ctx, cfg)
+	_, err := delegate.RunDelegateContainer(ctx, cfg, pullImage)
 	require.NoError(t, err, "failed to create delegate container: %s", err)
 
 	delegate, err := c.DelegateClient.WaitForDelegate(ctx, name, getDelegateTimeout())
@@ -55,7 +55,7 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 }
 
 func deleteDelegate(t *testing.T, name string) {
-	c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+	c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 	delegate, err := c.DelegateClient.GetDelegateByName(name)
 	require.NoError(t, err, "Failed to get delegate: %s", err)
 	require.NotNil(t, delegate, "Delegate should not be nil")
@@ -68,4 +68,7 @@ func deleteDelegate(t *testing.T, name string) {
 
 	err = cli.ContainerRemove(context.Background(), name, types.ContainerRemoveOptions{})
 	require.NoError(t, err, "failed to remove delegate container: %s", err)
+
+	err = c.DelegateClient.DeleteDelegate(delegate.UUID)
+	require.NoError(t, err, "failed to delete delegate: %s", err)
 }

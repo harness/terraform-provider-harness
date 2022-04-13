@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -126,7 +126,7 @@ func ResourceGitConnector() *schema.Resource {
 }
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	connId := d.Get("id").(string)
 
@@ -203,7 +203,7 @@ func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnect
 }
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	connInput := &graphql.GitConnectorInput{}
 	err := setGitConnectorConfig(d, connInput, false)
@@ -220,7 +220,7 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	id := d.Get("id").(string)
 
@@ -239,7 +239,7 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	id := d.Get("id").(string)
 

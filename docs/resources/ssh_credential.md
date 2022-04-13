@@ -52,38 +52,38 @@ resource "harness_ssh_credential" "ssh_creds" {
 
 ### Required
 
-- **name** (String) Name of the encrypted text secret
+- `name` (String) Name of the encrypted text secret
 
 ### Optional
 
-- **kerberos_authentication** (Block List, Max: 1) Kerberos authentication for SSH. Cannot be used if ssh_authentication is specified (see [below for nested schema](#nestedblock--kerberos_authentication))
-- **ssh_authentication** (Block List, Max: 1) Authentication method for SSH. Cannot be used if kerberos_authentication is specified. Only one of `inline_ssh`, `server_password`, or `ssh_key_file` should be set (see [below for nested schema](#nestedblock--ssh_authentication))
-- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
+- `kerberos_authentication` (Block List, Max: 1) Kerberos authentication for SSH. Cannot be used if ssh_authentication is specified (see [below for nested schema](#nestedblock--kerberos_authentication))
+- `ssh_authentication` (Block List, Max: 1) Authentication method for SSH. Cannot be used if kerberos_authentication is specified. Only one of `inline_ssh`, `server_password`, or `ssh_key_file` should be set (see [below for nested schema](#nestedblock--ssh_authentication))
+- `usage_scope` (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
 
 ### Read-Only
 
-- **id** (String) Id of the encrypted text secret
+- `id` (String) Id of the encrypted text secret
 
 <a id="nestedblock--kerberos_authentication"></a>
 ### Nested Schema for `kerberos_authentication`
 
 Required:
 
-- **port** (Number) Port to use for Kerberos authentication
-- **principal** (String) Name of the principal for authentication
-- **realm** (String) Realm associated with the Kerberos authentication
+- `port` (Number) Port to use for Kerberos authentication
+- `principal` (String) Name of the principal for authentication
+- `realm` (String) Realm associated with the Kerberos authentication
 
 Optional:
 
-- **tgt_generation_method** (Block List, Max: 1) TGT generation method (see [below for nested schema](#nestedblock--kerberos_authentication--tgt_generation_method))
+- `tgt_generation_method` (Block List, Max: 1) TGT generation method (see [below for nested schema](#nestedblock--kerberos_authentication--tgt_generation_method))
 
 <a id="nestedblock--kerberos_authentication--tgt_generation_method"></a>
 ### Nested Schema for `kerberos_authentication.tgt_generation_method`
 
 Optional:
 
-- **kerberos_password_id** (String) The id of the encrypted text secret
-- **key_tab_file_path** (String) The path to the key tab file
+- `kerberos_password_id` (String) The id of the encrypted text secret
+- `key_tab_file_path` (String) The path to the key tab file
 
 
 
@@ -92,25 +92,25 @@ Optional:
 
 Required:
 
-- **port** (Number) The port to connect to
-- **username** (String) The username to use when connecting to ssh
+- `port` (Number) The port to connect to
+- `username` (String) The username to use when connecting to ssh
 
 Optional:
 
-- **inline_ssh** (Block List, Max: 1) Inline SSH authentication configuration. Only ond of `passphrase_secret_id` or `ssh_key_file_id` should be used (see [below for nested schema](#nestedblock--ssh_authentication--inline_ssh))
-- **server_password** (Block List, Max: 1) Server password authentication configuration (see [below for nested schema](#nestedblock--ssh_authentication--server_password))
-- **ssh_key_file** (Block List, Max: 1) Use ssh key file for authentication (see [below for nested schema](#nestedblock--ssh_authentication--ssh_key_file))
+- `inline_ssh` (Block List, Max: 1) Inline SSH authentication configuration. Only ond of `passphrase_secret_id` or `ssh_key_file_id` should be used (see [below for nested schema](#nestedblock--ssh_authentication--inline_ssh))
+- `server_password` (Block List, Max: 1) Server password authentication configuration (see [below for nested schema](#nestedblock--ssh_authentication--server_password))
+- `ssh_key_file` (Block List, Max: 1) Use ssh key file for authentication (see [below for nested schema](#nestedblock--ssh_authentication--ssh_key_file))
 
 <a id="nestedblock--ssh_authentication--inline_ssh"></a>
 ### Nested Schema for `ssh_authentication.inline_ssh`
 
 Required:
 
-- **ssh_key_file_id** (String) The id of the secret containing the SSH key
+- `ssh_key_file_id` (String) The id of the secret containing the SSH key
 
 Optional:
 
-- **passphrase_secret_id** (String) The id of the encrypted secret to use
+- `passphrase_secret_id` (String) The id of the encrypted secret to use
 
 
 <a id="nestedblock--ssh_authentication--server_password"></a>
@@ -118,7 +118,7 @@ Optional:
 
 Required:
 
-- **password_secret_id** (String) The id of the encrypted secret
+- `password_secret_id` (String) The id of the encrypted secret
 
 
 <a id="nestedblock--ssh_authentication--ssh_key_file"></a>
@@ -126,11 +126,11 @@ Required:
 
 Required:
 
-- **path** (String) The path to the key file on the delegate
+- `path` (String) The path to the key file on the delegate
 
 Optional:
 
-- **passphrase_secret_id** (String) The id of the secret containing the password to use for the ssh key
+- `passphrase_secret_id` (String) The id of the secret containing the password to use for the ssh key
 
 
 
@@ -139,9 +139,9 @@ Optional:
 
 Optional:
 
-- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
-- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
-- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
+- `application_id` (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- `environment_filter_type` (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- `environment_id` (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 

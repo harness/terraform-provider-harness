@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -44,7 +44,7 @@ func ResourceDelegateApproval() *schema.Resource {
 }
 
 func resourceDelegateApprovalRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	id := d.Get("delegate_id").(string)
 	delegate, err := c.DelegateClient.GetDelegateById(id)
@@ -72,7 +72,7 @@ func resourceDelegateApprovalRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	// Don't attempt to do anything if we've already done this once.
 	if !d.IsNewResource() {

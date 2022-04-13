@@ -3,14 +3,17 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/application"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/cloudprovider"
-	"github.com/harness/terraform-provider-harness/internal/service/cd/connector"
+	cd_connector "github.com/harness/terraform-provider-harness/internal/service/cd/connector"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/delegate"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/environment"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
@@ -18,6 +21,8 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	"github.com/harness/terraform-provider-harness/internal/service/platform"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -63,14 +68,49 @@ func Provider(version string) func() *schema.Provider {
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.ApiKey.String(), nil),
 				},
+				"platform_api_key": {
+					Description: fmt.Sprintf("The API key for the Harness next gen platform. This can also be set using the `%s` environment variable.", helpers.EnvVars.PlatformApiKey.String()),
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.PlatformApiKey.String(), nil),
+				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_appdynamics":        connector.DatasourceConnectorAppDynamics(),
+				"harness_platform_connector_artifactory":        connector.DatasourceConnectorArtifactory(),
+				"harness_platform_connector_aws_secret_manager": connector.DatasourceConnectorAwsSM(),
+				"harness_platform_connector_aws":                connector.DatasourceConnectorAws(),
+				"harness_platform_connector_awscc":              connector.DatasourceConnectorAwsCC(),
+				"harness_platform_connector_awskms":             connector.DatasourceConnectorAwsKms(),
+				"harness_platform_connector_bitbucket":          connector.DatasourceConnectorBitbucket(),
+				"harness_platform_connector_datadog":            connector.DatasourceConnectorDatadog(),
+				"harness_platform_connector_docker":             connector.DatasourceConnectorDocker(),
+				"harness_platform_connector_dynatrace":          connector.DatasourceConnectorDynatrace(),
+				"harness_platform_connector_gcp":                connector.DatasourceConnectorGcp(),
+				"harness_platform_connector_git":                connector.DatasourceConnectorGit(),
+				"harness_platform_connector_github":             connector.DatasourceConnectorGithub(),
+				"harness_platform_connector_gitlab":             connector.DatasourceConnectorGitlab(),
+				"harness_platform_connector_helm":               connector.DatasourceConnectorHelm(),
+				"harness_platform_connector_jira":               connector.DatasourceConnectorJira(),
+				"harness_platform_connector_kubernetes":         connector.DatasourceConnectorKubernetes(),
+				"harness_platform_connector_nexus":              connector.DatasourceConnectorNexus(),
+				"harness_platform_connector_pagerduty":          connector.DatasourceConnectorPagerDuty(),
+				"harness_platform_connector_prometheus":         connector.DatasourceConnectorPrometheus(),
+				"harness_platform_connector_splunk":             connector.DatasourceConnectorSplunk(),
+				"harness_platform_connector_sumologic":          connector.DatasourceConnectorSumologic(),
+				"harness_platform_current_user":                 platform.DataSourceCurrentUser(),
+				"harness_platform_environment":                  platform.DataSourceEnvironment(),
+				"harness_platform_organization":                 platform.DataSourceOrganization(),
+				"harness_platform_pipeline":                     platform.DataSourcePipeline(),
+				"harness_platform_project":                      platform.DataSourceProject(),
+				"harness_platform_service":                      platform.DataSourceService(),
+
 				"harness_application":    application.DataSourceApplication(),
 				"harness_delegate":       delegate.DataSourceDelegate(),
 				"harness_delegate_ids":   delegate.DataSourceDelegateIds(),
 				"harness_encrypted_text": secrets.DataSourceEncryptedText(),
 				"harness_environment":    environment.DataSourceEnvironment(),
-				"harness_git_connector":  connector.DataSourceGitConnector(),
+				"harness_git_connector":  cd_connector.DataSourceGitConnector(),
 				"harness_secret_manager": secrets.DataSourceSecretManager(),
 				"harness_service":        service.DataSourceService(),
 				"harness_ssh_credential": secrets.DataSourceSshCredential(),
@@ -80,6 +120,35 @@ func Provider(version string) func() *schema.Provider {
 				"harness_yaml_config":    yamlconfig.DataSourceYamlConfig(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_appdynamics":        connector.ResourceConnectorAppDynamics(),
+				"harness_platform_connector_artifactory":        connector.ResourceConnectorArtifactory(),
+				"harness_platform_connector_aws_secret_manager": connector.ResourceConnectorAwsSM(),
+				"harness_platform_connector_aws":                connector.ResourceConnectorAws(),
+				"harness_platform_connector_awscc":              connector.ResourceConnectorAwsCC(),
+				"harness_platform_connector_awskms":             connector.ResourceConnectorAwsKms(),
+				"harness_platform_connector_bitbucket":          connector.ResourceConnectorBitbucket(),
+				"harness_platform_connector_datadog":            connector.ResourceConnectorDatadog(),
+				"harness_platform_connector_docker":             connector.ResourceConnectorDocker(),
+				"harness_platform_connector_dynatrace":          connector.ResourceConnectorDynatrace(),
+				"harness_platform_connector_gcp":                connector.ResourceConnectorGcp(),
+				"harness_platform_connector_git":                connector.ResourceConnectorGit(),
+				"harness_platform_connector_github":             connector.ResourceConnectorGithub(),
+				"harness_platform_connector_gitlab":             connector.ResourceConnectorGitlab(),
+				"harness_platform_connector_helm":               connector.ResourceConnectorHelm(),
+				"harness_platform_connector_jira":               connector.ResourceConnectorJira(),
+				"harness_platform_connector_kubernetes":         connector.ResourceConnectorK8s(),
+				"harness_platform_connector_newrelic":           connector.ResourceConnectorNewRelic(),
+				"harness_platform_connector_nexus":              connector.ResourceConnectorNexus(),
+				"harness_platform_connector_pagerduty":          connector.ResourceConnectorPagerDuty(),
+				"harness_platform_connector_prometheus":         connector.ResourceConnectorPrometheus(),
+				"harness_platform_connector_splunk":             connector.ResourceConnectorSplunk(),
+				"harness_platform_connector_sumologic":          connector.ResourceConnectorSumologic(),
+				"harness_platform_environment":                  platform.ResourceEnvironment(),
+				"harness_platform_organization":                 platform.ResourceOrganization(),
+				"harness_platform_pipeline":                     platform.ResourcePipeline(),
+				"harness_platform_project":                      platform.ResourceProject(),
+				"harness_platform_service":                      platform.ResourceService(),
+
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
 				"harness_application":               application.ResourceApplication(),
@@ -93,7 +162,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_cloudprovider_tanzu":       cloudprovider.ResourceCloudProviderTanzu(),
 				"harness_encrypted_text":            secrets.ResourceEncryptedText(),
 				"harness_environment":               environment.ResourceEnvironment(),
-				"harness_git_connector":             connector.ResourceGitConnector(),
+				"harness_git_connector":             cd_connector.ResourceGitConnector(),
 				"harness_infrastructure_definition": environment.ResourceInfraDefinition(),
 				"harness_service_ami":               service.ResourceAMIService(),
 				"harness_service_aws_codedeploy":    service.ResourceAWSCodeDeployService(),
@@ -125,23 +194,47 @@ func getHttpClient() *retryablehttp.Client {
 	return httpClient
 }
 
+func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
+	cfg := cd.DefaultConfig()
+	cfg.AccountId = d.Get("account_id").(string)
+	cfg.Endpoint = d.Get("endpoint").(string)
+	cfg.APIKey = d.Get("api_key").(string)
+	cfg.UserAgent = fmt.Sprintf("terraform-provider-harness-%s", version)
+	cfg.HTTPClient = getHttpClient()
+	cfg.DebugLogging = logging.IsDebugOrHigher()
+
+	client, err := cd.NewClient(cfg)
+
+	if err != nil {
+		log.Printf("[WARN] error creating CD client: %s", err)
+	}
+
+	return client
+}
+
+func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
+	client := nextgen.NewAPIClient(&nextgen.Configuration{
+		AccountId: d.Get("account_id").(string),
+		BasePath:  d.Get("endpoint").(string),
+		DefaultHeader: map[string]string{
+			helpers.HTTPHeaders.ApiKey.String(): d.Get("platform_api_key").(string),
+		},
+		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:   getHttpClient(),
+		DebugLogging: logging.IsDebugOrHigher(),
+	})
+
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		cfg := cd.DefaultConfig()
-		cfg.AccountId = d.Get("account_id").(string)
-		cfg.Endpoint = d.Get("endpoint").(string)
-		cfg.APIKey = d.Get("api_key").(string)
-		cfg.UserAgent = fmt.Sprintf("terraform-provider-harness-%s", version)
-		cfg.HTTPClient = getHttpClient()
-		cfg.DebugLogging = logging.IsDebugOrHigher()
-
-		client, err := cd.NewClient(cfg)
-
-		if err != nil {
-			return nil, diag.FromErr(err)
-		}
-
-		return client, nil
+		return &internal.Session{
+			AccountId: d.Get("account_id").(string),
+			Endpoint:  d.Get("endpoint").(string),
+			CDClient:  getCDClient(d, version),
+			PLClient:  getPLClient(d, version),
+		}, nil
 	}
 }

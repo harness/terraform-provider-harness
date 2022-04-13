@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -93,7 +93,7 @@ func ResourceEnvironment() *schema.Resource {
 }
 
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	var env *cac.Environment
 	var err error
@@ -128,7 +128,7 @@ func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnost
 }
 
 func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	appId := d.Get("app_id").(string)
 	id := d.Get("id").(string)
@@ -208,7 +208,7 @@ func expandVariableOverrides(d []interface{}) []*cac.VariableOverride {
 }
 
 func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	envName := d.Get("name").(string)
 	appId := d.Get("app_id").(string)

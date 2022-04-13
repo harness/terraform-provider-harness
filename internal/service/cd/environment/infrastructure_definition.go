@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -220,14 +220,14 @@ func ResourceInfraDefinition() *schema.Resource {
 }
 
 func resourceInfraDefinitionRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	id := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 	envId := d.Get("env_id").(string)
 
 	log.Printf("[DEBUG] Terraform: Read infrastructure definition %s", id)
-	infraDef, err := c.ConfigAsCodeClient.GetInfraDefinitionById(appId, envId, id)
+	infraDef, err := c.CDClient.ConfigAsCodeClient.GetInfraDefinitionById(appId, envId, id)
 	if err != nil {
 		return diag.FromErr(err)
 	} else if infraDef == nil {
@@ -242,14 +242,14 @@ func resourceInfraDefinitionRead(ctx context.Context, d *schema.ResourceData, me
 }
 
 func resourceInfraDefinitionDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	id := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 	envId := d.Get("env_id").(string)
 
 	log.Printf("[DEBUG] Terraform: Delete infrastructure definition %s", id)
-	err := c.ConfigAsCodeClient.DeleteInfraDefinition(appId, envId, id)
+	err := c.CDClient.ConfigAsCodeClient.DeleteInfraDefinition(appId, envId, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -258,7 +258,7 @@ func resourceInfraDefinitionDelete(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceInfraDefinitionCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	var input *cac.InfrastructureDefinition
 	var err error
@@ -271,7 +271,7 @@ func resourceInfraDefinitionCreateOrUpdate(ctx context.Context, d *schema.Resour
 		appId := d.Get("app_id").(string)
 		envId := d.Get("env_id").(string)
 		log.Printf("[DEBUG] Terraform: Updating infrastructure definition %s", d.Get("name"))
-		input, err = c.ConfigAsCodeClient.GetInfraDefinitionById(appId, envId, id)
+		input, err = c.CDClient.ConfigAsCodeClient.GetInfraDefinitionById(appId, envId, id)
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -316,7 +316,7 @@ func resourceInfraDefinitionCreateOrUpdate(ctx context.Context, d *schema.Resour
 	expandTanzuConfiguration(d.Get("tanzu").([]interface{}), input)
 	expandAzureWebAppConfiguration(d.Get("azure_webapp").([]interface{}), input)
 
-	infraDef, err := c.ConfigAsCodeClient.UpsertInfraDefinition(input)
+	infraDef, err := c.CDClient.ConfigAsCodeClient.UpsertInfraDefinition(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}

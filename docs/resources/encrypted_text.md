@@ -37,29 +37,29 @@ resource "harness_encrypted_text" "example" {
 
 ### Required
 
-- **name** (String) Name of the encrypted text secret
-- **secret_manager_id** (String) The id of the secret manager to associate the secret with. Once set, this field cannot be changed.
+- `name` (String) Name of the encrypted text secret
+- `secret_manager_id` (String) The id of the secret manager to associate the secret with. Once set, this field cannot be changed.
 
 ### Optional
 
-- **inherit_scopes_from_secret_manager** (Boolean) Boolean that indicates whether or not to inherit the usage scopes from the secret manager
-- **scoped_to_account** (Boolean) Boolean that indicates whether or not the secret is scoped to the account
-- **secret_reference** (String) Name of the existing secret. If you already have secrets created in a secrets manager such as HashiCorp Vault or AWS Secrets Manager, you do not need to re-create the existing secrets in Harness.
-- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
-- **value** (String, Sensitive) The value of the secret.
+- `inherit_scopes_from_secret_manager` (Boolean) Boolean that indicates whether or not to inherit the usage scopes from the secret manager
+- `scoped_to_account` (Boolean) Boolean that indicates whether or not the secret is scoped to the account
+- `secret_reference` (String) Name of the existing secret. If you already have secrets created in a secrets manager such as HashiCorp Vault or AWS Secrets Manager, you do not need to re-create the existing secrets in Harness.
+- `usage_scope` (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
+- `value` (String, Sensitive) The value of the secret.
 
 ### Read-Only
 
-- **id** (String) Id of the encrypted text secret
+- `id` (String) Id of the encrypted text secret
 
 <a id="nestedblock--usage_scope"></a>
 ### Nested Schema for `usage_scope`
 
 Optional:
 
-- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
-- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
-- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
+- `application_id` (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- `environment_filter_type` (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- `environment_id` (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 

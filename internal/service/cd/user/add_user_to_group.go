@@ -7,7 +7,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -49,7 +49,7 @@ func ResourceAddUserToGroup() *schema.Resource {
 }
 
 func resourceAddUserToGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	userId := d.Get("user_id").(string)
 	groupId := d.Get("group_id").(string)
@@ -76,7 +76,7 @@ func resourceAddUserToGroupCreate(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceAddUserToGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	userId := d.Get("user_id").(string)
 	groupId := d.Get("group_id").(string)
@@ -97,7 +97,7 @@ func resourceAddUserToGroupRead(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceAddUserToGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	userId := d.Get("user_id").(string)
 	groupId := d.Get("group_id").(string)

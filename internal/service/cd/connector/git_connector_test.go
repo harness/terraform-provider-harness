@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -30,14 +30,14 @@ func testSweepGitConnectors(r string) error {
 
 	for hasMore {
 
-		connectors, _, err := c.ConnectorClient.ListGitConnectors(limit, offset)
+		connectors, _, err := c.CDClient.ConnectorClient.ListGitConnectors(limit, offset)
 		if err != nil {
 			return err
 		}
 
 		for _, conn := range connectors {
 			if strings.HasPrefix(conn.Name, "test_") {
-				if err = c.ConnectorClient.DeleteConnector(conn.Id); err != nil {
+				if err = c.CDClient.ConnectorClient.DeleteConnector(conn.Id); err != nil {
 					return err
 				}
 			}
@@ -106,12 +106,12 @@ func TestAccResourceGitConnector_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
-					conn, err := c.ConnectorClient.GetGitConnectorByName(name)
+					c := acctest.TestAccProvider.Meta().(*internal.Session)
+					conn, err := c.CDClient.ConnectorClient.GetGitConnectorByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, conn)
 
-					err = c.ConnectorClient.DeleteConnector(conn.Id)
+					err = c.CDClient.ConnectorClient.DeleteConnector(conn.Id)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceGitConnector(name, true, true, true),
@@ -127,7 +127,7 @@ func testAccGetGitConnector(resourceName string, state *terraform.State) (*graph
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
 
-	return c.ConnectorClient.GetGitConnectorById(id)
+	return c.CDClient.ConnectorClient.GetGitConnectorById(id)
 }
 
 func testAccCheckGitConnectorExists(t *testing.T, resourceName string, connectorName string) resource.TestCheckFunc {

@@ -1,11 +1,13 @@
 package delegate_test
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/delegate"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -27,7 +29,8 @@ func TestAccApproveDelegate(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			createDelegateContainer(t, name)
+			pullDelegateImage(context.Background(), &delegate.DockerDelegateConfig{})
+			createDelegateContainer(t, name, false)
 		},
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{

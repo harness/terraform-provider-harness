@@ -17,30 +17,30 @@ Data source for retrieving a Harness application
 
 ### Optional
 
-- **id** (String) Id of the git connector.
-- **name** (String) The name of the git connector.
+- `id` (String) Id of the git connector.
+- `name` (String) The name of the git connector.
 
 ### Read-Only
 
-- **branch** (String) The branch of the git connector to use.
-- **commit_details** (Set of Object) Custom details to use when making commits using this git connector. (see [below for nested schema](#nestedatt--commit_details))
-- **created_at** (String) The time the git connector was created.
-- **delegate_selectors** (List of String) Delegate selectors to apply to this git connector.
-- **generate_webhook_url** (Boolean) Boolean indicating whether or not to generate a webhook url.
-- **password_secret_id** (String) The id of the secret for connecting to the git repository.
-- **ssh_setting_id** (String) The id of the SSH secret to use.
-- **url** (String) The url of the git repository or account/organization.
-- **url_type** (String) The type of git url being used. Options are `ACCOUNT`, and `REPO`.
-- **username** (String) The name of the user used to connect to the git repository.
-- **webhook_url** (String) The generated webhook url.
+- `branch` (String) The branch of the git connector to use.
+- `commit_details` (Set of Object) Custom details to use when making commits using this git connector. (see [below for nested schema](#nestedatt--commit_details))
+- `created_at` (String) The time the git connector was created.
+- `delegate_selectors` (List of String) Delegate selectors to apply to this git connector.
+- `generate_webhook_url` (Boolean) Boolean indicating whether or not to generate a webhook url.
+- `password_secret_id` (String) The id of the secret for connecting to the git repository.
+- `ssh_setting_id` (String) The id of the SSH secret to use.
+- `url` (String) The url of the git repository or account/organization.
+- `url_type` (String) The type of git url being used. Options are `ACCOUNT`, and `REPO`.
+- `username` (String) The name of the user used to connect to the git repository.
+- `webhook_url` (String) The generated webhook url.
 
 <a id="nestedatt--commit_details"></a>
 ### Nested Schema for `commit_details`
 
 Read-Only:
 
-- **author_email_id** (String)
-- **author_name** (String)
-- **message** (String)
+- `author_email_id` (String)
+- `author_name` (String)
+- `message` (String)
 
 

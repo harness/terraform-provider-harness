@@ -24,18 +24,18 @@ resource "harness_application" "myapp" {
 
 ### Required
 
-- **name** (String) The name of the application
+- `name` (String) The name of the application
 
 ### Optional
 
-- **description** (String) The application description
-- **is_manual_trigger_authorized** (Boolean) When this is set to true, all manual triggers will require API Key authorization
+- `description` (String) The application description
+- `is_manual_trigger_authorized` (Boolean) When this is set to true, all manual triggers will require API Key authorization
 
 ### Read-Only
 
-- **git_sync_connector_id** (String) The id of the git sync connector
-- **git_sync_enabled** (Boolean) True if git sync is enabled on this application
-- **id** (String) Unique identifier of the application
+- `git_sync_connector_id` (String) The id of the git sync connector
+- `git_sync_enabled` (Boolean) True if git sync is enabled on this application
+- `id` (String) Unique identifier of the application
 
 ## Import
 

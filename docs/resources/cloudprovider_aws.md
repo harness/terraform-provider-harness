@@ -41,33 +41,33 @@ resource "harness_cloudprovider_aws" "aws" {
 
 ### Required
 
-- **name** (String) The name of the cloud provider.
+- `name` (String) The name of the cloud provider.
 
 ### Optional
 
-- **access_key_id** (String) The plain text AWS access key id.
-- **access_key_id_secret_name** (String) The name of the Harness secret containing the AWS access key id
-- **assume_cross_account_role** (Block List, Max: 1) Configuration for assuming a cross account role. (see [below for nested schema](#nestedblock--assume_cross_account_role))
-- **delegate_selector** (String) Select the Delegate to use via one of its Selectors.
-- **secret_access_key_secret_name** (String) The name of the Harness secret containing the AWS secret access key.
-- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
-- **use_ec2_iam_credentials** (Boolean) Use the EC2 Instance Profile for Service Accounts.
-- **use_irsa** (Boolean) Use the AWS IAM Role for Service Accounts.
+- `access_key_id` (String) The plain text AWS access key id.
+- `access_key_id_secret_name` (String) The name of the Harness secret containing the AWS access key id
+- `assume_cross_account_role` (Block List, Max: 1) Configuration for assuming a cross account role. (see [below for nested schema](#nestedblock--assume_cross_account_role))
+- `delegate_selector` (String) Select the Delegate to use via one of its Selectors.
+- `secret_access_key_secret_name` (String) The name of the Harness secret containing the AWS secret access key.
+- `usage_scope` (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
+- `use_ec2_iam_credentials` (Boolean) Use the EC2 Instance Profile for Service Accounts.
+- `use_irsa` (Boolean) Use the AWS IAM Role for Service Accounts.
 
 ### Read-Only
 
-- **id** (String) The id of the cloud provider.
+- `id` (String) The id of the cloud provider.
 
 <a id="nestedblock--assume_cross_account_role"></a>
 ### Nested Schema for `assume_cross_account_role`
 
 Required:
 
-- **role_arn** (String) This is an IAM role in the target deployment AWS account.
+- `role_arn` (String) This is an IAM role in the target deployment AWS account.
 
 Optional:
 
-- **external_id** (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
+- `external_id` (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
 
 
 <a id="nestedblock--usage_scope"></a>
@@ -75,9 +75,9 @@ Optional:
 
 Optional:
 
-- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
-- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
-- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
+- `application_id` (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- `environment_filter_type` (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- `environment_id` (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 
