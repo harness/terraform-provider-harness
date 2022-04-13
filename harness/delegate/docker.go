@@ -105,7 +105,7 @@ func PullDelegateImage(ctx context.Context, cfg *DockerDelegateConfig) error {
 
 	cli, err := client.NewClientWithOpts(clientOpts)
 	if err != nil {
-		errors.Wrap(err, "failed to create docker client")
+		return errors.Wrap(err, "failed to create docker client")
 	}
 
 	log.Infof("Pulling docker image %s", cfg.Image)

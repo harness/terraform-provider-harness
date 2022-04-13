@@ -20,7 +20,10 @@ var delegateImagePull sync.Once
 
 func pullDelegateImage(ctx context.Context, cfg *delegate.DockerDelegateConfig) {
 	delegateImagePull.Do(func() {
-		delegate.PullDelegateImage(ctx, cfg)
+		err := delegate.PullDelegateImage(ctx, cfg)
+		if err != nil {
+			panic(err)
+		}
 	})
 }
 
