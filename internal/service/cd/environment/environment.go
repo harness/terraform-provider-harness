@@ -93,7 +93,7 @@ func ResourceEnvironment() *schema.Resource {
 }
 
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session)
+	c := meta.(*internal.Session).CDClient
 
 	var env *cac.Environment
 	var err error
@@ -101,7 +101,7 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 	envId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	if env, err = c.CDClient.ConfigAsCodeClient.GetEnvironmentById(appId, envId); err != nil {
+	if env, err = c.ConfigAsCodeClient.GetEnvironmentById(appId, envId); err != nil {
 		return diag.FromErr(err)
 	} else if env == nil {
 		d.SetId("")
@@ -128,7 +128,7 @@ func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnost
 }
 
 func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session)
+	c := meta.(*internal.Session).CDClient
 
 	appId := d.Get("app_id").(string)
 	id := d.Get("id").(string)
@@ -139,7 +139,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	if d.IsNewResource() {
 		env = cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
 	} else {
-		if env, err = c.CDClient.ConfigAsCodeClient.GetEnvironmentById(appId, id); err != nil {
+		if env, err = c.ConfigAsCodeClient.GetEnvironmentById(appId, id); err != nil {
 			return diag.FromErr(err)
 		} else if env == nil {
 			d.SetId("")
@@ -159,7 +159,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		env.VariableOverrides = expandVariableOverrides(overrides.(*schema.Set).List())
 	}
 
-	newEnv, err := c.CDClient.ConfigAsCodeClient.UpsertEnvironment(env)
+	newEnv, err := c.ConfigAsCodeClient.UpsertEnvironment(env)
 	if err != nil {
 		return diag.FromErr(err)
 	}
