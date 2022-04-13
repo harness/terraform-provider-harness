@@ -1,6 +1,6 @@
 
-<a name="0.1.18"></a>
-## 0.1.18 (2022-03-25)
+<a name="0.1.19"></a>
+## 0.1.19 (2022-04-13)
 
 ### Added
 
@@ -10,6 +10,10 @@
 
 * Added changelog setup
 * Added execution api's
+
+### Adding
+
+* adding irsa credentials options to aws cloud provider
 
 ### Bump
 
@@ -23,6 +27,10 @@
 
 * Create pipeline release3
 
+### Docker
+
+* Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
+
 ### Error
 
 * error handling
@@ -33,12 +41,12 @@
 
 ### Fix
 
-* fix json serialization
+* Fix timestamp parsing for delegate query
+* Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
 
 ### Fix
 
-* Fix timestamp parsing for delegate query
-* Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
+* fix json serialization
 
 ### Fixed
 
@@ -63,19 +71,22 @@
 
 * Implement new cac delete method
 
+### Modify
+
+* Modify delegate tests
+
 ### Moved
 
 * Moved to harness organization
 
 ### Refactored
 
-* refactored ng client
-* refactored client setup
+* Refactored client config and validation
 
 ### Refactored
 
-* Refactored client config and validation
-* Refactored logging and client configuration
+* refactored ng client
+* refactored client setup
 
 ### Regen
 
@@ -83,6 +94,8 @@
 
 ### Release
 
+* Release version 0.1.18 03-25-2022
+* Release v0.1.18
 * Release version v0.1.18 03-25-2022
 * Release vv0.1.18
 * Release version 0.1.17 03-24-2022
@@ -98,9 +111,6 @@
 * Release version 0.1.10 01-30-2022
 * Release v0.1.10
 * Release version 0.1.9 01-30-2022
-* Release v0.1.9
-* Release version 0.1.8 01-28-2022
-* Release v0.1.8
 
 ### Skip
 
@@ -116,19 +126,15 @@
 * Update pipeline ci
 * Update pipeline ci
 * Update pipeline ci
-* Update pipeline ci
+
+### Updated
+
+* updated deps
+* updated changelog
 
 ### Updated
 
 * Updated environmens
 * Updated tooling configuration
 * Updated dependencies
-
-### Updated
-
-* updated changelog
-
-### Upgraded
-
-* Upgraded containerd
 
