@@ -1,4 +1,36 @@
 # 0.2.2 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `platform_connector_appdynamics
+platform_connector_artifactory
+platform_connector_aws_secret_manager
+platform_connector_aws
+platform_connector_awscc
+platform_connector_awskms
+platform_connector_bitbucket
+platform_connector_datadog
+platform_connector_docker
+platform_connector_dynatrace
+platform_connector_gcp
+platform_connector_git
+platform_connector_github
+platform_connector_gitlab
+platform_connector_helm
+platform_connector_jira
+platform_connector_kubernetes
+platform_connector_nexus
+platform_connector_pagerduty
+platform_connector_prometheus
+platform_connector_splunk
+platform_connector_sumologic
+platform_current_user
+platform_environment
+platform_organization
+platform_pipeline
+platform_project
+platform_service` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
+
 # 0.2.1
 
 BUG FIXES:
