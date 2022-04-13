@@ -32,12 +32,12 @@ resource "harness_add_user_to_group" "example_add_user_to_groups" {
 
 ### Required
 
-- **group_id** (String) The name of the user.
-- **user_id** (String) Unique identifier of the user.
+- `group_id` (String) The name of the user.
+- `user_id` (String) Unique identifier of the user.
 
 ### Optional
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 ## Import
 

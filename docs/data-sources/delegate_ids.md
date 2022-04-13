@@ -23,13 +23,13 @@ data "harness_delegate_ds" "example" {
 
 ### Optional
 
-- **id** (String) The ID of this resource.
-- **name** (String) The name of the delegate to query for.
-- **status** (String) The status of the delegate to query for. Valid values are DELETED, ENABLED, WAITING_FOR_APPROVAL
-- **type** (String) The type of the delegate to query for. Valid values are DOCKER, ECS, HELM_DELEGATE, KUBERNETES, SHELL_SCRIPT
+- `id` (String) The ID of this resource.
+- `name` (String) The name of the delegate to query for.
+- `status` (String) The status of the delegate to query for. Valid values are DELETED, ENABLED, WAITING_FOR_APPROVAL
+- `type` (String) The type of the delegate to query for. Valid values are DOCKER, ECS, HELM_DELEGATE, KUBERNETES, SHELL_SCRIPT
 
 ### Read-Only
 
-- **delegate_ids** (List of String) A list of delegate ID's matching the specified search criteria.
+- `delegate_ids` (List of String) A list of delegate ID's matching the specified search criteria.
 
 

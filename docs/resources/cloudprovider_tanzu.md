@@ -37,19 +37,19 @@ resource "harness_cloudprovider_tanzu" "example" {
 
 ### Required
 
-- **endpoint** (String) The url of the Tanzu platform.
-- **name** (String) The name of the cloud provider.
-- **password_secret_name** (String) The name of the Harness secret containing the password to use to authenticate to Tanzu.
+- `endpoint` (String) The url of the Tanzu platform.
+- `name` (String) The name of the cloud provider.
+- `password_secret_name` (String) The name of the Harness secret containing the password to use to authenticate to Tanzu.
 
 ### Optional
 
-- **skip_validation** (Boolean) Skip validation of Tanzu configuration.
-- **username** (String) The username to use to authenticate to Tanzu.
-- **username_secret_name** (String) The name of the Harness secret containing the username to authenticate to Tanzu with.
+- `skip_validation` (Boolean) Skip validation of Tanzu configuration.
+- `username` (String) The username to use to authenticate to Tanzu.
+- `username_secret_name` (String) The name of the Harness secret containing the username to authenticate to Tanzu with.
 
 ### Read-Only
 
-- **id** (String) The id of the cloud provider.
+- `id` (String) The id of the cloud provider.
 
 ## Import
 

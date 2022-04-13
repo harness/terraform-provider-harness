@@ -30,27 +30,27 @@ resource "harness_service_ssh" "example" {
 
 ### Required
 
-- **app_id** (String) The id of the application the service belongs to
-- **artifact_type** (String) The type of artifact to deploy.
-- **name** (String) Name of the service
+- `app_id` (String) The id of the application the service belongs to
+- `artifact_type` (String) The type of artifact to deploy.
+- `name` (String) Name of the service
 
 ### Optional
 
-- **description** (String) Description of th service
-- **variable** (Block Set) Variables to be used in the service (see [below for nested schema](#nestedblock--variable))
+- `description` (String) Description of th service
+- `variable` (Block Set) Variables to be used in the service (see [below for nested schema](#nestedblock--variable))
 
 ### Read-Only
 
-- **id** (String) Id of the service
+- `id` (String) Id of the service
 
 <a id="nestedblock--variable"></a>
 ### Nested Schema for `variable`
 
 Required:
 
-- **name** (String) Name of the variable
-- **type** (String) Type of the variable. Options are 'TEXT' and 'ENCRYPTED_TEXT'
-- **value** (String) Value of the variable
+- `name` (String) Name of the variable
+- `type` (String) Type of the variable. Options are 'TEXT' and 'ENCRYPTED_TEXT'
+- `value` (String) Value of the variable
 
 ## Import
 

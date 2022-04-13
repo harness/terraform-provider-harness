@@ -35,13 +35,13 @@ resource "harness_cloudprovider_spot" "example" {
 
 ### Required
 
-- **account_id** (String) The Spot account ID
-- **name** (String) The name of the cloud provider.
-- **token_secret_name** (String) The name of the Harness secret containing the spot account token
+- `account_id` (String) The Spot account ID
+- `name` (String) The name of the cloud provider.
+- `token_secret_name` (String) The name of the Harness secret containing the spot account token
 
 ### Read-Only
 
-- **id** (String) The id of the cloud provider.
+- `id` (String) The id of the cloud provider.
 
 ## Import
 

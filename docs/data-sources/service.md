@@ -17,17 +17,17 @@ Data source for retrieving a Harness service
 
 ### Required
 
-- **app_id** (String) The id of the application the service belongs to
-- **id** (String) Unique identifier of the application
+- `app_id` (String) The id of the application the service belongs to
+- `id` (String) Unique identifier of the application
 
 ### Read-Only
 
-- **artifact_type** (String) The type of artifact deployed by the service
-- **description** (String) The application description
-- **helm_version** (String) The version of Helm being used by the service.
-- **name** (String) The name of the service
-- **tags** (Map of String) Tags for the service
-- **template_uri** (String) The path of the template used for the custom deployment
-- **type** (String) The type of the deployment
+- `artifact_type` (String) The type of artifact deployed by the service
+- `description` (String) The application description
+- `helm_version` (String) The version of Helm being used by the service.
+- `name` (String) The name of the service
+- `tags` (Map of String) Tags for the service
+- `template_uri` (String) The path of the template used for the custom deployment
+- `type` (String) The type of the deployment
 
 

@@ -52,43 +52,43 @@ resource "harness_cloudprovider_kubernetes" "example" {
 
 ### Required
 
-- **authentication** (Block List, Min: 1, Max: 1) Authentication configuration for the Kubernetes cluster (see [below for nested schema](#nestedblock--authentication))
-- **name** (String) The name of the cloud provider.
+- `authentication` (Block List, Min: 1, Max: 1) Authentication configuration for the Kubernetes cluster (see [below for nested schema](#nestedblock--authentication))
+- `name` (String) The name of the cloud provider.
 
 ### Optional
 
-- **skip_validation** (Boolean) Skip validation of Kubernetes configuration.
-- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
+- `skip_validation` (Boolean) Skip validation of Kubernetes configuration.
+- `usage_scope` (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
 
 ### Read-Only
 
-- **id** (String) The id of the cloud provider.
+- `id` (String) The id of the cloud provider.
 
 <a id="nestedblock--authentication"></a>
 ### Nested Schema for `authentication`
 
 Optional:
 
-- **delegate_selectors** (List of String) Delegate selectors to inherit the GCP credentials from.
-- **oidc** (Block List, Max: 1) Service account configuration for connecting to the Kubernetes cluster (see [below for nested schema](#nestedblock--authentication--oidc))
-- **service_account** (Block List, Max: 1) Username and password for authentication to the cluster (see [below for nested schema](#nestedblock--authentication--service_account))
-- **username_password** (Block List, Max: 1) Username and password for authentication to the cluster (see [below for nested schema](#nestedblock--authentication--username_password))
+- `delegate_selectors` (List of String) Delegate selectors to inherit the GCP credentials from.
+- `oidc` (Block List, Max: 1) Service account configuration for connecting to the Kubernetes cluster (see [below for nested schema](#nestedblock--authentication--oidc))
+- `service_account` (Block List, Max: 1) Username and password for authentication to the cluster (see [below for nested schema](#nestedblock--authentication--service_account))
+- `username_password` (Block List, Max: 1) Username and password for authentication to the cluster (see [below for nested schema](#nestedblock--authentication--username_password))
 
 <a id="nestedblock--authentication--oidc"></a>
 ### Nested Schema for `authentication.oidc`
 
 Required:
 
-- **client_id_secret_name** (String) Name of the Harness secret containing the client ID for the cluster.
-- **identity_provider_url** (String) URL of the identity provider to use.
-- **master_url** (String) URL of the Kubernetes master to connect to.
-- **password_secret_name** (String) Name of the Harness secret containing the password for the cluster.
-- **username** (String) Username for authentication to the cluster. This can be the username itself or the ID of a harness secret.
+- `client_id_secret_name` (String) Name of the Harness secret containing the client ID for the cluster.
+- `identity_provider_url` (String) URL of the identity provider to use.
+- `master_url` (String) URL of the Kubernetes master to connect to.
+- `password_secret_name` (String) Name of the Harness secret containing the password for the cluster.
+- `username` (String) Username for authentication to the cluster. This can be the username itself or the ID of a harness secret.
 
 Optional:
 
-- **client_secret_secret_name** (String) Name of the Harness secret containing the client secret for the cluster.
-- **scopes** (List of String) Scopes to request from the identity provider.
+- `client_secret_secret_name` (String) Name of the Harness secret containing the client secret for the cluster.
+- `scopes` (List of String) Scopes to request from the identity provider.
 
 
 <a id="nestedblock--authentication--service_account"></a>
@@ -96,12 +96,12 @@ Optional:
 
 Required:
 
-- **master_url** (String) URL of the Kubernetes master to connect to.
-- **service_account_token_secret_name** (String) Name of the Harness secret containing the service account token for the cluster.
+- `master_url` (String) URL of the Kubernetes master to connect to.
+- `service_account_token_secret_name` (String) Name of the Harness secret containing the service account token for the cluster.
 
 Optional:
 
-- **ca_certificate_secret_name** (String) Name of the Harness secret containing the CA certificate for the cluster.
+- `ca_certificate_secret_name` (String) Name of the Harness secret containing the CA certificate for the cluster.
 
 
 <a id="nestedblock--authentication--username_password"></a>
@@ -109,13 +109,13 @@ Optional:
 
 Required:
 
-- **master_url** (String) URL of the Kubernetes master to connect to.
-- **password_secret_name** (String) Name of the Harness secret containing the password for the cluster.
+- `master_url` (String) URL of the Kubernetes master to connect to.
+- `password_secret_name` (String) Name of the Harness secret containing the password for the cluster.
 
 Optional:
 
-- **username** (String) Username for authentication to the cluster
-- **username_secret_name** (String) Name of the Harness secret containing the username for authentication to the cluster
+- `username` (String) Username for authentication to the cluster
+- `username_secret_name` (String) Name of the Harness secret containing the username for authentication to the cluster
 
 
 
@@ -124,9 +124,9 @@ Optional:
 
 Optional:
 
-- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
-- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
-- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
+- `application_id` (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- `environment_filter_type` (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- `environment_id` (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 

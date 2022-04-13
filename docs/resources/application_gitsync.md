@@ -50,15 +50,15 @@ resource "harness_application_gitsync" "example" {
 
 ### Required
 
-- **app_id** (String) The id of the application.
-- **branch** (String) The branch of the git repository to sync to.
-- **connector_id** (String) The id of the git connector to use.
+- `app_id` (String) The id of the application.
+- `branch` (String) The branch of the git repository to sync to.
+- `connector_id` (String) The id of the git connector to use.
 
 ### Optional
 
-- **enabled** (Boolean) Whether or not to enable git sync.
-- **id** (String) The ID of this resource.
-- **repository_name** (String) The name of the git repository to sync to. This is only used if the git connector is for an account and not an individual repository.
+- `enabled` (Boolean) Whether or not to enable git sync.
+- `id` (String) The ID of this resource.
+- `repository_name` (String) The name of the git repository to sync to. This is only used if the git connector is for an account and not an individual repository.
 
 ## Import
 

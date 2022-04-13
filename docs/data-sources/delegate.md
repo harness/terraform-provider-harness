@@ -25,20 +25,20 @@ data "harness_delegate" "example" {
 
 ### Optional
 
-- **hostname** (String) The hostname of the delegate.
-- **id** (String) Unique identifier of the delegate
-- **name** (String) The name of the delegate to query for.
-- **status** (String) The status of the delegate to query for. Valid values are DELETED, ENABLED, WAITING_FOR_APPROVAL
-- **type** (String) The type of the delegate to query for. Valid values are DOCKER, ECS, HELM_DELEGATE, KUBERNETES, SHELL_SCRIPT
+- `hostname` (String) The hostname of the delegate.
+- `id` (String) Unique identifier of the delegate
+- `name` (String) The name of the delegate to query for.
+- `status` (String) The status of the delegate to query for. Valid values are DELETED, ENABLED, WAITING_FOR_APPROVAL
+- `type` (String) The type of the delegate to query for. Valid values are DOCKER, ECS, HELM_DELEGATE, KUBERNETES, SHELL_SCRIPT
 
 ### Read-Only
 
-- **account_id** (String) The account id the delegate belongs to.
-- **description** (String) The description of the delegate.
-- **ip** (String) The ip address of the delegate.
-- **last_heartbeat** (String) The last time the delegate was heard from.
-- **polling_mode_enabled** (Boolean) Whether the delegate is in polling mode.
-- **profile_id** (String) The id of the profile assigned to the delegate.
-- **version** (String) The version of the delegate.
+- `account_id` (String) The account id the delegate belongs to.
+- `description` (String) The description of the delegate.
+- `ip` (String) The ip address of the delegate.
+- `last_heartbeat` (String) The last time the delegate was heard from.
+- `polling_mode_enabled` (Boolean) Whether the delegate is in polling mode.
+- `profile_id` (String) The id of the profile assigned to the delegate.
+- `version` (String) The version of the delegate.
 
 

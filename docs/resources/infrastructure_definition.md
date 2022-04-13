@@ -53,55 +53,55 @@ resource "harness_infrastructure_definition" "k8s" {
 
 ### Required
 
-- **app_id** (String) The id of the application the infrastructure definition belongs to.
-- **cloud_provider_type** (String) The type of the cloud provider to connect with. Valid options are AWS, AZURE, CUSTOM, PHYSICAL_DATA_CENTER, KUBERNETES_CLUSTER, PCF, SPOT_INST
-- **deployment_type** (String) The type of the deployment to use. Valid options are AMI, AWS_CODEDEPLOY, AWS_LAMBDA, AZURE_VMSS, AZURE_WEBAPP, Custom, ECS, HELM, KUBERNETES, PCF, SSH, WINRM
-- **env_id** (String) The id of the environment the infrastructure definition belongs to.
-- **name** (String) The name of the infrastructure definition
+- `app_id` (String) The id of the application the infrastructure definition belongs to.
+- `cloud_provider_type` (String) The type of the cloud provider to connect with. Valid options are AWS, AZURE, CUSTOM, PHYSICAL_DATA_CENTER, KUBERNETES_CLUSTER, PCF, SPOT_INST
+- `deployment_type` (String) The type of the deployment to use. Valid options are AMI, AWS_CODEDEPLOY, AWS_LAMBDA, AZURE_VMSS, AZURE_WEBAPP, Custom, ECS, HELM, KUBERNETES, PCF, SSH, WINRM
+- `env_id` (String) The id of the environment the infrastructure definition belongs to.
+- `name` (String) The name of the infrastructure definition
 
 ### Optional
 
-- **aws_ami** (Block List, Max: 1) The configuration details for Aws AMI deployments. (see [below for nested schema](#nestedblock--aws_ami))
-- **aws_ecs** (Block List, Max: 1) The configuration details for Aws AMI deployments. (see [below for nested schema](#nestedblock--aws_ecs))
-- **aws_lambda** (Block List, Max: 1) The configuration details for Aws Lambda deployments. (see [below for nested schema](#nestedblock--aws_lambda))
-- **aws_ssh** (Block List, Max: 1) The configuration details for AWS SSH deployments. (see [below for nested schema](#nestedblock--aws_ssh))
-- **aws_winrm** (Block List, Max: 1) The configuration details for AWS WinRM deployments. (see [below for nested schema](#nestedblock--aws_winrm))
-- **azure_vmss** (Block List, Max: 1) The configuration details for Azure VMSS deployments. (see [below for nested schema](#nestedblock--azure_vmss))
-- **azure_webapp** (Block List, Max: 1) The configuration details for Azure WebApp deployments. (see [below for nested schema](#nestedblock--azure_webapp))
-- **datacenter_ssh** (Block List, Max: 1) The configuration details for SSH datacenter deployments. (see [below for nested schema](#nestedblock--datacenter_ssh))
-- **datacenter_winrm** (Block List, Max: 1) The configuration details for WinRM datacenter deployments. (see [below for nested schema](#nestedblock--datacenter_winrm))
-- **deployment_template_uri** (String) The URI of the deployment template to use. Only used if deployment_type is `CUSTOM`.
-- **kubernetes** (Block List, Max: 1) The configuration details for Kubernetes deployments. (see [below for nested schema](#nestedblock--kubernetes))
-- **kubernetes_gcp** (Block List, Max: 1) The configuration details for Kubernetes on GCP deployments. (see [below for nested schema](#nestedblock--kubernetes_gcp))
-- **provisioner_name** (String) The name of the infrastructure provisioner to use.
-- **scoped_services** (Set of String) The list of service names to scope this infrastructure definition to.
-- **tanzu** (Block List, Max: 1) The configuration details for PCF deployments. (see [below for nested schema](#nestedblock--tanzu))
+- `aws_ami` (Block List, Max: 1) The configuration details for Aws AMI deployments. (see [below for nested schema](#nestedblock--aws_ami))
+- `aws_ecs` (Block List, Max: 1) The configuration details for Aws AMI deployments. (see [below for nested schema](#nestedblock--aws_ecs))
+- `aws_lambda` (Block List, Max: 1) The configuration details for Aws Lambda deployments. (see [below for nested schema](#nestedblock--aws_lambda))
+- `aws_ssh` (Block List, Max: 1) The configuration details for AWS SSH deployments. (see [below for nested schema](#nestedblock--aws_ssh))
+- `aws_winrm` (Block List, Max: 1) The configuration details for AWS WinRM deployments. (see [below for nested schema](#nestedblock--aws_winrm))
+- `azure_vmss` (Block List, Max: 1) The configuration details for Azure VMSS deployments. (see [below for nested schema](#nestedblock--azure_vmss))
+- `azure_webapp` (Block List, Max: 1) The configuration details for Azure WebApp deployments. (see [below for nested schema](#nestedblock--azure_webapp))
+- `datacenter_ssh` (Block List, Max: 1) The configuration details for SSH datacenter deployments. (see [below for nested schema](#nestedblock--datacenter_ssh))
+- `datacenter_winrm` (Block List, Max: 1) The configuration details for WinRM datacenter deployments. (see [below for nested schema](#nestedblock--datacenter_winrm))
+- `deployment_template_uri` (String) The URI of the deployment template to use. Only used if deployment_type is `CUSTOM`.
+- `kubernetes` (Block List, Max: 1) The configuration details for Kubernetes deployments. (see [below for nested schema](#nestedblock--kubernetes))
+- `kubernetes_gcp` (Block List, Max: 1) The configuration details for Kubernetes on GCP deployments. (see [below for nested schema](#nestedblock--kubernetes_gcp))
+- `provisioner_name` (String) The name of the infrastructure provisioner to use.
+- `scoped_services` (Set of String) The list of service names to scope this infrastructure definition to.
+- `tanzu` (Block List, Max: 1) The configuration details for PCF deployments. (see [below for nested schema](#nestedblock--tanzu))
 
 ### Read-Only
 
-- **id** (String) The unique id of the infrastructure definition.
+- `id` (String) The unique id of the infrastructure definition.
 
 <a id="nestedblock--aws_ami"></a>
 ### Nested Schema for `aws_ami`
 
 Required:
 
-- **ami_deployment_type** (String) The ami deployment type to use. Valid options are AWS_ASG, SPOTINST
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **region** (String) The region to deploy to.
+- `ami_deployment_type` (String) The ami deployment type to use. Valid options are AWS_ASG, SPOTINST
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `region` (String) The region to deploy to.
 
 Optional:
 
-- **asg_identifies_workload** (Boolean) Flag to indicate whether the autoscaling group identifies the workload.
-- **autoscaling_group_name** (String) The name of the autoscaling group.
-- **classic_loadbalancers** (Set of String) The classic load balancers to use.
-- **hostname_convention** (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
-- **spotinst_cloud_provider_name** (String) The name of the SpotInst cloud provider to connect with.
-- **spotinst_config_json** (String) The SpotInst configuration to use.
-- **stage_classic_loadbalancers** (Set of String) The staging classic load balancers to use.
-- **stage_target_group_arns** (Set of String) The staging classic load balancers to use.
-- **target_group_arns** (Set of String) The ARN's of the target groups.
-- **use_traffic_shift** (Boolean) Flag to enable traffic shifting.
+- `asg_identifies_workload` (Boolean) Flag to indicate whether the autoscaling group identifies the workload.
+- `autoscaling_group_name` (String) The name of the autoscaling group.
+- `classic_loadbalancers` (Set of String) The classic load balancers to use.
+- `hostname_convention` (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
+- `spotinst_cloud_provider_name` (String) The name of the SpotInst cloud provider to connect with.
+- `spotinst_config_json` (String) The SpotInst configuration to use.
+- `stage_classic_loadbalancers` (Set of String) The staging classic load balancers to use.
+- `stage_target_group_arns` (Set of String) The staging classic load balancers to use.
+- `target_group_arns` (Set of String) The ARN's of the target groups.
+- `use_traffic_shift` (Boolean) Flag to enable traffic shifting.
 
 
 <a id="nestedblock--aws_ecs"></a>
@@ -109,18 +109,18 @@ Optional:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **cluster_name** (String) The name of the ECS cluster to use.
-- **launch_type** (String) The type of launch configuration to use. Valid options are FARGATE
-- **region** (String) The region to deploy to.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `cluster_name` (String) The name of the ECS cluster to use.
+- `launch_type` (String) The type of launch configuration to use. Valid options are FARGATE
+- `region` (String) The region to deploy to.
 
 Optional:
 
-- **assign_public_ip** (Boolean) Flag to assign a public IP address.
-- **execution_role** (String) The ARN of the role to use for execution.
-- **security_group_ids** (Set of String) The security group ids to apply to the ecs service.
-- **subnet_ids** (Set of String) The subnet ids to apply to the ecs service.
-- **vpc_id** (String) The VPC ids to use when selecting the instances.
+- `assign_public_ip` (Boolean) Flag to assign a public IP address.
+- `execution_role` (String) The ARN of the role to use for execution.
+- `security_group_ids` (Set of String) The security group ids to apply to the ecs service.
+- `subnet_ids` (Set of String) The subnet ids to apply to the ecs service.
+- `vpc_id` (String) The VPC ids to use when selecting the instances.
 
 
 <a id="nestedblock--aws_lambda"></a>
@@ -128,15 +128,15 @@ Optional:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **region** (String) The region to deploy to.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `region` (String) The region to deploy to.
 
 Optional:
 
-- **iam_role** (String) The IAM role to use.
-- **security_group_ids** (Set of String) The security group ids to apply to the ecs service.
-- **subnet_ids** (Set of String) The subnet ids to apply to the ecs service.
-- **vpc_id** (String) The VPC ids to use when selecting the instances.
+- `iam_role` (String) The IAM role to use.
+- `security_group_ids` (Set of String) The security group ids to apply to the ecs service.
+- `subnet_ids` (Set of String) The subnet ids to apply to the ecs service.
+- `vpc_id` (String) The VPC ids to use when selecting the instances.
 
 
 <a id="nestedblock--aws_ssh"></a>
@@ -144,27 +144,27 @@ Optional:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **host_connection_type** (String) The type of host connection to use. Valid options are PRIVATE_DNS, PUBLIC_DNS, PRIVATE_IP, PUBLIC_IP
-- **region** (String) The region to deploy to.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `host_connection_type` (String) The type of host connection to use. Valid options are PRIVATE_DNS, PUBLIC_DNS, PRIVATE_IP, PUBLIC_IP
+- `region` (String) The region to deploy to.
 
 Optional:
 
-- **autoscaling_group_name** (String) The name of the autoscaling group.
-- **desired_capacity** (Number) The desired capacity of the auto scaling group.
-- **host_connection_attrs_name** (String) The name of the host connection attributes to use.
-- **hostname_convention** (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
-- **loadbalancer_name** (String) The name of the load balancer to use.
-- **tag** (Block Set) The tags to use when selecting the instances. (see [below for nested schema](#nestedblock--aws_ssh--tag))
-- **vpc_ids** (Set of String) The VPC ids to use when selecting the instances.
+- `autoscaling_group_name` (String) The name of the autoscaling group.
+- `desired_capacity` (Number) The desired capacity of the auto scaling group.
+- `host_connection_attrs_name` (String) The name of the host connection attributes to use.
+- `hostname_convention` (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
+- `loadbalancer_name` (String) The name of the load balancer to use.
+- `tag` (Block Set) The tags to use when selecting the instances. (see [below for nested schema](#nestedblock--aws_ssh--tag))
+- `vpc_ids` (Set of String) The VPC ids to use when selecting the instances.
 
 <a id="nestedblock--aws_ssh--tag"></a>
 ### Nested Schema for `aws_ssh.tag`
 
 Required:
 
-- **key** (String) The key of the tag.
-- **value** (String) The value of the tag.
+- `key` (String) The key of the tag.
+- `value` (String) The value of the tag.
 
 
 
@@ -173,17 +173,17 @@ Required:
 
 Required:
 
-- **autoscaling_group_name** (String) The name of the autoscaling group.
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **host_connection_attrs_name** (String) The name of the host connection attributes to use.
-- **host_connection_type** (String) The type of host connection to use. Valid options are PRIVATE_DNS, PUBLIC_DNS, PRIVATE_IP, PUBLIC_IP
-- **region** (String) The region to deploy to.
+- `autoscaling_group_name` (String) The name of the autoscaling group.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `host_connection_attrs_name` (String) The name of the host connection attributes to use.
+- `host_connection_type` (String) The type of host connection to use. Valid options are PRIVATE_DNS, PUBLIC_DNS, PRIVATE_IP, PUBLIC_IP
+- `region` (String) The region to deploy to.
 
 Optional:
 
-- **desired_capacity** (Number) The desired capacity of the autoscaling group.
-- **hostname_convention** (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
-- **loadbalancer_name** (String) The name of the load balancer to use.
+- `desired_capacity` (Number) The desired capacity of the autoscaling group.
+- `hostname_convention` (String) The naming convention to use for the hostname. Defaults to ${host.ec2Instance.privateDnsName.split('\.')[0]}
+- `loadbalancer_name` (String) The name of the load balancer to use.
 
 
 <a id="nestedblock--azure_vmss"></a>
@@ -191,17 +191,17 @@ Optional:
 
 Required:
 
-- **auth_type** (String) The type of authentication to use. Valid options are SSH_PUBLIC_KEY.
-- **base_name** (String) Base name.
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **deployment_type** (String) The type of deployment. Valid options are NATIVE_VMSS
-- **resource_group_name** (String) The name of the resource group.
-- **subscription_id** (String) The unique id of the azure subscription.
-- **username** (String) The username to connect with.
+- `auth_type` (String) The type of authentication to use. Valid options are SSH_PUBLIC_KEY.
+- `base_name` (String) Base name.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `deployment_type` (String) The type of deployment. Valid options are NATIVE_VMSS
+- `resource_group_name` (String) The name of the resource group.
+- `subscription_id` (String) The unique id of the azure subscription.
+- `username` (String) The username to connect with.
 
 Optional:
 
-- **host_connection_attrs_name** (String) The name of the host connection attributes to use.
+- `host_connection_attrs_name` (String) The name of the host connection attributes to use.
 
 
 <a id="nestedblock--azure_webapp"></a>
@@ -209,9 +209,9 @@ Optional:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **resource_group** (String) The name of the resource group.
-- **subscription_id** (String) The unique id of the azure subscription.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `resource_group` (String) The name of the resource group.
+- `subscription_id` (String) The unique id of the azure subscription.
 
 
 <a id="nestedblock--datacenter_ssh"></a>
@@ -219,9 +219,9 @@ Required:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **host_connection_attributes_name** (String) The name of the SSH connection attributes to use.
-- **hostnames** (Set of String) A list of hosts to deploy to.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `host_connection_attributes_name` (String) The name of the SSH connection attributes to use.
+- `hostnames` (Set of String) A list of hosts to deploy to.
 
 
 <a id="nestedblock--datacenter_winrm"></a>
@@ -229,9 +229,9 @@ Required:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **hostnames** (Set of String) A list of hosts to deploy to.
-- **winrm_connection_attributes_name** (String) The name of the WinRM connection attributes to use.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `hostnames` (Set of String) A list of hosts to deploy to.
+- `winrm_connection_attributes_name` (String) The name of the WinRM connection attributes to use.
 
 
 <a id="nestedblock--kubernetes"></a>
@@ -239,9 +239,9 @@ Required:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **namespace** (String) The namespace in Kubernetes to deploy to.
-- **release_name** (String) The naming convention of the release. When using Helm Native the default is ${infra.kubernetes.infraId}. For standard Kubernetes manifests the default is release-${infra.kubernetes.infraId}
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `namespace` (String) The namespace in Kubernetes to deploy to.
+- `release_name` (String) The naming convention of the release. When using Helm Native the default is ${infra.kubernetes.infraId}. For standard Kubernetes manifests the default is release-${infra.kubernetes.infraId}
 
 
 <a id="nestedblock--kubernetes_gcp"></a>
@@ -249,10 +249,10 @@ Required:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **cluster_name** (String) The name of the cluster being deployed to.
-- **namespace** (String) The namespace in Kubernetes to deploy to.
-- **release_name** (String) The naming convention of the release.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `cluster_name` (String) The name of the cluster being deployed to.
+- `namespace` (String) The namespace in Kubernetes to deploy to.
+- `release_name` (String) The naming convention of the release.
 
 
 <a id="nestedblock--tanzu"></a>
@@ -260,9 +260,9 @@ Required:
 
 Required:
 
-- **cloud_provider_name** (String) The name of the cloud provider to connect with.
-- **organization** (String) The PCF organization to use.
-- **space** (String) The PCF space to deploy to.
+- `cloud_provider_name` (String) The name of the cloud provider to connect with.
+- `organization` (String) The PCF organization to use.
+- `space` (String) The PCF space to deploy to.
 
 ## Import
 

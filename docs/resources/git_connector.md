@@ -39,35 +39,35 @@ resource "harness_git_connector" "example" {
 
 ### Required
 
-- **name** (String) Name of the git connector.
-- **url** (String) The url of the git repository or account/organization
-- **url_type** (String) The type of git url being used. Options are `ACCOUNT`, and `REPO.`
+- `name` (String) Name of the git connector.
+- `url` (String) The url of the git repository or account/organization
+- `url_type` (String) The type of git url being used. Options are `ACCOUNT`, and `REPO.`
 
 ### Optional
 
-- **branch** (String) The branch of the git connector to use
-- **commit_details** (Block Set, Max: 1) Custom details to use when making commits using this git connector (see [below for nested schema](#nestedblock--commit_details))
-- **delegate_selectors** (Set of String) Delegate selectors to apply to this git connector.
-- **generate_webhook_url** (Boolean) Boolean indicating whether or not to generate a webhook url.
-- **password_secret_id** (String) The id of the secret for connecting to the git repository.
-- **ssh_setting_id** (String) The id of the SSH secret to use
-- **usage_scope** (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
-- **username** (String) The name of the user used to connect to the git repository
+- `branch` (String) The branch of the git connector to use
+- `commit_details` (Block Set, Max: 1) Custom details to use when making commits using this git connector (see [below for nested schema](#nestedblock--commit_details))
+- `delegate_selectors` (Set of String) Delegate selectors to apply to this git connector.
+- `generate_webhook_url` (Boolean) Boolean indicating whether or not to generate a webhook url.
+- `password_secret_id` (String) The id of the secret for connecting to the git repository.
+- `ssh_setting_id` (String) The id of the SSH secret to use
+- `usage_scope` (Block Set) This block is used for scoping the resource to a specific set of applications or environments. (see [below for nested schema](#nestedblock--usage_scope))
+- `username` (String) The name of the user used to connect to the git repository
 
 ### Read-Only
 
-- **created_at** (String) The time the git connector was created
-- **id** (String) Id of the git connector.
-- **webhook_url** (String) The generated webhook url
+- `created_at` (String) The time the git connector was created
+- `id` (String) Id of the git connector.
+- `webhook_url` (String) The generated webhook url
 
 <a id="nestedblock--commit_details"></a>
 ### Nested Schema for `commit_details`
 
 Optional:
 
-- **author_email_id** (String) The email id of the author
-- **author_name** (String) The name of the author
-- **message** (String) Commit message
+- `author_email_id` (String) The email id of the author
+- `author_name` (String) The name of the author
+- `message` (String) Commit message
 
 
 <a id="nestedblock--usage_scope"></a>
@@ -75,9 +75,9 @@ Optional:
 
 Optional:
 
-- **application_id** (String) Id of the application to scope to. If empty then this scope applies to all applications.
-- **environment_filter_type** (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
-- **environment_id** (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
+- `application_id` (String) Id of the application to scope to. If empty then this scope applies to all applications.
+- `environment_filter_type` (String) Type of environment filter applied. Cannot be used with `environment_id`. Valid options are NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
+- `environment_id` (String) Id of the id of the specific environment to scope to. Cannot be used with `environment_filter_type`.
 
 ## Import
 

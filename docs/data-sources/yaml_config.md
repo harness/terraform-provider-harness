@@ -17,16 +17,16 @@ Data source for retrieving a yaml config.
 
 ### Required
 
-- **path** (String) Path to the yaml file.
+- `path` (String) Path to the yaml file.
 
 ### Optional
 
-- **app_id** (String) Unique identifier of the application. This is not required for account level resources (i.e. cloud providers, connectors, etc.).
+- `app_id` (String) Unique identifier of the application. This is not required for account level resources (i.e. cloud providers, connectors, etc.).
 
 ### Read-Only
 
-- **content** (String) Content of the yaml file.
-- **id** (String) Unique identifier of the yaml resource.
-- **name** (String) Name of the yaml resource.
+- `content` (String) Content of the yaml file.
+- `id` (String) Unique identifier of the yaml resource.
+- `name` (String) Name of the yaml resource.
 
 

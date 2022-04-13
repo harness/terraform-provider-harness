@@ -42,27 +42,27 @@ resource "harness_service_kubernetes" "example" {
 
 ### Required
 
-- **app_id** (String) The id of the application the service belongs to
-- **name** (String) Name of the service
+- `app_id` (String) The id of the application the service belongs to
+- `name` (String) Name of the service
 
 ### Optional
 
-- **description** (String) Description of th service
-- **helm_version** (String) The version of Helm to use. Options are `V2` and `V3`. Defaults to 'V2'. Only used when `type` is `KUBERNETES` or `HELM`.
-- **variable** (Block Set) Variables to be used in the service (see [below for nested schema](#nestedblock--variable))
+- `description` (String) Description of th service
+- `helm_version` (String) The version of Helm to use. Options are `V2` and `V3`. Defaults to 'V2'. Only used when `type` is `KUBERNETES` or `HELM`.
+- `variable` (Block Set) Variables to be used in the service (see [below for nested schema](#nestedblock--variable))
 
 ### Read-Only
 
-- **id** (String) Id of the service
+- `id` (String) Id of the service
 
 <a id="nestedblock--variable"></a>
 ### Nested Schema for `variable`
 
 Required:
 
-- **name** (String) Name of the variable
-- **type** (String) Type of the variable. Options are 'TEXT' and 'ENCRYPTED_TEXT'
-- **value** (String) Value of the variable
+- `name` (String) Name of the variable
+- `type` (String) Type of the variable. Options are 'TEXT' and 'ENCRYPTED_TEXT'
+- `value` (String) Value of the variable
 
 ## Import
 

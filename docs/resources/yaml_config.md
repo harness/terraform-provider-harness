@@ -31,17 +31,17 @@ EOF
 
 ### Required
 
-- **content** (String) The raw YAML configuration.
-- **path** (String) The path of the resource.
+- `content` (String) The raw YAML configuration.
+- `path` (String) The path of the resource.
 
 ### Optional
 
-- **app_id** (String) The id of the application. This is required for all resources except global ones.
+- `app_id` (String) The id of the application. This is required for all resources except global ones.
 
 ### Read-Only
 
-- **id** (String) The unique id of the resource.
-- **name** (String) The name of the resource.
+- `id` (String) The unique id of the resource.
+- `name` (String) The name of the resource.
 
 ## Import
 

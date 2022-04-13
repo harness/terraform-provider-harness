@@ -17,11 +17,11 @@ Data source for retrieving an SSO providers
 
 ### Optional
 
-- **id** (String) Unique identifier of the SSO provider.
-- **name** (String) The name of the SSO provider.
+- `id` (String) Unique identifier of the SSO provider.
+- `name` (String) The name of the SSO provider.
 
 ### Read-Only
 
-- **type** (String) The type of SSO provider.
+- `type` (String) The type of SSO provider.
 
 

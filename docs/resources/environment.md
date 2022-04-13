@@ -62,31 +62,31 @@ resource "harness_environment" "test" {
 
 ### Required
 
-- **app_id** (String) The id of the application.
-- **name** (String) The name of the environment.
-- **type** (String) The type of the environment. Valid values are `PROD` and `NON_PROD`
+- `app_id` (String) The id of the application.
+- `name` (String) The name of the environment.
+- `type` (String) The type of the environment. Valid values are `PROD` and `NON_PROD`
 
 ### Optional
 
-- **description** (String) The description of the environment.
-- **variable_override** (Block Set) Override for a service variable (see [below for nested schema](#nestedblock--variable_override))
+- `description` (String) The description of the environment.
+- `variable_override` (Block Set) Override for a service variable (see [below for nested schema](#nestedblock--variable_override))
 
 ### Read-Only
 
-- **id** (String) The id of the environment.
+- `id` (String) The id of the environment.
 
 <a id="nestedblock--variable_override"></a>
 ### Nested Schema for `variable_override`
 
 Required:
 
-- **name** (String) The name of the variable
-- **type** (String) The type of the service variable. Valid values are `TEXT` and `ENCRYPTED_TEXT`
-- **value** (String) The value of the service variable
+- `name` (String) The name of the variable
+- `type` (String) The type of the service variable. Valid values are `TEXT` and `ENCRYPTED_TEXT`
+- `value` (String) The value of the service variable
 
 Optional:
 
-- **service_name** (String) The name of the service
+- `service_name` (String) The name of the service
 
 ## Import
 

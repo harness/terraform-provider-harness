@@ -36,18 +36,18 @@ resource "harness_cloudprovider_azure" "azure" {
 
 ### Required
 
-- **client_id** (String) The client id for the Azure application
-- **key** (String) The Name of the Harness secret containing the key for the Azure application
-- **name** (String) The name of the cloud provider.
-- **tenant_id** (String) The tenant id for the Azure application
+- `client_id` (String) The client id for the Azure application
+- `key` (String) The Name of the Harness secret containing the key for the Azure application
+- `name` (String) The name of the cloud provider.
+- `tenant_id` (String) The tenant id for the Azure application
 
 ### Optional
 
-- **environment_type** (String) The type of environment. Valid options are [AZURE AZURE_US_GOVERNMENT]
+- `environment_type` (String) The type of environment. Valid options are [AZURE AZURE_US_GOVERNMENT]
 
 ### Read-Only
 
-- **id** (String) The id of the cloud provider.
+- `id` (String) The id of the cloud provider.
 
 ## Import
 
