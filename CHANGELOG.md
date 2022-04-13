@@ -2,35 +2,62 @@
 
 FEATURES:
 
-* **New Resource:** `` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_appdynamics` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_artifactory` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_aws` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_aws_secret_manager` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_awscc` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_awskms` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_bitbucket` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_datadog` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_docker` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_dynatrace` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_gcp` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_git` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_github` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_gitlab` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_helm` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_jira` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_kubernetes` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_nexus` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_pagerduty` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_prometheus` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_splunk` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_connector_sumologic` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_current_user` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_environment` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_organization` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_pipeline` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_project` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
-* **New Resource:** `platform_service` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
+* **New Data Source:** `platform_connector_appdynamics
+platform_connector_artifactory
+platform_connector_aws_secret_manager
+platform_connector_aws
+platform_connector_awscc
+platform_connector_awskms
+platform_connector_bitbucket
+platform_connector_datadog
+platform_connector_docker
+platform_connector_dynatrace
+platform_connector_gcp
+platform_connector_git
+platform_connector_github
+platform_connector_gitlab
+platform_connector_helm
+platform_connector_jira
+platform_connector_kubernetes
+platform_connector_nexus
+platform_connector_pagerduty
+platform_connector_prometheus
+platform_connector_splunk
+platform_connector_sumologic
+platform_current_user
+platform_environment
+platform_organization
+platform_pipeline
+platform_project
+platform_service` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
+* **New Resource:** `platform_connector_appdynamics
+platform_connector_artifactory
+platform_connector_aws_secret_manager
+platform_connector_aws
+platform_connector_awscc
+platform_connector_awskms
+platform_connector_bitbucket
+platform_connector_datadog
+platform_connector_docker
+platform_connector_dynatrace
+platform_connector_gcp
+platform_connector_git
+platform_connector_github
+platform_connector_gitlab
+platform_connector_helm
+platform_connector_jira
+platform_connector_kubernetes
+platform_connector_nexus
+platform_connector_pagerduty
+platform_connector_prometheus
+platform_connector_splunk
+platform_connector_sumologic
+platform_current_user
+platform_environment
+platform_organization
+platform_pipeline
+platform_project
+platform_service` ([#112](https://github.com/hashicorp/terraform-provider-harness/issues/112))
 
 # 0.2.1
 
