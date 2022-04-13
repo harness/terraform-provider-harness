@@ -91,8 +91,35 @@ func getDefaultContainerConfig(cfg *DockerDelegateConfig) *container.Config {
 	}
 }
 
+func PullDelegateImage(ctx context.Context, cfg *DockerDelegateConfig) error {
+	if cfg.Image == "" {
+		cfg.Image = harnessDockerImage
+	}
+
+	var clientOpts client.Opt
+	if cfg.ClientOptions != nil {
+		clientOpts = cfg.ClientOptions
+	} else {
+		clientOpts = client.FromEnv
+	}
+
+	cli, err := client.NewClientWithOpts(clientOpts)
+	if err != nil {
+		errors.Wrap(err, "failed to create docker client")
+	}
+
+	log.Infof("Pulling docker image %s", cfg.Image)
+	reader, err := cli.ImagePull(ctx, cfg.Image, types.ImagePullOptions{All: true})
+	if err != nil {
+		return errors.Wrap(err, "failed to pull docker image")
+	}
+	io.Copy(os.Stdout, reader)
+
+	return nil
+}
+
 // Returns the container Id of the delegate
-func RunDelegateContainer(ctx context.Context, cfg *DockerDelegateConfig) (string, error) {
+func RunDelegateContainer(ctx context.Context, cfg *DockerDelegateConfig, pullImage bool) (string, error) {
 	if cfg.Image == "" {
 		cfg.Image = harnessDockerImage
 	}
@@ -116,12 +143,14 @@ func RunDelegateContainer(ctx context.Context, cfg *DockerDelegateConfig) (strin
 		return "", errors.Wrap(err, "failed to create docker client")
 	}
 
-	log.Infof("Pulling docker image %s", cfg.Image)
-	reader, err := cli.ImagePull(ctx, cfg.Image, types.ImagePullOptions{All: true})
-	if err != nil {
-		return "", errors.Wrap(err, "failed to pull docker image")
+	if pullImage {
+		log.Infof("Pulling docker image %s", cfg.Image)
+		reader, err := cli.ImagePull(ctx, cfg.Image, types.ImagePullOptions{All: true})
+		if err != nil {
+			return "", errors.Wrap(err, "failed to pull docker image")
+		}
+		io.Copy(os.Stdout, reader)
 	}
-	io.Copy(os.Stdout, reader)
 
 	log.Infof("Creating docker container %s", cfg.ContainerName)
 	cont, err := cli.ContainerCreate(ctx, containerConfig, cfg.HostConfig, cfg.NetworkingConfig, cfg.Platform, cfg.ContainerName)

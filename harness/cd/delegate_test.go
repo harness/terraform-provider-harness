@@ -3,6 +3,7 @@ package cd
 import (
 	"context"
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
@@ -14,6 +15,14 @@ import (
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/stretchr/testify/require"
 )
+
+var delegateImagePull sync.Once
+
+func pullDelegateImage(ctx context.Context, cfg *delegate.DockerDelegateConfig) {
+	delegateImagePull.Do(func() {
+		delegate.PullDelegateImage(ctx, cfg)
+	})
+}
 
 var defaultDelegateTimeout = time.Minute * 5
 
@@ -42,8 +51,10 @@ func createDelegateContainer(t *testing.T, name string) *graphql.Delegate {
 		ProfileId:     helpers.TestEnvVars.DelegateProfileId.Get(),
 	}
 
+	pullDelegateImage(ctx, &delegate.DockerDelegateConfig{})
+
 	t.Logf("Starting delegate %s", name)
-	_, err := delegate.RunDelegateContainer(ctx, cfg)
+	_, err := delegate.RunDelegateContainer(ctx, cfg, false)
 	require.NoError(t, err, "failed to create delegate container: %s", err)
 
 	delegate, err := c.DelegateClient.WaitForDelegate(ctx, name, getDelegateTimeout())
@@ -67,6 +78,9 @@ func deleteDelegate(t *testing.T, name string) {
 
 	err = cli.ContainerRemove(context.Background(), name, types.ContainerRemoveOptions{})
 	require.NoError(t, err, "failed to remove delegate container: %s", err)
+
+	err = c.DelegateClient.DeleteDelegate(delegate.UUID)
+	require.NoError(t, err, "Failed to delete delegate: %s", err)
 }
 
 func TestCreateDelegate(t *testing.T) {

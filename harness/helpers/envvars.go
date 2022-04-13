@@ -10,7 +10,7 @@ var EnvVars = struct {
 	BearerToken    EnvVar
 	DelegateSecret EnvVar
 	Endpoint       EnvVar
-	NGApiKey       EnvVar
+	PlatformApiKey EnvVar
 	DebugEnabled   EnvVar
 }{
 	AccountId:      "HARNESS_ACCOUNT_ID",
@@ -18,7 +18,7 @@ var EnvVars = struct {
 	BearerToken:    "HARNESS_BEARER_TOKEN",
 	DelegateSecret: "HARNESS_DELEGATE_SECRET",
 	Endpoint:       "HARNESS_ENDPOINT",
-	NGApiKey:       "HARNESS_NG_API_KEY",
+	PlatformApiKey: "HARNESS_PLATFORM_API_KEY",
 	DebugEnabled:   "HARNESS_DEBUG_ENABLED",
 }
 
