@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -21,12 +21,12 @@ func serviceStateImporter(d *schema.ResourceData, i interface{}) ([]*schema.Reso
 }
 
 func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	id := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
 
-	err := c.ConfigAsCodeClient.DeleteService(appId, id)
+	err := c.CDClient.ConfigAsCodeClient.DeleteService(appId, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}

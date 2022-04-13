@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -144,7 +144,7 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 
 					grp, err := c.UserClient.GetUserGroupByName(expectedName)
 					require.NoError(t, err)
@@ -200,7 +200,7 @@ func testAccUserGroupCreation(t *testing.T, resourceName string, name string) re
 
 func testAccGetUserGroup(resourceName string, state *terraform.State) (*graphql.UserGroup, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c := acctest.TestAccGetApiClientFromProvider().CDClient
 	id := r.Primary.ID
 
 	return c.UserClient.GetUserGroupById(id)
@@ -366,7 +366,7 @@ func testAccResourceUserGroupSAML(name string) string {
 }
 
 func testSweepUserGroups(r string) error {
-	c := acctest.TestAccGetApiClientFromProvider()
+	c := acctest.TestAccGetApiClientFromProvider().CDClient
 
 	limit := 100
 	offset := 0

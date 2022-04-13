@@ -25,7 +25,7 @@ func testAccGetService(resourceName string, state *terraform.State) (*cac.Servic
 	svcId := r.Primary.ID
 	appId := r.Primary.Attributes["app_id"]
 
-	return c.ConfigAsCodeClient.GetServiceById(appId, svcId)
+	return c.CDClient.ConfigAsCodeClient.GetServiceById(appId, svcId)
 }
 
 func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -170,7 +170,7 @@ func TestAccResourceK8sCloudProviderConnector_DeleteUnderlyingResource(t *testin
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 					cp, err := c.CloudProviderClient.GetKubernetesCloudProviderByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, cp)

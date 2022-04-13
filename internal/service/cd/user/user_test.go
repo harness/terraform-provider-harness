@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -81,7 +81,7 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 
 					usr, err := c.UserClient.GetUserByEmail(expectedEmail)
 					require.NoError(t, err)
@@ -119,7 +119,7 @@ func TestAccResourceUser_WithUserGroups(t *testing.T) {
 						userId := s.RootModule().Resources[resourceName].Primary.ID
 						groupId := s.RootModule().Resources["harness_user_group.test"].Primary.ID
 						acctest.TestAccConfigureProvider()
-						c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+						c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 
 						limit := 100
 						offset := 0
@@ -178,7 +178,7 @@ func testAccUserCreation(t *testing.T, resourceName string, email string) resour
 
 func testAccGetUser(resourceName string, state *terraform.State) (*graphql.User, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c := acctest.TestAccGetApiClientFromProvider().CDClient
 	email := r.Primary.Attributes["email"]
 
 	return c.UserClient.GetUserByEmail(email)
@@ -219,7 +219,7 @@ func testAccResourceUser_WithUserGroups(name string, email string) string {
 }
 
 func testSweepUsers(r string) error {
-	c := acctest.TestAccGetApiClientFromProvider()
+	c := acctest.TestAccGetApiClientFromProvider().CDClient
 
 	limit := 100
 	offset := 0

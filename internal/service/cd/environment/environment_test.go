@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -75,7 +75,7 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 					app, err := c.ApplicationClient.GetApplicationByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, app)
@@ -97,7 +97,7 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 
 func testAccGetEnvironment(resourceName string, state *terraform.State) (*cac.Environment, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c := acctest.TestAccGetApiClientFromProvider().CDClient
 	svcId := r.Primary.ID
 	appId := r.Primary.Attributes["app_id"]
 

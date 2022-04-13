@@ -6,6 +6,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -66,7 +67,7 @@ func ResourceCloudProviderTanzu() *schema.Resource {
 }
 
 func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	cp := &cac.PcfCloudProvider{}
 	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
@@ -98,7 +99,7 @@ func readCloudProviderTanzu(c *cd.ApiClient, d *schema.ResourceData, cp *cac.Pcf
 }
 
 func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	var input *cac.PcfCloudProvider
 	var err error

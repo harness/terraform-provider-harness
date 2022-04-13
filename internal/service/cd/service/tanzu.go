@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,7 +25,7 @@ func ResourcePCFService() *schema.Resource {
 }
 
 func resourceTanzuServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	svcId := d.Get("id").(string)
 	appId := d.Get("app_id").(string)
@@ -33,7 +33,7 @@ func resourceTanzuServiceRead(ctx context.Context, d *schema.ResourceData, meta 
 	var svc *cac.Service
 	var err error
 
-	if svc, err = c.ConfigAsCodeClient.GetServiceById(appId, svcId); err != nil {
+	if svc, err = c.CDClient.ConfigAsCodeClient.GetServiceById(appId, svcId); err != nil {
 		return diag.FromErr(err)
 	} else if svc == nil {
 		d.SetId("")
@@ -57,7 +57,7 @@ func readServicePCF(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics {
 }
 
 func resourceTanzuServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	var input *cac.Service
 	var err error
@@ -65,7 +65,7 @@ func resourceTanzuServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 	if d.IsNewResource() {
 		input = cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
 	} else {
-		if input, err = c.ConfigAsCodeClient.GetServiceById(d.Get("app_id").(string), d.Id()); err != nil {
+		if input, err = c.CDClient.ConfigAsCodeClient.GetServiceById(d.Get("app_id").(string), d.Id()); err != nil {
 			return diag.FromErr(err)
 		} else if input == nil {
 			d.SetId("")
@@ -86,7 +86,7 @@ func resourceTanzuServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 	}
 
 	// Create Service
-	newSvc, err := c.ConfigAsCodeClient.UpsertService(input)
+	newSvc, err := c.CDClient.ConfigAsCodeClient.UpsertService(input)
 	if err != nil {
 		return diag.FromErr(err)
 	}

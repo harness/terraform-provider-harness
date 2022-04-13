@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -155,7 +155,7 @@ func ResourceUserGroup() *schema.Resource {
 }
 
 func resourceUserGroupCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	input := &graphql.UserGroup{
 		Name:        d.Get("name").(string),
@@ -181,7 +181,7 @@ func resourceUserGroupCreate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	id := d.Get("id").(string)
 
@@ -226,7 +226,7 @@ func readUserGroup(d *schema.ResourceData, userGroup *graphql.UserGroup) diag.Di
 }
 
 func resourceUserGroupUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	input := &graphql.UserGroup{
 		Id:   d.Id(),
@@ -247,7 +247,7 @@ func resourceUserGroupUpdate(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceUserGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session).CDClient
 
 	if err := c.UserClient.DeleteUserGroup(d.Id()); err != nil {
 		return diag.FromErr(err)

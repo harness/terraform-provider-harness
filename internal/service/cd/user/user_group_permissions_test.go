@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -20,7 +20,7 @@ func TestAccResourceUserGroupPermissions_AccountPermissions(t *testing.T) {
 	resourceName := "harness_user_group_permissions.test"
 
 	defer func() {
-		c := acctest.TestAccGetApiClientFromProvider()
+		c := acctest.TestAccGetApiClientFromProvider().CDClient
 		ug, err := c.UserClient.GetUserGroupByName(expectedName)
 		require.NoError(t, err)
 		require.NotNil(t, ug)
@@ -30,7 +30,7 @@ func TestAccResourceUserGroupPermissions_AccountPermissions(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			c := acctest.TestAccGetApiClientFromProvider()
+			c := acctest.TestAccGetApiClientFromProvider().CDClient
 			c.UserClient.CreateUserGroup(&graphql.UserGroup{
 				Name: expectedName,
 			})
@@ -64,7 +64,7 @@ func TestAccResourceUserGroupPermissions_DeleteUnderlyingResource(t *testing.T) 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			c := acctest.TestAccGetApiClientFromProvider()
+			c := acctest.TestAccGetApiClientFromProvider().CDClient
 			c.UserClient.CreateUserGroup(&graphql.UserGroup{
 				Name: expectedName,
 			})
@@ -77,7 +77,7 @@ func TestAccResourceUserGroupPermissions_DeleteUnderlyingResource(t *testing.T) 
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					c := acctest.TestAccProvider.Meta().(*internal.Session).CDClient
 
 					grp, err := c.UserClient.GetUserGroupByName(expectedName)
 					require.NoError(t, err)
@@ -101,7 +101,7 @@ func TestAccResourceUserGroupPermissions_AppPermissions(t *testing.T) {
 	resourceName := "harness_user_group_permissions.test"
 
 	defer func() {
-		c := acctest.TestAccGetApiClientFromProvider()
+		c := acctest.TestAccGetApiClientFromProvider().CDClient
 		ug, err := c.UserClient.GetUserGroupByName(expectedName)
 		require.NoError(t, err)
 		require.NotNil(t, ug)
@@ -111,7 +111,7 @@ func TestAccResourceUserGroupPermissions_AppPermissions(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck: func() {
 			acctest.TestAccPreCheck(t)
-			c := acctest.TestAccGetApiClientFromProvider()
+			c := acctest.TestAccGetApiClientFromProvider().CDClient
 			c.UserClient.CreateUserGroup(&graphql.UserGroup{
 				Name: expectedName,
 			})
@@ -244,7 +244,7 @@ func testAccResourceUserGroupPermissions_AccountPermissions(name string) string 
 func testAccUserGroupPermissionsDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		r := acctest.TestAccGetResource(resourceName, state)
-		c := acctest.TestAccGetApiClientFromProvider()
+		c := acctest.TestAccGetApiClientFromProvider().CDClient
 
 		id := r.Primary.ID
 

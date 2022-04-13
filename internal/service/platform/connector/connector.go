@@ -1,0 +1,156 @@
+package connector
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/antihax/optional"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/gitsync"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/jinzhu/copier"
+)
+
+type ReadConnectorData func(*schema.ResourceData, *nextgen.ConnectorInfo) error
+
+func resourceConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
+	c := meta.(*internal.Session).PLClient
+
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
+	}
+
+	resp, _, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, getReadConnectorOpts(d))
+	if err != nil {
+		return nil, helpers.HandleApiError(err, d)
+	}
+
+	if connType != resp.Data.Connector.Type_ {
+		return nil, diag.FromErr(fmt.Errorf("expected connector to be of type %s, but got %s", connType, resp.Data.Connector.Type_))
+	}
+
+	readCommonConnectorData(d, resp.Data.Connector)
+
+	return resp.Data.Connector, nil
+}
+
+func getReadConnectorOpts(d *schema.ResourceData) *nextgen.ConnectorsApiGetConnectorOpts {
+	connOpts := &nextgen.ConnectorsApiGetConnectorOpts{}
+
+	if attr, ok := d.GetOk("org_id"); ok {
+		connOpts.OrgIdentifier = optional.NewString(attr.(string))
+	}
+
+	if attr, ok := d.GetOk("project_id"); ok {
+		connOpts.ProjectIdentifier = optional.NewString(attr.(string))
+	}
+
+	if attr, ok := d.GetOk("git_sync"); ok {
+		opts := attr.([]interface{})[0].(map[string]interface{})
+		connOpts.Branch = optional.NewString(opts["branch"].(string))
+		connOpts.RepoIdentifier = optional.NewString(opts["repo_id"].(string))
+	}
+
+	return connOpts
+}
+
+func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connector *nextgen.ConnectorInfo) (*nextgen.ConnectorInfo, diag.Diagnostics) {
+	c := meta.(*internal.Session).PLClient
+
+	id := d.Id()
+	buildConnector(d, connector)
+
+	var err error
+	var resp nextgen.ResponseDtoConnectorResponse
+
+	if id == "" {
+		resp, _, err = c.ConnectorsApi.CreateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, getCreateConnectorOps(d))
+	} else {
+		resp, _, err = c.ConnectorsApi.UpdateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, getUpdateConnectorOps(d))
+	}
+
+	if err != nil {
+		return nil, helpers.HandleApiError(err, d)
+	}
+
+	readCommonConnectorData(d, resp.Data.Connector)
+
+	return resp.Data.Connector, nil
+}
+
+func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*internal.Session).PLClient
+
+	_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), getDeleteConnectorOpts(d))
+	if err != nil {
+		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+	}
+
+	return nil
+}
+
+func getCreateConnectorOps(d *schema.ResourceData) *nextgen.ConnectorsApiCreateConnectorOpts {
+	connOpts := &nextgen.ConnectorsApiCreateConnectorOpts{}
+	opts := gitsync.GetGitSyncOptions(d)
+	copier.Copy(connOpts, opts)
+	return connOpts
+}
+
+func getUpdateConnectorOps(d *schema.ResourceData) *nextgen.ConnectorsApiUpdateConnectorOpts {
+	connOpts := &nextgen.ConnectorsApiUpdateConnectorOpts{}
+	opts := gitsync.GetGitSyncOptions(d)
+	copier.Copy(connOpts, opts)
+	return connOpts
+}
+
+func getDeleteConnectorOpts(d *schema.ResourceData) *nextgen.ConnectorsApiDeleteConnectorOpts {
+	connOpts := &nextgen.ConnectorsApiDeleteConnectorOpts{
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	}
+
+	opts := gitsync.GetGitSyncOptions(d)
+	copier.Copy(connOpts, opts)
+
+	return connOpts
+}
+
+func buildConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfo) {
+	if attr := d.Get("name").(string); attr != "" {
+		connector.Name = attr
+	}
+
+	if attr := d.Get("identifier").(string); attr != "" {
+		connector.Identifier = attr
+	}
+
+	if attr := d.Get("description").(string); attr != "" {
+		connector.Description = attr
+	}
+
+	if attr := d.Get("org_id").(string); attr != "" {
+		connector.OrgIdentifier = attr
+	}
+
+	if attr := d.Get("project_id").(string); attr != "" {
+		connector.ProjectIdentifier = attr
+	}
+
+	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
+		connector.Tags = helpers.ExpandTags(attr)
+	}
+}
+
+func readCommonConnectorData(d *schema.ResourceData, connector *nextgen.ConnectorInfo) {
+	d.SetId(connector.Identifier)
+	d.Set("identifier", connector.Identifier)
+	d.Set("description", connector.Description)
+	d.Set("name", connector.Name)
+	d.Set("org_id", connector.OrgIdentifier)
+	d.Set("project_id", connector.ProjectIdentifier)
+	d.Set("tags", helpers.FlattenTags(connector.Tags))
+}

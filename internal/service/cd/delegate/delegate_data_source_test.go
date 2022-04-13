@@ -1,9 +1,11 @@
 package delegate_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/delegate"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -20,7 +22,8 @@ func TestAccDataSourceDelegate_hostname(t *testing.T) {
 	defer deleteDelegate(t, delegateName)
 
 	acctest.TestAccPreCheck(t)
-	delegate := createDelegateContainer(t, delegateName)
+	pullDelegateImage(context.Background(), &delegate.DockerDelegateConfig{})
+	delegate := createDelegateContainer(t, delegateName, false)
 
 	resource.UnitTest(t, resource.TestCase{
 		ProviderFactories: acctest.ProviderFactories,
@@ -47,7 +50,8 @@ func TestAccDataSourceDelegate_name(t *testing.T) {
 	defer deleteDelegate(t, delegateName)
 
 	acctest.TestAccPreCheck(t)
-	delegate := createDelegateContainer(t, delegateName)
+	pullDelegateImage(context.Background(), &delegate.DockerDelegateConfig{})
+	delegate := createDelegateContainer(t, delegateName, false)
 
 	resource.UnitTest(t, resource.TestCase{
 		ProviderFactories: acctest.ProviderFactories,

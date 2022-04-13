@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -59,13 +59,13 @@ func TestAccResourceSSHCredential_SSHAuthentication_DeleteUnderlyingResource(t *
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*cd.ApiClient)
+					c := acctest.TestAccProvider.Meta().(*internal.Session)
 
-					secret, err := c.SecretClient.GetSSHCredentialByName(name)
+					secret, err := c.CDClient.SecretClient.GetSSHCredentialByName(name)
 					require.NoError(t, err)
 					require.NotNil(t, secret)
 
-					err = c.SecretClient.DeleteSecret(secret.Id, secret.SecretType)
+					err = c.CDClient.SecretClient.DeleteSecret(secret.Id, secret.SecretType)
 					require.NoError(t, err)
 				},
 				Config:             testAccResourceSSHCredential(name, true, graphql.SSHAuthenticationTypes.SSHAuthentication),
@@ -137,7 +137,7 @@ func testAccGetSSHCredential(resourceName string, state *terraform.State) (*grap
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
 
-	return c.SecretClient.GetSSHCredentialById(id)
+	return c.CDClient.SecretClient.GetSSHCredentialById(id)
 }
 
 func testAccSShCredentialCreation(t *testing.T, resourceName string, authenticationScheme graphql.SSHAuthenticationScheme) resource.TestCheckFunc {

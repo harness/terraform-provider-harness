@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -71,12 +71,12 @@ func DataSourceService() *schema.Resource {
 
 func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	appId := d.Get("app_id").(string)
 	svcId := d.Get("id").(string)
 
-	svc, err := c.ConfigAsCodeClient.GetServiceById(appId, svcId)
+	svc, err := c.CDClient.ConfigAsCodeClient.GetServiceById(appId, svcId)
 	if err != nil {
 		return diag.FromErr(err)
 	}

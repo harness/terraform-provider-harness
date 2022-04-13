@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/usagescope"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -194,7 +194,7 @@ func ResourceSSHCredential() *schema.Resource {
 }
 
 func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	var input *graphql.SSHCredential
 	var err error
@@ -202,7 +202,7 @@ func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.Resource
 	if d.IsNewResource() {
 		input = &graphql.SSHCredential{}
 	} else {
-		if input, err = c.SecretClient.GetSSHCredentialById(d.Id()); err != nil {
+		if input, err = c.CDClient.SecretClient.GetSSHCredentialById(d.Id()); err != nil {
 			return diag.FromErr(err)
 		} else if input == nil {
 			d.SetId("")
@@ -223,7 +223,7 @@ func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.Resource
 	}
 	input.UsageScope = usageScope
 
-	cred, err := c.SecretClient.CreateSSHCredential(input)
+	cred, err := c.CDClient.SecretClient.CreateSSHCredential(input)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -233,11 +233,11 @@ func resourceSSHCredentialCreateOrUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceSSHCredentialRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	credId := d.Get("id").(string)
 
-	cred, err := c.SecretClient.GetSSHCredentialById(credId)
+	cred, err := c.CDClient.SecretClient.GetSSHCredentialById(credId)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -272,9 +272,9 @@ func readSSHCredential(d *schema.ResourceData, secret *graphql.SSHCredential) di
 }
 
 func resourceSSHCredentialDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
-	err := c.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.SSHCredential)
+	err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.SSHCredential)
 
 	if err != nil {
 		return diag.FromErr(err)

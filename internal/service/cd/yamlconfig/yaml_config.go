@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,12 +65,12 @@ func ResourceYamlConfig() *schema.Resource {
 }
 
 func resourceYamlConfigRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	app_id := d.Get("app_id").(string)
 	path := cac.YamlPath(d.Get("path").(string))
 
-	entity, err := c.ConfigAsCodeClient.FindYamlByPath(app_id, path)
+	entity, err := c.CDClient.ConfigAsCodeClient.FindYamlByPath(app_id, path)
 	if err != nil {
 		return diag.FromErr(err)
 	} else if entity == nil {
@@ -92,18 +92,18 @@ func readYamlConfig(d *schema.ResourceData, entity *cac.YamlEntity) diag.Diagnos
 }
 
 func resourceYamlConfigCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	path := cac.YamlPath(d.Get("path").(string))
 	app_id := d.Get("app_id").(string)
 	content := d.Get("content").(string)
 
-	_, err := c.ConfigAsCodeClient.UpsertRawYaml(path, []byte(content))
+	_, err := c.CDClient.ConfigAsCodeClient.UpsertRawYaml(path, []byte(content))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	yamlEntity, err := c.ConfigAsCodeClient.FindYamlByPath(app_id, path)
+	yamlEntity, err := c.CDClient.ConfigAsCodeClient.FindYamlByPath(app_id, path)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -116,12 +116,12 @@ func resourceYamlConfigCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 }
 
 func resourceYamlConfigDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*cd.ApiClient)
+	c := meta.(*internal.Session)
 
 	path := cac.YamlPath(d.Get("path").(string))
 	content := d.Get("content").(string)
 
-	err := c.ConfigAsCodeClient.DeleteEntityV2(path, content)
+	err := c.CDClient.ConfigAsCodeClient.DeleteEntityV2(path, content)
 	if err != nil {
 		return diag.FromErr(err)
 	}
