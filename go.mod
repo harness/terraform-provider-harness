@@ -8,7 +8,7 @@ require (
 	github.com/harness/harness-go-sdk v0.1.19
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.13.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.14.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/stretchr/testify v1.7.1
 )
