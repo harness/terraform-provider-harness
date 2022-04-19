@@ -13,20 +13,21 @@ import (
 func ResourceDelegateApproval() *schema.Resource {
 	return &schema.Resource{
 		Description:   "Resource for approving or rejecting delegates.",
-		CreateContext: resourceDelegateApprovalCreateOrUpdate,
+		CreateContext: resourceDelegateApprovalCreate,
 		ReadContext:   resourceDelegateApprovalRead,
-		UpdateContext: resourceDelegateApprovalCreateOrUpdate,
 		DeleteContext: resourceDelegateApprovalDelete,
 		Schema: map[string]*schema.Schema{
 			"delegate_id": {
 				Description: "The id of the delegate.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"approve": {
 				Description: "Whether or not to approve the delegate.",
 				Type:        schema.TypeBool,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"status": {
 				Description: "The status of the delegate.",
@@ -71,13 +72,8 @@ func resourceDelegateApprovalRead(ctx context.Context, d *schema.ResourceData, m
 	return nil
 }
 
-func resourceDelegateApprovalCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceDelegateApprovalCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
-	// Don't attempt to do anything if we've already done this once.
-	if !d.IsNewResource() {
-		return diag.Errorf("the delegate approval status has already been changed.")
-	}
 
 	id := d.Get("delegate_id").(string)
 	delegate, err := c.DelegateClient.GetDelegateById(id)
