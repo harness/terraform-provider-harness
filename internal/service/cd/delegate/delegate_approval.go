@@ -22,11 +22,13 @@ func ResourceDelegateApproval() *schema.Resource {
 				Description: "The id of the delegate.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"approve": {
 				Description: "Whether or not to approve the delegate.",
 				Type:        schema.TypeBool,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"status": {
 				Description: "The status of the delegate.",
