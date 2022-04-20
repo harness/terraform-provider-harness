@@ -35,11 +35,13 @@ func ResourceYamlConfig() *schema.Resource {
 				Description: "The id of the application. This is required for all resources except global ones.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"path": {
 				Description: "The path of the resource.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"content": {
 				Description: "The raw YAML configuration.",
