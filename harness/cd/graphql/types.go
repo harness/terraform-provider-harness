@@ -28,25 +28,6 @@ type ServiceConnection struct {
 	PageInfo PageInfo
 }
 
-type Service struct{}
-
-type ArtifactSource struct {
-	CommonMetadata
-	Artifacts ArtifactConnection
-}
-
-type ArtifactConnection struct {
-	Nodes    []Artifact
-	PageInfo PageInfo
-}
-
-type Artifact struct {
-	ArtifactSource ArtifactSource
-	BuildNo        string
-	CollectedAt    time.Time
-	Id             string
-}
-
 type PipelineConnection struct {
 	Nodes    []Pipeline
 	PageInfo PageInfo
@@ -87,13 +68,6 @@ type Environment struct {
 type InfrastructureDefinitionConnection struct {
 	Nodes    []InfrastructureDefinition
 	PageInfo PageInfo
-}
-
-type PageInfo struct {
-	HasMore bool
-	Limit   int
-	Offset  int
-	Total   int
 }
 
 type InfrastructureDefinition struct {
