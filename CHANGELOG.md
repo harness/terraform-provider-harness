@@ -1,15 +1,19 @@
 
-<a name="0.1.19"></a>
-## 0.1.19 (2022-04-13)
+<a name="0.1.20"></a>
+## 0.1.20 (2022-04-20)
 
-### Added
+### Add
 
-* added release2 pipeline
+* Add ability to list services ([#103](https://github.com/harness/harness-go-sdk/issues/103))
 
 ### Added
 
 * Added changelog setup
 * Added execution api's
+
+### Added
+
+* added release2 pipeline
 
 ### Adding
 
@@ -50,18 +54,17 @@
 
 ### Fixed
 
-* fixed tests
-* fixed error message
-* fixed ng endpoint configuration
-
-### Fixed
-
 * Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
 * Fixed ng secret manager serializer
 * Fixed auth configuration issue
+
+### Fixed
+
+* fixed tests
+* fixed error message
 
 ### Gitsync
 
@@ -94,6 +97,8 @@
 
 ### Release
 
+* Release version 0.1.19 04-13-2022
+* Release v0.1.19
 * Release version 0.1.18 03-25-2022
 * Release v0.1.18
 * Release version v0.1.18 03-25-2022
@@ -109,8 +114,6 @@
 * Release version 0.1.11 02-02-2022
 * Release v0.1.11
 * Release version 0.1.10 01-30-2022
-* Release v0.1.10
-* Release version 0.1.9 01-30-2022
 
 ### Skip
 
@@ -129,12 +132,12 @@
 
 ### Updated
 
-* updated deps
-* updated changelog
-
-### Updated
-
 * Updated environmens
 * Updated tooling configuration
 * Updated dependencies
+
+### Updated
+
+* updated deps
+* updated changelog
 
