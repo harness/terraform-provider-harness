@@ -41,7 +41,7 @@ func TestAcc_ResourceAwsCloudProvider(t *testing.T) {
 	})
 }
 
-func TestAccResourceAwsCloudProvider_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceAwsCloudProvider_DeleteUnderlyingResourcez(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
