@@ -26,7 +26,7 @@ func DataSourceCurrentAccountConnector() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"url": {
+			"endpoint": {
 				Description: "The url of the Harness control plane.",
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -40,7 +40,7 @@ func dataSourceGitConnectorCurrentAccount(ctx context.Context, d *schema.Resourc
 
 	d.SetId(c.Configuration.AccountId)
 	d.Set("account_id", c.Configuration.AccountId)
-	d.Set("url", c.Configuration.Endpoint)
+	d.Set("endpoint", c.Configuration.Endpoint)
 
 	return nil
 }
