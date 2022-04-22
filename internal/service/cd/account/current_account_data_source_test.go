@@ -1,4 +1,4 @@
-package connector_test
+package account_test
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 func TestAccDataSourceCurrentAccount(t *testing.T) {
 
 	var (
-		resourceName = "data.harness_current_account.test"
+	// resourceName = "data.harness_current_account.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{

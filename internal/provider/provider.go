@@ -11,6 +11,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/service/cd/account"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/application"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/cloudprovider"
 	cd_connector "github.com/harness/terraform-provider-harness/internal/service/cd/connector"
@@ -105,19 +106,20 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_project":                      platform.DataSourceProject(),
 				"harness_platform_service":                      platform.DataSourceService(),
 
-				"harness_application":    application.DataSourceApplication(),
-				"harness_delegate":       delegate.DataSourceDelegate(),
-				"harness_delegate_ids":   delegate.DataSourceDelegateIds(),
-				"harness_encrypted_text": secrets.DataSourceEncryptedText(),
-				"harness_environment":    environment.DataSourceEnvironment(),
-				"harness_git_connector":  cd_connector.DataSourceGitConnector(),
-				"harness_secret_manager": secrets.DataSourceSecretManager(),
-				"harness_service":        service.DataSourceService(),
-				"harness_ssh_credential": secrets.DataSourceSshCredential(),
-				"harness_sso_provider":   sso.DataSourceSSOProvider(),
-				"harness_user_group":     user.DataSourceUserGroup(),
-				"harness_user":           user.DataSourceUser(),
-				"harness_yaml_config":    yamlconfig.DataSourceYamlConfig(),
+				"harness_application":     application.DataSourceApplication(),
+				"harness_current_account": account.DataSourceCurrentAccountConnector(),
+				"harness_delegate":        delegate.DataSourceDelegate(),
+				"harness_delegate_ids":    delegate.DataSourceDelegateIds(),
+				"harness_encrypted_text":  secrets.DataSourceEncryptedText(),
+				"harness_environment":     environment.DataSourceEnvironment(),
+				"harness_git_connector":   cd_connector.DataSourceGitConnector(),
+				"harness_secret_manager":  secrets.DataSourceSecretManager(),
+				"harness_service":         service.DataSourceService(),
+				"harness_ssh_credential":  secrets.DataSourceSshCredential(),
+				"harness_sso_provider":    sso.DataSourceSSOProvider(),
+				"harness_user_group":      user.DataSourceUserGroup(),
+				"harness_user":            user.DataSourceUser(),
+				"harness_yaml_config":     yamlconfig.DataSourceYamlConfig(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_connector_appdynamics":        connector.ResourceConnectorAppDynamics(),
