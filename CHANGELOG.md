@@ -1,4 +1,13 @@
 # 0.2.3 (Unreleased)
+
+ENHANCEMENTS:
+
+* data-source/yaml_config: Changing `path` field forces a new resource to be created. ([#117](https://github.com/hashicorp/terraform-provider-harness/issues/117))
+
+BUG FIXES:
+
+* resource/delegate_approval: Force new resource when `delegate_id` or `approve` fields change. ([#115](https://github.com/hashicorp/terraform-provider-harness/issues/115))
+
 # 0.2.2
 
 FEATURES:
