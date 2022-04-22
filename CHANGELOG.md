@@ -1,5 +1,9 @@
 # 0.2.3 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `current_account` ([#119](https://github.com/hashicorp/terraform-provider-harness/issues/119))
+
 ENHANCEMENTS:
 
 * data-source/yaml_config: Changing `path` field forces a new resource to be created. ([#117](https://github.com/hashicorp/terraform-provider-harness/issues/117))
