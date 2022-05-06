@@ -1,3 +1,9 @@
+# 0.2.4
+
+BUG FIXES:
+
+* resource/cloudprovider_kubernetes: Fixes issue causing delegate selectors to not be applied properly. ([#123](https://github.com/hashicorp/terraform-provider-harness/issues/123))
+
 # 0.2.3
 
 FEATURES:
