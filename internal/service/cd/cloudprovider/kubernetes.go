@@ -489,10 +489,12 @@ func expandK8sAuth(d []interface{}, cp *cac.KubernetesCloudProvider) {
 	auth := d[0].(map[string]interface{})
 
 	if attr, ok := auth["delegate_selectors"]; ok {
+		selectors := make([]string, 0)
 		for _, v := range attr.([]interface{}) {
-			cp.DelegateSelectors = append(cp.DelegateSelectors, v.(string))
-			cp.UseKubernetesDelegate = true
+			selectors = append(selectors, v.(string))
 		}
+		cp.DelegateSelectors = selectors
+		cp.UseKubernetesDelegate = len(selectors) > 0
 	}
 
 	if attr, ok := auth["username_password"]; ok {
