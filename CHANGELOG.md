@@ -1,6 +1,6 @@
 
-<a name="0.1.20"></a>
-## 0.1.20 (2022-04-20)
+<a name="0.1.21"></a>
+## 0.1.21 (2022-05-06)
 
 ### Add
 
@@ -8,6 +8,7 @@
 
 ### Added
 
+* Added artifact sources to service for graphql
 * Added changelog setup
 * Added execution api's
 
@@ -54,21 +55,24 @@
 
 ### Fixed
 
+* fixed tests
+* fixed error message
+
+### Fixed
+
 * Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
 * Fixed ng secret manager serializer
-* Fixed auth configuration issue
-
-### Fixed
-
-* fixed tests
-* fixed error message
 
 ### Gitsync
 
 * Gitsync setup
+
+### Handle
+
+* Handle upsert error
 
 ### Implement
 
@@ -97,6 +101,8 @@
 
 ### Release
 
+* Release version 0.1.20 04-20-2022
+* Release v0.1.20
 * Release version 0.1.19 04-13-2022
 * Release v0.1.19
 * Release version 0.1.18 03-25-2022
@@ -112,8 +118,6 @@
 * Release version 0.1.12 02-16-2022
 * Release v0.1.12
 * Release version 0.1.11 02-02-2022
-* Release v0.1.11
-* Release version 0.1.10 01-30-2022
 
 ### Skip
 
@@ -125,7 +129,6 @@
 
 ### Update
 
-* Update pipeline ci
 * Update pipeline ci
 * Update pipeline ci
 * Update pipeline ci
