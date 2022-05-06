@@ -107,6 +107,10 @@ const (
 	standardServiceFields = `
 	name
 	artifactType
+	artifactSources {
+		id
+		name
+	}
 	createdAt
 	createdBy {
 		email
