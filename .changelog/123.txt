@@ -1,0 +1,3 @@
+```release-note:bug
+resource/cloudprovider_kubernetes: Fixes issue causing delegate selectors to not be applied properly.
+```
