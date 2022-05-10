@@ -1,3 +1,9 @@
+# 0.2.5
+
+BUG FIXES:
+
+* Fixed issue with serializing encrypted text references with service variables. ([#128](https://github.com/hashicorp/terraform-provider-harness/issues/128))
+
 # 0.2.4
 
 BUG FIXES:
