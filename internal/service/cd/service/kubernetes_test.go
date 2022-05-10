@@ -53,6 +53,36 @@ func TestAccResourceKubernetesService(t *testing.T) {
 	})
 }
 
+func TestAccResourceKubernetesService_WithSecrets(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		description  = "some description"
+		resourceName = "harness_service_kubernetes.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceKubernetesService_WithSecrets(name, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "helm_version", string(cac.HelmVersions.V2)),
+					testAccCheckKubernetesServiceExists(t, resourceName, name, description),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: serviceImportStateIdFunc(resourceName),
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceKubernetesService_DeleteUnderlyingResource(t *testing.T) {
 
 	var (
@@ -142,8 +172,51 @@ func testAccResourceKubernetesService(name string, description string) string {
 `, name, description)
 }
 
-type Variable struct {
-	Name  string
-	Value string
-	Type  string
+func testAccResourceKubernetesService_WithSecrets(name string, description string) string {
+	return fmt.Sprintf(`
+		data "harness_secret_manager" "default" {
+			default = true
+		}
+
+		resource "harness_encrypted_text" "test" {
+			name = "%[1]s"
+			value = "someval"
+			secret_manager_id = data.harness_secret_manager.default.id
+
+			usage_scope {
+				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
+			}
+
+			usage_scope {
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+		}
+
+		resource "harness_application" "test" {
+			depends_on = [harness_encrypted_text.test]
+			name = "%[1]s"
+		}
+
+		resource "harness_service_kubernetes" "test" {
+			depends_on = [harness_encrypted_text.test]
+
+			app_id = harness_application.test.id
+			name = "%[1]s"
+			helm_version = "V2"
+			description = "%[2]s"
+			
+			variable {
+				name = "test"
+				value = "test_value"
+				type = "TEXT"
+			}
+
+			variable {
+				name = harness_encrypted_text.test.name
+				value = "%[1]s"
+				type = "ENCRYPTED_TEXT"
+			}
+		}
+
+`, name, description)
 }

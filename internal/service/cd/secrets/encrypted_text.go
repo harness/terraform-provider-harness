@@ -2,6 +2,9 @@ package secrets
 
 import (
 	"context"
+	"log"
+	"strings"
+	"time"
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -190,10 +193,18 @@ func resourceEncryptedTextUpdate(ctx context.Context, d *schema.ResourceData, me
 func resourceEncryptedTextDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session)
 
-	err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText)
+	if err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText); err != nil {
 
-	if err != nil {
-		return diag.FromErr(err)
+		// There is a racecondition that happens when resources referencing a secret are deleted by the usage count
+		// on the secret isn't updated yet. For now I'm putting in a simple 5s retry which works for now.
+		// If it fails again we'll just assume it's actually still in use.
+		if strings.Contains(err.Error(), "still being used") {
+			log.Println("[WARN] Secret is still being used, cannot delete. Retrying in 5s...")
+			time.Sleep(time.Second * 5)
+			if err := c.CDClient.SecretClient.DeleteSecret(d.Get("id").(string), graphql.SecretTypes.EncryptedText); err != nil {
+				return diag.FromErr(err)
+			}
+		}
 	}
 
 	return nil
