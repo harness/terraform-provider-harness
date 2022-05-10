@@ -1,6 +1,6 @@
 
-<a name="0.1.21"></a>
-## 0.1.21 (2022-05-06)
+<a name="0.1.22"></a>
+## 0.1.22 (2022-05-10)
 
 ### Add
 
@@ -8,13 +8,13 @@
 
 ### Added
 
-* Added artifact sources to service for graphql
-* Added changelog setup
-* Added execution api's
+* added release2 pipeline
 
 ### Added
 
-* added release2 pipeline
+* Added artifact sources to service for graphql
+* Added changelog setup
+* Added execution api's
 
 ### Adding
 
@@ -46,17 +46,17 @@
 
 ### Fix
 
-* Fix timestamp parsing for delegate query
-* Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
+* fix json serialization
 
 ### Fix
 
-* fix json serialization
+* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
+* Fix timestamp parsing for delegate query
+* Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
 
 ### Fixed
 
 * fixed tests
-* fixed error message
 
 ### Fixed
 
@@ -101,6 +101,8 @@
 
 ### Release
 
+* Release version 0.1.21 05-06-2022
+* Release v0.1.21
 * Release version 0.1.20 04-20-2022
 * Release v0.1.20
 * Release version 0.1.19 04-13-2022
@@ -117,7 +119,6 @@
 * Release v0.1.13
 * Release version 0.1.12 02-16-2022
 * Release v0.1.12
-* Release version 0.1.11 02-02-2022
 
 ### Skip
 
