@@ -77,35 +77,6 @@ type ResponseMessage struct {
 	Message string `json:"message"`
 }
 
-type Service struct {
-	HarnessApiVersion         HarnessApiVersion  `yaml:"harnessApiVersion" json:"harnessApiVersion"`
-	Type                      ObjectType         `yaml:"type" json:"type"`
-	Id                        string             `yaml:"-"`
-	Name                      string             `yaml:"-"`
-	ArtifactType              ArtifactType       `yaml:"artifactType,omitempty"`
-	DeploymentType            DeploymentType     `yaml:"deploymentType,omitempty"`
-	Description               string             `yaml:"description,omitempty"`
-	Tags                      map[string]string  `yaml:"tags,omitempty"`
-	HelmVersion               HelmVersion        `yaml:"helmVersion,omitempty"`
-	ApplicationId             string             `yaml:"-"`
-	DeploymentTypeTemplateUri string             `yaml:"deploymentTypeTemplateUri,omitempty"`
-	ConfigVariables           []*ServiceVariable `yaml:"configVariables,omitempty"`
-}
-
-func (a *Service) IsEmpty() bool {
-	return reflect.DeepEqual(a, &Service{})
-}
-
-func (s *Service) Validate() (bool, error) {
-	return utils.RequiredStringFieldsSet(s, []string{"ApplicationId"})
-}
-
-type ServiceVariable struct {
-	Name      string            `yaml:"name,omitempty"`
-	Value     string            `yaml:"value,omitempty"`
-	ValueType VariableValueType `yaml:"valueType,omitempty"`
-}
-
 type AwsCloudProvider struct {
 	HarnessApiVersion      HarnessApiVersion          `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Type                   ObjectType                 `yaml:"type" json:"type"`
@@ -271,10 +242,6 @@ type AppFilter struct {
 type EnvFilter struct {
 	FilterTypes []EnvironmentFilterType `yaml:"filterTypes,omitempty"`
 	EntityNames []string                `yaml:"entityNames,omitempty"`
-}
-
-type SecretRef struct {
-	Name string
 }
 
 type YamlPath string

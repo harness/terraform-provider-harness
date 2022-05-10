@@ -66,7 +66,7 @@ func TestUpdateKubernetesCloudProvider(t *testing.T) {
 		Name:               updatedName,
 		ClusterDetailsType: graphql.ClusterDetailsTypes.InheritClusterDetails,
 		InheritClusterDetails: &graphql.InheritClusterDetails{
-			DelegateSelectors: []string{"Primary"},
+			DelegateSelectors: []string{"k8s"},
 		},
 		SkipValidation: true,
 	}
@@ -75,7 +75,6 @@ func TestUpdateKubernetesCloudProvider(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, updatedCP)
 	require.Equal(t, updatedName, updatedCP.Name)
-
 	err = c.CloudProviderClient.DeleteCloudProvider(cp.Id)
 	require.NoError(t, err)
 }

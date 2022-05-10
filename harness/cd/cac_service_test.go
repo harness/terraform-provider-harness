@@ -38,6 +38,51 @@ func TestCreateService(t *testing.T) {
 	require.Equal(t, app.Id, newService.ApplicationId)
 }
 
+func TestCreateServiceWithVariables(t *testing.T) {
+	// Setup
+	c := getClient()
+	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
+	app, err := createApplication(name)
+	require.NoError(t, err)
+	require.NotNil(t, app)
+
+	// Cleanup
+	defer func() {
+		err = c.ApplicationClient.DeleteApplication(app.Id)
+		require.Nil(t, err, "Failed to delete application: %s", err)
+	}()
+
+	secret, err := createEncryptedTextSecret(name, "secret_value")
+	require.NoError(t, err)
+
+	// Verify
+	svc, _ := cac.NewEntity(cac.ObjectTypes.Service).(*cac.Service)
+	svc.Name = name
+	svc.ApplicationId = app.Id
+	svc.DeploymentType = cac.DeploymentTypes.Kubernetes
+	svc.ArtifactType = cac.ArtifactTypes.Docker
+	svc.ConfigVariables = []*cac.ServiceVariable{
+		{
+			Name:      "var1",
+			Value:     "value1",
+			ValueType: cac.VariableOverrideValueTypes.Text,
+		},
+		{
+			Name:      "secret",
+			Value:     secret.Name,
+			ValueType: cac.VariableOverrideValueTypes.EncryptedText,
+		},
+	}
+
+	newService := &cac.Service{}
+	err = c.ConfigAsCodeClient.UpsertObject(svc, cac.GetServiceYamlPath(app.Name, name), newService)
+	require.NoError(t, err)
+	require.NotEmpty(t, newService.Id)
+	require.Equal(t, len(svc.ConfigVariables), len(newService.ConfigVariables))
+	require.Equal(t, app.Id, newService.ApplicationId)
+
+}
+
 func TestGetService(t *testing.T) {
 	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	// Create application

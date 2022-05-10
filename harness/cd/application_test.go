@@ -99,7 +99,7 @@ func TestUpdateApplication(t *testing.T) {
 
 	// Setup
 	name := fmt.Sprintf("%s-%s", t.Name(), utils.RandStringBytes(5))
-	expectedName := "test_name_change"
+	expectedName := fmt.Sprintf("%s_test_name_change", name)
 
 	// Create a new app
 	newApp, err := createApplication(name)
