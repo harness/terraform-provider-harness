@@ -1,6 +1,6 @@
 
-<a name="0.1.22"></a>
-## 0.1.22 (2022-05-10)
+<a name="0.1.23"></a>
+## 0.1.23 (2022-05-11)
 
 ### Add
 
@@ -46,6 +46,7 @@
 
 ### Fix
 
+* fix cac error handling
 * fix json serialization
 
 ### Fix
@@ -82,10 +83,6 @@
 
 * Modify delegate tests
 
-### Moved
-
-* Moved to harness organization
-
 ### Refactored
 
 * Refactored client config and validation
@@ -101,6 +98,8 @@
 
 ### Release
 
+* Release version 0.1.22 05-10-2022
+* Release v0.1.22
 * Release version 0.1.21 05-06-2022
 * Release v0.1.21
 * Release version 0.1.20 04-20-2022
@@ -130,7 +129,6 @@
 
 ### Update
 
-* Update pipeline ci
 * Update pipeline ci
 * Update pipeline ci
 
