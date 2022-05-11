@@ -673,6 +673,8 @@ github.com/harness/harness-go-sdk v0.1.21 h1:pJKerjcF8k9j5cJFUMT6itxI8/urtXw65cO
 github.com/harness/harness-go-sdk v0.1.21/go.mod h1:ZBI/z9rHV/rEgZJp8YCDWT4s/8i2PzitNcACPdn/m7U=
 github.com/harness/harness-go-sdk v0.1.22 h1:Bf/8ZMOcpC4/lH7ujYmxfuRa3OA6nJLqwZE3tJWvrjA=
 github.com/harness/harness-go-sdk v0.1.22/go.mod h1:ZBI/z9rHV/rEgZJp8YCDWT4s/8i2PzitNcACPdn/m7U=
+github.com/harness/harness-go-sdk v0.1.23 h1:cLa5WO+nZjwtPUpFqmUK2EyklRY598nzF7EySkQbQ+c=
+github.com/harness/harness-go-sdk v0.1.23/go.mod h1:ZBI/z9rHV/rEgZJp8YCDWT4s/8i2PzitNcACPdn/m7U=
 github.com/hashicorp/consul/api v1.1.0/go.mod h1:VmuI/Lkw1nC05EYQWNKwWGbkg+FbDBtguAZLlVdkD9Q=
 github.com/hashicorp/consul/api v1.10.1/go.mod h1:XjsvQN+RJGWI2TWy1/kqaE16HrR2J/FWgkYjdZQsX9M=
 github.com/hashicorp/consul/api v1.11.0/go.mod h1:XjsvQN+RJGWI2TWy1/kqaE16HrR2J/FWgkYjdZQsX9M=
