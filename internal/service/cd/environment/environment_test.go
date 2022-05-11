@@ -23,7 +23,7 @@ func TestAccResourceEnvironment(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceEnvironment(name, cac.EnvironmentTypes.NonProd),
@@ -32,13 +32,47 @@ func TestAccResourceEnvironment(t *testing.T) {
 					testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.NonProd),
 				),
 			},
-			// {
-			// 	Config: testAccResourceEnvironment(name, cac.EnvironmentTypes.Prod),
-			// 	Check: resource.ComposeTestCheckFunc(
-			// 		resource.TestCheckResourceAttr(resourceName, "name", name),
-			// 		testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.Prod),
-			// 	),
-			// },
+			{
+				Config: testAccResourceEnvironment(name, cac.EnvironmentTypes.Prod),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.Prod),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				ImportState:  true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					primary := s.RootModule().Resources[resourceName].Primary
+					id := primary.ID
+					app_id := primary.Attributes["app_id"]
+					return fmt.Sprintf("%s/%s", app_id, id), nil
+				},
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceEnvironment_WithVariables(t *testing.T) {
+
+	var (
+		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(12))
+		resourceName = "harness_environment.test"
+	)
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		// CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironment_WithVariables(name, cac.EnvironmentTypes.NonProd),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					testAccCheckEnvironmentExists(t, resourceName, name, cac.EnvironmentTypes.NonProd),
+				),
+			},
 			// {
 			// 	ResourceName: resourceName,
 			// 	ImportState:  true,
@@ -170,6 +204,50 @@ func testAccResourceEnvironment(name string, envType cac.EnvironmentType) string
 			// 	value = "override2"
 			// 	type = "TEXT"
 			// }
+		}
+`, name, envType)
+}
+
+func testAccResourceEnvironment_WithVariables(name string, envType cac.EnvironmentType) string {
+	return fmt.Sprintf(`
+		data "harness_secret_manager" "default" {
+			default = true
+		}
+
+		resource "harness_encrypted_text" "test" {
+			name = "%[1]s"
+			value = "someval"
+			secret_manager_id = data.harness_secret_manager.default.id
+
+			usage_scope {
+				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
+			}
+
+			usage_scope {
+				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
+			}
+		}
+		
+		resource "harness_application" "test" {
+			name = "%[1]s"
+		}
+
+		resource "harness_environment" "test" {
+			app_id = harness_application.test.id
+			name = "%[1]s"
+			type = "%[2]s"
+
+			variable_override {
+				name = "test"
+				value = "override"
+				type = "TEXT"
+			}
+
+			variable_override {
+				name = "test2"
+				value = harness_encrypted_text.test.name
+				type = "ENCRYPTED_TEXT"
+			}
 		}
 `, name, envType)
 }
