@@ -201,10 +201,6 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*ca
 
 	if responseObj.Resource != nil {
 
-		if responseObj.Resource.Status != "" && responseObj.Resource.Status != statusSuccess {
-			return nil, fmt.Errorf("%s: %s", responseObj.Resource.Status, responseObj.Resource.ErrorMessage)
-		}
-
 		if responseObj.Resource.ErrorMessage != "" {
 			return nil, fmt.Errorf("%s", responseObj.Resource.ErrorMessage)
 		}
@@ -212,6 +208,11 @@ func (c *ConfigAsCodeClient) ExecuteRequest(request *retryablehttp.Request) (*ca
 		if responseObj.Resource.ErrorMssg != "" {
 			return nil, fmt.Errorf("%s", responseObj.Resource.ErrorMssg)
 		}
+
+		if responseObj.Resource.Status != "" && responseObj.Resource.Status != statusSuccess {
+			return nil, fmt.Errorf("%s: %s", responseObj.Resource.Status, strings.Join([]string{responseObj.Resource.ErrorMessage, responseObj.Resource.ErrorMssg}, " "))
+		}
+
 	}
 
 	return responseObj.Resource, nil
