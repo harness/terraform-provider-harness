@@ -270,13 +270,6 @@ func (e *Environment) Validate() (bool, error) {
 	return utils.RequiredStringFieldsSet(e, []string{"Name", "EnvironmentType", "ApplicationId"})
 }
 
-type VariableOverride struct {
-	Name        string            `yaml:"name,omitempty"`
-	ServiceName string            `yaml:"serviceName,omitempty"`
-	Value       string            `yaml:"value,omitempty"`
-	ValueType   VariableValueType `yaml:"valueType,omitempty"`
-}
-
 type InfrastructureDefinition struct {
 	HarnessApiVersion         HarnessApiVersion       `yaml:"harnessApiVersion" json:"harnessApiVersion"`
 	Type                      ObjectType              `yaml:"type" json:"type"`

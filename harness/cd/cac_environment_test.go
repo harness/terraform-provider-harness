@@ -28,6 +28,45 @@ func TestUpsertEnvironment(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestUpsertEnvironment_WithVariables(t *testing.T) {
+	c := getClient()
+	appName := fmt.Sprintf("%s-%s-app", t.Name(), utils.RandStringBytes(5))
+	envName := fmt.Sprintf("%s-%s-svc", t.Name(), utils.RandStringBytes(5))
+
+	secret, err := createEncryptedTextSecret(envName, "secret_value")
+	require.NoError(t, err)
+
+	app, err := createApplication(appName)
+	require.NoError(t, err)
+
+	input := cac.NewEntity(cac.ObjectTypes.Environment).(*cac.Environment)
+	input.Name = envName
+	input.ApplicationId = app.Id
+	input.EnvironmentType = cac.EnvironmentTypes.Prod
+	input.ConfigMapYamlByServiceTemplateName = &map[string]interface{}{}
+	input.VariableOverrides = []*cac.VariableOverride{
+		{
+			Name:      "var",
+			Value:     "foo",
+			ValueType: cac.VariableOverrideValueTypes.Text,
+		},
+		{
+			Name:      "secret_variable",
+			Value:     secret.Name,
+			ValueType: cac.VariableOverrideValueTypes.EncryptedText,
+		},
+	}
+
+	env, err := c.ConfigAsCodeClient.UpsertEnvironment(input)
+	require.NoError(t, err)
+	require.Equal(t, env.Name, envName)
+	require.Equal(t, env.ApplicationId, app.Id)
+	require.Equal(t, 2, len(env.VariableOverrides))
+
+	err = c.ConfigAsCodeClient.DeleteEnvironment(app.Name, envName)
+	require.NoError(t, err)
+}
+
 func TestGetEnvironmentById(t *testing.T) {
 	c := getClient()
 
