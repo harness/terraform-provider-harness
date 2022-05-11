@@ -1,10 +1,10 @@
-# 0.2.6
+# 0.2.7
 
 BUG FIXES:
 
 * Fixed issue with serializing encrypted text references with environment variable overrides. ([#131](https://github.com/hashicorp/terraform-provider-harness/issues/131))
 
-# 0.2.5
+# 0.2.6
 
 BUG FIXES:
 
