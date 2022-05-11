@@ -1,14 +1,10 @@
 
-<a name="0.1.23"></a>
-## 0.1.23 (2022-05-11)
+<a name="0.1.24"></a>
+## 0.1.24 (2022-05-11)
 
 ### Add
 
 * Add ability to list services ([#103](https://github.com/harness/harness-go-sdk/issues/103))
-
-### Added
-
-* added release2 pipeline
 
 ### Added
 
@@ -46,6 +42,7 @@
 
 ### Fix
 
+* fix environment variable overrides with secrets
 * fix cac error handling
 * fix json serialization
 
@@ -57,15 +54,15 @@
 
 ### Fixed
 
-* fixed tests
-
-### Fixed
-
 * Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
 * Fixed ng secret manager serializer
+
+### Fixed
+
+* fixed tests
 
 ### Gitsync
 
@@ -98,6 +95,8 @@
 
 ### Release
 
+* Release version 0.1.23 05-11-2022
+* Release v0.1.23
 * Release version 0.1.22 05-10-2022
 * Release v0.1.22
 * Release version 0.1.21 05-06-2022
@@ -129,7 +128,6 @@
 
 ### Update
 
-* Update pipeline ci
 * Update pipeline ci
 
 ### Updated
