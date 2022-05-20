@@ -9,10 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This is details of the secret entity defined in Harness.
 type Secret struct {
 	// This specifies the type of secret
-	Type_ string `json:"type"`
+	Type_ SecretType `json:"type"`
 	// Name of the Secret
 	Name string `json:"name"`
 	// Identifier of the Secret
@@ -24,6 +26,10 @@ type Secret struct {
 	// Tags
 	Tags map[string]string `json:"tags,omitempty"`
 	// Description of the Secret
-	Description string      `json:"description,omitempty"`
-	Spec        *SecretSpec `json:"spec"`
+	Description string          `json:"description,omitempty"`
+	Spec        json.RawMessage `json:"spec"`
+
+	File   *SecretFileSpe  `json:"-"`
+	Text   *SecretTextSpec `json:"-"`
+	SSHKey *SshKeySpec     `json:"-"`
 }

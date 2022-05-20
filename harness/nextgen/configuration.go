@@ -77,7 +77,7 @@ func NewConfiguration() *Configuration {
 
 	cfg := &Configuration{
 		AccountId:     helpers.EnvVars.AccountId.Get(),
-		ApiKey:        helpers.EnvVars.ApiKey.Get(),
+		ApiKey:        helpers.EnvVars.PlatformApiKey.Get(),
 		BasePath:      helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl),
 		DefaultHeader: make(map[string]string),
 		HTTPClient:    utils.GetDefaultHttpClient(logger),
