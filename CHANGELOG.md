@@ -1,6 +1,6 @@
 
-<a name="0.1.25"></a>
-## 0.1.25 (2022-05-20)
+<a name="0.1.26"></a>
+## 0.1.26 (2022-05-20)
 
 ### Add
 
@@ -44,13 +44,10 @@
 
 ### Fix
 
+* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
 * Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
-
-### Fixed
-
-* fixed tests
 
 ### Fixed
 
@@ -59,6 +56,10 @@
 * Fixed tooling dependencies
 * Fixed issue with tests
 * Fixed ng secret manager serializer
+
+### Fixed
+
+* fixed tests
 
 ### Gitsync
 
@@ -95,6 +96,8 @@
 
 ### Release
 
+* Release version 0.1.25 05-20-2022
+* Release v0.1.25
 * Release version 0.1.24 05-11-2022
 * Release v0.1.24
 * Release version 0.1.23 05-11-2022
@@ -126,18 +129,13 @@
 
 * UPDATES updated golang to 1.17
 
-### Update
+### Updated
 
-* Update pipeline ci
+* updated deps
+* updated changelog
 
 ### Updated
 
 * Updated environmens
 * Updated tooling configuration
-* Updated dependencies
-
-### Updated
-
-* updated deps
-* updated changelog
 
