@@ -1,11 +1,10 @@
-package platform_test
+package organization_test
 
 import (
 	"context"
 	"fmt"
 	"testing"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -15,27 +14,27 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccResourceEnvironment(t *testing.T) {
+func TestAccResourceOrganization(t *testing.T) {
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_environment.test"
+	resourceName := "harness_platform_organization.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		CheckDestroy:      testAccOrganizationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironment(id, name),
+				Config: testAccResourceOrganization(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceEnvironment(id, updatedName),
+				Config: testAccResourceOrganization(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -45,24 +44,24 @@ func TestAccResourceEnvironment(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_environment.test"
+	resourceName := "harness_platform_organization.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccOrganizationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironment(id, name),
+				Config: testAccResourceOrganization(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -72,14 +71,11 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c := acctest.TestAccProvider.Meta().(*internal.Session).PLClient
-					resp, _, err := c.EnvironmentsApi.DeleteEnvironmentV2(context.Background(), id, c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
-						OrgIdentifier:     optional.NewString(id),
-						ProjectIdentifier: optional.NewString(id),
-					})
+					resp, _, err := c.OrganizationApi.DeleteOrganization(context.Background(), id, c.AccountId, nil)
 					require.NoError(t, err)
 					require.True(t, resp.Data)
 				},
-				Config:             testAccResourceEnvironment(id, name),
+				Config:             testAccResourceOrganization(id, name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -87,61 +83,37 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccGetPlatformEnvironment(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
+func testAccGetOrganization(resourceName string, state *terraform.State) (*nextgen.Organization, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
-	orgId := r.Primary.Attributes["org_id"]
-	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(context.Background(), id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
-		OrgIdentifier:     optional.NewString(orgId),
-		ProjectIdentifier: optional.NewString(projId),
-	})
-
+	resp, _, err := c.PLClient.OrganizationApi.GetOrganization(context.Background(), id, c.AccountId)
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.Data == nil || resp.Data.Environment == nil {
-		return nil, nil
-	}
-
-	return resp.Data.Environment, nil
+	return resp.Data.Organization, nil
 }
 
-func testAccEnvironmentDestroy(resourceName string) resource.TestCheckFunc {
+func testAccOrganizationDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		env, _ := testAccGetPlatformEnvironment(resourceName, state)
-		if env != nil {
-			return fmt.Errorf("Found environment: %s", env.Identifier)
+		org, _ := testAccGetOrganization(resourceName, state)
+		if org != nil {
+			return fmt.Errorf("Found organization: %s", org.Identifier)
 		}
 
 		return nil
 	}
 }
 
-func testAccResourceEnvironment(id string, name string) string {
+func testAccResourceOrganization(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			color = "#472848"
-		}
-
-		resource "harness_platform_environment" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
-			color = "#0063F7"
-			type = "PreProduction"
+			description = "test"
+			tags = ["foo:bar", "baz:qux"]
 		}
 `, id, name)
 }
