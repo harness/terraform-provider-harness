@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -10,8 +10,8 @@
 package nextgen
 
 type MessageLite struct {
-	SerializedSize         int32              `json:"serializedSize,omitempty"`
 	ParserForType          *ParserMessageLite `json:"parserForType,omitempty"`
+	SerializedSize         int32              `json:"serializedSize,omitempty"`
 	Initialized            bool               `json:"initialized,omitempty"`
 	DefaultInstanceForType *MessageLite       `json:"defaultInstanceForType,omitempty"`
 }

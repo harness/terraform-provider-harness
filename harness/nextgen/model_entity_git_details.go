@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,16 +11,8 @@ package nextgen
 
 // This contains Validity Details of the Entity
 type EntityGitDetails struct {
-	// Object Id of the Entity
-	ObjectId string `json:"objectId,omitempty"`
-	// Branch Name
-	Branch string `json:"branch,omitempty"`
-	// Git Sync Config Id
-	RepoIdentifier string `json:"repoIdentifier,omitempty"`
-	// Root Folder Path of the Entity
-	RootFolder string `json:"rootFolder,omitempty"`
-	// File Path of the Entity
-	FilePath string `json:"filePath,omitempty"`
-	// Name of the repo
-	RepoName string `json:"repoName,omitempty"`
+	// Indicates if the Entity is valid
+	Valid bool `json:"valid,omitempty"`
+	// This has the Git File content if the entity is invalid
+	InvalidYaml string `json:"invalidYaml,omitempty"`
 }

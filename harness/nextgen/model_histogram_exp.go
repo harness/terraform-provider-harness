@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -10,12 +10,10 @@
 package nextgen
 
 type HistogramExp struct {
-	FirstBucketSize float64   `json:"firstBucketSize,omitempty"`
-	GrowthRatio     float64   `json:"growthRatio,omitempty"`
-	NumBuckets      int32     `json:"numBuckets,omitempty"`
-	MinBucket       int32     `json:"minBucket,omitempty"`
-	MaxBucket       int32     `json:"maxBucket,omitempty"`
-	BucketWeights   []float64 `json:"bucketWeights,omitempty"`
-	TotalWeight     float64   `json:"totalWeight,omitempty"`
-	Precomputed     []float64 `json:"precomputed,omitempty"`
+	NumBuckets    int32     `json:"numBuckets,omitempty"`
+	MinBucket     int32     `json:"minBucket,omitempty"`
+	MaxBucket     int32     `json:"maxBucket,omitempty"`
+	BucketWeights []float64 `json:"bucketWeights,omitempty"`
+	TotalWeight   float64   `json:"totalWeight,omitempty"`
+	Precomputed   []float64 `json:"precomputed,omitempty"`
 }

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -15,7 +15,7 @@ type SourceCodeManager struct {
 	Id string `json:"id,omitempty"`
 	// Id of the User
 	UserIdentifier string `json:"userIdentifier,omitempty"`
-	// Account Identifier for the Entity
+	// Account Identifier for the Entity.
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
 	// Name of Source Code Manager
 	Name string `json:"name"`

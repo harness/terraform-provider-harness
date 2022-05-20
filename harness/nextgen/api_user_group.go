@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -31,7 +31,7 @@ type UserGroupApiService service
 UserGroupApiService Get a User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body List of scopes
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param groupIdentifier groupIdentifier
 @return ResponseDtoBoolean
 */
@@ -153,12 +153,12 @@ func (a *UserGroupApiService) CopyUserGroup(ctx context.Context, body []Scope, a
 /*
 UserGroupApiService Remove a user from the user group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Identifier of the user group
  * @param userIdentifier Identifier of the user
  * @param optional nil or *UserGroupApiDeleteMemberOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserGroup
 */
 
@@ -290,11 +290,11 @@ func (a *UserGroupApiService) DeleteMember(ctx context.Context, accountIdentifie
 /*
 UserGroupApiService Delete a User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Identifier of the user group
  * @param optional nil or *UserGroupApiDeleteUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserGroup
 */
 
@@ -426,9 +426,10 @@ func (a *UserGroupApiService) DeleteUserGroup(ctx context.Context, accountIdenti
 UserGroupApiService List the User Groups selected by a filter in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body User Group Filter
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoListUserGroup
 */
-func (a *UserGroupApiService) GetBatchUsersGroupList(ctx context.Context, body UserGroupFilter) (ResponseDtoListUserGroup, *http.Response, error) {
+func (a *UserGroupApiService) GetBatchUsersGroupList(ctx context.Context, body UserGroupFilter, accountIdentifier string) (ResponseDtoListUserGroup, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -444,6 +445,7 @@ func (a *UserGroupApiService) GetBatchUsersGroupList(ctx context.Context, body U
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -544,12 +546,12 @@ func (a *UserGroupApiService) GetBatchUsersGroupList(ctx context.Context, body U
 /*
 UserGroupApiService Check if the user is part of the user group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Identifier of the user group
  * @param userIdentifier Identifier of the user
  * @param optional nil or *UserGroupApiGetMemberOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
@@ -681,11 +683,11 @@ func (a *UserGroupApiService) GetMember(ctx context.Context, accountIdentifier s
 /*
 UserGroupApiService Get a User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Identifier of the user group
  * @param optional nil or *UserGroupApiGetUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserGroup
 */
 
@@ -816,13 +818,13 @@ func (a *UserGroupApiService) GetUserGroup(ctx context.Context, accountIdentifie
 /*
 UserGroupApiService List the User Groups in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserGroupApiGetUserGroupListOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "SearchTerm" (optional.String) -  Search filter which matches by user group name/identifier
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserGroup
 */
@@ -969,14 +971,14 @@ func (a *UserGroupApiService) GetUserGroupList(ctx context.Context, accountIdent
 /*
 UserGroupApiService List the users in a User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Identifier of the user group
  * @param optional nil or *UserGroupApiGetUserListInUserGroupOpts - Optional Parameters:
      * @param "Body" (optional.Interface of UserFilter) -  Filter users based on multiple parameters
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserMetadata
 */
@@ -1128,12 +1130,12 @@ func (a *UserGroupApiService) GetUserListInUserGroup(ctx context.Context, accoun
 UserGroupApiService Link SAML Group to the User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Saml Link Group Request
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param userGroupId Identifier of the user group
  * @param samlId Saml Group entity identifier
  * @param optional nil or *UserGroupApiLinkUserGroupToSAMLOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return RestResponseUserGroup
 */
 
@@ -1268,10 +1270,10 @@ func (a *UserGroupApiService) LinkUserGroupToSAML(ctx context.Context, body Saml
 UserGroupApiService Create a User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body User Group entity to be created
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserGroupApiPostUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserGroup
 */
 
@@ -1403,12 +1405,12 @@ func (a *UserGroupApiService) PostUserGroup(ctx context.Context, body UserGroup,
 /*
 UserGroupApiService Add a user to the user group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Identifier of the user group
  * @param userIdentifier Identifier of the user
  * @param optional nil or *UserGroupApiPutMemberOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserGroup
 */
 
@@ -1541,10 +1543,10 @@ func (a *UserGroupApiService) PutMember(ctx context.Context, accountIdentifier s
 UserGroupApiService Update a User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body User Group entity with the updates
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserGroupApiPutUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserGroup
 */
 
@@ -1677,11 +1679,11 @@ func (a *UserGroupApiService) PutUserGroup(ctx context.Context, body UserGroup, 
 UserGroupApiService Unlink SSO Group from the User Group in an account/org/project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userGroupId Identifier of the user group
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserGroupApiUnlinkUserGroupfromSSOOpts - Optional Parameters:
      * @param "RetainMembers" (optional.Bool) -  Retain currently synced members of the user group
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return RestResponseUserGroup
 */
 

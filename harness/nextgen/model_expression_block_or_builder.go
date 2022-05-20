@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,14 +11,14 @@ package nextgen
 
 type ExpressionBlockOrBuilder struct {
 	Count                     int32                  `json:"count,omitempty"`
-	ExpressionValue           string                 `json:"expressionValue,omitempty"`
 	Expression                string                 `json:"expression,omitempty"`
 	ExpressionBytes           *ByteString            `json:"expressionBytes,omitempty"`
 	ExpressionValueBytes      *ByteString            `json:"expressionValueBytes,omitempty"`
+	ExpressionValue           string                 `json:"expressionValue,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DefaultInstanceForType    *Message               `json:"defaultInstanceForType,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
 }

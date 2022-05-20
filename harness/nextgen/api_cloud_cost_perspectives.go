@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -29,7 +29,7 @@ CloudCostPerspectivesApiService Create a Perspective
 Create a Perspective. You can set the clone parameter as true to clone a Perspective.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Request body containing Perspective&#x27;s CEView object
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param clone Set the clone parameter as true to clone a Perspective.
 @return ResponseDtoceView
 */
@@ -152,7 +152,7 @@ func (a *CloudCostPerspectivesApiService) CreatePerspective(ctx context.Context,
 CloudCostPerspectivesApiService Delete a Perspective
 Delete a Perspective for the given Perspective ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param perspectiveId Unique identifier for the Perspective
 @return ResponseDtoString
 */
@@ -273,7 +273,7 @@ func (a *CloudCostPerspectivesApiService) DeletePerspective(ctx context.Context,
 CloudCostPerspectivesApiService Return details of all the Perspectives
 Return details of all the Perspectives for the given account ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoListPerspective
 */
 func (a *CloudCostPerspectivesApiService) GetAllPerspectives(ctx context.Context, accountIdentifier string) (ResponseDtoListPerspective, *http.Response, error) {
@@ -389,10 +389,135 @@ func (a *CloudCostPerspectivesApiService) GetAllPerspectives(ctx context.Context
 }
 
 /*
+CloudCostPerspectivesApiService Get the last period cost for a Perspective
+Get last period cost for a Perspective
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param perspectiveId The Perspective identifier for which we want the cost
+ * @param startTime The Start time (timestamp in millis) for the current period
+ * @param period The period (DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY) for which we want the cost
+@return ResponseDtoDouble
+*/
+func (a *CloudCostPerspectivesApiService) GetLastPeriodCost(ctx context.Context, accountIdentifier string, perspectiveId string, startTime int64, period string) (ResponseDtoDouble, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoDouble
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ccm/api/perspective/lastPeriodCost"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("perspectiveId", parameterToString(perspectiveId, ""))
+	localVarQueryParams.Add("startTime", parameterToString(startTime, ""))
+	localVarQueryParams.Add("period", parameterToString(period, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoDouble
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
 CloudCostPerspectivesApiService Fetch details of a Perspective
 Fetch details of a Perspective for the given Perspective ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param perspectiveId Unique identifier for the Perspective
 @return ResponseDtoceView
 */
@@ -514,7 +639,7 @@ CloudCostPerspectivesApiService Update a Perspective
 Update a Perspective. It accepts a CEView object and upserts it using the uuid mentioned in the definition.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Perspective&#x27;s CEView object
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoceView
 */
 func (a *CloudCostPerspectivesApiService) UpdatePerspective(ctx context.Context, body CeView, accountIdentifier string) (ResponseDtoceView, *http.Response, error) {

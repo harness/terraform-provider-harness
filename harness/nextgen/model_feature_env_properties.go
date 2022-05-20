@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -15,7 +15,7 @@ type FeatureEnvProperties struct {
 	// The environment identifier
 	Environment string `json:"environment"`
 	// The last time the flag was modified in this environment
-	ModifiedAt int64 `json:"modifiedAt"`
+	ModifiedAt int64 `json:"modifiedAt,omitempty"`
 	// The variation to serve for this flag in this environment when the flag is off
 	OffVariation string `json:"offVariation"`
 	// A list of rules to use when evaluating this flag in this environment

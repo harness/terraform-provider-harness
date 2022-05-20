@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -15,7 +15,6 @@ type PolicySetMetadata struct {
 	Initialized                 bool                      `json:"initialized,omitempty"`
 	Created                     int64                     `json:"created,omitempty"`
 	Status                      string                    `json:"status,omitempty"`
-	AccountId                   string                    `json:"accountId,omitempty"`
 	PolicySetId                 string                    `json:"policySetId,omitempty"`
 	PolicySetIdBytes            *ByteString               `json:"policySetIdBytes,omitempty"`
 	PolicyMetadataList          []PolicyMetadata          `json:"policyMetadataList,omitempty"`
@@ -24,18 +23,19 @@ type PolicySetMetadata struct {
 	PolicySetName               string                    `json:"policySetName,omitempty"`
 	PolicySetNameBytes          *ByteString               `json:"policySetNameBytes,omitempty"`
 	IdentifierBytes             *ByteString               `json:"identifierBytes,omitempty"`
-	OrgId                       string                    `json:"orgId,omitempty"`
 	StatusBytes                 *ByteString               `json:"statusBytes,omitempty"`
+	AccountId                   string                    `json:"accountId,omitempty"`
 	AccountIdBytes              *ByteString               `json:"accountIdBytes,omitempty"`
 	OrgIdBytes                  *ByteString               `json:"orgIdBytes,omitempty"`
 	ProjectId                   string                    `json:"projectId,omitempty"`
 	ProjectIdBytes              *ByteString               `json:"projectIdBytes,omitempty"`
-	SerializedSize              int32                     `json:"serializedSize,omitempty"`
 	Deny                        bool                      `json:"deny,omitempty"`
 	ParserForType               *ParserPolicySetMetadata  `json:"parserForType,omitempty"`
+	SerializedSize              int32                     `json:"serializedSize,omitempty"`
 	DefaultInstanceForType      *PolicySetMetadata        `json:"defaultInstanceForType,omitempty"`
+	OrgId                       string                    `json:"orgId,omitempty"`
 	AllFields                   map[string]interface{}    `json:"allFields,omitempty"`
-	InitializationErrorString   string                    `json:"initializationErrorString,omitempty"`
 	DescriptorForType           *Descriptor               `json:"descriptorForType,omitempty"`
+	InitializationErrorString   string                    `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize      int32                     `json:"memoizedSerializedSize,omitempty"`
 }

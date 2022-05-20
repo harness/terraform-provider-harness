@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,9 +12,9 @@ package nextgen
 // Returns AWS Secret Manager configuration details.
 type AwsSecretManager struct {
 	Credential *AwsSecretManagerCredential `json:"credential"`
-	// Region for AWS Secret Manager.
+	// Region for AWS SM.
 	Region string `json:"region"`
-	// Text that is appended to the Secret as a prefix.
+	// Text that is prepended to the Secret name as a prefix.
 	SecretNamePrefix string `json:"secretNamePrefix,omitempty"`
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`

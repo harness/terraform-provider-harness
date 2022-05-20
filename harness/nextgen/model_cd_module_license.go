@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -21,6 +21,7 @@ type CdModuleLicense struct {
 	ExpiryTime        int64  `json:"expiryTime,omitempty"`
 	CreatedAt         int64  `json:"createdAt,omitempty"`
 	LastModifiedAt    int64  `json:"lastModifiedAt,omitempty"`
+	TrialExtended     bool   `json:"trialExtended,omitempty"`
 	CdLicenseType     string `json:"cdLicenseType,omitempty"`
 	Workloads         int32  `json:"workloads,omitempty"`
 	ServiceInstances  int32  `json:"serviceInstances,omitempty"`

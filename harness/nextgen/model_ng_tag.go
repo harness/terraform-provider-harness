@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,6 +11,8 @@ package nextgen
 
 // This is the view of the tags of the entity.
 type NgTag struct {
-	Key   string `json:"key"`
+	// Tag key
+	Key string `json:"key"`
+	// Tag value
 	Value string `json:"value"`
 }

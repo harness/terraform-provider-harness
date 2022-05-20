@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -348,6 +348,7 @@ Returns all the Feature Flag details for the given project
      * @param "TargetIdentifier" (optional.String) -  Identifier of a target
      * @param "Metrics" (optional.Bool) -  Parameter to indicate if metrics data is requested in response
      * @param "FeatureIdentifiers" (optional.String) -  Comma separated identifiers for multiple Features
+     * @param "ExcludedFeatures" (optional.String) -  Comma separated identifiers to exclude from the response
 @return Features
 */
 
@@ -364,6 +365,7 @@ type FeatureFlagsApiGetAllFeaturesOpts struct {
 	TargetIdentifier      optional.String
 	Metrics               optional.Bool
 	FeatureIdentifiers    optional.String
+	ExcludedFeatures      optional.String
 }
 
 func (a *FeatureFlagsApiService) GetAllFeatures(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *FeatureFlagsApiGetAllFeaturesOpts) (Features, *http.Response, error) {
@@ -420,6 +422,9 @@ func (a *FeatureFlagsApiService) GetAllFeatures(ctx context.Context, accountIden
 	}
 	if localVarOptionals != nil && localVarOptionals.FeatureIdentifiers.IsSet() {
 		localVarQueryParams.Add("featureIdentifiers", parameterToString(localVarOptionals.FeatureIdentifiers.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ExcludedFeatures.IsSet() {
+		localVarQueryParams.Add("excludedFeatures", parameterToString(localVarOptionals.ExcludedFeatures.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}

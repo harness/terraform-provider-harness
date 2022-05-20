@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,7 +11,12 @@ package nextgen
 
 // This is the Runtime Input Template for a Pipeline defined in Harness.
 type InputSetTemplateWithReplacedExpressionsResponse struct {
-	InputSetTemplateYaml string   `json:"inputSetTemplateYaml,omitempty"`
-	ReplacedExpressions  []string `json:"replacedExpressions,omitempty"`
-	Modules              []string `json:"modules,omitempty"`
+	// Runtime Input template for the Pipeline
+	InputSetTemplateYaml string `json:"inputSetTemplateYaml,omitempty"`
+	// List of Expressions that need to be replaced for running selected Stages. Empty if the full Pipeline is being run or no expressions need to be replaced
+	ReplacedExpressions []string `json:"replacedExpressions,omitempty"`
+	// Modules in which the Pipeline belongs
+	Modules []string `json:"modules,omitempty"`
+	// Tells whether there are any Input Sets for this Pipeline or not.
+	HasInputSets bool `json:"hasInputSets,omitempty"`
 }

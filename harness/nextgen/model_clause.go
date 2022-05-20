@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -14,7 +14,7 @@ type Clause struct {
 	// The attribute to use in the clause.  This can be any target attribute
 	Attribute string `json:"attribute"`
 	// The unique ID for the clause
-	Id string `json:"id"`
+	Id string `json:"id,omitempty"`
 	// Is the operation negated?
 	Negate bool `json:"negate"`
 	// The type of operation such as equals, starts_with, contains

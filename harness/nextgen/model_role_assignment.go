@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -10,10 +10,10 @@
 package nextgen
 
 type RoleAssignment struct {
-	Identifier              string     `json:"identifier,omitempty"`
-	ResourceGroupIdentifier string     `json:"resourceGroupIdentifier,omitempty"`
-	RoleIdentifier          string     `json:"roleIdentifier,omitempty"`
-	Principal               *Principal `json:"principal,omitempty"`
-	Disabled                bool       `json:"disabled,omitempty"`
-	Managed                 bool       `json:"managed,omitempty"`
+	Identifier              string          `json:"identifier,omitempty"`
+	ResourceGroupIdentifier string          `json:"resourceGroupIdentifier,omitempty"`
+	RoleIdentifier          string          `json:"roleIdentifier,omitempty"`
+	Principal               *AuthzPrincipal `json:"principal,omitempty"`
+	Disabled                bool            `json:"disabled,omitempty"`
+	Managed                 bool            `json:"managed,omitempty"`
 }

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,9 +12,9 @@ package nextgen
 // This contains the Audit Event filter information. This is used to filter Audit Events depending on the information provided.
 type AuditFilterProperties struct {
 	// List of Resource Scopes
-	Scopes []ResourcegroupResourceScope `json:"scopes,omitempty"`
+	Scopes []AuditResourceScope `json:"scopes,omitempty"`
 	// List of Resources
-	Resources []Resource `json:"resources,omitempty"`
+	Resources []AuditResource `json:"resources,omitempty"`
 	// List of Module Types
 	Modules []string `json:"modules,omitempty"`
 	// List of Actions
@@ -22,7 +22,9 @@ type AuditFilterProperties struct {
 	// List of Environments
 	Environments []Environment `json:"environments,omitempty"`
 	// List of Principals
-	Principals []ResourcegroupPrincipal `json:"principals,omitempty"`
+	Principals []AuditPrincipal `json:"principals,omitempty"`
+	// Pre-defined Filter
+	StaticFilter string `json:"staticFilter,omitempty"`
 	// Used to specify a start time for retrieving Audit events that occurred at or after the time indicated.
 	StartTime int64 `json:"startTime,omitempty"`
 	// Used to specify the end time for retrieving Audit events that occurred at or before the time indicated.

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,22 +11,35 @@ package nextgen
 
 // This contains Overlay Input Set details.
 type OverlayInputSetResponse struct {
-	AccountId                 string                    `json:"accountId,omitempty"`
-	OrgIdentifier             string                    `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier         string                    `json:"projectIdentifier,omitempty"`
-	PipelineIdentifier        string                    `json:"pipelineIdentifier,omitempty"`
-	Identifier                string                    `json:"identifier,omitempty"`
-	Name                      string                    `json:"name,omitempty"`
-	Description               string                    `json:"description,omitempty"`
-	InputSetReferences        []string                  `json:"inputSetReferences,omitempty"`
-	OverlayInputSetYaml       string                    `json:"overlayInputSetYaml,omitempty"`
-	Tags                      map[string]string         `json:"tags,omitempty"`
-	IsOutdated                bool                      `json:"isOutdated,omitempty"`
-	IsErrorResponse           bool                      `json:"isErrorResponse,omitempty"`
+	// Account Identifier for the Entity.
+	AccountId string `json:"accountId,omitempty"`
+	// Organization Identifier for the Entity.
+	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// Project Identifier for the Entity.
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	// Pipeline Identifier for the entity.
+	PipelineIdentifier string `json:"pipelineIdentifier,omitempty"`
+	// Input Set Identifier
+	Identifier string `json:"identifier,omitempty"`
+	// Input Set Name
+	Name string `json:"name,omitempty"`
+	// Input Set description
+	Description string `json:"description,omitempty"`
+	// Input Set References in the Overlay Input Set
+	InputSetReferences []string `json:"inputSetReferences,omitempty"`
+	// Overlay Input Set YAML
+	OverlayInputSetYaml string `json:"overlayInputSetYaml,omitempty"`
+	// Input Set tags
+	Tags map[string]string `json:"tags,omitempty"`
+	// This field is true if a Pipeline update has made this Input Set invalid, and cannot be used for Pipeline Execution
+	IsOutdated bool `json:"isOutdated,omitempty"`
+	// This field is true if an Overlay Input Set had errors and hence could not be saved
+	IsErrorResponse bool `json:"isErrorResponse,omitempty"`
+	// This contains the invalid references in the Overlay Input Set, along with a message why they are invalid
 	InvalidInputSetReferences map[string]string         `json:"invalidInputSetReferences,omitempty"`
 	Version                   int64                     `json:"version,omitempty"`
 	GitDetails                *PipelineEntityGitDetails `json:"gitDetails,omitempty"`
 	EntityValidityDetails     *PipelineEntityGitDetails `json:"entityValidityDetails,omitempty"`
-	ErrorResponse             bool                      `json:"errorResponse,omitempty"`
 	Outdated                  bool                      `json:"outdated,omitempty"`
+	ErrorResponse             bool                      `json:"errorResponse,omitempty"`
 }

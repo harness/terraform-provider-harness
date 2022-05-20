@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,9 +30,9 @@ type ExecuteApiService service
 /*
 ExecuteApiService Get Preflight Checks Response for a Preflight Id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param preflightCheckId Preflight Id from the start Preflight Checks API
  * @param optional nil or *ExecuteApiGetPreFlightCheckResponseOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -
@@ -167,14 +167,14 @@ func (a *ExecuteApiService) GetPreFlightCheckResponse(ctx context.Context, accou
 /*
 ExecuteApiService Get retry stages for failed pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param planExecutionId planExecutionId of the execution we want to retry
  * @param optional nil or *ExecuteApiGetRetryStagesOpts - Optional Parameters:
      * @param "PipelineIdentifier" (optional.String) -  Pipeline Identifier
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoRetryInfo
 */
@@ -316,13 +316,13 @@ func (a *ExecuteApiService) GetRetryStages(ctx context.Context, accountIdentifie
 /*
 ExecuteApiService Get list of Stages to select for Stage executions
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param optional nil or *ExecuteApiGetStagesExecutionListOpts - Optional Parameters:
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoListStageExecutionResponse
 */
@@ -460,9 +460,9 @@ func (a *ExecuteApiService) GetStagesExecutionList(ctx context.Context, accountI
 /*
 ExecuteApiService Handles Ignore,Abort,MarkAsSuccess,Retry on post manual intervention for a given execution with the given planExecutionId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param interruptType The Interrupt type needed to be applied to the execution. Choose a value from the enum list.
  * @param planExecutionId The Pipeline Execution Id on which the Interrupt needs to be applied.
  * @param nodeExecutionId The runtime Id of the step/stage on which the Interrupt needs to be applied.
@@ -588,9 +588,9 @@ func (a *ExecuteApiService) HandleManualInterventionInterrupt(ctx context.Contex
 /*
 ExecuteApiService Handles the interrupt for a given stage in a pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param interruptType The Interrupt type needed to be applied to the execution. Choose a value from the enum list.
  * @param planExecutionId The Pipeline Execution Id on which the Interrupt needs to be applied.
  * @param nodeExecutionId The runtime Id of the step/stage on which the Interrupt needs to be applied.
@@ -716,9 +716,9 @@ func (a *ExecuteApiService) HandleStageInterrupt(ctx context.Context, accountIde
 /*
 ExecuteApiService Latest ExecutionId from Retry Executions
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param planExecutionId planExecutionId of the execution of whose we need to find the latest execution planExecutionId
 @return ResponseDtoRetryLatestExecutionResponse
@@ -842,15 +842,15 @@ func (a *ExecuteApiService) LatestExecutionId(ctx context.Context, accountIdenti
 /*
 ExecuteApiService Execute given Stages of a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
  * @param identifier Pipeline Identifier
  * @param optional nil or *ExecuteApiPostExecuteStagesOpts - Optional Parameters:
      * @param "Body" (optional.Interface of RunStageRequest) -
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
 @return ResponseDtoPlanExecutionResponse
@@ -1002,14 +1002,14 @@ func (a *ExecuteApiService) PostExecuteStages(ctx context.Context, accountIdenti
 ExecuteApiService Execute a pipeline with input set references list
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
  * @param identifier Pipeline identifier for the entity. Identifier of the Pipeline to be executed
  * @param optional nil or *ExecuteApiPostPipelineExecuteWithInputSetListOpts - Optional Parameters:
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
 @return ResponseDtoPlanExecutionResponse
@@ -1155,15 +1155,15 @@ func (a *ExecuteApiService) PostPipelineExecuteWithInputSetList(ctx context.Cont
 /*
 ExecuteApiService Execute a pipeline with inputSet pipeline yaml
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
  * @param identifier Pipeline identifier for the entity. Identifier of the Pipeline to be executed
  * @param optional nil or *ExecuteApiPostPipelineExecuteWithInputSetYamlOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
 @return ResponseDtoPlanExecutionResponse
@@ -1312,177 +1312,18 @@ func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYaml(ctx context.Cont
 }
 
 /*
-ExecuteApiService Execute a pipeline with inputSet pipeline yaml V2
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
- * @param identifier Pipeline identifier for the entity. Identifier of the Pipeline to be executed
- * @param optional nil or *ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-     * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponse
-*/
-
-type ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts struct {
-	Body                    optional.Interface
-	Branch                  optional.String
-	RepoIdentifier          optional.String
-	GetDefaultFromOtherRepo optional.Bool
-	UseFQNIfError           optional.Bool
-}
-
-func (a *ExecuteApiService) PostPipelineExecuteWithInputSetYamlv2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, identifier string, localVarOptionals *ExecuteApiPostPipelineExecuteWithInputSetYamlv2Opts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponse
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipeline/execute/{identifier}/v2"
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
-	localVarQueryParams.Add("moduleType", parameterToString(moduleType, ""))
-	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
-		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.RepoIdentifier.IsSet() {
-		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.GetDefaultFromOtherRepo.IsSet() {
-		localVarQueryParams.Add("getDefaultFromOtherRepo", parameterToString(localVarOptionals.GetDefaultFromOtherRepo.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.UseFQNIfError.IsSet() {
-		localVarQueryParams.Add("useFQNIfError", parameterToString(localVarOptionals.UseFQNIfError.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
 ExecuteApiService Re-run given Stages of a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
  * @param identifier Pipeline Identifier
  * @param originalExecutionId This param contains the previous execution execution id. This is basically when we are rerunning a Pipeline.
  * @param optional nil or *ExecuteApiPostReExecuteStagesOpts - Optional Parameters:
      * @param "Body" (optional.Interface of RunStageRequest) -
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
 @return ResponseDtoPlanExecutionResponse
@@ -1634,9 +1475,9 @@ func (a *ExecuteApiService) PostReExecuteStages(ctx context.Context, accountIden
 /*
 ExecuteApiService Execute an Interrupt on an execution
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param interruptType The Interrupt type needed to be applied to the execution. Choose a value from the enum list.
  * @param planExecutionId The Pipeline Execution Id on which the Interrupt needs to be applied.
 @return ResponseDtoInterruptResponse
@@ -1760,16 +1601,16 @@ func (a *ExecuteApiService) PutHandleInterrupt(ctx context.Context, accountIdent
 /*
 ExecuteApiService Re Execute a pipeline with inputSet pipeline yaml
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
  * @param originalExecutionId This param contains the previous execution execution id. This is basically when we are rerunning a Pipeline.
  * @param identifier Pipeline identifier for the entity. Identifier of the Pipeline to be executed
  * @param optional nil or *ExecuteApiRePostPipelineExecuteWithInputSetYamlOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "UseFQNIfError" (optional.Bool) -
 @return ResponseDtoPlanExecutionResponse
@@ -1919,180 +1760,19 @@ func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYaml(ctx context.Co
 }
 
 /*
-ExecuteApiService Re Execute a pipeline with InputSet Pipeline YAML Version 2
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
- * @param originalExecutionId This param contains the previous execution execution id. This is basically when we are rerunning a Pipeline.
- * @param identifier Pipeline identifier for the entity. Identifier of the Pipeline to be executed
- * @param optional nil or *ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts - Optional Parameters:
-     * @param "Body" (optional.Interface of string) -  InputSet YAML if the pipeline contains runtime inputs. This will be empty by default if pipeline does not contains runtime inputs
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
-     * @param "UseFQNIfError" (optional.Bool) -
-@return ResponseDtoPlanExecutionResponse
-*/
-
-type ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts struct {
-	Body                    optional.Interface
-	Branch                  optional.String
-	RepoIdentifier          optional.String
-	GetDefaultFromOtherRepo optional.Bool
-	UseFQNIfError           optional.Bool
-}
-
-func (a *ExecuteApiService) RePostPipelineExecuteWithInputSetYamlV2(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, moduleType string, originalExecutionId string, identifier string, localVarOptionals *ExecuteApiRePostPipelineExecuteWithInputSetYamlV2Opts) (ResponseDtoPlanExecutionResponse, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoPlanExecutionResponse
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipeline/execute/rerun/v2/{originalExecutionId}/{identifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"originalExecutionId"+"}", fmt.Sprintf("%v", originalExecutionId), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
-	localVarQueryParams.Add("moduleType", parameterToString(moduleType, ""))
-	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
-		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.RepoIdentifier.IsSet() {
-		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.GetDefaultFromOtherRepo.IsSet() {
-		localVarQueryParams.Add("getDefaultFromOtherRepo", parameterToString(localVarOptionals.GetDefaultFromOtherRepo.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.UseFQNIfError.IsSet() {
-		localVarQueryParams.Add("useFQNIfError", parameterToString(localVarOptionals.UseFQNIfError.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-
-		localVarOptionalBody := localVarOptionals.Body.Value()
-		localVarPostBody = &localVarOptionalBody
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoPlanExecutionResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
 ExecuteApiService Rerun a pipeline with given inputSet identifiers
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body InputSet reference details
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType The module from which execution was triggered.
  * @param useFQNIfError Use FQN in error response
  * @param originalExecutionId Id of the execution from which we are running
  * @param identifier Pipeline Identifier
  * @param optional nil or *ExecuteApiRerunPipelineWithInputSetIdentifierListOpts - Optional Parameters:
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPlanExecutionResponse
 */
@@ -2235,9 +1915,9 @@ func (a *ExecuteApiService) RerunPipelineWithInputSetIdentifierList(ctx context.
 /*
 ExecuteApiService Retry History for a given execution
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param planExecutionId planExecutionId of the execution of whose we need to find the retry history
 @return ResponseDtoRetryHistoryResponse
@@ -2361,9 +2041,9 @@ func (a *ExecuteApiService) RetryHistory(ctx context.Context, accountIdentifier 
 /*
 ExecuteApiService Retry a executed pipeline with inputSet pipeline yaml
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param moduleType Module type for the entity. If its from deployments,type will be CD , if its from build type will be CI
  * @param planExecutionId This param contains the previous execution execution id. This is basically when we are rerunning a Pipeline.
  * @param retryStages This param contains the identifier of stages from where to resume. It will be a list if we want to retry from parallel group
@@ -2509,14 +2189,14 @@ func (a *ExecuteApiService) RetryPipeline(ctx context.Context, accountIdentifier
 /*
 ExecuteApiService Start Preflight Checks for a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *ExecuteApiStartPreFlightCheckOpts - Optional Parameters:
      * @param "Body" (optional.Interface of string) -  Runtime Input YAML to be sent for Pipeline execution
      * @param "PipelineIdentifier" (optional.String) -  Pipeline Identifier
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoString
 */

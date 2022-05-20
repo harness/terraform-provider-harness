@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -16,6 +16,6 @@ type ServingRule struct {
 	// The rules priority relative to other rules.  The rules are evaluated in order with 1 being the highest
 	Priority int32 `json:"priority"`
 	// The unique identifier for this rule
-	RuleId string `json:"ruleId"`
+	RuleId string `json:"ruleId,omitempty"`
 	Serve  *Serve `json:"serve"`
 }

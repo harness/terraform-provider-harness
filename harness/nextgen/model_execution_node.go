@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -29,6 +29,6 @@ type ExecutionNode struct {
 	UnitProgresses      []UnitProgress                    `json:"unitProgresses,omitempty"`
 	ProgressData        *map[string]interface{}           `json:"progressData,omitempty"`
 	DelegateInfoList    []DelegateInfo                    `json:"delegateInfoList,omitempty"`
-	InterruptHistories  []InterruptEffect                 `json:"interruptHistories,omitempty"`
+	InterruptHistories  []InterruptEffectDto              `json:"interruptHistories,omitempty"`
 	StepDetails         map[string]map[string]interface{} `json:"stepDetails,omitempty"`
 }

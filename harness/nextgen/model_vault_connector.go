@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -14,12 +14,12 @@ type VaultConnector struct {
 	AuthToken string `json:"authToken,omitempty"`
 	// This is the location of the Vault directory where Secret will be stored.
 	BasePath string `json:"basePath,omitempty"`
-	// URL of the Vault.
-	VaultUrl string `json:"vaultUrl,omitempty"`
+	// URL of the HashiCorp Vault.
+	VaultUrl string `json:"vaultUrl"`
 	// Boolean value to indicate if the Secret Manager created is read only.
 	IsReadOnly bool `json:"isReadOnly,omitempty"`
 	// This is the time interval for token renewal.
-	RenewalIntervalMinutes int64 `json:"renewalIntervalMinutes,omitempty"`
+	RenewalIntervalMinutes int64 `json:"renewalIntervalMinutes"`
 	// Manually entered Secret Engine.
 	SecretEngineManuallyConfigured bool `json:"secretEngineManuallyConfigured,omitempty"`
 	// Name of the Secret Engine.
@@ -27,7 +27,8 @@ type VaultConnector struct {
 	// ID of App Role.
 	AppRoleId string `json:"appRoleId,omitempty"`
 	SecretId  string `json:"secretId,omitempty"`
-	IsDefault bool   `json:"isDefault,omitempty"`
+	// Boolean value to indicate if the Secret Manager is your default Secret Manager.
+	IsDefault bool `json:"isDefault,omitempty"`
 	// Version of Secret Engine.
 	SecretEngineVersion int32 `json:"secretEngineVersion,omitempty"`
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
@@ -45,7 +46,13 @@ type VaultConnector struct {
 	// This is the Vault role defined to bind to aws iam account/role being accessed.
 	VaultAwsIamRole      string `json:"vaultAwsIamRole,omitempty"`
 	XvaultAwsIamServerId string `json:"xvaultAwsIamServerId,omitempty"`
-	Default_             bool   `json:"default,omitempty"`
-	AccessType           string `json:"accessType,omitempty"`
-	ReadOnly             bool   `json:"readOnly,omitempty"`
+	// Boolean value to indicate if K8s Auth is used for authentication.
+	UseK8sAuth bool `json:"useK8sAuth,omitempty"`
+	// This is the role where K8s auth will happen.
+	VaultK8sAuthRole string `json:"vaultK8sAuthRole,omitempty"`
+	// This is the SA token path where the token is mounted in the K8s Pod.
+	ServiceAccountTokenPath string `json:"serviceAccountTokenPath,omitempty"`
+	Default_                bool   `json:"default,omitempty"`
+	AccessType              string `json:"accessType,omitempty"`
+	ReadOnly                bool   `json:"readOnly,omitempty"`
 }

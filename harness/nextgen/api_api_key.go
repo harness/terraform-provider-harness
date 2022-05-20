@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,6 +30,7 @@ type ApiKeyApiService service
 /*
 ApiKeyApiService Creates an API key
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier
  * @param optional nil or *ApiKeyApiCreateApiKeyOpts - Optional Parameters:
      * @param "Body" (optional.Interface of ApiKey) -
 @return ResponseDtoApiKey
@@ -39,7 +40,7 @@ type ApiKeyApiCreateApiKeyOpts struct {
 	Body optional.Interface
 }
 
-func (a *ApiKeyApiService) CreateApiKey(ctx context.Context, localVarOptionals *ApiKeyApiCreateApiKeyOpts) (ResponseDtoApiKey, *http.Response, error) {
+func (a *ApiKeyApiService) CreateApiKey(ctx context.Context, accountIdentifier string, localVarOptionals *ApiKeyApiCreateApiKeyOpts) (ResponseDtoApiKey, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -55,6 +56,7 @@ func (a *ApiKeyApiService) CreateApiKey(ctx context.Context, localVarOptionals *
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml", "text/plain"}
 
@@ -159,13 +161,13 @@ func (a *ApiKeyApiService) CreateApiKey(ctx context.Context, localVarOptionals *
 /*
 ApiKeyApiService Deletes the API Key corresponding to the provided ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier Id of API key&#x27;s Parent Service Account
  * @param identifier This is the API key ID
  * @param optional nil or *ApiKeyApiDeleteApiKeyOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
@@ -298,13 +300,13 @@ func (a *ApiKeyApiService) DeleteApiKey(ctx context.Context, accountIdentifier s
 /*
 ApiKeyApiService Fetches the API Keys details corresponding to the provided ID and Scope.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier ID of API key&#x27;s Parent Service Account
  * @param identifier This is the API key ID
  * @param optional nil or *ApiKeyApiGetAggregatedApiKeyOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoApiKeyAggregate
 */
 
@@ -437,12 +439,12 @@ func (a *ApiKeyApiService) GetAggregatedApiKey(ctx context.Context, accountIdent
 /*
 ApiKeyApiService Fetches the list of API Keys corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier ID of API key&#x27;s Parent Service Account
  * @param optional nil or *ApiKeyApiListApiKeysOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "Identifiers" (optional.Interface of []string) -  This is the list of API Key IDs. Details specific to these IDs would be fetched.
 @return ResponseDtoListApiKey
 */
@@ -579,15 +581,15 @@ func (a *ApiKeyApiService) ListApiKeys(ctx context.Context, accountIdentifier st
 /*
 ApiKeyApiService Fetches the list of Aggregated API Keys corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier ID of API key&#x27;s Parent Service Account
  * @param optional nil or *ApiKeyApiListApiKeys1Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "Identifiers" (optional.Interface of []string) -  This is the list of API Key IDs. Details specific to these IDs would be fetched.
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
      * @param "SearchTerm" (optional.String) -  This would be used to filter API keys. Any API key having the specified string in its Name, ID and Tag would be filtered.
 @return ResponseDtoPageResponseApiKeyAggregate

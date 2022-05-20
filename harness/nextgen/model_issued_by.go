@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -10,24 +10,9 @@
 package nextgen
 
 type IssuedBy struct {
-	UnknownFields             *UnknownFieldSet        `json:"unknownFields,omitempty"`
-	Initialized               bool                    `json:"initialized,omitempty"`
-	TriggerIssuer             *TriggerIssuer          `json:"triggerIssuer,omitempty"`
-	ManualIssuer              *ManualIssuer           `json:"manualIssuer,omitempty"`
-	ManualIssuerOrBuilder     *ManualIssuerOrBuilder  `json:"manualIssuerOrBuilder,omitempty"`
-	AdviserIssuer             *AdviserIssuer          `json:"adviserIssuer,omitempty"`
-	AdviserIssuerOrBuilder    *AdviserIssuerOrBuilder `json:"adviserIssuerOrBuilder,omitempty"`
-	TimeoutIssuer             *TimeoutIssuer          `json:"timeoutIssuer,omitempty"`
-	TimeoutIssuerOrBuilder    *TimeoutIssuerOrBuilder `json:"timeoutIssuerOrBuilder,omitempty"`
-	TriggerIssuerOrBuilder    *TriggerIssuerOrBuilder `json:"triggerIssuerOrBuilder,omitempty"`
-	IssuerCase                string                  `json:"issuerCase,omitempty"`
-	IssueTime                 *Timestamp              `json:"issueTime,omitempty"`
-	IssueTimeOrBuilder        *TimestampOrBuilder     `json:"issueTimeOrBuilder,omitempty"`
-	SerializedSize            int32                   `json:"serializedSize,omitempty"`
-	ParserForType             *ParserIssuedBy         `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *IssuedBy               `json:"defaultInstanceForType,omitempty"`
-	AllFields                 map[string]interface{}  `json:"allFields,omitempty"`
-	InitializationErrorString string                  `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor             `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize    int32                   `json:"memoizedSerializedSize,omitempty"`
+	IssueTime     int64          `json:"issueTime"`
+	ManualIssuer  *ManualIssuer  `json:"manualIssuer,omitempty"`
+	AdviserIssuer *AdviserIssuer `json:"adviserIssuer,omitempty"`
+	TimeoutIssuer *TimeoutIssuer `json:"timeoutIssuer,omitempty"`
+	TriggerIssuer *TriggerIssuer `json:"triggerIssuer,omitempty"`
 }

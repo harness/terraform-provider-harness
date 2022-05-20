@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,18 +30,18 @@ type InputSetsApiService service
 /*
 InputSetsApiService Delete the Input Set by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param inputSetIdentifier This is the Id of the Input Set that needs to be deleted. An error is thrown if no Input Set exists for this Id.
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline identifier for the Input Set. Input Set will be deleted for the Pipeline corresponding to this Identifier
+ * @param inputSetIdentifier Identifier of the Input Set that should be deleted.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiDeleteInputSetOpts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -  Version of entity to match
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
-     * @param "FilePath" (optional.String) -  File Path of the Entity
-     * @param "CommitMsg" (optional.String) -  Commit Message
+     * @param "IfMatch" (optional.String) -  Version of Entity to match
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
+     * @param "RootFolder" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "FilePath" (optional.String) -  File Path of the Entity.
+     * @param "CommitMsg" (optional.String) -  Commit Message to use for the merge commit.
      * @param "LastObjectId" (optional.String) -  Last Object Id
 @return ResponseDtoBoolean
 */
@@ -196,14 +196,14 @@ func (a *InputSetsApiService) DeleteInputSet(ctx context.Context, inputSetIdenti
 /*
 InputSetsApiService Gets Input Set for a given identifier. Throws error if no Input Set exists for the given identifier.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param inputSetIdentifier Identifier of the Input Set
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline ID for the Input Set. The Input Set will work only for the Pipeline corresponding to this identifier.
+ * @param inputSetIdentifier Identifier for the Input Set
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiGetInputSetOpts - Optional Parameters:
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoInputSetResponse
 */
@@ -342,14 +342,14 @@ func (a *InputSetsApiService) GetInputSet(ctx context.Context, inputSetIdentifie
 /*
 InputSetsApiService Gets an Overlay Input Set by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param inputSetIdentifier Identifier of the Overlay Input Set
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier This is the Pipeline Id specific to the Overlay Input Set. Overlay Input Set corresponding to the Pipeline with this Id would be fetched
+ * @param inputSetIdentifier Identifier for the Overlay Input Set
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiGetOverlayInputSetOpts - Optional Parameters:
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoOverlayInputSetResponse
 */
@@ -488,18 +488,18 @@ func (a *InputSetsApiService) GetOverlayInputSet(ctx context.Context, inputSetId
 /*
 InputSetsApiService List all Input Sets for a pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline identifier for which we need the Input Sets list.
  * @param optional nil or *InputSetsApiListInputSetOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
-     * @param "InputSetType" (optional.String) -  Type of Input Set needed: \&quot;INPUT_SET\&quot;, or \&quot;OVERLAY_INPUT_SET\&quot;, or \&quot;ALL\&quot;. If nothing is sent, ALL is considered.
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
+     * @param "InputSetType" (optional.String) -  Type of Input Set. The default value is ALL.
      * @param "SearchTerm" (optional.String) -  Search term to filter out Input Sets based on name, identifier, tags.
      * @param "SortOrders" (optional.Interface of []string) -  Sort criteria for the elements.
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPageResponseInputSetSummaryResponse
 */
@@ -658,15 +658,15 @@ func (a *InputSetsApiService) ListInputSet(ctx context.Context, accountIdentifie
 InputSetsApiService Merge given Input Sets into a single Runtime Input YAML
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Identifier of the Pipeline to which the Input Sets belong
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiMergeInputSetsOpts - Optional Parameters:
      * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline to which the Input Sets belong
      * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline to which the Input Sets belong
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoMergeInputSetResponse
 */
@@ -815,15 +815,15 @@ func (a *InputSetsApiService) MergeInputSets(ctx context.Context, body MergeInpu
 InputSetsApiService Merge given Runtime Input YAML into the Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Identifier of the Pipeline to which the Input Sets belong
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiMergeRuntimeInputIntoPipelineOpts - Optional Parameters:
      * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline to which the Input Sets belong
      * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline to which the Input Sets belong
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoMergeInputSetResponse
 */
@@ -971,21 +971,21 @@ func (a *InputSetsApiService) MergeRuntimeInputIntoPipeline(ctx context.Context,
 /*
 InputSetsApiService Create an Input Set for a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Input set YAML to be created. The account, org, project, and pipeline identifiers inside the YAML should match the query parameters
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline identifier for the input set. The input set will work only for the pipeline corresponding to this identifier.
+ * @param body Input set YAML to be created. The Account, Org, Project, and Pipeline identifiers inside the YAML should match the query parameters.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiPostInputSetOpts - Optional Parameters:
      * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline for which the Input Set is to be created
      * @param "PipelineRepoID" (optional.String) -  Github Repo identifier of the Pipeline for which the Input Set is to be created
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
-     * @param "FilePath" (optional.String) -  File Path of the Entity
-     * @param "CommitMsg" (optional.String) -  File Path of the Entity
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
+     * @param "RootFolder" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "FilePath" (optional.String) -  File Path of the Entity.
+     * @param "CommitMsg" (optional.String) -  File Path of the Entity.
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
-     * @param "BaseBranch" (optional.String) -  Default Branch
+     * @param "BaseBranch" (optional.String) -  Name of the default branch.
 @return ResponseDtoInputSetResponse
 */
 
@@ -1149,18 +1149,18 @@ func (a *InputSetsApiService) PostInputSet(ctx context.Context, body string, acc
 InputSetsApiService Create an Overlay Input Set for a pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Overlay Input Set YAML to be created. The Account, Org, Project, and Pipeline identifiers inside the YAML should match the query parameters
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline identifier for the overlay input set. The Overlay Input Set will work only for the Pipeline corresponding to this identifier.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param optional nil or *InputSetsApiPostOverlayInputSetOpts - Optional Parameters:
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
-     * @param "FilePath" (optional.String) -  File Path of the Entity
-     * @param "CommitMsg" (optional.String) -  File Path of the Entity
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
+     * @param "RootFolder" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "FilePath" (optional.String) -  File Path of the Entity.
+     * @param "CommitMsg" (optional.String) -  File Path of the Entity.
      * @param "IsNewBranch" (optional.Bool) -  Checks the new branch
-     * @param "BaseBranch" (optional.String) -  Default Branch
+     * @param "BaseBranch" (optional.String) -  Name of the default branch.
 @return ResponseDtoOverlayInputSetResponse
 */
 
@@ -1315,37 +1315,39 @@ func (a *InputSetsApiService) PostOverlayInputSet(ctx context.Context, body stri
 /*
 InputSetsApiService Update Input Set for Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Input set YAML to be updated. The Account, Org, Project, and Pipeline Ids inside the YAML should match the query parameters
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline Id for the Input Set. The Input Set will work only for the Pipeline corresponding to this Id.
+ * @param body Input set YAML to be updated. The query parameters should match the Account, Org, Project, and Pipeline Ids in the YAML.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
  * @param inputSetIdentifier Identifier for the Input Set that needs to be updated. An Input Set corresponding to this identifier should already exist.
  * @param optional nil or *InputSetsApiPutInputSetOpts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -  Version of entity to match
-     * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline for which the Input Set is to be created
-     * @param "PipelineRepoID" (optional.String) -  Github Repo Id of the Pipeline for which the Input Set is to be created
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
-     * @param "FilePath" (optional.String) -  Root Folder Path of the Entity
-     * @param "CommitMsg" (optional.String) -  Commit Message
+     * @param "IfMatch" (optional.String) -  Version of Entity to match
+     * @param "PipelineBranch" (optional.String) -  Github branch of the Pipeline for which the Input Set is to be updated
+     * @param "PipelineRepoID" (optional.String) -  Github Repo Id of the Pipeline for which the Input Set is to be updated
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
+     * @param "RootFolder" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "FilePath" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "CommitMsg" (optional.String) -  Commit Message to use for the merge commit.
      * @param "LastObjectId" (optional.String) -  Last Object Id
-     * @param "BaseBranch" (optional.String) -  Default Branch
+     * @param "ResolvedConflictCommitId" (optional.String) -  If the entity is git-synced, this parameter represents the commit id against which file conflicts are resolved
+     * @param "BaseBranch" (optional.String) -  Name of the default branch.
 @return ResponseDtoInputSetResponse
 */
 
 type InputSetsApiPutInputSetOpts struct {
-	IfMatch        optional.String
-	PipelineBranch optional.String
-	PipelineRepoID optional.String
-	Branch         optional.String
-	RepoIdentifier optional.String
-	RootFolder     optional.String
-	FilePath       optional.String
-	CommitMsg      optional.String
-	LastObjectId   optional.String
-	BaseBranch     optional.String
+	IfMatch                  optional.String
+	PipelineBranch           optional.String
+	PipelineRepoID           optional.String
+	Branch                   optional.String
+	RepoIdentifier           optional.String
+	RootFolder               optional.String
+	FilePath                 optional.String
+	CommitMsg                optional.String
+	LastObjectId             optional.String
+	ResolvedConflictCommitId optional.String
+	BaseBranch               optional.String
 }
 
 func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, inputSetIdentifier string, localVarOptionals *InputSetsApiPutInputSetOpts) (ResponseDtoInputSetResponse, *http.Response, error) {
@@ -1392,6 +1394,9 @@ func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, acco
 	}
 	if localVarOptionals != nil && localVarOptionals.LastObjectId.IsSet() {
 		localVarQueryParams.Add("lastObjectId", parameterToString(localVarOptionals.LastObjectId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ResolvedConflictCommitId.IsSet() {
+		localVarQueryParams.Add("resolvedConflictCommitId", parameterToString(localVarOptionals.ResolvedConflictCommitId.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.BaseBranch.IsSet() {
 		localVarQueryParams.Add("baseBranch", parameterToString(localVarOptionals.BaseBranch.Value(), ""))
@@ -1500,32 +1505,34 @@ func (a *InputSetsApiService) PutInputSet(ctx context.Context, body string, acco
 InputSetsApiService Update an Overlay Input Set for a pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Overlay Input Set YAML to be updated. The Account, Org, Project, and Pipeline identifiers inside the YAML should match the query parameters, and the Overlay Input Set identifier cannot be changed.
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
- * @param pipelineIdentifier Pipeline identifier for the Overlay Input Set. The Overlay Input Set will work only for the Pipeline corresponding to this identifier.
- * @param inputSetIdentifier Identifier for the Overlay Input Set that needs to be updated. An Overlay Input Set corresponding to this identifier should already exist.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param pipelineIdentifier Pipeline Identifier for the entity.
+ * @param inputSetIdentifier Identifier for the Overlay Input Set that needs to be updated.
  * @param optional nil or *InputSetsApiPutOverlayInputSetOpts - Optional Parameters:
-     * @param "IfMatch" (optional.String) -  Version of entity to match
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
-     * @param "RootFolder" (optional.String) -  Root Folder Path of the Entity
-     * @param "FilePath" (optional.String) -  Root Folder Path of the Entity
-     * @param "CommitMsg" (optional.String) -  Commit Message
+     * @param "IfMatch" (optional.String) -  Version of Entity to match
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
+     * @param "RootFolder" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "FilePath" (optional.String) -  Path to  the root folder of the Entity.
+     * @param "CommitMsg" (optional.String) -  Commit Message to use for the merge commit.
      * @param "LastObjectId" (optional.String) -  Last Object Id
-     * @param "BaseBranch" (optional.String) -  Default Branch
+     * @param "ResolvedConflictCommitId" (optional.String) -  If the entity is git-synced, this parameter represents the commit id against which file conflicts are resolved
+     * @param "BaseBranch" (optional.String) -  Name of the default branch.
 @return ResponseDtoOverlayInputSetResponse
 */
 
 type InputSetsApiPutOverlayInputSetOpts struct {
-	IfMatch        optional.String
-	Branch         optional.String
-	RepoIdentifier optional.String
-	RootFolder     optional.String
-	FilePath       optional.String
-	CommitMsg      optional.String
-	LastObjectId   optional.String
-	BaseBranch     optional.String
+	IfMatch                  optional.String
+	Branch                   optional.String
+	RepoIdentifier           optional.String
+	RootFolder               optional.String
+	FilePath                 optional.String
+	CommitMsg                optional.String
+	LastObjectId             optional.String
+	ResolvedConflictCommitId optional.String
+	BaseBranch               optional.String
 }
 
 func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, pipelineIdentifier string, inputSetIdentifier string, localVarOptionals *InputSetsApiPutOverlayInputSetOpts) (ResponseDtoOverlayInputSetResponse, *http.Response, error) {
@@ -1566,6 +1573,9 @@ func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body strin
 	}
 	if localVarOptionals != nil && localVarOptionals.LastObjectId.IsSet() {
 		localVarQueryParams.Add("lastObjectId", parameterToString(localVarOptionals.LastObjectId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ResolvedConflictCommitId.IsSet() {
+		localVarQueryParams.Add("resolvedConflictCommitId", parameterToString(localVarOptionals.ResolvedConflictCommitId.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.BaseBranch.IsSet() {
 		localVarQueryParams.Add("baseBranch", parameterToString(localVarOptionals.BaseBranch.Value(), ""))
@@ -1673,14 +1683,14 @@ func (a *InputSetsApiService) PutOverlayInputSet(ctx context.Context, body strin
 /*
 InputSetsApiService Fetch Runtime Input Template for a Pipeline
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline identifier for which we need the Runtime Input Template.
  * @param optional nil or *InputSetsApiRuntimeInputTemplateOpts - Optional Parameters:
      * @param "Body" (optional.Interface of InputSetTemplateRequest) -
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoInputSetTemplateWithReplacedExpressionsResponse
 */

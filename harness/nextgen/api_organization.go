@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,8 +30,8 @@ type OrganizationApiService service
 /*
 OrganizationApiService Deletes the Organization corresponding to the specified Organization ID.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Organization Identifier for the Entity
- * @param accountIdentifier Account Identifier for the Entity
+ * @param identifier Organization Identifier for the Entity.
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *OrganizationApiDeleteOrganizationOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version number of the Organization
 @return ResponseDtoBoolean
@@ -160,8 +160,8 @@ func (a *OrganizationApiService) DeleteOrganization(ctx context.Context, identif
 /*
 OrganizationApiService Get the Organization by accountIdentifier and orgIdentifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier Organization Identifier for the Entity
- * @param accountIdentifier Account Identifier for the Entity
+ * @param identifier Organization Identifier for the Entity.
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoOrganizationResponse
 */
 func (a *OrganizationApiService) GetOrganization(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
@@ -280,12 +280,12 @@ func (a *OrganizationApiService) GetOrganization(ctx context.Context, identifier
 /*
 OrganizationApiService Get the list of Organizations satisfying the criteria (if any) in the request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *OrganizationApiGetOrganizationListOpts - Optional Parameters:
      * @param "Identifiers" (optional.Interface of []string) -  This is the list of Org Key IDs. Details specific to these IDs would be fetched.
      * @param "SearchTerm" (optional.String) -  This would be used to filter Organizations. Any Organization having the specified string in its Name, ID and Tag would be filtered.
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseOrganizationResponse
 */
@@ -429,7 +429,7 @@ func (a *OrganizationApiService) GetOrganizationList(ctx context.Context, accoun
 OrganizationApiService Creates an Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Organization to create
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoOrganizationResponse
 */
 func (a *OrganizationApiService) PostOrganization(ctx context.Context, body OrganizationRequest, accountIdentifier string) (ResponseDtoOrganizationResponse, *http.Response, error) {
@@ -550,8 +550,8 @@ func (a *OrganizationApiService) PostOrganization(ctx context.Context, body Orga
 OrganizationApiService Updates the Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the updated Organization. Please provide values for all fields, not just the fields you are updating
- * @param accountIdentifier Account Identifier for the Entity
- * @param identifier Organization Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param identifier Organization Identifier for the Entity.
  * @param optional nil or *OrganizationApiPutOrganizationOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -  Version number of the Organization
 @return ResponseDtoOrganizationResponse

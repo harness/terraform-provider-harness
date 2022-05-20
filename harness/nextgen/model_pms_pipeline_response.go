@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,6 +12,8 @@ package nextgen
 // This contains pipeline yaml with the version.
 type PmsPipelineResponse struct {
 	YamlPipeline          string                    `json:"yamlPipeline,omitempty"`
+	// Pipeline YAML after resolving templates
+	ResolvedTemplatesPipelineYaml string                    `json:"resolvedTemplatesPipelineYaml,omitempty"`
 	Version               int64                     `json:"version,omitempty"`
 	GitDetails            *PipelineEntityGitDetails `json:"gitDetails,omitempty"`
 	EntityValidityDetails *PipelineEntityGitDetails `json:"entityValidityDetails,omitempty"`

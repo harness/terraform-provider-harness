@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -15,11 +15,6 @@ type ExecutableResponse struct {
 	Initialized               bool                                   `json:"initialized,omitempty"`
 	Children                  *ChildrenExecutableResponse            `json:"children,omitempty"`
 	Task                      *TaskExecutableResponse                `json:"task,omitempty"`
-	Sync                      *SyncExecutableResponse                `json:"sync,omitempty"`
-	Child                     *ChildExecutableResponse               `json:"child,omitempty"`
-	ResponseCase              string                                 `json:"responseCase,omitempty"`
-	AsyncOrBuilder            *AsyncExecutableResponseOrBuilder      `json:"asyncOrBuilder,omitempty"`
-	ChildOrBuilder            *ChildExecutableResponseOrBuilder      `json:"childOrBuilder,omitempty"`
 	ChildrenOrBuilder         *ChildrenExecutableResponseOrBuilder   `json:"childrenOrBuilder,omitempty"`
 	ChildChain                *ChildChainExecutableResponse          `json:"childChain,omitempty"`
 	ChildChainOrBuilder       *ChildChainExecutableResponseOrBuilder `json:"childChainOrBuilder,omitempty"`
@@ -29,11 +24,16 @@ type ExecutableResponse struct {
 	SyncOrBuilder             *SyncExecutableResponseOrBuilder       `json:"syncOrBuilder,omitempty"`
 	SkipTask                  *SkipTaskExecutableResponse            `json:"skipTask,omitempty"`
 	SkipTaskOrBuilder         *SkipTaskExecutableResponseOrBuilder   `json:"skipTaskOrBuilder,omitempty"`
-	SerializedSize            int32                                  `json:"serializedSize,omitempty"`
+	ResponseCase              string                                 `json:"responseCase,omitempty"`
+	AsyncOrBuilder            *AsyncExecutableResponseOrBuilder      `json:"asyncOrBuilder,omitempty"`
+	ChildOrBuilder            *ChildExecutableResponseOrBuilder      `json:"childOrBuilder,omitempty"`
+	Child                     *ChildExecutableResponse               `json:"child,omitempty"`
+	Sync                      *SyncExecutableResponse                `json:"sync,omitempty"`
 	ParserForType             *ParserExecutableResponse              `json:"parserForType,omitempty"`
+	SerializedSize            int32                                  `json:"serializedSize,omitempty"`
 	DefaultInstanceForType    *ExecutableResponse                    `json:"defaultInstanceForType,omitempty"`
 	AllFields                 map[string]interface{}                 `json:"allFields,omitempty"`
-	InitializationErrorString string                                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                            `json:"descriptorForType,omitempty"`
+	InitializationErrorString string                                 `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize    int32                                  `json:"memoizedSerializedSize,omitempty"`
 }

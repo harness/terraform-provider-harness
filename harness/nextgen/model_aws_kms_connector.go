@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,10 +11,10 @@ package nextgen
 
 // This has configuration details for the AWS KMS Secret Manager.
 type AwsKmsConnector struct {
-	Credential *AwsKmsConnectorCredential `json:"credential,omitempty"`
+	Credential *AwsKmsConnectorCredential `json:"credential"`
 	KmsArn     string                     `json:"kmsArn"`
 	// Region for AWS KMS.
-	Region string `json:"region,omitempty"`
+	Region string `json:"region"`
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
 	Default_          bool     `json:"default,omitempty"`

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,18 +11,18 @@ package nextgen
 
 type ChildExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet               `json:"unknownFields,omitempty"`
-	LogKeysList               []string                       `json:"logKeysList,omitempty"`
+	Initialized               bool                           `json:"initialized,omitempty"`
+	ParserForType             *ParserChildExecutableResponse `json:"parserForType,omitempty"`
+	SerializedSize            int32                          `json:"serializedSize,omitempty"`
+	DefaultInstanceForType    *ChildExecutableResponse       `json:"defaultInstanceForType,omitempty"`
+	ChildNodeId               string                         `json:"childNodeId,omitempty"`
 	LogKeysCount              int32                          `json:"logKeysCount,omitempty"`
+	LogKeysList               []string                       `json:"logKeysList,omitempty"`
 	UnitsList                 []string                       `json:"unitsList,omitempty"`
 	UnitsCount                int32                          `json:"unitsCount,omitempty"`
-	Initialized               bool                           `json:"initialized,omitempty"`
-	ChildNodeId               string                         `json:"childNodeId,omitempty"`
-	SerializedSize            int32                          `json:"serializedSize,omitempty"`
-	ParserForType             *ParserChildExecutableResponse `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *ChildExecutableResponse       `json:"defaultInstanceForType,omitempty"`
 	ChildNodeIdBytes          *ByteString                    `json:"childNodeIdBytes,omitempty"`
 	AllFields                 map[string]interface{}         `json:"allFields,omitempty"`
-	InitializationErrorString string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                    `json:"descriptorForType,omitempty"`
+	InitializationErrorString string                         `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize    int32                          `json:"memoizedSerializedSize,omitempty"`
 }

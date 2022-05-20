@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -27,12 +27,12 @@ type FieldDescriptor struct {
 	JavaType        string                `json:"javaType,omitempty"`
 	LiteJavaType    string                `json:"liteJavaType,omitempty"`
 	Packable        bool                  `json:"packable,omitempty"`
-	Extension       bool                  `json:"extension,omitempty"`
-	LiteType        string                `json:"liteType,omitempty"`
 	Packed          bool                  `json:"packed,omitempty"`
 	Required        bool                  `json:"required,omitempty"`
-	MapField        bool                  `json:"mapField,omitempty"`
 	Repeated        bool                  `json:"repeated,omitempty"`
+	MapField        bool                  `json:"mapField,omitempty"`
+	Extension       bool                  `json:"extension,omitempty"`
+	LiteType        string                `json:"liteType,omitempty"`
 	Name            string                `json:"name,omitempty"`
 	Number          int32                 `json:"number,omitempty"`
 }

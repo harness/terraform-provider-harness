@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This entity contains the details of the Jira Connectors
+// JIRA Connector details.
 type JiraConnector struct {
 	JiraUrl           string   `json:"jiraUrl"`
 	Username          string   `json:"username,omitempty"`

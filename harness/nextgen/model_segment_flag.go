@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -21,6 +21,8 @@ type SegmentFlag struct {
 	Name string `json:"name"`
 	// The project identifier for the feature flag
 	Project string `json:"project"`
+	// The unique identifier for this rule
+	RuleId string `json:"ruleId,omitempty"`
 	// How the the flag has been included, either directly or via a custom rule
 	Type_ string `json:"type"`
 	// The identifier for the variation of the flag that should be served to members of the group

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -31,12 +31,12 @@ type GitSyncErrorsApiService service
 GitSyncErrorsApiService Get Errors Count for the given scope, Repo and Branch
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *GitSyncErrorsApiGetGitSyncErrorsCountOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "SearchTerm" (optional.String) -  Search Term
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "SearchTerm" (optional.String) -  Search Term.
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoGitSyncErrorCount
 */
@@ -187,15 +187,15 @@ func (a *GitSyncErrorsApiService) GetGitSyncErrorsCount(ctx context.Context, loc
 GitSyncErrorsApiService Lists Git to Harness Errors by file or connectivity errors for the given scope, Repo and Branch
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *GitSyncErrorsApiListGitSyncErrorsOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "SearchTerm" (optional.String) -  Search Term
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "SearchTerm" (optional.String) -  Search Term.
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "GitToHarness" (optional.Bool) -  This specifies which errors to show - (Git to Harness or Connectivity), Put true to show Git to Harness Errors
 @return ResponseDtoPageResponseGitSyncError
@@ -364,14 +364,14 @@ GitSyncErrorsApiService Lists Git to Harness Errors for the given Commit Id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param commitId Commit Id
  * @param optional nil or *GitSyncErrorsApiListGitToHarnessErrorForCommitOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
 @return ResponseDtoPageResponseGitSyncError
 */
@@ -531,15 +531,15 @@ func (a *GitSyncErrorsApiService) ListGitToHarnessErrorForCommit(ctx context.Con
 GitSyncErrorsApiService Lists Git to Harness Errors grouped by Commits for the given scope, Repo and Branch
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *GitSyncErrorsApiListGitToHarnessErrorsGroupedByCommitsOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "SearchTerm" (optional.String) -  Search Term
-     * @param "Branch" (optional.String) -  Branch Name
-     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "SearchTerm" (optional.String) -  Search Term.
+     * @param "Branch" (optional.String) -  Name of the branch.
+     * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
      * @param "NumberOfErrorsInSummary" (optional.Int32) -  Number of errors that will be displayed in the summary
 @return ResponseDtoPageResponseGitSyncErrorAggregateByCommit

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -31,10 +31,10 @@ type UserApiService service
 UserApiService Add user(s) to given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiAddUsersOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoAddUsersResponse
 */
 
@@ -166,6 +166,7 @@ func (a *UserApiService) AddUsers(ctx context.Context, body AddUsersDto, account
 /*
 UserApiService Updates the User password
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiChangeUserPasswordOpts - Optional Parameters:
      * @param "Body" (optional.Interface of PasswordChange) -
 @return ResponseDtoPasswordChangeResponse
@@ -175,7 +176,7 @@ type UserApiChangeUserPasswordOpts struct {
 	Body optional.Interface
 }
 
-func (a *UserApiService) ChangeUserPassword(ctx context.Context, localVarOptionals *UserApiChangeUserPasswordOpts) (ResponseDtoPasswordChangeResponse, *http.Response, error) {
+func (a *UserApiService) ChangeUserPassword(ctx context.Context, accountIdentifier string, localVarOptionals *UserApiChangeUserPasswordOpts) (ResponseDtoPasswordChangeResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -191,6 +192,7 @@ func (a *UserApiService) ChangeUserPassword(ctx context.Context, localVarOptiona
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -295,11 +297,11 @@ func (a *UserApiService) ChangeUserPassword(ctx context.Context, localVarOptiona
 /*
 UserApiService Boolean status whether the user is last admin at scope or not
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiCheckIfLastAdminOpts - Optional Parameters:
      * @param "UserId" (optional.String) -  User identifier
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
@@ -433,16 +435,10 @@ func (a *UserApiService) CheckIfLastAdmin(ctx context.Context, accountIdentifier
 /*
 UserApiService Disables two-factor-auth for an user in an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *UserApiDisableTTwoFactorAuthOpts - Optional Parameters:
-     * @param "RoutingId" (optional.String) -  Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoUserInfo
 */
-
-type UserApiDisableTTwoFactorAuthOpts struct {
-	RoutingId optional.String
-}
-
-func (a *UserApiService) DisableTTwoFactorAuth(ctx context.Context, localVarOptionals *UserApiDisableTTwoFactorAuthOpts) (ResponseDtoUserInfo, *http.Response, error) {
+func (a *UserApiService) DisableTTwoFactorAuth(ctx context.Context, accountIdentifier string) (ResponseDtoUserInfo, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -458,9 +454,7 @@ func (a *UserApiService) DisableTTwoFactorAuth(ctx context.Context, localVarOpti
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.RoutingId.IsSet() {
-		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.RoutingId.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -559,18 +553,17 @@ func (a *UserApiService) DisableTTwoFactorAuth(ctx context.Context, localVarOpti
 /*
 UserApiService Enables two-factor-auth for an user in an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiEnableTwoFactorAuthOpts - Optional Parameters:
      * @param "Body" (optional.Interface of TwoFactorAuthSettingsInfo) -
-     * @param "RoutingId" (optional.String) -  Account Identifier for the Entity
 @return ResponseDtoUserInfo
 */
 
 type UserApiEnableTwoFactorAuthOpts struct {
-	Body      optional.Interface
-	RoutingId optional.String
+	Body optional.Interface
 }
 
-func (a *UserApiService) EnableTwoFactorAuth(ctx context.Context, localVarOptionals *UserApiEnableTwoFactorAuthOpts) (ResponseDtoUserInfo, *http.Response, error) {
+func (a *UserApiService) EnableTwoFactorAuth(ctx context.Context, accountIdentifier string, localVarOptionals *UserApiEnableTwoFactorAuthOpts) (ResponseDtoUserInfo, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -586,9 +579,7 @@ func (a *UserApiService) EnableTwoFactorAuth(ctx context.Context, localVarOption
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.RoutingId.IsSet() {
-		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.RoutingId.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -694,7 +685,7 @@ func (a *UserApiService) EnableTwoFactorAuth(ctx context.Context, localVarOption
 UserApiService Count of projects that are accessible to a user filtered by CreatedAt time
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiGetAccessibleProjectsCountOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "UserId" (optional.String) -  user Identifier
      * @param "StartTime" (optional.Int64) -  Start time to Filter projects by CreatedAt time
      * @param "EndTime" (optional.Int64) -  End time to Filter projects by CreatedAt time
@@ -835,10 +826,10 @@ func (a *UserApiService) GetAccessibleProjectsCount(ctx context.Context, localVa
 UserApiService Returns the user metadata along with rolesAssignments by userId and scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userId user Identifier
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiGetAggregatedUserOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserAggregate
 */
 
@@ -969,14 +960,14 @@ func (a *UserApiService) GetAggregatedUser(ctx context.Context, userId string, a
 /*
 UserApiService List of all the user&#x27;s metadata along with rolesAssignments who have access to given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiGetAggregatedUsersOpts - Optional Parameters:
      * @param "Body" (optional.Interface of AclAggregateFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "SearchTerm" (optional.String) -  Search term
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserAggregate
 */
@@ -1133,8 +1124,8 @@ UserApiService List of current gen users with the given Account Identifier
  * @param accountIdentifier This is the Account Identifier. Users corresponding to this Account will be retrieved.
  * @param optional nil or *UserApiGetCurrentGenUsersOpts - Optional Parameters:
      * @param "SearchString" (optional.String) -  This string will be used to filter the search results. Details of all the users having this string in their name or email address will be filtered.
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserMetadata
 */
@@ -1273,7 +1264,7 @@ func (a *UserApiService) GetCurrentGenUsers(ctx context.Context, accountIdentifi
 /*
 UserApiService Gets current logged in User information
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoUserInfo
 */
 func (a *UserApiService) GetCurrentUserInfo(ctx context.Context, accountIdentifier string) (ResponseDtoUserInfo, *http.Response, error) {
@@ -1391,10 +1382,11 @@ func (a *UserApiService) GetCurrentUserInfo(ctx context.Context, accountIdentifi
 /*
 UserApiService Gets two factor authentication settings information of the current logged in user
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param authMechanism This is the authentication mechanism for the logged-in User. Two-Factor Authentication settings will be fetched for this mechanism.
 @return ResponseDtoTwoFactorAuthSettingsInfo
 */
-func (a *UserApiService) GetTwoFactorAuthSettings(ctx context.Context, authMechanism string) (ResponseDtoTwoFactorAuthSettingsInfo, *http.Response, error) {
+func (a *UserApiService) GetTwoFactorAuthSettings(ctx context.Context, accountIdentifier string, authMechanism string) (ResponseDtoTwoFactorAuthSettingsInfo, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -1411,6 +1403,7 @@ func (a *UserApiService) GetTwoFactorAuthSettings(ctx context.Context, authMecha
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -1510,7 +1503,7 @@ func (a *UserApiService) GetTwoFactorAuthSettings(ctx context.Context, authMecha
 UserApiService list of project(s) of current user in the passed account Id in form of List
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiGetUserAllProjectsInfoOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -  Account Identifier for the Entity
+     * @param "AccountId" (optional.String) -  Account Identifier for the Entity.
      * @param "UserId" (optional.String) -  User Identifier
 @return ResponseDtoListProject
 */
@@ -1642,8 +1635,8 @@ UserApiService Retrieves the list of projects of the current user corresponding 
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *UserApiGetUserProjectInfoOpts - Optional Parameters:
      * @param "AccountId" (optional.String) -  This is the Account Identifier. Details of all the Projects within the scope of this Account will be fetched.
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseProject
 */
@@ -1781,13 +1774,13 @@ func (a *UserApiService) GetUserProjectInfo(ctx context.Context, localVarOptiona
 /*
 UserApiService List of user&#x27;s Metadata for a given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiGetUsersOpts - Optional Parameters:
      * @param "Body" (optional.Interface of UserFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseUserMetadata
 */
@@ -1938,10 +1931,10 @@ func (a *UserApiService) GetUsers(ctx context.Context, accountIdentifier string,
 UserApiService Remove user as the collaborator from the scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userId user Identifier
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiRemoveUserOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
@@ -2073,10 +2066,10 @@ func (a *UserApiService) RemoveUser(ctx context.Context, userId string, accountI
 UserApiService unlock user in a given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param userId user Identifier
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiUnlockUserOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoUserInfo
 */
 
@@ -2207,6 +2200,7 @@ func (a *UserApiService) UnlockUser(ctx context.Context, userId string, accountI
 /*
 UserApiService Updates the User information
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *UserApiUpdateUserInfoOpts - Optional Parameters:
      * @param "Body" (optional.Interface of UserInfo) -
 @return ResponseDtoUserInfo
@@ -2216,7 +2210,7 @@ type UserApiUpdateUserInfoOpts struct {
 	Body optional.Interface
 }
 
-func (a *UserApiService) UpdateUserInfo(ctx context.Context, localVarOptionals *UserApiUpdateUserInfoOpts) (ResponseDtoUserInfo, *http.Response, error) {
+func (a *UserApiService) UpdateUserInfo(ctx context.Context, accountIdentifier string, localVarOptionals *UserApiUpdateUserInfoOpts) (ResponseDtoUserInfo, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -2232,6 +2226,7 @@ func (a *UserApiService) UpdateUserInfo(ctx context.Context, localVarOptionals *
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,6 +30,7 @@ type TokenApiService service
 /*
 TokenApiService Creates a Token
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier
  * @param optional nil or *TokenApiCreateTokenOpts - Optional Parameters:
      * @param "Body" (optional.Interface of Token) -
 @return ResponseDtoString
@@ -39,7 +40,7 @@ type TokenApiCreateTokenOpts struct {
 	Body optional.Interface
 }
 
-func (a *TokenApiService) CreateToken(ctx context.Context, localVarOptionals *TokenApiCreateTokenOpts) (ResponseDtoString, *http.Response, error) {
+func (a *TokenApiService) CreateToken(ctx context.Context, accountIdentifier string, localVarOptionals *TokenApiCreateTokenOpts) (ResponseDtoString, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -55,6 +56,7 @@ func (a *TokenApiService) CreateToken(ctx context.Context, localVarOptionals *To
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml", "text/plain"}
 
@@ -160,13 +162,13 @@ func (a *TokenApiService) CreateToken(ctx context.Context, localVarOptionals *To
 TokenApiService Deletes a Token by ID
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Token ID
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier ID of API key&#x27;s Parent Service Account
  * @param apiKeyIdentifier API key ID
  * @param optional nil or *TokenApiDeleteTokenOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
@@ -300,16 +302,16 @@ func (a *TokenApiService) DeleteToken(ctx context.Context, identifier string, ac
 /*
 TokenApiService Fetches the list of Aggregated Tokens corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier ID of API key&#x27;s Parent Service Account
  * @param apiKeyIdentifier API key ID
  * @param optional nil or *TokenApiListAggregatedTokensOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "Identifiers" (optional.Interface of []string) -  This is the list of Token IDs. Details specific to these IDs would be fetched.
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
      * @param "SearchTerm" (optional.String) -  This would be used to filter Tokens. Any Token having the specified string in its Name, ID and Tag would be filtered.
 @return ResponseDtoPageResponseTokenAggregate
@@ -465,14 +467,14 @@ func (a *TokenApiService) ListAggregatedTokens(ctx context.Context, accountIdent
 TokenApiService Rotates a Token by ID
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Token Identifier
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param apiKeyType This is the API Key type like Personal Access Key or Service Account Key.
  * @param parentIdentifier ID of API key&#x27;s Parent Service Account
  * @param apiKeyIdentifier API key ID
  * @param optional nil or *TokenApiRotateTokenOpts - Optional Parameters:
      * @param "RotateTimestamp" (optional.Int64) -  Time stamp when the Token is to be rotated
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoString
 */
 
@@ -610,6 +612,7 @@ func (a *TokenApiService) RotateToken(ctx context.Context, identifier string, ac
 /*
 TokenApiService Updates a Token by ID
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier
  * @param identifier Token ID
  * @param optional nil or *TokenApiUpdateTokenOpts - Optional Parameters:
      * @param "Body" (optional.Interface of Token) -
@@ -620,7 +623,7 @@ type TokenApiUpdateTokenOpts struct {
 	Body optional.Interface
 }
 
-func (a *TokenApiService) UpdateToken(ctx context.Context, identifier string, localVarOptionals *TokenApiUpdateTokenOpts) (ResponseDtoToken, *http.Response, error) {
+func (a *TokenApiService) UpdateToken(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *TokenApiUpdateTokenOpts) (ResponseDtoToken, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -637,6 +640,7 @@ func (a *TokenApiService) UpdateToken(ctx context.Context, identifier string, lo
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml", "text/plain"}
 

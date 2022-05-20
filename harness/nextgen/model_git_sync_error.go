@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,13 +11,13 @@ package nextgen
 
 // This contains Git Sync Error Details
 type GitSyncError struct {
-	// Account Identifier for the Entity
+	// Account Identifier for the Entity.
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	// Repo URL
+	// URL of the repository.
 	RepoUrl string `json:"repoUrl,omitempty"`
-	// Git Sync Config Id
+	// Git Sync Config Id.
 	RepoId string `json:"repoId,omitempty"`
-	// Branch Name
+	// Name of the branch.
 	BranchName string `json:"branchName,omitempty"`
 	// List of scope of the Git Sync Error
 	Scopes []Scope `json:"scopes,omitempty"`
@@ -25,7 +25,7 @@ type GitSyncError struct {
 	ChangeType string `json:"changeType,omitempty"`
 	// Complete File Path of the Entity
 	CompleteFilePath string `json:"completeFilePath,omitempty"`
-	// Entity Type
+	// Entity Type.
 	EntityType string `json:"entityType,omitempty"`
 	// Error Message
 	FailureReason string `json:"failureReason,omitempty"`
@@ -34,6 +34,7 @@ type GitSyncError struct {
 	// Type of Git Sync Error
 	ErrorType              string               `json:"errorType,omitempty"`
 	AdditionalErrorDetails *GitSyncErrorDetails `json:"additionalErrorDetails,omitempty"`
+	RepoProvider           string               `json:"repoProvider,omitempty"`
 	// Time at which the Git Sync error was logged
 	CreatedAt int64 `json:"createdAt,omitempty"`
 }

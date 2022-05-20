@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -32,9 +32,9 @@ RolesApiService Delete a Custom Role in a scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Identifier of the Role
  * @param optional nil or *RolesApiDeleteRoleOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleResponse
 */
 
@@ -130,7 +130,7 @@ func (a *RolesApiService) DeleteRole(ctx context.Context, identifier string, loc
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -150,7 +150,7 @@ func (a *RolesApiService) DeleteRole(ctx context.Context, identifier string, loc
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -180,9 +180,9 @@ RolesApiService Get a Role by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Identifier of the Role
  * @param optional nil or *RolesApiGetRoleOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleResponse
 */
 
@@ -278,7 +278,7 @@ func (a *RolesApiService) GetRole(ctx context.Context, identifier string, localV
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -298,7 +298,7 @@ func (a *RolesApiService) GetRole(ctx context.Context, identifier string, localV
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -327,12 +327,12 @@ func (a *RolesApiService) GetRole(ctx context.Context, identifier string, localV
 RolesApiService List roles in the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *RolesApiGetRoleListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "SearchTerm" (optional.String) -  Search roles by name/identifier
 @return ResponseDtoPageResponseRoleResponse
 */
@@ -444,7 +444,7 @@ func (a *RolesApiService) GetRoleList(ctx context.Context, localVarOptionals *Ro
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -464,7 +464,7 @@ func (a *RolesApiService) GetRoleList(ctx context.Context, localVarOptionals *Ro
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -494,9 +494,9 @@ RolesApiService Create a Custom Role in a scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Role entity
  * @param optional nil or *RolesApiPostRoleOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleResponse
 */
 
@@ -593,7 +593,7 @@ func (a *RolesApiService) PostRole(ctx context.Context, body Role, localVarOptio
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -613,7 +613,7 @@ func (a *RolesApiService) PostRole(ctx context.Context, body Role, localVarOptio
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -644,9 +644,9 @@ RolesApiService Update a Custom Role by identifier
  * @param body Updated Role entity
  * @param identifier Identifier of the Role
  * @param optional nil or *RolesApiPutRoleOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleResponse
 */
 
@@ -744,7 +744,7 @@ func (a *RolesApiService) PutRole(ctx context.Context, body Role, identifier str
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -764,7 +764,7 @@ func (a *RolesApiService) PutRole(ctx context.Context, body Role, identifier str
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

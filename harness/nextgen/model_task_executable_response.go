@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,22 +11,22 @@ package nextgen
 
 type TaskExecutableResponse struct {
 	UnknownFields             *UnknownFieldSet              `json:"unknownFields,omitempty"`
-	TaskIdBytes               *ByteString                   `json:"taskIdBytes,omitempty"`
-	LogKeysList               []string                      `json:"logKeysList,omitempty"`
-	LogKeysCount              int32                         `json:"logKeysCount,omitempty"`
-	UnitsList                 []string                      `json:"unitsList,omitempty"`
-	UnitsCount                int32                         `json:"unitsCount,omitempty"`
-	TaskNameBytes             *ByteString                   `json:"taskNameBytes,omitempty"`
 	Initialized               bool                          `json:"initialized,omitempty"`
 	TaskId                    string                        `json:"taskId,omitempty"`
 	TaskName                  string                        `json:"taskName,omitempty"`
-	TaskCategory              string                        `json:"taskCategory,omitempty"`
-	TaskCategoryValue         int32                         `json:"taskCategoryValue,omitempty"`
-	SerializedSize            int32                         `json:"serializedSize,omitempty"`
 	ParserForType             *ParserTaskExecutableResponse `json:"parserForType,omitempty"`
+	SerializedSize            int32                         `json:"serializedSize,omitempty"`
 	DefaultInstanceForType    *TaskExecutableResponse       `json:"defaultInstanceForType,omitempty"`
+	TaskCategoryValue         int32                         `json:"taskCategoryValue,omitempty"`
+	LogKeysCount              int32                         `json:"logKeysCount,omitempty"`
+	TaskCategory              string                        `json:"taskCategory,omitempty"`
+	TaskIdBytes               *ByteString                   `json:"taskIdBytes,omitempty"`
+	LogKeysList               []string                      `json:"logKeysList,omitempty"`
+	TaskNameBytes             *ByteString                   `json:"taskNameBytes,omitempty"`
+	UnitsList                 []string                      `json:"unitsList,omitempty"`
+	UnitsCount                int32                         `json:"unitsCount,omitempty"`
 	AllFields                 map[string]interface{}        `json:"allFields,omitempty"`
-	InitializationErrorString string                        `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                   `json:"descriptorForType,omitempty"`
+	InitializationErrorString string                        `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize    int32                         `json:"memoizedSerializedSize,omitempty"`
 }

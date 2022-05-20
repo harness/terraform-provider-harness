@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,11 +11,11 @@ package nextgen
 
 // This is the view of Account Settings in Harness.
 type AccountSettings struct {
-	// Account Identifier for the Entity
+	// Account Identifier for the Entity.
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
-	// Organization Identifier for the Entity
+	// Organization Identifier for the Entity.
 	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	// Project Identifier for the Entity
+	// Project Identifier for the Entity.
 	ProjectIdentifier string                `json:"projectIdentifier,omitempty"`
 	Config            *AccountSettingConfig `json:"config"`
 	// This is the type of resource for which Account Setting is created.

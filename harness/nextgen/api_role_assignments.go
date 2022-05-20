@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -32,9 +32,9 @@ RoleAssignmentsApiService Delete an existing role assignment by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Identifier for role assignment
  * @param optional nil or *RoleAssignmentsApiDeleteRoleAssignmentOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleAssignmentResponse
 */
 
@@ -130,7 +130,7 @@ func (a *RoleAssignmentsApiService) DeleteRoleAssignment(ctx context.Context, id
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -150,7 +150,7 @@ func (a *RoleAssignmentsApiService) DeleteRoleAssignment(ctx context.Context, id
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -180,12 +180,12 @@ RoleAssignmentsApiService List role assignments in the scope according to the gi
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Filter role assignments based on multiple parameters.
  * @param optional nil or *RoleAssignmentsApiGetFilteredRoleAssignmentListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoPageResponseRoleAssignmentResponse
 */
 
@@ -294,7 +294,7 @@ func (a *RoleAssignmentsApiService) GetFilteredRoleAssignmentList(ctx context.Co
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -314,7 +314,7 @@ func (a *RoleAssignmentsApiService) GetFilteredRoleAssignmentList(ctx context.Co
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -344,9 +344,9 @@ RoleAssignmentsApiService List role assignments in the scope according to the gi
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Filter role assignments based on multiple parameters.
  * @param optional nil or *RoleAssignmentsApiGetRoleAssignmentAggregateListOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleAssignmentAggregateResponse
 */
 
@@ -443,7 +443,7 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentAggregateList(ctx context.C
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -463,7 +463,7 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentAggregateList(ctx context.C
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -492,12 +492,12 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentAggregateList(ctx context.C
 RoleAssignmentsApiService List role assignments in the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *RoleAssignmentsApiGetRoleAssignmentListOpts - Optional Parameters:
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoPageResponseRoleAssignmentResponse
 */
 
@@ -604,7 +604,7 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentList(ctx context.Context, l
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -624,7 +624,7 @@ func (a *RoleAssignmentsApiService) GetRoleAssignmentList(ctx context.Context, l
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -654,9 +654,9 @@ RoleAssignmentsApiService Creates role assignment within the specified scope.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body These are details for the role assignment to create.
  * @param optional nil or *RoleAssignmentsApiPostRoleAssignmentOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleAssignmentResponse
 */
 
@@ -753,7 +753,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, body
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -773,7 +773,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignment(ctx context.Context, body
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -803,9 +803,9 @@ RoleAssignmentsApiService Create multiple role assignments in a scope. Returns a
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body List of role assignments to create
  * @param optional nil or *RoleAssignmentsApiPostRoleAssignmentsOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoListRoleAssignmentResponse
 */
 
@@ -902,7 +902,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, bod
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -922,7 +922,7 @@ func (a *RoleAssignmentsApiService) PostRoleAssignments(ctx context.Context, bod
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -953,9 +953,9 @@ RoleAssignmentsApiService Update existing role assignment by identifier and scop
  * @param body This has the details of the updated role assignment.
  * @param identifier Identifier of the role assignment to update
  * @param optional nil or *RoleAssignmentsApiPutRoleAssignmentOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleAssignmentResponse
 */
 
@@ -1053,7 +1053,7 @@ func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, body 
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1073,7 +1073,7 @@ func (a *RoleAssignmentsApiService) PutRoleAssignment(ctx context.Context, body 
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1103,9 +1103,9 @@ RoleAssignmentsApiService Check whether a proposed role assignment is valid.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is the details of the role assignment for validation.
  * @param optional nil or *RoleAssignmentsApiValidateRoleAssignmentOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoRoleAssignmentValidationResponse
 */
 
@@ -1202,7 +1202,7 @@ func (a *RoleAssignmentsApiService) ValidateRoleAssignment(ctx context.Context, 
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
+			var v AuthzFailure
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1222,7 +1222,7 @@ func (a *RoleAssignmentsApiService) ValidateRoleAssignment(ctx context.Context, 
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
+			var v AuthzError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

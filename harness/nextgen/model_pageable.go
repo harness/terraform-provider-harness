@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,9 +11,9 @@ package nextgen
 
 type Pageable struct {
 	Sort       *Sort `json:"sort,omitempty"`
-	PageNumber int32 `json:"pageNumber,omitempty"`
+	Unpaged    bool  `json:"unpaged,omitempty"`
 	PageSize   int32 `json:"pageSize,omitempty"`
 	Paged      bool  `json:"paged,omitempty"`
-	Unpaged    bool  `json:"unpaged,omitempty"`
+	PageNumber int32 `json:"pageNumber,omitempty"`
 	Offset     int64 `json:"offset,omitempty"`
 }

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -31,9 +31,10 @@ type SMTPApiService service
 SMTPApiService Creates SMTP config
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
+ * @param accountIdentifier
 @return ResponseDtoNgSmtp
 */
-func (a *SMTPApiService) CreateSmtpConfig(ctx context.Context, body NgSmtp) (ResponseDtoNgSmtp, *http.Response, error) {
+func (a *SMTPApiService) CreateSmtpConfig(ctx context.Context, body NgSmtp, accountIdentifier string) (ResponseDtoNgSmtp, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -49,6 +50,7 @@ func (a *SMTPApiService) CreateSmtpConfig(ctx context.Context, body NgSmtp) (Res
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 
@@ -150,9 +152,10 @@ func (a *SMTPApiService) CreateSmtpConfig(ctx context.Context, body NgSmtp) (Res
 SMTPApiService Delete Smtp Config by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Config identifier
+ * @param accountIdentifier
 @return ResponseDtoBoolean
 */
-func (a *SMTPApiService) DeleteSmtpConfig(ctx context.Context, identifier string) (ResponseDtoBoolean, *http.Response, error) {
+func (a *SMTPApiService) DeleteSmtpConfig(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -169,6 +172,7 @@ func (a *SMTPApiService) DeleteSmtpConfig(ctx context.Context, identifier string
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -268,7 +272,7 @@ func (a *SMTPApiService) DeleteSmtpConfig(ctx context.Context, identifier string
 SMTPApiService Gets Smtp config by accountId
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param optional nil or *SMTPApiGetSmtpConfigOpts - Optional Parameters:
-     * @param "AccountId" (optional.String) -  Account Identifier for the Entity
+     * @param "AccountId" (optional.String) -  Account Identifier for the Entity.
 @return ResponseDtoNgSmtp
 */
 
@@ -394,9 +398,10 @@ func (a *SMTPApiService) GetSmtpConfig(ctx context.Context, localVarOptionals *S
 SMTPApiService Updates the Smtp Config
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body
+ * @param accountIdentifier
 @return ResponseDtoNgSmtp
 */
-func (a *SMTPApiService) UpdateSmtp(ctx context.Context, body NgSmtp) (ResponseDtoNgSmtp, *http.Response, error) {
+func (a *SMTPApiService) UpdateSmtp(ctx context.Context, body NgSmtp, accountIdentifier string) (ResponseDtoNgSmtp, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -412,6 +417,7 @@ func (a *SMTPApiService) UpdateSmtp(ctx context.Context, body NgSmtp) (ResponseD
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 
@@ -513,7 +519,7 @@ func (a *SMTPApiService) UpdateSmtp(ctx context.Context, body NgSmtp) (ResponseD
 SMTPApiService Tests the config&#x27;s connectivity by sending a test email
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Attribute uuid
- * @param accountId Account Identifier for the Entity
+ * @param accountId Account Identifier for the Entity.
  * @param to
  * @param subject
  * @param body
@@ -638,7 +644,7 @@ func (a *SMTPApiService) ValidateConnectivity(ctx context.Context, identifier st
 /*
 SMTPApiService Checks whether other connectors exist with the same name
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId Account Identifier for the Entity
+ * @param accountId Account Identifier for the Entity.
  * @param optional nil or *SMTPApiValidateNameOpts - Optional Parameters:
      * @param "Name" (optional.String) -  The name of Config
 @return ResponseDtoValidationResult

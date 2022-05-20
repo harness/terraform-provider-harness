@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -38,7 +38,7 @@ var (
 	xmlCheck  = regexp.MustCompile("(?i:[application|text]/xml)")
 )
 
-// APIClient manages communication with the CD NextGen API Reference API v3.0
+// APIClient manages communication with the Harness NextGen Software Delivery Platform API Reference API v3.0
 // In most cases there should be only one, shared, APIClient.
 type APIClient struct {
 	cfg    *Configuration
@@ -60,7 +60,13 @@ type APIClient struct {
 
 	ApiKeyApi *ApiKeyApiService
 
+	AuditApi *AuditApiService
+
+	AuditFiltersApi *AuditFiltersApiService
+
 	AuthenticationSettingsApi *AuthenticationSettingsApiService
+
+	CloudCostAnomaliesApi *CloudCostAnomaliesApiService
 
 	CloudCostAutoStoppingFixedSchedulesApi *CloudCostAutoStoppingFixedSchedulesApiService
 
@@ -82,6 +88,10 @@ type APIClient struct {
 
 	ConnectorsApi *ConnectorsApiService
 
+	DelegateGroupTagsResourceApi *DelegateGroupTagsResourceApiService
+
+	DelegateTokenResourceApi *DelegateTokenResourceApiService
+
 	EnvironmentsApi *EnvironmentsApiService
 
 	ExecuteApi *ExecuteApiService
@@ -90,15 +100,15 @@ type APIClient struct {
 
 	FeatureFlagsApi *FeatureFlagsApiService
 
-	FilterApi *FilterApiService
+	FileStoreApi *FileStoreApiService
 
-	GcpClustersApi *GcpClustersApiService
+	FilterApi *FilterApiService
 
 	GitBranchesApi *GitBranchesApiService
 
-	GitSyncApi *GitSyncApiService
+	GitFullSyncApi *GitFullSyncApiService
 
-	GitSyncEntitiesApi *GitSyncEntitiesApiService
+	GitSyncApi *GitSyncApiService
 
 	GitSyncErrorsApi *GitSyncErrorsApiService
 
@@ -107,6 +117,8 @@ type APIClient struct {
 	HarnessResourceGroupApi *HarnessResourceGroupApiService
 
 	HarnessResourceTypeApi *HarnessResourceTypeApiService
+
+	HostsApi *HostsApiService
 
 	InputSetsApi *InputSetsApiService
 
@@ -158,6 +170,8 @@ type APIClient struct {
 
 	UserGroupApi *UserGroupApiService
 
+	ValidateHostApi *ValidateHostApiService
+
 	WebhookEventHandlerApi *WebhookEventHandlerApiService
 
 	WebhookTriggersApi *WebhookTriggersApiService
@@ -185,7 +199,10 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.AccountSettingApi = (*AccountSettingApiService)(&c.common)
 	c.AccountsApi = (*AccountsApiService)(&c.common)
 	c.ApiKeyApi = (*ApiKeyApiService)(&c.common)
+	c.AuditApi = (*AuditApiService)(&c.common)
+	c.AuditFiltersApi = (*AuditFiltersApiService)(&c.common)
 	c.AuthenticationSettingsApi = (*AuthenticationSettingsApiService)(&c.common)
+	c.CloudCostAnomaliesApi = (*CloudCostAnomaliesApiService)(&c.common)
 	c.CloudCostAutoStoppingFixedSchedulesApi = (*CloudCostAutoStoppingFixedSchedulesApiService)(&c.common)
 	c.CloudCostAutoStoppingLoadBalancersApi = (*CloudCostAutoStoppingLoadBalancersApiService)(&c.common)
 	c.CloudCostAutoStoppingRulesApi = (*CloudCostAutoStoppingRulesApiService)(&c.common)
@@ -196,19 +213,22 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.CloudCostRecommendationsApi = (*CloudCostRecommendationsApiService)(&c.common)
 	c.CloudCostRecommendationsDetailsApi = (*CloudCostRecommendationsDetailsApiService)(&c.common)
 	c.ConnectorsApi = (*ConnectorsApiService)(&c.common)
+	c.DelegateGroupTagsResourceApi = (*DelegateGroupTagsResourceApiService)(&c.common)
+	c.DelegateTokenResourceApi = (*DelegateTokenResourceApiService)(&c.common)
 	c.EnvironmentsApi = (*EnvironmentsApiService)(&c.common)
 	c.ExecuteApi = (*ExecuteApiService)(&c.common)
 	c.ExecutionDetailsApi = (*ExecutionDetailsApiService)(&c.common)
 	c.FeatureFlagsApi = (*FeatureFlagsApiService)(&c.common)
+	c.FileStoreApi = (*FileStoreApiService)(&c.common)
 	c.FilterApi = (*FilterApiService)(&c.common)
-	c.GcpClustersApi = (*GcpClustersApiService)(&c.common)
 	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
+	c.GitFullSyncApi = (*GitFullSyncApiService)(&c.common)
 	c.GitSyncApi = (*GitSyncApiService)(&c.common)
-	c.GitSyncEntitiesApi = (*GitSyncEntitiesApiService)(&c.common)
 	c.GitSyncErrorsApi = (*GitSyncErrorsApiService)(&c.common)
 	c.GitSyncSettingsApi = (*GitSyncSettingsApiService)(&c.common)
 	c.HarnessResourceGroupApi = (*HarnessResourceGroupApiService)(&c.common)
 	c.HarnessResourceTypeApi = (*HarnessResourceTypeApiService)(&c.common)
+	c.HostsApi = (*HostsApiService)(&c.common)
 	c.InputSetsApi = (*InputSetsApiService)(&c.common)
 	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
@@ -234,6 +254,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.UsageApi = (*UsageApiService)(&c.common)
 	c.UserApi = (*UserApiService)(&c.common)
 	c.UserGroupApi = (*UserGroupApiService)(&c.common)
+	c.ValidateHostApi = (*ValidateHostApiService)(&c.common)
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 	c.WebhookTriggersApi = (*WebhookTriggersApiService)(&c.common)
 

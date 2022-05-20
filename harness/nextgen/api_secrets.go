@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -31,10 +31,10 @@ type SecretsApiService service
 SecretsApiService Deletes Secret by ID and Scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Secret ID
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiDeleteSecretV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
@@ -166,10 +166,10 @@ func (a *SecretsApiService) DeleteSecretV2(ctx context.Context, identifier strin
 SecretsApiService Get the Secret by ID and Scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Secret ID
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiGetSecretV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoSecretResponse
 */
 
@@ -300,10 +300,10 @@ func (a *SecretsApiService) GetSecretV2(ctx context.Context, identifier string, 
 /*
 SecretsApiService Fetches the list of Secrets corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiListSecretsV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "Identifiers" (optional.Interface of []string) -  This is the list of Secret IDs. Details specific to these IDs would be fetched.
      * @param "Type_" (optional.String) -  Type of Secret whether it is SecretFile, SecretText or SSH key
      * @param "SearchTerm" (optional.String) -  Filter Secrets based on name, Identifier and tags by this search term
@@ -473,11 +473,11 @@ func (a *SecretsApiService) ListSecretsV2(ctx context.Context, accountIdentifier
 /*
 SecretsApiService Fetches the list of Secrets corresponding to the request&#x27;s filter criteria.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiListSecretsV3Opts - Optional Parameters:
      * @param "Body" (optional.Interface of SecretResourceFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "PageIndex" (optional.Int32) -  Page number of navigation. The default value of 0
      * @param "PageSize" (optional.Int32) -  Number of entries per page. The default value is 100
 @return ResponseDtoPageResponseSecretResponse
@@ -625,10 +625,10 @@ func (a *SecretsApiService) ListSecretsV3(ctx context.Context, accountIdentifier
 SecretsApiService Creates a Secret at given Scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details required to create the Secret
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiPostSecretOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "PrivateSecret" (optional.Bool) -  This is a boolean value to specify if the Secret is Private. The default value is False.
 @return ResponseDtoSecretResponse
 */
@@ -765,12 +765,12 @@ func (a *SecretsApiService) PostSecret(ctx context.Context, body SecretRequestWr
 /*
 SecretsApiService Creates a Secret File
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiPostSecretFileV2Opts - Optional Parameters:
      * @param "File" (optional.Interface of interface{}) -
      * @param "Spec" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "PrivateSecret" (optional.Bool) -  This is a boolean value to specify if the Secret is Private. The default value is False.
 @return ResponseDtoSecretResponse
 */
@@ -914,10 +914,10 @@ func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentif
 SecretsApiService Creates a secret via YAML
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details required to create the Secret
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiPostSecretViaYamlOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "PrivateSecret" (optional.Bool) -  This is a boolean value to specify if the Secret is Private. The default value is False.
 @return ResponseDtoSecretResponse
 */
@@ -1054,12 +1054,12 @@ func (a *SecretsApiService) PostSecretViaYaml(ctx context.Context, body SecretRe
 /*
 SecretsApiService Updates the Secret by ID and Scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Secret ID
  * @param optional nil or *SecretsApiPutSecretOpts - Optional Parameters:
      * @param "Body" (optional.Interface of SecretRequestWrapper) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoSecretResponse
 */
 
@@ -1197,13 +1197,13 @@ func (a *SecretsApiService) PutSecret(ctx context.Context, accountIdentifier str
 /*
 SecretsApiService Updates the Secret file by ID and Scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Secret ID
  * @param optional nil or *SecretsApiPutSecretFileV2Opts - Optional Parameters:
      * @param "File" (optional.Interface of interface{}) -
      * @param "Spec" (optional.String) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoSecretResponse
 */
 
@@ -1343,11 +1343,11 @@ func (a *SecretsApiService) PutSecretFileV2(ctx context.Context, accountIdentifi
 SecretsApiService Updates the Secret by ID and Scope via YAML
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of Secret to create
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier Secret ID
  * @param optional nil or *SecretsApiPutSecretViaYamlOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoSecretResponse
 */
 
@@ -1481,10 +1481,10 @@ func (a *SecretsApiService) PutSecretViaYaml(ctx context.Context, body SecretReq
 SecretsApiService Validates Secret with the provided ID and Scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Secret type
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiValidateSecretOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "Identifier" (optional.String) -  Secret ID
 @return ResponseDtoSecretValidationResult
 */
@@ -1622,10 +1622,10 @@ func (a *SecretsApiService) ValidateSecret(ctx context.Context, body SecretValid
 SecretsApiService Checks whether the identifier is unique or not
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Secret Identifier
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *SecretsApiValidateSecretIdentifierIsUniqueOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 

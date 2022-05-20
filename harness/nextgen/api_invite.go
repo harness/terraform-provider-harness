@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,10 +30,11 @@ type InviteApiService service
 /*
 InviteApiService Delete an Invite by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param inviteId Invite Id
 @return ResponseDtoOptionalInvite
 */
-func (a *InviteApiService) DeleteInvite(ctx context.Context, inviteId string) (ResponseDtoOptionalInvite, *http.Response, error) {
+func (a *InviteApiService) DeleteInvite(ctx context.Context, accountIdentifier string, inviteId string) (ResponseDtoOptionalInvite, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -50,6 +51,7 @@ func (a *InviteApiService) DeleteInvite(ctx context.Context, inviteId string) (R
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -148,6 +150,7 @@ func (a *InviteApiService) DeleteInvite(ctx context.Context, inviteId string) (R
 /*
 InviteApiService Gets an Invite by either Invite Id or JwtToken
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *InviteApiGetInviteOpts - Optional Parameters:
      * @param "InviteId" (optional.String) -  Invitation Id
      * @param "Jwttoken" (optional.String) -  JWT Token
@@ -159,7 +162,7 @@ type InviteApiGetInviteOpts struct {
 	Jwttoken optional.String
 }
 
-func (a *InviteApiService) GetInvite(ctx context.Context, localVarOptionals *InviteApiGetInviteOpts) (ResponseDtoInvite, *http.Response, error) {
+func (a *InviteApiService) GetInvite(ctx context.Context, accountIdentifier string, localVarOptionals *InviteApiGetInviteOpts) (ResponseDtoInvite, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -175,6 +178,7 @@ func (a *InviteApiService) GetInvite(ctx context.Context, localVarOptionals *Inv
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.InviteId.IsSet() {
 		localVarQueryParams.Add("inviteId", parameterToString(localVarOptionals.InviteId.Value(), ""))
 	}
@@ -279,12 +283,12 @@ func (a *InviteApiService) GetInvite(ctx context.Context, localVarOptionals *Inv
 /*
 InviteApiService List all the Invites for a Project or Organization
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *InviteApiGetInvitesOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseInvite
 */
@@ -427,14 +431,14 @@ func (a *InviteApiService) GetInvites(ctx context.Context, accountIdentifier str
 /*
 InviteApiService List of all the Invites pending users
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *InviteApiGetPendingUsersAggregatedOpts - Optional Parameters:
      * @param "Body" (optional.Interface of AclAggregateFilter) -
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "SearchTerm" (optional.String) -  Search term
-     * @param "PageIndex" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "PageSize" (optional.Int32) -  The number of the elements to fetch
+     * @param "PageIndex" (optional.Int32) -  Number of pages.
+     * @param "PageSize" (optional.Int32) -  Number of Elements to fetch.
      * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
 @return ResponseDtoPageResponseInvite
 */
@@ -589,10 +593,10 @@ func (a *InviteApiService) GetPendingUsersAggregated(ctx context.Context, accoun
 InviteApiService Send a user Invite to either Project or Organization (Deprecated). Please use the /user/users API to invite users
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Invite to create
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *InviteApiSendInviteOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoListInviteOperationResponse
 */
 
@@ -725,7 +729,7 @@ func (a *InviteApiService) SendInvite(ctx context.Context, body CreateInvite, ac
 InviteApiService Resend the Invite email
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Details of the Updated Invite
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param inviteId Invite id
 @return ResponseDtoOptionalInvite
 */

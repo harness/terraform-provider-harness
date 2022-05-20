@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -10,21 +10,8 @@
 package nextgen
 
 type ManualIssuer struct {
-	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
-	Identifier                string                 `json:"identifier,omitempty"`
-	Initialized               bool                   `json:"initialized,omitempty"`
-	UserId                    string                 `json:"userId,omitempty"`
-	IdentifierBytes           *ByteString            `json:"identifierBytes,omitempty"`
-	TypeBytes                 *ByteString            `json:"typeBytes,omitempty"`
-	SerializedSize            int32                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserManualIssuer    `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *ManualIssuer          `json:"defaultInstanceForType,omitempty"`
-	EmailId                   string                 `json:"emailId,omitempty"`
-	EmailIdBytes              *ByteString            `json:"emailIdBytes,omitempty"`
-	UserIdBytes               *ByteString            `json:"userIdBytes,omitempty"`
-	Type_                     string                 `json:"type,omitempty"`
-	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
-	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
-	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
+	EmailId    string `json:"email_id"`
+	UserId     string `json:"user_id"`
+	Type_      string `json:"type"`
+	Identifier string `json:"identifier"`
 }

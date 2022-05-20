@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -29,14 +29,14 @@ type GitBranchesApiService service
 /*
 GitBranchesApiService Lists branches with their status(Synced, Unsynced) by Git Sync Config Id for the given scope
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param yamlGitConfigIdentifier Git Sync Config Id
+ * @param yamlGitConfigIdentifier Git Sync Config Id.
  * @param optional nil or *GitBranchesApiGetListOfBranchesWithStatusOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "Page" (optional.Int32) -  Indicates the number of pages. Results for these pages will be retrieved.
-     * @param "Size" (optional.Int32) -  The number of the elements to fetch
-     * @param "SearchTerm" (optional.String) -  Search Term
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Page" (optional.Int32) -  Number of pages.
+     * @param "Size" (optional.Int32) -  Number of Elements to fetch.
+     * @param "SearchTerm" (optional.String) -  Search Term.
      * @param "BranchSyncStatus" (optional.String) -  Used to filter out Synced and Unsynced branches
 @return ResponseDtoGitBranchList
 */
@@ -187,12 +187,12 @@ func (a *GitBranchesApiService) GetListOfBranchesWithStatus(ctx context.Context,
 /*
 GitBranchesApiService Sync the content of new Git Branch into harness with Git Sync Config Id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param repoIdentifier Git Sync Config Id
+ * @param repoIdentifier Git Sync Config Id.
  * @param optional nil or *GitBranchesApiSyncGitBranchOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity
-     * @param "Branch" (optional.String) -  Branch Name
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Branch" (optional.String) -  Name of the branch.
 @return ResponseDtoBoolean
 */
 

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -17,7 +17,7 @@ type RoleAssignmentFilter struct {
 	// Filter role assignments based on principal type
 	PrincipalTypeFilter []string `json:"principalTypeFilter,omitempty"`
 	// Filter role assignments based on principals
-	PrincipalFilter []Principal `json:"principalFilter,omitempty"`
+	PrincipalFilter []AuthzPrincipal `json:"principalFilter,omitempty"`
 	// Filter role assignments based on role assignments being harness managed
 	HarnessManagedFilter []bool `json:"harnessManagedFilter,omitempty"`
 	// Filter role assignments based on whether they are enabled or disabled

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -28,7 +28,8 @@ type AccountsApiService service
 /*
 AccountsApiService Gets an account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoAccount
 */
 func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {
@@ -48,6 +49,7 @@ func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -147,7 +149,7 @@ func (a *AccountsApiService) GetAccountNG(ctx context.Context, accountIdentifier
 AccountsApiService Update Default Experience
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is details of the Account. DefaultExperience is mandatory
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoAccount
 */
 func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Context, body Account, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {
@@ -268,7 +270,7 @@ func (a *AccountsApiService) UpdateAccountDefaultExperienceNG(ctx context.Contex
 AccountsApiService Update Account Name
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body This is details of the Account. Name is mandatory.
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoAccount
 */
 func (a *AccountsApiService) UpdateAccountNameNG(ctx context.Context, body Account, accountIdentifier string) (ResponseDtoAccount, *http.Response, error) {

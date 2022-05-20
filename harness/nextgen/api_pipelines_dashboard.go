@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -27,9 +27,9 @@ type PipelinesDashboardApiService service
 /*
 PipelinesDashboardApiService Fetches Pipeline Executions details for a given Interval and will be presented in day wise format
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param moduleInfo The module from which execution was triggered.
  * @param startTime Start Date Epoch time in ms
@@ -147,9 +147,9 @@ func (a *PipelinesDashboardApiService) GetPipelineDashboardExecution(ctx context
 /*
 PipelinesDashboardApiService Fetches Pipeline Executions details for a given Interval and will be presented in day wise format
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param moduleInfo The module from which execution was triggered.
  * @param startTime Start Date Epoch time in ms
@@ -267,9 +267,9 @@ func (a *PipelinesDashboardApiService) GetPipelineExecution(ctx context.Context,
 /*
 PipelinesDashboardApiService Fetches Pipeline Health data for a given Interval and will be presented in day wise format
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param moduleInfo The module from which execution was triggered.
  * @param startTime Start Date Epoch time in ms
@@ -387,9 +387,9 @@ func (a *PipelinesDashboardApiService) GetPipelinedHealth(ctx context.Context, a
 /*
 PipelinesDashboardApiService Fetches Pipeline Health data for a given Interval and will be presented in day wise format
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the entity.
- * @param orgIdentifier Organization Identifier for the entity.
- * @param projectIdentifier Project Identifier for the entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
  * @param pipelineIdentifier Pipeline Identifier
  * @param moduleInfo The module from which execution was triggered.
  * @param startTime Start Date Epoch time in ms

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,19 +12,19 @@ package nextgen
 type RerunInfo struct {
 	UnknownFields             *UnknownFieldSet       `json:"unknownFields,omitempty"`
 	Initialized               bool                   `json:"initialized,omitempty"`
+	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
+	ParserForType             *ParserRerunInfo       `json:"parserForType,omitempty"`
+	SerializedSize            int32                  `json:"serializedSize,omitempty"`
+	DefaultInstanceForType    *RerunInfo             `json:"defaultInstanceForType,omitempty"`
+	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
+	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
+	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
 	PrevExecutionId           string                 `json:"prevExecutionId,omitempty"`
 	PrevExecutionIdBytes      *ByteString            `json:"prevExecutionIdBytes,omitempty"`
 	PrevTriggerTypeValue      int32                  `json:"prevTriggerTypeValue,omitempty"`
 	PrevTriggerType           string                 `json:"prevTriggerType,omitempty"`
-	RootExecutionId           string                 `json:"rootExecutionId,omitempty"`
-	RootTriggerType           string                 `json:"rootTriggerType,omitempty"`
-	SerializedSize            int32                  `json:"serializedSize,omitempty"`
-	ParserForType             *ParserRerunInfo       `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *RerunInfo             `json:"defaultInstanceForType,omitempty"`
-	RootTriggerTypeValue      int32                  `json:"rootTriggerTypeValue,omitempty"`
-	RootExecutionIdBytes      *ByteString            `json:"rootExecutionIdBytes,omitempty"`
 	AllFields                 map[string]interface{} `json:"allFields,omitempty"`
-	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor            `json:"descriptorForType,omitempty"`
+	InitializationErrorString string                 `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize    int32                  `json:"memoizedSerializedSize,omitempty"`
 }

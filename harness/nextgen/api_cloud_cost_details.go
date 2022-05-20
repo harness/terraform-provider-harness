@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -30,7 +30,7 @@ type CloudCostDetailsApiService service
 CloudCostDetailsApiService Returns an overview of the cost
 Returns total cost, cost trend, and the time period based on the specified query parameters.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param perspectiveId Perspective identifier of the cost details
  * @param optional nil or *CloudCostDetailsApiCostdetailoverviewOpts - Optional Parameters:
      * @param "Body" (optional.Interface of CostDetailsQueryParams) -  Cost details query parameters.
@@ -175,7 +175,7 @@ CloudCostDetailsApiService Returns cost details in a tabular format
 Returns cost details in a tabular format based on the specified query parameters.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Cost details query parameters.
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param perspectiveId Perspective identifier of the cost details
  * @param optional nil or *CloudCostDetailsApiCostdetailtabularOpts - Optional Parameters:
      * @param "StartTime" (optional.String) -  Start time of the cost details. Should use org.joda.time.DateTime parsable format. Example, &#x27;2022-01-31&#x27;, &#x27;2022-01-31T07:54Z&#x27; or &#x27;2022-01-31T07:54:51.264Z&#x27;.  Defaults to Today - 7days
@@ -314,7 +314,7 @@ CloudCostDetailsApiService Returns cost details in a time series format
 Returns cost details in a time series format based on the specified query parameters.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Cost details query parameters.
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param perspectiveId Perspective identifier of the cost details
  * @param optional nil or *CloudCostDetailsApiCostdetailttimeseriesOpts - Optional Parameters:
      * @param "StartTime" (optional.String) -  Start time of the cost details. Should use org.joda.time.DateTime parsable format. Example, &#x27;2022-01-31&#x27;, &#x27;2022-01-31T07:54Z&#x27; or &#x27;2022-01-31T07:54:51.264Z&#x27;.  Defaults to Today - 7days

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -11,9 +11,12 @@ package nextgen
 
 // View of the Response of Merging of Input Sets of a Pipeline
 type MergeInputSetResponse struct {
-	PipelineYaml         string                      `json:"pipelineYaml,omitempty"`
-	CompletePipelineYaml string                      `json:"completePipelineYaml,omitempty"`
-	IsErrorResponse      bool                        `json:"isErrorResponse,omitempty"`
-	InputSetErrorWrapper *InputSetErrorWrapperDtopms `json:"inputSetErrorWrapper,omitempty"`
-	ErrorResponse        bool                        `json:"errorResponse,omitempty"`
+	// Merged YAML of all the Input Sets
+	PipelineYaml string `json:"pipelineYaml,omitempty"`
+	// Pipeline YAML after merging with the Input Sets
+	CompletePipelineYaml string `json:"completePipelineYaml,omitempty"`
+	// This field is true if the merging is not possible
+	IsErrorResponse      bool                  `json:"isErrorResponse,omitempty"`
+	InputSetErrorWrapper *InputSetErrorWrapper `json:"inputSetErrorWrapper,omitempty"`
+	ErrorResponse        bool                  `json:"errorResponse,omitempty"`
 }

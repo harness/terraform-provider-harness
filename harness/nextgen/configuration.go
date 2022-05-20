@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -69,7 +69,7 @@ type Configuration struct {
 	DebugLogging  bool
 }
 
-func DefaultConfiguration() *Configuration {
+func NewConfiguration() *Configuration {
 	logger := logging.NewLogger()
 	if helpers.EnvVars.DebugEnabled.Get() == "true" {
 		logger.SetLevel(log.DebugLevel)

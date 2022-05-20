@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,15 +12,15 @@ package nextgen
 type MessageOptionsOrBuilder struct {
 	MapEntry                         bool                           `json:"mapEntry,omitempty"`
 	MessageSetWireFormat             bool                           `json:"messageSetWireFormat,omitempty"`
-	Deprecated                       bool                           `json:"deprecated,omitempty"`
 	NoStandardDescriptorAccessor     bool                           `json:"noStandardDescriptorAccessor,omitempty"`
+	Deprecated                       bool                           `json:"deprecated,omitempty"`
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
 	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
 	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
-	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
 }

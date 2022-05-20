@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,17 +12,9 @@ package nextgen
 type FileOptions struct {
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
-	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
-	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
 	ParserForType                    *ParserFileOptions             `json:"parserForType,omitempty"`
+	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
 	DefaultInstanceForType           *FileOptions                   `json:"defaultInstanceForType,omitempty"`
-	JavaPackage                      string                         `json:"javaPackage,omitempty"`
-	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
-	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
-	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
-	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
-	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
-	OptimizeFor                      string                         `json:"optimizeFor,omitempty"`
 	GoPackage                        string                         `json:"goPackage,omitempty"`
 	GoPackageBytes                   *ByteString                    `json:"goPackageBytes,omitempty"`
 	CcGenericServices                bool                           `json:"ccGenericServices,omitempty"`
@@ -48,9 +40,17 @@ type FileOptions struct {
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
+	JavaPackage                      string                         `json:"javaPackage,omitempty"`
+	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
+	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
+	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
+	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
+	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
+	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
+	OptimizeFor                      string                         `json:"optimizeFor,omitempty"`
 	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
-	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
+	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
 	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
 	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

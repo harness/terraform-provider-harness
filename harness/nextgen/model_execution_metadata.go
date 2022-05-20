@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -27,11 +27,11 @@ type ExecutionMetadata struct {
 	RetryInfo                 *RetryExecutionInfo              `json:"retryInfo,omitempty"`
 	RetryInfoOrBuilder        *RetryExecutionInfoOrBuilder     `json:"retryInfoOrBuilder,omitempty"`
 	IsNotificationConfigured  bool                             `json:"isNotificationConfigured,omitempty"`
-	SerializedSize            int32                            `json:"serializedSize,omitempty"`
 	ParserForType             *ParserExecutionMetadata         `json:"parserForType,omitempty"`
+	SerializedSize            int32                            `json:"serializedSize,omitempty"`
 	DefaultInstanceForType    *ExecutionMetadata               `json:"defaultInstanceForType,omitempty"`
 	AllFields                 map[string]interface{}           `json:"allFields,omitempty"`
-	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                      `json:"descriptorForType,omitempty"`
+	InitializationErrorString string                           `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize    int32                            `json:"memoizedSerializedSize,omitempty"`
 }

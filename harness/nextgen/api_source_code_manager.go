@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -160,7 +160,7 @@ func (a *SourceCodeManagerApiService) CreateSourceCodeManager(ctx context.Contex
 SourceCodeManagerApiService Deletes the Source Code Manager corresponding to the specified Source Code Manager Id
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param identifier Source Code manager Identifier
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 func (a *SourceCodeManagerApiService) DeleteSourceCodeManager(ctx context.Context, identifier string, accountIdentifier string) (ResponseDtoBoolean, *http.Response, error) {
@@ -279,7 +279,7 @@ func (a *SourceCodeManagerApiService) DeleteSourceCodeManager(ctx context.Contex
 /*
 SourceCodeManagerApiService Lists Source Code Managers for the given account
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity
+ * @param accountIdentifier Account Identifier for the Entity.
 @return ResponseDtoListSourceCodeManager
 */
 func (a *SourceCodeManagerApiService) GetSourceCodeManagers(ctx context.Context, accountIdentifier string) (ResponseDtoListSourceCodeManager, *http.Response, error) {

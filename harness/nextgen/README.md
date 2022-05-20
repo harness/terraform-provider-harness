@@ -39,6 +39,12 @@ Class | Method | HTTP request | Description
 *ApiKeyApi* | [**ListApiKeys**](docs/ApiKeyApi.md#listapikeys) | **Get** /ng/api/apikey | Fetches the list of API Keys corresponding to the request&#x27;s filter criteria.
 *ApiKeyApi* | [**ListApiKeys1**](docs/ApiKeyApi.md#listapikeys1) | **Get** /ng/api/apikey/aggregate | Fetches the list of Aggregated API Keys corresponding to the request&#x27;s filter criteria.
 *ApiKeyApi* | [**UpdateApiKey**](docs/ApiKeyApi.md#updateapikey) | **Put** /ng/api/apikey/{identifier} | Updates API Key for the provided ID
+*AuditApi* | [**GetAuditEventList**](docs/AuditApi.md#getauditeventlist) | **Post** /audit/api/audits/list | List Audit Events
+*AuditFiltersApi* | [**DeleteAuditFilter**](docs/AuditFiltersApi.md#deleteauditfilter) | **Delete** /audit/api/auditFilters/{identifier} | Delete a Filter of type Audit by identifier
+*AuditFiltersApi* | [**GetAuditFilter**](docs/AuditFiltersApi.md#getauditfilter) | **Get** /audit/api/auditFilters/{identifier} | Gets a Filter of type Audit by identifier
+*AuditFiltersApi* | [**GetAuditFilterList**](docs/AuditFiltersApi.md#getauditfilterlist) | **Get** /audit/api/auditFilters | Get the list of Filters of type Audit satisfying the criteria (if any) in the request
+*AuditFiltersApi* | [**PostAuditFilter**](docs/AuditFiltersApi.md#postauditfilter) | **Post** /audit/api/auditFilters | Creates a Filter
+*AuditFiltersApi* | [**UpdateAuditFilter**](docs/AuditFiltersApi.md#updateauditfilter) | **Put** /audit/api/auditFilters | Updates the Filter of type Audit
 *AuthenticationSettingsApi* | [**DeleteSamlMetaData**](docs/AuthenticationSettingsApi.md#deletesamlmetadata) | **Delete** /ng/api/authentication-settings/delete-saml-metadata | Deletes SAML meta data by accountIdentifier
 *AuthenticationSettingsApi* | [**GetAuthenticationSettings**](docs/AuthenticationSettingsApi.md#getauthenticationsettings) | **Get** /ng/api/authentication-settings | Get the authentication settings by accountIdentifier
 *AuthenticationSettingsApi* | [**GetPasswordStrengthSettings**](docs/AuthenticationSettingsApi.md#getpasswordstrengthsettings) | **Get** /ng/api/authentication-settings/login-settings/password-strength | Get the password strength settings by accountIdentifier
@@ -50,6 +56,10 @@ Class | Method | HTTP request | Description
 *AuthenticationSettingsApi* | [**UpdateSamlMetaData**](docs/AuthenticationSettingsApi.md#updatesamlmetadata) | **Put** /ng/api/authentication-settings/saml-metadata-upload | Updates the SAML metadata by accountId
 *AuthenticationSettingsApi* | [**UpdateWhitelistedDomains**](docs/AuthenticationSettingsApi.md#updatewhitelisteddomains) | **Put** /ng/api/authentication-settings/whitelisted-domains | Updates the Whitelisted domains by accountIdentifier
 *AuthenticationSettingsApi* | [**UploadSamlMetaData**](docs/AuthenticationSettingsApi.md#uploadsamlmetadata) | **Post** /ng/api/authentication-settings/saml-metadata-upload | Uploads the SAML metadata by accountId
+*CloudCostAnomaliesApi* | [**GetAnomaliesSummary**](docs/CloudCostAnomaliesApi.md#getanomaliessummary) | **Post** /ccm/api/anomaly/summary | List Anomalies
+*CloudCostAnomaliesApi* | [**ListAnomalies**](docs/CloudCostAnomaliesApi.md#listanomalies) | **Post** /ccm/api/anomaly | List Anomalies
+*CloudCostAnomaliesApi* | [**ListPerspectiveAnomalies**](docs/CloudCostAnomaliesApi.md#listperspectiveanomalies) | **Post** /ccm/api/anomaly/perspective/{perspectiveId} | List Anomalies for Perspective
+*CloudCostAnomaliesApi* | [**ReportAnomalyFeedback**](docs/CloudCostAnomaliesApi.md#reportanomalyfeedback) | **Put** /ccm/api/anomaly/feedback | Report Anomaly feedback
 *CloudCostAutoStoppingFixedSchedulesApi* | [**CreateAutoStoppingSchedules**](docs/CloudCostAutoStoppingFixedSchedulesApi.md#createautostoppingschedules) | **Post** /lw/api/accounts/{account_id}/schedules | Create a fixed schedule for an AutoStopping Rule
 *CloudCostAutoStoppingFixedSchedulesApi* | [**DeleteAutoStoppingSchedule**](docs/CloudCostAutoStoppingFixedSchedulesApi.md#deleteautostoppingschedule) | **Delete** /lw/api/accounts/{account_id}/schedules/{schedule_id} | Delete a fixed schedule for AutoStopping Rule.
 *CloudCostAutoStoppingFixedSchedulesApi* | [**ListAutoStoppingSchedules**](docs/CloudCostAutoStoppingFixedSchedulesApi.md#listautostoppingschedules) | **Get** /lw/api/accounts/{account_id}/schedules | Return all the AutoStopping Rule fixed schedules
@@ -88,12 +98,14 @@ Class | Method | HTTP request | Description
 *CloudCostPerspectivesApi* | [**CreatePerspective**](docs/CloudCostPerspectivesApi.md#createperspective) | **Post** /ccm/api/perspective | Create a Perspective
 *CloudCostPerspectivesApi* | [**DeletePerspective**](docs/CloudCostPerspectivesApi.md#deleteperspective) | **Delete** /ccm/api/perspective | Delete a Perspective
 *CloudCostPerspectivesApi* | [**GetAllPerspectives**](docs/CloudCostPerspectivesApi.md#getallperspectives) | **Get** /ccm/api/perspective/getAllPerspectives | Return details of all the Perspectives
+*CloudCostPerspectivesApi* | [**GetLastPeriodCost**](docs/CloudCostPerspectivesApi.md#getlastperiodcost) | **Get** /ccm/api/perspective/lastPeriodCost | Get the last period cost for a Perspective
 *CloudCostPerspectivesApi* | [**GetPerspective**](docs/CloudCostPerspectivesApi.md#getperspective) | **Get** /ccm/api/perspective | Fetch details of a Perspective
 *CloudCostPerspectivesApi* | [**UpdatePerspective**](docs/CloudCostPerspectivesApi.md#updateperspective) | **Put** /ccm/api/perspective | Update a Perspective
 *CloudCostRecommendationsApi* | [**ListRecommendations**](docs/CloudCostRecommendationsApi.md#listrecommendations) | **Post** /ccm/api/recommendation/overview/list | Return the list of Recommendations
 *CloudCostRecommendationsApi* | [**RecommendationFilterValues**](docs/CloudCostRecommendationsApi.md#recommendationfiltervalues) | **Post** /ccm/api/recommendation/overview/filter-values | Return the list of filter values for the Recommendations
 *CloudCostRecommendationsApi* | [**RecommendationStats**](docs/CloudCostRecommendationsApi.md#recommendationstats) | **Post** /ccm/api/recommendation/overview/stats | Return Recommendations statistics
 *CloudCostRecommendationsApi* | [**RecommendationsCount**](docs/CloudCostRecommendationsApi.md#recommendationscount) | **Post** /ccm/api/recommendation/overview/count | Return the number of Recommendations
+*CloudCostRecommendationsDetailsApi* | [**EcsRecommendationDetail**](docs/CloudCostRecommendationsDetailsApi.md#ecsrecommendationdetail) | **Get** /ccm/api/recommendation/details/ecs-service | Return ECS Recommendation
 *CloudCostRecommendationsDetailsApi* | [**NodeRecommendationDetail**](docs/CloudCostRecommendationsDetailsApi.md#noderecommendationdetail) | **Get** /ccm/api/recommendation/details/node-pool | Return node pool Recommendation
 *CloudCostRecommendationsDetailsApi* | [**WorkloadRecommendationDetail**](docs/CloudCostRecommendationsDetailsApi.md#workloadrecommendationdetail) | **Get** /ccm/api/recommendation/details/workload | Return workload Recommendation
 *ConnectorsApi* | [**CreateConnector**](docs/ConnectorsApi.md#createconnector) | **Post** /ng/api/connectors | Creates a Connector
@@ -110,6 +122,14 @@ Class | Method | HTTP request | Description
 *ConnectorsApi* | [**ListConnectorByFQN**](docs/ConnectorsApi.md#listconnectorbyfqn) | **Post** /ng/api/connectors/listbyfqn | Get the list of connectors by FQN satisfying the criteria (if any) in the request
 *ConnectorsApi* | [**UpdateConnector**](docs/ConnectorsApi.md#updateconnector) | **Put** /ng/api/connectors | Updates the Connector
 *ConnectorsApi* | [**ValidateTheIdentifierIsUnique**](docs/ConnectorsApi.md#validatetheidentifierisunique) | **Get** /ng/api/connectors/validateUniqueIdentifier | Validate the Connector by Account Identifier and Connector Identifier
+*DelegateGroupTagsResourceApi* | [**AddTagsToDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#addtagstodelegategroup) | **Post** /ng/api/delegate-group-tags/{groupIdentifier} | Add given list of tags to the Delegate group
+*DelegateGroupTagsResourceApi* | [**DeleteTagsFromDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#deletetagsfromdelegategroup) | **Delete** /ng/api/delegate-group-tags/{groupIdentifier} | Deletes all tags from the Delegate group
+*DelegateGroupTagsResourceApi* | [**ListTagsForDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#listtagsfordelegategroup) | **Get** /ng/api/delegate-group-tags/{groupIdentifier} | Retrieves list of tags attached with Delegate group
+*DelegateGroupTagsResourceApi* | [**UpdateTagsOfDelegateGroup**](docs/DelegateGroupTagsResourceApi.md#updatetagsofdelegategroup) | **Put** /ng/api/delegate-group-tags/{groupIdentifier} | Clears all existing tags with delegate group and attach given set of tags to delegate group.
+*DelegateTokenResourceApi* | [**CreateDelegateToken**](docs/DelegateTokenResourceApi.md#createdelegatetoken) | **Post** /ng/api/delegate-token-ng | Creates Delegate Token.
+*DelegateTokenResourceApi* | [**GetDelegateGroupsUsingToken**](docs/DelegateTokenResourceApi.md#getdelegategroupsusingtoken) | **Get** /ng/api/delegate-token-ng/delegate-groups | Lists delegate groups that are using the specified delegate token.
+*DelegateTokenResourceApi* | [**GetDelegateTokens**](docs/DelegateTokenResourceApi.md#getdelegatetokens) | **Get** /ng/api/delegate-token-ng | Retrieves Delegate Tokens by Account, Organization, Project and status.
+*DelegateTokenResourceApi* | [**RevokeDelegateToken**](docs/DelegateTokenResourceApi.md#revokedelegatetoken) | **Put** /ng/api/delegate-token-ng | Revokes Delegate Token.
 *EnvironmentsApi* | [**CreateEnvironmentV2**](docs/EnvironmentsApi.md#createenvironmentv2) | **Post** /ng/api/environmentsV2 | Create an Environment
 *EnvironmentsApi* | [**DeleteEnvironmentV2**](docs/EnvironmentsApi.md#deleteenvironmentv2) | **Delete** /ng/api/environmentsV2/{environmentIdentifier} | Delete an Environment by identifier
 *EnvironmentsApi* | [**GetEnvironmentAccessList**](docs/EnvironmentsApi.md#getenvironmentaccesslist) | **Get** /ng/api/environmentsV2/list/access | Gets Environment Access list
@@ -126,16 +146,15 @@ Class | Method | HTTP request | Description
 *ExecuteApi* | [**PostExecuteStages**](docs/ExecuteApi.md#postexecutestages) | **Post** /pipeline/api/pipeline/execute/{identifier}/stages | Execute given Stages of a Pipeline
 *ExecuteApi* | [**PostPipelineExecuteWithInputSetList**](docs/ExecuteApi.md#postpipelineexecutewithinputsetlist) | **Post** /pipeline/api/pipeline/execute/{identifier}/inputSetList | Execute a pipeline with input set references list
 *ExecuteApi* | [**PostPipelineExecuteWithInputSetYaml**](docs/ExecuteApi.md#postpipelineexecutewithinputsetyaml) | **Post** /pipeline/api/pipeline/execute/{identifier} | Execute a pipeline with inputSet pipeline yaml
-*ExecuteApi* | [**PostPipelineExecuteWithInputSetYamlv2**](docs/ExecuteApi.md#postpipelineexecutewithinputsetyamlv2) | **Post** /pipeline/api/pipeline/execute/{identifier}/v2 | Execute a pipeline with inputSet pipeline yaml V2
 *ExecuteApi* | [**PostReExecuteStages**](docs/ExecuteApi.md#postreexecutestages) | **Post** /pipeline/api/pipeline/execute/rerun/{originalExecutionId}/{identifier}/stages | Re-run given Stages of a Pipeline
 *ExecuteApi* | [**PutHandleInterrupt**](docs/ExecuteApi.md#puthandleinterrupt) | **Put** /pipeline/api/pipeline/execute/interrupt/{planExecutionId} | Execute an Interrupt on an execution
 *ExecuteApi* | [**RePostPipelineExecuteWithInputSetYaml**](docs/ExecuteApi.md#repostpipelineexecutewithinputsetyaml) | **Post** /pipeline/api/pipeline/execute/rerun/{originalExecutionId}/{identifier} | Re Execute a pipeline with inputSet pipeline yaml
-*ExecuteApi* | [**RePostPipelineExecuteWithInputSetYamlV2**](docs/ExecuteApi.md#repostpipelineexecutewithinputsetyamlv2) | **Post** /pipeline/api/pipeline/execute/rerun/v2/{originalExecutionId}/{identifier} | Re Execute a pipeline with InputSet Pipeline YAML Version 2
 *ExecuteApi* | [**RerunPipelineWithInputSetIdentifierList**](docs/ExecuteApi.md#rerunpipelinewithinputsetidentifierlist) | **Post** /pipeline/api/pipeline/execute/rerun/{originalExecutionId}/{identifier}/inputSetList | Rerun a pipeline with given inputSet identifiers
 *ExecuteApi* | [**RetryHistory**](docs/ExecuteApi.md#retryhistory) | **Get** /pipeline/api/pipeline/execute/retryHistory/{planExecutionId} | Retry History for a given execution
 *ExecuteApi* | [**RetryPipeline**](docs/ExecuteApi.md#retrypipeline) | **Post** /pipeline/api/pipeline/execute/retry/{identifier} | Retry a executed pipeline with inputSet pipeline yaml
 *ExecuteApi* | [**StartPreFlightCheck**](docs/ExecuteApi.md#startpreflightcheck) | **Post** /pipeline/api/pipeline/execute/preflightCheck | Start Preflight Checks for a Pipeline
 *ExecutionDetailsApi* | [**GetExecutionDetail**](docs/ExecutionDetailsApi.md#getexecutiondetail) | **Get** /pipeline/api/pipelines/execution/{planExecutionId} | Get the Pipeline Execution details for given PlanExecution Id
+*ExecutionDetailsApi* | [**GetExecutionDetailV2**](docs/ExecutionDetailsApi.md#getexecutiondetailv2) | **Get** /pipeline/api/pipelines/execution/v2/{planExecutionId} | Get the Pipeline Execution details for given PlanExecution Id without full graph unless specified explicitly
 *ExecutionDetailsApi* | [**GetInputsetYaml**](docs/ExecutionDetailsApi.md#getinputsetyaml) | **Get** /pipeline/api/pipelines/execution/{planExecutionId}/inputset | Get the Input Set YAML used for given Plan Execution
 *ExecutionDetailsApi* | [**GetInputsetYamlV2**](docs/ExecutionDetailsApi.md#getinputsetyamlv2) | **Get** /pipeline/api/pipelines/execution/{planExecutionId}/inputsetV2 | Get the Input Set YAML used for given Plan Execution
 *ExecutionDetailsApi* | [**GetListOfExecutions**](docs/ExecutionDetailsApi.md#getlistofexecutions) | **Post** /pipeline/api/pipelines/execution/summary | Gets list of Executions of Pipelines for specific filters.
@@ -144,6 +163,11 @@ Class | Method | HTTP request | Description
 *FeatureFlagsApi* | [**GetAllFeatures**](docs/FeatureFlagsApi.md#getallfeatures) | **Get** /cf/admin/features | Returns all Feature Flags for the project
 *FeatureFlagsApi* | [**GetFeatureFlag**](docs/FeatureFlagsApi.md#getfeatureflag) | **Get** /cf/admin/features/{identifier} | Returns a Feature Flag
 *FeatureFlagsApi* | [**PatchFeature**](docs/FeatureFlagsApi.md#patchfeature) | **Patch** /cf/admin/features/{identifier} | Updates a Feature Flag
+*FileStoreApi* | [**Create**](docs/FileStoreApi.md#create) | **Post** /ng/api/file-store | Creates file or folder
+*FileStoreApi* | [**DeleteFile**](docs/FileStoreApi.md#deletefile) | **Delete** /ng/api/file-store/{identifier} | Delete file or folder by identifier
+*FileStoreApi* | [**DownloadFile**](docs/FileStoreApi.md#downloadfile) | **Get** /ng/api/file-store/file/{fileIdentifier}/download | Download File
+*FileStoreApi* | [**GetFolderNodes**](docs/FileStoreApi.md#getfoldernodes) | **Post** /ng/api/file-store/folder | Get Folder nodes.
+*FileStoreApi* | [**Update**](docs/FileStoreApi.md#update) | **Put** /ng/api/file-store/{identifier} | Updates file or folder
 *FilterApi* | [**DeleteFilter**](docs/FilterApi.md#deletefilter) | **Delete** /ng/api/filters/{identifier} | Delete a Filter by identifier
 *FilterApi* | [**GetConnectorListV21**](docs/FilterApi.md#getconnectorlistv21) | **Get** /ng/api/filters | Get the list of Filters satisfying the criteria (if any) in the request
 *FilterApi* | [**GetFilter**](docs/FilterApi.md#getfilter) | **Get** /ng/api/filters/{identifier} | Gets a Filter by identifier
@@ -153,23 +177,19 @@ Class | Method | HTTP request | Description
 *FilterApi* | [**PipelinepostFilter**](docs/FilterApi.md#pipelinepostfilter) | **Post** /pipeline/api/filters | Creates a Filter
 *FilterApi* | [**PipelineupdateFilter**](docs/FilterApi.md#pipelineupdatefilter) | **Put** /pipeline/api/filters | Updates the Filter
 *FilterApi* | [**PostFilter**](docs/FilterApi.md#postfilter) | **Post** /ng/api/filters | Creates a Filter
-*FilterApi* | [**ResourcegroupdeleteFilter**](docs/FilterApi.md#resourcegroupdeletefilter) | **Delete** /resourcegroup/api/filters/{identifier} | Delete a Filter by identifier
-*FilterApi* | [**ResourcegroupgetConnectorListV2**](docs/FilterApi.md#resourcegroupgetconnectorlistv2) | **Get** /resourcegroup/api/filters | Get the list of Filters satisfying the criteria (if any) in the request
-*FilterApi* | [**ResourcegroupgetFilter**](docs/FilterApi.md#resourcegroupgetfilter) | **Get** /resourcegroup/api/filters/{identifier} | Gets a Filter by identifier
-*FilterApi* | [**ResourcegrouppostFilter**](docs/FilterApi.md#resourcegrouppostfilter) | **Post** /resourcegroup/api/filters | Creates a Filter
-*FilterApi* | [**ResourcegroupupdateFilter**](docs/FilterApi.md#resourcegroupupdatefilter) | **Put** /resourcegroup/api/filters | Updates the Filter
 *FilterApi* | [**UpdateFilter**](docs/FilterApi.md#updatefilter) | **Put** /ng/api/filters | Updates the Filter
-*GcpClustersApi* | [**GetClusterNamesForGcp**](docs/GcpClustersApi.md#getclusternamesforgcp) | **Get** /ng/api/gcp/clusters | Gets gcp cluster names
 *GitBranchesApi* | [**GetListOfBranchesWithStatus**](docs/GitBranchesApi.md#getlistofbrancheswithstatus) | **Get** /ng/api/git-sync-branch/listBranchesWithStatus | Lists branches with their status(Synced, Unsynced) by Git Sync Config Id for the given scope
 *GitBranchesApi* | [**SyncGitBranch**](docs/GitBranchesApi.md#syncgitbranch) | **Post** /ng/api/git-sync-branch/sync | Sync the content of new Git Branch into harness with Git Sync Config Id
+*GitFullSyncApi* | [**CreateGitFullSyncConfig**](docs/GitFullSyncApi.md#creategitfullsyncconfig) | **Post** /ng/api/git-full-sync/config | Create Configuration for Git Full Sync for the provided scope
+*GitFullSyncApi* | [**GetGitFullSyncConfig**](docs/GitFullSyncApi.md#getgitfullsyncconfig) | **Get** /ng/api/git-full-sync/config | Fetch Configuration for Git Full Sync for the provided scope
+*GitFullSyncApi* | [**ListFullSyncFiles**](docs/GitFullSyncApi.md#listfullsyncfiles) | **Post** /ng/api/git-full-sync/files | List files in full sync along with their status
+*GitFullSyncApi* | [**TriggerFullSync**](docs/GitFullSyncApi.md#triggerfullsync) | **Post** /ng/api/git-full-sync | Trigger Full Sync
+*GitFullSyncApi* | [**UpdateGitFullSyncConfig**](docs/GitFullSyncApi.md#updategitfullsyncconfig) | **Put** /ng/api/git-full-sync/config | Update Configuration for Git Full Sync for the provided scope
 *GitSyncApi* | [**CreateGitSyncConfig**](docs/GitSyncApi.md#creategitsyncconfig) | **Post** /ng/api/git-sync | Creates Git Sync Config in given scope
 *GitSyncApi* | [**GetGitSyncConfigList**](docs/GitSyncApi.md#getgitsyncconfiglist) | **Get** /ng/api/git-sync | Lists Git Sync Config for the given scope
 *GitSyncApi* | [**IsGitSyncEnabled**](docs/GitSyncApi.md#isgitsyncenabled) | **Get** /ng/api/git-sync/git-sync-enabled | Check whether Git Sync is enabled for given scope or not
 *GitSyncApi* | [**UpdateDefaultFolder**](docs/GitSyncApi.md#updatedefaultfolder) | **Put** /ng/api/git-sync/{identifier}/folder/{folderIdentifier}/default | Update existing Git Sync Config default root folder by Identifier
 *GitSyncApi* | [**UpdateGitSyncConfig**](docs/GitSyncApi.md#updategitsyncconfig) | **Put** /ng/api/git-sync | Update existing Git Sync Config by Identifier
-*GitSyncEntitiesApi* | [**ListGitSyncEntitiesByType**](docs/GitSyncEntitiesApi.md#listgitsyncentitiesbytype) | **Get** /ng/api/git-sync-entities/{entityType} | Lists Git Sync Entity filtered by their Type for the given scope
-*GitSyncEntitiesApi* | [**ListGitSyncEntitiesSummaryForRepoAndBranch**](docs/GitSyncEntitiesApi.md#listgitsyncentitiessummaryforrepoandbranch) | **Post** /ng/api/git-sync-entities/branch/{branch} | Lists Git Sync Entity by product for the given Repo, Branch and list of Entity Types
-*GitSyncEntitiesApi* | [**ListGitSyncEntitiesSummaryForRepoAndTypes**](docs/GitSyncEntitiesApi.md#listgitsyncentitiessummaryforrepoandtypes) | **Post** /ng/api/git-sync-entities/summary | Lists Git Sync Entity by product for the given list of Repos and Entity Types
 *GitSyncErrorsApi* | [**GetGitSyncErrorsCount**](docs/GitSyncErrorsApi.md#getgitsyncerrorscount) | **Get** /ng/api/git-sync-errors/count | Get Errors Count for the given scope, Repo and Branch
 *GitSyncErrorsApi* | [**ListGitSyncErrors**](docs/GitSyncErrorsApi.md#listgitsyncerrors) | **Get** /ng/api/git-sync-errors | Lists Git to Harness Errors by file or connectivity errors for the given scope, Repo and Branch
 *GitSyncErrorsApi* | [**ListGitToHarnessErrorForCommit**](docs/GitSyncErrorsApi.md#listgittoharnesserrorforcommit) | **Get** /ng/api/git-sync-errors/commits/{commitId} | Lists Git to Harness Errors for the given Commit Id
@@ -178,12 +198,19 @@ Class | Method | HTTP request | Description
 *GitSyncSettingsApi* | [**GetGitSyncSettings**](docs/GitSyncSettingsApi.md#getgitsyncsettings) | **Get** /ng/api/git-sync-settings | Get Git Sync Setting for the given scope
 *GitSyncSettingsApi* | [**UpdateGitSyncSetting**](docs/GitSyncSettingsApi.md#updategitsyncsetting) | **Put** /ng/api/git-sync-settings | This updates the existing Git Sync settings within the scope. Only changing Connectivity Mode is allowed
 *HarnessResourceGroupApi* | [**CreateResourceGroup**](docs/HarnessResourceGroupApi.md#createresourcegroup) | **Post** /resourcegroup/api/resourcegroup | Create a resource group
+*HarnessResourceGroupApi* | [**CreateResourceGroupV2**](docs/HarnessResourceGroupApi.md#createresourcegroupv2) | **Post** /resourcegroup/api/v2/resourcegroup | Create a resource group
 *HarnessResourceGroupApi* | [**DeleteResourceGroup**](docs/HarnessResourceGroupApi.md#deleteresourcegroup) | **Delete** /resourcegroup/api/resourcegroup/{identifier} | Delete a resource group
-*HarnessResourceGroupApi* | [**GetFilterResourceGroupList**](docs/HarnessResourceGroupApi.md#getfilterresourcegrouplist) | **Post** /resourcegroup/api/resourcegroup/filter | 
+*HarnessResourceGroupApi* | [**DeleteResourceGroupV2**](docs/HarnessResourceGroupApi.md#deleteresourcegroupv2) | **Delete** /resourcegroup/api/v2/resourcegroup/{identifier} | Delete a resource group
+*HarnessResourceGroupApi* | [**GetFilterResourceGroupList**](docs/HarnessResourceGroupApi.md#getfilterresourcegrouplist) | **Post** /resourcegroup/api/resourcegroup/filter | This fetches a filtered list of Resource Groups
+*HarnessResourceGroupApi* | [**GetFilterResourceGroupListV2**](docs/HarnessResourceGroupApi.md#getfilterresourcegrouplistv2) | **Post** /resourcegroup/api/v2/resourcegroup/filter | This fetches a filtered list of Resource Groups
 *HarnessResourceGroupApi* | [**GetResourceGroup**](docs/HarnessResourceGroupApi.md#getresourcegroup) | **Get** /resourcegroup/api/resourcegroup/{identifier} | Get a resource group by identifier
 *HarnessResourceGroupApi* | [**GetResourceGroupList**](docs/HarnessResourceGroupApi.md#getresourcegrouplist) | **Get** /resourcegroup/api/resourcegroup | Get list of resource groups
+*HarnessResourceGroupApi* | [**GetResourceGroupListV2**](docs/HarnessResourceGroupApi.md#getresourcegrouplistv2) | **Get** /resourcegroup/api/v2/resourcegroup | Get list of resource groups
+*HarnessResourceGroupApi* | [**GetResourceGroupV2**](docs/HarnessResourceGroupApi.md#getresourcegroupv2) | **Get** /resourcegroup/api/v2/resourcegroup/{identifier} | Get a resource group by identifier
 *HarnessResourceGroupApi* | [**UpdateResourceGroup**](docs/HarnessResourceGroupApi.md#updateresourcegroup) | **Put** /resourcegroup/api/resourcegroup/{identifier} | Update a resource group
+*HarnessResourceGroupApi* | [**UpdateResourceGroup1**](docs/HarnessResourceGroupApi.md#updateresourcegroup1) | **Put** /resourcegroup/api/v2/resourcegroup/{identifier} | Update a resource group
 *HarnessResourceTypeApi* | [**GetResourceTypes**](docs/HarnessResourceTypeApi.md#getresourcetypes) | **Get** /resourcegroup/api/resourcetype | Gets all resource types available at this scope
+*HostsApi* | [**FilterHostsByConnector**](docs/HostsApi.md#filterhostsbyconnector) | **Post** /ng/api/hosts/filter | Gets the list of hosts filtered by accountIdentifier and connectorIdentifier
 *InputSetsApi* | [**DeleteInputSet**](docs/InputSetsApi.md#deleteinputset) | **Delete** /pipeline/api/inputSets/{inputSetIdentifier} | Delete the Input Set by Identifier
 *InputSetsApi* | [**GetInputSet**](docs/InputSetsApi.md#getinputset) | **Get** /pipeline/api/inputSets/{inputSetIdentifier} | Gets Input Set for a given identifier. Throws error if no Input Set exists for the given identifier.
 *InputSetsApi* | [**GetOverlayInputSet**](docs/InputSetsApi.md#getoverlayinputset) | **Get** /pipeline/api/inputSets/overlay/{inputSetIdentifier} | Gets an Overlay Input Set by identifier
@@ -217,20 +244,19 @@ Class | Method | HTTP request | Description
 *OrganizationApi* | [**PutOrganization**](docs/OrganizationApi.md#putorganization) | **Put** /ng/api/organizations/{identifier} | Updates the Organization
 *PermissionsApi* | [**GetPermissionList**](docs/PermissionsApi.md#getpermissionlist) | **Get** /authz/api/permissions | Get all permissions in a scope or all permissions in the system.
 *PermissionsApi* | [**GetPermissionResourceTypesList**](docs/PermissionsApi.md#getpermissionresourcetypeslist) | **Get** /authz/api/permissions/resourcetypes | Get all resource types for permissions in a scope or in the system.
-*PipelinesApi* | [**CreateVariables**](docs/PipelinesApi.md#createvariables) | **Post** /pipeline/api/pipelines/variables | Get all the Variables which can be used as expression in the Pipeline.
 *PipelinesApi* | [**DeletePipeline**](docs/PipelinesApi.md#deletepipeline) | **Delete** /pipeline/api/pipelines/{pipelineIdentifier} | Deletes a Pipeline
 *PipelinesApi* | [**GetExecutionNode**](docs/PipelinesApi.md#getexecutionnode) | **Get** /pipeline/api/pipelines/getExecutionNode | Get the Execution Node by Execution Id
 *PipelinesApi* | [**GetExpandedPipelineJSON**](docs/PipelinesApi.md#getexpandedpipelinejson) | **Get** /pipeline/api/pipelines/expandedJSON/{pipelineIdentifier} | Gets Pipeline JSON with extra info for some fields
-*PipelinesApi* | [**GetNotificationSchema**](docs/PipelinesApi.md#getnotificationschema) | **Get** /pipeline/api/pipelines/notification | 
 *PipelinesApi* | [**GetPipeline**](docs/PipelinesApi.md#getpipeline) | **Get** /pipeline/api/pipelines/{pipelineIdentifier} | Gets a Pipeline by identifier
 *PipelinesApi* | [**GetPipelineList**](docs/PipelinesApi.md#getpipelinelist) | **Post** /pipeline/api/pipelines/list | List of pipelines
 *PipelinesApi* | [**GetPipelineSummary**](docs/PipelinesApi.md#getpipelinesummary) | **Get** /pipeline/api/pipelines/summary/{pipelineIdentifier} | Gets pipeline summary by pipeline identifier
 *PipelinesApi* | [**GetStepsV2**](docs/PipelinesApi.md#getstepsv2) | **Post** /pipeline/api/pipelines/v2/steps | Gets all the Steps for given Category (V2 Version)
 *PipelinesApi* | [**PostPipeline**](docs/PipelinesApi.md#postpipeline) | **Post** /pipeline/api/pipelines | Create a Pipeline
-*PipelinesApi* | [**PostPipelineV2**](docs/PipelinesApi.md#postpipelinev2) | **Post** /pipeline/api/pipelines/v2 | Create a Pipeline API (V2 Version)
-*PipelinesApi* | [**RefreshFFCache**](docs/PipelinesApi.md#refreshffcache) | **Get** /pipeline/api/pipelines/ffCache/refresh | Refresh the feature flag cache
+*PipelinesApi* | [**PostPipeline1**](docs/PipelinesApi.md#postpipeline1) | **Post** /pipeline/api/pipelines/validate-yaml-with-schema | Validate a Pipeline YAML with Schema
+*PipelinesApi* | [**PostPipeline2**](docs/PipelinesApi.md#postpipeline2) | **Post** /pipeline/api/pipelines/validate-pipeline-with-schema | Validate a Pipeline with Schema
+*PipelinesApi* | [**PostPipelineV2**](docs/PipelinesApi.md#postpipelinev2) | **Post** /pipeline/api/pipelines/v2 | Create a Pipeline API With Governance Checks
 *PipelinesApi* | [**UpdatePipeline**](docs/PipelinesApi.md#updatepipeline) | **Put** /pipeline/api/pipelines/{pipelineIdentifier} | Update a Pipeline by identifier
-*PipelinesApi* | [**UpdatePipelineV2**](docs/PipelinesApi.md#updatepipelinev2) | **Put** /pipeline/api/pipelines/v2/{pipelineIdentifier} | Updates a Pipeline by identifier (V2 Version)
+*PipelinesApi* | [**UpdatePipelineV2**](docs/PipelinesApi.md#updatepipelinev2) | **Put** /pipeline/api/pipelines/v2/{pipelineIdentifier} | Updates a Pipeline by identifier with Governance checks
 *PipelinesDashboardApi* | [**GetPipelineDashboardExecution**](docs/PipelinesDashboardApi.md#getpipelinedashboardexecution) | **Get** /pipeline/api/dashboard/pipelineExecution | Fetches Pipeline Executions details for a given Interval and will be presented in day wise format
 *PipelinesDashboardApi* | [**GetPipelineExecution**](docs/PipelinesDashboardApi.md#getpipelineexecution) | **Get** /pipeline/api/pipelines/pipelineExecution | Fetches Pipeline Executions details for a given Interval and will be presented in day wise format
 *PipelinesDashboardApi* | [**GetPipelinedHealth**](docs/PipelinesDashboardApi.md#getpipelinedhealth) | **Get** /pipeline/api/pipelines/pipelineHealth | Fetches Pipeline Health data for a given Interval and will be presented in day wise format 
@@ -323,13 +349,16 @@ Class | Method | HTTP request | Description
 *TokenApi* | [**UpdateToken**](docs/TokenApi.md#updatetoken) | **Put** /ng/api/token/{identifier} | Updates a Token by ID
 *TriggersApi* | [**CreateTrigger**](docs/TriggersApi.md#createtrigger) | **Post** /pipeline/api/triggers | Creates Trigger for triggering target pipeline identifier.
 *TriggersApi* | [**DeleteTrigger**](docs/TriggersApi.md#deletetrigger) | **Delete** /pipeline/api/triggers/{triggerIdentifier} | Deletes Trigger by identifier.
-*TriggersApi* | [**GenerateWebhookToken**](docs/TriggersApi.md#generatewebhooktoken) | **Get** /pipeline/api/triggers/regenerateToken | Generates random webhook token for new triggers.
 *TriggersApi* | [**GetListForTarget**](docs/TriggersApi.md#getlistfortarget) | **Get** /pipeline/api/triggers | Gets the paginated list of triggers for accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier.
 *TriggersApi* | [**GetTrigger**](docs/TriggersApi.md#gettrigger) | **Get** /pipeline/api/triggers/{triggerIdentifier} | Gets the trigger by accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier and triggerIdentifier.
 *TriggersApi* | [**GetTriggerDetails**](docs/TriggersApi.md#gettriggerdetails) | **Get** /pipeline/api/triggers/{triggerIdentifier}/details | Fetches Trigger details for a specific accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier, triggerIdentifier.
 *TriggersApi* | [**UpdateTrigger**](docs/TriggersApi.md#updatetrigger) | **Put** /pipeline/api/triggers/{triggerIdentifier} | Updates trigger for pipeline with target pipeline identifier.
 *TriggersApi* | [**UpdateTriggerStatus**](docs/TriggersApi.md#updatetriggerstatus) | **Put** /pipeline/api/triggers/{triggerIdentifier}/status | Activates or deactivate trigger for pipeline with target pipeline identifier.
+*UsageApi* | [**CcmgetCDLicenseUsageForServiceInstances**](docs/UsageApi.md#ccmgetcdlicenseusageforserviceinstances) | **Get** /ccm/api/usage/CD/serviceInstancesLicense | Gets License Usage By Module, Timestamp, and Account Identifier
+*UsageApi* | [**CcmgetCDLicenseUsageForServices**](docs/UsageApi.md#ccmgetcdlicenseusageforservices) | **Get** /ccm/api/usage/CD/servicesLicense | Gets License Usage By Module, Timestamp, and Account Identifier
 *UsageApi* | [**CcmgetLicenseUsage**](docs/UsageApi.md#ccmgetlicenseusage) | **Get** /ccm/api/usage/{module} | Gets License Usage By Module, Timestamp, and Account Identifier
+*UsageApi* | [**GetCDLicenseUsageForServiceInstances**](docs/UsageApi.md#getcdlicenseusageforserviceinstances) | **Get** /ng/api/usage/CD/serviceInstancesLicense | Gets License Usage By Module, Timestamp, and Account Identifier
+*UsageApi* | [**GetCDLicenseUsageForServices**](docs/UsageApi.md#getcdlicenseusageforservices) | **Get** /ng/api/usage/CD/servicesLicense | Gets License Usage By Module, Timestamp, and Account Identifier
 *UsageApi* | [**GetLicenseUsage**](docs/UsageApi.md#getlicenseusage) | **Get** /ng/api/usage/{module} | Gets License Usage By Module, Timestamp, and Account Identifier
 *UserApi* | [**AddUsers**](docs/UserApi.md#addusers) | **Post** /ng/api/user/users | Add user(s) to given scope
 *UserApi* | [**ChangeUserPassword**](docs/UserApi.md#changeuserpassword) | **Put** /ng/api/user/password | Updates the User password
@@ -361,19 +390,9 @@ Class | Method | HTTP request | Description
 *UserGroupApi* | [**PutMember**](docs/UserGroupApi.md#putmember) | **Put** /ng/api/user-groups/{identifier}/member/{userIdentifier} | Add a user to the user group in an account/org/project
 *UserGroupApi* | [**PutUserGroup**](docs/UserGroupApi.md#putusergroup) | **Put** /ng/api/user-groups | Update a User Group in an account/org/project
 *UserGroupApi* | [**UnlinkUserGroupfromSSO**](docs/UserGroupApi.md#unlinkusergroupfromsso) | **Put** /ng/api/user-groups/{userGroupId}/unlink | Unlink SSO Group from the User Group in an account/org/project
+*ValidateHostApi* | [**ValidateSshHosts**](docs/ValidateHostApi.md#validatesshhosts) | **Post** /ng/api/host-validation/ssh | Validates hosts connectivity using SSH credentials
 *WebhookEventHandlerApi* | [**ProcessWebhookEvent**](docs/WebhookEventHandlerApi.md#processwebhookevent) | **Post** /ng/api/webhook | Process event payload for webhook triggers.
 *WebhookTriggersApi* | [**FetchWebhookDetails**](docs/WebhookTriggersApi.md#fetchwebhookdetails) | **Get** /pipeline/api/webhook/triggerProcessingDetails | Gets webhook event processing details for input eventId.
-*WebhookTriggersApi* | [**GetActionsList**](docs/WebhookTriggersApi.md#getactionslist) | **Get** /pipeline/api/webhook/actions | Get all supported actions for event type and source.
-*WebhookTriggersApi* | [**GetBitbucketPRActions**](docs/WebhookTriggersApi.md#getbitbucketpractions) | **Get** /pipeline/api/webhook/bitbucketPRActions | Gets all supported Bitbucket PR event actions.
-*WebhookTriggersApi* | [**GetBitbucketTriggerEvents**](docs/WebhookTriggersApi.md#getbitbuckettriggerevents) | **Get** /pipeline/api/webhook/bitbucketTriggerEvents | Gets all supported Bitbucket trigger events.
-*WebhookTriggersApi* | [**GetGitTriggerEventDetails**](docs/WebhookTriggersApi.md#getgittriggereventdetails) | **Get** /pipeline/api/webhook/gitTriggerEventDetails | Gets trigger git actions for each supported event.
-*WebhookTriggersApi* | [**GetGithubIssueCommentActions**](docs/WebhookTriggersApi.md#getgithubissuecommentactions) | **Get** /pipeline/api/webhook/githubIssueCommentActions | Gets all supported Github Issue comment event actions
-*WebhookTriggersApi* | [**GetGithubPRActions**](docs/WebhookTriggersApi.md#getgithubpractions) | **Get** /pipeline/api/webhook/githubPRActions | Gets all supported Github PR event actions
-*WebhookTriggersApi* | [**GetGithubTriggerEvents**](docs/WebhookTriggersApi.md#getgithubtriggerevents) | **Get** /pipeline/api/webhook/githubTriggerEvents | Gets all supported Github trigger events.
-*WebhookTriggersApi* | [**GetGitlabPRActions**](docs/WebhookTriggersApi.md#getgitlabpractions) | **Get** /pipeline/api/webhook/gitlabPRActions | Gets all supported GitLab PR event actions.
-*WebhookTriggersApi* | [**GetGitlabTriggerEvents**](docs/WebhookTriggersApi.md#getgitlabtriggerevents) | **Get** /pipeline/api/webhook/gitlabTriggerEvents | Gets all supported Gitlab trigger events.
-*WebhookTriggersApi* | [**GetSourceRepos**](docs/WebhookTriggersApi.md#getsourcerepos) | **Get** /pipeline/api/webhook/sourceRepos | Gets source repo types with all supported events.
-*WebhookTriggersApi* | [**GetWebhookTriggerTypes**](docs/WebhookTriggersApi.md#getwebhooktriggertypes) | **Get** /pipeline/api/webhook/webhookTriggerTypes | Gets all supported scm webhook type.
 *WebhookTriggersApi* | [**PipelineprocessWebhookEvent**](docs/WebhookTriggersApi.md#pipelineprocesswebhookevent) | **Post** /pipeline/api/webhook/trigger | Handles event payload for webhook triggers.
 *WebhookTriggersApi* | [**ProcessCustomWebhookEvent**](docs/WebhookTriggersApi.md#processcustomwebhookevent) | **Post** /pipeline/api/webhook/custom | Handles event payload for custom webhook triggers.
 
@@ -400,9 +419,13 @@ Class | Method | HTTP request | Description
  - [AddUsersDto](docs/AddUsersDto.md)
  - [AddUsersResponse](docs/AddUsersResponse.md)
  - [AdviserIssuer](docs/AdviserIssuer.md)
- - [AdviserIssuerOrBuilder](docs/AdviserIssuerOrBuilder.md)
  - [AlertThreshold](docs/AlertThreshold.md)
  - [AllResourcesOfAccountResponse](docs/AllResourcesOfAccountResponse.md)
+ - [AnomalyData](docs/AnomalyData.md)
+ - [AnomalyFeedback](docs/AnomalyFeedback.md)
+ - [AnomalyQueryDto](docs/AnomalyQueryDto.md)
+ - [AnomalySummary](docs/AnomalySummary.md)
+ - [ApiFilestoreBody](docs/ApiFilestoreBody.md)
  - [ApiKey](docs/ApiKey.md)
  - [ApiKeyAggregate](docs/ApiKeyAggregate.md)
  - [ApiKeys](docs/ApiKeys.md)
@@ -418,10 +441,18 @@ Class | Method | HTTP request | Description
  - [AuditEventData](docs/AuditEventData.md)
  - [AuditEventDto](docs/AuditEventDto.md)
  - [AuditFilterProperties](docs/AuditFilterProperties.md)
+ - [AuditPrincipal](docs/AuditPrincipal.md)
+ - [AuditResource](docs/AuditResource.md)
+ - [AuditResourceScope](docs/AuditResourceScope.md)
+ - [AuditRoleBinding](docs/AuditRoleBinding.md)
  - [AuthenticationInfoDto](docs/AuthenticationInfoDto.md)
  - [AuthenticationSettingsResponse](docs/AuthenticationSettingsResponse.md)
  - [AuthenticationsettingsSamlmetadatauploadBody](docs/AuthenticationsettingsSamlmetadatauploadBody.md)
  - [AuthenticationsettingsSamlmetadatauploadBody1](docs/AuthenticationsettingsSamlmetadatauploadBody1.md)
+ - [AuthzError](docs/AuthzError.md)
+ - [AuthzFailure](docs/AuthzFailure.md)
+ - [AuthzPrincipal](docs/AuthzPrincipal.md)
+ - [AuthzResponseMessage](docs/AuthzResponseMessage.md)
  - [AuthzValidationResult](docs/AuthzValidationResult.md)
  - [AwsCodeCommitAuthentication](docs/AwsCodeCommitAuthentication.md)
  - [AwsCodeCommitConnector](docs/AwsCodeCommitConnector.md)
@@ -446,7 +477,29 @@ Class | Method | HTTP request | Description
  - [AwsSmCredentialSpecAssumeIam](docs/AwsSmCredentialSpecAssumeIam.md)
  - [AwsSmCredentialSpecAssumeSts](docs/AwsSmCredentialSpecAssumeSts.md)
  - [AwsSmCredentialSpecManualConfig](docs/AwsSmCredentialSpecManualConfig.md)
+ - [AzureAuth](docs/AzureAuth.md)
+ - [AzureAuthCredential](docs/AzureAuthCredential.md)
+ - [AzureClientKeyCert](docs/AzureClientKeyCert.md)
+ - [AzureClientSecretKey](docs/AzureClientSecretKey.md)
+ - [AzureConnector](docs/AzureConnector.md)
+ - [AzureCredential](docs/AzureCredential.md)
+ - [AzureCredentialSpec](docs/AzureCredentialSpec.md)
+ - [AzureInheritFromDelegateDetails](docs/AzureInheritFromDelegateDetails.md)
  - [AzureKeyVaultConnector](docs/AzureKeyVaultConnector.md)
+ - [AzureManualDetails](docs/AzureManualDetails.md)
+ - [AzureMsiAuth](docs/AzureMsiAuth.md)
+ - [AzureRepoApiAccess](docs/AzureRepoApiAccess.md)
+ - [AzureRepoApiAccessSpec](docs/AzureRepoApiAccessSpec.md)
+ - [AzureRepoAuthentication](docs/AzureRepoAuthentication.md)
+ - [AzureRepoConfig](docs/AzureRepoConfig.md)
+ - [AzureRepoCredentials](docs/AzureRepoCredentials.md)
+ - [AzureRepoHttpCredentials](docs/AzureRepoHttpCredentials.md)
+ - [AzureRepoHttpCredentialsSpec](docs/AzureRepoHttpCredentialsSpec.md)
+ - [AzureRepoSshCredentials](docs/AzureRepoSshCredentials.md)
+ - [AzureRepoTokenSpec](docs/AzureRepoTokenSpec.md)
+ - [AzureRepoUsernameToken](docs/AzureRepoUsernameToken.md)
+ - [AzureSystemAssignedMsiAuth](docs/AzureSystemAssignedMsiAuth.md)
+ - [AzureUserAssignedMsiAuth](docs/AzureUserAssignedMsiAuth.md)
  - [BaseSshSpec](docs/BaseSshSpec.md)
  - [BillingExportSpec](docs/BillingExportSpec.md)
  - [BitbucketApiAccess](docs/BitbucketApiAccess.md)
@@ -464,7 +517,13 @@ Class | Method | HTTP request | Description
  - [BudgetScope](docs/BudgetScope.md)
  - [BuildDetails](docs/BuildDetails.md)
  - [ByteString](docs/ByteString.md)
+ - [CcmAggregation](docs/CcmAggregation.md)
  - [CcmConnectorFilter](docs/CcmConnectorFilter.md)
+ - [CcmFilter](docs/CcmFilter.md)
+ - [CcmGroupBy](docs/CcmGroupBy.md)
+ - [CcmNumberFilter](docs/CcmNumberFilter.md)
+ - [CcmSort](docs/CcmSort.md)
+ - [CcmTimeFilter](docs/CcmTimeFilter.md)
  - [CdLicenseSummary](docs/CdLicenseSummary.md)
  - [CdModuleLicense](docs/CdModuleLicense.md)
  - [CeAwsConnector](docs/CeAwsConnector.md)
@@ -529,7 +588,16 @@ Class | Method | HTTP request | Description
  - [DashboardPipelineHealth](docs/DashboardPipelineHealth.md)
  - [DataPoint](docs/DataPoint.md)
  - [DatadogConnectorDto](docs/DatadogConnectorDto.md)
+ - [DelegateConnectionDetails](docs/DelegateConnectionDetails.md)
+ - [DelegateGroupDetails](docs/DelegateGroupDetails.md)
+ - [DelegateGroupDto](docs/DelegateGroupDto.md)
+ - [DelegateGroupListing](docs/DelegateGroupListing.md)
+ - [DelegateGroupTags](docs/DelegateGroupTags.md)
  - [DelegateInfo](docs/DelegateInfo.md)
+ - [DelegateInner](docs/DelegateInner.md)
+ - [DelegateInsightsBarDetails](docs/DelegateInsightsBarDetails.md)
+ - [DelegateInsightsDetails](docs/DelegateInsightsDetails.md)
+ - [DelegateTokenDetails](docs/DelegateTokenDetails.md)
  - [DeleteAccessPointPayload](docs/DeleteAccessPointPayload.md)
  - [Descriptor](docs/Descriptor.md)
  - [DescriptorProto](docs/DescriptorProto.md)
@@ -541,12 +609,13 @@ Class | Method | HTTP request | Description
  - [DockerUserNamePassword](docs/DockerUserNamePassword.md)
  - [DynamicResourceSelector](docs/DynamicResourceSelector.md)
  - [DynatraceConnectorDto](docs/DynatraceConnectorDto.md)
+ - [EcsRecommendationDto](docs/EcsRecommendationDto.md)
  - [EdgeLayoutList](docs/EdgeLayoutList.md)
  - [EditionAction](docs/EditionAction.md)
  - [EmailConfigDto](docs/EmailConfigDto.md)
  - [EmbeddedUser](docs/EmbeddedUser.md)
  - [EntityGitDetails](docs/EntityGitDetails.md)
- - [EntityReference](docs/EntityReference.md)
+ - [EntityInfo](docs/EntityInfo.md)
  - [EnumDescriptor](docs/EnumDescriptor.md)
  - [EnumDescriptorProto](docs/EnumDescriptorProto.md)
  - [EnumDescriptorProtoOrBuilder](docs/EnumDescriptorProtoOrBuilder.md)
@@ -562,6 +631,7 @@ Class | Method | HTTP request | Description
  - [Environment](docs/Environment.md)
  - [EnvironmentRequest](docs/EnvironmentRequest.md)
  - [EnvironmentResponse](docs/EnvironmentResponse.md)
+ - [EnvironmentResponseDetails](docs/EnvironmentResponseDetails.md)
  - [ErrorDetail](docs/ErrorDetail.md)
  - [ErrorMetadata](docs/ErrorMetadata.md)
  - [ErrorTrackingConnectorDto](docs/ErrorTrackingConnectorDto.md)
@@ -597,11 +667,15 @@ Class | Method | HTTP request | Description
  - [FieldOptions](docs/FieldOptions.md)
  - [FieldOptionsOrBuilder](docs/FieldOptionsOrBuilder.md)
  - [FieldValues](docs/FieldValues.md)
+ - [File](docs/File.md)
  - [FileDescriptor](docs/FileDescriptor.md)
  - [FileDescriptorProto](docs/FileDescriptorProto.md)
+ - [FileNode](docs/FileNode.md)
  - [FileOptions](docs/FileOptions.md)
  - [FileOptionsOrBuilder](docs/FileOptionsOrBuilder.md)
+ - [FileStoreNode](docs/FileStoreNode.md)
  - [FilesIdentifierBody](docs/FilesIdentifierBody.md)
+ - [FilestoreIdentifierBody](docs/FilestoreIdentifierBody.md)
  - [Filter](docs/Filter.md)
  - [FilterProperties](docs/FilterProperties.md)
  - [FilterStats](docs/FilterStats.md)
@@ -610,6 +684,7 @@ Class | Method | HTTP request | Description
  - [FixedSchedulesListResponse](docs/FixedSchedulesListResponse.md)
  - [FlagBasicInfo](docs/FlagBasicInfo.md)
  - [FlagBasicInfos](docs/FlagBasicInfos.md)
+ - [FolderNode](docs/FolderNode.md)
  - [FormDataContentDisposition](docs/FormDataContentDisposition.md)
  - [GatewayAccountRequest](docs/GatewayAccountRequest.md)
  - [GcpBillingExportSpecDto](docs/GcpBillingExportSpecDto.md)
@@ -619,7 +694,6 @@ Class | Method | HTTP request | Description
  - [GcpCredentialSpec](docs/GcpCredentialSpec.md)
  - [GcpKmsConnector](docs/GcpKmsConnector.md)
  - [GcpManualDetails](docs/GcpManualDetails.md)
- - [GcpResponse](docs/GcpResponse.md)
  - [GetAccessPointResponse](docs/GetAccessPointResponse.md)
  - [GitAuthentication](docs/GitAuthentication.md)
  - [GitBranch](docs/GitBranch.md)
@@ -627,23 +701,21 @@ Class | Method | HTTP request | Description
  - [GitConfig](docs/GitConfig.md)
  - [GitDetails](docs/GitDetails.md)
  - [GitEnabled](docs/GitEnabled.md)
- - [GitEntityBranchSummaryFilter](docs/GitEntityBranchSummaryFilter.md)
- - [GitEntitySummaryFilter](docs/GitEntitySummaryFilter.md)
  - [GitFileContent](docs/GitFileContent.md)
+ - [GitFullSyncConfig](docs/GitFullSyncConfig.md)
+ - [GitFullSyncConfigRequest](docs/GitFullSyncConfigRequest.md)
+ - [GitFullSyncEntityInfo](docs/GitFullSyncEntityInfo.md)
+ - [GitFullSyncEntityInfoFilter](docs/GitFullSyncEntityInfoFilter.md)
  - [GitHttpAuthenticationDto](docs/GitHttpAuthenticationDto.md)
  - [GitPrCreateRequest](docs/GitPrCreateRequest.md)
  - [GitSshAuthentication](docs/GitSshAuthentication.md)
  - [GitSyncConfig](docs/GitSyncConfig.md)
- - [GitSyncEntity](docs/GitSyncEntity.md)
- - [GitSyncEntityList](docs/GitSyncEntityList.md)
  - [GitSyncError](docs/GitSyncError.md)
  - [GitSyncErrorAggregateByCommit](docs/GitSyncErrorAggregateByCommit.md)
  - [GitSyncErrorCount](docs/GitSyncErrorCount.md)
  - [GitSyncErrorDetails](docs/GitSyncErrorDetails.md)
  - [GitSyncFolderConfig](docs/GitSyncFolderConfig.md)
  - [GitSyncPatchOperation](docs/GitSyncPatchOperation.md)
- - [GitSyncRepoFiles](docs/GitSyncRepoFiles.md)
- - [GitSyncRepoFilesList](docs/GitSyncRepoFilesList.md)
  - [GitSyncSettings](docs/GitSyncSettings.md)
  - [GithubApiAccess](docs/GithubApiAccess.md)
  - [GithubApiAccessSpec](docs/GithubApiAccessSpec.md)
@@ -672,6 +744,9 @@ Class | Method | HTTP request | Description
  - [GovernanceMetadata](docs/GovernanceMetadata.md)
  - [GraphLayoutNode](docs/GraphLayoutNode.md)
  - [HistogramExp](docs/HistogramExp.md)
+ - [HostDto](docs/HostDto.md)
+ - [HostFilterDto](docs/HostFilterDto.md)
+ - [HostValidationDto](docs/HostValidationDto.md)
  - [HttpHelmAuthCredentials](docs/HttpHelmAuthCredentials.md)
  - [HttpHelmAuthentication](docs/HttpHelmAuthentication.md)
  - [HttpHelmConnector](docs/HttpHelmConnector.md)
@@ -679,24 +754,21 @@ Class | Method | HTTP request | Description
  - [HttpRequestInfo](docs/HttpRequestInfo.md)
  - [InlineResponse200](docs/InlineResponse200.md)
  - [InlineResponse2001](docs/InlineResponse2001.md)
- - [InputSetErrorDtopms](docs/InputSetErrorDtopms.md)
- - [InputSetErrorResponseDtopms](docs/InputSetErrorResponseDtopms.md)
- - [InputSetErrorWrapperDtopms](docs/InputSetErrorWrapperDtopms.md)
+ - [InputSetError](docs/InputSetError.md)
+ - [InputSetErrorWrapper](docs/InputSetErrorWrapper.md)
  - [InputSetResponse](docs/InputSetResponse.md)
  - [InputSetSummaryResponse](docs/InputSetSummaryResponse.md)
  - [InputSetTemplateRequest](docs/InputSetTemplateRequest.md)
  - [InputSetTemplateResponse](docs/InputSetTemplateResponse.md)
  - [InputSetTemplateWithReplacedExpressionsResponse](docs/InputSetTemplateWithReplacedExpressionsResponse.md)
- - [InputSetValidator](docs/InputSetValidator.md)
  - [InstanceBasedRoutingData](docs/InstanceBasedRoutingData.md)
  - [InstanceDetails](docs/InstanceDetails.md)
  - [InterruptConfig](docs/InterruptConfig.md)
- - [InterruptEffect](docs/InterruptEffect.md)
+ - [InterruptEffectDto](docs/InterruptEffectDto.md)
  - [InterruptResponse](docs/InterruptResponse.md)
  - [InvitationSource](docs/InvitationSource.md)
  - [Invite](docs/Invite.md)
  - [IssuedBy](docs/IssuedBy.md)
- - [IssuedByOrBuilder](docs/IssuedByOrBuilder.md)
  - [JiraConnector](docs/JiraConnector.md)
  - [JsonNode](docs/JsonNode.md)
  - [K8sRecommendationFilter](docs/K8sRecommendationFilter.md)
@@ -719,10 +791,8 @@ Class | Method | HTTP request | Description
  - [Location](docs/Location.md)
  - [LocationOrBuilder](docs/LocationOrBuilder.md)
  - [LoginTypeResponse](docs/LoginTypeResponse.md)
- - [LwResource](docs/LwResource.md)
  - [LwServiceResponse](docs/LwServiceResponse.md)
  - [ManualIssuer](docs/ManualIssuer.md)
- - [ManualIssuerOrBuilder](docs/ManualIssuerOrBuilder.md)
  - [MeanMedianInfo](docs/MeanMedianInfo.md)
  - [MergeInputSetRequest](docs/MergeInputSetRequest.md)
  - [MergeInputSetResponse](docs/MergeInputSetResponse.md)
@@ -751,12 +821,11 @@ Class | Method | HTTP request | Description
  - [NgTag](docs/NgTag.md)
  - [NgTriggerDetailsResponseDto](docs/NgTriggerDetailsResponseDto.md)
  - [NgTriggerResponse](docs/NgTriggerResponse.md)
+ - [NodeErrorInfo](docs/NodeErrorInfo.md)
  - [NodePool](docs/NodePool.md)
  - [NodePoolId](docs/NodePoolId.md)
  - [NodeRecommendationDto](docs/NodeRecommendationDto.md)
  - [NodeRunInfo](docs/NodeRunInfo.md)
- - [NotificationChannelWrapper](docs/NotificationChannelWrapper.md)
- - [NotificationRules](docs/NotificationRules.md)
  - [NotificationSettingConfig](docs/NotificationSettingConfig.md)
  - [NotificationSettingConfigDto](docs/NotificationSettingConfigDto.md)
  - [OAuthSettings](docs/OAuthSettings.md)
@@ -782,9 +851,10 @@ Class | Method | HTTP request | Description
  - [PageResponseEnvironmentResponse](docs/PageResponseEnvironmentResponse.md)
  - [PageResponseFilter](docs/PageResponseFilter.md)
  - [PageResponseGitBranch](docs/PageResponseGitBranch.md)
- - [PageResponseGitSyncEntityList](docs/PageResponseGitSyncEntityList.md)
+ - [PageResponseGitFullSyncEntityInfo](docs/PageResponseGitFullSyncEntityInfo.md)
  - [PageResponseGitSyncError](docs/PageResponseGitSyncError.md)
  - [PageResponseGitSyncErrorAggregateByCommit](docs/PageResponseGitSyncErrorAggregateByCommit.md)
+ - [PageResponseHostDto](docs/PageResponseHostDto.md)
  - [PageResponseInputSetSummaryResponse](docs/PageResponseInputSetSummaryResponse.md)
  - [PageResponseInvite](docs/PageResponseInvite.md)
  - [PageResponseNgTriggerDetailsResponseDto](docs/PageResponseNgTriggerDetailsResponseDto.md)
@@ -792,6 +862,7 @@ Class | Method | HTTP request | Description
  - [PageResponseProject](docs/PageResponseProject.md)
  - [PageResponseProjectResponse](docs/PageResponseProjectResponse.md)
  - [PageResponseResourceGroupResponse](docs/PageResponseResourceGroupResponse.md)
+ - [PageResponseResourceGroupV2Response](docs/PageResponseResourceGroupV2Response.md)
  - [PageResponseRoleAssignmentResponse](docs/PageResponseRoleAssignmentResponse.md)
  - [PageResponseRoleResponse](docs/PageResponseRoleResponse.md)
  - [PageResponseSecretResponse](docs/PageResponseSecretResponse.md)
@@ -805,10 +876,8 @@ Class | Method | HTTP request | Description
  - [PagerDutyConfigDto](docs/PagerDutyConfigDto.md)
  - [PagerDutyConnectorDto](docs/PagerDutyConnectorDto.md)
  - [Pagination](docs/Pagination.md)
- - [ParameterFieldNotificationChannelWrapper](docs/ParameterFieldNotificationChannelWrapper.md)
- - [ParameterFieldString](docs/ParameterFieldString.md)
+ - [PairDelegateInsightsTypeLong](docs/PairDelegateInsightsTypeLong.md)
  - [Parser](docs/Parser.md)
- - [ParserAdviserIssuer](docs/ParserAdviserIssuer.md)
  - [ParserAsyncExecutableResponse](docs/ParserAsyncExecutableResponse.md)
  - [ParserChild](docs/ParserChild.md)
  - [ParserChildChainExecutableResponse](docs/ParserChildChainExecutableResponse.md)
@@ -833,10 +902,7 @@ Class | Method | HTTP request | Description
  - [ParserFileDescriptorProto](docs/ParserFileDescriptorProto.md)
  - [ParserFileOptions](docs/ParserFileOptions.md)
  - [ParserGovernanceMetadata](docs/ParserGovernanceMetadata.md)
- - [ParserInterruptConfig](docs/ParserInterruptConfig.md)
- - [ParserIssuedBy](docs/ParserIssuedBy.md)
  - [ParserLocation](docs/ParserLocation.md)
- - [ParserManualIssuer](docs/ParserManualIssuer.md)
  - [ParserMessage](docs/ParserMessage.md)
  - [ParserMessageLite](docs/ParserMessageLite.md)
  - [ParserMessageOptions](docs/ParserMessageOptions.md)
@@ -851,7 +917,6 @@ Class | Method | HTTP request | Description
  - [ParserRerunInfo](docs/ParserRerunInfo.md)
  - [ParserReservedRange](docs/ParserReservedRange.md)
  - [ParserRetryExecutionInfo](docs/ParserRetryExecutionInfo.md)
- - [ParserRetryInterruptConfig](docs/ParserRetryInterruptConfig.md)
  - [ParserServiceDescriptorProto](docs/ParserServiceDescriptorProto.md)
  - [ParserServiceOptions](docs/ParserServiceOptions.md)
  - [ParserSkipInfo](docs/ParserSkipInfo.md)
@@ -860,14 +925,9 @@ Class | Method | HTTP request | Description
  - [ParserSyncExecutableResponse](docs/ParserSyncExecutableResponse.md)
  - [ParserTaskChainExecutableResponse](docs/ParserTaskChainExecutableResponse.md)
  - [ParserTaskExecutableResponse](docs/ParserTaskExecutableResponse.md)
- - [ParserTimeoutIssuer](docs/ParserTimeoutIssuer.md)
- - [ParserTimestamp](docs/ParserTimestamp.md)
- - [ParserTriggerIssuer](docs/ParserTriggerIssuer.md)
  - [ParserTriggeredBy](docs/ParserTriggeredBy.md)
  - [ParserUninterpretedOption](docs/ParserUninterpretedOption.md)
  - [ParserUnitProgress](docs/ParserUnitProgress.md)
- - [ParserYamlOutputProperties](docs/ParserYamlOutputProperties.md)
- - [ParserYamlProperties](docs/ParserYamlProperties.md)
  - [PasswordChange](docs/PasswordChange.md)
  - [PasswordStrengthPolicy](docs/PasswordStrengthPolicy.md)
  - [PatchInstructionInner](docs/PatchInstructionInner.md)
@@ -877,12 +937,14 @@ Class | Method | HTTP request | Description
  - [PermissionCheck](docs/PermissionCheck.md)
  - [PermissionResponse](docs/PermissionResponse.md)
  - [Perspective](docs/Perspective.md)
+ - [PerspectiveAnomalyData](docs/PerspectiveAnomalyData.md)
  - [PerspectiveBudgetScope](docs/PerspectiveBudgetScope.md)
  - [PerspectiveEntityStatsData](docs/PerspectiveEntityStatsData.md)
+ - [PerspectiveQueryDto](docs/PerspectiveQueryDto.md)
  - [PerspectiveTimeSeriesData](docs/PerspectiveTimeSeriesData.md)
+ - [PhysicalDataCenterConnectorDto](docs/PhysicalDataCenterConnectorDto.md)
  - [PipelineCount](docs/PipelineCount.md)
  - [PipelineEntityGitDetails](docs/PipelineEntityGitDetails.md)
- - [PipelineEvent](docs/PipelineEvent.md)
  - [PipelineExecution](docs/PipelineExecution.md)
  - [PipelineExecutionDetail](docs/PipelineExecutionDetail.md)
  - [PipelineExecutionSummary](docs/PipelineExecutionSummary.md)
@@ -893,13 +955,8 @@ Class | Method | HTTP request | Description
  - [PipelineWrapperResponse](docs/PipelineWrapperResponse.md)
  - [PlanExecution](docs/PlanExecution.md)
  - [PlanExecutionResponse](docs/PlanExecutionResponse.md)
- - [PmsEmailChannel](docs/PmsEmailChannel.md)
- - [PmsMsTeamChannel](docs/PmsMsTeamChannel.md)
- - [PmsNotificationChannel](docs/PmsNotificationChannel.md)
- - [PmsPagerDutyChannel](docs/PmsPagerDutyChannel.md)
  - [PmsPipelineResponse](docs/PmsPipelineResponse.md)
  - [PmsPipelineSummaryResponse](docs/PmsPipelineSummaryResponse.md)
- - [PmsSlackChannel](docs/PmsSlackChannel.md)
  - [PolicyMetadata](docs/PolicyMetadata.md)
  - [PolicyMetadataOrBuilder](docs/PolicyMetadataOrBuilder.md)
  - [PolicySetMetadata](docs/PolicySetMetadata.md)
@@ -923,9 +980,11 @@ Class | Method | HTTP request | Description
  - [QlceViewFieldInput](docs/QlceViewFieldInput.md)
  - [QlceViewFilter](docs/QlceViewFilter.md)
  - [QlceViewFilterWrapper](docs/QlceViewFilterWrapper.md)
+ - [QlceViewGroupBy](docs/QlceViewGroupBy.md)
  - [QlceViewMetadataFilter](docs/QlceViewMetadataFilter.md)
  - [QlceViewRule](docs/QlceViewRule.md)
  - [QlceViewTimeFilter](docs/QlceViewTimeFilter.md)
+ - [QlceViewTimeTruncGroupBy](docs/QlceViewTimeTruncGroupBy.md)
  - [RdsDatabase](docs/RdsDatabase.md)
  - [RecommendClusterRequest](docs/RecommendClusterRequest.md)
  - [RecommendationDetailsDto](docs/RecommendationDetailsDto.md)
@@ -934,6 +993,7 @@ Class | Method | HTTP request | Description
  - [RecommendationResponse](docs/RecommendationResponse.md)
  - [Recommendations](docs/Recommendations.md)
  - [Reference](docs/Reference.md)
+ - [ReferenceDto](docs/ReferenceDto.md)
  - [RemoveOperation](docs/RemoveOperation.md)
  - [ReplaceOperation](docs/ReplaceOperation.md)
  - [RequestMetadata](docs/RequestMetadata.md)
@@ -942,20 +1002,22 @@ Class | Method | HTTP request | Description
  - [ReservedRange](docs/ReservedRange.md)
  - [ReservedRangeOrBuilder](docs/ReservedRangeOrBuilder.md)
  - [Resource](docs/Resource.md)
+ - [ResourceFilter](docs/ResourceFilter.md)
  - [ResourceGroup](docs/ResourceGroup.md)
  - [ResourceGroupFilter](docs/ResourceGroupFilter.md)
  - [ResourceGroupRequest](docs/ResourceGroupRequest.md)
  - [ResourceGroupResponse](docs/ResourceGroupResponse.md)
+ - [ResourceGroupV2](docs/ResourceGroupV2.md)
+ - [ResourceGroupV2Request](docs/ResourceGroupV2Request.md)
+ - [ResourceGroupV2Response](docs/ResourceGroupV2Response.md)
  - [ResourceRequirement](docs/ResourceRequirement.md)
  - [ResourceScope](docs/ResourceScope.md)
  - [ResourceSelector](docs/ResourceSelector.md)
  - [ResourceSelectorByScope](docs/ResourceSelectorByScope.md)
  - [ResourceSelectorFilter](docs/ResourceSelectorFilter.md)
+ - [ResourceSelectorV2](docs/ResourceSelectorV2.md)
  - [ResourceType](docs/ResourceType.md)
- - [ResourcegroupPrincipal](docs/ResourcegroupPrincipal.md)
  - [ResourcegroupResourceGroup](docs/ResourcegroupResourceGroup.md)
- - [ResourcegroupResourceScope](docs/ResourcegroupResourceScope.md)
- - [ResourcegroupRoleBinding](docs/ResourcegroupRoleBinding.md)
  - [ResponseDtoAccessCheckResponse](docs/ResponseDtoAccessCheckResponse.md)
  - [ResponseDtoAccount](docs/ResponseDtoAccount.md)
  - [ResponseDtoAccountLicense](docs/ResponseDtoAccountLicense.md)
@@ -974,15 +1036,17 @@ Class | Method | HTTP request | Description
  - [ResponseDtoCostOverview](docs/ResponseDtoCostOverview.md)
  - [ResponseDtoDashboardPipelineExecution](docs/ResponseDtoDashboardPipelineExecution.md)
  - [ResponseDtoDashboardPipelineHealth](docs/ResponseDtoDashboardPipelineHealth.md)
+ - [ResponseDtoDouble](docs/ResponseDtoDouble.md)
  - [ResponseDtoEnvironmentResponse](docs/ResponseDtoEnvironmentResponse.md)
  - [ResponseDtoExecutionNode](docs/ResponseDtoExecutionNode.md)
  - [ResponseDtoFieldValues](docs/ResponseDtoFieldValues.md)
+ - [ResponseDtoFile](docs/ResponseDtoFile.md)
  - [ResponseDtoFilter](docs/ResponseDtoFilter.md)
- - [ResponseDtoGcpResponse](docs/ResponseDtoGcpResponse.md)
+ - [ResponseDtoFolderNode](docs/ResponseDtoFolderNode.md)
  - [ResponseDtoGitBranchList](docs/ResponseDtoGitBranchList.md)
  - [ResponseDtoGitFileContent](docs/ResponseDtoGitFileContent.md)
+ - [ResponseDtoGitFullSyncConfig](docs/ResponseDtoGitFullSyncConfig.md)
  - [ResponseDtoGitSyncErrorCount](docs/ResponseDtoGitSyncErrorCount.md)
- - [ResponseDtoGitSyncRepoFilesList](docs/ResponseDtoGitSyncRepoFilesList.md)
  - [ResponseDtoGitSyncSettings](docs/ResponseDtoGitSyncSettings.md)
  - [ResponseDtoInputSetResponse](docs/ResponseDtoInputSetResponse.md)
  - [ResponseDtoInputSetTemplateResponse](docs/ResponseDtoInputSetTemplateResponse.md)
@@ -993,24 +1057,20 @@ Class | Method | HTTP request | Description
  - [ResponseDtoLicenseUsage](docs/ResponseDtoLicenseUsage.md)
  - [ResponseDtoLicensesWithSummary](docs/ResponseDtoLicensesWithSummary.md)
  - [ResponseDtoListAccountSettings](docs/ResponseDtoListAccountSettings.md)
+ - [ResponseDtoListAnomalyData](docs/ResponseDtoListAnomalyData.md)
+ - [ResponseDtoListAnomalySummary](docs/ResponseDtoListAnomalySummary.md)
  - [ResponseDtoListApiKey](docs/ResponseDtoListApiKey.md)
- - [ResponseDtoListBitbucketPrAction](docs/ResponseDtoListBitbucketPrAction.md)
- - [ResponseDtoListBitbucketTriggerEvent](docs/ResponseDtoListBitbucketTriggerEvent.md)
  - [ResponseDtoListBudget](docs/ResponseDtoListBudget.md)
  - [ResponseDtoListCeReportSchedule](docs/ResponseDtoListCeReportSchedule.md)
  - [ResponseDtoListConnectorResponse](docs/ResponseDtoListConnectorResponse.md)
  - [ResponseDtoListEnvironmentResponse](docs/ResponseDtoListEnvironmentResponse.md)
  - [ResponseDtoListFilterStats](docs/ResponseDtoListFilterStats.md)
- - [ResponseDtoListGitSyncEntityList](docs/ResponseDtoListGitSyncEntityList.md)
- - [ResponseDtoListGithubIssueCommentAction](docs/ResponseDtoListGithubIssueCommentAction.md)
- - [ResponseDtoListGithubPrAction](docs/ResponseDtoListGithubPrAction.md)
- - [ResponseDtoListGithubTriggerEvent](docs/ResponseDtoListGithubTriggerEvent.md)
- - [ResponseDtoListGitlabPrAction](docs/ResponseDtoListGitlabPrAction.md)
- - [ResponseDtoListGitlabTriggerEvent](docs/ResponseDtoListGitlabTriggerEvent.md)
+ - [ResponseDtoListHostValidationDto](docs/ResponseDtoListHostValidationDto.md)
  - [ResponseDtoListInviteOperationResponse](docs/ResponseDtoListInviteOperationResponse.md)
  - [ResponseDtoListModuleLicense](docs/ResponseDtoListModuleLicense.md)
  - [ResponseDtoListPermissionResponse](docs/ResponseDtoListPermissionResponse.md)
  - [ResponseDtoListPerspective](docs/ResponseDtoListPerspective.md)
+ - [ResponseDtoListPerspectiveAnomalyData](docs/ResponseDtoListPerspectiveAnomalyData.md)
  - [ResponseDtoListProject](docs/ResponseDtoListProject.md)
  - [ResponseDtoListRoleAssignmentResponse](docs/ResponseDtoListRoleAssignmentResponse.md)
  - [ResponseDtoListServiceAccount](docs/ResponseDtoListServiceAccount.md)
@@ -1019,17 +1079,12 @@ Class | Method | HTTP request | Description
  - [ResponseDtoListStageExecutionResponse](docs/ResponseDtoListStageExecutionResponse.md)
  - [ResponseDtoListString](docs/ResponseDtoListString.md)
  - [ResponseDtoListUserGroup](docs/ResponseDtoListUserGroup.md)
- - [ResponseDtoListWebhookAction](docs/ResponseDtoListWebhookAction.md)
- - [ResponseDtoListWebhookTriggerType](docs/ResponseDtoListWebhookTriggerType.md)
  - [ResponseDtoMapEditionSetEditionAction](docs/ResponseDtoMapEditionSetEditionAction.md)
  - [ResponseDtoMapModuleTypeLong](docs/ResponseDtoMapModuleTypeLong.md)
- - [ResponseDtoMapStringMapStringListString](docs/ResponseDtoMapStringMapStringListString.md)
- - [ResponseDtoMapWebhookSourceRepoListWebhookEvent](docs/ResponseDtoMapWebhookSourceRepoListWebhookEvent.md)
  - [ResponseDtoMergeInputSetResponse](docs/ResponseDtoMergeInputSetResponse.md)
  - [ResponseDtoModuleLicense](docs/ResponseDtoModuleLicense.md)
  - [ResponseDtoNgSmtp](docs/ResponseDtoNgSmtp.md)
  - [ResponseDtoNodeRecommendationDto](docs/ResponseDtoNodeRecommendationDto.md)
- - [ResponseDtoNotificationRules](docs/ResponseDtoNotificationRules.md)
  - [ResponseDtoOptionalInvite](docs/ResponseDtoOptionalInvite.md)
  - [ResponseDtoOrganizationResponse](docs/ResponseDtoOrganizationResponse.md)
  - [ResponseDtoOverlayInputSetResponse](docs/ResponseDtoOverlayInputSetResponse.md)
@@ -1040,9 +1095,10 @@ Class | Method | HTTP request | Description
  - [ResponseDtoPageResponseConnectorResponse](docs/ResponseDtoPageResponseConnectorResponse.md)
  - [ResponseDtoPageResponseEnvironmentResponse](docs/ResponseDtoPageResponseEnvironmentResponse.md)
  - [ResponseDtoPageResponseFilter](docs/ResponseDtoPageResponseFilter.md)
- - [ResponseDtoPageResponseGitSyncEntityList](docs/ResponseDtoPageResponseGitSyncEntityList.md)
+ - [ResponseDtoPageResponseGitFullSyncEntityInfo](docs/ResponseDtoPageResponseGitFullSyncEntityInfo.md)
  - [ResponseDtoPageResponseGitSyncError](docs/ResponseDtoPageResponseGitSyncError.md)
  - [ResponseDtoPageResponseGitSyncErrorAggregateByCommit](docs/ResponseDtoPageResponseGitSyncErrorAggregateByCommit.md)
+ - [ResponseDtoPageResponseHostDto](docs/ResponseDtoPageResponseHostDto.md)
  - [ResponseDtoPageResponseInputSetSummaryResponse](docs/ResponseDtoPageResponseInputSetSummaryResponse.md)
  - [ResponseDtoPageResponseInvite](docs/ResponseDtoPageResponseInvite.md)
  - [ResponseDtoPageResponseNgTriggerDetailsResponseDto](docs/ResponseDtoPageResponseNgTriggerDetailsResponseDto.md)
@@ -1050,6 +1106,7 @@ Class | Method | HTTP request | Description
  - [ResponseDtoPageResponseProject](docs/ResponseDtoPageResponseProject.md)
  - [ResponseDtoPageResponseProjectResponse](docs/ResponseDtoPageResponseProjectResponse.md)
  - [ResponseDtoPageResponseResourceGroupResponse](docs/ResponseDtoPageResponseResourceGroupResponse.md)
+ - [ResponseDtoPageResponseResourceGroupV2Response](docs/ResponseDtoPageResponseResourceGroupV2Response.md)
  - [ResponseDtoPageResponseRoleAssignmentResponse](docs/ResponseDtoPageResponseRoleAssignmentResponse.md)
  - [ResponseDtoPageResponseRoleResponse](docs/ResponseDtoPageResponseRoleResponse.md)
  - [ResponseDtoPageResponseSecretResponse](docs/ResponseDtoPageResponseSecretResponse.md)
@@ -1071,6 +1128,7 @@ Class | Method | HTTP request | Description
  - [ResponseDtoRecommendationOverviewStats](docs/ResponseDtoRecommendationOverviewStats.md)
  - [ResponseDtoRecommendations](docs/ResponseDtoRecommendations.md)
  - [ResponseDtoResourceGroupResponse](docs/ResponseDtoResourceGroupResponse.md)
+ - [ResponseDtoResourceGroupV2Response](docs/ResponseDtoResourceGroupV2Response.md)
  - [ResponseDtoResourceType](docs/ResponseDtoResourceType.md)
  - [ResponseDtoRetryHistoryResponse](docs/ResponseDtoRetryHistoryResponse.md)
  - [ResponseDtoRetryInfo](docs/ResponseDtoRetryInfo.md)
@@ -1084,21 +1142,24 @@ Class | Method | HTTP request | Description
  - [ResponseDtoSecretValidationResult](docs/ResponseDtoSecretValidationResult.md)
  - [ResponseDtoServiceAccount](docs/ResponseDtoServiceAccount.md)
  - [ResponseDtoServiceAccountAggregate](docs/ResponseDtoServiceAccountAggregate.md)
+ - [ResponseDtoServiceInstanceUsageDto](docs/ResponseDtoServiceInstanceUsageDto.md)
  - [ResponseDtoServiceResponse](docs/ResponseDtoServiceResponse.md)
+ - [ResponseDtoServiceUsageDto](docs/ResponseDtoServiceUsageDto.md)
  - [ResponseDtoSetString](docs/ResponseDtoSetString.md)
  - [ResponseDtoSourceCodeManager](docs/ResponseDtoSourceCodeManager.md)
  - [ResponseDtoStepCategory](docs/ResponseDtoStepCategory.md)
  - [ResponseDtoString](docs/ResponseDtoString.md)
  - [ResponseDtoToken](docs/ResponseDtoToken.md)
+ - [ResponseDtoTriggerGitFullSyncResponse](docs/ResponseDtoTriggerGitFullSyncResponse.md)
  - [ResponseDtoTwoFactorAuthSettingsInfo](docs/ResponseDtoTwoFactorAuthSettingsInfo.md)
  - [ResponseDtoUserAggregate](docs/ResponseDtoUserAggregate.md)
  - [ResponseDtoUserGroup](docs/ResponseDtoUserGroup.md)
  - [ResponseDtoUserInfo](docs/ResponseDtoUserInfo.md)
  - [ResponseDtoValidationResult](docs/ResponseDtoValidationResult.md)
- - [ResponseDtoVariableMergeServiceResponse](docs/ResponseDtoVariableMergeServiceResponse.md)
  - [ResponseDtoWebhookEventProcessingDetails](docs/ResponseDtoWebhookEventProcessingDetails.md)
  - [ResponseDtoWorkloadRecommendationDto](docs/ResponseDtoWorkloadRecommendationDto.md)
  - [ResponseDtoceView](docs/ResponseDtoceView.md)
+ - [ResponseDtoecsRecommendationDto](docs/ResponseDtoecsRecommendationDto.md)
  - [ResponseDtongTriggerDetailsResponseDto](docs/ResponseDtongTriggerDetailsResponseDto.md)
  - [ResponseDtongTriggerResponse](docs/ResponseDtongTriggerResponse.md)
  - [ResponseDtopmsPipelineResponse](docs/ResponseDtopmsPipelineResponse.md)
@@ -1110,10 +1171,13 @@ Class | Method | HTTP request | Description
  - [ResponseMessageExceptionSuppressed](docs/ResponseMessageExceptionSuppressed.md)
  - [RestResponseAuthenticationSettingsResponse](docs/RestResponseAuthenticationSettingsResponse.md)
  - [RestResponseBoolean](docs/RestResponseBoolean.md)
+ - [RestResponseDelegateGroupDto](docs/RestResponseDelegateGroupDto.md)
+ - [RestResponseDelegateGroupListing](docs/RestResponseDelegateGroupListing.md)
+ - [RestResponseDelegateTokenDetails](docs/RestResponseDelegateTokenDetails.md)
+ - [RestResponseListDelegateTokenDetails](docs/RestResponseListDelegateTokenDetails.md)
  - [RestResponseLoginTypeResponse](docs/RestResponseLoginTypeResponse.md)
  - [RestResponsePasswordStrengthPolicy](docs/RestResponsePasswordStrengthPolicy.md)
  - [RestResponseSsoConfig](docs/RestResponseSsoConfig.md)
- - [RestResponseString](docs/RestResponseString.md)
  - [RestResponseUserGroup](docs/RestResponseUserGroup.md)
  - [Results](docs/Results.md)
  - [RetryExecutionInfo](docs/RetryExecutionInfo.md)
@@ -1122,7 +1186,6 @@ Class | Method | HTTP request | Description
  - [RetryHistoryResponse](docs/RetryHistoryResponse.md)
  - [RetryInfo](docs/RetryInfo.md)
  - [RetryInterruptConfig](docs/RetryInterruptConfig.md)
- - [RetryInterruptConfigOrBuilder](docs/RetryInterruptConfigOrBuilder.md)
  - [RetryLatestExecutionResponse](docs/RetryLatestExecutionResponse.md)
  - [RetryStageInfo](docs/RetryStageInfo.md)
  - [Role](docs/Role.md)
@@ -1145,7 +1208,9 @@ Class | Method | HTTP request | Description
  - [SaveServiceRequest](docs/SaveServiceRequest.md)
  - [SaveStaticSchedulesRequest](docs/SaveStaticSchedulesRequest.md)
  - [ScimUser](docs/ScimUser.md)
+ - [ScmErrorMetadataDto](docs/ScmErrorMetadataDto.md)
  - [Scope](docs/Scope.md)
+ - [ScopeSelector](docs/ScopeSelector.md)
  - [Secret](docs/Secret.md)
  - [SecretFileSpe](docs/SecretFileSpe.md)
  - [SecretManagerMetadataDto](docs/SecretManagerMetadataDto.md)
@@ -1175,15 +1240,17 @@ Class | Method | HTTP request | Description
  - [ServiceDiagnostics](docs/ServiceDiagnostics.md)
  - [ServiceDiagnosticsResponse](docs/ServiceDiagnosticsResponse.md)
  - [ServiceError](docs/ServiceError.md)
- - [ServiceExpressionProperties](docs/ServiceExpressionProperties.md)
  - [ServiceHealthResponse](docs/ServiceHealthResponse.md)
+ - [ServiceInstanceUsageDto](docs/ServiceInstanceUsageDto.md)
  - [ServiceMetadata](docs/ServiceMetadata.md)
  - [ServiceMetadataCloudProviderDetails](docs/ServiceMetadataCloudProviderDetails.md)
- - [ServiceNowConnectorDto](docs/ServiceNowConnectorDto.md)
+ - [ServiceNowConnector](docs/ServiceNowConnector.md)
  - [ServiceOptions](docs/ServiceOptions.md)
  - [ServiceOptionsOrBuilder](docs/ServiceOptionsOrBuilder.md)
  - [ServiceRequest](docs/ServiceRequest.md)
  - [ServiceResponse](docs/ServiceResponse.md)
+ - [ServiceResponseDetails](docs/ServiceResponseDetails.md)
+ - [ServiceUsageDto](docs/ServiceUsageDto.md)
  - [ServiceUsageRecord](docs/ServiceUsageRecord.md)
  - [ServicesResponse](docs/ServicesResponse.md)
  - [ServingRule](docs/ServingRule.md)
@@ -1247,14 +1314,12 @@ Class | Method | HTTP request | Description
  - [TimeSchedulePeriod](docs/TimeSchedulePeriod.md)
  - [TimeSeriesDataPoints](docs/TimeSeriesDataPoints.md)
  - [TimeoutIssuer](docs/TimeoutIssuer.md)
- - [TimeoutIssuerOrBuilder](docs/TimeoutIssuerOrBuilder.md)
- - [Timestamp](docs/Timestamp.md)
- - [TimestampOrBuilder](docs/TimestampOrBuilder.md)
  - [Token](docs/Token.md)
  - [TokenAggregate](docs/TokenAggregate.md)
  - [TotalHealth](docs/TotalHealth.md)
+ - [TotalResourceUsage](docs/TotalResourceUsage.md)
+ - [TriggerGitFullSyncResponse](docs/TriggerGitFullSyncResponse.md)
  - [TriggerIssuer](docs/TriggerIssuer.md)
- - [TriggerIssuerOrBuilder](docs/TriggerIssuerOrBuilder.md)
  - [TriggerStatus](docs/TriggerStatus.md)
  - [TriggeredBy](docs/TriggeredBy.md)
  - [TriggeredByOrBuilder](docs/TriggeredByOrBuilder.md)
@@ -1264,6 +1329,7 @@ Class | Method | HTTP request | Description
  - [UninterpretedOptionOrBuilder](docs/UninterpretedOptionOrBuilder.md)
  - [UnitProgress](docs/UnitProgress.md)
  - [UnknownFieldSet](docs/UnknownFieldSet.md)
+ - [UsageDataDto](docs/UsageDataDto.md)
  - [UserAggregate](docs/UserAggregate.md)
  - [UserFilter](docs/UserFilter.md)
  - [UserGroup](docs/UserGroup.md)
@@ -1277,8 +1343,6 @@ Class | Method | HTTP request | Description
  - [ValidationError](docs/ValidationError.md)
  - [ValidationResult](docs/ValidationResult.md)
  - [ValidationStatus](docs/ValidationStatus.md)
- - [VariableMergeServiceResponse](docs/VariableMergeServiceResponse.md)
- - [VariableResponseMapValue](docs/VariableResponseMapValue.md)
  - [Variation](docs/Variation.md)
  - [VariationMap](docs/VariationMap.md)
  - [VaultConnector](docs/VaultConnector.md)
@@ -1295,8 +1359,8 @@ Class | Method | HTTP request | Description
  - [WeightedVariation](docs/WeightedVariation.md)
  - [WorkloadRecommendationDto](docs/WorkloadRecommendationDto.md)
  - [YamlDiffRecordDto](docs/YamlDiffRecordDto.md)
- - [YamlOutputProperties](docs/YamlOutputProperties.md)
- - [YamlProperties](docs/YamlProperties.md)
+ - [YamlSchemaErrorDto](docs/YamlSchemaErrorDto.md)
+ - [YamlSchemaErrorWrapperDto](docs/YamlSchemaErrorWrapperDto.md)
 
 ## Documentation For Authorization
 

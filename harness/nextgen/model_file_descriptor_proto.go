@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -13,25 +13,26 @@ type FileDescriptorProto struct {
 	UnknownFields             *UnknownFieldSet                  `json:"unknownFields,omitempty"`
 	Initialized               bool                              `json:"initialized,omitempty"`
 	Options                   *FileOptions                      `json:"options,omitempty"`
-	OptionsOrBuilder          *FileOptionsOrBuilder             `json:"optionsOrBuilder,omitempty"`
-	SourceCodeInfo            *SourceCodeInfo                   `json:"sourceCodeInfo,omitempty"`
-	SourceCodeInfoOrBuilder   *SourceCodeInfoOrBuilder          `json:"sourceCodeInfoOrBuilder,omitempty"`
-	SyntaxBytes               *ByteString                       `json:"syntaxBytes,omitempty"`
-	Syntax                    string                            `json:"syntax,omitempty"`
-	EnumTypeCount             int32                             `json:"enumTypeCount,omitempty"`
+	ServiceCount              int32                             `json:"serviceCount,omitempty"`
+	ExtensionCount            int32                             `json:"extensionCount,omitempty"`
 	PublicDependencyCount     int32                             `json:"publicDependencyCount,omitempty"`
 	DependencyCount           int32                             `json:"dependencyCount,omitempty"`
 	MessageTypeCount          int32                             `json:"messageTypeCount,omitempty"`
-	ServiceCount              int32                             `json:"serviceCount,omitempty"`
+	EnumTypeCount             int32                             `json:"enumTypeCount,omitempty"`
+	Syntax                    string                            `json:"syntax,omitempty"`
+	ParserForType             *ParserFileDescriptorProto        `json:"parserForType,omitempty"`
+	SerializedSize            int32                             `json:"serializedSize,omitempty"`
+	DefaultInstanceForType    *FileDescriptorProto              `json:"defaultInstanceForType,omitempty"`
+	EnumTypeList              []EnumDescriptorProto             `json:"enumTypeList,omitempty"`
 	EnumTypeOrBuilderList     []EnumDescriptorProtoOrBuilder    `json:"enumTypeOrBuilderList,omitempty"`
 	ServiceList               []ServiceDescriptorProto          `json:"serviceList,omitempty"`
 	ServiceOrBuilderList      []ServiceDescriptorProtoOrBuilder `json:"serviceOrBuilderList,omitempty"`
 	ExtensionList             []FieldDescriptorProto            `json:"extensionList,omitempty"`
 	ExtensionOrBuilderList    []FieldDescriptorProtoOrBuilder   `json:"extensionOrBuilderList,omitempty"`
-	ExtensionCount            int32                             `json:"extensionCount,omitempty"`
-	SerializedSize            int32                             `json:"serializedSize,omitempty"`
-	ParserForType             *ParserFileDescriptorProto        `json:"parserForType,omitempty"`
-	DefaultInstanceForType    *FileDescriptorProto              `json:"defaultInstanceForType,omitempty"`
+	OptionsOrBuilder          *FileOptionsOrBuilder             `json:"optionsOrBuilder,omitempty"`
+	SourceCodeInfo            *SourceCodeInfo                   `json:"sourceCodeInfo,omitempty"`
+	SourceCodeInfoOrBuilder   *SourceCodeInfoOrBuilder          `json:"sourceCodeInfoOrBuilder,omitempty"`
+	SyntaxBytes               *ByteString                       `json:"syntaxBytes,omitempty"`
 	NameBytes                 *ByteString                       `json:"nameBytes,omitempty"`
 	PackageBytes              *ByteString                       `json:"packageBytes,omitempty"`
 	DependencyList            []string                          `json:"dependencyList,omitempty"`
@@ -40,11 +41,10 @@ type FileDescriptorProto struct {
 	WeakDependencyCount       int32                             `json:"weakDependencyCount,omitempty"`
 	MessageTypeList           []DescriptorProto                 `json:"messageTypeList,omitempty"`
 	MessageTypeOrBuilderList  []DescriptorProtoOrBuilder        `json:"messageTypeOrBuilderList,omitempty"`
-	EnumTypeList              []EnumDescriptorProto             `json:"enumTypeList,omitempty"`
 	Name                      string                            `json:"name,omitempty"`
 	Package_                  string                            `json:"package,omitempty"`
 	AllFields                 map[string]interface{}            `json:"allFields,omitempty"`
-	InitializationErrorString string                            `json:"initializationErrorString,omitempty"`
 	DescriptorForType         *Descriptor                       `json:"descriptorForType,omitempty"`
+	InitializationErrorString string                            `json:"initializationErrorString,omitempty"`
 	MemoizedSerializedSize    int32                             `json:"memoizedSerializedSize,omitempty"`
 }

@@ -1,5 +1,5 @@
 /*
- * CD NextGen API Reference
+ * Harness NextGen Software Delivery Platform API Reference
  *
  * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
  *
@@ -12,7 +12,7 @@ package nextgen
 // A Feature Flag response
 type Feature struct {
 	// Indicates if the flag has been archived and is no longer used
-	Archived bool `json:"archived"`
+	Archived bool `json:"archived,omitempty"`
 	// The date the flag was created in milliseconds
 	CreatedAt int64 `json:"createdAt"`
 	// The default value returned when a flag is off
@@ -31,13 +31,13 @@ type Feature struct {
 	// The type of Feature flag
 	Kind string `json:"kind"`
 	// The date the flag was last modified in milliseconds
-	ModifiedAt int64 `json:"modifiedAt"`
+	ModifiedAt int64 `json:"modifiedAt,omitempty"`
 	// The name of the Feature Flag
 	Name string `json:"name"`
 	// The user who created the flag
 	Owner []string `json:"owner,omitempty"`
 	// Indicates if this is a permanent flag, or one that should expire
-	Permanent     bool           `json:"permanent"`
+	Permanent     bool           `json:"permanent,omitempty"`
 	Prerequisites []Prerequisite `json:"prerequisites,omitempty"`
 	// The project this Feature belongs to
 	Project string `json:"project"`
