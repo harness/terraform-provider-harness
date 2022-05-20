@@ -1,6 +1,6 @@
 
-<a name="0.1.24"></a>
-## 0.1.24 (2022-05-11)
+<a name="0.1.25"></a>
+## 0.1.25 (2022-05-20)
 
 ### Add
 
@@ -23,10 +23,6 @@
 ### Configurable
 
 * Configurable debug logging
-
-### Create
-
-* Create pipeline release3
 
 ### Docker
 
@@ -54,15 +50,15 @@
 
 ### Fixed
 
+* fixed tests
+
+### Fixed
+
 * Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
 * Fixed ng secret manager serializer
-
-### Fixed
-
-* fixed tests
 
 ### Gitsync
 
@@ -93,8 +89,14 @@
 
 * Regen NG API's
 
+### Regenerated
+
+* regenerated NG API's ([#121](https://github.com/harness/harness-go-sdk/issues/121))
+
 ### Release
 
+* Release version 0.1.24 05-11-2022
+* Release v0.1.24
 * Release version 0.1.23 05-11-2022
 * Release v0.1.23
 * Release version 0.1.22 05-10-2022
@@ -115,8 +117,6 @@
 * Release v0.1.16
 * Release version 0.1.13 03-01-2022
 * Release v0.1.13
-* Release version 0.1.12 02-16-2022
-* Release v0.1.12
 
 ### Skip
 
