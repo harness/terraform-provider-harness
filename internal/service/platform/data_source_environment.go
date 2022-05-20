@@ -37,7 +37,7 @@ func DataSourceEnvironment() *schema.Resource {
 }
 
 func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	resp, _, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),

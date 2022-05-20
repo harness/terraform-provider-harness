@@ -1,7 +1,6 @@
-package platform_test
+package usergroup_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -15,27 +14,27 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccResourceService(t *testing.T) {
+func TestAccResourceUserGroup(t *testing.T) {
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_service.test"
+	resourceName := "harness_platform_usergroup.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccServiceDestroy(resourceName),
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceService(id, name),
+				Config: testAccResourceUserGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceService(id, updatedName),
+				Config: testAccResourceUserGroup(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -51,18 +50,18 @@ func TestAccResourceService(t *testing.T) {
 	})
 }
 
-func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_service.test"
+	resourceName := "harness_platform_usergroup.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceService(id, name),
+				Config: testAccResourceUserGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -71,14 +70,16 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*internal.Session).PLClient
-					_, _, err := c.ServicesApi.DeleteServiceV2(context.Background(), id, c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
+					c, ctx := acctest.TestAccProvider.Meta().(*internal.Session).GetPlatformClient()
+					resp, _, err := c.UserGroupApi.DeleteUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiDeleteUserGroupOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
 					require.NoError(t, err)
+					require.NotNil(t, resp)
+					require.Equal(t, resp.Status, nextgen.ResponseStatusTypes.Success)
 				},
-				Config:             testAccResourceService(id, name),
+				Config:             testAccResourceUserGroup(id, name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -86,14 +87,14 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccGetService(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
+func testAccGetPlatformUserGroup(resourceName string, state *terraform.State) (*nextgen.UserGroup, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c, ctx := acctest.TestAccGetApiClientFromProvider().GetPlatformClient()
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(context.Background(), id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+	resp, _, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 		OrgIdentifier:     optional.NewString(orgId),
 		ProjectIdentifier: optional.NewString(projId),
 	})
@@ -102,25 +103,25 @@ func testAccGetService(resourceName string, state *terraform.State) (*nextgen.En
 		return nil, err
 	}
 
-	if resp.Data == nil || resp.Data.Environment == nil {
+	if resp.Data == nil {
 		return nil, nil
 	}
 
-	return resp.Data.Environment, nil
+	return resp.Data, nil
 }
 
-func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
+func testAccUserGroupDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		env, _ := testAccGetService(resourceName, state)
+		env, _ := testAccGetPlatformUserGroup(resourceName, state)
 		if env != nil {
-			return fmt.Errorf("Found service: %s", env.Identifier)
+			return fmt.Errorf("Found usergroup: %s", env.Identifier)
 		}
 
 		return nil
 	}
 }
 
-func testAccResourceService(id string, name string) string {
+func testAccResourceUserGroup(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -134,7 +135,7 @@ func testAccResourceService(id string, name string) string {
 			color = "#472848"
 		}
 
-		resource "harness_platform_service" "test" {
+		resource "harness_platform_usergroup" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id

@@ -24,6 +24,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -150,6 +151,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_pipeline":                     platform.ResourcePipeline(),
 				"harness_platform_project":                      platform.ResourceProject(),
 				"harness_platform_service":                      platform.ResourceService(),
+				"harness_platform_usergroup":                    usergroup.ResourceUserGroup(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
@@ -216,11 +218,9 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 
 func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
 	client := nextgen.NewAPIClient(&nextgen.Configuration{
-		AccountId: d.Get("account_id").(string),
-		BasePath:  d.Get("endpoint").(string),
-		DefaultHeader: map[string]string{
-			helpers.HTTPHeaders.ApiKey.String(): d.Get("platform_api_key").(string),
-		},
+		AccountId:    d.Get("account_id").(string),
+		BasePath:     d.Get("endpoint").(string),
+		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		HTTPClient:   getHttpClient(),
 		DebugLogging: logging.IsDebugOrHigher(),

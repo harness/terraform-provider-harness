@@ -44,7 +44,7 @@ func DataSourceOrganization() *schema.Resource {
 }
 
 func dataSourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	searchOptions := &nextgen.OrganizationApiGetOrganizationListOpts{
 		PageIndex: optional.NewInt32(0),

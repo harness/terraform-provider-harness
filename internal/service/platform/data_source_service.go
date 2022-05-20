@@ -26,7 +26,7 @@ func DataSourceService() *schema.Resource {
 }
 
 func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	resp, _, err := c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),

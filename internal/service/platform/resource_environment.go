@@ -45,7 +45,7 @@ func ResourceEnvironment() *schema.Resource {
 }
 
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	resp, _, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
@@ -70,7 +70,7 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
 	var resp nextgen.ResponseDtoEnvironmentResponse
@@ -97,7 +97,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, _, err := c.EnvironmentsApi.DeleteEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
@@ -124,7 +124,7 @@ func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
 	}
 }
 
-func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentRequest) {
+func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)

@@ -40,7 +40,7 @@ func DataSourceProject() *schema.Resource {
 }
 
 func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Get("identifier").(string)
 	orgId := d.Get("org_id").(string)

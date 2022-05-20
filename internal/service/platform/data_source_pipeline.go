@@ -6,7 +6,6 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/harness/terraform-provider-harness/internal/gitsync"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -27,13 +26,12 @@ func DataSourcePipeline() *schema.Resource {
 	}
 
 	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
-	gitsync.SetGitSyncSchema(resource.Schema, true)
 
 	return resource
 }
 
 func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	resp, _, err := c.PipelinesApi.GetPipeline(ctx,
 		c.AccountId,
