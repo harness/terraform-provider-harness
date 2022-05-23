@@ -1,3 +1,16 @@
+# 0.2.8
+
+ENHANCEMENTS:
+
+* Upgraded harnes-go-sdk@v0.2.27 ([#139](https://github.com/hashicorp/terraform-provider-harness/issues/139))
+
+BUG FIXES:
+
+* datasource/harness_platform_connector: Fixed lookup by name. ([#139](https://github.com/hashicorp/terraform-provider-harness/issues/139))
+* datasource/harness_platform_organization: Fixed lookup by name. ([#139](https://github.com/hashicorp/terraform-provider-harness/issues/139))
+* datasource/harness_platform_pipeline: Fixed lookup by name. ([#139](https://github.com/hashicorp/terraform-provider-harness/issues/139))
+* datasource/harness_platform_project: Fixed lookup by name. ([#139](https://github.com/hashicorp/terraform-provider-harness/issues/139))
+
 # 0.2.7
 
 BUG FIXES:
