@@ -1,6 +1,6 @@
 
-<a name="0.1.26"></a>
-## 0.1.26 (2022-05-20)
+<a name="0.1.27"></a>
+## 0.1.27 (2022-05-23)
 
 ### Add
 
@@ -8,6 +8,7 @@
 
 ### Added
 
+* Added resource lookups by name
 * Added artifact sources to service for graphql
 * Added changelog setup
 * Added execution api's
@@ -38,16 +39,15 @@
 
 ### Fix
 
-* fix environment variable overrides with secrets
-* fix cac error handling
-* fix json serialization
-
-### Fix
-
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
-* Fix secretRef issue related to https://harness.atlassian.net/browse/PL-22258
+
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
 
 ### Fixed
 
@@ -55,7 +55,6 @@
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
-* Fixed ng secret manager serializer
 
 ### Fixed
 
@@ -96,6 +95,8 @@
 
 ### Release
 
+* Release version 0.1.26 05-20-2022
+* Release v0.1.26
 * Release version 0.1.25 05-20-2022
 * Release v0.1.25
 * Release version 0.1.24 05-11-2022
@@ -119,7 +120,6 @@
 * Release version 0.1.16 03-17-2022
 * Release v0.1.16
 * Release version 0.1.13 03-01-2022
-* Release v0.1.13
 
 ### Skip
 
