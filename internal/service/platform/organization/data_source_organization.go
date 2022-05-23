@@ -2,8 +2,8 @@ package organization
 
 import (
 	"context"
+	"errors"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -17,25 +17,7 @@ func DataSourceOrganization() *schema.Resource {
 
 		ReadContext: dataSourceOrganizationRead,
 
-		Schema: map[string]*schema.Schema{
-			"search_term": {
-				Description: "Search term used to find the organization.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			// "sort_orders": {
-			// 	Description: "Sort orders used to order the organization list. Sort orders are listed as `field:order` pairs. For example `name:desc`.",
-			// 	Type:        schema.TypeList,
-			// 	Elem:        &schema.Schema{Type: schema.TypeString},
-			// 	Optional:    true,
-			// },
-			"first_result": {
-				Description: "When set to true if the query returns more than one result the first item will be selected. When set to false (default) this will return an error.",
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-			},
-		},
+		Schema: map[string]*schema.Schema{},
 	}
 
 	helpers.SetCommonDataSourceSchema(resource.Schema)
@@ -46,34 +28,33 @@ func DataSourceOrganization() *schema.Resource {
 func dataSourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	searchOptions := &nextgen.OrganizationApiGetOrganizationListOpts{
-		PageIndex: optional.NewInt32(0),
-		PageSize:  optional.NewInt32(2),
-	}
+	var err error
+	var org *nextgen.OrganizationResponse
 
-	if attr := d.Get("search_term").(string); attr != "" {
-		searchOptions.SearchTerm = optional.NewString(attr)
-	}
+	id := d.Get("identifier").(string)
+	name := d.Get("name").(string)
 
-	if attr := d.Get("identifier").(string); attr != "" {
-		searchOptions.Identifiers = optional.NewInterface([]string{attr})
+	if id != "" {
+		var resp nextgen.ResponseDtoOrganizationResponse
+		resp, _, err = c.OrganizationApi.GetOrganization(ctx, id, c.AccountId)
+		org = resp.Data
+	} else if name != "" {
+		org, err = c.OrganizationApi.GetOrganizationByName(ctx, c.AccountId, name)
+	} else {
+		return diag.FromErr(errors.New("either identifier or name must be specified"))
 	}
-
-	resp, _, err := c.OrganizationApi.GetOrganizationList(ctx, c.AccountId, searchOptions)
 
 	if err != nil {
-		return diag.FromErr(err)
+		return helpers.HandleApiError(err, d)
 	}
 
-	if resp.Data.TotalItems == 0 {
-		return diag.Errorf("organization not found")
+	if org == nil || org.Organization == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
-	if resp.Data.TotalItems > 1 && !d.Get("first_result").(bool) {
-		return diag.Errorf("more than one organization was found that matches the search criteria")
-	}
-
-	readOrganization(d, resp.Data.Content[0].Organization)
+	readOrganization(d, org.Organization)
 
 	return nil
 }

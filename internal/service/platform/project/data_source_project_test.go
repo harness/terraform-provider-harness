@@ -34,6 +34,31 @@ func TestAccDataSourceProject(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceProjectByName(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	orgId := "test"
+	resourceName := "data.harness_platform_project.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceProjectByName(id, orgId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgId),
+					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
+					resource.TestCheckResourceAttr(resourceName, "name", id),
+					resource.TestCheckResourceAttr(resourceName, "description", ""),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 func testAccDataSourceProject(id string, orgId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_project" "test" {
@@ -45,6 +70,22 @@ func testAccDataSourceProject(id string, orgId string) string {
 
 		data "harness_platform_project" "test" {
 			identifier = harness_platform_project.test.identifier
+			org_id = "%[2]s"
+		}
+	`, id, orgId)
+}
+
+func testAccDataSourceProjectByName(id string, orgId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			org_id = "%[2]s"
+			name = "%[1]s"
+			color = "#0063F7"
+		}
+
+		data "harness_platform_project" "test" {
+			name = harness_platform_project.test.name
 			org_id = "%[2]s"
 		}
 	`, id, orgId)

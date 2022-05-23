@@ -1,4 +1,4 @@
-package service_test
+package usergroup_test
 
 import (
 	"fmt"
@@ -9,18 +9,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceService(t *testing.T) {
+func TestAccDataSourceUserGroup(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	resourceName := "data.harness_platform_service.test"
+	resourceName := "data.harness_platform_usergroup.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceService(id, name),
+				Config: testAccDataSourceUserGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -32,18 +32,18 @@ func TestAccDataSourceService(t *testing.T) {
 	})
 }
 
-func TestAccDataSourceServiceByName(t *testing.T) {
+func TestAccDataSourceUserGroupByName(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	resourceName := "data.harness_platform_service.test"
+	resourceName := "data.harness_platform_usergroup.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceServiceByName(id, name),
+				Config: testAccDataSourceUserGroupByName(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -55,7 +55,7 @@ func TestAccDataSourceServiceByName(t *testing.T) {
 	})
 }
 
-func testAccDataSourceService(id string, name string) string {
+func testAccDataSourceUserGroup(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -69,22 +69,22 @@ func testAccDataSourceService(id string, name string) string {
 			color = "#472848"
 		}
 
-		resource "harness_platform_service" "test" {
+		resource "harness_platform_usergroup" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 		}
 
-		data "harness_platform_service" "test" {
-			identifier = harness_platform_service.test.identifier
-			org_id = harness_platform_service.test.org_id
-			project_id = harness_platform_service.test.project_id
+		data "harness_platform_usergroup" "test" {
+			identifier = harness_platform_usergroup.test.identifier
+			org_id = harness_platform_usergroup.test.org_id
+			project_id = harness_platform_usergroup.test.project_id
 		}
 `, id, name)
 }
 
-func testAccDataSourceServiceByName(id string, name string) string {
+func testAccDataSourceUserGroupByName(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -98,17 +98,17 @@ func testAccDataSourceServiceByName(id string, name string) string {
 			color = "#472848"
 		}
 
-		resource "harness_platform_service" "test" {
+		resource "harness_platform_usergroup" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 		}
 
-		data "harness_platform_service" "test" {
-			name = harness_platform_service.test.name
-			org_id = harness_platform_service.test.org_id
-			project_id = harness_platform_service.test.project_id
+		data "harness_platform_usergroup" "test" {
+			name = harness_platform_usergroup.test.name
+			org_id = harness_platform_usergroup.test.org_id
+			project_id = harness_platform_usergroup.test.project_id
 		}
 `, id, name)
 }

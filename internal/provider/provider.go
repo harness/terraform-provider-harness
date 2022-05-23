@@ -111,6 +111,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
 				"harness_platform_project":                      project.DataSourceProject(),
 				"harness_platform_service":                      pl_service.DataSourceService(),
+				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),

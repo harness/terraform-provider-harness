@@ -1,4 +1,4 @@
-package service
+package usergroup
 
 import (
 	"context"
@@ -12,38 +12,38 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceService() *schema.Resource {
+func DataSourceUserGroup() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness service.",
+		Description: "Data source for retrieving a Harness User Group.",
 
-		ReadContext: dataSourceServiceRead,
+		ReadContext: dataSourceUserGroupRead,
 
 		Schema: map[string]*schema.Schema{},
 	}
 
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
 
 	return resource
 }
 
-func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
+	var ug *nextgen.UserGroup
 	var err error
-	var svc *nextgen.ServiceResponseDetails
 
 	id := d.Get("identifier").(string)
 	name := d.Get("name").(string)
 
 	if id != "" {
-		var resp nextgen.ResponseDtoServiceResponse
-		resp, _, err = c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
+		var resp nextgen.ResponseDtoUserGroup
+		resp, _, err = c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
-		svc = resp.Data.Service
+		ug = resp.Data
 	} else if name != "" {
-		svc, err = c.ServicesApi.GetServiceByName(ctx, c.AccountId, name, nextgen.GetServiceByNameOpts{
+		ug, err = c.UserGroupApi.GetUserGroupByName(ctx, c.AccountId, name, &nextgen.UserGroupApiGetUserGroupByNameOpts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
@@ -55,13 +55,13 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleApiError(err, d)
 	}
 
-	if svc == nil {
+	if ug == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
 	}
 
-	readService(d, svc)
+	readUserGroup(d, ug)
 
 	return nil
 }
