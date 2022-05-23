@@ -18,5 +18,5 @@ type EnvironmentRequest struct {
 	Name              string            `json:"name,omitempty"`
 	Description       string            `json:"description,omitempty"`
 	Color             string            `json:"color,omitempty"`
-	Type_             string            `json:"type,omitempty"`
+	Type_             EnvironmentType   `json:"type,omitempty"`
 }

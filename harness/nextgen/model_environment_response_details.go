@@ -18,7 +18,7 @@ type EnvironmentResponseDetails struct {
 	Name              string            `json:"name,omitempty"`
 	Description       string            `json:"description,omitempty"`
 	Color             string            `json:"color,omitempty"`
-	Type_             string            `json:"type,omitempty"`
+	Type_             EnvironmentType   `json:"type,omitempty"`
 	Deleted           bool              `json:"deleted,omitempty"`
 	Tags              map[string]string `json:"tags,omitempty"`
 	Version           int64             `json:"version,omitempty"`

@@ -29,5 +29,5 @@ type ConnectorFilterProperties struct {
 	// Filter tags as a key-value pair.
 	Tags map[string]string `json:"tags,omitempty"`
 	// This specifies the corresponding Entity of the filter.
-	FilterType string `json:"filterType,omitempty"`
+	FilterType ConnectorFilterType `json:"filterType,omitempty"`
 }

@@ -10,7 +10,7 @@
 package nextgen
 
 type ResponseDtoPageResponseUserGroup struct {
-	Status        string                 `json:"status,omitempty"`
+	Status        ResponseStatusType     `json:"status,omitempty"`
 	Data          *PageResponseUserGroup `json:"data,omitempty"`
 	MetaData      *interface{}           `json:"metaData,omitempty"`
 	CorrelationId string                 `json:"correlationId,omitempty"`
