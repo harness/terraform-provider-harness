@@ -1,0 +1,20 @@
+```release-note:bug
+datasource/harness_platform_connector: Fixed lookup by name.
+```
+
+```release-note:bug
+datasource/harness_platform_organization: Fixed lookup by name.
+```
+
+```release-note:bug
+datasource/harness_platform_project: Fixed lookup by name.
+```
+
+```release-note:bug
+datasource/harness_platform_pipeline: Fixed lookup by name.
+```
+
+
+```release-note:enhancement
+Upgraded harnes-go-sdk@v0.2.27
+```
