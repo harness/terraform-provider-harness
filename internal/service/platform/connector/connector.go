@@ -8,16 +8,14 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/harness/terraform-provider-harness/internal/gitsync"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/jinzhu/copier"
 )
 
 type ReadConnectorData func(*schema.ResourceData, *nextgen.ConnectorInfo) error
 
 func resourceConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 	if id == "" {
@@ -59,7 +57,7 @@ func getReadConnectorOpts(d *schema.ResourceData) *nextgen.ConnectorsApiGetConne
 }
 
 func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connector *nextgen.ConnectorInfo) (*nextgen.ConnectorInfo, diag.Diagnostics) {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 	buildConnector(d, connector)
@@ -68,9 +66,9 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 	var resp nextgen.ResponseDtoConnectorResponse
 
 	if id == "" {
-		resp, _, err = c.ConnectorsApi.CreateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, getCreateConnectorOps(d))
+		resp, _, err = c.ConnectorsApi.CreateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, &nextgen.ConnectorsApiCreateConnectorOpts{})
 	} else {
-		resp, _, err = c.ConnectorsApi.UpdateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, getUpdateConnectorOps(d))
+		resp, _, err = c.ConnectorsApi.UpdateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, &nextgen.ConnectorsApiUpdateConnectorOpts{})
 	}
 
 	if err != nil {
@@ -83,40 +81,14 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 }
 
 func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), getDeleteConnectorOpts(d))
+	_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), &nextgen.ConnectorsApiDeleteConnectorOpts{})
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
 
 	return nil
-}
-
-func getCreateConnectorOps(d *schema.ResourceData) *nextgen.ConnectorsApiCreateConnectorOpts {
-	connOpts := &nextgen.ConnectorsApiCreateConnectorOpts{}
-	opts := gitsync.GetGitSyncOptions(d)
-	copier.Copy(connOpts, opts)
-	return connOpts
-}
-
-func getUpdateConnectorOps(d *schema.ResourceData) *nextgen.ConnectorsApiUpdateConnectorOpts {
-	connOpts := &nextgen.ConnectorsApiUpdateConnectorOpts{}
-	opts := gitsync.GetGitSyncOptions(d)
-	copier.Copy(connOpts, opts)
-	return connOpts
-}
-
-func getDeleteConnectorOpts(d *schema.ResourceData) *nextgen.ConnectorsApiDeleteConnectorOpts {
-	connOpts := &nextgen.ConnectorsApiDeleteConnectorOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-	}
-
-	opts := gitsync.GetGitSyncOptions(d)
-	copier.Copy(connOpts, opts)
-
-	return connOpts
 }
 
 func buildConnector(d *schema.ResourceData, connector *nextgen.ConnectorInfo) {

@@ -1,4 +1,4 @@
-package platform
+package pipeline
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/harness/terraform-provider-harness/internal/gitsync"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -31,13 +30,12 @@ func ResourcePipeline() *schema.Resource {
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
-	gitsync.SetGitSyncSchema(resource.Schema, false)
 
 	return resource
 }
 
 func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 
@@ -59,16 +57,16 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
 	id := d.Id()
 	pipeline := buildPipeline(d)
 
 	if id == "" {
-		_, _, err = c.PipelinesApi.PostPipeline(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, gitsync.GetGitSyncOptions(d).ToPipelinesApiPostPipelineOpts())
+		_, _, err = c.PipelinesApi.PostPipeline(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, &nextgen.PipelinesApiPostPipelineOpts{})
 	} else {
-		_, _, err = c.PipelinesApi.UpdatePipelineV2(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, id, gitsync.GetGitSyncOptions(d).ToPipelinesApiUpdatePipelineV2Opts())
+		_, _, err = c.PipelinesApi.UpdatePipelineV2(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, id, &nextgen.PipelinesApiUpdatePipelineV2Opts{})
 	}
 
 	if err != nil {
@@ -76,7 +74,7 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	// The create/update methods don't return the yaml in the response, so we need to query for it again.
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, gitsync.GetGitSyncOptions(d).ToPipelinesApiGetPipelineOpts())
+	resp, _, err := c.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return helpers.HandleApiError(err, d)
 	}
@@ -87,11 +85,11 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	pipeline := buildPipeline(d)
 
-	_, _, err := c.PipelinesApi.DeletePipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, gitsync.GetGitSyncOptions(d).ToPipelinesApiDeletePipelineOpts())
+	_, _, err := c.PipelinesApi.DeletePipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiDeletePipelineOpts{})
 	if err != nil {
 		return helpers.HandleApiError(err, d)
 	}
@@ -112,7 +110,6 @@ func buildPipeline(d *schema.ResourceData) *nextgen.Pipeline {
 
 // Read response from API out to the stored identifiers
 func readPipeline(d *schema.ResourceData, pipeline *nextgen.PmsPipelineResponse) {
-	gitsync.SetGitSyncDetails(d, pipeline.GitDetails.ToEntityGitDetails())
 	d.SetId(pipeline.PipelineData.Pipeline.Identifier)
 	d.Set("identifier", pipeline.PipelineData.Pipeline.Identifier)
 	d.Set("name", pipeline.PipelineData.Pipeline.Name)

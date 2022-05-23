@@ -2,7 +2,6 @@ package connector
 
 import (
 	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal/gitsync"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -70,7 +69,6 @@ func DatasourceConnectorAppDynamics() *schema.Resource {
 	}
 
 	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
-	gitsync.SetGitSyncSchema(resource.Schema, true)
 
 	return resource
 }

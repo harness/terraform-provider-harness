@@ -1,4 +1,4 @@
-package platform_test
+package user_test
 
 import (
 	"testing"
@@ -8,6 +8,8 @@ import (
 )
 
 func TestAccDataSourceCurrentUser(t *testing.T) {
+	t.Skip("Only works with personal access tokens.")
+
 	resourceName := "data.harness_platform_current_user.test"
 
 	resource.UnitTest(t, resource.TestCase{

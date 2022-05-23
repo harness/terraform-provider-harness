@@ -1,4 +1,4 @@
-package platform
+package user
 
 import (
 	"context"
@@ -86,7 +86,7 @@ func DataSourceCurrentUser() *schema.Resource {
 }
 
 func dataSourceCurrentUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	resp, _, err := c.UserApi.GetCurrentUserInfo(ctx, c.AccountId)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())

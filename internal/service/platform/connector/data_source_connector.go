@@ -159,7 +159,7 @@ package connector
 // }
 
 // func dataSourceConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-// 	c := meta.(*internal.Session).PLClient
+// 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 // 	filterProperties := nextgen.ConnectorFilterProperties{
 // 		FilterType: "Connector",

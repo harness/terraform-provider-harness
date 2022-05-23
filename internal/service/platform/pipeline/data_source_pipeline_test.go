@@ -1,4 +1,4 @@
-package platform_test
+package pipeline_test
 
 import (
 	"fmt"

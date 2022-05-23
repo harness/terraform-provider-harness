@@ -5,7 +5,6 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal/gitsync"
 	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,7 +35,6 @@ func ResourceConnectorPrometheus() *schema.Resource {
 	}
 
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
-	gitsync.SetGitSyncSchema(resource.Schema, false)
 
 	return resource
 }

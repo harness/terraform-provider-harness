@@ -1,4 +1,4 @@
-package platform
+package service
 
 import (
 	"context"
@@ -30,7 +30,7 @@ func ResourceService() *schema.Resource {
 }
 
 func resourceServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 
@@ -55,7 +55,7 @@ func resourceServiceRead(ctx context.Context, d *schema.ResourceData, meta inter
 }
 
 func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
 	var resp nextgen.ResponseDtoServiceResponse
@@ -82,7 +82,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, _, err := c.ProjectApi.DeleteProject(ctx, d.Id(), c.AccountId, &nextgen.ProjectApiDeleteProjectOpts{OrgIdentifier: optional.NewString(d.Get("org_id").(string))})
 	if err != nil {
@@ -103,7 +103,7 @@ func buildService(d *schema.ResourceData) *nextgen.ServiceRequest {
 	}
 }
 
-func readService(d *schema.ResourceData, project *nextgen.ServiceRequest) {
+func readService(d *schema.ResourceData, project *nextgen.ServiceResponseDetails) {
 	d.SetId(project.Identifier)
 	d.Set("identifier", project.Identifier)
 	d.Set("org_id", project.OrgIdentifier)

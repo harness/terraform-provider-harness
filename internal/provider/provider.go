@@ -22,8 +22,14 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
-	"github.com/harness/terraform-provider-harness/internal/service/platform"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
+	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
+	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -99,12 +105,13 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_prometheus":         connector.DatasourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":             connector.DatasourceConnectorSplunk(),
 				"harness_platform_connector_sumologic":          connector.DatasourceConnectorSumologic(),
-				"harness_platform_current_user":                 platform.DataSourceCurrentUser(),
-				"harness_platform_environment":                  platform.DataSourceEnvironment(),
-				"harness_platform_organization":                 platform.DataSourceOrganization(),
-				"harness_platform_pipeline":                     platform.DataSourcePipeline(),
-				"harness_platform_project":                      platform.DataSourceProject(),
-				"harness_platform_service":                      platform.DataSourceService(),
+				"harness_platform_current_user":                 pl_user.DataSourceCurrentUser(),
+				"harness_platform_environment":                  pl_environment.DataSourceEnvironment(),
+				"harness_platform_organization":                 organization.DataSourceOrganization(),
+				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
+				"harness_platform_project":                      project.DataSourceProject(),
+				"harness_platform_service":                      pl_service.DataSourceService(),
+				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -145,11 +152,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_prometheus":         connector.ResourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":             connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_sumologic":          connector.ResourceConnectorSumologic(),
-				"harness_platform_environment":                  platform.ResourceEnvironment(),
-				"harness_platform_organization":                 platform.ResourceOrganization(),
-				"harness_platform_pipeline":                     platform.ResourcePipeline(),
-				"harness_platform_project":                      platform.ResourceProject(),
-				"harness_platform_service":                      platform.ResourceService(),
+				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
+				"harness_platform_organization":                 organization.ResourceOrganization(),
+				"harness_platform_pipeline":                     pipeline.ResourcePipeline(),
+				"harness_platform_project":                      project.ResourceProject(),
+				"harness_platform_service":                      pl_service.ResourceService(),
+				"harness_platform_usergroup":                    usergroup.ResourceUserGroup(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
@@ -216,11 +224,9 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 
 func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
 	client := nextgen.NewAPIClient(&nextgen.Configuration{
-		AccountId: d.Get("account_id").(string),
-		BasePath:  d.Get("endpoint").(string),
-		DefaultHeader: map[string]string{
-			helpers.HTTPHeaders.ApiKey.String(): d.Get("platform_api_key").(string),
-		},
+		AccountId:    d.Get("account_id").(string),
+		BasePath:     d.Get("endpoint").(string),
+		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		HTTPClient:   getHttpClient(),
 		DebugLogging: logging.IsDebugOrHigher(),

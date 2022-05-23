@@ -1,4 +1,4 @@
-package platform_test
+package environment_test
 
 import (
 	"context"
@@ -79,7 +79,7 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 					require.NoError(t, err)
 					require.True(t, resp.Data)
 				},
-				Config:             testAccResourceOrganization(id, name),
+				Config:             testAccResourceEnvironment(id, name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -87,7 +87,7 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccGetPlatformEnvironment(resourceName string, state *terraform.State) (*nextgen.EnvironmentRequest, error) {
+func testAccGetPlatformEnvironment(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID

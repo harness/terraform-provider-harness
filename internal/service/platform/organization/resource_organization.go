@@ -1,4 +1,4 @@
-package platform
+package organization
 
 import (
 	"context"
@@ -31,7 +31,7 @@ func ResourceOrganization() *schema.Resource {
 }
 
 func resourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 	if id == "" {
@@ -51,7 +51,7 @@ func resourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta 
 }
 
 func resourceOrganizationCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 	org := buildOrganization(d)
@@ -75,7 +75,7 @@ func resourceOrganizationCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 }
 
 func resourceOrganizationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, _, err := c.OrganizationApi.DeleteOrganization(ctx, d.Id(), c.AccountId, nil)
 	if err != nil {

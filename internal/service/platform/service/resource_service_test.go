@@ -1,10 +1,11 @@
-package platform_test
+package service_test
 
 import (
 	"context"
 	"fmt"
 	"testing"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -14,27 +15,27 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccResourceOrganization(t *testing.T) {
+func TestAccResourceService(t *testing.T) {
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_organization.test"
+	resourceName := "harness_platform_service.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccOrganizationDestroy(resourceName),
+		CheckDestroy:      testAccServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceOrganization(id, name),
+				Config: testAccResourceService(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceOrganization(id, updatedName),
+				Config: testAccResourceService(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -44,24 +45,24 @@ func TestAccResourceOrganization(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_organization.test"
+	resourceName := "harness_platform_service.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccOrganizationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceOrganization(id, name),
+				Config: testAccResourceService(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -71,11 +72,13 @@ func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c := acctest.TestAccProvider.Meta().(*internal.Session).PLClient
-					resp, _, err := c.OrganizationApi.DeleteOrganization(context.Background(), id, c.AccountId, nil)
+					_, _, err := c.ServicesApi.DeleteServiceV2(context.Background(), id, c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
+						OrgIdentifier:     optional.NewString(id),
+						ProjectIdentifier: optional.NewString(id),
+					})
 					require.NoError(t, err)
-					require.True(t, resp.Data)
 				},
-				Config:             testAccResourceOrganization(id, name),
+				Config:             testAccResourceService(id, name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -83,37 +86,59 @@ func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccGetOrganization(resourceName string, state *terraform.State) (*nextgen.Organization, error) {
+func testAccGetService(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c := acctest.TestAccGetApiClientFromProvider()
 	id := r.Primary.ID
+	orgId := r.Primary.Attributes["org_id"]
+	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.OrganizationApi.GetOrganization(context.Background(), id, c.AccountId)
+	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(context.Background(), id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+		OrgIdentifier:     optional.NewString(orgId),
+		ProjectIdentifier: optional.NewString(projId),
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Data.Organization, nil
+	if resp.Data == nil || resp.Data.Environment == nil {
+		return nil, nil
+	}
+
+	return resp.Data.Environment, nil
 }
 
-func testAccOrganizationDestroy(resourceName string) resource.TestCheckFunc {
+func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		org, _ := testAccGetOrganization(resourceName, state)
-		if org != nil {
-			return fmt.Errorf("Found organization: %s", org.Identifier)
+		env, _ := testAccGetService(resourceName, state)
+		if env != nil {
+			return fmt.Errorf("Found service: %s", env.Identifier)
 		}
 
 		return nil
 	}
 }
 
-func testAccResourceOrganization(id string, name string) string {
+func testAccResourceService(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
-			description = "test"
-			tags = ["foo:bar", "baz:qux"]
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_service" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
 		}
 `, id, name)
 }

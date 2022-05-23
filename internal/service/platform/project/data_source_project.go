@@ -1,7 +1,8 @@
-package platform
+package project
 
 import (
 	"context"
+	"errors"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -40,17 +41,36 @@ func DataSourceProject() *schema.Resource {
 }
 
 func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := meta.(*internal.Session).PLClient
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Get("identifier").(string)
 	orgId := d.Get("org_id").(string)
+	name := d.Get("name").(string)
 
-	resp, _, err := c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{OrgIdentifier: optional.NewString(orgId)})
-	if err != nil {
-		return diag.FromErr(err)
+	var err error
+	var proj *nextgen.ProjectResponse
+
+	if id != "" {
+		var resp nextgen.ResponseDtoProjectResponse
+		resp, _, err = c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{OrgIdentifier: optional.NewString(orgId)})
+		proj = resp.Data
+	} else if name != "" {
+		proj, err = c.ProjectApi.GetProjectByName(ctx, c.AccountId, orgId, name)
+	} else {
+		return diag.FromErr(errors.New("either identifier or name must be specified"))
 	}
 
-	readProject(d, resp.Data.Project)
+	if err != nil {
+		return helpers.HandleApiError(err, d)
+	}
+
+	if proj == nil || proj.Project == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	readProject(d, proj.Project)
 
 	return nil
 }
