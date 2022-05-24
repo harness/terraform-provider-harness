@@ -27,7 +27,6 @@ Datasource for looking up an AWS connector.
 
 - `cross_account_access` (List of Object) Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature. (see [below for nested schema](#nestedatt--cross_account_access))
 - `description` (String) Description of the resource.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `inherit_from_delegate` (List of Object) Inherit credentials from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `irsa` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--irsa))
 - `manual` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--manual))
@@ -40,18 +39,6 @@ Read-Only:
 
 - `external_id` (String)
 - `role_arn` (String)
-
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 
 <a id="nestedatt--inherit_from_delegate"></a>

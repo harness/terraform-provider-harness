@@ -19,8 +19,6 @@ Resource for creating a Harness environment.
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 - `type` (String) The type of environment. Valid values are PreProduction, Production
 
 ### Optional
@@ -28,6 +26,8 @@ Resource for creating a Harness environment.
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 
 

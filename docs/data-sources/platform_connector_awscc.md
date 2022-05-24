@@ -29,7 +29,6 @@ Datasource for looking up an AWS Cloud Cost connector.
 - `cross_account_access` (List of Object) Harness uses the secure cross-account role to access your AWS account. The role includes a restricted policy to access the cost and usage reports and resources for the sole purpose of cost analysis and cost optimization. (see [below for nested schema](#nestedatt--cross_account_access))
 - `description` (String) Description of the resource.
 - `features_enabled` (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
 - `s3_bucket` (String) The name of s3 bucket.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -41,17 +40,5 @@ Read-Only:
 
 - `external_id` (String)
 - `role_arn` (String)
-
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 

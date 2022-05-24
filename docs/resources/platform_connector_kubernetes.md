@@ -24,7 +24,6 @@ Resource for creating a K8s connector.
 
 - `client_key_cert` (Block List, Max: 1) Client key and certificate config for the connector. (see [below for nested schema](#nestedblock--client_key_cert))
 - `description` (String) Description of the resource.
-- `git_sync` (Block List, Max: 1) (see [below for nested schema](#nestedblock--git_sync))
 - `id` (String) The ID of this resource.
 - `inherit_from_delegate` (Block List, Max: 1) Credentials are inherited from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `openid_connect` (Block List, Max: 1) OpenID configuration for the connector. (see [below for nested schema](#nestedblock--openid_connect))
@@ -48,21 +47,6 @@ Optional:
 
 - `ca_cert_ref` (String) Reference to the secret containing the CA certificate for the connector.
 - `client_key_passphrase_ref` (String) Reference to the secret containing the client key passphrase for the connector.
-
-
-<a id="nestedblock--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Optional:
-
-- `branch` (String) The git branch to use for the resource.
-- `file_path` (String) The file path of the resource.
-- `repo_id` (String) Git sync config Id.
-- `root_folder` (String) The root folder path of the resource.
-
-Read-Only:
-
-- `object_id` (String) The object id of the resource.
 
 
 <a id="nestedblock--inherit_from_delegate"></a>

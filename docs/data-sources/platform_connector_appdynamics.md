@@ -29,7 +29,6 @@ Datasource for looking up an App Dynamics connector.
 - `api_token` (List of Object) Authenticate to App Dynamics using api token. (see [below for nested schema](#nestedatt--api_token))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) Url of the App Dynamics controller.
 - `username_password` (List of Object) Authenticate to App Dynamics using username and password. (see [below for nested schema](#nestedatt--username_password))
@@ -41,18 +40,6 @@ Read-Only:
 
 - `client_id` (String)
 - `client_secret_ref` (String)
-
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 
 <a id="nestedatt--username_password"></a>

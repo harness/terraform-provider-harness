@@ -28,7 +28,6 @@ Datasource for looking up a Datadog connector.
 - `credentials` (List of Object) The credentials to use for the docker registry. If not specified then the connection is made to the registry anonymously. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) The type of the docker registry. Valid options are DockerHub, Harbor, Other, Quay
 - `url` (String) The url of the docker registry.
@@ -41,17 +40,5 @@ Read-Only:
 - `password_ref` (String)
 - `username` (String)
 - `username_ref` (String)
-
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 

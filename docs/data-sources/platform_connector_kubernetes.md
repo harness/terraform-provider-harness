@@ -27,7 +27,6 @@ Datasource for looking up a Kubernetes connector.
 
 - `client_key_cert` (List of Object) Client key and certificate config for the connector. (see [below for nested schema](#nestedatt--client_key_cert))
 - `description` (String) Description of the resource.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `inherit_from_delegate` (List of Object) Credentials are inherited from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `openid_connect` (List of Object) OpenID configuration for the connector. (see [below for nested schema](#nestedatt--openid_connect))
 - `service_account` (List of Object) Service account for the connector. (see [below for nested schema](#nestedatt--service_account))
@@ -45,18 +44,6 @@ Read-Only:
 - `client_key_passphrase_ref` (String)
 - `client_key_ref` (String)
 - `master_url` (String)
-
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 
 <a id="nestedatt--inherit_from_delegate"></a>

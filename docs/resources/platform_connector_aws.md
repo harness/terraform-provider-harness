@@ -24,7 +24,6 @@ Resource for creating an AWS connector.
 
 - `cross_account_access` (Block List, Max: 1) Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature. (see [below for nested schema](#nestedblock--cross_account_access))
 - `description` (String) Description of the resource.
-- `git_sync` (Block List, Max: 1) (see [below for nested schema](#nestedblock--git_sync))
 - `id` (String) The ID of this resource.
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
@@ -43,21 +42,6 @@ Required:
 Optional:
 
 - `external_id` (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
-
-
-<a id="nestedblock--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Optional:
-
-- `branch` (String) The git branch to use for the resource.
-- `file_path` (String) The file path of the resource.
-- `repo_id` (String) Git sync config Id.
-- `root_folder` (String) The root folder path of the resource.
-
-Read-Only:
-
-- `object_id` (String) The object id of the resource.
 
 
 <a id="nestedblock--inherit_from_delegate"></a>

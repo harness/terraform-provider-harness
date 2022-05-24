@@ -28,21 +28,9 @@ Datasource for looking up a Splunk connector.
 - `account_id` (String) Splunk account id.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `password_ref` (String) The reference to the Harness secret containing the Splunk password.
 - `tags` (Set of String) Tags to associate with the resource.
 - `url` (String) Url of the Splunk server.
 - `username` (String) The username used for connecting to Splunk.
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 

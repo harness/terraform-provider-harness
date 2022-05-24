@@ -28,7 +28,6 @@ Datasource for looking up an AWS Secret Manager connector.
 - `credentials` (List of Object) The credentials to use for connecting to aws. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `git_sync` (List of Object) (see [below for nested schema](#nestedatt--git_sync))
 - `region` (String) The AWS region where the AWS Secret Manager is.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -59,18 +58,5 @@ Read-Only:
 
 - `access_key_ref` (String)
 - `secret_key_ref` (String)
-
-
-
-<a id="nestedatt--git_sync"></a>
-### Nested Schema for `git_sync`
-
-Read-Only:
-
-- `branch` (String)
-- `file_path` (String)
-- `object_id` (String)
-- `repo_id` (String)
-- `root_folder` (String)
 
 
