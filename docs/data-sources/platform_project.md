@@ -30,6 +30,6 @@ Data source for retrieving a Harness project.
 - `color` (String) Color of the project.
 - `description` (String) Description of the resource.
 - `modules` (Set of String) Modules in the project.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

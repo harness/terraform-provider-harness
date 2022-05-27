@@ -28,7 +28,7 @@ Resource for creating a Gcp connector.
 - `manual` (Block List, Max: 1) Manual credential configuration. (see [below for nested schema](#nestedblock--manual))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedblock--inherit_from_delegate"></a>
 ### Nested Schema for `inherit_from_delegate`

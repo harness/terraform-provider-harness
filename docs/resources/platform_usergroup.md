@@ -26,7 +26,7 @@ Resource for creating a Harness User Group.
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 ### Read-Only
 

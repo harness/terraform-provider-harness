@@ -30,7 +30,7 @@ Datasource for looking up an AWS KMS connector.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
 - `region` (String) The AWS region where the AWS Secret Manager is.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedatt--credentials"></a>
 ### Nested Schema for `credentials`

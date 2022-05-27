@@ -29,7 +29,7 @@ Datasource for looking up a Splunk connector.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
 - `password_ref` (String) The reference to the Harness secret containing the Splunk password.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `url` (String) Url of the Splunk server.
 - `username` (String) The username used for connecting to Splunk.
 

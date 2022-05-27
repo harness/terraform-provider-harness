@@ -28,7 +28,7 @@ Datasource for looking up a Gcp connector.
 - `description` (String) Description of the resource.
 - `inherit_from_delegate` (List of Object) Inherit configuration from delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `manual` (List of Object) Manual credential configuration. (see [below for nested schema](#nestedatt--manual))
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedatt--inherit_from_delegate"></a>
 ### Nested Schema for `inherit_from_delegate`

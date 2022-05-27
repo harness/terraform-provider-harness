@@ -28,7 +28,7 @@ Datasource for looking up a Datadog connector.
 - `credentials` (List of Object) The credentials to use for the docker registry. If not specified then the connection is made to the registry anonymously. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `type` (String) The type of the docker registry. Valid options are DockerHub, Harbor, Other, Quay
 - `url` (String) The url of the docker registry.
 

@@ -20,3 +20,14 @@ func FlattenTags(tags map[string]string) []string {
 	}
 	return result
 }
+
+// func ExpandKeyValueTags(tags []interface{}) map[string]string {
+// 	result := map[string]string{}
+
+// 	for _, tag := range tags {
+// 		parts := strings.Split(tag.(string), ":")
+// 		result[parts[0]] = parts[1]
+// 	}
+
+// 	return result
+// }

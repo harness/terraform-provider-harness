@@ -26,7 +26,7 @@ func SetSchemaFlagType(s *schema.Schema, flag SchemaFlagType) {
 
 func GetTagsSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Tags to associate with the resource.",
+		Description: "Tags to associate with the resource. Tags should be in the form `name:value`.",
 		Type:        schema.TypeSet,
 		Elem: &schema.Schema{
 			Type: schema.TypeString,

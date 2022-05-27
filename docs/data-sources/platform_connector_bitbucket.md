@@ -30,7 +30,7 @@ Datasource for looking up a Bitbucket connector.
 - `credentials` (List of Object) Credentials to use for the connection. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `url` (String) Url of the BitBucket repository or account.
 - `validation_repo` (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
 
