@@ -1,6 +1,6 @@
 
-<a name="0.1.27"></a>
-## 0.1.27 (2022-05-23)
+<a name="0.1.28"></a>
+## 0.1.28 (2022-05-27)
 
 ### Add
 
@@ -11,7 +11,6 @@
 * Added resource lookups by name
 * Added artifact sources to service for graphql
 * Added changelog setup
-* Added execution api's
 
 ### Adding
 
@@ -39,15 +38,19 @@
 
 ### Fix
 
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
+
+### Fix
+
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
 
-### Fix
+### Fixed
 
-* fix environment variable overrides with secrets
-* fix cac error handling
-* fix json serialization
+* fixed tests
 
 ### Fixed
 
@@ -55,10 +58,6 @@
 * Fixed tests
 * Fixed tooling dependencies
 * Fixed issue with tests
-
-### Fixed
-
-* fixed tests
 
 ### Gitsync
 
@@ -72,18 +71,22 @@
 
 * Implement new cac delete method
 
+### Implemented
+
+* Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
+
 ### Modify
 
 * Modify delegate tests
 
 ### Refactored
 
-* Refactored client config and validation
+* refactored ng client
+* refactored client setup
 
 ### Refactored
 
-* refactored ng client
-* refactored client setup
+* Refactored client config and validation
 
 ### Regen
 
@@ -95,6 +98,8 @@
 
 ### Release
 
+* Release version 0.1.27 05-23-2022
+* Release v0.1.27
 * Release version 0.1.26 05-20-2022
 * Release v0.1.26
 * Release version 0.1.25 05-20-2022
@@ -119,7 +124,6 @@
 * Release v0.1.17
 * Release version 0.1.16 03-17-2022
 * Release v0.1.16
-* Release version 0.1.13 03-01-2022
 
 ### Skip
 
