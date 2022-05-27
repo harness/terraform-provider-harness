@@ -1,3 +1,9 @@
+# 0.2.10
+
+ENHANCEMENTS:
+
+* resource/application: Added support for tagging. ([#140](https://github.com/hashicorp/terraform-provider-harness/issues/140))
+
 # 0.2.8
 
 ENHANCEMENTS:
