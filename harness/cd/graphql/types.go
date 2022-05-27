@@ -292,6 +292,7 @@ type Application struct {
 	Pipelines                 *PipelineConnection      `json:"pipelines,omitempty"`
 	Services                  *ServiceConnection       `json:"services,omitempty"`
 	Workflows                 *WorkflowConnection      `json:"workflows,omitempty"`
+	Tags                      []*Tag                   `json:"tags,omitempty"`
 }
 
 type Applications struct {
