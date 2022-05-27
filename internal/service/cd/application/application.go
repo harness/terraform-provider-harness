@@ -74,7 +74,7 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 		return diag.FromErr(err)
 	}
 
-	d.SetId(app.Id)
+	applicationRead(d, app)
 
 	return nil
 }
@@ -89,6 +89,7 @@ func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.FromErr(err)
 	}
 
+	// In case the application was deleted since the state was lst updated.
 	if app == nil {
 		d.SetId("")
 		d.MarkNewResource()
@@ -105,7 +106,7 @@ func applicationRead(d *schema.ResourceData, app *graphql.Application) {
 		return
 	}
 
-	d.Set("id", app.Id)
+	d.SetId(app.Id)
 	d.Set("name", app.Name)
 	d.Set("description", app.Description)
 	d.Set("is_manual_trigger_authorized", app.IsManualTriggerAuthorized)
