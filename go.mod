@@ -92,4 +92,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0 // indirect
 )
 
-// replace github.com/harness/harness-go-sdk => ../harness-go-sdk
+replace github.com/harness/harness-go-sdk => ../harness-go-sdk
