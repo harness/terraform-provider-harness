@@ -30,7 +30,7 @@ Datasource for looking up an AWS connector.
 - `inherit_from_delegate` (List of Object) Inherit credentials from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `irsa` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--irsa))
 - `manual` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--manual))
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedatt--cross_account_access"></a>
 ### Nested Schema for `cross_account_access`

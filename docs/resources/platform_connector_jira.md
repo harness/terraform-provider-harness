@@ -29,7 +29,7 @@ Resource for creating a Jira connector.
 - `id` (String) The ID of this resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `username` (String) Username to use for authentication.
 - `username_ref` (String) Reference to a secret containing the username to use for authentication.
 

@@ -29,7 +29,7 @@ Datasource for looking up a Sumologic connector.
 - `access_key_ref` (String) Reference to the Harness secret containing the access key.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `url` (String) Url of the SumoLogic server.
 
 

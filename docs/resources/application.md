@@ -16,6 +16,11 @@ Resource for creating a Harness application
 resource "harness_application" "myapp" {
   name        = "My Application"
   description = "This is my first Harness application"
+
+  tags = [
+    "mytag:myvalue",
+    "team:development"
+  ]
 }
 ```
 
@@ -30,6 +35,7 @@ resource "harness_application" "myapp" {
 
 - `description` (String) The application description
 - `is_manual_trigger_authorized` (Boolean) When this is set to true, all manual triggers will require API Key authorization
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 ### Read-Only
 

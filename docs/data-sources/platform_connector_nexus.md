@@ -28,7 +28,7 @@ Datasource for looking up a Nexus connector.
 - `credentials` (List of Object) Credentials to use for authentication. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `url` (String) URL of the Nexus server.
 - `version` (String) Version of the Nexus server. Valid values are 2.x, 3.x
 

@@ -29,7 +29,7 @@ Datasource for looking up a Datadog connector.
 - `api_key_ref` (String) Reference to the Harness secret containing the api key.
 - `application_key_ref` (String) Reference to the Harness secret containing the application key.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `url` (String) Url of the Datadog server.
 
 

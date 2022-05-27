@@ -24,6 +24,6 @@ Resource for creating a Harness organization.
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

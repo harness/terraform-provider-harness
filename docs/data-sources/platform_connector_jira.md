@@ -28,7 +28,7 @@ Datasource for looking up a Jira connector.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
 - `password_ref` (String) Reference to a secret containing the password to use for authentication.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `url` (String) Url of the Jira server.
 - `username` (String) Username to use for authentication.
 - `username_ref` (String) Reference to a secret containing the username to use for authentication.

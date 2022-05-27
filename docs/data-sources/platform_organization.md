@@ -24,6 +24,6 @@ Data source for retrieving a Harness organization
 ### Read-Only
 
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

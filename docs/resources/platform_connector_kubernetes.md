@@ -30,7 +30,7 @@ Resource for creating a K8s connector.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `service_account` (Block List, Max: 1) Service account for the connector. (see [below for nested schema](#nestedblock--service_account))
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `username_password` (Block List, Max: 1) Username and password for the connector. (see [below for nested schema](#nestedblock--username_password))
 
 <a id="nestedblock--client_key_cert"></a>

@@ -30,7 +30,7 @@ Resource for creating an AWS Secret Manager connector.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedblock--credentials"></a>
 ### Nested Schema for `credentials`

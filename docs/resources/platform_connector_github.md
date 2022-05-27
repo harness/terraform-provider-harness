@@ -31,7 +31,7 @@ Resource for creating a Github connector.
 - `id` (String) The ID of this resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `validation_repo` (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
 
 <a id="nestedblock--credentials"></a>

@@ -31,7 +31,7 @@ Resource for creating an AWS Cloud Cost connector.
 - `id` (String) The ID of this resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedblock--cross_account_access"></a>
 ### Nested Schema for `cross_account_access`

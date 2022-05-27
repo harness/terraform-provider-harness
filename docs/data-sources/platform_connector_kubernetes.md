@@ -30,7 +30,7 @@ Datasource for looking up a Kubernetes connector.
 - `inherit_from_delegate` (List of Object) Credentials are inherited from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `openid_connect` (List of Object) OpenID configuration for the connector. (see [below for nested schema](#nestedatt--openid_connect))
 - `service_account` (List of Object) Service account for the connector. (see [below for nested schema](#nestedatt--service_account))
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `username_password` (List of Object) Username and password for the connector. (see [below for nested schema](#nestedatt--username_password))
 
 <a id="nestedatt--client_key_cert"></a>

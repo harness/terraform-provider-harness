@@ -24,20 +24,27 @@ func TestAccResourceApplication(t *testing.T) {
 		CheckDestroy:      testAccApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceApplication(expectedName),
+				Config: testAccResourceApplication(expectedName, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "my description"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 					testAccApplicationCreation(t, resourceName, expectedName),
 				),
 			},
 			{
-				Config: testAccResourceApplication(updatedName),
+				Config: testAccResourceApplication(updatedName, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "my description"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
 					testAccApplicationCreation(t, resourceName, updatedName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -54,10 +61,11 @@ func TestAccResourceApplication_DeleteUnderlyingResource(t *testing.T) {
 		CheckDestroy:      testAccApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceApplication(expectedName),
+				Config: testAccResourceApplication(expectedName, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", expectedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "my description"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 					testAccApplicationCreation(t, resourceName, expectedName),
 				),
 			},
@@ -74,28 +82,7 @@ func TestAccResourceApplication_DeleteUnderlyingResource(t *testing.T) {
 				},
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
-				Config:             testAccResourceApplication(expectedName),
-			},
-		},
-	})
-}
-
-func TestAccResourceApplication_Import(t *testing.T) {
-
-	resourceName := "harness_application.test"
-	name := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceApplication(name),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				Config:             testAccResourceApplication(expectedName, true),
 			},
 		},
 	})
@@ -123,11 +110,19 @@ func testAccApplicationDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourceApplication(name string) string {
+func testAccResourceApplication(name string, withTags bool) string {
+
+	tags := ""
+	if withTags {
+		tags = `tags = ["test:val", "foo:bar"]`
+	}
+
 	return fmt.Sprintf(`
 		resource "harness_application" "test" {
 			name = "%s"
 			description = "my description"
+
+			%s
 		}
-`, name)
+`, name, tags)
 }

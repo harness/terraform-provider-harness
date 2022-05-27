@@ -31,7 +31,7 @@ Datasource for looking up an AWS Cloud Cost connector.
 - `features_enabled` (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY.
 - `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
 - `s3_bucket` (String) The name of s3 bucket.
-- `tags` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedatt--cross_account_access"></a>
 ### Nested Schema for `cross_account_access`

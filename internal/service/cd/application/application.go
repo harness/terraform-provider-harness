@@ -2,12 +2,16 @@ package application
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
+	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/pkg/errors"
 )
 
 func ResourceApplication() *schema.Resource {
@@ -74,6 +78,15 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 		return diag.FromErr(err)
 	}
 
+	if err := attachTags(d, app, c); err != nil {
+		return diag.FromErr(err)
+	}
+
+	app, err = c.ApplicationClient.GetApplicationById(app.Id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	applicationRead(d, app)
 
 	return nil
@@ -118,6 +131,14 @@ func applicationRead(d *schema.ResourceData, app *graphql.Application) {
 			d.Set("git_sync_connector_id", app.GitSyncConfig.GitConnector.Id)
 		}
 	}
+
+	tags := []string{}
+	for _, tag := range app.Tags {
+		tags = append(tags, fmt.Sprintf("%s:%s", tag.Name, tag.Value))
+	}
+	if len(tags) > 0 {
+		d.Set("tags", tags)
+	}
 }
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -131,6 +152,27 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	app, err := c.ApplicationClient.UpdateApplication(input)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	if d.HasChanges("tags") {
+		for _, t := range app.Tags {
+			if err := c.TagClient.DetachTag(&graphql.DetachTagInput{
+				EntityId:   app.Id,
+				EntityType: graphql.TagEntityTypes.Application,
+				Name:       t.Name,
+			}); err != nil {
+				return diag.Errorf("failed to detach tag %s. %s", t.Name, err)
+			}
+		}
+
+		if err := attachTags(d, app, c); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	app, err = c.ApplicationClient.GetApplicationById(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -149,5 +191,29 @@ func resourceApplicationDelete(ctx context.Context, d *schema.ResourceData, meta
 
 	d.SetId("")
 
+	return nil
+}
+
+func attachTags(d *schema.ResourceData, app *graphql.Application, c *cd.ApiClient) error {
+	for _, t := range d.Get("tags").(*schema.Set).List() {
+		tagInput := &graphql.AttachTagInput{
+			EntityId:   app.Id,
+			EntityType: graphql.TagEntityTypes.Application,
+		}
+		tagStr := t.(string)
+		parts := strings.Split(tagStr, ":")
+
+		if len(parts) > 0 {
+			tagInput.Name = parts[0]
+		}
+
+		if len(parts) > 1 {
+			tagInput.Value = parts[1]
+		}
+
+		if _, err := c.TagClient.AttachTag(tagInput); err != nil {
+			return errors.Wrap(err, fmt.Sprintf("failed to attach tag %s", tagInput.Name))
+		}
+	}
 	return nil
 }
