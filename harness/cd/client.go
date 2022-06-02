@@ -45,6 +45,7 @@ type ApiClient struct {
 	SSOClient           *SSOClient
 	UserClient          *UserClient
 	TagClient           *TagClient
+	TriggerClient       *TriggerClient
 }
 
 func DefaultConfig() *Config {
@@ -110,6 +111,7 @@ func NewClient(cfg *Config) (*ApiClient, error) {
 	c.SSOClient = (*SSOClient)(&c.common)
 	c.UserClient = (*UserClient)(&c.common)
 	c.TagClient = (*TagClient)(&c.common)
+	c.TriggerClient = (*TriggerClient)(&c.common)
 
 	return c, nil
 }
