@@ -1,6 +1,6 @@
 
-<a name="0.1.28"></a>
-## 0.1.28 (2022-05-27)
+<a name="0.1.29"></a>
+## 0.1.29 (2022-06-02)
 
 ### Add
 
@@ -8,6 +8,7 @@
 
 ### Added
 
+* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 * Added resource lookups by name
 * Added artifact sources to service for graphql
 * Added changelog setup
@@ -82,15 +83,10 @@
 ### Refactored
 
 * refactored ng client
-* refactored client setup
 
 ### Refactored
 
 * Refactored client config and validation
-
-### Regen
-
-* Regen NG API's
 
 ### Regenerated
 
@@ -98,6 +94,8 @@
 
 ### Release
 
+* Release version 0.1.28 05-27-2022
+* Release v0.1.28
 * Release version 0.1.27 05-23-2022
 * Release v0.1.27
 * Release version 0.1.26 05-20-2022
