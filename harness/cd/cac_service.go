@@ -26,6 +26,10 @@ func (c *ConfigAsCodeClient) UpsertService(input *cac.Service) (*cac.Service, er
 		return nil, err
 	}
 
+	if app == nil {
+		return nil, fmt.Errorf("could not find application by id: '%s'", input.ApplicationId)
+	}
+
 	if ok, err := input.Validate(); !ok {
 		return nil, err
 	}
