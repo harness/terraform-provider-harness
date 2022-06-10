@@ -89,7 +89,7 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 
 func testAccGetPlatformUserGroup(resourceName string, state *terraform.State) (*nextgen.UserGroup, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c, ctx := acctest.TestAccGetApiClientFromProvider().GetPlatformClient()
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]

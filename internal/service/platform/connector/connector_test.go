@@ -1,7 +1,6 @@
 package connector_test
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/antihax/optional"
@@ -24,7 +23,7 @@ func testAccConnectorDestroy(resourceName string) resource.TestCheckFunc {
 
 func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.ConnectorInfo, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
 	options := &nextgen.ConnectorsApiGetConnectorOpts{}
@@ -49,7 +48,7 @@ func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.
 		options.RepoIdentifier = optional.NewString(attr)
 	}
 
-	resp, _, err := c.PLClient.ConnectorsApi.GetConnector(context.Background(), c.AccountId, id, options)
+	resp, _, err := c.PLClient.ConnectorsApi.GetConnector(ctx, c.AccountId, id, options)
 	if err != nil {
 		return nil, err
 	}

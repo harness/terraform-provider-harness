@@ -8,6 +8,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/provider"
@@ -54,6 +55,10 @@ func TestAccGetResource(resourceName string, state *terraform.State) *terraform.
 
 func TestAccGetApiClientFromProvider() *internal.Session {
 	return TestAccProvider.Meta().(*internal.Session)
+}
+
+func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetPlatformClientWithContext(context.Background())
 }
 
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {

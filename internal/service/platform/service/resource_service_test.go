@@ -88,12 +88,12 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 
 func testAccGetService(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(context.Background(), id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(ctx, id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:     optional.NewString(orgId),
 		ProjectIdentifier: optional.NewString(projId),
 	})

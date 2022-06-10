@@ -1,7 +1,6 @@
 package pipeline_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -50,12 +49,12 @@ func TestAccResourcePipeline(t *testing.T) {
 
 func testAccGetPipeline(resourceName string, state *terraform.State) (*nextgen.PmsPipelineResponse, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.PipelinesApi.GetPipeline(context.Background(), c.AccountId, orgId, projId, id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.PLClient.PipelinesApi.GetPipeline(ctx, c.AccountId, orgId, projId, id, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return nil, err
 	}

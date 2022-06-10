@@ -85,10 +85,10 @@ func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
 
 func testAccGetOrganization(resourceName string, state *terraform.State) (*nextgen.Organization, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c := acctest.TestAccGetApiClientFromProvider()
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
-	resp, _, err := c.PLClient.OrganizationApi.GetOrganization(context.Background(), id, c.AccountId)
+	resp, _, err := c.PLClient.OrganizationApi.GetOrganization(ctx, id, c.AccountId)
 	if err != nil {
 		return nil, err
 	}
