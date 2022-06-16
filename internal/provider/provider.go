@@ -27,6 +27,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
@@ -112,6 +113,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_project":                      project.DataSourceProject(),
 				"harness_platform_service":                      pl_service.DataSourceService(),
 				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
+				"harness_platform_secret_text":                  secret.DataSourceSecretText(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -158,6 +160,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_project":                      project.ResourceProject(),
 				"harness_platform_service":                      pl_service.ResourceService(),
 				"harness_platform_usergroup":                    usergroup.ResourceUserGroup(),
+				"harness_platform_secret_text":                  secret.ResourceSecretText(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
