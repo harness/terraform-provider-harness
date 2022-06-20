@@ -114,6 +114,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service":                      pl_service.DataSourceService(),
 				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
 				"harness_platform_secret_text":                  secret.DataSourceSecretText(),
+				"harness_platform_secret_file":                  secret.DataSourceSecretFile(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -161,6 +162,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service":                      pl_service.ResourceService(),
 				"harness_platform_usergroup":                    usergroup.ResourceUserGroup(),
 				"harness_platform_secret_text":                  secret.ResourceSecretText(),
+				"harness_platform_secret_file":                  secret.ResourceSecretFile(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
