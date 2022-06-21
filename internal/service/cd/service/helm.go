@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/utils"
@@ -17,7 +16,7 @@ func ResourceHelmService() *schema.Resource {
 		ReadContext:   resourceHelmServiceRead,
 		UpdateContext: resourceHelmServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
-		Schema:        commonServiceSchema(),
+		Schema:        k8sServiceSchema(),
 		Importer: &schema.ResourceImporter{
 			State: serviceStateImporter,
 		},
@@ -49,6 +48,7 @@ func readServiceHelm(d *schema.ResourceData, svc *cac.Service) diag.Diagnostics 
 	d.Set("name", svc.Name)
 	d.Set("app_id", svc.ApplicationId)
 	d.Set("description", svc.Description)
+	d.Set("helm_version", svc.HelmVersion)
 
 	if vars := flattenServiceVariables(svc.ConfigVariables); len(vars) > 0 {
 		d.Set("variable", vars)
@@ -81,6 +81,10 @@ func resourceHelmServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	input.DeploymentType = cac.DeploymentTypes.Helm
 	input.ApplicationId = d.Get("app_id").(string)
 	input.Description = d.Get("description").(string)
+
+	if helmVersion := d.Get("helm_version"); helmVersion != nil {
+		input.HelmVersion = cac.HelmVersion(helmVersion.(string))
+	}
 
 	if vars := d.Get("variable"); vars != nil {
 		input.ConfigVariables = expandServiceVariables(vars.(*schema.Set).List())
