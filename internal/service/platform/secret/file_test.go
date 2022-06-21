@@ -19,7 +19,7 @@ func TestAccSecretFile(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccSecretDestroy(resourceName),
+		CheckDestroy:      testAccSecretDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceSecret_file(id, name),
@@ -47,6 +47,9 @@ func TestAccSecretFile(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"file_path",
+				},
 			},
 		},
 	})

@@ -3,6 +3,7 @@ package secret
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -20,6 +21,7 @@ func ResourceSecretFile() *schema.Resource {
 		UpdateContext: resourceSecretFileCreateOrUpdate,
 		DeleteContext: resourceSecretDelete,
 		CreateContext: resourceSecretFileCreateOrUpdate,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"secret_manager_identifier": {
@@ -60,20 +62,24 @@ func resourceSecretFileCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	var err error
 	var resp nextgen.ResponseDtoSecretResponse
 
+	tags := d.Get("tags").(*schema.Set)
+	no_of_tags := tags.Len()
+	var tags_string = buildTag(no_of_tags, tags)
+
 	if id == "" {
 		resp, _, err = c.SecretsApi.PostSecretFileV2(ctx, c.AccountId, &nextgen.SecretsApiPostSecretFileV2Opts{
-			// OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			// ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-			Spec: optional.NewString(fmt.Sprintf(`{"secret":{"type":"SecretFile","name":"%[1]s","identifier":"%[2]s","description":"%[3]s","tags":{},"spec":{"secretManagerIdentifier":"%[4]s"}}}`, d.Get("name"), d.Get("identifier"), d.Get("description"), d.Get("secret_manager_identifier"))),
-			File: optional.NewInterface(d.Get("file_path").(string)),
+			OrgIdentifier:     buildField(d, "org_id"),
+			ProjectIdentifier: buildField(d, "project_id"),
+			Spec:              optional.NewString(fmt.Sprintf(`{"secret":{"type":"SecretFile","name":"%[1]s","identifier":"%[2]s","description":"%[3]s","tags":%[4]s,"spec":{"secretManagerIdentifier":"%[5]s"}}}`, d.Get("name"), d.Get("identifier"), d.Get("description"), strings.Join(tags_string, ","), d.Get("secret_manager_identifier"))),
+			File:              optional.NewInterface(d.Get("file_path").(string)),
 		})
 	} else {
 		resp, _, err = c.SecretsApi.PutSecretFileV2(ctx, c.AccountId, id, &nextgen.SecretsApiPutSecretFileV2Opts{
-			// OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			// ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-			Spec: optional.NewString(fmt.Sprintf(`{"secret":{"type":"SecretFile","name":"%[1]s","identifier":"%[2]s","description":"%[3]s","tags":{},"spec":{"secretManagerIdentifier":"%[4]s"}}}`, d.Get("name"), d.Get("identifier"), d.Get("description"), d.Get("secret_manager_identifier"))),
-			File: optional.NewInterface(d.Get("file_path")),
-		}, d.Get("file_name").(string))
+			OrgIdentifier:     buildField(d, "org_id"),
+			ProjectIdentifier: buildField(d, "project_id"),
+			Spec:              optional.NewString(fmt.Sprintf(`{"secret":{"type":"SecretFile","name":"%[1]s","identifier":"%[2]s","description":"%[3]s","tags":%[4]s,"spec":{"secretManagerIdentifier":"%[5]s"}}}`, d.Get("name"), d.Get("identifier"), d.Get("description"), strings.Join(tags_string, ","), d.Get("secret_manager_identifier"))),
+			File:              optional.NewInterface(d.Get("file_path").(string)),
+		})
 	}
 
 	if err != nil {
@@ -87,41 +93,23 @@ func resourceSecretFileCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func buildSecretFile(d *schema.ResourceData) *nextgen.Secret {
-	secret := &nextgen.Secret{
-		Type_: nextgen.SecretTypes.SecretFile,
-		File:  &nextgen.SecretFileSpe{},
+func buildTag(no_of_tags int, tags *schema.Set) []string {
+	var tags_string = make([]string, no_of_tags)
+	for i := 0; i < tags.Len(); i++ {
+		tag := fmt.Sprintf("%v", tags.List()[i])
+		split_tag := strings.Split(tag, ":")
+		key := split_tag[0]
+		value := split_tag[1]
+		tags_string[i] = fmt.Sprintf(`{"%[1]s":"%[2]s"}`, key, value)
 	}
+	return tags_string
+}
 
-	if attr := d.Get("name").(string); attr != "" {
-		secret.Name = attr
+func buildField(d *schema.ResourceData, field string) optional.String {
+	if arr, ok := d.GetOk(field); ok {
+		return optional.NewString(arr.(string))
 	}
-
-	if attr := d.Get("identifier").(string); attr != "" {
-		secret.Identifier = attr
-	}
-
-	if attr := d.Get("description").(string); attr != "" {
-		secret.Description = attr
-	}
-
-	if attr := d.Get("org_id").(string); attr != "" {
-		secret.OrgIdentifier = attr
-	}
-
-	if attr := d.Get("project_id").(string); attr != "" {
-		secret.ProjectIdentifier = attr
-	}
-
-	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
-		secret.Tags = helpers.ExpandTags(attr)
-	}
-
-	if attr, ok := d.GetOk("secret_manager_identifier"); ok {
-		secret.File.SecretManagerIdentifier = attr.(string)
-	}
-
-	return secret
+	return optional.EmptyString()
 }
 
 func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
