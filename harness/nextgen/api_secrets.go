@@ -826,8 +826,11 @@ func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentif
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	file_content, err := ioutil.ReadFile(parameterToString(localVarOptionals.File.Value(), ""))
 	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
 		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
+		localVarFileName = parameterToString(localVarOptionals.File.Value(), "")
+		localVarFileBytes = file_content
 	}
 	if localVarOptionals != nil && localVarOptionals.Spec.IsSet() {
 		localVarFormParams.Add("spec", parameterToString(localVarOptionals.Spec.Value(), ""))
@@ -1255,8 +1258,11 @@ func (a *SecretsApiService) PutSecretFileV2(ctx context.Context, accountIdentifi
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	file_content, err := ioutil.ReadFile(parameterToString(localVarOptionals.File.Value(), ""))
 	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
 		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
+		localVarFileName = parameterToString(localVarOptionals.File.Value(), "")
+		localVarFileBytes = file_content
 	}
 	if localVarOptionals != nil && localVarOptionals.Spec.IsSet() {
 		localVarFormParams.Add("spec", parameterToString(localVarOptionals.Spec.Value(), ""))
