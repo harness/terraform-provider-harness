@@ -49,6 +49,7 @@ func TestAccSecretText_inline(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -96,6 +97,7 @@ func TestAccResourceSecretText_reference(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -103,11 +105,24 @@ func TestAccResourceSecretText_reference(t *testing.T) {
 
 func testAccResourceSecret_text_inline(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_organization" "org" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_project" "project" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.org.id
+		color = "#0063F7"
+	}
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
+			org_id = harness_platform_organization.org.id
+			project_id = harness_platform_project.project.id
 
 			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Inline"

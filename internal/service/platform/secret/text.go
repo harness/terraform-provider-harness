@@ -92,6 +92,9 @@ func buildSecretText(d *schema.ResourceData) *nextgen.Secret {
 }
 
 func readSecretText(d *schema.ResourceData, secret *nextgen.Secret) error {
+	if secret == nil {
+		return nil
+	}
 	d.Set("secret_manager_identifier", secret.Text.SecretManagerIdentifier)
 	d.Set("value_type", secret.Text.ValueType)
 	d.Set("value", secret.Text.Value)
