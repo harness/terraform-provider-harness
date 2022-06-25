@@ -1,0 +1,2 @@
+```release-note:new-resource
+platform_secret_text
