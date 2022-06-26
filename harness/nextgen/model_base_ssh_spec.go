@@ -11,5 +11,7 @@ package nextgen
 
 // This is the SSH specification details as defined in Harness.
 type BaseSshSpec struct {
-	Type_ string `json:"type"`
+	Type_          SSHSpecificationType `json:"type"`
+	KerberosConfig *KerberosConfig
+	SSHConfig      *SshConfig
 }

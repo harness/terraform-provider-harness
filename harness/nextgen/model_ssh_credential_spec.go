@@ -11,5 +11,8 @@ package nextgen
 
 // This is the SSH credential specification defined in Harness.
 type SshCredentialSpec struct {
-	CredentialType string `json:"credentialType"`
+	CredentialType         string                        `json:"credentialType"`
+	KeyPathCredential      *SshKeyPathCredential         `json:"keyPathCredential"`
+	KeyReferenceCredential *SshKeyReferenceCredentialDto `json:"keyReferenceCredential"`
+	PasswordCredential     *SshPasswordCredentialDto     `json:"passwordCredential"`
 }

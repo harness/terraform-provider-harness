@@ -13,5 +13,5 @@ package nextgen
 type SshAuth struct {
 	Spec *BaseSshSpec `json:"spec"`
 	// Specifies authentication scheme, SSH or Kerberos
-	Type_ string `json:"type"`
+	Type_ SSHAuthenticationType `json:"type"`
 }

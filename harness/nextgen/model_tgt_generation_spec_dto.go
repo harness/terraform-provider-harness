@@ -10,5 +10,7 @@
 package nextgen
 
 type TgtGenerationSpecDto struct {
-	TgtGenerationMethod string `json:"tgtGenerationMethod"`
+	TgtGenerationMethod string                    `json:"tgtGenerationMethod"`
+	KeyTabFilePathSpec  *TgtKeyTabFilePathSpecDto ``
+	PasswordSpec        *TgtPasswordSpecDto
 }
