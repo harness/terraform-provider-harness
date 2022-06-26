@@ -40,11 +40,11 @@ func testAccDataSourceSecret_file(name string) string {
 		name = "%[1]s"
 		description = "test"
 		tags = ["foo:bar"]
-		file_path = "/Users/meetrathod/terraform-provider-harness/internal/acctest/secret_files/secret.txt"
+		file_path = "%[2]s"
 		secret_manager_identifier = "harnessSecretManager"
 	}
 	data "harness_platform_secret_file" "test"{
 		identifier = harness_platform_secret_file.test.identifier
 	}
-	`, name)
+	`, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }

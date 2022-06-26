@@ -2,6 +2,7 @@ package secret_test
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -62,8 +63,10 @@ func testAccResourceSecret_file(id string, name string) string {
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
-		file_path = "/Users/meetrathod/terraform-provider-harness/internal/acctest/secret_files/secret.txt"
-		secret_manager_identifier = "harnessSecretManager"
-	}
-	`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
+}
+
+func getAbsFilePath(file_path string) string {
+	absPath, _ := filepath.Abs(file_path)
+	return absPath
 }
