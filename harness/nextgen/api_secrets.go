@@ -827,6 +827,9 @@ func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentif
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
 	file_content, err := ioutil.ReadFile(parameterToString(localVarOptionals.File.Value(), ""))
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
 	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
 		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
 		localVarFileName = parameterToString(localVarOptionals.File.Value(), "")
