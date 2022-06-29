@@ -9,8 +9,11 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type TgtGenerationSpecDto struct {
-	TgtGenerationMethod string                    `json:"tgtGenerationMethod"`
+	TgtGenerationMethod TgtGenerationMethodType   `json:"tgtGenerationMethod"`
 	KeyTabFilePathSpec  *TgtKeyTabFilePathSpecDto ``
 	PasswordSpec        *TgtPasswordSpecDto
+	Spec                json.RawMessage `json:"spec"`
 }

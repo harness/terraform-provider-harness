@@ -9,13 +9,17 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This is the Kerberos configuration details, defined in Harness.
 type KerberosConfig struct {
 	Type_ string `json:"type"`
 	// This is the authorization role, the user/service has in the realm.
 	Principal string `json:"principal"`
 	// Name of the Realm.
-	Realm               string                `json:"realm"`
-	TgtGenerationMethod string                `json:"tgtGenerationMethod,omitempty"`
-	Spec                *TgtGenerationSpecDto `json:"spec,omitempty"`
+	Realm               string                    `json:"realm"`
+	TgtGenerationMethod TgtGenerationMethodType   `json:"tgtGenerationMethod,omitempty"`
+	KeyTabFilePathSpec  *TgtKeyTabFilePathSpecDto `json:"-"`
+	PasswordSpec        *TgtPasswordSpecDto       `json:"-"`
+	Spec                json.RawMessage           `json:"spec,omitempty"`
 }

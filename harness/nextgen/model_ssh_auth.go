@@ -9,9 +9,13 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This is the SSH Authentication specification defined in Harness.
 type SshAuth struct {
-	Spec *BaseSshSpec `json:"spec"`
+	KerberosConfig *KerberosConfig `json:"-"`
+	SSHConfig      *SshConfig      `json:"-"`
+	Spec           json.RawMessage `json:"spec"`
 	// Specifies authentication scheme, SSH or Kerberos
 	Type_ SSHAuthenticationType `json:"type"`
 }
