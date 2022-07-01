@@ -27,6 +27,8 @@ func (a *Secret) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.SSHKey)
 	case SecretTypes.SecretText:
 		err = json.Unmarshal(aux.Spec, &a.Text)
+	case SecretTypes.WinRmCredentials:
+		err = json.Unmarshal(aux.Spec, &a.WinRmCredentials)
 	default:
 		panic(fmt.Sprintf("unknown secret type %s", a.Type_))
 	}
@@ -48,6 +50,8 @@ func (a *Secret) MarshalJSON() ([]byte, error) {
 		// noop
 	case SecretTypes.SecretText:
 		spec, err = json.Marshal(a.Text)
+	case SecretTypes.WinRmCredentials:
+		spec, err = json.Marshal(a.WinRmCredentials)
 	default:
 		panic(fmt.Sprintf("unknown secret type %s", a.Type_))
 	}
