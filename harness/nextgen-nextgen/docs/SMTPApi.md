@@ -1,0 +1,190 @@
+# nextgen{{classname}}
+
+All URIs are relative to *https://app.harness.io/gateway*
+
+Method | HTTP request | Description
+------------- | ------------- | -------------
+[**CreateSmtpConfig**](SMTPApi.md#CreateSmtpConfig) | **Post** /ng/api/smtpConfig | Creates SMTP config
+[**DeleteSmtpConfig**](SMTPApi.md#DeleteSmtpConfig) | **Delete** /ng/api/smtpConfig/{identifier} | Delete Smtp Config by identifier
+[**GetSmtpConfig**](SMTPApi.md#GetSmtpConfig) | **Get** /ng/api/smtpConfig | Gets Smtp config by accountId
+[**UpdateSmtp**](SMTPApi.md#UpdateSmtp) | **Put** /ng/api/smtpConfig | Updates the Smtp Config
+[**ValidateConnectivity**](SMTPApi.md#ValidateConnectivity) | **Post** /ng/api/smtpConfig/validate-connectivity | Tests the config&#x27;s connectivity by sending a test email
+[**ValidateName**](SMTPApi.md#ValidateName) | **Post** /ng/api/smtpConfig/validateName | Checks whether other connectors exist with the same name
+
+# **CreateSmtpConfig**
+> ResponseDtoNgSmtp CreateSmtpConfig(ctx, body, accountIdentifier)
+Creates SMTP config
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **body** | [**NgSmtp**](NgSmtp.md)|  | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+
+### Return type
+
+[**ResponseDtoNgSmtp**](ResponseDTONgSmtp.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **DeleteSmtpConfig**
+> ResponseDtoBoolean DeleteSmtpConfig(ctx, identifier, accountIdentifier)
+Delete Smtp Config by identifier
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **identifier** | **string**| Config identifier | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+
+### Return type
+
+[**ResponseDtoBoolean**](ResponseDTOBoolean.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **GetSmtpConfig**
+> ResponseDtoNgSmtp GetSmtpConfig(ctx, optional)
+Gets Smtp config by accountId
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+ **optional** | ***SMTPApiGetSmtpConfigOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a SMTPApiGetSmtpConfigOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **accountId** | **optional.String**| Account Identifier for the Entity. | 
+
+### Return type
+
+[**ResponseDtoNgSmtp**](ResponseDTONgSmtp.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **UpdateSmtp**
+> ResponseDtoNgSmtp UpdateSmtp(ctx, body, accountIdentifier)
+Updates the Smtp Config
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **body** | [**NgSmtp**](NgSmtp.md)|  | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+
+### Return type
+
+[**ResponseDtoNgSmtp**](ResponseDTONgSmtp.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ValidateConnectivity**
+> ResponseDtoValidationResult ValidateConnectivity(ctx, identifier, accountId, to, subject, body)
+Tests the config's connectivity by sending a test email
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **identifier** | **string**| Attribute uuid | 
+  **accountId** | **string**| Account Identifier for the Entity. | 
+  **to** | **string**|  | 
+  **subject** | **string**|  | 
+  **body** | **string**|  | 
+
+### Return type
+
+[**ResponseDtoValidationResult**](ResponseDTOValidationResult.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ValidateName**
+> ResponseDtoValidationResult ValidateName(ctx, accountId, optional)
+Checks whether other connectors exist with the same name
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountId** | **string**| Account Identifier for the Entity. | 
+ **optional** | ***SMTPApiValidateNameOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a SMTPApiValidateNameOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **name** | **optional.String**| The name of Config | 
+
+### Return type
+
+[**ResponseDtoValidationResult**](ResponseDTOValidationResult.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
