@@ -105,13 +105,6 @@ func buildTag(no_of_tags int, tags *schema.Set) []string {
 	return tags_string
 }
 
-func buildField(d *schema.ResourceData, field string) optional.String {
-	if arr, ok := d.GetOk(field); ok {
-		return optional.NewString(arr.(string))
-	}
-	return optional.EmptyString()
-}
-
 func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
 	d.Set("secret_manager_identifier", secret.File.SecretManagerIdentifier)
 	d.SetId(secret.Identifier)

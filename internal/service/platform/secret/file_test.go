@@ -63,6 +63,9 @@ func testAccResourceSecret_file(id string, name string) string {
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
+		file_path = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
+	}
 		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
