@@ -222,7 +222,7 @@ func buildSecretSshKey(d *schema.ResourceData) *nextgen.Secret {
 		config := attr.([]interface{})[0].(map[string]interface{})
 
 		secret.SSHKey.Auth = &nextgen.SshAuth{
-			Type_:          "Kerberos",
+			Type_:          nextgen.SSHAuthenticationTypes.Kerberos,
 			KerberosConfig: &nextgen.KerberosConfig{},
 		}
 
@@ -265,7 +265,7 @@ func buildSecretSshKey(d *schema.ResourceData) *nextgen.Secret {
 		config := attr.([]interface{})[0].(map[string]interface{})
 
 		secret.SSHKey.Auth = &nextgen.SshAuth{
-			Type_:     "SSH",
+			Type_:     nextgen.SSHAuthenticationTypes.SSH,
 			SSHConfig: &nextgen.SshConfig{},
 		}
 
