@@ -339,7 +339,7 @@ func readSecretSSHKey(d *schema.ResourceData, secret *nextgen.Secret) error {
 			{
 				"credential_type":             secret.SSHKey.Auth.SSHConfig.CredentialType,
 				"sshkey_path_credential":      readSshKeyPathCredentialSpec(secret),
-				"sshkey_reference_credential": readSshKeyReferenceCredentialSpec(secret),
+				"sshkey_reference_credential": readSshKeyRefernceCredentialSpec(secret),
 				"ssh_password_credential":     readSshPasswordSpec(secret),
 			},
 		})
@@ -359,7 +359,7 @@ func readSecretSSHKey(d *schema.ResourceData, secret *nextgen.Secret) error {
 	return nil
 }
 
-func readSshKeyReferenceCredentialSpec(secret *nextgen.Secret) []map[string]interface{} {
+func readSshKeyRefernceCredentialSpec(secret *nextgen.Secret) []map[string]interface{} {
 	var spec []map[string]interface{}
 	switch secret.SSHKey.Auth.SSHConfig.CredentialType {
 	case nextgen.SSHConfigTypes.KeyPath:
