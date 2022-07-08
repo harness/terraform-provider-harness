@@ -32,6 +32,8 @@ func TestAccResourceRoles(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "permissions.0", "core_pipeline_edit"),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.0", "project"),
 				),
 			},
 			{
@@ -41,6 +43,8 @@ func TestAccResourceRoles(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "permissions.0", "core_pipeline_edit"),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.0", "project"),
 				),
 			},
 			{
