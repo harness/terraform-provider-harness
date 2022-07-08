@@ -21,6 +21,14 @@ func FlattenTags(tags map[string]string) []string {
 	return result
 }
 
+func ExpandField(permissions []interface{}) []string {
+	var result []string
+	for _, permission := range permissions {
+		result = append(result, permission.(string))
+	}
+	return result
+}
+
 // func ExpandKeyValueTags(tags []interface{}) map[string]string {
 // 	result := map[string]string{}
 

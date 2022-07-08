@@ -1,14 +1,12 @@
 package environment_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -71,8 +69,8 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*internal.Session).PLClient
-					resp, _, err := c.EnvironmentsApi.DeleteEnvironmentV2(context.Background(), id, c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					resp, _, err := c.EnvironmentsApi.DeleteEnvironmentV2(ctx, id, c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
@@ -94,7 +92,7 @@ func testAccGetPlatformEnvironment(resourceName string, state *terraform.State) 
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(ctx), id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+	resp, _, err := c.EnvironmentsApi.GetEnvironmentV2((ctx), id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:     optional.NewString(orgId),
 		ProjectIdentifier: optional.NewString(projId),
 	})
