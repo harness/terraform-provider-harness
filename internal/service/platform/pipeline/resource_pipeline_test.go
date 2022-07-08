@@ -54,7 +54,7 @@ func testAccGetPipeline(resourceName string, state *terraform.State) (*nextgen.P
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.PipelinesApi.GetPipeline(ctx, c.AccountId, orgId, projId, id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.PipelinesApi.GetPipeline(ctx, c.AccountId, orgId, projId, id, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
 		return nil, err
 	}

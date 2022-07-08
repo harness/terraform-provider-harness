@@ -88,7 +88,7 @@ func testAccGetOrganization(resourceName string, state *terraform.State) (*nextg
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
-	resp, _, err := c.PLClient.OrganizationApi.GetOrganization(ctx, id, c.AccountId)
+	resp, _, err := c.OrganizationApi.GetOrganization(ctx, id, c.AccountId)
 	if err != nil {
 		return nil, err
 	}
