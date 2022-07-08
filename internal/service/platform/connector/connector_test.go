@@ -48,7 +48,7 @@ func testAccGetConnector(resourceName string, state *terraform.State) (*nextgen.
 		options.RepoIdentifier = optional.NewString(attr)
 	}
 
-	resp, _, err := c.PLClient.ConnectorsApi.GetConnector(ctx, c.AccountId, id, options)
+	resp, _, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, options)
 	if err != nil {
 		return nil, err
 	}

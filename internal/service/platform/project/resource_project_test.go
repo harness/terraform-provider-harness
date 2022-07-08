@@ -91,7 +91,7 @@ func testAccGetProject(resourceName string, state *terraform.State) (*nextgen.Pr
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 
-	resp, _, err := c.PLClient.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{OrgIdentifier: optional.NewString(orgId)})
+	resp, _, err := c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{OrgIdentifier: optional.NewString(orgId)})
 	if err != nil {
 		return nil, err
 	}

@@ -93,7 +93,7 @@ func testAccGetService(resourceName string, state *terraform.State) (*nextgen.En
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PLClient.EnvironmentsApi.GetEnvironmentV2(ctx, id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+	resp, _, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:     optional.NewString(orgId),
 		ProjectIdentifier: optional.NewString(projId),
 	})
