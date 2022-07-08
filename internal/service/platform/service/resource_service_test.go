@@ -1,14 +1,12 @@
 package service_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -71,8 +69,8 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*internal.Session).PLClient
-					_, _, err := c.ServicesApi.DeleteServiceV2(context.Background(), id, c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.ServicesApi.DeleteServiceV2(ctx, id, c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})

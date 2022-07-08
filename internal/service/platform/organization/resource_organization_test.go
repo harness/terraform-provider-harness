@@ -1,13 +1,11 @@
 package organization_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
-	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -70,8 +68,8 @@ func TestAccResourceOrganization_DeleteUnderlyingResource(t *testing.T) {
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
-					c := acctest.TestAccProvider.Meta().(*internal.Session).PLClient
-					resp, _, err := c.OrganizationApi.DeleteOrganization(context.Background(), id, c.AccountId, nil)
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					resp, _, err := c.OrganizationApi.DeleteOrganization(ctx, id, c.AccountId, nil)
 					require.NoError(t, err)
 					require.True(t, resp.Data)
 				},
