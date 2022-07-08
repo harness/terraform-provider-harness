@@ -1,4 +1,13 @@
-# 0.2.12 (Unreleased)
+# 0.2.12
+
+FEATURES:
+
+* **New Resource:** `platform_roles` ([#161](https://github.com/hashicorp/terraform-provider-harness/issues/161))
+* **New Resource:** `platform_secret_file` ([#157](https://github.com/hashicorp/terraform-provider-harness/issues/157))
+* **New Resource:** `platform_secret_sshkey` ([#159](https://github.com/hashicorp/terraform-provider-harness/issues/159))
+* **New Resource:** `platform_secret_text` ([#154](https://github.com/hashicorp/terraform-provider-harness/issues/154))
+
+# 0.2.11
 
 # 0.2.10
 
