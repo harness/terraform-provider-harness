@@ -9,10 +9,15 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This is the SSH configuration details defined in Harness.
 type SshConfig struct {
-	Type_ string `json:"type"`
+	Type_ SSHConfigType `json:"type"`
 	// This specifies SSH credential type as Password, KeyPath or KeyReference
-	CredentialType string             `json:"credentialType"`
-	Spec           *SshCredentialSpec `json:"spec"`
+	CredentialType         SSHConfigType                 `json:"credentialType"`
+	KeyReferenceCredential *SshKeyReferenceCredentialDto `json:"-"`
+	KeyPathCredential      *SshKeyPathCredential         `json:"-"`
+	PasswordCredential     *SshPasswordCredentialDto     `json:"-"`
+	Spec                   json.RawMessage               `json:"spec"`
 }

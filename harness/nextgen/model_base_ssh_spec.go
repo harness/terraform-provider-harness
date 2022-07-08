@@ -9,7 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This is the SSH specification details as defined in Harness.
 type BaseSshSpec struct {
-	Type_ string `json:"type"`
+	Type_          SSHSpecificationType `json:"type"`
+	KerberosConfig *KerberosConfig      `json:"-"`
+	SSHConfig      *SshConfig           `json:"-"`
+	Spec           json.RawMessage      `json:"spec"`
 }

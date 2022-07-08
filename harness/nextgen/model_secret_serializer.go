@@ -44,7 +44,7 @@ func (a *Secret) MarshalJSON() ([]byte, error) {
 	case SecretTypes.SecretFile:
 		spec, err = json.Marshal(a.File)
 	case SecretTypes.SSHKey:
-		// spec, err = json.Marshal(a.AssumeIamRole)
+		spec, err = json.Marshal(a.SSHKey)
 		// noop
 	case SecretTypes.SecretText:
 		spec, err = json.Marshal(a.Text)
