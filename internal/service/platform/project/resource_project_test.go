@@ -119,7 +119,6 @@ func testAccResourceProject(id string, name string) string {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
-			color = "#0063F7"
 		}
 `, id, name)
 }
