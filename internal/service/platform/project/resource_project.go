@@ -27,6 +27,7 @@ func ResourceProject() *schema.Resource {
 				Description: "Color of the project.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"modules": {
 				Description: "Modules in the project.",
