@@ -268,6 +268,8 @@ func testAccResourceConnectorK8s_ClientKeyCert(id string, name string) string {
 				client_key_passphrase_ref = "account.TEST_k8s_client_test"
 				client_key_algorithm = "RSA"
 			}
+
+			delegate_selectors = ["harness-delegate"]
 		}
 `, id, name)
 }
@@ -301,6 +303,7 @@ func testAccResourceConnectorK8s_ServiceAccount(id string, name string) string {
 				master_url = "https://kubernetes.example.com"
 				service_account_token_ref = "account.TEST_k8s_client_test"
 			}
+			delegate_selectors = ["harness-delegate"]
 		}
 `, id, name)
 }

@@ -51,6 +51,15 @@ func ResourceConnectorK8s() *schema.Resource {
 					},
 				},
 			},
+			"delegate_selectors": {
+				Description: "Selectors to use for the delegate.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+				ConflictsWith: []string{
+					"inherit_from_delegate",
+				},
+			},
 			"username_password": {
 				Description: "Username and password for the connector.",
 				Type:        schema.TypeList,
@@ -318,6 +327,13 @@ func buildConnectorK8s(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	} else {
 
+		if attr, ok := d.GetOk("delegate_selectors"); ok {
+			delegate_selectors := attr.(*schema.Set).List()
+			if len(delegate_selectors) > 0 {
+				connector.K8sCluster.DelegateSelectors = utils.InterfaceSliceToStringSlice(delegate_selectors)
+			}
+		}
+
 		connector.K8sCluster.Credential = &nextgen.KubernetesCredential{
 			Type_: nextgen.KubernetesCredentialTypes.ManualConfig,
 			ManualConfig: &nextgen.KubernetesClusterDetails{
@@ -475,6 +491,7 @@ func readConnectorK8s(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 					"client_key_algorithm":      auth.ClientKeyCert.ClientKeyAlgo,
 				},
 			})
+			d.Set("delegate_selectors", connector.K8sCluster.DelegateSelectors)
 		case nextgen.KubernetesAuthTypes.UsernamePassword:
 			d.Set("username_password", []map[string]interface{}{
 				{
@@ -484,6 +501,7 @@ func readConnectorK8s(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 					"password_ref": auth.UsernamePassword.PasswordRef,
 				},
 			})
+			d.Set("delegate_selectors", connector.K8sCluster.DelegateSelectors)
 		case nextgen.KubernetesAuthTypes.ServiceAccount:
 			d.Set("service_account", []map[string]interface{}{
 				{
@@ -491,6 +509,7 @@ func readConnectorK8s(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 					"service_account_token_ref": auth.ServiceAccount.ServiceAccountTokenRef,
 				},
 			})
+			d.Set("delegate_selectors", connector.K8sCluster.DelegateSelectors)
 		case nextgen.KubernetesAuthTypes.OpenIdConnect:
 			d.Set("openid_connect", []map[string]interface{}{
 				{
@@ -504,6 +523,7 @@ func readConnectorK8s(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 					"scopes":        strings.Split(auth.OpenIdConnect.OidcScopes, ","),
 				},
 			})
+			d.Set("delegate_selectors", connector.K8sCluster.DelegateSelectors)
 		default:
 			return fmt.Errorf("unsupported auth method: %s", auth.Type_)
 		}
