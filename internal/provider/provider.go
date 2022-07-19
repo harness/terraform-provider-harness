@@ -27,6 +27,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
@@ -118,6 +119,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_file":                  secret.DataSourceSecretFile(),
 				"harness_platform_secret_sshkey":                secret.DataSourceSecretSSHKey(),
 				"harness_platform_roles":                        roles.DataSourceRoles(),
+				"harness_platform_resource_group":               resource_group.DataSourceResourceGroup(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -168,6 +170,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_file":                  secret.ResourceSecretFile(),
 				"harness_platform_secret_sshkey":                secret.ResourceSecretSSHKey(),
 				"harness_platform_roles":                        roles.ResourceRoles(),
+				"harness_platform_resource_group":               resource_group.ResourceResourceGroup(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),

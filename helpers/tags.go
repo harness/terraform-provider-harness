@@ -1,6 +1,10 @@
 package helpers
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+)
 
 func ExpandTags(tags []interface{}) map[string]string {
 	result := map[string]string{}
@@ -17,6 +21,21 @@ func FlattenTags(tags map[string]string) []string {
 	var result []string
 	for k, v := range tags {
 		result = append(result, k+":"+v)
+	}
+	return result
+}
+
+func ExpandScopeSelector(scopeSelectors []interface{}) []nextgen.ScopeSelector {
+	var result []nextgen.ScopeSelector
+	for _, scopeSelector := range scopeSelectors {
+		v := scopeSelector.(map[string]interface{})
+
+		var resultScopeSelector nextgen.ScopeSelector
+		resultScopeSelector.Filter = v["filter"].(string)
+		resultScopeSelector.AccountIdentifier = v["account_id"].(string)
+		resultScopeSelector.OrgIdentifier = v["org_id"].(string)
+		resultScopeSelector.ProjectIdentifier = v["project_id"].(string)
+		result = append(result, resultScopeSelector)
 	}
 	return result
 }
