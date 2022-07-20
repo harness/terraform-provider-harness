@@ -1,0 +1,6 @@
+```release-note:bug
+resource/harness_platform_connector_kubernetes: Add delegate selectors.
+```
+```release-note:bug
+data-source/harness_platform_connector_kubernetes: Add delegate selectors.
+```

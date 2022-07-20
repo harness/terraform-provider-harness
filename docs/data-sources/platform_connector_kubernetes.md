@@ -26,6 +26,7 @@ Datasource for looking up a Kubernetes connector.
 ### Read-Only
 
 - `client_key_cert` (List of Object) Client key and certificate config for the connector. (see [below for nested schema](#nestedatt--client_key_cert))
+- `delegate_selectors` (Set of String) Selectors to use for the delegate.
 - `description` (String) Description of the resource.
 - `inherit_from_delegate` (List of Object) Credentials are inherited from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `openid_connect` (List of Object) OpenID configuration for the connector. (see [below for nested schema](#nestedatt--openid_connect))
