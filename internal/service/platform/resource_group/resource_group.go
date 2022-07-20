@@ -148,6 +148,10 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d)
 	}
 
+	if resp.Data == nil {
+		return nil
+	}
+
 	readResourceGroup(d, resp.Data.ResourceGroup)
 
 	return nil
@@ -313,9 +317,7 @@ func expandResourceFilter(resourceSelector []nextgen.ResourceSelectorV2) []inter
 func expandResources(resources []interface{}) []nextgen.ResourceSelectorV2 {
 	var result []nextgen.ResourceSelectorV2
 	for _, resourceSelector := range resources {
-		r := nextgen.ResourceSelectorV2{
-			// Identifiers: resourceSelector.,
-		}
+		r := nextgen.ResourceSelectorV2{}
 		v := resourceSelector.(map[string]interface{})
 		r.ResourceType = v["resource_type"].(string)
 		r.Identifiers = helpers.ExpandField(v["identifiers"].(*schema.Set).List())
@@ -325,7 +327,6 @@ func expandResources(resources []interface{}) []nextgen.ResourceSelectorV2 {
 			r.AttributeFilter.AttributeName = config["attribute_name"].(string)
 			r.AttributeFilter.AttributeValues = helpers.ExpandField(config["attribute_values"].(*schema.Set).List())
 		}
-		// r.Identifiers = resourceSelector.(string)
 		result = append(result, r)
 	}
 	return result

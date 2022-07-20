@@ -47,6 +47,7 @@ func TestAccResourceResourceGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -93,6 +94,18 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 
 func testAccResourceResourceGroup(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		color = "#0063F7"
+		org_id = harness_platform_organization.test.identifier
+	}
+	
 		resource "harness_platform_resource_group" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -100,10 +113,14 @@ func testAccResourceResourceGroup(id string, name string) string {
 			tags = ["foo:bar"]
 
 			account_id = "UKh5Yts7THSMAbccG3HrLA"
-			allowed_scope_levels =["account"]
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			allowed_scope_levels =["project"]
 			included_scopes {
 				filter = "EXCLUDING_CHILD_SCOPES"
 				account_id = "UKh5Yts7THSMAbccG3HrLA"
+				org_id = harness_platform_project.test.org_id
+				project_id = harness_platform_project.test.id
 			}
 			resource_filter {
 				include_all_resources = false
