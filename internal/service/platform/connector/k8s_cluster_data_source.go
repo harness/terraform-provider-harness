@@ -30,6 +30,12 @@ func DatasourceConnectorKubernetes() *schema.Resource {
 					},
 				},
 			},
+			"delegate_selectors": {
+				Description: "Selectors to use for the delegate.",
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"username_password": {
 				Description: "Username and password for the connector.",
 				Type:        schema.TypeList,

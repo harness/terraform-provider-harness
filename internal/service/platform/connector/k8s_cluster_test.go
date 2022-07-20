@@ -78,6 +78,7 @@ func TestAccResourceConnectorK8s_ClientKeyCert(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_ref", "account.TEST_k8s_client_key"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_passphrase_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_algorithm", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -94,6 +95,7 @@ func TestAccResourceConnectorK8s_ClientKeyCert(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_ref", "account.TEST_k8s_client_key"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_passphrase_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_algorithm", "RSA"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -128,6 +130,7 @@ func TestAccResourceConnectorK8s_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.password_ref", "account.TEST_k8s_client_test"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -141,6 +144,7 @@ func TestAccResourceConnectorK8s_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.password_ref", "account.TEST_k8s_client_test"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -174,6 +178,7 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "service_account.0.service_account_token_ref", "account.TEST_k8s_client_test"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -186,6 +191,7 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "service_account.0.service_account_token_ref", "account.TEST_k8s_client_test"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -224,6 +230,7 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.password_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.secret_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.scopes.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -241,6 +248,7 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.password_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.secret_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.scopes.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
@@ -287,6 +295,8 @@ func testAccResourceConnectorK8s_UsernamePassword(id string, name string) string
 				username = "admin"
 				password_ref = "account.TEST_k8s_client_test"
 			}
+
+			delegate_selectors = ["harness-delegate"]
 		}
 `, id, name)
 }
@@ -328,6 +338,8 @@ func testAccResourceConnectorK8s_OpenIDConnect(id string, name string) string {
 					"scope2"
 				]
 			}
+
+			delegate_selectors = ["harness-delegate"]
 		}
 `, id, name)
 }
