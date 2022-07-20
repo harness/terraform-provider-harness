@@ -1,6 +1,6 @@
 
-<a name="0.1.31"></a>
-## 0.1.31 (2022-07-08)
+<a name="0.1.32"></a>
+## 0.1.32 (2022-07-20)
 
 ### Add
 
@@ -8,6 +8,7 @@
 
 ### Added
 
+* Added attribute filter model
 * Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 * Added resource lookups by name
 * Added artifact sources to service for graphql
@@ -27,10 +28,6 @@
 ### Change
 
 * change model and enums for ssh key secret type
-
-### Configurable
-
-* Configurable debug logging
 
 ### Docker
 
@@ -101,6 +98,7 @@
 
 ### Release
 
+* Release v0.1.31
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -138,10 +136,6 @@
 
 * SSH key related models and enum changes
 
-### Skip
-
-* Skip long running delegate tests
-
 ### Updated
 
 * Updated environmens
@@ -153,6 +147,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
+* Merge pull request [#140](https://github.com/harness/harness-go-sdk/issues/140) from harness/release
 * Merge pull request [#138](https://github.com/harness/harness-go-sdk/issues/138) from harness/PL-25840
 * Merge pull request [#139](https://github.com/harness/harness-go-sdk/issues/139) from harness/PL-25839
 
