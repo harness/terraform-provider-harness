@@ -1,0 +1,3 @@
+```release-note:bug
+platform_connector_kubernetes: Add delegate selectors.
+```
