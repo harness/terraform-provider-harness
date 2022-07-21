@@ -1,5 +1,15 @@
 # 0.2.13 (Unreleased)
 
+FEATURES:
+
+* **New Resource:** `platform_resource_group` ([#168](https://github.com/hashicorp/terraform-provider-harness/issues/168))
+
+BUG FIXES:
+
+* data-source/harness_platform_connector_kubernetes: Add delegate selectors. ([#169](https://github.com/hashicorp/terraform-provider-harness/issues/169))
+* resource/harness_platform_connector_kubernetes: Add delegate selectors. ([#169](https://github.com/hashicorp/terraform-provider-harness/issues/169))
+* resource/harness_platform_project: Fixed the vanishing color in project resource ([#166](https://github.com/hashicorp/terraform-provider-harness/issues/166))
+
 # 0.2.12
 
 FEATURES:
