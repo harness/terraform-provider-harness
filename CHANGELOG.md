@@ -1,4 +1,4 @@
-# 0.2.13 (Unreleased)
+# 0.2.13
 
 FEATURES:
 
