@@ -11,8 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func ResourceKubernetesService() *schema.Resource {
-
+func k8sServiceSchema() map[string]*schema.Schema {
 	k8sSchema := commonServiceSchema()
 	k8sSchema["helm_version"] = &schema.Schema{
 		Description:  "The version of Helm to use. Options are `V2` and `V3`. Defaults to 'V2'. Only used when `type` is `KUBERNETES` or `HELM`.",
@@ -21,14 +20,17 @@ func ResourceKubernetesService() *schema.Resource {
 		ValidateFunc: validation.StringInSlice([]string{string(cac.HelmVersions.V2), string(cac.HelmVersions.V3)}, false),
 		Default:      cac.HelmVersions.V2,
 	}
+	return k8sSchema
+}
 
+func ResourceKubernetesService() *schema.Resource {
 	return &schema.Resource{
 		Description:   utils.ConfigAsCodeDescription("Resource for creating a Kubernetes service."),
 		CreateContext: resourceKubernetesServiceCreateOrUpdate,
 		ReadContext:   resourceKubernetesServiceKubernetesRead,
 		UpdateContext: resourceKubernetesServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
-		Schema:        k8sSchema,
+		Schema:        k8sServiceSchema(),
 		Importer: &schema.ResourceImporter{
 			State: serviceStateImporter,
 		},

@@ -34,7 +34,8 @@ resource "harness_service_helm" "example" {
 
 ### Optional
 
-- `description` (String) Description of th service
+- `description` (String) Description of the service
+- `helm_version` (String) Helm version used by the service. Options are 'V2' and 'V3'
 - `variable` (Block Set) Variables to be used in the service (see [below for nested schema](#nestedblock--variable))
 
 ### Read-Only
