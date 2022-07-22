@@ -46,6 +46,7 @@ type ApiClient struct {
 	UserClient          *UserClient
 	TagClient           *TagClient
 	TriggerClient       *TriggerClient
+	ApprovalClient      *ApprovalClient
 }
 
 func DefaultConfig() *Config {
@@ -101,6 +102,7 @@ func NewClient(cfg *Config) (*ApiClient, error) {
 
 	// API Services
 	c.ApplicationClient = (*ApplicationClient)(&c.common)
+	c.ApprovalClient = (*ApprovalClient)(&c.common)
 	c.CloudProviderClient = (*CloudProviderClient)(&c.common)
 	c.ConfigAsCodeClient = (*ConfigAsCodeClient)(&c.common)
 	c.ConnectorClient = (*ConnectorClient)(&c.common)

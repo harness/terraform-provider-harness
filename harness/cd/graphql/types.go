@@ -847,3 +847,30 @@ type CEClusterHealth struct {
 	LastEventTimestamp float64  `json:"lastEventTimestamp,omitempty"`
 	Messages           []string `json:"messages"`
 }
+
+type ApprovalVariable struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+type ApprovalDetailsPayload struct {
+	ApprovalDetails []*Approval `json:"approvalDetails,omitempty"`
+}
+
+type Approval struct {
+	ApprovalId   string              `json:"approvalId,omitempty"`
+	ApprovalType ApprovalStepType    `json:"approvalType,omitempty"`
+	StepName     string              `json:"stepName,omitempty"`
+	StageName    string              `json:"stageName,omitempty"`
+	StartedAt    *time.Time          `json:"startedAt,omitempty"`
+	TriggeredBy  User                `json:"triggeredBy,omitempty"`
+	WillExpireAt *time.Time          `json:"willExpireAt,omitempty"`
+	Approvers    []string            `json:"approvers,omitempty"`
+	ExecutionId  string              `json:"executionId,omitempty"`
+	Variables    []*ApprovalVariable `json:"variables,omitempty"`
+}
+
+type ApproveOrRejectApprovalsInputPayload struct {
+	ClientMutationId string `json:"clientMutationId,omitempty"`
+	Success          bool   `json:"success,omitempty"`
+}
