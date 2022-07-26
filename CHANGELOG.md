@@ -167,7 +167,7 @@ ENHANCEMENTS:
 
 FEATURES:
 
-* **New Resource:** `user_group_permissions` ([#80](https://github.com/harness/terraform-provider-aws/issues/80))
+* **New Resource:** `user_group_permissions` ([#80](https://github.com/harness/terraform-provider-harness/issues/80))
 
 ENHANCEMENTS:
 
