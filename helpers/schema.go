@@ -154,7 +154,11 @@ var PipelineResourceImporter = &schema.ResourceImporter{
 		parts := strings.Split(d.Id(), "/")
 		d.Set("org_id", parts[0])
 		d.Set("project_id", parts[1])
+<<<<<<< HEAD
 		d.Set("pipeline_id", parts[2])
+=======
+		d.Set("target_id", parts[2])
+>>>>>>> 99c0cd1 (Add triggers resource)
 		d.Set("identifier", parts[3])
 		d.SetId(parts[3])
 
