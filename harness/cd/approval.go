@@ -35,7 +35,7 @@ func (ac *ApprovalClient) GetApprovalDetails(applicationId string, executionId s
 	return &res.ApprovalDetails, nil
 }
 
-func (ac *ApprovalClient) ApproveOrRejectApprovals(input *graphql.ApproveOrRejectApprovalsInput) (*graphql.ApproveOrRejectApprovalsInputPayload, error) {
+func (ac *ApprovalClient) ApproveOrRejectApprovals(input *graphql.ApproveOrRejectApprovalsInput) (*graphql.ApproveOrRejectApprovals, error) {
 
 	query := &GraphQLQuery{
 		Query: `mutation approveOrRejectApprovals ($approvalInput: ApproveOrRejectApprovalsInput!) {
@@ -50,8 +50,8 @@ func (ac *ApprovalClient) ApproveOrRejectApprovals(input *graphql.ApproveOrRejec
 		},
 	}
 
-	res := &struct {
-		ApproveOrRejectApprovalsInputPayload *graphql.ApproveOrRejectApprovalsInputPayload
+	res := struct {
+		ApproveOrRejectApprovals graphql.ApproveOrRejectApprovals
 	}{}
 	err := ac.ApiClient.ExecuteGraphQLQuery(query, &res)
 
@@ -59,7 +59,7 @@ func (ac *ApprovalClient) ApproveOrRejectApprovals(input *graphql.ApproveOrRejec
 		return nil, err
 	}
 
-	return res.ApproveOrRejectApprovalsInputPayload, nil
+	return &res.ApproveOrRejectApprovals, nil
 }
 
 var approvalDetailsFields = `

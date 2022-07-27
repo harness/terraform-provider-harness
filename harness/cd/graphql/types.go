@@ -870,7 +870,7 @@ type Approval struct {
 	Variables    []*ApprovalVariable `json:"variables,omitempty"`
 }
 
-type ApproveOrRejectApprovalsInputPayload struct {
+type ApproveOrRejectApprovals struct {
 	ClientMutationId string `json:"clientMutationId,omitempty"`
 	Success          bool   `json:"success,omitempty"`
 }
