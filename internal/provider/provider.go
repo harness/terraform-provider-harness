@@ -24,6 +24,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
@@ -161,6 +162,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_splunk":             connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_sumologic":          connector.ResourceConnectorSumologic(),
 				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
+				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.ResourcePipeline(),
 				"harness_platform_project":                      project.ResourceProject(),
