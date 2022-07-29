@@ -22,7 +22,6 @@ Data source for retrieving a Harness environment.
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
@@ -30,6 +29,7 @@ Data source for retrieving a Harness environment.
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
+- `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `type` (String) The type of environment.
 

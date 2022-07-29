@@ -36,10 +36,13 @@ resource "harness_platform_secret_file" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `id` (String) The ID of this resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 ## Import
 

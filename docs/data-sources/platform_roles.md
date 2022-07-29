@@ -18,7 +18,6 @@ Data source for retrieving roles
 ### Optional
 
 - `allowed_scope_levels` (Set of String) The scope levels at which this role can be used
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
@@ -28,6 +27,7 @@ Data source for retrieving roles
 ### Read-Only
 
 - `description` (String) Description of the resource.
+- `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

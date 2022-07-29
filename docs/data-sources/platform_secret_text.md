@@ -17,7 +17,6 @@ DataSource for looking up secret of type secret text.
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
@@ -26,6 +25,7 @@ DataSource for looking up secret of type secret text.
 ### Read-Only
 
 - `description` (String) Description of the resource.
+- `id` (String) The ID of this resource.
 - `secret_manager_identifier` (String) Identifier of the Secret Manager used to manage the secret.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `value` (String) Value of the Secret
