@@ -104,13 +104,16 @@ resource "harness_platform_secret_sshkey" "ssh_password" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `id` (String) The ID of this resource.
 - `kerberos` (Block List, Max: 1) Kerberos authentication scheme (see [below for nested schema](#nestedblock--kerberos))
 - `org_id` (String) Unique identifier of the organization.
 - `port` (Number) SSH port
 - `project_id` (String) Unique identifier of the project.
 - `ssh` (Block List, Max: 1) Kerberos authentication scheme (see [below for nested schema](#nestedblock--ssh))
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--kerberos"></a>
 ### Nested Schema for `kerberos`

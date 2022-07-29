@@ -17,7 +17,6 @@ Datasource for looking up secert file type secret.
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
@@ -27,6 +26,7 @@ Datasource for looking up secert file type secret.
 
 - `description` (String) Description of the resource.
 - `file_path` (String) Path of the file containing secret value
+- `id` (String) The ID of this resource.
 - `secret_manager_identifier` (String) Identifier of the Secret Manager used to manage the secret.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 

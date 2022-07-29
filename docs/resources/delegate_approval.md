@@ -31,12 +31,9 @@ resource "harness_delegate_approval" "test" {
 - `approve` (Boolean) Whether or not to approve the delegate.
 - `delegate_id` (String) The id of the delegate.
 
-### Optional
-
-- `id` (String) The ID of this resource.
-
 ### Read-Only
 
+- `id` (String) The ID of this resource.
 - `status` (String) The status of the delegate.
 
 ## Import

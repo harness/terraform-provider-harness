@@ -17,7 +17,6 @@ Datasource for looking up a PagerDuty connector.
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
@@ -28,6 +27,7 @@ Datasource for looking up a PagerDuty connector.
 - `api_token_ref` (String) Reference to the Harness secret containing the api token.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
+- `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

@@ -21,7 +21,6 @@ Data source for retrieving a Harness project.
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
@@ -29,6 +28,7 @@ Data source for retrieving a Harness project.
 
 - `color` (String) Color of the project.
 - `description` (String) Description of the resource.
+- `id` (String) The ID of this resource.
 - `modules` (Set of String) Modules in the project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 

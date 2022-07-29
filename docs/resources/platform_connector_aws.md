@@ -24,13 +24,16 @@ Resource for creating an AWS connector.
 
 - `cross_account_access` (Block List, Max: 1) Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature. (see [below for nested schema](#nestedblock--cross_account_access))
 - `description` (String) Description of the resource.
-- `id` (String) The ID of this resource.
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
 - `manual` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--manual))
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+
+### Read-Only
+
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--cross_account_access"></a>
 ### Nested Schema for `cross_account_access`

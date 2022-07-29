@@ -35,7 +35,7 @@ resource "harness_add_user_to_group" "example_add_user_to_groups" {
 - `group_id` (String) The name of the user.
 - `user_id` (String) Unique identifier of the user.
 
-### Optional
+### Read-Only
 
 - `id` (String) The ID of this resource.
 

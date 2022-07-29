@@ -17,13 +17,13 @@ Data source for retrieving a Harness organization
 
 ### Optional
 
-- `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
 ### Read-Only
 
 - `description` (String) Description of the resource.
+- `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 
