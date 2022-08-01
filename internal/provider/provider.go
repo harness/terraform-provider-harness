@@ -32,6 +32,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/hashicorp/go-cleanhttp"
@@ -122,6 +123,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_sshkey":                secret.DataSourceSecretSSHKey(),
 				"harness_platform_roles":                        roles.DataSourceRoles(),
 				"harness_platform_resource_group":               resource_group.DataSourceResourceGroup(),
+				"harness_platform_service_account":              service_account.DataSourceServiceAccount(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -174,6 +176,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_secret_sshkey":                secret.ResourceSecretSSHKey(),
 				"harness_platform_roles":                        roles.ResourceRoles(),
 				"harness_platform_resource_group":               resource_group.ResourceResourceGroup(),
+				"harness_platform_service_account":              service_account.ResourceServiceAccount(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
