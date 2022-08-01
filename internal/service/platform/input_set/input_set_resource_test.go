@@ -72,7 +72,7 @@ func testAccGetInputSet(resourceName string, state *terraform.State) (*nextgen.I
 	projectIdentifier := buildField(r, "project_id").Value()
 	pipelineIdentifier := buildField(r, "pipeline_id").Value()
 	resp, _, err := c.InputSetsApi.GetInputSet(ctx, id, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
-		&nextgen.PipelineInputSetApiGetInputSetOpts{})
+		&nextgen.InputSetsApiGetInputSetOpts{})
 
 	if err != nil {
 		return nil, err

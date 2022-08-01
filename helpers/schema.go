@@ -148,13 +148,6 @@ func BuildField(d *schema.ResourceData, field string) optional.String {
 	return optional.EmptyString()
 }
 
-func BuildBoolField(d *schema.ResourceData, field string, def optional.Bool) optional.Bool {
-	if arr, ok := d.GetOk(field); ok {
-		return optional.NewBool(arr.(bool))
-	}
-	return def
-}
-
 // PipelineResourceImporter defines the importer configuration for all pipeline level resources.
 var PipelineResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {

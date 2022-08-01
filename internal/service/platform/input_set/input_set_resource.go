@@ -49,7 +49,7 @@ func resourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	pipelineId := d.Get("pipeline_id").(string)
 
-	resp, _, err := c.InputSetsApi.GetInputSet(ctx, id, c.AccountId, orgId, projectId, pipelineId, &nextgen.PipelineInputSetApiGetInputSetOpts{})
+	resp, _, err := c.InputSetsApi.GetInputSet(ctx, id, c.AccountId, orgId, projectId, pipelineId, &nextgen.InputSetsApiGetInputSetOpts{})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d)
@@ -79,10 +79,10 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		resp, _, err = c.InputSetsApi.PostInputSet(ctx, inputSet.InputSetYaml, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
-			&nextgen.PipelineInputSetApiPostInputSetOpts{})
+			&nextgen.InputSetsApiPostInputSetOpts{})
 	} else {
 		resp, _, err = c.InputSetsApi.PutInputSet(ctx, inputSet.InputSetYaml, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier, d.Id(),
-			&nextgen.PipelineInputSetApiPutInputSetOpts{})
+			&nextgen.InputSetsApiPutInputSetOpts{})
 	}
 
 	if err != nil {
@@ -101,7 +101,7 @@ func resourceInputSetDelete(ctx context.Context, d *schema.ResourceData, meta in
 	pipelineIdentifier := helpers.BuildField(d, "pipeline_id").Value()
 
 	_, _, err := c.InputSetsApi.DeleteInputSet(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
-		&nextgen.PipelineInputSetApiDeleteInputSetOpts{})
+		&nextgen.InputSetsApiDeleteInputSetOpts{})
 
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())

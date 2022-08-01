@@ -44,7 +44,7 @@ func dataSourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta in
 		d.Get("org_id").(string),
 		d.Get("project_id").(string),
 		d.Get("pipeline_id").(string),
-		&nextgen.PipelineInputSetApiGetInputSetOpts{},
+		&nextgen.InputSetsApiGetInputSetOpts{},
 	)
 
 	if err != nil {
