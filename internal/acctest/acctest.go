@@ -69,6 +69,17 @@ func TestAccGetApplication(resourceName string, state *terraform.State) (*graphq
 	return c.CDClient.ApplicationClient.GetApplicationById(id)
 }
 
+func PipelineResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		pipelineId := primary.Attributes["pipeline_id"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, pipelineId, id), nil
+	}
+}
+
 func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
