@@ -210,7 +210,7 @@ func testAccResourceInputSet(id string, name string) string {
 						name = "%[2]s"
 						tags = [
 							"foo:bar",
-            ]
+                        ]
 						org_id = harness_platform_organization.test.id
 						project_id = harness_platform_project.test.id
 						pipeline_id = harness_platform_pipeline.test.id
