@@ -111,6 +111,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_sumologic":          connector.DatasourceConnectorSumologic(),
 				"harness_platform_current_user":                 pl_user.DataSourceCurrentUser(),
 				"harness_platform_environment":                  pl_environment.DataSourceEnvironment(),
+				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
 				"harness_platform_project":                      project.DataSourceProject(),

@@ -2,7 +2,6 @@ package input_set_test
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -28,15 +27,20 @@ func TestAccResourceInputSet(t *testing.T) {
 				Config: testAccResourceInputSet(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					//TODO: add more tests here.
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "pipeline_id", id),
 				),
 			},
 			{
 				Config: testAccResourceInputSet(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "pipeline_id", id),
 				),
 			},
 			{
@@ -68,11 +72,7 @@ func testAccGetInputSet(resourceName string, state *terraform.State) (*nextgen.I
 	projectIdentifier := buildField(r, "project_id").Value()
 	pipelineIdentifier := buildField(r, "pipeline_id").Value()
 	resp, _, err := c.InputSetsApi.GetInputSet(ctx, id, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
-		&nextgen.PipelineInputSetApiGetInputSetOpts{
-			Branch:                  buildField(r, "branch"),
-			RepoIdentifier:          buildField(r, "repo_identifier"),
-			GetDefaultFromOtherRepo: buildBoolField(r, "get_default_from_other_repo", optional.EmptyBool()),
-		})
+		&nextgen.PipelineInputSetApiGetInputSetOpts{})
 
 	if err != nil {
 		return nil, err
@@ -90,16 +90,6 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 		return optional.NewString(attr)
 	}
 	return optional.EmptyString()
-}
-
-func buildBoolField(r *terraform.ResourceState, field string, def optional.Bool) optional.Bool {
-	if attr, ok := r.Primary.Attributes[field]; ok {
-		val, err := strconv.ParseBool(attr)
-		if err == nil {
-			return optional.NewBool(val)
-		}
-	}
-	return def
 }
 
 func testAccResourceInputSet(id string, name string) string {
@@ -208,16 +198,19 @@ func testAccResourceInputSet(id string, name string) string {
                                         action:
                                           type: StageRollback
                     variables:
-                        - name: JDK_IMAGE
+                        - name: key
                           type: String
-                          default: us.gcr.io/platform-205701/cie-agent-harness-core-jdk11:latest
-                          value: <+input>.allowedValues(us.gcr.io/platform-205701/cie-agent-harness-core-jdk11:latest)
+                          default: value
+                          value: <+input>.allowedValues(value)
             EOT
         }
 
 				resource "harness_platform_input_set" "test" {
 						identifier = "%[1]s"
 						name = "%[2]s"
+						tags = [
+							"foo:bar",
+            ]
 						org_id = harness_platform_organization.test.id
 						project_id = harness_platform_project.test.id
 						pipeline_id = harness_platform_pipeline.test.id
@@ -225,14 +218,16 @@ func testAccResourceInputSet(id string, name string) string {
                 inputSet:
                   identifier: "%[1]s"
                   name: "%[2]s"
+                  tags:
+                    foo: "bar"
                   orgIdentifier: "${harness_platform_organization.test.id}"
                   projectIdentifier: "${harness_platform_project.test.id}"
                   pipeline:
                     identifier: "${harness_platform_pipeline.test.id}"
                     variables:
-                    - name: "JDK_IMAGE"
+                    - name: "key"
                       type: "String"
-                      value: "us.gcr.io/platform-205701/cie-agent-harness-core-jdk11:latest"
+                      value: "value"
             EOT
 				}
         `, id, name)

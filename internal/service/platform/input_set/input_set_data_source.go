@@ -17,8 +17,13 @@ func DataSourceInputSet() *schema.Resource {
 		ReadContext: dataSourceInputSetRead,
 
 		Schema: map[string]*schema.Schema{
+			"pipeline_id": {
+				Description: "Identifier of the pipeline",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"yaml": {
-				Description: "YAML of the input set.",
+				Description: "Input Set YAML",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
