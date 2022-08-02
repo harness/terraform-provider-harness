@@ -1,3 +1,10 @@
+# 0.3.1 (August 2,2022)
+
+BUG FIXES:
+
+* data-source/harness_platform_service_account: Added nextgen sub category for service account resource. ([#177](https://github.com/harness/terraform-provider-harness/issues/177))
+* resource/harness_platform_service_account: Added nextgen sub category for service account resource. ([#177](https://github.com/harness/terraform-provider-harness/issues/177))
+
 # 0.3.0 (August 2,2022)
 
 FEATURES:
