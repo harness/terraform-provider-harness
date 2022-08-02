@@ -1,3 +1,10 @@
+# 0.3.0 (August 2,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_input_set` ([#174](https://github.com/harness/terraform-provider-harness/issues/174))
+* **New Resource:** `platform_service_account` ([#170](https://github.com/harness/terraform-provider-harness/issues/170))
+
 # 0.2.13
 
 FEATURES:
