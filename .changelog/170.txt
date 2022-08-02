@@ -1,0 +1,3 @@
+```release-note:new-resource
+platform_service_account
+```
