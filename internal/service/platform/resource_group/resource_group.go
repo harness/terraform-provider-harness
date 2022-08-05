@@ -321,7 +321,7 @@ func expandResources(resources []interface{}) []nextgen.ResourceSelectorV2 {
 		v := resourceSelector.(map[string]interface{})
 		r.ResourceType = v["resource_type"].(string)
 		r.Identifiers = helpers.ExpandField(v["identifiers"].(*schema.Set).List())
-		if attr, ok := v["attribute_filter"]; ok {
+		if attr, ok := v["attribute_filter"]; ok && len(attr.([]interface{})) > 0 {
 			config := attr.([]interface{})[0].(map[string]interface{})
 
 			r.AttributeFilter.AttributeName = config["attribute_name"].(string)
