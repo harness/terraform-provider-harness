@@ -11,7 +11,7 @@ package nextgen
 
 // Used to specify resources in resource group
 type ResourceSelectorV2 struct {
-	ResourceType    string          `json:"resourceType"`
-	Identifiers     []string        `json:"identifiers,omitempty"`
-	AttributeFilter AttributeFilter `json:"attributeFilter"`
+	ResourceType    string           `json:"resourceType"`
+	Identifiers     []string         `json:"identifiers,omitempty"`
+	AttributeFilter *AttributeFilter `json:"attributeFilter,omitempty"`
 }
