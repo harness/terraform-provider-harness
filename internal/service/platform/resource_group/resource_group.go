@@ -300,17 +300,23 @@ func expandResourceFilter(resourceSelector []nextgen.ResourceSelectorV2) []inter
 	var result []interface{}
 	for _, selector := range resourceSelector {
 		result = append(result, map[string]interface{}{
-			"resource_type": selector.ResourceType,
-			"identifiers":   selector.Identifiers,
-			"attribute_filter": []interface{}{
-				map[string]interface{}{
-					"attribute_name":   selector.AttributeFilter.AttributeName,
-					"attribute_values": selector.AttributeFilter.AttributeValues,
-				},
-			},
+			"resource_type":    selector.ResourceType,
+			"identifiers":      selector.Identifiers,
+			"attribute_filter": expandAttributeFilter(selector),
 		})
 	}
 
+	return result
+}
+
+func expandAttributeFilter(resourceSelector nextgen.ResourceSelectorV2) []interface{} {
+	var result []interface{}
+	if resourceSelector.AttributeFilter != nil {
+		result = append(result, map[string]interface{}{
+			"attribute_name":   resourceSelector.AttributeFilter.AttributeName,
+			"attribute_values": resourceSelector.AttributeFilter.AttributeValues,
+		})
+	}
 	return result
 }
 
@@ -322,10 +328,11 @@ func expandResources(resources []interface{}) []nextgen.ResourceSelectorV2 {
 		r.ResourceType = v["resource_type"].(string)
 		r.Identifiers = helpers.ExpandField(v["identifiers"].(*schema.Set).List())
 		if attr, ok := v["attribute_filter"]; ok {
-			config := attr.([]interface{})[0].(map[string]interface{})
-
-			r.AttributeFilter.AttributeName = config["attribute_name"].(string)
-			r.AttributeFilter.AttributeValues = helpers.ExpandField(config["attribute_values"].(*schema.Set).List())
+			if len(attr.([]interface{})) != 0 {
+				config := attr.([]interface{})[0].(map[string]interface{})
+				r.AttributeFilter.AttributeName = config["attribute_name"].(string)
+				r.AttributeFilter.AttributeValues = helpers.ExpandField(config["attribute_values"].(*schema.Set).List())
+			}
 		}
 		result = append(result, r)
 	}
