@@ -1,3 +1,10 @@
+# 0.3.2 (August 14,2022)
+
+BUG FIXES:
+
+* data-source: Added First Gen and Next Gen sub category for data source. ([#184](https://github.com/harness/terraform-provider-harness/issues/184))
+* resource: Added First Gen and Next Gen sub category for resource. ([#184](https://github.com/harness/terraform-provider-harness/issues/184))
+
 # 0.3.1 (August 2,2022)
 
 BUG FIXES:
