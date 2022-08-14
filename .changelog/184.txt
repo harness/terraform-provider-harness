@@ -1,0 +1,6 @@
+```release-note:bug
+resource: Added First Gen and Next Gen sub category for resource.
+```
+```release-note:bug
+data-source: Added First Gen and Next Gen sub category for data source.
+```
