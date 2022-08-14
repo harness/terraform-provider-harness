@@ -4,9 +4,9 @@
 
 The Terraform provider for Harness is a plugin that allows you to manage resources in Harness CD.
 
-## Disclaimer
+## Support
 
-This product is not supported by the Harness Customer support team. If you have any questions please open a [new issue](https://github.com/harness/terraform-provider-harness/issues/new) or join our slack [channel](https://harnesscommunity.slack.com/archives/C02G9CUNF1S).
+If you have any questions please open a new issue(https://github.com/harness/terraform-provider-harness/issues/new) or join our slack channel(https://harnesscommunity.slack.com/archives/C02G9CUNF1S).
 
 ## Quick Starts
 
