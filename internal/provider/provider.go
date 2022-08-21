@@ -164,6 +164,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_prometheus":         connector.ResourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":             connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_sumologic":          connector.ResourceConnectorSumologic(),
+				"harness_platform_connector_hcvagent":           connector.ResourceConnectorHCVAgent(),
+				"harness_platform_connector_hcvk8s":             connector.ResourceConnectorHCVK8sAuth(),
 				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),

@@ -83,7 +83,19 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), &nextgen.ConnectorsApiDeleteConnectorOpts{})
+	localVarOptionals := &nextgen.ConnectorsApiDeleteConnectorOpts{}
+
+	orgIdentifier, ok := d.GetOk("org_id")
+	if ok && orgIdentifier != nil {
+		localVarOptionals.OrgIdentifier = optional.NewString(orgIdentifier.(string))
+	}
+
+	projIdentifier, ok := d.GetOk("project_id")
+	if ok && orgIdentifier != nil {
+		localVarOptionals.ProjectIdentifier = optional.NewString(projIdentifier.(string))
+	}
+
+	_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), localVarOptionals)
 	if err != nil {
 		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 	}
