@@ -1,3 +1,9 @@
+# 0.3.3 (August 23,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_resource_group: Fix resource group empty attribute filter bug ([#182](https://github.com/harness/terraform-provider-harness/issues/182))
+
 # 0.3.2 (August 14,2022)
 
 BUG FIXES:
