@@ -1,3 +1,9 @@
+# 0.3.4 (August 27,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_connector_artifactory: Fix bug in artifactory connector resource ([#191](https://github.com/harness/terraform-provider-harness/issues/191))
+
 # 0.3.3 (August 23,2022)
 
 BUG FIXES:
