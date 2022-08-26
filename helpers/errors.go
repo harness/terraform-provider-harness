@@ -7,12 +7,5 @@ import (
 )
 
 func HandleApiError(err error, d *schema.ResourceData) diag.Diagnostics {
-	e := err.(nextgen.GenericSwaggerError)
-
-	if e.Code() == nextgen.ErrorCodes.ResourceNotFound {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 	return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
 }
