@@ -50,7 +50,7 @@ func TestAccResourceService(t *testing.T) {
 }
 
 func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
-
+	t.Skip()
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_service.test"
