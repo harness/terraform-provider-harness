@@ -17,7 +17,7 @@ func ResourceTriggers() *schema.Resource {
 		UpdateContext: resourceTriggersCreateOrUpdate,
 		CreateContext: resourceTriggersCreateOrUpdate,
 		DeleteContext: resourceTriggersDelete,
-		Importer:      helpers.PipelineResourceImporter,
+		Importer:      helpers.TriggerResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"target_id": {
@@ -72,15 +72,13 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var resp nextgen.ResponseDtongTriggerResponse
 	id := d.Id()
 
-	trigger := buildTrigger(d)
-
 	if id == "" {
-		resp, _, err = c.TriggersApi.CreateTrigger(ctx, trigger.Yaml, c.AccountId,
+		resp, _, err = c.TriggersApi.CreateTrigger(ctx, d.Get("yaml").(string), c.AccountId,
 			d.Get("org_id").(string),
 			d.Get("project_id").(string),
 			d.Get("target_id").(string))
 	} else {
-		resp, _, err = c.TriggersApi.UpdateTrigger(ctx, trigger.Yaml, c.AccountId, d.Get("org_id").(string),
+		resp, _, err = c.TriggersApi.UpdateTrigger(ctx, d.Get("yaml").(string), c.AccountId, d.Get("org_id").(string),
 			d.Get("project_id").(string),
 			d.Get("target_id").(string), id, &nextgen.TriggersApiUpdateTriggerOpts{
 				IfMatch: helpers.BuildField(d, "if_match"),
@@ -99,9 +97,7 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceTriggersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	trigger := buildTrigger(d)
-
-	_, _, err := c.TriggersApi.DeleteTrigger(ctx, c.AccountId, trigger.OrgIdentifier, trigger.ProjectIdentifier, d.Get("target_id").(string), d.Id(), &nextgen.TriggersApiDeleteTriggerOpts{
+	_, _, err := c.TriggersApi.DeleteTrigger(ctx, c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), d.Get("target_id").(string), d.Id(), &nextgen.TriggersApiDeleteTriggerOpts{
 		IfMatch: helpers.BuildField(d, "if_match"),
 	})
 
@@ -112,16 +108,6 @@ func resourceTriggersDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func buildTrigger(d *schema.ResourceData) *nextgen.Trigger {
-	return &nextgen.Trigger{
-		Identifier:        d.Get("identifier").(string),
-		Name:              d.Get("name").(string),
-		OrgIdentifier:     d.Get("org_id").(string),
-		ProjectIdentifier: d.Get("project_id").(string),
-		Yaml:              d.Get("yaml").(string),
-	}
-}
-
 func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
 	d.SetId(trigger.Identifier)
 	d.Set("identifier", trigger.Identifier)
@@ -129,4 +115,5 @@ func readTriggers(d *schema.ResourceData, trigger *nextgen.NgTriggerResponse) {
 	d.Set("org_id", trigger.OrgIdentifier)
 	d.Set("project_id", trigger.ProjectIdentifier)
 	d.Set("target_id", trigger.TargetIdentifier)
+	d.Set("yaml", trigger.Yaml)
 }
