@@ -75,7 +75,13 @@ func PipelineResourceImportStateIdFunc(resourceName string) resource.ImportState
 		id := primary.ID
 		orgId := primary.Attributes["org_id"]
 		projId := primary.Attributes["project_id"]
-		pipelineId := primary.Attributes["pipeline_id"]
+		var pipelineId string
+		if len(primary.Attributes["pipeline_id"]) != 0 {
+			pipelineId = primary.Attributes["pipeline_id"]
+		}
+		if len(primary.Attributes["target_id"]) != 0 {
+			pipelineId = primary.Attributes["target_id"]
+		}
 		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, pipelineId, id), nil
 	}
 }

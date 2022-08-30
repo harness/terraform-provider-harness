@@ -162,6 +162,19 @@ var PipelineResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+var TriggerResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+		d.Set("target_id", parts[2])
+		d.Set("identifier", parts[3])
+		d.SetId(parts[3])
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
 // ProjectResourceImporter defines the importer configuration for all project level resources.
 // The id used for the import should be in the format <org_id>/<project_id>/<identifier>
 var ProjectResourceImporter = &schema.ResourceImporter{
