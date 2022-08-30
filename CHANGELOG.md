@@ -1,3 +1,9 @@
+# 0.4.0 (August 31,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_triggers` ([#192](https://github.com/harness/terraform-provider-harness/issues/192))
+
 # 0.3.4 (August 27,2022)
 
 BUG FIXES:
