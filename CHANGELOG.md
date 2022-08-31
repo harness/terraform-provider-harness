@@ -1,3 +1,9 @@
+# 0.4.1 (August 31,2022)
+
+ENHANCEMENTS:
+
+* data-source: Added example usage for data sources ([#193](https://github.com/harness/terraform-provider-harness/issues/193))
+
 # 0.4.0 (August 31,2022)
 
 FEATURES:
