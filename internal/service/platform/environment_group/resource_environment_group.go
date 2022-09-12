@@ -2,8 +2,6 @@ package environment_group
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -11,7 +9,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceEnvironmentGroup() *schema.Resource {
@@ -30,12 +27,6 @@ func ResourceEnvironmentGroup() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"type": {
-				Description:  fmt.Sprintf("The type of environment group. Valid values are %s", strings.Join(nextgen.EnvironmentGroupTypeValues, ", ")),
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: validation.StringInSlice(nextgen.EnvironmentGroupTypeValues, false),
-			},
 		},
 	}
 
@@ -47,9 +38,12 @@ func ResourceEnvironmentGroup() *schema.Resource {
 func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroupV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupV2Opts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	OrgIdentifier :=     (d.Get("org_id").(string))
+	ProjectIdentifier := (d.Get("project_id").(string))
+
+	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Id(), c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+		Branch:     optional.NewString(d.Get("branch").(string)),
+		RepoIdentifier: optional.NewString(d.Get("repo_id").(string)),
 	})
 
 	if err != nil {
@@ -58,13 +52,13 @@ func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, m
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Data == nil || resp.Data.EnvironmentGroup == nil {
+	if resp.Data == nil || resp.Data.EnvGroup == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
 	}
 
-	readEnvironmentGroup(d, resp.Data.EnvironmentGroup)
+	readEnvironmentGroup(d, resp.Data.EnvGroup)
 
 	return nil
 }
@@ -73,16 +67,17 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
-	var resp nextgen.ResponseDtoEnvironmentGroupResponse
+	var resp nextgen.ResponseDtoEnvironmentGroup
 	id := d.Id()
 	env := buildEnvironmentGroup(d)
 
 	if id == "" {
-		resp, _, err = c.EnvironmentGroupApi.CreateEnvironmentGroupV2(ctx, c.AccountId, &nextgen.EnvironmentGroupApiCreateEnvironmentGroupV2Opts{
+		resp, _, err = c.EnvironmentGroupApi.PostEnvironmentGroup(ctx, c.AccountId, &nextgen.EnvironmentGroupApiPostEnvironmentGroupOpts{
 			Body: optional.NewInterface(env),
 		})
 	} else {
-		resp, _, err = c.EnvironmentGroupApi.UpdateEnvironmentGroupV2(ctx, c.AccountId, &nextgen.EnvironmentGroupApiUpdateEnvironmentGroupV2Opts{
+		
+		resp, _, err = c.EnvironmentGroupApi.UpdateEnvironmentGroup(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentGroupApiUpdateEnvironmentGroupOpts{
 			Body: optional.NewInterface(env),
 		})
 	}
@@ -91,7 +86,7 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 		return helpers.HandleApiError(err, d)
 	}
 
-	readEnvironmentGroup(d, resp.Data.EnvironmentGroup)
+	readEnvironmentGroup(d, resp.Data.EnvGroup)
 
 	return nil
 }
@@ -99,9 +94,12 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 func resourceEnvironmentGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroupV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupV2Opts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	OrgIdentifier :=     (d.Get("org_id").(string))
+	ProjectIdentifier := (d.Get("project_id").(string))
+
+	_, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
+		Branch:     optional.NewString(d.Get("branch").(string)),
+		RepoIdentifier: optional.NewString(d.Get("repo_id").(string)),
 	})
 
 	if err != nil {
@@ -117,7 +115,7 @@ func buildEnvironmentGroup(d *schema.ResourceData) *nextgen.EnvironmentGroupRequ
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
 		Color:             d.Get("color").(string),
-		yaml:             d.Get("yaml").(string),
+		Yaml:             d.Get("yaml").(string),
 	}
 }
 
@@ -129,5 +127,4 @@ func readEnvironmentGroup(d *schema.ResourceData, env *nextgen.EnvironmentGroupR
 	d.Set("color", env.Color)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	d.Set("type", env.Type_.String())
 }

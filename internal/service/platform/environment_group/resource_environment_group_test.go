@@ -70,12 +70,16 @@ func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					resp, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroupV2(ctx, id, c.AccountId, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupV2Opts{
-						OrgIdentifier:     optional.NewString(id),
-						ProjectIdentifier: optional.NewString(id),
+					
+					OrgIdentifier :=     id
+					ProjectIdentifier := id
+
+					resp, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, id, c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
+						Branch:     optional.NewString(id),
+						RepoIdentifier: optional.NewString(id),
 					})
 					require.NoError(t, err)
-					require.True(t, resp.Data)
+					require.True(t, resp.Data.Deleted)
 				},
 				Config:             testAccResourceEnvironmentGroup(id, name),
 				PlanOnly:           true,
@@ -85,27 +89,29 @@ func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccGetPlatformEnvironmentGroup(resourceName string, state *terraform.State) (*nextgen.EnvironmentGroupResponseDetails, error) {
+func testAccGetPlatformEnvironmentGroup(resourceName string, state *terraform.State) (*nextgen.EnvironmentGroupResponse, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
+	branch := r.Primary.Attributes["branch"]
+	repoIdentifier := r.Primary.Attributes["repoIdentifier"]
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroupV2((ctx), id, c.AccountId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupV2Opts{
-		OrgIdentifier:     optional.NewString(orgId),
-		ProjectIdentifier: optional.NewString(projId),
+	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup((ctx), id, c.AccountId, orgId, projId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+		Branch:     optional.NewString(branch),
+		RepoIdentifier: optional.NewString(repoIdentifier),
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.Data == nil || resp.Data.EnvironmentGroup == nil {
+	if resp.Data == nil || resp.Data.EnvGroup == nil {
 		return nil, nil
 	}
 
-	return resp.Data.EnvironmentGroup, nil
+	return resp.Data.EnvGroup, nil
 }
 
 func testAccEnvironmentGroupDestroy(resourceName string) resource.TestCheckFunc {
