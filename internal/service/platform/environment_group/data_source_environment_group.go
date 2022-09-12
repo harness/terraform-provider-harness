@@ -44,20 +44,18 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 	var env *nextgen.EnvironmentGroupResponse
 
 	id := d.Get("identifier").(string)
-	name := d.Get("name").(string)
 
 	if id != "" {
-		var resp nextgen.ResponseDtoEnvironmentGroupResponse
-		resp, _, err = c.EnvironmentGroupApi.GetEnvironmentGroupV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupV2Opts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		var resp nextgen.ResponseDtoEnvironmentGroup
+
+		OrgIdentifier :=     (d.Get("org_id").(string))
+		ProjectIdentifier := (d.Get("project_id").(string))
+
+		resp, _, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+		Branch:     optional.NewString(d.Get("branch").(string)),
+		RepoIdentifier: optional.NewString(d.Get("repo_id").(string)),
 		})
-		env = resp.Data.EnvironmentGroup
-	} else if name != "" {
-		env, err = c.EnvironmentGroupApi.GetEnvironmentGroupByName(ctx, c.AccountId, name, nextgen.GetEnvironmentGroupByNameOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-		})
+		env = resp.Data.EnvGroup
 	} else {
 		return diag.FromErr(errors.New("either identifier or name must be specified"))
 	}
