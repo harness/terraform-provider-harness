@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -21,11 +20,6 @@ func DataSourceEnvironmentGroup() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"color": {
 				Description: "Color of the environment group.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"type": {
-				Description: "The type of environment group.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -48,16 +42,16 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 	if id != "" {
 		var resp nextgen.ResponseDtoEnvironmentGroup
 
-		OrgIdentifier :=     (d.Get("org_id").(string))
-		ProjectIdentifier := (d.Get("project_id").(string))
+		orgIdentifier :=     (d.Get("org_id").(string))
+		projectIdentifier := (d.Get("project_id").(string))
 
-		resp, _, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-		Branch:     optional.NewString(d.Get("branch").(string)),
-		RepoIdentifier: optional.NewString(d.Get("repo_id").(string)),
+		resp, _, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+			Branch:     helpers.BuildField(d, "brach"),
+			RepoIdentifier: helpers.BuildField(d, "repo_id"),
 		})
 		env = resp.Data.EnvGroup
 	} else {
-		return diag.FromErr(errors.New("either identifier or name must be specified"))
+		return diag.FromErr(errors.New("identifier must be specified"))
 	}
 
 	if err != nil {

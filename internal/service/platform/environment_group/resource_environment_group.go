@@ -38,12 +38,12 @@ func ResourceEnvironmentGroup() *schema.Resource {
 func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	OrgIdentifier :=     (d.Get("org_id").(string))
-	ProjectIdentifier := (d.Get("project_id").(string))
+	orgIdentifier :=     (d.Get("org_id").(string))
+	projectIdentifier := (d.Get("project_id").(string))
 
-	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Id(), c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-		Branch:     optional.NewString(d.Get("branch").(string)),
-		RepoIdentifier: optional.NewString(d.Get("repo_id").(string)),
+	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+		Branch:     helpers.BuildField(d, "brach"),
+		RepoIdentifier: helpers.BuildField(d, "repo_id"),
 	})
 
 	if err != nil {
@@ -94,12 +94,12 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 func resourceEnvironmentGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	OrgIdentifier :=     (d.Get("org_id").(string))
-	ProjectIdentifier := (d.Get("project_id").(string))
+	orgIdentifier :=     (d.Get("org_id").(string))
+	projectIdentifier := (d.Get("project_id").(string))
 
-	_, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
-		Branch:     optional.NewString(d.Get("branch").(string)),
-		RepoIdentifier: optional.NewString(d.Get("repo_id").(string)),
+	_, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
+		Branch:     helpers.BuildField(d, "brach"),
+		RepoIdentifier: helpers.BuildField(d, "repo_id"),
 	})
 
 	if err != nil {
