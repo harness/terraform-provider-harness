@@ -94,6 +94,8 @@ type APIClient struct {
 
 	EnvironmentsApi *EnvironmentsApiService
 
+	EnvironmentGroupApi *EnvironmentGroupApiService
+
 	ExecuteApi *ExecuteApiService
 
 	ExecutionDetailsApi *ExecutionDetailsApiService
