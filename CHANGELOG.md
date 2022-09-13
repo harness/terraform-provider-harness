@@ -1,6 +1,6 @@
 
-<a name="0.1.33"></a>
-## 0.1.33 (2022-08-13)
+<a name="0.1.34"></a>
+## 0.1.34 (2022-09-13)
 
 ### Add
 
@@ -18,6 +18,10 @@
 
 * adding irsa credentials options to aws cloud provider
 
+### Adding
+
+* Adding dto files
+
 ### Bump
 
 * Bump github.com/docker/docker
@@ -28,6 +32,7 @@
 
 ### Change
 
+* change in package name
 * change model and enums for ssh key secret type
 
 ### Docker
@@ -45,24 +50,24 @@
 
 ### Fix
 
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
+
+### Fix
+
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
 
-### Fix
-
-* fix environment variable overrides with secrets
-* fix cac error handling
-* fix json serialization
-
 ### Fixed
 
 * Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 
-### Gitsync
+### Fixing
 
-* Gitsync setup
+* fixing package name
 
 ### Handle
 
@@ -87,6 +92,8 @@
 
 ### Release
 
+* Release version 0.1.33 08-13-2022
+* Release v0.1.33
 * Release version 0.1.32 07-20-2022
 * Release v0.1.32
 * Release v0.1.31
@@ -127,6 +134,10 @@
 
 * Resource selector model change
 
+### Restoring
+
+* restoring the swagger.yaml
+
 ### SSH
 
 * SSH key related models and enum changes
@@ -136,12 +147,9 @@
 * updated dependencies
 * updated deps
 
-### Updated
-
-* Updated environmens
-
 ### Pull Requests
 
+* Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
 * Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
 * Merge pull request [#140](https://github.com/harness/harness-go-sdk/issues/140) from harness/release
