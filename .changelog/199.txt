@@ -1,4 +1,4 @@
-``release-note:bug
+```release-note:bug
 resource/harness_platform_usergroup: Fix user group to include sso related fields 
 ```
 ```release-note:bug
