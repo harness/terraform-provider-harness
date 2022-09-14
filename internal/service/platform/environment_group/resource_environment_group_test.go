@@ -26,14 +26,14 @@ func TestAccResourceEnvironmentGroup(t *testing.T) {
 		CheckDestroy:      testAccEnvironmentGroupDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironmentGroup(id),
+				Config: testAccResourceEnvironmentGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceEnvironmentGroup(id),
+				Config: testAccResourceEnvironmentGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -60,7 +60,7 @@ func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironmentGroup(id),
+				Config: testAccResourceEnvironmentGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -81,7 +81,7 @@ func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 					require.NoError(t, err)
 					require.True(t, resp.Data.Deleted)
 				},
-				Config:             testAccResourceEnvironmentGroup(id),
+				Config:             testAccResourceEnvironmentGroup(id, name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -125,14 +125,16 @@ func testAccEnvironmentGroupDestroy(resourceName string) resource.TestCheckFunc 
 	}
 }
 
-func testAccResourceEnvironmentGroup(id string) string {
+func testAccResourceEnvironmentGroup(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
+			name = "%[2]s"
 		}
 
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
+			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
 			color = "#472848"
 		}
@@ -144,5 +146,5 @@ func testAccResourceEnvironmentGroup(id string) string {
 			color = "#0063F7"
 			type = "PreProduction"
 		}
-`, id)
+`, id, name)
 }

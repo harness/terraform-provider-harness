@@ -12,6 +12,7 @@ import (
 func TestAccDataSourceEnvironmentGroup(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
 	resourceName := "data.harness_platform_environment_group.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -19,7 +20,7 @@ func TestAccDataSourceEnvironmentGroup(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceEnvironmentGroup(id),
+				Config: testAccDataSourceEnvironmentGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -30,14 +31,16 @@ func TestAccDataSourceEnvironmentGroup(t *testing.T) {
 	})
 }
 
-func testAccDataSourceEnvironmentGroup(id string) string {
+func testAccDataSourceEnvironmentGroup(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
+			name = "%[2]s"
 		}
 
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
+			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
 			color = "#472848"
 		}
@@ -54,5 +57,5 @@ func testAccDataSourceEnvironmentGroup(id string) string {
 			org_id = harness_platform_environment_group.test.org_id
 			project_id = harness_platform_environment_group.test.project_id
 		}
-`, id)
+`, id, name)
 }
