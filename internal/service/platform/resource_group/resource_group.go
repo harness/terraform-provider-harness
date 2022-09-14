@@ -2,6 +2,7 @@ package resource_group
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -139,13 +140,13 @@ func resourceResourceGroupRead(ctx context.Context, d *schema.ResourceData, meta
 
 	id := d.Get("identifier").(string)
 
-	resp, _, err := c.HarnessResourceGroupApi.GetResourceGroupV2(ctx, id, c.AccountId, &nextgen.HarnessResourceGroupApiGetResourceGroupV2Opts{
+	resp, httpResp, err := c.HarnessResourceGroupApi.GetResourceGroupV2(ctx, id, c.AccountId, &nextgen.HarnessResourceGroupApiGetResourceGroupV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if resp.Data == nil {
@@ -163,24 +164,25 @@ func resourceResourceGroupCreateOrUpdate(ctx context.Context, d *schema.Resource
 
 	var err error
 	var resp nextgen.ResponseDtoResourceGroupV2Response
+	var httpResp *http.Response
 
 	id := d.Id()
 	resourceGroup := buildResourceGroup(d)
 
 	if id == "" {
-		resp, _, err = c.HarnessResourceGroupApi.CreateResourceGroupV2(ctx, nextgen.ResourceGroupV2Request{ResourceGroup: resourceGroup}, c.AccountId, &nextgen.HarnessResourceGroupApiCreateResourceGroupV2Opts{
+		resp, httpResp, err = c.HarnessResourceGroupApi.CreateResourceGroupV2(ctx, nextgen.ResourceGroupV2Request{ResourceGroup: resourceGroup}, c.AccountId, &nextgen.HarnessResourceGroupApiCreateResourceGroupV2Opts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		resp, _, err = c.HarnessResourceGroupApi.UpdateResourceGroup1(ctx, nextgen.ResourceGroupV2Request{ResourceGroup: resourceGroup}, c.AccountId, d.Id(), &nextgen.HarnessResourceGroupApiUpdateResourceGroup1Opts{
+		resp, httpResp, err = c.HarnessResourceGroupApi.UpdateResourceGroup1(ctx, nextgen.ResourceGroupV2Request{ResourceGroup: resourceGroup}, c.AccountId, d.Id(), &nextgen.HarnessResourceGroupApiUpdateResourceGroup1Opts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readResourceGroup(d, resp.Data.ResourceGroup)
@@ -191,13 +193,13 @@ func resourceResourceGroupCreateOrUpdate(ctx context.Context, d *schema.Resource
 func resourceResourceGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.HarnessResourceGroupApi.DeleteResourceGroupV2(ctx, d.Id(), c.AccountId, &nextgen.HarnessResourceGroupApiDeleteResourceGroupV2Opts{
+	_, httpResp, err := c.HarnessResourceGroupApi.DeleteResourceGroupV2(ctx, d.Id(), c.AccountId, &nextgen.HarnessResourceGroupApiDeleteResourceGroupV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

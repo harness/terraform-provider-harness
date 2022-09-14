@@ -38,7 +38,7 @@ func DataSourceInputSet() *schema.Resource {
 func dataSourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	resp, _, err := c.InputSetsApi.GetInputSet(ctx,
+	resp, httpResp, err := c.InputSetsApi.GetInputSet(ctx,
 		d.Get("identifier").(string),
 		c.AccountId,
 		d.Get("org_id").(string),
@@ -48,7 +48,7 @@ func dataSourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta in
 	)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readInputSet(d, resp.Data)

@@ -3,6 +3,7 @@ package usergroup
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -31,19 +32,20 @@ func dataSourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta i
 
 	var ug *nextgen.UserGroup
 	var err error
+	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
 	name := d.Get("name").(string)
 
 	if id != "" {
 		var resp nextgen.ResponseDtoUserGroup
-		resp, _, err = c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
+		resp, httpResp, err = c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
 		ug = resp.Data
 	} else if name != "" {
-		ug, err = c.UserGroupApi.GetUserGroupByName(ctx, c.AccountId, name, &nextgen.UserGroupApiGetUserGroupByNameOpts{
+		ug, httpResp, err = c.UserGroupApi.GetUserGroupByName(ctx, c.AccountId, name, &nextgen.UserGroupApiGetUserGroupByNameOpts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
@@ -52,7 +54,7 @@ func dataSourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if ug == nil {

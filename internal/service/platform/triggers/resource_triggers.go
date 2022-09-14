@@ -2,6 +2,7 @@ package triggers
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -52,12 +53,12 @@ func resourceTriggersRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	id := d.Id()
 
-	resp, _, err := c.TriggersApi.GetTrigger(ctx, c.AccountId,
+	resp, httpResp, err := c.TriggersApi.GetTrigger(ctx, c.AccountId,
 		d.Get("org_id").(string),
 		d.Get("project_id").(string), d.Get("target_id").(string), id)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readTriggers(d, resp.Data)
@@ -70,15 +71,16 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	var err error
 	var resp nextgen.ResponseDtongTriggerResponse
+	var httpResp *http.Response
 	id := d.Id()
 
 	if id == "" {
-		resp, _, err = c.TriggersApi.CreateTrigger(ctx, d.Get("yaml").(string), c.AccountId,
+		resp, httpResp, err = c.TriggersApi.CreateTrigger(ctx, d.Get("yaml").(string), c.AccountId,
 			d.Get("org_id").(string),
 			d.Get("project_id").(string),
 			d.Get("target_id").(string))
 	} else {
-		resp, _, err = c.TriggersApi.UpdateTrigger(ctx, d.Get("yaml").(string), c.AccountId, d.Get("org_id").(string),
+		resp, httpResp, err = c.TriggersApi.UpdateTrigger(ctx, d.Get("yaml").(string), c.AccountId, d.Get("org_id").(string),
 			d.Get("project_id").(string),
 			d.Get("target_id").(string), id, &nextgen.TriggersApiUpdateTriggerOpts{
 				IfMatch: helpers.BuildField(d, "if_match"),
@@ -86,7 +88,7 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readTriggers(d, resp.Data)
@@ -97,12 +99,12 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceTriggersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.TriggersApi.DeleteTrigger(ctx, c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), d.Get("target_id").(string), d.Id(), &nextgen.TriggersApiDeleteTriggerOpts{
+	_, httpResp, err := c.TriggersApi.DeleteTrigger(ctx, c.AccountId, d.Get("org_id").(string), d.Get("project_id").(string), d.Get("target_id").(string), d.Id(), &nextgen.TriggersApiDeleteTriggerOpts{
 		IfMatch: helpers.BuildField(d, "if_match"),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package input_set
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -49,10 +50,10 @@ func resourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	pipelineId := d.Get("pipeline_id").(string)
 
-	resp, _, err := c.InputSetsApi.GetInputSet(ctx, id, c.AccountId, orgId, projectId, pipelineId, &nextgen.InputSetsApiGetInputSetOpts{})
+	resp, httpResp, err := c.InputSetsApi.GetInputSet(ctx, id, c.AccountId, orgId, projectId, pipelineId, &nextgen.InputSetsApiGetInputSetOpts{})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if resp.Data == nil {
@@ -70,6 +71,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	var err error
 	var resp nextgen.ResponseDtoInputSetResponse
+	var httpResp *http.Response
 
 	id := d.Id()
 	inputSet := buildInputSet(d)
@@ -78,15 +80,15 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	pipelineIdentifier := d.Get("pipeline_id").(string)
 
 	if id == "" {
-		resp, _, err = c.InputSetsApi.PostInputSet(ctx, inputSet.InputSetYaml, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
+		resp, httpResp, err = c.InputSetsApi.PostInputSet(ctx, inputSet.InputSetYaml, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
 			&nextgen.InputSetsApiPostInputSetOpts{})
 	} else {
-		resp, _, err = c.InputSetsApi.PutInputSet(ctx, inputSet.InputSetYaml, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier, d.Id(),
+		resp, httpResp, err = c.InputSetsApi.PutInputSet(ctx, inputSet.InputSetYaml, c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier, d.Id(),
 			&nextgen.InputSetsApiPutInputSetOpts{})
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readInputSet(d, resp.Data)
@@ -100,11 +102,11 @@ func resourceInputSetDelete(ctx context.Context, d *schema.ResourceData, meta in
 	projectIdentifier := helpers.BuildField(d, "project_id").Value()
 	pipelineIdentifier := helpers.BuildField(d, "pipeline_id").Value()
 
-	_, _, err := c.InputSetsApi.DeleteInputSet(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
+	_, httpResp, err := c.InputSetsApi.DeleteInputSet(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, pipelineIdentifier,
 		&nextgen.InputSetsApiDeleteInputSetOpts{})
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package organization
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -39,10 +40,10 @@ func resourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta 
 		return nil
 	}
 
-	resp, _, err := c.OrganizationApi.GetOrganization(ctx, d.Id(), c.AccountId)
+	resp, httpResp, err := c.OrganizationApi.GetOrganization(ctx, d.Id(), c.AccountId)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readOrganization(d, resp.Data.Organization)
@@ -58,15 +59,16 @@ func resourceOrganizationCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 
 	var err error
 	var resp nextgen.ResponseDtoOrganizationResponse
+	var httpResp *http.Response
 
 	if id == "" {
-		resp, _, err = c.OrganizationApi.PostOrganization(ctx, nextgen.OrganizationRequest{Organization: org}, c.AccountId)
+		resp, httpResp, err = c.OrganizationApi.PostOrganization(ctx, nextgen.OrganizationRequest{Organization: org}, c.AccountId)
 	} else {
-		resp, _, err = c.OrganizationApi.PutOrganization(ctx, nextgen.OrganizationRequest{Organization: org}, c.AccountId, org.Identifier, nil)
+		resp, httpResp, err = c.OrganizationApi.PutOrganization(ctx, nextgen.OrganizationRequest{Organization: org}, c.AccountId, org.Identifier, nil)
 	}
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readOrganization(d, resp.Data.Organization)
@@ -77,9 +79,9 @@ func resourceOrganizationCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 func resourceOrganizationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.OrganizationApi.DeleteOrganization(ctx, d.Id(), c.AccountId, nil)
+	_, httpResp, err := c.OrganizationApi.DeleteOrganization(ctx, d.Id(), c.AccountId, nil)
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

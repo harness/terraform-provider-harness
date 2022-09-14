@@ -54,10 +54,10 @@ func dataSourceRolesRead(ctx context.Context, d *schema.ResourceData, meta inter
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	}
 
-	resp, _, err := c.RolesApi.GetRole(ctx, id, rolesApiGetRoleOpts)
+	resp, httpResp, err := c.RolesApi.GetRole(ctx, id, rolesApiGetRoleOpts)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readRoles(d, resp.Data.Role)

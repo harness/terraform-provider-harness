@@ -33,7 +33,7 @@ func DataSourcePipeline() *schema.Resource {
 func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx,
+	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx,
 		c.AccountId,
 		d.Get("org_id").(string),
 		d.Get("project_id").(string),
@@ -42,7 +42,7 @@ func dataSourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta in
 	)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readPipeline(d, resp.Data)
