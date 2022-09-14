@@ -140,7 +140,6 @@ func testAccResourceEnvironmentGroup(id string, name string) string {
 		}
 
 		resource "harness_platform_environment_group" "test" {
-			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			color = "#0063F7"

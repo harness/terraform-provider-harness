@@ -30,7 +30,7 @@ func ResourceEnvironmentGroup() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
+	helpers.SetMultiLevelResourceSchemaForEnvGroup(resource.Schema)
 
 	return resource
 }
