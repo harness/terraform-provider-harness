@@ -16,8 +16,8 @@ import (
 
 func TestAccResourceUserGroup(t *testing.T) {
 
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_usergroup.test"
 
@@ -140,6 +140,30 @@ func testAccResourceUserGroup(id string, name string) string {
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			users = ["pTaX1uGFQiSUm5_5lAM8kw"]
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
 		}
 `, id, name)
 }
