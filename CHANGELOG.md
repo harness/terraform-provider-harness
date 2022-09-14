@@ -1,6 +1,6 @@
 
-<a name="0.1.34"></a>
-## 0.1.34 (2022-09-13)
+<a name="0.1.35"></a>
+## 0.1.35 (2022-09-14)
 
 ### Add
 
@@ -42,7 +42,6 @@
 ### Error
 
 * error handling after read file
-* error handling
 
 ### Extra
 
@@ -50,16 +49,16 @@
 
 ### Fix
 
-* fix environment variable overrides with secrets
-* fix cac error handling
-* fix json serialization
-
-### Fix
-
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
+
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
 
 ### Fixed
 
@@ -92,6 +91,8 @@
 
 ### Release
 
+* Release version 0.1.34 09-13-2022
+* Release v0.1.34
 * Release version 0.1.33 08-13-2022
 * Release v0.1.33
 * Release version 0.1.32 07-20-2022
@@ -127,8 +128,6 @@
 * Release vv0.1.18
 * Release version 0.1.17 03-24-2022
 * Release v0.1.17
-* Release version 0.1.16 03-17-2022
-* Release v0.1.16
 
 ### Resource
 
@@ -142,6 +141,11 @@
 
 * SSH key related models and enum changes
 
+### Update
+
+* Update user group model
+* Update user group model
+
 ### Updated
 
 * updated dependencies
@@ -149,6 +153,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
 * Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
 * Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
