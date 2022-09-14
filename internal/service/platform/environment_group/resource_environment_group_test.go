@@ -144,7 +144,6 @@ func testAccResourceEnvironmentGroup(id string, name string) string {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			color = "#0063F7"
-			type = "PreProduction"
 		}
 `, id, name)
 }

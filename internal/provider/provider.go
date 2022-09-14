@@ -24,6 +24,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
+	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
@@ -113,6 +114,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_sumologic":          connector.DatasourceConnectorSumologic(),
 				"harness_platform_current_user":                 pl_user.DataSourceCurrentUser(),
 				"harness_platform_environment":                  pl_environment.DataSourceEnvironment(),
+				"harness_platform_environment_group":            pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
@@ -167,6 +169,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_splunk":             connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_sumologic":          connector.ResourceConnectorSumologic(),
 				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
+				"harness_platform_environment_group":            pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.ResourcePipeline(),
