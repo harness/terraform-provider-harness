@@ -1,3 +1,5 @@
+# 0.4.2 (September 14,2022)
+
 # 0.4.1 (August 31,2022)
 
 ENHANCEMENTS:
