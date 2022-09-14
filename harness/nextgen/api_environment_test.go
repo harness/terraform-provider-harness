@@ -29,7 +29,7 @@ func TestGetEnvironmentByName(t *testing.T) {
 		c.EnvironmentsApi.DeleteEnvironmentV2(ctx, c.AccountId, id, &EnvironmentsApiDeleteEnvironmentV2Opts{})
 	}()
 
-	result, err := c.EnvironmentsApi.GetEnvironmentByName(ctx, c.AccountId, id, GetEnvironmentByNameOpts{})
+	result, _, err := c.EnvironmentsApi.GetEnvironmentByName(ctx, c.AccountId, id, GetEnvironmentByNameOpts{})
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.Equal(t, result.Name, id)

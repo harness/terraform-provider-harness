@@ -26,7 +26,7 @@ func TestGetProjectByName(t *testing.T) {
 		c.ProjectApi.DeleteProject(ctx, name, c.AccountId, &ProjectApiDeleteProjectOpts{})
 	}()
 
-	result, err := c.ProjectApi.GetProjectByName(ctx, c.AccountId, "default", name)
+	result, _, err := c.ProjectApi.GetProjectByName(ctx, c.AccountId, "default", name)
 	require.NoError(t, err)
 	require.NotNil(t, result.Project)
 	require.Equal(t, result.Project.Name, name)

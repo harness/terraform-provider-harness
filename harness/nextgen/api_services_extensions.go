@@ -2,6 +2,7 @@ package nextgen
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/antihax/optional"
 )
@@ -11,12 +12,12 @@ type GetServiceByNameOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (s *ServicesApiService) GetServiceByName(ctx context.Context, accountId string, name string, opts GetServiceByNameOpts) (*ServiceResponseDetails, error) {
+func (s *ServicesApiService) GetServiceByName(ctx context.Context, accountId string, name string, opts GetServiceByNameOpts) (*ServiceResponseDetails, *http.Response, error) {
 	var pageIndex int32 = 0
 	var pageSize int32 = 2
 
 	for true {
-		resp, _, err := s.GetServiceList(ctx, accountId, &ServicesApiGetServiceListOpts{
+		resp, httpResp, err := s.GetServiceList(ctx, accountId, &ServicesApiGetServiceListOpts{
 			OrgIdentifier:     opts.OrgIdentifier,
 			ProjectIdentifier: opts.ProjectIdentifier,
 			SearchTerm:        optional.NewString(name),
@@ -25,21 +26,21 @@ func (s *ServicesApiService) GetServiceByName(ctx context.Context, accountId str
 		})
 
 		if err != nil {
-			return nil, err
+			return nil, httpResp, err
 		}
 
 		if len(resp.Data.Content) == 0 {
-			return nil, nil
+			return nil, httpResp, nil
 		}
 
 		for _, svc := range resp.Data.Content {
 			if svc.Service.Name == name {
-				return svc.Service, nil
+				return svc.Service, httpResp, nil
 			}
 		}
 
 		pageIndex += pageSize
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }

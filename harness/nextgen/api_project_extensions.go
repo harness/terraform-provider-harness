@@ -2,16 +2,17 @@ package nextgen
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/antihax/optional"
 )
 
-func (p *ProjectApiService) GetProjectByName(ctx context.Context, accountId string, organizationId string, name string) (*ProjectResponse, error) {
+func (p *ProjectApiService) GetProjectByName(ctx context.Context, accountId string, organizationId string, name string) (*ProjectResponse, *http.Response, error) {
 	var pageIndex int32 = 0
 	var pageSize int32 = 2
 
 	for true {
-		resp, _, err := p.GetProjectList(ctx, accountId, &ProjectApiGetProjectListOpts{
+		resp, httpResp, err := p.GetProjectList(ctx, accountId, &ProjectApiGetProjectListOpts{
 			SearchTerm:    optional.NewString(name),
 			OrgIdentifier: optional.NewString(organizationId),
 			PageIndex:     optional.NewInt32(pageIndex),
@@ -19,21 +20,21 @@ func (p *ProjectApiService) GetProjectByName(ctx context.Context, accountId stri
 		})
 
 		if err != nil {
-			return nil, err
+			return nil, httpResp, err
 		}
 
 		if len(resp.Data.Content) == 0 {
-			return nil, nil
+			return nil, httpResp, nil
 		}
 
 		for _, project := range resp.Data.Content {
 			if project.Project.Name == name {
-				return &project, nil
+				return &project, httpResp, nil
 			}
 		}
 
 		pageIndex += pageSize
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }

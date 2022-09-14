@@ -26,7 +26,7 @@ func TestGetUserGroupByName(t *testing.T) {
 		c.UserGroupApi.DeleteUserGroup(ctx, c.AccountId, id, &UserGroupApiDeleteUserGroupOpts{})
 	}()
 
-	result, err := c.UserGroupApi.GetUserGroupByName(ctx, c.AccountId, id, &UserGroupApiGetUserGroupByNameOpts{})
+	result, _, err := c.UserGroupApi.GetUserGroupByName(ctx, c.AccountId, id, &UserGroupApiGetUserGroupByNameOpts{})
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.Equal(t, result.Name, id)
