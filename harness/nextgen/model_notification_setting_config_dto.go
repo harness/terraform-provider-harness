@@ -10,5 +10,9 @@
 package nextgen
 
 type NotificationSettingConfigDto struct {
-	Type_ string `json:"type,omitempty"`
+	Type_                    string `json:"type,omitempty"`
+	SlackWebhookUrl          string `json:"slackWebhookUrl,omitempty"`
+	GroupEmail               string `json:"groupEmail,omitempty"`
+	MicrosoftTeamsWebhookUrl string `json:"microsoftTeamsWebhookUrl,omitempty"`
+	PagerDutyKey             string `json:"pagerDutyKey,omitempty"`
 }

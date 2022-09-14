@@ -20,6 +20,7 @@ type UserGroup struct {
 	NotificationConfigs  []NotificationSettingConfigDto `json:"notificationConfigs,omitempty"`
 	IsSsoLinked          bool                           `json:"isSsoLinked,omitempty"`
 	LinkedSsoId          string                         `json:"linkedSsoId,omitempty"`
+	LinkedSsoType        string                         `json:"linkedSsoType,omitempty"`
 	LinkedSsoDisplayName string                         `json:"linkedSsoDisplayName,omitempty"`
 	SsoGroupId           string                         `json:"ssoGroupId,omitempty"`
 	SsoGroupName         string                         `json:"ssoGroupName,omitempty"`
