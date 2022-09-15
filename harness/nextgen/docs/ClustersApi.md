@@ -1,6 +1,6 @@
 # nextgen{{classname}}
 
-All URIs are relative to *https://qa.harness.io/gateway/ng/api*
+All URIs are relative to *https://app.harness.io/gateway/ng/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
