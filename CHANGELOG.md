@@ -1,6 +1,6 @@
 
-<a name="0.1.35"></a>
-## 0.1.35 (2022-09-14)
+<a name="0.2.0"></a>
+## 0.2.0 (2022-09-15)
 
 ### Add
 
@@ -43,10 +43,6 @@
 
 * error handling after read file
 
-### Extra
-
-* Extra check in test
-
 ### Fix
 
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
@@ -58,7 +54,6 @@
 
 * fix environment variable overrides with secrets
 * fix cac error handling
-* fix json serialization
 
 ### Fixed
 
@@ -91,6 +86,8 @@
 
 ### Release
 
+* Release version 0.1.35 09-14-2022
+* Release v0.1.35
 * Release version 0.1.34 09-13-2022
 * Release v0.1.34
 * Release version 0.1.33 08-13-2022
@@ -153,6 +150,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
+* Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
 * Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
