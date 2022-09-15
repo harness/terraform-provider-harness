@@ -2,6 +2,7 @@ package environment_group
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -22,16 +23,33 @@ func ResourceEnvironmentGroup() *schema.Resource {
 		Importer:      helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the environment group.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"org_id": {
+				Description: "org_id of the environment group.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "project_id of the environment group.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"color": {
 				Description: "Color of the environment group.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"yaml": {
+				Description: "Input Set YAML",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 		},
 	}
-
-	helpers.SetMultiLevelResourceSchemaForEnvGroup(resource.Schema)
-
 	return resource
 }
 
@@ -41,13 +59,15 @@ func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, m
 	orgIdentifier :=     (d.Get("org_id").(string))
 	projectIdentifier := (d.Get("project_id").(string))
 
+	var httpResp *http.Response
+	
 	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
 		Branch:     helpers.BuildField(d, "brach"),
 		RepoIdentifier: helpers.BuildField(d, "repo_id"),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -68,6 +88,7 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 
 	var err error
 	var resp nextgen.ResponseDtoEnvironmentGroup
+	var httpResp *http.Response
 	id := d.Id()
 	env := buildEnvironmentGroup(d)
 
@@ -83,7 +104,7 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readEnvironmentGroup(d, resp.Data.EnvGroup)
@@ -121,10 +142,8 @@ func buildEnvironmentGroup(d *schema.ResourceData) *nextgen.EnvironmentGroupRequ
 
 func readEnvironmentGroup(d *schema.ResourceData, env *nextgen.EnvironmentGroupResponse) {
 	d.SetId(env.Identifier)
-	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
-	d.Set("name", env.Name)
+	d.Set("project_id", env.ProjectIdentifier)
+	d.Set("identifier", env.Identifier)
 	d.Set("color", env.Color)
-	d.Set("description", env.Description)
-	d.Set("tags", helpers.FlattenTags(env.Tags))
 }
