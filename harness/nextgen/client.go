@@ -218,6 +218,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.DelegateGroupTagsResourceApi = (*DelegateGroupTagsResourceApiService)(&c.common)
 	c.DelegateTokenResourceApi = (*DelegateTokenResourceApiService)(&c.common)
 	c.EnvironmentsApi = (*EnvironmentsApiService)(&c.common)
+	c.EnvironmentGroupApi = (*EnvironmentGroupApiService)(&c.common)
 	c.ExecuteApi = (*ExecuteApiService)(&c.common)
 	c.ExecutionDetailsApi = (*ExecutionDetailsApiService)(&c.common)
 	c.FeatureFlagsApi = (*FeatureFlagsApiService)(&c.common)
