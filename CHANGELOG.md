@@ -1,3 +1,10 @@
+# 0.4.2 (September 14,2022)
+
+BUG FIXES:
+
+* data-source/harness_platform_usergroup: Fix user group to include sso related fields ([#199](https://github.com/harness/terraform-provider-harness/issues/199))
+* resource/harness_platform_usergroup: Fix user group to include sso related fields ([#199](https://github.com/harness/terraform-provider-harness/issues/199))
+
 # 0.4.1 (August 31,2022)
 
 ENHANCEMENTS:
