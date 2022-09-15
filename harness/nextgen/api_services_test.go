@@ -28,7 +28,7 @@ func TestGetServiceByName(t *testing.T) {
 		c.ServicesApi.DeleteServiceV2(ctx, c.AccountId, id, &ServicesApiDeleteServiceV2Opts{})
 	}()
 
-	result, err := c.ServicesApi.GetServiceByName(ctx, c.AccountId, id, GetServiceByNameOpts{})
+	result, _, err := c.ServicesApi.GetServiceByName(ctx, c.AccountId, id, GetServiceByNameOpts{})
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.Equal(t, result.Name, id)

@@ -27,7 +27,7 @@ func TestGetOrganizationByName(t *testing.T) {
 		c.OrganizationApi.DeleteOrganization(ctx, id, c.AccountId, &OrganizationApiDeleteOrganizationOpts{})
 	}()
 
-	result, err := c.OrganizationApi.GetOrganizationByName(ctx, c.AccountId, id)
+	result, _, err := c.OrganizationApi.GetOrganizationByName(ctx, c.AccountId, id)
 	require.NoError(t, err)
 	require.NotNil(t, result.Organization)
 	require.Equal(t, result.Organization.Name, id)

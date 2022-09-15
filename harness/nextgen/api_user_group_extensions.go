@@ -2,6 +2,7 @@ package nextgen
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/antihax/optional"
 )
@@ -11,13 +12,13 @@ type UserGroupApiGetUserGroupByNameOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *UserGroupApiService) GetUserGroupByName(ctx context.Context, accountIdentifier string, name string, opts *UserGroupApiGetUserGroupByNameOpts) (*UserGroup, error) {
+func (a *UserGroupApiService) GetUserGroupByName(ctx context.Context, accountIdentifier string, name string, opts *UserGroupApiGetUserGroupByNameOpts) (*UserGroup, *http.Response, error) {
 
 	var pageIndex int32 = 0
 	var pageSize int32 = 2
 
 	for true {
-		resp, _, err := a.GetUserGroupList(ctx, accountIdentifier, &UserGroupApiGetUserGroupListOpts{
+		resp, httpResp, err := a.GetUserGroupList(ctx, accountIdentifier, &UserGroupApiGetUserGroupListOpts{
 			OrgIdentifier:     opts.OrgIdentifier,
 			ProjectIdentifier: opts.ProjectIdentifier,
 			SearchTerm:        optional.NewString(name),
@@ -26,21 +27,21 @@ func (a *UserGroupApiService) GetUserGroupByName(ctx context.Context, accountIde
 		})
 
 		if err != nil {
-			return nil, err
+			return nil, httpResp, err
 		}
 
 		if len(resp.Data.Content) == 0 {
-			return nil, nil
+			return nil, httpResp, nil
 		}
 
 		for _, userGroup := range resp.Data.Content {
 			if userGroup.Name == name {
-				return &userGroup, nil
+				return &userGroup, httpResp, nil
 			}
 		}
 
 		pageIndex += pageSize
 	}
 
-	return nil, nil
+	return nil, nil, nil
 }
