@@ -3,6 +3,7 @@ package environment_group
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -36,6 +37,7 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 
 	var err error
 	var env *nextgen.EnvironmentGroupResponse
+	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
 
@@ -55,7 +57,7 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling

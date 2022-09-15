@@ -25,6 +25,7 @@ func TestAccDataSourceEnvironmentGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
 				),
 			},
 		},
@@ -42,16 +43,27 @@ func testAccDataSourceEnvironmentGroup(id string, name string) string {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
-			color = "#472848"
-		}
-
-		resource "harness_platform_environment_group" "test" {
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
 			color = "#0063F7"
 		}
 
+		resource "harness_platform_environment_group" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			color = "#0063F7"
+			yaml = <<-EOT
+			     environmentGroup:
+			                 name: "%[1]s"
+			                 identifier: "%[1]s"
+			                 description: "temp"
+			                 orgIdentifier: ${harness_platform_project.test.org_id}
+			                 projectIdentifier: ${harness_platform_project.test.id}
+			                 envIdentifiers: []
+		  EOT
+		}
+
 		data "harness_platform_environment_group" "test" {
+			identifier = "%[1]s"
 			org_id = harness_platform_environment_group.test.org_id
 			project_id = harness_platform_environment_group.test.project_id
 		}
