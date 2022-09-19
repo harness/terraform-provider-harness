@@ -7,6 +7,7 @@ import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceSecretText() *schema.Resource {
@@ -26,9 +27,10 @@ func ResourceSecretText() *schema.Resource {
 				ForceNew:    true,
 			},
 			"value_type": {
-				Description: "This has details to specify if the secret value is inline or referenced.",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:  "This has details to specify if the secret value is Inline or Reference.",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice([]string{"Reference", "Inline"}, false),
 			},
 			"value": {
 				Description: "Value of the Secret",
