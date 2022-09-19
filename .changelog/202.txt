@@ -1,0 +1,6 @@
+```release-note:bug
+resource/harness_platform_secret_text: Fixed value type field documentation in secret text 
+```
+```release-note:bug
+data-source/harness_platform_secret_text: Fixed value type field documentation in secret text 
+```
