@@ -38,7 +38,7 @@ resource "harness_platform_secret_text" "test" {
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `secret_manager_identifier` (String) Identifier of the Secret Manager used to manage the secret.
-- `value_type` (String) This has details to specify if the secret value is inline or referenced.
+- `value_type` (String) This has details to specify if the secret value is Inline or Reference.
 
 ### Optional
 

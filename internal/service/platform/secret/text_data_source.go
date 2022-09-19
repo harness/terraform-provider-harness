@@ -17,7 +17,7 @@ func DataSourceSecretText() *schema.Resource {
 				Computed:    true,
 			},
 			"value_type": {
-				Description: "This has details to specify if the secret value is inline or referenced.",
+				Description: "This has details to specify if the secret value is Inline or Reference.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
