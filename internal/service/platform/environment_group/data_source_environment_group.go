@@ -47,8 +47,6 @@ func DataSourceEnvironmentGroup() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
-
 	return resource
 }
 
@@ -64,11 +62,11 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 	if id != "" {
 		var resp nextgen.ResponseDtoEnvironmentGroup
 
-		orgIdentifier :=     (d.Get("org_id").(string))
+		orgIdentifier := (d.Get("org_id").(string))
 		projectIdentifier := (d.Get("project_id").(string))
 
 		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-			Branch:     helpers.BuildField(d, "brach"),
+			Branch:         helpers.BuildField(d, "brach"),
 			RepoIdentifier: helpers.BuildField(d, "repo_id"),
 		})
 		env = resp.Data.EnvGroup
