@@ -3,6 +3,7 @@ package secret
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -22,9 +23,9 @@ func resourceSecretReadBase(ctx context.Context, d *schema.ResourceData, meta in
 		id = d.Get("identifier").(string)
 	}
 
-	resp, _, err := c.SecretsApi.GetSecretV2(ctx, id, c.AccountId, getReadSecretOpts(d))
+	resp, httpResp, err := c.SecretsApi.GetSecretV2(ctx, id, c.AccountId, getReadSecretOpts(d))
 	if err != nil {
-		return nil, helpers.HandleApiError(err, d)
+		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if resp.Data == nil {
@@ -57,21 +58,22 @@ func resourceSecretCreateOrUpdateBase(ctx context.Context, d *schema.ResourceDat
 
 	var err error
 	var resp nextgen.ResponseDtoSecretResponse
+	var httpResp *http.Response
 
 	if id == "" {
-		resp, _, err = c.SecretsApi.PostSecret(ctx, nextgen.SecretRequestWrapper{Secret: secret}, c.AccountId, &nextgen.SecretsApiPostSecretOpts{
+		resp, httpResp, err = c.SecretsApi.PostSecret(ctx, nextgen.SecretRequestWrapper{Secret: secret}, c.AccountId, &nextgen.SecretsApiPostSecretOpts{
 			OrgIdentifier:     buildField(d, "org_id"),
 			ProjectIdentifier: buildField(d, "project_id"),
 		})
 	} else {
-		resp, _, err = c.SecretsApi.PutSecret(ctx, c.AccountId, d.Id(), &nextgen.SecretsApiPutSecretOpts{
+		resp, httpResp, err = c.SecretsApi.PutSecret(ctx, c.AccountId, d.Id(), &nextgen.SecretsApiPutSecretOpts{
 			OrgIdentifier:     buildField(d, "org_id"),
 			ProjectIdentifier: buildField(d, "project_id"),
 			Body:              optional.NewInterface(nextgen.SecretRequestWrapper{Secret: secret})})
 	}
 
 	if err != nil {
-		return nil, helpers.HandleApiError(err, d)
+		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readCommonSecretData(d, resp.Data.Secret)
@@ -89,12 +91,12 @@ func buildField(d *schema.ResourceData, field string) optional.String {
 func resourceSecretDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.SecretsApi.DeleteSecretV2(ctx, d.Id(), c.AccountId, &nextgen.SecretsApiDeleteSecretV2Opts{
+	_, httpResp, err := c.SecretsApi.DeleteSecretV2(ctx, d.Id(), c.AccountId, &nextgen.SecretsApiDeleteSecretV2Opts{
 		OrgIdentifier:     buildField(d, "org_id"),
 		ProjectIdentifier: buildField(d, "project_id"),
 	})
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

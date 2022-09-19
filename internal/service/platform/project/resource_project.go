@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -50,12 +51,12 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta inter
 
 	id := d.Id()
 
-	resp, _, err := c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{
+	resp, httpResp, err := c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{
 		OrgIdentifier: optional.NewString(d.Get("org_id").(string)),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readProject(d, resp.Data.Project)
@@ -68,21 +69,22 @@ func resourceProjectCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 
 	var err error
 	var resp nextgen.ResponseDtoProjectResponse
+	var httpResp *http.Response
 	id := d.Id()
 	project := buildProject(d)
 
 	if id == "" {
-		resp, _, err = c.ProjectApi.PostProject(ctx, nextgen.ProjectRequest{Project: project}, c.AccountId, &nextgen.ProjectApiPostProjectOpts{
+		resp, httpResp, err = c.ProjectApi.PostProject(ctx, nextgen.ProjectRequest{Project: project}, c.AccountId, &nextgen.ProjectApiPostProjectOpts{
 			OrgIdentifier: optional.NewString(d.Get("org_id").(string)),
 		})
 	} else {
-		resp, _, err = c.ProjectApi.PutProject(ctx, nextgen.ProjectRequest{Project: project}, c.AccountId, id, &nextgen.ProjectApiPutProjectOpts{
+		resp, httpResp, err = c.ProjectApi.PutProject(ctx, nextgen.ProjectRequest{Project: project}, c.AccountId, id, &nextgen.ProjectApiPutProjectOpts{
 			OrgIdentifier: optional.NewString(d.Get("org_id").(string)),
 		})
 	}
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readProject(d, resp.Data.Project)
@@ -93,9 +95,9 @@ func resourceProjectCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.ProjectApi.DeleteProject(ctx, d.Id(), c.AccountId, &nextgen.ProjectApiDeleteProjectOpts{OrgIdentifier: optional.NewString(d.Get("org_id").(string))})
+	_, httpResp, err := c.ProjectApi.DeleteProject(ctx, d.Id(), c.AccountId, &nextgen.ProjectApiDeleteProjectOpts{OrgIdentifier: optional.NewString(d.Get("org_id").(string))})
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

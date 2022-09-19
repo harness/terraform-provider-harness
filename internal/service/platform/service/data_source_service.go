@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -31,19 +32,20 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	var err error
 	var svc *nextgen.ServiceResponseDetails
+	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
 	name := d.Get("name").(string)
 
 	if id != "" {
 		var resp nextgen.ResponseDtoServiceResponse
-		resp, _, err = c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
+		resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
 		svc = resp.Data.Service
 	} else if name != "" {
-		svc, err = c.ServicesApi.GetServiceByName(ctx, c.AccountId, name, nextgen.GetServiceByNameOpts{
+		svc, httpResp, err = c.ServicesApi.GetServiceByName(ctx, c.AccountId, name, nextgen.GetServiceByNameOpts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
@@ -52,7 +54,7 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if svc == nil {

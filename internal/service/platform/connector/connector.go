@@ -3,6 +3,7 @@ package connector
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -22,9 +23,9 @@ func resourceConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta
 		id = d.Get("identifier").(string)
 	}
 
-	resp, _, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, getReadConnectorOpts(d))
+	resp, httpResp, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, getReadConnectorOpts(d))
 	if err != nil {
-		return nil, helpers.HandleApiError(err, d)
+		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if connType != resp.Data.Connector.Type_ {
@@ -64,15 +65,16 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 
 	var err error
 	var resp nextgen.ResponseDtoConnectorResponse
+	var httpResp *http.Response
 
 	if id == "" {
-		resp, _, err = c.ConnectorsApi.CreateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, &nextgen.ConnectorsApiCreateConnectorOpts{})
+		resp, httpResp, err = c.ConnectorsApi.CreateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, &nextgen.ConnectorsApiCreateConnectorOpts{})
 	} else {
-		resp, _, err = c.ConnectorsApi.UpdateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, &nextgen.ConnectorsApiUpdateConnectorOpts{})
+		resp, httpResp, err = c.ConnectorsApi.UpdateConnector(ctx, nextgen.Connector{Connector: connector}, c.AccountId, &nextgen.ConnectorsApiUpdateConnectorOpts{})
 	}
 
 	if err != nil {
-		return nil, helpers.HandleApiError(err, d)
+		return nil, helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readCommonConnectorData(d, resp.Data.Connector)
@@ -83,12 +85,12 @@ func resourceConnectorCreateOrUpdateBase(ctx context.Context, d *schema.Resource
 func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), &nextgen.ConnectorsApiDeleteConnectorOpts{
+	_, httpResp, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), &nextgen.ConnectorsApiDeleteConnectorOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id")})
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

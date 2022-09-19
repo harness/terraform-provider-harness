@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 
-	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -87,9 +87,9 @@ func DataSourceCurrentUser() *schema.Resource {
 
 func dataSourceCurrentUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	resp, _, err := c.UserApi.GetCurrentUserInfo(ctx, c.AccountId)
+	resp, httpResp, err := c.UserApi.GetCurrentUserInfo(ctx, c.AccountId)
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	user := resp.Data

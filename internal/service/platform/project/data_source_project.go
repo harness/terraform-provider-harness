@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -49,19 +50,20 @@ func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	var err error
 	var proj *nextgen.ProjectResponse
+	var httpResp *http.Response
 
 	if id != "" {
 		var resp nextgen.ResponseDtoProjectResponse
-		resp, _, err = c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{OrgIdentifier: optional.NewString(orgId)})
+		resp, httpResp, err = c.ProjectApi.GetProject(ctx, id, c.AccountId, &nextgen.ProjectApiGetProjectOpts{OrgIdentifier: optional.NewString(orgId)})
 		proj = resp.Data
 	} else if name != "" {
-		proj, err = c.ProjectApi.GetProjectByName(ctx, c.AccountId, orgId, name)
+		proj, httpResp, err = c.ProjectApi.GetProjectByName(ctx, c.AccountId, orgId, name)
 	} else {
 		return diag.FromErr(errors.New("either identifier or name must be specified"))
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if proj == nil || proj.Project == nil {

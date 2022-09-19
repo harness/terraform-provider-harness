@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/antihax/optional v1.0.0
 	github.com/docker/docker v20.10.17+incompatible
-	github.com/harness/harness-go-sdk v0.1.35
+	github.com/harness/harness-go-sdk v0.2.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.22.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.0
@@ -90,7 +90,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220914142337-ca0e39ece12f // indirect
+	google.golang.org/genproto v0.0.0-20220914210030-581e60b4ef85 // indirect
 	google.golang.org/grpc v1.49.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

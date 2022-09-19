@@ -3,6 +3,7 @@ package environment
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -42,19 +43,20 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 
 	var err error
 	var env *nextgen.EnvironmentResponseDetails
+	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
 	name := d.Get("name").(string)
 
 	if id != "" {
 		var resp nextgen.ResponseDtoEnvironmentResponse
-		resp, _, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+		resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
 		env = resp.Data.Environment
 	} else if name != "" {
-		env, err = c.EnvironmentsApi.GetEnvironmentByName(ctx, c.AccountId, name, nextgen.GetEnvironmentByNameOpts{
+		env, httpResp, err = c.EnvironmentsApi.GetEnvironmentByName(ctx, c.AccountId, name, nextgen.GetEnvironmentByNameOpts{
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		})
@@ -63,7 +65,7 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling

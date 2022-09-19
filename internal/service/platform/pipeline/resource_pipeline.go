@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -39,7 +40,7 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	id := d.Id()
 
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx,
+	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx,
 		c.AccountId,
 		d.Get("org_id").(string),
 		d.Get("project_id").(string),
@@ -48,7 +49,7 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 	)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readPipeline(d, resp.Data)
@@ -60,23 +61,24 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
+	var httpResp *http.Response
 	id := d.Id()
 	pipeline := buildPipeline(d)
 
 	if id == "" {
-		_, _, err = c.PipelinesApi.PostPipeline(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, &nextgen.PipelinesApiPostPipelineOpts{})
+		_, httpResp, err = c.PipelinesApi.PostPipeline(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, &nextgen.PipelinesApiPostPipelineOpts{})
 	} else {
-		_, _, err = c.PipelinesApi.UpdatePipelineV2(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, id, &nextgen.PipelinesApiUpdatePipelineV2Opts{})
+		_, httpResp, err = c.PipelinesApi.UpdatePipelineV2(ctx, pipeline.Yaml, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, id, &nextgen.PipelinesApiUpdatePipelineV2Opts{})
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// The create/update methods don't return the yaml in the response, so we need to query for it again.
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiGetPipelineOpts{})
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readPipeline(d, resp.Data)
@@ -89,9 +91,9 @@ func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 	pipeline := buildPipeline(d)
 
-	_, _, err := c.PipelinesApi.DeletePipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiDeletePipelineOpts{})
+	_, httpResp, err := c.PipelinesApi.DeletePipeline(ctx, c.AccountId, pipeline.OrgIdentifier, pipeline.ProjectIdentifier, pipeline.Identifier, &nextgen.PipelinesApiDeletePipelineOpts{})
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

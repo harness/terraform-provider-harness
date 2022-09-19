@@ -3,6 +3,7 @@ package organization
 import (
 	"context"
 	"errors"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -30,22 +31,23 @@ func dataSourceOrganizationRead(ctx context.Context, d *schema.ResourceData, met
 
 	var err error
 	var org *nextgen.OrganizationResponse
+	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
 	name := d.Get("name").(string)
 
 	if id != "" {
 		var resp nextgen.ResponseDtoOrganizationResponse
-		resp, _, err = c.OrganizationApi.GetOrganization(ctx, id, c.AccountId)
+		resp, httpResp, err = c.OrganizationApi.GetOrganization(ctx, id, c.AccountId)
 		org = resp.Data
 	} else if name != "" {
-		org, err = c.OrganizationApi.GetOrganizationByName(ctx, c.AccountId, name)
+		org, httpResp, err = c.OrganizationApi.GetOrganizationByName(ctx, c.AccountId, name)
 	} else {
 		return diag.FromErr(errors.New("either identifier or name must be specified"))
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if org == nil || org.Organization == nil {

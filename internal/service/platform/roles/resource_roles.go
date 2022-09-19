@@ -2,6 +2,7 @@ package roles
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -57,10 +58,10 @@ func resourceRolesRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	}
 
-	resp, _, err := c.RolesApi.GetRole(ctx, id, rolesApiGetRoleOpts)
+	resp, httpResp, err := c.RolesApi.GetRole(ctx, id, rolesApiGetRoleOpts)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readRoles(d, resp.Data.Role)
@@ -73,18 +74,19 @@ func resourceRolesCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 
 	var err error
 	var resp nextgen.ResponseDtoRoleResponse
+	var httpResp *http.Response
 	id := d.Id()
 
 	role := buildRoles(d)
 
 	if id == "" {
-		resp, _, err = c.RolesApi.PostRole(ctx, *role, &nextgen.RolesApiPostRoleOpts{
+		resp, httpResp, err = c.RolesApi.PostRole(ctx, *role, &nextgen.RolesApiPostRoleOpts{
 			AccountIdentifier: optional.NewString(c.AccountId),
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		resp, _, err = c.RolesApi.PutRole(ctx, *role, id, &nextgen.RolesApiPutRoleOpts{
+		resp, httpResp, err = c.RolesApi.PutRole(ctx, *role, id, &nextgen.RolesApiPutRoleOpts{
 			AccountIdentifier: optional.NewString(c.AccountId),
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
@@ -92,7 +94,7 @@ func resourceRolesCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readRoles(d, resp.Data.Role)
@@ -103,13 +105,13 @@ func resourceRolesCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 func resourceRolesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.RolesApi.DeleteRole(ctx, d.Id(), &nextgen.RolesApiDeleteRoleOpts{
+	_, httpResp, err := c.RolesApi.DeleteRole(ctx, d.Id(), &nextgen.RolesApiDeleteRoleOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

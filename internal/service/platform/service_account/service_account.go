@@ -2,6 +2,7 @@ package service_account
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -43,13 +44,13 @@ func resourceServiceAccountRead(ctx context.Context, d *schema.ResourceData, met
 
 	id := d.Get("identifier").(string)
 
-	resp, _, err := c.ServiceAccountApi.GetAggregatedServiceAccount(ctx, c.AccountId, id, &nextgen.ServiceAccountApiGetAggregatedServiceAccountOpts{
+	resp, httpResp, err := c.ServiceAccountApi.GetAggregatedServiceAccount(ctx, c.AccountId, id, &nextgen.ServiceAccountApiGetAggregatedServiceAccountOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	if resp.Data.ServiceAccount == nil {
@@ -66,24 +67,25 @@ func resourceServiceAccountCreateOrUpdate(ctx context.Context, d *schema.Resourc
 
 	var err error
 	var resp nextgen.ResponseDtoServiceAccount
+	var httpResp *http.Response
 	id := d.Id()
 
 	serviceAccount := buildServiceAccount(d)
 
 	if id == "" {
-		resp, _, err = c.ServiceAccountApi.CreateServiceAccount(ctx, *serviceAccount, c.AccountId, &nextgen.ServiceAccountApiCreateServiceAccountOpts{
+		resp, httpResp, err = c.ServiceAccountApi.CreateServiceAccount(ctx, *serviceAccount, c.AccountId, &nextgen.ServiceAccountApiCreateServiceAccountOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		resp, _, err = c.ServiceAccountApi.UpdateServiceAccount(ctx, *serviceAccount, c.AccountId, id, &nextgen.ServiceAccountApiUpdateServiceAccountOpts{
+		resp, httpResp, err = c.ServiceAccountApi.UpdateServiceAccount(ctx, *serviceAccount, c.AccountId, id, &nextgen.ServiceAccountApiUpdateServiceAccountOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	}
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 	readServiceAccount(d, resp.Data)
 	return nil
@@ -92,13 +94,13 @@ func resourceServiceAccountCreateOrUpdate(ctx context.Context, d *schema.Resourc
 func resourceServiceAccountDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, _, err := c.ServiceAccountApi.DeleteServiceAccount(ctx, c.AccountId, d.Id(), &nextgen.ServiceAccountApiDeleteServiceAccountOpts{
+	_, httpResp, err := c.ServiceAccountApi.DeleteServiceAccount(ctx, c.AccountId, d.Id(), &nextgen.ServiceAccountApiDeleteServiceAccountOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil
