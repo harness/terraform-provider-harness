@@ -2,6 +2,7 @@ package environment_group
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -26,7 +27,7 @@ func ResourceEnvironmentGroup() *schema.Resource {
 			"identifier": {
 				Description: "identifier of the environment group.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"org_id": {
 				Description: "org_id of the environment group.",
@@ -56,15 +57,27 @@ func ResourceEnvironmentGroup() *schema.Resource {
 func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgIdentifier :=     (d.Get("org_id").(string))
-	projectIdentifier := (d.Get("project_id").(string))
 
+	var err error
+	var envGroup *nextgen.EnvironmentGroupResponse
 	var httpResp *http.Response
+
+	id := d.Get("identifier").(string)
 	
-	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-		Branch:     helpers.BuildField(d, "brach"),
-		RepoIdentifier: helpers.BuildField(d, "repo_id"),
-	})
+	if id != "" {
+		var resp nextgen.ResponseDtoEnvironmentGroup
+
+		orgIdentifier :=     (d.Get("org_id").(string))
+		projectIdentifier := (d.Get("project_id").(string))
+
+		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+			Branch:     helpers.BuildField(d, "brach"),
+			RepoIdentifier: helpers.BuildField(d, "repo_id"),
+		})
+		envGroup = resp.Data.EnvGroup
+	} else {
+		return diag.FromErr(errors.New("identifier must be specified"))
+	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -72,13 +85,11 @@ func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, m
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Data == nil || resp.Data.EnvGroup == nil {
-		d.SetId("")
-		d.MarkNewResource()
+	if envGroup == nil {
 		return nil
 	}
 
-	readEnvironmentGroup(d, resp.Data.EnvGroup)
+	readEnvironmentGroup(d, envGroup)
 
 	return nil
 }
@@ -92,13 +103,15 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 	id := d.Id()
 	env := buildEnvironmentGroup(d)
 
+	orgIdentifier :=     (d.Get("org_id").(string))
+
 	if id == "" {
-		resp, _, err = c.EnvironmentGroupApi.PostEnvironmentGroup(ctx, c.AccountId, &nextgen.EnvironmentGroupApiPostEnvironmentGroupOpts{
+		resp, httpResp, err = c.EnvironmentGroupApi.PostEnvironmentGroup(ctx, c.AccountId, &nextgen.EnvironmentGroupApiPostEnvironmentGroupOpts{
 			Body: optional.NewInterface(env),
 		})
 	} else {
 		
-		resp, _, err = c.EnvironmentGroupApi.UpdateEnvironmentGroup(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentGroupApiUpdateEnvironmentGroupOpts{
+		resp, httpResp, err = c.EnvironmentGroupApi.UpdateEnvironmentGroup(ctx, c.AccountId, orgIdentifier, &nextgen.EnvironmentGroupApiUpdateEnvironmentGroupOpts{
 			Body: optional.NewInterface(env),
 		})
 	}
@@ -118,13 +131,13 @@ func resourceEnvironmentGroupDelete(ctx context.Context, d *schema.ResourceData,
 	orgIdentifier :=     (d.Get("org_id").(string))
 	projectIdentifier := (d.Get("project_id").(string))
 
-	_, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
+	_, httpResp, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
 		Branch:     helpers.BuildField(d, "brach"),
 		RepoIdentifier: helpers.BuildField(d, "repo_id"),
 	})
 
 	if err != nil {
-		return diag.Errorf(err.(nextgen.GenericSwaggerError).Error())
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

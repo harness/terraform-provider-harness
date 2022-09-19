@@ -19,10 +19,30 @@ func DataSourceEnvironmentGroup() *schema.Resource {
 		ReadContext: dataSourceEnvironmentGroupRead,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the environment group.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"org_id": {
+				Description: "org_id of the environment group.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "project_id of the environment group.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"color": {
 				Description: "Color of the environment group.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
+			},
+			"yaml": {
+				Description: "Input Set YAML",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}
@@ -47,7 +67,7 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 		orgIdentifier :=     (d.Get("org_id").(string))
 		projectIdentifier := (d.Get("project_id").(string))
 
-		resp, _, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
 			Branch:     helpers.BuildField(d, "brach"),
 			RepoIdentifier: helpers.BuildField(d, "repo_id"),
 		})

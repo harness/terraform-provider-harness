@@ -16,8 +16,10 @@ import (
 func TestAccResourceEnvironmentGroup(t *testing.T) {
 
 	name := t.Name()
+	color := "#0063F7"
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_environment_group.test"
+	updatedColor := "#0063F8"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -25,13 +27,29 @@ func TestAccResourceEnvironmentGroup(t *testing.T) {
 		CheckDestroy:      testAccEnvironmentGroupDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironmentGroup(id, name),
+				Config: testAccResourceEnvironmentGroup(id, name, color),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
 				),
+			},
+			{
+				Config: testAccResourceEnvironmentGroup(id, name, updatedColor),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", updatedColor),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -40,6 +58,7 @@ func TestAccResourceEnvironmentGroup(t *testing.T) {
 func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 	t.Skip()
 	name := t.Name()
+	color := "#0063F7"
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_environment_group.test"
 
@@ -48,7 +67,7 @@ func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironmentGroup(id, name),
+				Config: testAccResourceEnvironmentGroup(id, name, color),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -69,7 +88,7 @@ func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
 					require.NoError(t, err)
 					require.True(t, resp.Data.Deleted)
 				},
-				Config:             testAccResourceEnvironmentGroup(id, name),
+				Config:             testAccResourceEnvironmentGroup(id, name, color),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -113,7 +132,7 @@ func testAccEnvironmentGroupDestroy(resourceName string) resource.TestCheckFunc 
 	}
 }
 
-func testAccResourceEnvironmentGroup(id string, name string) string {
+func testAccResourceEnvironmentGroup(id string, name string, color string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -131,7 +150,7 @@ func testAccResourceEnvironmentGroup(id string, name string) string {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			color = "#0063F7"
+			color = "%[3]s"
 			yaml = <<-EOT
 			     environmentGroup:
 			                 name: "%[1]s"
@@ -142,5 +161,5 @@ func testAccResourceEnvironmentGroup(id string, name string) string {
 			                 envIdentifiers: []
 		  EOT
 		}
-`, id, name)
+`, id, name, color)
 }
