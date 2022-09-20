@@ -1,3 +1,14 @@
+# 0.5.0 (September 20,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_environment_group` ([#203](https://github.com/harness/terraform-provider-harness/issues/203))
+
+BUG FIXES:
+
+* data-source/harness_platform_secret_text: Fixed value type field documentation in secret text ([#202](https://github.com/harness/terraform-provider-harness/issues/202))
+* resource/harness_platform_secret_text: Fixed value type field documentation in secret text ([#202](https://github.com/harness/terraform-provider-harness/issues/202))
+
 # 0.4.2 (September 14,2022)
 
 BUG FIXES:
