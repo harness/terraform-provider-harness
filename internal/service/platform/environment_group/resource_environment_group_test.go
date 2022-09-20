@@ -10,7 +10,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceEnvironmentGroup(t *testing.T) {
@@ -50,47 +49,6 @@ func TestAccResourceEnvironmentGroup(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{"yaml"},
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
-}
-
-func TestAccResourceEnvironmentGRoup_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip()
-	name := t.Name()
-	color := "#0063F7"
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_environment_group.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceEnvironmentGroup(id, name, color),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-				),
-			},
-			{
-				PreConfig: func() {
-					acctest.TestAccConfigureProvider()
-					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-
-					OrgIdentifier := id
-					ProjectIdentifier := id
-
-					resp, _, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, id, c.AccountId, OrgIdentifier, ProjectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
-						Branch:         optional.NewString(id),
-						RepoIdentifier: optional.NewString(id),
-					})
-					require.NoError(t, err)
-					require.True(t, resp.Data.Deleted)
-				},
-				Config:             testAccResourceEnvironmentGroup(id, name, color),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

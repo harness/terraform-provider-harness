@@ -27,22 +27,22 @@ func DataSourceEnvironmentGroup() *schema.Resource {
 			"org_id": {
 				Description: "org_id of the environment group.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"project_id": {
 				Description: "project_id of the environment group.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"color": {
 				Description: "Color of the environment group.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"yaml": {
 				Description: "Input Set YAML",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 		},
 	}
