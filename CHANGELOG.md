@@ -1,6 +1,6 @@
 
-<a name="0.2.0"></a>
-## 0.2.0 (2022-09-15)
+<a name="0.2.1"></a>
+## 0.2.1 (2022-09-21)
 
 ### Add
 
@@ -67,10 +67,6 @@
 
 * Handle upsert error
 
-### Implement
-
-* Implement new cac delete method
-
 ### Implemented
 
 * Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
@@ -86,6 +82,8 @@
 
 ### Release
 
+* Release version 0.2.0 09-15-2022
+* Release v0.2.0
 * Release version 0.1.35 09-14-2022
 * Release v0.1.35
 * Release version 0.1.34 09-13-2022
@@ -123,8 +121,6 @@
 * Release v0.1.18
 * Release version v0.1.18 03-25-2022
 * Release vv0.1.18
-* Release version 0.1.17 03-24-2022
-* Release v0.1.17
 
 ### Resource
 
@@ -150,6 +146,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
