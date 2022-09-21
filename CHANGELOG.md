@@ -1,3 +1,9 @@
+# 0.5.1 (September 21,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_cluster` ([#204](https://github.com/harness/terraform-provider-harness/issues/204))
+
 # 0.5.0 (September 20,2022)
 
 FEATURES:
