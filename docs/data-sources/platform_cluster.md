@@ -25,6 +25,7 @@ data "harness_platform_cluster" "test" {
 
 ### Required
 
+- `env_id` (String) environment identifier of the cluster.
 - `identifier` (String) identifier of the cluster.
 
 ### Optional
