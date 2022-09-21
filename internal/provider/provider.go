@@ -15,6 +15,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/application"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/cloudprovider"
 	cd_connector "github.com/harness/terraform-provider-harness/internal/service/cd/connector"
+	pl_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/cluster"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/delegate"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/environment"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
@@ -97,6 +98,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":              connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":             connector.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":          connector.DatasourceConnectorBitbucket(),
+				"harness_platform_cluster":                      pl_cluster.DataSourceCluster(),
 				"harness_platform_connector_datadog":            connector.DatasourceConnectorDatadog(),
 				"harness_platform_connector_docker":             connector.DatasourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":          connector.DatasourceConnectorDynatrace(),
@@ -152,6 +154,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":              connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":             connector.ResourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":          connector.ResourceConnectorBitbucket(),
+				"harness_platform_cluster":                      pl_cluster.ResourceCluster(),
 				"harness_platform_connector_datadog":            connector.ResourceConnectorDatadog(),
 				"harness_platform_connector_docker":             connector.ResourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":          connector.ResourceConnectorDynatrace(),
