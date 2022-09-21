@@ -1,3 +1,5 @@
+# 0.5.2 (September 21,2022)
+
 # 0.5.1 (September 21,2022)
 
 FEATURES:
