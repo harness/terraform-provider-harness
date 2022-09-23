@@ -110,7 +110,7 @@ func testAccResourceEnvironmentGroup(id string, name string, color string) strin
 			project_id = harness_platform_project.test.id
 			color = "%[3]s"
 			yaml = <<-EOT
-			     environmentGroup:
+			   environmentGroup:
 			                 name: "%[1]s"
 			                 identifier: "%[1]s"
 			                 description: "temp"
