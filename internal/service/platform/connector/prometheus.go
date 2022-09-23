@@ -37,33 +37,33 @@ func ResourceConnectorPrometheus() *schema.Resource {
 				Optional:    true,
 			},
 			"password_ref": {
-				Description: "Password reference",
+				Description: "Password reference.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"headers": {
-				Description: "headers",
+				Description: "Headers.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"key": {
-							Description: "key",
+							Description: "Key.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"encrypted_value_ref": {
-							Description: "Encrypted value reference",
+							Description: "Encrypted value reference.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"value": {
-							Description: "value",
+							Description: "Value.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"value_encrypted": {
-							Description: "Encrypted value",
+							Description: "Encrypted value.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
