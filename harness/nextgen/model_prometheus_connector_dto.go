@@ -10,6 +10,10 @@
 package nextgen
 
 type PrometheusConnectorDto struct {
-	Url               string   `json:"url"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	ConnectorType     string                    `json:"connectorType"`
+	Url               string                    `json:"url"`
+	Username          string                    `json:"username,omitempty"`
+	PasswordRef       string                    `json:"passwordRef,omitempty"`
+	Headers           []CustomHealthKeyAndValue `json:"headers,omitempty"`
+	DelegateSelectors []string                  `json:"delegateSelectors,omitempty"`
 }
