@@ -1,6 +1,6 @@
 
-<a name="0.2.1"></a>
-## 0.2.1 (2022-09-21)
+<a name="0.2.2"></a>
+## 0.2.2 (2022-09-23)
 
 ### Add
 
@@ -16,15 +16,11 @@
 
 ### Adding
 
-* adding irsa credentials options to aws cloud provider
+* Adding dto files
 
 ### Adding
 
-* Adding dto files
-
-### Bump
-
-* Bump github.com/docker/docker
+* adding irsa credentials options to aws cloud provider
 
 ### Catch
 
@@ -45,19 +41,15 @@
 
 ### Fix
 
+* fix environment variable overrides with secrets
+* fix cac error handling
+
+### Fix
+
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
-
-### Fix
-
-* fix environment variable overrides with secrets
-* fix cac error handling
-
-### Fixed
-
-* Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
 
 ### Fixing
 
@@ -82,6 +74,8 @@
 
 ### Release
 
+* Release version 0.2.1 09-21-2022
+* Release v0.2.1
 * Release version 0.2.0 09-15-2022
 * Release v0.2.0
 * Release version 0.1.35 09-14-2022
@@ -120,7 +114,6 @@
 * Release version 0.1.18 03-25-2022
 * Release v0.1.18
 * Release version v0.1.18 03-25-2022
-* Release vv0.1.18
 
 ### Resource
 
@@ -136,6 +129,7 @@
 
 ### Update
 
+* Update prometheus connector dto model
 * Update user group model
 * Update user group model
 
@@ -146,6 +140,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
