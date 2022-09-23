@@ -19,7 +19,13 @@ func DataSourceService() *schema.Resource {
 
 		ReadContext: dataSourceServiceRead,
 
-		Schema: map[string]*schema.Schema{},
+		Schema: map[string]*schema.Schema{
+			"yaml": {
+				Description: "Input Set YAML",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+		},
 	}
 
 	helpers.SetProjectLevelDataSourceSchema(resource.Schema)

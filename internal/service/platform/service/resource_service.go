@@ -22,7 +22,13 @@ func ResourceService() *schema.Resource {
 		CreateContext: resourceServiceCreateOrUpdate,
 		Importer:      helpers.ProjectResourceImporter,
 
-		Schema: map[string]*schema.Schema{},
+		Schema: map[string]*schema.Schema{
+			"yaml": {
+				Description: "Input Set YAML",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+		},
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
@@ -114,5 +120,5 @@ func readService(d *schema.ResourceData, project *nextgen.ServiceResponseDetails
 	d.Set("name", project.Name)
 	d.Set("description", project.Description)
 	d.Set("tags", helpers.FlattenTags(project.Tags))
-	d.Set("yaml", helpers.FlattenTags(project.Tags))
+	d.Set("yaml", project.Yaml)
 }
