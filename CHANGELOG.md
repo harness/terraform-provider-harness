@@ -1,3 +1,11 @@
+# 0.5.3 (September 25,2022)
+
+BUG FIXES:
+
+* data-source/harness_platform_connector_prometheus: Fix prometheus connector schema to include missing fields ([#210](https://github.com/harness/terraform-provider-harness/issues/210))
+* resource/harness_platform_connector_prometheus: Fix prometheus connector schema to include missing fields ([#210](https://github.com/harness/terraform-provider-harness/issues/210))
+* resource/harness_platform_environment: Fixed bug in color field ([#209](https://github.com/harness/terraform-provider-harness/issues/209))
+
 # 0.5.2 (September 21,2022)
 
 # 0.5.1 (September 21,2022)

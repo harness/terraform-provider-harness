@@ -22,6 +22,44 @@ func DatasourceConnectorPrometheus() *schema.Resource {
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"user_name": {
+				Description: "User name.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"password_ref": {
+				Description: "Password reference.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"headers": {
+				Description: "Headers.",
+				Type:        schema.TypeSet,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"key": {
+							Description: "Key.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"encrypted_value_ref": {
+							Description: "Encrypted value reference.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"value": {
+							Description: "Value.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"value_encrypted": {
+							Description: "Encrypted value.",
+							Type:        schema.TypeBool,
+							Computed:    true,
+						},
+					}},
+			},
 		},
 	}
 

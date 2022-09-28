@@ -30,6 +30,7 @@ func ResourceEnvironment() *schema.Resource {
 				Description: "Color of the environment.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"type": {
 				Description:  fmt.Sprintf("The type of environment. Valid values are %s", strings.Join(nextgen.EnvironmentTypeValues, ", ")),
