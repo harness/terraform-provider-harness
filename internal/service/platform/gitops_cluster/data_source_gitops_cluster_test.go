@@ -13,7 +13,7 @@ func TestAccDataSourceGitopsCluster(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	agentId := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	accountId := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	// accountId := c.AccountId
 	name := id
 	resourceName := "data.harness_platform_gitops_cluster.test"
 
@@ -22,7 +22,7 @@ func TestAccDataSourceGitopsCluster(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceGitopsCluster(id, name, accountId, agentId),
+				Config: testAccDataSourceGitopsCluster(id, name, agentId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -32,7 +32,7 @@ func TestAccDataSourceGitopsCluster(t *testing.T) {
 	})
 }
 
-func testAccDataSourceGitopsCluster(id string, name string, accountId string, agentId string) string {
+func testAccDataSourceGitopsCluster(id string, name string, agentId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -51,7 +51,7 @@ func testAccDataSourceGitopsCluster(id string, name string, accountId string, ag
 			account_identifier = "%[3]s"
 			project_identifier = harness_platform_project.test.id
 			org_identifier = harness_platform_project.test.org_id
-			agent_identifier = "%[4]s"
+			agent_identifier = "%[3]s"
 
  			request {
 				upsert = false
@@ -99,11 +99,11 @@ func testAccDataSourceGitopsCluster(id string, name string, accountId string, ag
 								nanos = 98765
 							}
 						}
-						server_version = "1.1.1.2.3.4"
+						server_version = "1.1"
 					}
 				}
 			}
 		}
-		`, id, name, accountId, agentId)
+		`, id, name, agentId)
 
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/antihax/optional"
+	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -436,12 +437,11 @@ func ResourceGitopsCluster() *schema.Resource {
 
 func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier, identifier string
+	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("agent_identifier"); ok {
 		agentIdentifier = attr.(string)
-	}
-	if attr, ok := d.GetOk("account_identifier"); ok {
-		accountIdentifier = attr.(string)
 	}
 	if attr, ok := d.GetOk("org_identifier"); ok {
 		orgIdentifier = attr.(string)
@@ -478,6 +478,7 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 
 func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_identifier").(string)
 	identifier := d.Get("identifier").(string)
 	var queryName, queryServer string
@@ -490,7 +491,7 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		// queryIdValue = queryId["value"].(string)
 	}
 	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
-		AccountIdentifier: optional.NewString(d.Get("account_identifier").(string)),
+		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
 		QueryServer:       optional.NewString(queryServer),
@@ -517,12 +518,13 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_identifier").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
 	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceUpdate(ctx, *updateClusterRequest, agentIdentifier, identifier,
 		&nextgen.AgentClusterServiceApiAgentClusterServiceUpdateOpts{
-			AccountIdentifier: optional.NewString(d.Get("account_identifier").(string)),
+			AccountIdentifier: optional.NewString(c.AccountId),
 			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
 		})
@@ -543,16 +545,15 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 
 func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_identifier").(string)
 	identifier := d.Get("identifier").(string)
 	_, httpResp, err := c.AgentClusterApi.AgentClusterServiceDelete(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceDeleteOpts{
-		AccountIdentifier: optional.NewString(d.Get("account_identifier").(string)),
+		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
 		QueryServer:       optional.NewString(d.Get("query.server").(string)),
 		QueryName:         optional.NewString(d.Get("query.name").(string)),
-		// QueryIdType:       optional.NewString(d.Get("query.id.type").(string)),
-		// QueryIdValue:      optional.NewString(d.Get("query.id.value").(string)),
 	})
 
 	if err != nil {

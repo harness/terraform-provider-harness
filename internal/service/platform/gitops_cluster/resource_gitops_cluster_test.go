@@ -15,7 +15,6 @@ import (
 func TestAccResourceGitopsCluster(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	agentId := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	accountId := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_gitops_cluster.test"
@@ -25,14 +24,14 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsCluster(id, name, accountId, agentId),
+				Config: testAccResourceGitopsCluster(id, name, agentId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceGitopsCluster(id, updatedName, accountId, agentId),
+				Config: testAccResourceGitopsCluster(id, updatedName, agentId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -56,13 +55,10 @@ func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Se
 	identifier := r.Primary.Attributes["identifier"]
 
 	resp, _, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
-		AccountIdentifier: optional.NewString(r.Primary.Attributes["account_identifier"]),
 		OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_identifier"]),
 		ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_identifier"]),
 		QueryServer:       optional.NewString(r.Primary.Attributes["query.server"]),
 		QueryName:         optional.NewString(r.Primary.Attributes["query.name"]),
-		// QueryIdType:       optional.NewString(r.Primary.Attributes["query.id.type"]),
-		// QueryIdValue:      optional.NewString(r.Primary.Attributes["query.id.value"]),
 	})
 
 	if err != nil {
@@ -88,7 +84,7 @@ func testAccResourceGitopsClusterDestroy(resourceName string) resource.TestCheck
 
 }
 
-func testAccResourceGitopsCluster(id string, name string, accountId string, agentId string) string {
+func testAccResourceGitopsCluster(id string, name string, agentId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -107,7 +103,7 @@ func testAccResourceGitopsCluster(id string, name string, accountId string, agen
 			account_identifier = "%[3]s"
 			project_identifier = harness_platform_project.test.id
 			org_identifier = harness_platform_project.test.org_id
-			agent_identifier = "%[4]s"
+			agent_identifier = "%[3]s"
 
  			request {
 				upsert = false
@@ -160,6 +156,6 @@ func testAccResourceGitopsCluster(id string, name string, accountId string, agen
 				}
 			}
 		}
-		`, id, name, accountId, agentId)
+		`, id, name, agentId)
 
 }

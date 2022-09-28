@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/antihax/optional"
+	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -431,6 +432,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 
 func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_identifier").(string)
 	identifier := d.Get("identifier").(string)
 	var queryName, queryServer string
@@ -438,12 +440,9 @@ func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, me
 		query := d.Get("query").([]interface{})[0].(map[string]interface{})
 		queryServer = query["server"].(string)
 		queryName = query["name"].(string)
-		// queryId := query["id"].(map[string]interface{})
-		// queryIdType = queryId["type"].(string)
-		// queryIdValue = queryId["value"].(string)
 	}
 	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
-		AccountIdentifier: optional.NewString(d.Get("account_identifier").(string)),
+		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
 		QueryServer:       optional.NewString(queryServer),
