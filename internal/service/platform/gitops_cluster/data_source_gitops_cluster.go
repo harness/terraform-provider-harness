@@ -18,22 +18,22 @@ func DataSourceGitopsCluster() *schema.Resource {
 		ReadContext: dataSourceGitopsClusterRead,
 
 		Schema: map[string]*schema.Schema{
-			"account_identifier": {
+			"account_id": {
 				Description: "account identifier of the cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"project_identifier": {
+			"project_id": {
 				Description: "project identifier of the cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_identifier": {
+			"org_id": {
 				Description: "organization identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"agent_identifier": {
+			"agent_id": {
 				Description: "agent identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -356,12 +356,12 @@ func DataSourceGitopsCluster() *schema.Resource {
 														Schema: map[string]*schema.Schema{
 															"resources_count": {
 																Description: "number of observed Kubernetes resources",
-																Type:        schema.TypeInt,
+																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"apis_count": {
 																Description: "number of observed Kubernetes API count",
-																Type:        schema.TypeInt,
+																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"last_cache_sync_time": {
@@ -374,7 +374,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 												},
 												"applications_count": {
 													Description: "the number of applications managed by Argo CD on the cluster",
-													Type:        schema.TypeInt,
+													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"api_versions": {
@@ -433,7 +433,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	agentIdentifier := d.Get("agent_identifier").(string)
+	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	var queryName, queryServer string
 	if d.Get("query") != nil && len(d.Get("query").([]interface{})) > 0 {
@@ -443,8 +443,8 @@ func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, me
 	}
 	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
-		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		QueryServer:       optional.NewString(queryServer),
 		QueryName:         optional.NewString(queryName),
 	})
