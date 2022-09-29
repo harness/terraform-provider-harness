@@ -21,23 +21,23 @@ func ResourceGitopsAgent() *schema.Resource {
 		ReadContext:   resourceGitopsAgentRead,
 		UpdateContext: resourceGitopsAgentUpdate,
 		DeleteContext: resourceGitopsAgentDelete,
-		Importer:      helpers.OrgResourceImporter,
+		Importer:      helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"account_identifier": {
+			"account_id": {
 				Description: "account identifier of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"project_identifier": {
-				Description: "project identifier of the agent.",
+			"org_id": {
+				Description: "org identifier of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_identifier": {
-				Description: "organization identifier of the agent.",
+			"project_id": {
+				Description: "org identifier of the agent.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"identifier": {
 				Description: "identifier of the agent.",
@@ -114,13 +114,12 @@ func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	agentIdentifier := d.Get("agent_identifier").(string)
-	// identifier := d.Get("identifier").(string)
+	agentIdentifier := d.Get("identifier").(string)
 
 	resp, httpResp, err := c.AgentServiceApi.AgentServiceGet(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceGetOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
-		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
 	if err != nil {
@@ -142,7 +141,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	agentIdentifier := d.Get("agent_identifier").(string)
+	agentIdentifier := d.Get("identifier").(string)
 	updateAgentRequest := buildCreateUpdateAgentRequest(d)
 	updateAgentRequest.AccountIdentifier = c.AccountId
 	resp, httpResp, err := c.AgentServiceApi.AgentServiceUpdate(ctx, *updateAgentRequest, agentIdentifier)
@@ -164,12 +163,12 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	agentIdentifier := d.Get("agent_identifier").(string)
-	// identifier := d.Get("identifier").(string)
+	agentIdentifier := d.Get("identifier").(string)
+
 	_, httpResp, err := c.AgentServiceApi.AgentServiceDelete(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceDeleteOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
-		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
 	if err != nil {
@@ -183,10 +182,10 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 	// if attr, ok := d.GetOk("account_identifier"); ok {
 	// 	v1Agent.AccountIdentifier = attr.(string)
 	// }
-	if attr, ok := d.GetOk("project_identifier"); ok {
+	if attr, ok := d.GetOk("project_id"); ok {
 		v1Agent.ProjectIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("org_identifier"); ok {
+	if attr, ok := d.GetOk("org_id"); ok {
 		v1Agent.OrgIdentifier = attr.(string)
 	}
 	if attr, ok := d.GetOk("identifier"); ok {
@@ -212,8 +211,9 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			fmt.Println("META: ", meta)
 			var v1MetaData nextgen.V1AgentMetadata
 
-			v1MetaData.HighAvailability = meta["high_availability"].(bool)
-
+			if meta["high_availability"] != nil {
+				v1MetaData.HighAvailability = meta["high_availability"].(bool)
+			}
 			if meta["namespace"] != nil {
 				v1MetaData.Namespace = meta["namespace"].(string)
 			}
@@ -230,8 +230,12 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("name", agent.Name)
 	d.Set("description", agent.Description)
 	d.Set("tags", agent.Tags)
-	d.Set("org_identifier", agent.OrgIdentifier)
-	d.Set("project_identifier", agent.ProjectIdentifier)
-	// d.Set("metadata.high_availability", agent.Metadata.HighAvailability)
-	// d.Set("metadata.namespace", agent.Metadata.Namespace)
+	d.Set("org_id", agent.OrgIdentifier)
+	d.Set("project_id", agent.ProjectIdentifier)
+	metadata := []interface{}{}
+	metaDataMap := map[string]interface{}{}
+	metaDataMap["namespace"] = agent.Metadata.Namespace
+	metaDataMap["high_availability"] = agent.Metadata.HighAvailability
+	metadata = append(metadata, metaDataMap)
+	d.Set("metadata", metadata)
 }

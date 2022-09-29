@@ -19,17 +19,17 @@ func DataSourceGitopsAgent() *schema.Resource {
 		ReadContext: dataSourceGitopsAgentRead,
 
 		Schema: map[string]*schema.Schema{
-			"account_identifier": {
+			"account_id": {
 				Description: "account identifier of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"project_identifier": {
+			"project_id": {
 				Description: "project identifier of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_identifier": {
+			"org_id": {
 				Description: "organization identifier of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
@@ -65,18 +65,18 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"metadata": {
 				Description: "tags for the agent.",
 				Type:        schema.TypeList,
-				Computed:    true,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
 							Description: "namespace of the agent.",
 							Type:        schema.TypeString,
-							Computed:    true,
+							Required:    true,
 						},
 						"high_availability": {
 							Description: "If the agent should be high availability.",
 							Type:        schema.TypeBool,
-							Computed:    true,
+							Optional:    true,
 						},
 					}},
 			},
@@ -92,8 +92,8 @@ func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta
 
 	resp, httpResp, err := c.AgentServiceApi.AgentServiceGet(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceGetOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
-		OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
 	if err != nil {

@@ -1,47 +1,52 @@
 package gitops_agent_test
 
 import (
+	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/antihax/optional"
+	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccResourceGitopsAgent(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	orgId := "default"
-	projectId := "gitops2"
-	accountId := "px7xd_BFRCi-pfWPYXVjvw"
+	orgId := "gitopstest"
+	projectId := "gitopsagenttest"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_agent.test"
 	agentName := id
-	updatedAgentName := agentName + "_updated"
+	namespace := "tf-test"
+	updatedNamespace := namespace + "-updated"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
+		// CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, agentName),
+				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, agentName, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", agentName),
 				),
 			},
 			{
-				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, updatedAgentName),
+				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, agentName, updatedNamespace),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", updatedAgentName),
+					resource.TestCheckResourceAttr(resourceName, "metadata.0.namespace", updatedNamespace),
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"account_id", "type"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -51,9 +56,12 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Agent, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	agentIdentifier := r.Primary.Attributes["agent_identifier"]
+	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	agentIdentifier := r.Primary.Attributes["identifier"]
+	// id := r.Primary.ID
 
 	resp, _, err := c.AgentServiceApi.AgentServiceGet(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceGetOpts{
+		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_identifier"]),
 		ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_identifier"]),
 	})
@@ -80,19 +88,19 @@ func testAccResourceGitopsAgentDestroy(resourceName string) resource.TestCheckFu
 
 }
 
-func testAccResourceGitopsAgent(agentId string, accountId string, projectId string, orgId string, agentName string) string {
+func testAccResourceGitopsAgent(agentId string, accountId string, projectId string, orgId string, agentName string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_agent" "test" {
 			identifier = "%[1]s"
-			account_identifier = "%[2]s"
-			project_identifier = "%[3]s"
-			org_identifier = "%[4]s"
+			account_id = "%[2]s"
+			project_id = "%[3]s"
+			org_id = "%[4]s"
 			name = "%[5]s"
 			type = "CONNECTED_ARGO_PROVIDER"
 			metadata {
-        namespace = "tf-test"
+        namespace = "%[6]s"
         high_availability = true
     	}
 		}
-		`, agentId, accountId, projectId, orgId, agentName)
+		`, agentId, accountId, projectId, orgId, agentName, namespace)
 }
