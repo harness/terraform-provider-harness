@@ -1,6 +1,6 @@
 
-<a name="0.2.2"></a>
-## 0.2.2 (2022-09-23)
+<a name="0.2.3"></a>
+## 0.2.3 (2022-09-29)
 
 ### Add
 
@@ -49,7 +49,6 @@
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
-* Fix timestamp parsing for delegate query
 
 ### Fixing
 
@@ -74,6 +73,8 @@
 
 ### Release
 
+* Release version 0.2.2 09-23-2022
+* Release v0.2.2
 * Release version 0.2.1 09-21-2022
 * Release v0.2.1
 * Release version 0.2.0 09-15-2022
@@ -112,8 +113,6 @@
 * Release version 0.1.19 04-13-2022
 * Release v0.1.19
 * Release version 0.1.18 03-25-2022
-* Release v0.1.18
-* Release version v0.1.18 03-25-2022
 
 ### Resource
 
@@ -129,6 +128,7 @@
 
 ### Update
 
+* Update role assignments api and models
 * Update prometheus connector dto model
 * Update user group model
 * Update user group model
@@ -140,6 +140,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
