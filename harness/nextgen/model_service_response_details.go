@@ -11,13 +11,13 @@ package nextgen
 
 // This is the Service entity defined in Harness
 type ServiceResponseDetails struct {
-	AccountId string `json:"accountId,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	Name string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Deleted bool `json:"deleted,omitempty"`
-	Tags map[string]string `json:"tags,omitempty"`
-	Yaml string `json:"yaml,omitempty"`
+	AccountId         string            `json:"accountId,omitempty"`
+	Identifier        string            `json:"identifier,omitempty"`
+	OrgIdentifier     string            `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string            `json:"projectIdentifier,omitempty"`
+	Name              string            `json:"name,omitempty"`
+	Description       string            `json:"description,omitempty"`
+	Deleted           bool              `json:"deleted,omitempty"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Yaml              string            `json:"yaml,omitempty"`
 }
