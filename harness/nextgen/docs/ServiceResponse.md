@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Service** | [***ServiceResponse**](ServiceResponse.md) |  | [optional] [default to null]
+**Service** | [***ServiceResponseDetails**](ServiceResponseDetails.md) |  | [optional] [default to null]
 **CreatedAt** | **int64** |  | [optional] [default to null]
 **LastModifiedAt** | **int64** |  | [optional] [default to null]
 
