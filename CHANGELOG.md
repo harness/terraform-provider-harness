@@ -1,3 +1,9 @@
+# 0.6.0 (September 30,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_role_assignments` ([#213](https://github.com/harness/terraform-provider-harness/issues/213))
+
 # 0.5.3 (September 25,2022)
 
 BUG FIXES:
