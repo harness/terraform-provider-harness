@@ -15,7 +15,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/application"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/cloudprovider"
 	cd_connector "github.com/harness/terraform-provider-harness/internal/service/cd/connector"
-	pl_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/cluster"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/delegate"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/environment"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
@@ -23,6 +22,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	pl_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/cluster"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
@@ -31,6 +31,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
@@ -130,6 +131,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_resource_group":               resource_group.DataSourceResourceGroup(),
 				"harness_platform_service_account":              service_account.DataSourceServiceAccount(),
 				"harness_platform_triggers":                     triggers.DataSourceTriggers(),
+				"harness_platform_role_assignments":             role_assignments.DataSourceRoleAssignments(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -186,6 +188,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_resource_group":               resource_group.ResourceResourceGroup(),
 				"harness_platform_service_account":              service_account.ResourceServiceAccount(),
 				"harness_platform_triggers":                     triggers.ResourceTriggers(),
+				"harness_platform_role_assignments":             role_assignments.ResourceRoleAssignments(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
