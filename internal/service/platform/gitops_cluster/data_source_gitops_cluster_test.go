@@ -45,10 +45,6 @@ func testAccDataSourceGitopsCluster(clusterId string, accoundId string, projectI
 
  			request {
 				upsert = false
-				id {
-					type = "type123"
-					value = "value123"
-				}
 				cluster {
 					server = "server_test"
 					name = "%[6]s"
