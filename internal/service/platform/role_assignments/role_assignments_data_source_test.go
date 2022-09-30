@@ -24,7 +24,7 @@ func TestAccDataSourceRoleAssignments(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "resource_group_identifier", "_all_project_level_resources"),
+					resource.TestCheckResourceAttr(resourceName, "resource_group_identifier", "_all_account_level_resources"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "managed", "false"),
 					resource.TestCheckResourceAttr(resourceName, "principal.0.type", "SERVICE_ACCOUNT"),
@@ -36,18 +36,6 @@ func TestAccDataSourceRoleAssignments(t *testing.T) {
 
 func testAccDataSourceRoleAssignments(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-	}
-
-	resource "harness_platform_project" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		color = "#0063F7"
-		org_id = harness_platform_organization.test.identifier
-	}
-
 	resource "harness_platform_service_account" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -55,16 +43,12 @@ func testAccDataSourceRoleAssignments(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 		account_id = "UKh5Yts7THSMAbccG3HrLA"
-		org_id = harness_platform_project.test.org_id
-		project_id = harness_platform_project.test.id
 	}
 
-	resource "harness_platform_role_assignments" "test1"{
+	resource "harness_platform_role_assignments" "test" {
 		identifier = "%[1]s"
-		org_id = harness_platform_project.test.org_id
-		project_id = harness_platform_project.test.id
-		resource_group_identifier = "_all_project_level_resources"
-		role_identifier = "_project_viewer"
+		resource_group_identifier = "_all_account_level_resources"
+		role_identifier = "_account_viewer"
 		principal {
 			identifier = harness_platform_service_account.test.id
 			type = "SERVICE_ACCOUNT"
@@ -74,9 +58,7 @@ func testAccDataSourceRoleAssignments(id string, name string) string {
 	}
 
 	data "harness_platform_role_assignments" "test" {
-		identifier = "%[1]s"
-		org_id = harness_platform_project.test.org_id
-		project_id = harness_platform_project.test.id
+		identifier = harness_platform_role_assignments.test.id
 	}
 	`, id, name)
 }
