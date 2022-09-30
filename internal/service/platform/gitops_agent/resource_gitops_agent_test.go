@@ -27,7 +27,7 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, agentName, namespace),
@@ -58,7 +58,6 @@ func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Ag
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := r.Primary.Attributes["identifier"]
-	// id := r.Primary.ID
 
 	resp, _, err := c.AgentServiceApi.AgentServiceGet(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceGetOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),

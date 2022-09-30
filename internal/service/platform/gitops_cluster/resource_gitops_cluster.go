@@ -96,14 +96,14 @@ func ResourceGitopsCluster() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
-						// "updated_fields": {
-						// 	Description: "Fields which are updated.",
-						// 	Type:        schema.TypeList,
-						// 	Optional:    true,
-						// 	Elem: &schema.Schema{
-						// 		Type: schema.TypeString,
-						// 	},
-						// },
+						"updated_fields": {
+							Description: "Fields which are updated.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"update_mask": {
 							Description: "Update mask of the cluster.",
 							Type:        schema.TypeList,
@@ -633,7 +633,6 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				clusterInfoCache := map[string]interface{}{}
 				clusterInfoCache["resources_count"] = cl.Cluster.Info.CacheInfo.ResourcesCount
 				clusterInfoCache["apis_count"] = cl.Cluster.Info.CacheInfo.ApisCount
-				// clusterInfoCache["last_cache_sync_time"] = cl.Cluster.Info.CacheInfo.LastCacheSyncTime
 
 				clusterInfoCacheList = append(clusterInfoCacheList, clusterInfoCache)
 				clusterInfo["cache_info"] = clusterInfoCacheList
@@ -685,27 +684,12 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClusterClusterUp
 		updateMaskPath = updateMask["paths"].([]string)
 	}
 
-	// var requestId map[string]interface{}
-	// var requestIdType, requestIdValue string
-	// if request["id"] != nil {
-	// 	requestId = request["id"].(map[string]interface{})
-	// 	if requestId["type"] != nil {
-	// 		requestIdType = requestId["type"].(string)
-	// 	}
-	// 	if requestId["value"] != nil {
-	// 		requestIdValue = requestId["value"].(string)
-	// 	}
-	// }
 	return &nextgen.ClusterClusterUpdateRequest{
 		Cluster:       buildClusterDetails(d),
 		UpdatedFields: updatedFields,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
 		},
-		// Id: &nextgen.ClustersClusterId{
-		// 	Type_: requestIdType,
-		// 	Value: requestIdValue,
-		// },
 	}
 }
 

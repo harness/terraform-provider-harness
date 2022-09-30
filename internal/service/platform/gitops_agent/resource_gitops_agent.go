@@ -179,9 +179,6 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 
 func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 	var v1Agent nextgen.V1Agent
-	// if attr, ok := d.GetOk("account_identifier"); ok {
-	// 	v1Agent.AccountIdentifier = attr.(string)
-	// }
 	if attr, ok := d.GetOk("project_id"); ok {
 		v1Agent.ProjectIdentifier = attr.(string)
 	}
