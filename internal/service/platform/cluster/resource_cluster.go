@@ -28,7 +28,7 @@ func ResourceCluster() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"envref": {
+			"env_id": {
 				Description: "environment identifier of the cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
@@ -48,6 +48,29 @@ func ResourceCluster() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"clusters": {
+				Description: "list of cluster identifiers and names",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"identifier": {
+							Description: "account Identifier of the account",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"name": {
+							Description: "name of the cluster",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"scope": {
+							Description: "scope at which the cluster exists in harness gitops, project vs org vs account",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					}},
+			},
 		},
 	}
 	return resource
@@ -57,7 +80,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, meta inter
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	envId := d.Get("env_id").(string)
-	resp, httpResp, err := c.ClustersApi.GetCluster(ctx, d.Id(), c.AccountId, envId, &nextgen.ClustersApiGetClusterOpts{
+	resp, httpResp, err := c.ClustersApi.GetClusterList(ctx, c.AccountId, envId, &nextgen.ClustersApiGetClusterListOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
@@ -74,14 +97,14 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return nil
 	}
 
-	readCluster(d, resp.Data)
+	readCluster(d, &resp.Data.Content[0])
 
 	return nil
 }
 
 func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	envId := d.Get("env_id").(string)
+	envId := d.Get("envRef").(string)
 	_, httpResp, err := c.ClustersApi.DeleteCluster(ctx, d.Id(), c.AccountId, envId, &nextgen.ClustersApiDeleteClusterOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
@@ -98,11 +121,11 @@ func resourceClusterLink(ctx context.Context, d *schema.ResourceData, meta inter
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
-	var resp nextgen.ResponseDtoClusterResponse
+	var resp nextgen.ResponseDtoClusterBatchResponse
 	var httpResp *http.Response
-	env := buildCluster(d)
+	env := buildLinkCluster(d)
 
-	resp, httpResp, err = c.ClustersApi.LinkCluster(ctx, c.AccountId, &nextgen.ClustersApiLinkClusterOpts{
+	resp, httpResp, err = c.ClustersApi.LinkClusters(ctx, c.AccountId, &nextgen.ClustersApiLinkClustersOpts{
 		Body: optional.NewInterface(env),
 	})
 
@@ -110,26 +133,26 @@ func resourceClusterLink(ctx context.Context, d *schema.ResourceData, meta inter
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readCluster(d, resp.Data)
+	readLinkedCluster(d, resp.Data)
 	return nil
 }
 
-func buildCluster(d *schema.ResourceData) *nextgen.ClusterRequest {
-	return &nextgen.ClusterRequest{
-		Identifier:        d.Get("identifier").(string),
+func buildLinkCluster(d *schema.ResourceData) *nextgen.ClusterBatchRequest {
+	return &nextgen.ClusterBatchRequest{
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
-		EnvRef:            d.Get("envref").(string),
-		Scope:             d.Get("scope").(string),
+		EnvRef:            d.Get("env_id").(string),
+		Clusters:          helpers.ExpandClusters(d.Get("clusters").(*schema.Set).List()),
 	}
 }
 
 func readCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
-	d.Set("clusterRef", cl.ClusterRef)
+	d.Set("identifier", cl.ClusterRef)
 	d.Set("org_id", cl.OrgIdentifier)
-	d.Set("proj_id", cl.ProjectIdentifier)
-	d.Set("account_id", cl.AccountIdentifier)
-	d.Set("envref", cl.EnvRef)
+	d.Set("project_id", cl.ProjectIdentifier)
+	d.Set("env_id", cl.EnvRef)
 	d.Set("scope", cl.Scope)
-	d.Set("name", cl.Name)
+}
+
+func readLinkedCluster(d *schema.ResourceData, cl *nextgen.ClusterBatchResponse) {
 }
