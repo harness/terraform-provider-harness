@@ -20,7 +20,7 @@ func ResourceGitopsCluster() *schema.Resource {
 		ReadContext:   resourceGitopsClusterRead,
 		UpdateContext: resourceGitopsClusterUpdate,
 		DeleteContext: resourceGitopsClusterDelete,
-		Importer:      helpers.OrgResourceImporter,
+		Importer:      helpers.GitopsAgentResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -96,14 +96,14 @@ func ResourceGitopsCluster() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
-						"updated_fields": {
-							Description: "Fields which are updated.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
+						// "updated_fields": {
+						// 	Description: "Fields which are updated.",
+						// 	Type:        schema.TypeList,
+						// 	Optional:    true,
+						// 	Elem: &schema.Schema{
+						// 		Type: schema.TypeString,
+						// 	},
+						// },
 						"update_mask": {
 							Description: "Update mask of the cluster.",
 							Type:        schema.TypeList,
@@ -307,7 +307,7 @@ func ResourceGitopsCluster() *schema.Resource {
 									"info": {
 										Description: "information about cluster cache and state",
 										Type:        schema.TypeList,
-										Optional:    true,
+										Computed:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {
@@ -406,7 +406,7 @@ func ResourceGitopsCluster() *schema.Resource {
 									"project": {
 										Description: "Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 									},
 									"labels": {
 										Description: "Labels for cluster secret metadata",
@@ -547,8 +547,6 @@ func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, me
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-		QueryServer:       optional.NewString(d.Get("query.server").(string)),
-		QueryName:         optional.NewString(d.Get("query.name").(string)),
 	})
 
 	if err != nil {
@@ -616,7 +614,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			cluster["config"] = configList
 		}
 		cluster["namespaces"] = cl.Cluster.Namespaces
-		// cluster["refresh_requested_at"] = cl.Cluster.RefreshRequestedAt
+		cluster["refresh_requested_at"] = cl.Cluster.RefreshRequestedAt
 
 		if cl.Cluster.Info != nil {
 			clusterInfoList := []interface{}{}
@@ -646,6 +644,8 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			cluster["info"] = clusterInfoList
 		}
 		cluster["project"] = cl.Cluster.Project
+		cluster["annotations"] = cl.Cluster.Annotations
+		cluster["labels"] = cl.Cluster.Labels
 		clusterList = append(clusterList, cluster)
 		request["cluster"] = clusterList
 		requestList = append(requestList, request)
@@ -808,7 +808,7 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 				}
 				clusterDetails.Namespaces = namespaces
 			}
-			if requestCluster["refresh_requested_at"] != nil {
+			if requestCluster["refresh_requested_at"] != nil && len(requestCluster["refresh_requested_at"].([]interface{})) > 0 {
 				clusterDetails.RefreshRequestedAt = &nextgen.V1Time{}
 				refreshRequestedAt := requestCluster["refresh_requested_at"].([]interface{})[0].(map[string]interface{})
 				if refreshRequestedAt["seconds"] != nil {
@@ -819,10 +819,10 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 				}
 			}
 
-			if requestCluster["info"] != nil {
+			if requestCluster["info"] != nil && len(requestCluster["info"].([]interface{})) > 0 {
 				clusterDetails.Info = &nextgen.V1alpha1ClusterInfo{}
 				clusterInfo := requestCluster["info"].([]interface{})[0].(map[string]interface{})
-				if clusterInfo["connection_state"] != nil {
+				if clusterInfo["connection_state"] != nil && len(clusterInfo["connection_state"].([]interface{})) > 0 {
 					clusterDetails.Info.ConnectionState = &nextgen.V1alpha1ConnectionState{}
 					connectionState := clusterInfo["connection_state"].([]interface{})[0].(map[string]interface{})
 					if connectionState["status"] != nil {
@@ -831,7 +831,7 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 					if connectionState["message"] != nil {
 						clusterDetails.Info.ConnectionState.Message = connectionState["message"].(string)
 					}
-					if clusterInfo["attempted_at"] != nil {
+					if clusterInfo["attempted_at"] != nil && len(clusterInfo["attempted_at"].([]interface{})) > 0 {
 						clusterDetails.Info.ConnectionState.AttemptedAt = &nextgen.V1Time{}
 						attemptedAt := clusterInfo["attempted_at"].([]interface{})[0].(map[string]interface{})
 						if attemptedAt["seconds"] != nil {
@@ -854,14 +854,14 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 				clusterDetails.ClusterResources = requestCluster["cluster_resources"].(bool)
 			}
 
-			if requestCluster["labels"] != nil {
+			if requestCluster["labels"] != nil && len(requestCluster["labels"].(map[string]interface{})) > 0 {
 				var labelMap = map[string]string{}
 				for k, v := range requestCluster["labels"].(map[string]interface{}) {
 					labelMap[k] = v.(string)
 				}
 				clusterDetails.Labels = labelMap
 			}
-			if requestCluster["annotations"] != nil {
+			if requestCluster["annotations"] != nil && len(requestCluster["annotations"].(map[string]interface{})) > 0 {
 				var annotationMap = map[string]string{}
 				for k, v := range requestCluster["annotations"].(map[string]interface{}) {
 					annotationMap[k] = v.(string)

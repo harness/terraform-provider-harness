@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceGitopsAgent(t *testing.T) {
 	orgId := "gitopstest"
 	projectId := "gitopsagent"
-	agentId := "testagent"
+	agentId := "terraformtestagent"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "data.harness_platform_gitops_agent.test"
 	agentName := "testagent"

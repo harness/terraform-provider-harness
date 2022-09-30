@@ -2,6 +2,7 @@ package gitops_cluster_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -10,11 +11,11 @@ import (
 
 func TestAccDataSourceGitopsCluster(t *testing.T) {
 
-	id := "test"
-	agentId := "dontdeletethisagent"
-	orgId := "default"
-	accountId := "px7xd_BFRCi-pfWPYXVjvw"
-	projectId := "gitops2"
+	id := "terraformct"
+	agentId := "terraformtestagent"
+	orgId := "gitopstest"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	projectId := "gitopsagent"
 	clusterName := id
 
 	resourceName := "data.harness_platform_gitops_cluster.test"
