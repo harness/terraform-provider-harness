@@ -30,5 +30,6 @@ Resource for creating a Harness project.
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `yaml` (String) Input Set YAML
 
 
