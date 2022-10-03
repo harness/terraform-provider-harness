@@ -19,6 +19,5 @@ type ServiceResponseDetails struct {
 	Description       string            `json:"description,omitempty"`
 	Deleted           bool              `json:"deleted,omitempty"`
 	Tags              map[string]string `json:"tags,omitempty"`
-	Version           int64             `json:"version,omitempty"`
 	Yaml              string            `json:"yaml,omitempty"`
 }

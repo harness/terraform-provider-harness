@@ -1,4 +1,4 @@
-# {{classname}}
+# nextgen{{classname}}
 
 All URIs are relative to *https://app.harness.io/gateway*
 
@@ -22,7 +22,7 @@ Create a Service
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiCreateServiceV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -56,7 +56,7 @@ Create Services
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiCreateServicesV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -91,7 +91,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **serviceIdentifier** | **string**| Service Identifier for the entity | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiDeleteServiceV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -101,8 +101,8 @@ Name | Type | Description  | Notes
 
 
  **ifMatch** | **optional.String**|  | 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
 
 ### Return type
 
@@ -128,7 +128,7 @@ Gets Service Access list
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiGetServiceAccessListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -136,13 +136,15 @@ Optional parameters are passed through a pointer to a ServicesApiGetServiceAcces
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **page** | **optional.Int32**| Indicates the number of pages. Results for these pages will be retrieved. | [default to 0]
- **size** | **optional.Int32**| The number of the elements to fetch | [default to 100]
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **page** | **optional.Int32**| Page Index of the results to fetch.Default Value: 0 | [default to 0]
+ **size** | **optional.Int32**| Results per page | [default to 100]
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **searchTerm** | **optional.String**| The word to be searched and included in the list response | 
  **serviceIdentifiers** | [**optional.Interface of []string**](string.md)| List of ServicesIds | 
  **sort** | [**optional.Interface of []string**](string.md)| Specifies the sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order | 
+ **type_** | **optional.String**|  | 
+ **gitOpsEnabled** | **optional.Bool**|  | 
 
 ### Return type
 
@@ -168,7 +170,7 @@ Gets Service list
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiGetServiceListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -176,13 +178,17 @@ Optional parameters are passed through a pointer to a ServicesApiGetServiceListO
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **page** | **optional.Int32**| Indicates the number of pages. Results for these pages will be retrieved. | [default to 0]
- **size** | **optional.Int32**| The number of the elements to fetch | [default to 100]
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **page** | **optional.Int32**| Page Index of the results to fetch.Default Value: 0 | [default to 0]
+ **size** | **optional.Int32**| Results per page | [default to 100]
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **searchTerm** | **optional.String**| The word to be searched and included in the list response | 
  **serviceIdentifiers** | [**optional.Interface of []string**](string.md)| List of ServicesIds | 
  **sort** | [**optional.Interface of []string**](string.md)| Specifies the sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order | 
+ **type_** | **optional.String**|  | 
+ **gitOpsEnabled** | **optional.Bool**|  | 
+ **deploymentTemplateIdentifier** | **optional.String**|  | 
+ **versionLabel** | **optional.String**|  | 
 
 ### Return type
 
@@ -209,7 +215,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **serviceIdentifier** | **string**| Service Identifier for the entity | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiGetServiceV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -218,8 +224,8 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **deleted** | **optional.Bool**| Specify whether Service is deleted or not | [default to false]
 
 ### Return type
@@ -246,7 +252,7 @@ Update a Service by identifier
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiUpdateServiceV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -281,7 +287,7 @@ Upsert a Service by identifier
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ServicesApiUpsertServiceV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
