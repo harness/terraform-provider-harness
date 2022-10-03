@@ -1,6 +1,6 @@
 
-<a name="0.2.3"></a>
-## 0.2.3 (2022-09-29)
+<a name="0.2.4"></a>
+## 0.2.4 (2022-10-03)
 
 ### Add
 
@@ -17,10 +17,6 @@
 ### Adding
 
 * Adding dto files
-
-### Adding
-
-* adding irsa credentials options to aws cloud provider
 
 ### Catch
 
@@ -41,14 +37,14 @@
 
 ### Fix
 
-* fix environment variable overrides with secrets
-* fix cac error handling
-
-### Fix
-
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
+
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
 
 ### Fixing
 
@@ -65,7 +61,6 @@
 ### Modify
 
 * Modify secret file post and put methods
-* Modify delegate tests
 
 ### Regenerated
 
@@ -73,6 +68,8 @@
 
 ### Release
 
+* Release version 0.2.3 09-29-2022
+* Release v0.2.3
 * Release version 0.2.2 09-23-2022
 * Release v0.2.2
 * Release version 0.2.1 09-21-2022
@@ -112,7 +109,6 @@
 * Release v0.1.20
 * Release version 0.1.19 04-13-2022
 * Release v0.1.19
-* Release version 0.1.18 03-25-2022
 
 ### Resource
 
@@ -140,6 +136,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
+* Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
