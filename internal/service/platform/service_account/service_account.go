@@ -24,7 +24,7 @@ func ResourceServiceAccount() *schema.Resource {
 			"email": {
 				Description: "Email of the Service Account.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": {
 				Description: "Account Identifier for the Entity.",
