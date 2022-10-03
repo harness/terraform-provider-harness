@@ -1,6 +1,6 @@
 # nextgen{{classname}}
 
-All URIs are relative to *https://app.harness.io/gateway/ng/api*
+All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -41,7 +41,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKey](../README.md#ApiKey)
 
 ### HTTP request headers
 
@@ -81,7 +81,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKey](../README.md#ApiKey)
 
 ### HTTP request headers
 
@@ -123,7 +123,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKey](../README.md#ApiKey)
 
 ### HTTP request headers
 
@@ -157,7 +157,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKey](../README.md#ApiKey)
 
 ### HTTP request headers
 
@@ -191,7 +191,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[ApiKey](../README.md#ApiKey)
 
 ### HTTP request headers
 
