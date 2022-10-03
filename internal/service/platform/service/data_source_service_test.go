@@ -103,11 +103,6 @@ func testAccDataSourceServiceByName(id string, name string) string {
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			yaml = <<-EOT
-			    service:  
-			        name: "%[1]s"
-			        identifier: "%[1]s"
-		  EOT
 		}
 
 		data "harness_platform_service" "test" {
