@@ -25,20 +25,6 @@ func FlattenTags(tags map[string]string) []string {
 	return result
 }
 
-func ExpandClusters(clusterBasicDTO []interface{}) []nextgen.ClusterBasicDto {
-	var result []nextgen.ClusterBasicDto
-	for _, cluster := range clusterBasicDTO {
-		v := cluster.(map[string]interface{})
-
-		var resultcluster nextgen.ClusterBasicDto
-		resultcluster.Identifier = v["identifier"].(string)
-		resultcluster.Name = v["name"].(string)
-		resultcluster.Scope = v["scope"].(string)
-		result = append(result, resultcluster)
-	}
-	return result
-}
-
 func ExpandScopeSelector(scopeSelectors []interface{}) []nextgen.ScopeSelector {
 	var result []nextgen.ScopeSelector
 	for _, scopeSelector := range scopeSelectors {

@@ -41,7 +41,7 @@ func DataSourceCluster() *schema.Resource {
 			"scope": {
 				Description: "scope at which the cluster exists in harness gitops",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}

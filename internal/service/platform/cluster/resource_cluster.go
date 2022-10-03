@@ -46,7 +46,7 @@ func ResourceCluster() *schema.Resource {
 			"scope": {
 				Description: "scope at which the cluster exists in harness gitops",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"clusters": {
 				Description: "list of cluster identifiers and names",
@@ -142,8 +142,22 @@ func buildLinkCluster(d *schema.ResourceData) *nextgen.ClusterBatchRequest {
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
 		EnvRef:            d.Get("env_id").(string),
-		Clusters:          helpers.ExpandClusters(d.Get("clusters").(*schema.Set).List()),
+		Clusters:          ExpandClusters(d.Get("clusters").(*schema.Set).List()),
 	}
+}
+
+func ExpandClusters(clusterBasicDTO []interface{}) []nextgen.ClusterBasicDto {
+	var result []nextgen.ClusterBasicDto
+	for _, cluster := range clusterBasicDTO {
+		v := cluster.(map[string]interface{})
+
+		var resultcluster nextgen.ClusterBasicDto
+		resultcluster.Identifier = v["identifier"].(string)
+		resultcluster.Name = v["name"].(string)
+		resultcluster.Scope = v["scope"].(string)
+		result = append(result, resultcluster)
+	}
+	return result
 }
 
 func readCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
