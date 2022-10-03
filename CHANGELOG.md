@@ -1,3 +1,13 @@
+# 0.6.1 (October 3,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_service: added documentation for yaml field. ([#215](https://github.com/harness/terraform-provider-harness/issues/215))
+
+BUG FIXES:
+
+* resource/harness_platform_cluster: Fix added correct batch cluster API. ([#216](https://github.com/harness/terraform-provider-harness/issues/216))
+
 # 0.6.0 (September 30,2022)
 
 FEATURES:
