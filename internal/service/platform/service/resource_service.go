@@ -26,7 +26,7 @@ func ResourceService() *schema.Resource {
 			"yaml": {
 				Description: "Input Set YAML",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
 			},
 		},
 	}

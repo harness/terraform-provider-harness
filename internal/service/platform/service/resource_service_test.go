@@ -137,6 +137,14 @@ func testAccResourceService(id string, name string) string {
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
+			yaml = <<-EOT
+			   service:
+			                 name: "%[1]s"
+			                 identifier: "%[1]s"
+			                 description: "temp"
+			                 orgIdentifier: ${harness_platform_project.test.org_id}
+			                 projectIdentifier: ${harness_platform_project.test.id}
+		  EOT
 		}
 `, id, name)
 }
