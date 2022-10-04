@@ -1,3 +1,9 @@
+# 0.6.3 (October 5,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_service_account: Fix account id field in service account ([#219](https://github.com/harness/terraform-provider-harness/issues/219))
+
 # 0.6.2 (October 5,2022)
 
 BUG FIXES:

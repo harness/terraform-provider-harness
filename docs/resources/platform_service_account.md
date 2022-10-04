@@ -28,13 +28,13 @@ resource "harness_platform_service_account" "example" {
 
 ### Required
 
+- `account_id` (String) Account Identifier for the Entity.
 - `email` (String) Email of the Service Account.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
 ### Optional
 
-- `account_id` (String) Account Identifier for the Entity.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.

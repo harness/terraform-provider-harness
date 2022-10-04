@@ -29,7 +29,7 @@ func ResourceServiceAccount() *schema.Resource {
 			"account_id": {
 				Description: "Account Identifier for the Entity.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 		},
 	}
