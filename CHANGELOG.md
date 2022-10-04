@@ -1,3 +1,9 @@
+# 0.6.2 (October 5,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_service_account: Fix email field in service account ([#217](https://github.com/harness/terraform-provider-harness/issues/217))
+
 # 0.6.1 (October 3,2022)
 
 ENHANCEMENTS:
