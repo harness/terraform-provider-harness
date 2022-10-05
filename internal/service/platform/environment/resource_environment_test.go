@@ -139,6 +139,48 @@ func testAccResourceEnvironment(id string, name string) string {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			type = "PreProduction"
-		}
+			yaml = <<-EOT
+			   environment:
+         name: %[2]s
+         identifier: %[1]s
+         orgIdentifier: ${harness_platform_project.test.org_id}
+         projectIdentifier: ${harness_platform_project.test.id}
+         type: PreProduction
+         variables:
+           - name: envVar1
+             type: String
+             value: v1
+             description: ""
+           - name: envVar2
+             type: String
+             value: v2
+             description: ""
+         overrides:
+           manifests:
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
+           configFiles:
+             - configFile:
+                 identifier: configFileEnv
+                 spec:
+                   store:
+                     type: Harness
+                     spec:
+                       files:
+                         - account:/Add-ons/svcOverrideTest
+                       secretFiles: []
+      EOT
+  	}
 `, id, name)
 }
