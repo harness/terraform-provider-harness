@@ -1,3 +1,31 @@
+# 0.6.3 (October 5,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_service_account: Fix account id field in service account ([#219](https://github.com/harness/terraform-provider-harness/issues/219))
+
+# 0.6.2 (October 5,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_service_account: Fix email field in service account ([#217](https://github.com/harness/terraform-provider-harness/issues/217))
+
+# 0.6.1 (October 3,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_service: added documentation for yaml field. ([#215](https://github.com/harness/terraform-provider-harness/issues/215))
+
+BUG FIXES:
+
+* resource/harness_platform_cluster: Fix added correct batch cluster API. ([#216](https://github.com/harness/terraform-provider-harness/issues/216))
+
+# 0.6.0 (September 30,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_role_assignments` ([#213](https://github.com/harness/terraform-provider-harness/issues/213))
+
 # 0.5.3 (September 25,2022)
 
 BUG FIXES:

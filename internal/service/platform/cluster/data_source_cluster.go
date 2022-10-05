@@ -38,6 +38,11 @@ func DataSourceCluster() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"scope": {
+				Description: "scope at which the cluster exists in harness gitops",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 	return resource
@@ -47,7 +52,7 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	id := d.Get("identifier").(string)
 
-	resp, httpResp, err := c.ClustersApi.GetCluster(ctx, id, c.AccountId, id, &nextgen.ClustersApiGetClusterOpts{
+	resp, httpResp, err := c.ClustersApi.GetCluster(ctx, id, c.AccountId, d.Get("env_id").(string), &nextgen.ClustersApiGetClusterOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
@@ -68,5 +73,3 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	return nil
 }
-
-

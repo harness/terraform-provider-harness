@@ -3,12 +3,12 @@
 page_title: "harness_platform_cluster Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for a Link Harness Cluster.
+  Resource for Linking a Harness Cluster to Environments.
 ---
 
 # harness_platform_cluster (Resource)
 
-Resource for a Link Harness Cluster.
+Resource for Linking a Harness Cluster to Environments.
 
 ## Example Usage
 
@@ -25,18 +25,28 @@ resource "harness_platform_cluster" "test" {
 
 ### Required
 
-- `envref` (String) environment identifier of the cluster.
+- `env_id` (String) environment identifier of the cluster.
 - `identifier` (String) identifier of the cluster.
 
 ### Optional
 
+- `clusters` (Block Set) list of cluster identifiers and names (see [below for nested schema](#nestedblock--clusters))
 - `org_id` (String) org_id of the cluster.
 - `project_id` (String) project_id of the cluster.
-- `scope` (String) scope at which the cluster exists in harness gitops
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `scope` (String) scope at which the cluster exists in harness gitops
+
+<a id="nestedblock--clusters"></a>
+### Nested Schema for `clusters`
+
+Optional:
+
+- `identifier` (String) account Identifier of the account
+- `name` (String) name of the cluster
+- `scope` (String) scope at which the cluster exists in harness gitops, project vs org vs account
 
 ## Import
 

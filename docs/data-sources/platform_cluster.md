@@ -36,5 +36,6 @@ data "harness_platform_cluster" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `scope` (String) scope at which the cluster exists in harness gitops
 
 
