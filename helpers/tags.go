@@ -10,8 +10,13 @@ func ExpandTags(tags []interface{}) map[string]string {
 	result := map[string]string{}
 
 	for _, tag := range tags {
-		parts := strings.Split(tag.(string), ":")
-		result[parts[0]] = parts[1]
+		
+		if strings.Contains(tag.(string),":") {
+		   parts := strings.Split(tag.(string), ":")
+		   result[parts[0]] = parts[1]
+		} else {
+	           result[tag.(string)] = ""
+		}
 	}
 
 	return result
