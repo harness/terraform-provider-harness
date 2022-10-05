@@ -662,9 +662,25 @@ func (e GenericSwaggerError) Error() string {
 		return e.error
 	}
 
-	failure := e.model.(Failure)
-	if failure.Message != "" {
-		return failure.Message
+	failure, ok := e.model.(Failure)
+	if ok {
+		if failure.Message != "" {
+			return failure.Message
+		}
+	} else {
+		failure, ok := e.model.(AuthzFailure)
+		if ok {
+			if failure.Message != "" {
+				return failure.Message
+			}
+		} else {
+			failure, ok := e.model.(ModelError)
+			if ok {
+				if failure.Message != "" {
+					return failure.Message
+				}
+			}
+		}
 	}
 
 	// if len(failure.ResponseMessages) > 0 {
