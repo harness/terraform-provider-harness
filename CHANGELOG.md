@@ -1,6 +1,6 @@
 
-<a name="0.2.4"></a>
-## 0.2.4 (2022-10-03)
+<a name="0.2.5"></a>
+## 0.2.5 (2022-10-05)
 
 ### Add
 
@@ -27,24 +27,20 @@
 * change in package name
 * change model and enums for ssh key secret type
 
-### Docker
-
-* Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
-
 ### Error
 
 * error handling after read file
 
 ### Fix
 
-* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
-* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
-* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
+* fix environment variable overrides with secrets
+* fix cac error handling
 
 ### Fix
 
-* fix environment variable overrides with secrets
-* fix cac error handling
+* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
+* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
+* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 
 ### Fixing
 
@@ -53,6 +49,10 @@
 ### Handle
 
 * Handle upsert error
+
+### Handling
+
+* Handling different kinds of errors
 
 ### Implemented
 
@@ -68,6 +68,8 @@
 
 ### Release
 
+* Release version 0.2.4 10-03-2022
+* Release v0.2.4
 * Release version 0.2.3 09-29-2022
 * Release v0.2.3
 * Release version 0.2.2 09-23-2022
@@ -108,7 +110,6 @@
 * Release version 0.1.20 04-20-2022
 * Release v0.1.20
 * Release version 0.1.19 04-13-2022
-* Release v0.1.19
 
 ### Resource
 
@@ -132,10 +133,10 @@
 ### Updated
 
 * updated dependencies
-* updated deps
 
 ### Pull Requests
 
+* Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
