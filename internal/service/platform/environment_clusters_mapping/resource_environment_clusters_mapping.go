@@ -12,14 +12,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceCluster() *schema.Resource {
+func ResourceEnvironmentClustersMapping() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Cluster.",
+		Description: "Resource for mapping environment with Harness Clusters.",
 
-		ReadContext:   resourceClusterRead,
-		DeleteContext: resourceClusterDelete,
-		CreateContext: resourceClusterLink,
-		UpdateContext: resourceClusterLink,
+		ReadContext:   resourceEnvironmentClustersMappingRead,
+		DeleteContext: resourceEnvironmentClustersMappingDelete,
+		CreateContext: resourceEnvironmentClustersMappingClusterLink,
+		UpdateContext: resourceEnvironmentClustersMappingClusterLink,
 		Importer:      helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -29,7 +29,7 @@ func ResourceCluster() *schema.Resource {
 				Required:    true,
 			},
 			"env_id": {
-				Description: "environment identifier of the cluster.",
+				Description: "environment identifier.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -76,7 +76,7 @@ func ResourceCluster() *schema.Resource {
 	return resource
 }
 
-func resourceClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentClustersMappingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	envId := d.Get("env_id").(string)
@@ -97,14 +97,14 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, meta inter
 		return nil
 	}
 
-	readCluster(d, &resp.Data.Content[0])
+	readEnvironmentClustersMappingCluster(d, &resp.Data.Content[0])
 
 	return nil
 }
 
-func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentClustersMappingDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	envId := d.Get("envRef").(string)
+	envId := d.Get("env_id").(string)
 	_, httpResp, err := c.ClustersApi.DeleteCluster(ctx, d.Id(), c.AccountId, envId, &nextgen.ClustersApiDeleteClusterOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
@@ -117,13 +117,13 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func resourceClusterLink(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentClustersMappingClusterLink(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
 	var resp nextgen.ResponseDtoClusterBatchResponse
 	var httpResp *http.Response
-	env := buildLinkCluster(d)
+	env := buildEnvironmentClustersMappingCluster(d)
 
 	resp, httpResp, err = c.ClustersApi.LinkClusters(ctx, c.AccountId, &nextgen.ClustersApiLinkClustersOpts{
 		Body: optional.NewInterface(env),
@@ -133,20 +133,20 @@ func resourceClusterLink(ctx context.Context, d *schema.ResourceData, meta inter
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readLinkedCluster(d, resp.Data)
+	readEnvironmentClustersMappingLinkedCluster(d, resp.Data)
 	return nil
 }
 
-func buildLinkCluster(d *schema.ResourceData) *nextgen.ClusterBatchRequest {
+func buildEnvironmentClustersMappingCluster(d *schema.ResourceData) *nextgen.ClusterBatchRequest {
 	return &nextgen.ClusterBatchRequest{
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
 		EnvRef:            d.Get("env_id").(string),
-		Clusters:          ExpandClusters(d.Get("clusters").(*schema.Set).List()),
+		Clusters:          ExpandEnvironmentClustersMappingCluster(d.Get("clusters").(*schema.Set).List()),
 	}
 }
 
-func ExpandClusters(clusterBasicDTO []interface{}) []nextgen.ClusterBasicDto {
+func ExpandEnvironmentClustersMappingCluster(clusterBasicDTO []interface{}) []nextgen.ClusterBasicDto {
 	var result []nextgen.ClusterBasicDto
 	for _, cluster := range clusterBasicDTO {
 		v := cluster.(map[string]interface{})
@@ -160,7 +160,7 @@ func ExpandClusters(clusterBasicDTO []interface{}) []nextgen.ClusterBasicDto {
 	return result
 }
 
-func readCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
+func readEnvironmentClustersMappingCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
 	d.Set("identifier", cl.ClusterRef)
 	d.Set("org_id", cl.OrgIdentifier)
 	d.Set("project_id", cl.ProjectIdentifier)
@@ -168,5 +168,6 @@ func readCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
 	d.Set("scope", cl.Scope)
 }
 
-func readLinkedCluster(d *schema.ResourceData, cl *nextgen.ClusterBatchResponse) {
+func readEnvironmentClustersMappingLinkedCluster(d *schema.ResourceData, cl *nextgen.ClusterBatchResponse) {
+	d.SetId("123456") //temp id unitl we get gitops agent and cluster utility setup
 }

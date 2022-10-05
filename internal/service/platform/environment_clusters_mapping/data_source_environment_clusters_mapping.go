@@ -11,11 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceCluster() *schema.Resource {
+func DataSourceEnvironmentClustersMapping() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness Cluster.",
 
-		ReadContext: dataSourceClusterRead,
+		ReadContext: dataSourceResourceEnvironmentClustersMappingRead,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -48,7 +48,7 @@ func DataSourceCluster() *schema.Resource {
 	return resource
 }
 
-func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceResourceEnvironmentClustersMappingRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	id := d.Get("identifier").(string)
 
@@ -69,7 +69,7 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, meta int
 		return nil
 	}
 
-	readCluster(d, resp.Data)
+	readEnvironmentClustersMappingCluster(d, resp.Data)
 
 	return nil
 }

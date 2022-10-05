@@ -22,9 +22,9 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
-	pl_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/cluster"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
+	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -99,7 +99,6 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":              connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":             connector.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":          connector.DatasourceConnectorBitbucket(),
-				"harness_platform_cluster":                      pl_cluster.DataSourceCluster(),
 				"harness_platform_connector_datadog":            connector.DatasourceConnectorDatadog(),
 				"harness_platform_connector_docker":             connector.DatasourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":          connector.DatasourceConnectorDynatrace(),
@@ -118,6 +117,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_current_user":                 pl_user.DataSourceCurrentUser(),
 				"harness_platform_environment":                  pl_environment.DataSourceEnvironment(),
 				"harness_platform_environment_group":            pl_environment_group.DataSourceEnvironmentGroup(),
+				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
@@ -156,7 +156,6 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":              connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":             connector.ResourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":          connector.ResourceConnectorBitbucket(),
-				"harness_platform_cluster":                      pl_cluster.ResourceCluster(),
 				"harness_platform_connector_datadog":            connector.ResourceConnectorDatadog(),
 				"harness_platform_connector_docker":             connector.ResourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":          connector.ResourceConnectorDynatrace(),
@@ -175,6 +174,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_sumologic":          connector.ResourceConnectorSumologic(),
 				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":            pl_environment_group.ResourceEnvironmentGroup(),
+				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.ResourcePipeline(),
