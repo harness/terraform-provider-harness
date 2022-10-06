@@ -28,7 +28,7 @@ Resource for creating a Harness environment.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `yaml` (String) Input Set YAML
+- `yaml` (String) Environment YAML
 
 ### Read-Only
 
