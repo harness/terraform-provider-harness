@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 
+* resource/harness_platform_environment: added suport foroptional `yaml` field. ([#221](https://github.com/harness/terraform-provider-harness/issues/221))
 * resource/harness_platform_service: making `yaml` field as optional. ([#218](https://github.com/harness/terraform-provider-harness/issues/218))
 
 BUG FIXES:
