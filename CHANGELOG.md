@@ -1,3 +1,13 @@
+# 0.6.4 (October 6,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_service: making `yaml` field as optional. ([#218](https://github.com/harness/terraform-provider-harness/issues/218))
+
+BUG FIXES:
+
+* resource/harness_platform_roles: Fix bug in roles resource ([#222](https://github.com/harness/terraform-provider-harness/issues/222))
+
 # 0.6.3 (October 5,2022)
 
 BUG FIXES:
