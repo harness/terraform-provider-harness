@@ -1,11 +1,10 @@
 
-<a name="0.2.5"></a>
-## 0.2.5 (2022-10-05)
+<a name="0.2.6"></a>
+## 0.2.6 (2022-10-06)
 
 ### Add
 
 * Add approvals for CG to SDK ([#142](https://github.com/harness/harness-go-sdk/issues/142))
-* Add ability to list services ([#103](https://github.com/harness/harness-go-sdk/issues/103))
 
 ### Added
 
@@ -68,6 +67,8 @@
 
 ### Release
 
+* Release version 0.2.5 10-05-2022
+* Release v0.2.5
 * Release version 0.2.4 10-03-2022
 * Release v0.2.4
 * Release version 0.2.3 09-29-2022
@@ -108,8 +109,6 @@
 * Release version 0.1.21 05-06-2022
 * Release v0.1.21
 * Release version 0.1.20 04-20-2022
-* Release v0.1.20
-* Release version 0.1.19 04-13-2022
 
 ### Resource
 
@@ -136,6 +135,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
