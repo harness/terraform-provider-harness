@@ -147,6 +147,9 @@ func testAccResourceEnvironment(id string, name string) string {
          orgIdentifier: ${harness_platform_project.test.org_id}
          projectIdentifier: ${harness_platform_project.test.id}
          type: PreProduction
+         tags:
+           foo: bar
+           baz: ""
          variables:
            - name: envVar1
              type: String
