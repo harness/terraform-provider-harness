@@ -44,11 +44,11 @@ func TestAccResourceEnvironmentGroup(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"yaml"},
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
