@@ -128,7 +128,7 @@ func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
 		Color:             d.Get("color").(string),
 		Description:       d.Get("description").(string),
 		Tags:              helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
-		Type_:             nextgen.EnvironmentType(d.Get("type").(string)),
+		Type_:             d.Get("type").(string),
 		Yaml:              d.Get("yaml").(string),
 	}
 }
