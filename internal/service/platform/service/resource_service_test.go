@@ -54,6 +54,8 @@ func TestAccResourceServiceWithYaml(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
+	varValue := t.Name()
+	updatedVarValue := fmt.Sprintf("%s_updated", varValue)
 	resourceName := "harness_platform_service.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -62,14 +64,14 @@ func TestAccResourceServiceWithYaml(t *testing.T) {
 		CheckDestroy:      testAccServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceServiceWithYaml(id, name),
+				Config: testAccResourceServiceWithYaml(id, name, varValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceServiceWithYaml(id, updatedName),
+				Config: testAccResourceServiceWithYaml(id, updatedName, updatedVarValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -177,7 +179,7 @@ func testAccResourceService(id string, name string) string {
 `, id, name)
 }
 
-func testAccResourceServiceWithYaml(id string, name string) string {
+func testAccResourceServiceWithYaml(id string, name string, varValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -229,7 +231,7 @@ func testAccResourceServiceWithYaml(id string, name string) string {
               variables:
                 - name: var1
                   type: String
-                  value: val1
+                  value: %[3]s
                 - name: var2
                   type: String
                   value: val2
@@ -237,5 +239,5 @@ func testAccResourceServiceWithYaml(id string, name string) string {
           gitOpsEnabled: false
 		  EOT
 		}
-`, id, name)
+`, id, name, varValue)
 }
