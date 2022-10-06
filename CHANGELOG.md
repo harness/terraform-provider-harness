@@ -28,7 +28,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 
-* resource/harness_platform_cluster: Fix added correct batch cluster API. ([#216](https://github.com/harness/terraform-provider-harness/issues/216))
+* resource/harness_platform_environment_clusters_mapping: Fix added correct batch cluster API. ([#216](https://github.com/harness/terraform-provider-harness/issues/216))
 
 # 0.6.0 (September 30,2022)
 
