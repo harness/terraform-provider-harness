@@ -11,6 +11,9 @@ func ExpandTags(tags []interface{}) map[string]string {
 
 	for _, tag := range tags {
 		parts := strings.Split(tag.(string), ":")
+		if len(parts) == 1 {
+			parts = append(parts, "")
+		}
 		result[parts[0]] = parts[1]
 	}
 
@@ -20,7 +23,11 @@ func ExpandTags(tags []interface{}) map[string]string {
 func FlattenTags(tags map[string]string) []string {
 	var result []string
 	for k, v := range tags {
-		result = append(result, k+":"+v)
+		if v == "" {
+			result = append(result, k)
+		} else {
+			result = append(result, k+":"+v)
+		}
 	}
 	return result
 }

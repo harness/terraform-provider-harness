@@ -138,6 +138,7 @@ func testAccResourceEnvironment(id string, name string) string {
 			name = "%[2]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
+			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
 			yaml = <<-EOT
 			   environment:
