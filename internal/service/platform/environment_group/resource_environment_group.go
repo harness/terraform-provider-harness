@@ -43,6 +43,7 @@ func ResourceEnvironmentGroup() *schema.Resource {
 				Description: "Color of the environment group.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"yaml": {
 				Description: "Input Set YAML",
@@ -57,21 +58,20 @@ func ResourceEnvironmentGroup() *schema.Resource {
 func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-
 	var err error
 	var envGroup *nextgen.EnvironmentGroupResponse
 	var httpResp *http.Response
 
 	id := d.Get("identifier").(string)
-	
+
 	if id != "" {
 		var resp nextgen.ResponseDtoEnvironmentGroup
 
-		orgIdentifier :=     (d.Get("org_id").(string))
+		orgIdentifier := (d.Get("org_id").(string))
 		projectIdentifier := (d.Get("project_id").(string))
 
 		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-			Branch:     helpers.BuildField(d, "brach"),
+			Branch:         helpers.BuildField(d, "branch"),
 			RepoIdentifier: helpers.BuildField(d, "repo_id"),
 		})
 		envGroup = resp.Data.EnvGroup
@@ -103,15 +103,13 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 	id := d.Id()
 	env := buildEnvironmentGroup(d)
 
-	orgIdentifier :=     (d.Get("org_id").(string))
-
 	if id == "" {
 		resp, httpResp, err = c.EnvironmentGroupApi.PostEnvironmentGroup(ctx, c.AccountId, &nextgen.EnvironmentGroupApiPostEnvironmentGroupOpts{
 			Body: optional.NewInterface(env),
 		})
 	} else {
-		
-		resp, httpResp, err = c.EnvironmentGroupApi.UpdateEnvironmentGroup(ctx, c.AccountId, orgIdentifier, &nextgen.EnvironmentGroupApiUpdateEnvironmentGroupOpts{
+
+		resp, httpResp, err = c.EnvironmentGroupApi.UpdateEnvironmentGroup(ctx, c.AccountId, id, &nextgen.EnvironmentGroupApiUpdateEnvironmentGroupOpts{
 			Body: optional.NewInterface(env),
 		})
 	}
@@ -128,11 +126,11 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 func resourceEnvironmentGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgIdentifier :=     (d.Get("org_id").(string))
+	orgIdentifier := (d.Get("org_id").(string))
 	projectIdentifier := (d.Get("project_id").(string))
 
 	_, httpResp, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
-		Branch:     helpers.BuildField(d, "brach"),
+		Branch:         helpers.BuildField(d, "branch"),
 		RepoIdentifier: helpers.BuildField(d, "repo_id"),
 	})
 
@@ -149,7 +147,7 @@ func buildEnvironmentGroup(d *schema.ResourceData) *nextgen.EnvironmentGroupRequ
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
 		Color:             d.Get("color").(string),
-		Yaml:             d.Get("yaml").(string),
+		Yaml:              d.Get("yaml").(string),
 	}
 }
 

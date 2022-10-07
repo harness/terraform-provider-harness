@@ -37,6 +37,7 @@ func DataSourceEnvironmentGroup() *schema.Resource {
 			"color": {
 				Description: "Color of the environment group.",
 				Type:        schema.TypeString,
+				Optional:    true,
 				Computed:    true,
 			},
 			"yaml": {
@@ -66,7 +67,7 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 		projectIdentifier := (d.Get("project_id").(string))
 
 		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-			Branch:         helpers.BuildField(d, "brach"),
+			Branch:         helpers.BuildField(d, "branch"),
 			RepoIdentifier: helpers.BuildField(d, "repo_id"),
 		})
 		env = resp.Data.EnvGroup
