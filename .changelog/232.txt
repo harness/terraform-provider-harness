@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_environment_clusters_mapping:  update docs for cluster resource 
+```
+x
