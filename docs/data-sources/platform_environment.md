@@ -40,5 +40,6 @@ data "harness_platform_environment" "test" {
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `type` (String) The type of environment.
+- `yaml` (String) Input Set YAML
 
 

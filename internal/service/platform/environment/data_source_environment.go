@@ -30,6 +30,11 @@ func DataSourceEnvironment() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"yaml": {
+				Description: "Input Set YAML",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 
