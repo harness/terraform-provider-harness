@@ -1,3 +1,9 @@
+# 0.6.5 (October 6,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_environment_group: Fix bug in update env group ([#229](https://github.com/harness/terraform-provider-harness/issues/229))
+
 # 0.6.4 (October 6,2022)
 
 ENHANCEMENTS:
