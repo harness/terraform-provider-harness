@@ -1,9 +1,12 @@
 # 0.6.5 (October 6,2022)
 
+ENHANCEMENTS:
+
+* resource/harness_platform_environment_clusters_mapping:  update name for cluster resource ([#231](https://github.com/harness/terraform-provider-harness/issues/231))
+
 BUG FIXES:
 
 * resource/harness_platform_environment_group: Fix bug in update env group ([#229](https://github.com/harness/terraform-provider-harness/issues/229))
-* resource/harness_platform_environment_clusters_mapping:  update name for cluster resource ([#231](https://github.com/harness/terraform-provider-harness/issues/231))
 
 # 0.6.4 (October 6,2022)
 
