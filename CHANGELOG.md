@@ -1,3 +1,9 @@
+# 0.6.6 (October 7,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_environment_clusters_mapping:  update docs for cluster resource ([#232](https://github.com/harness/terraform-provider-harness/issues/232))
+
 # 0.6.5 (October 6,2022)
 
 ENHANCEMENTS:
