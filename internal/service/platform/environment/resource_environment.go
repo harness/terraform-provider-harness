@@ -39,9 +39,10 @@ func ResourceEnvironment() *schema.Resource {
 				ValidateFunc: validation.StringInSlice(nextgen.EnvironmentTypeValues, false),
 			},
 			"yaml": {
-				Description: "Input Set YAML",
+				Description: "Environment YAML",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
