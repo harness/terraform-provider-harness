@@ -79,7 +79,7 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	readEnvironment(d, env)
+	readEnvironment(d, env, true)
 
 	return nil
 }

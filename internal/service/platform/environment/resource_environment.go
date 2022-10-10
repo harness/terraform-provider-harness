@@ -72,7 +72,7 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 		return nil
 	}
 
-	readEnvironment(d, resp.Data.Environment)
+	readEnvironment(d, resp.Data.Environment, true)
 
 	return nil
 }
@@ -100,7 +100,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readEnvironment(d, resp.Data.Environment)
+	readEnvironment(d, resp.Data.Environment, false)
 
 	return nil
 }
@@ -134,7 +134,7 @@ func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
 	}
 }
 
-func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails) {
+func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails, isRead bool) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
@@ -143,5 +143,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("type", env.Type_.String())
-	d.Set("yaml", env.Yaml)
+	if isRead == true || d.Get("yaml").(string) != "" {
+		d.Set("yaml", env.Yaml)
+	}
 }
