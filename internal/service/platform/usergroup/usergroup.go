@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -177,8 +176,8 @@ func resourceUserGroupDelete(ctx context.Context, d *schema.ResourceData, meta i
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, httpResp, err := c.UserGroupApi.DeleteUserGroup(ctx, c.AccountId, d.Id(), &nextgen.UserGroupApiDeleteUserGroupOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
