@@ -146,7 +146,7 @@ func resourceRoleAssignmentsCreateorUpdate(ctx context.Context, d *schema.Resour
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readRoleAssignments(d, resp.Data.RoleAssignment)
+	readRoleAssignments(d, resp.Data.RoleAssignment
 
 	return nil
 }
