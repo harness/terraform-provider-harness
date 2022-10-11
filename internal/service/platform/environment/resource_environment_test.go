@@ -40,10 +40,48 @@ func TestAccResourceEnvironment(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceEnvironment_withYaml(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_environment.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironmentWithYaml(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				Config: testAccResourceEnvironmentWithYaml(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -119,7 +157,7 @@ func testAccEnvironmentDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourceEnvironment(id string, name string) string {
+func testAccResourceEnvironmentWithYaml(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -185,6 +223,31 @@ func testAccResourceEnvironment(id string, name string) string {
                          - account:/Add-ons/svcOverrideTest
                        secretFiles: []
       EOT
+  	}
+`, id, name)
+}
+
+func testAccResourceEnvironment(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
   	}
 `, id, name)
 }

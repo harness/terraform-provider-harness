@@ -42,7 +42,6 @@ func ResourceEnvironment() *schema.Resource {
 				Description: "Environment YAML",
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed:    true,
 			},
 		},
 	}
@@ -72,7 +71,7 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 		return nil
 	}
 
-	readEnvironment(d, resp.Data.Environment, true)
+	readEnvironment(d, resp.Data.Environment)
 
 	return nil
 }
@@ -100,7 +99,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readEnvironment(d, resp.Data.Environment, false)
+	readEnvironment(d, resp.Data.Environment)
 
 	return nil
 }
@@ -134,7 +133,7 @@ func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
 	}
 }
 
-func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails, isRead bool) {
+func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
@@ -143,7 +142,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("type", env.Type_.String())
-	if isRead == true || d.Get("yaml").(string) != "" {
+	if d.Get("yaml").(string) != "" {
 		d.Set("yaml", env.Yaml)
 	}
 }
