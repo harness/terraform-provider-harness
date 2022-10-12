@@ -13,13 +13,12 @@ Resource for creating a Harness environment group.
 ## Example Usage
 
 ```terraform
-resource "platform_environment_group" "test" {
+resource "harness_platform_environment_group" "test" {
   identifier = "identifier"
   org_id     = "orgIdentifer"
   project_id = "projectIdentifier"
   color      = "#0063F7"
   yaml       = <<-EOT
-   ---
   environmentGroup:
     name: "name"
     identifier: "identifier"

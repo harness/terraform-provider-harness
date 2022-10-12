@@ -29,9 +29,12 @@ data "harness_platform_environment_group" "test" {
 - `org_id` (String) org_id of the environment group.
 - `project_id` (String) project_id of the environment group.
 
-### Read-Only
+### Optional
 
 - `color` (String) Color of the environment group.
+
+### Read-Only
+
 - `id` (String) The ID of this resource.
 - `yaml` (String) Input Set YAML
 
