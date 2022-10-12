@@ -31,6 +31,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
+	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
@@ -121,6 +122,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
+				"harness_platform_permissions":                  pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                      project.DataSourceProject(),
 				"harness_platform_service":                      pl_service.DataSourceService(),
 				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
