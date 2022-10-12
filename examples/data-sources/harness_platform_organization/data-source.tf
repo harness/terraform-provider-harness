@@ -1,3 +1,3 @@
-resource "harness_platform_organization" "this" {
+data "harness_platform_organization" "this" {
   identifier = "identifier"
 }

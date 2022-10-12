@@ -13,7 +13,7 @@ Data source for retrieving a Harness organization
 ## Example Usage
 
 ```terraform
-resource "harness_platform_organization" "this" {
+data "harness_platform_organization" "this" {
   identifier = "identifier"
 }
 ```
