@@ -127,6 +127,11 @@ func SetProjectLevelResourceSchema(s map[string]*schema.Schema) {
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
 }
 
+func SetProjectLevelResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
+}
+
 func SetMultiLevelResourceSchema(s map[string]*schema.Schema) {
 	SetCommonResourceSchema(s)
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
