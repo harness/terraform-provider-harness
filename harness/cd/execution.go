@@ -11,6 +11,8 @@ type ExecutionClient struct {
 	ApiClient *ApiClient
 }
 
+func (c *ExecutionClient) ExportExecutions() {}
+
 func (c *ExecutionClient) GetWorkflowExecutionById(id string) (*graphql.WorkflowExecution, error) {
 
 	query := &GraphQLQuery{
@@ -197,4 +199,16 @@ tags {
 	name
 	value
 }
+`
+
+const exportExecutionsFields = `
+clientMutationId
+requestId
+status
+totalExecutions
+triggeredAt
+statusLink
+downloadLink
+expiresAt
+errorMessage
 `
