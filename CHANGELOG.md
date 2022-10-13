@@ -1,6 +1,6 @@
 
-<a name="0.2.6"></a>
-## 0.2.6 (2022-10-06)
+<a name="0.2.7"></a>
+## 0.2.7 (2022-10-13)
 
 ### Add
 
@@ -17,6 +17,10 @@
 
 * Adding dto files
 
+### Adding
+
+* adding delegate resource
+
 ### Catch
 
 * Catch service not found issue
@@ -32,22 +36,18 @@
 
 ### Fix
 
-* fix environment variable overrides with secrets
-* fix cac error handling
-
-### Fix
-
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
+
 ### Fixing
 
 * fixing package name
-
-### Handle
-
-* Handle upsert error
 
 ### Handling
 
@@ -67,6 +67,8 @@
 
 ### Release
 
+* Release version 0.2.6 10-06-2022
+* Release v0.2.6
 * Release version 0.2.5 10-05-2022
 * Release v0.2.5
 * Release version 0.2.4 10-03-2022
@@ -108,7 +110,6 @@
 * Release v0.1.22
 * Release version 0.1.21 05-06-2022
 * Release v0.1.21
-* Release version 0.1.20 04-20-2022
 
 ### Resource
 
@@ -135,6 +136,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#175](https://github.com/harness/harness-go-sdk/issues/175) from harness/del-ng-api
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
