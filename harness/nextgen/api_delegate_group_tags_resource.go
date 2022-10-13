@@ -1,7 +1,7 @@
 /*
  * Harness NextGen Software Delivery Platform API Reference
  *
- * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
+ * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub
  *
  * API version: 3.0
  * Contact: contact@harness.io
@@ -31,21 +31,20 @@ type DelegateGroupTagsResourceApiService service
 DelegateGroupTagsResourceApiService Add given list of tags to the Delegate group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Set of tags
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param groupIdentifier Delegate Group Identifier
  * @param optional nil or *DelegateGroupTagsResourceApiAddTagsToDelegateGroupOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return RestResponseDelegateGroupDto
 */
 
 type DelegateGroupTagsResourceApiAddTagsToDelegateGroupOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DelegateGroupTagsResourceApiService) AddTagsToDelegateGroup(ctx context.Context, body DelegateGroupTags, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiAddTagsToDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
+func (a *DelegateGroupTagsResourceApiService) AddTagsToDelegateGroup(ctx context.Context, body DelegateGroupTags, accountIdentifier string, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiAddTagsToDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -62,9 +61,7 @@ func (a *DelegateGroupTagsResourceApiService) AddTagsToDelegateGroup(ctx context
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -171,21 +168,20 @@ func (a *DelegateGroupTagsResourceApiService) AddTagsToDelegateGroup(ctx context
 /*
 DelegateGroupTagsResourceApiService Deletes all tags from the Delegate group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param groupIdentifier Delegate Group Identifier
  * @param optional nil or *DelegateGroupTagsResourceApiDeleteTagsFromDelegateGroupOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return RestResponseDelegateGroupDto
 */
 
 type DelegateGroupTagsResourceApiDeleteTagsFromDelegateGroupOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DelegateGroupTagsResourceApiService) DeleteTagsFromDelegateGroup(ctx context.Context, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiDeleteTagsFromDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
+func (a *DelegateGroupTagsResourceApiService) DeleteTagsFromDelegateGroup(ctx context.Context, accountIdentifier string, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiDeleteTagsFromDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -202,9 +198,7 @@ func (a *DelegateGroupTagsResourceApiService) DeleteTagsFromDelegateGroup(ctx co
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -307,23 +301,158 @@ func (a *DelegateGroupTagsResourceApiService) DeleteTagsFromDelegateGroup(ctx co
 }
 
 /*
+DelegateGroupTagsResourceApiService List delegate groups that are having mentioned tags.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body Set of tags
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *DelegateGroupTagsResourceApiListDelegateGroupsUsingTagsOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+@return RestResponseListDelegateGroupDto
+*/
+
+type DelegateGroupTagsResourceApiListDelegateGroupsUsingTagsOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *DelegateGroupTagsResourceApiService) ListDelegateGroupsUsingTags(ctx context.Context, body DelegateGroupTags, accountIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiListDelegateGroupsUsingTagsOpts) (RestResponseListDelegateGroupDto, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue RestResponseListDelegateGroupDto
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/delegate-group-tags/delegate-groups"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v RestResponseListDelegateGroupDto
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
 DelegateGroupTagsResourceApiService Retrieves list of tags attached with Delegate group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param groupIdentifier Delegate Group Identifier
  * @param optional nil or *DelegateGroupTagsResourceApiListTagsForDelegateGroupOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return RestResponseDelegateGroupDto
 */
 
 type DelegateGroupTagsResourceApiListTagsForDelegateGroupOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DelegateGroupTagsResourceApiService) ListTagsForDelegateGroup(ctx context.Context, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiListTagsForDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
+func (a *DelegateGroupTagsResourceApiService) ListTagsForDelegateGroup(ctx context.Context, accountIdentifier string, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiListTagsForDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -340,9 +469,7 @@ func (a *DelegateGroupTagsResourceApiService) ListTagsForDelegateGroup(ctx conte
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -448,21 +575,20 @@ func (a *DelegateGroupTagsResourceApiService) ListTagsForDelegateGroup(ctx conte
 DelegateGroupTagsResourceApiService Clears all existing tags with delegate group and attach given set of tags to delegate group.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param body Set of tags
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param groupIdentifier Delegate Group Identifier
  * @param optional nil or *DelegateGroupTagsResourceApiUpdateTagsOfDelegateGroupOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return RestResponseDelegateGroupDto
 */
 
 type DelegateGroupTagsResourceApiUpdateTagsOfDelegateGroupOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *DelegateGroupTagsResourceApiService) UpdateTagsOfDelegateGroup(ctx context.Context, body DelegateGroupTags, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiUpdateTagsOfDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
+func (a *DelegateGroupTagsResourceApiService) UpdateTagsOfDelegateGroup(ctx context.Context, body DelegateGroupTags, accountIdentifier string, groupIdentifier string, localVarOptionals *DelegateGroupTagsResourceApiUpdateTagsOfDelegateGroupOpts) (RestResponseDelegateGroupDto, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -479,9 +605,7 @@ func (a *DelegateGroupTagsResourceApiService) UpdateTagsOfDelegateGroup(ctx cont
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
