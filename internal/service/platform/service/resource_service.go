@@ -93,7 +93,10 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, httpResp, err := c.ProjectApi.DeleteProject(ctx, d.Id(), c.AccountId, &nextgen.ProjectApiDeleteProjectOpts{OrgIdentifier: optional.NewString(d.Get("org_id").(string))})
+	_, httpResp, err := c.ServicesApi.DeleteServiceV2(ctx, d.Id(), c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}

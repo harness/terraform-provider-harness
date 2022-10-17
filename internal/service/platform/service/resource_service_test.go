@@ -122,14 +122,14 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccGetService(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
+func testAccGetService(resourceName string, state *terraform.State) (*nextgen.ServiceResponseDetails, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, id, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+	resp, _, err := c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
 		OrgIdentifier:     optional.NewString(orgId),
 		ProjectIdentifier: optional.NewString(projId),
 	})
@@ -138,11 +138,11 @@ func testAccGetService(resourceName string, state *terraform.State) (*nextgen.En
 		return nil, err
 	}
 
-	if resp.Data == nil || resp.Data.Environment == nil {
+	if resp.Data == nil || resp.Data.Service == nil {
 		return nil, nil
 	}
 
-	return resp.Data.Environment, nil
+	return resp.Data.Service, nil
 }
 
 func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
@@ -158,47 +158,47 @@ func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
 
 func testAccResourceService(id string, name string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-		}
+    resource "harness_platform_organization" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+    }
 
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			color = "#472848"
-		}
+    resource "harness_platform_project" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_organization.test.id
+      color = "#472848"
+  }
 
-		resource "harness_platform_service" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
-		}
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_project.test.org_id
+      project_id = harness_platform_project.test.id
+    }
 `, id, name)
 }
 
 func testAccResourceServiceWithYaml(id string, name string, varValue string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-		}
+    resource "harness_platform_organization" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+    }
 
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			color = "#472848"
-		}
+    resource "harness_platform_project" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_organization.test.id
+      color = "#472848"
+    }
 
-		resource "harness_platform_service" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
-			yaml = <<-EOT
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_project.test.org_id
+      project_id = harness_platform_project.test.id
+      yaml = <<-EOT
         service:
           name: %[1]s
           identifier: %[2]s
@@ -237,7 +237,7 @@ func testAccResourceServiceWithYaml(id string, name string, varValue string) str
                   value: val2
             type: Kubernetes
           gitOpsEnabled: false
-		  EOT
-		}
+      EOT
+    }
 `, id, name, varValue)
 }
