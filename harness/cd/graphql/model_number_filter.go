@@ -1,6 +1,6 @@
 package graphql
 
 type NumberFilter struct {
-	Operator NumberOperatorType
-	Values   []int
+	Operator NumberOperatorType `json:"operator,omitempty"`
+	Values   []int              `json:"values,omitempty"`
 }

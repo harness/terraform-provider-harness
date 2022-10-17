@@ -1,6 +1,6 @@
 package graphql
 
 type DeploymentTagFilter struct {
-	EntityType DeploymentTagType
-	Tags       []DeploymentTag
+	EntityType DeploymentTagType `json:"entityType,omitempty"`
+	Tags       []DeploymentTag   `json:"tags,omitempty"`
 }

@@ -1,8 +1,6 @@
 package graphql
 
-import "github.com/harness/harness-go-sdk/harness/time"
-
 type TimeFilter struct {
-	Operator TimeOperatorType
-	Value    *time.Time
+	Operator TimeOperatorType `json:"operator,omitempty"`
+	Value    int64            `json:"value,omitempty"`
 }
