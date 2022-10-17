@@ -13,7 +13,6 @@ func TestAccDataSourcePermissions(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	resourceName := "data.harness_platform_permissions.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -21,9 +20,6 @@ func TestAccDataSourcePermissions(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourcePermissions(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", name),
-				),
 			},
 		},
 	})
