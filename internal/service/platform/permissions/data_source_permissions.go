@@ -15,7 +15,7 @@ import (
 
 func DataSourcePermissions() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving permissions",
+		Description: "Data source for retrieving permissions.",
 
 		ReadContext: dataSourcePermissionsRead,
 		Schema: map[string]*schema.Schema{
@@ -50,7 +50,6 @@ func DataSourcePermissions() *schema.Resource {
 							Description: "Status of the permission",
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 						},
 						"resource_type": {
 							Description: "Resource type for the given permission",
@@ -65,7 +64,6 @@ func DataSourcePermissions() *schema.Resource {
 						"allowed_scope_levels": {
 							Description: "The scope levels at which this resource group can be used",
 							Type:        schema.TypeSet,
-							Optional:    true,
 							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
@@ -74,7 +72,6 @@ func DataSourcePermissions() *schema.Resource {
 						"include_in_all_roles": {
 							Description: "Is included in all roles",
 							Type:        schema.TypeBool,
-							Optional:    true,
 							Computed:    true,
 						},
 					}},

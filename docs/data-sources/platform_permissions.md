@@ -3,12 +3,12 @@
 page_title: "harness_platform_permissions Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving permissions
+  Data source for retrieving permissions.
 ---
 
 # harness_platform_permissions (Data Source)
 
-Data source for retrieving permissions
+Data source for retrieving permissions.
 
 ## Example Usage
 
