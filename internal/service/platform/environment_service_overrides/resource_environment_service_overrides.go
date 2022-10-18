@@ -46,7 +46,7 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelResourceSchemaForServiceOverride(resource.Schema)
+	SetProjectLevelResourceSchemaForServiceOverride(resource.Schema)
 
 	return resource
 }
@@ -142,4 +142,9 @@ func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.Service
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
 	d.Set("service_id", so.ServiceRef)
+}
+
+func SetProjectLevelResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
 }
