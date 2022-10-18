@@ -56,13 +56,11 @@ func DataSourcePermissions() *schema.Resource {
 							Description: "Resource type for the given permission",
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 						},
 						"action": {
 							Description: "Action performed by the permission",
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 						},
 						"allowed_scope_levels": {
 							Description: "The scope levels at which this resource group can be used",
@@ -104,7 +102,7 @@ func dataSourcePermissionsRead(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 	var id = c.AccountId
-	
+
 	id = fmt.Sprintf("%d", utils.StringHashcode(c.AccountId+d.Get("org_id").(string)+d.Get("project_id").(string)))
 	readPermissions(d, resp.Data, id)
 
