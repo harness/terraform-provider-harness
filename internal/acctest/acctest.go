@@ -86,6 +86,20 @@ func PipelineResourceImportStateIdFunc(resourceName string) resource.ImportState
 	}
 }
 
+func InfrastructureResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		var envId string
+		if len(primary.Attributes["env_id"]) != 0 {
+			envId = primary.Attributes["env_id"]
+		}
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, envId, id), nil
+	}
+}
+
 func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary

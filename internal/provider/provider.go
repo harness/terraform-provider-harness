@@ -28,6 +28,7 @@ import (
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	pl_gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops_agent"
 	pl_gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops_cluster"
+	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
@@ -123,6 +124,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_gitops_agent":                 pl_gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_cluster":               pl_gitops_cluster.DataSourceGitopsCluster(),
+				"harness_platform_infrastructure":               pl_infrastructure.DataSourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
@@ -183,6 +185,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_gitops_agent":                 pl_gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_cluster":               pl_gitops_cluster.ResourceGitopsCluster(),
+				"harness_platform_infrastructure":               pl_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.ResourcePipeline(),
