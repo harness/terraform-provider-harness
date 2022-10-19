@@ -20,7 +20,7 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 		UpdateContext: resourceEnvironmentServiceOverridesCreateOrUpdate,
 		DeleteContext: resourceEnvironmentServiceOverridesDelete,
 		CreateContext: resourceEnvironmentServiceOverridesCreateOrUpdate,
-		Importer:      helpers.ProjectResourceImporter,
+		Importer:      helpers.EnvRelatedResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -136,12 +136,14 @@ func readEnvironmentServiceOverridesList(d *schema.ResourceData, env *nextgen.Pa
 }
 
 func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.ServiceOverrideResponse) {
-	d.SetId(so.OrgIdentifier) //temp id
+	serviceOverrideID := so.ServiceRef + "_" + so.EnvironmentRef
+	d.SetId(serviceOverrideID)
 	d.Set("identifier", so.OrgIdentifier)
 	d.Set("org_id", so.OrgIdentifier)
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
 	d.Set("service_id", so.ServiceRef)
+	d.Set("yaml", so.Yaml)
 }
 
 func SetProjectLevelResourceSchemaForServiceOverride(s map[string]*schema.Schema) {

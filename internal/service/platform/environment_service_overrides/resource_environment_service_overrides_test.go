@@ -12,29 +12,36 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccEnvironmentServiceOverrides(t *testing.T) {
+func TestAccEnvServiceOverrides(t *testing.T) {
 
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
+	expectedid := id + "_" + id
 	resourceName := "harness_environment_service_overrides.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccEnvironmentServiceOverridesDestroy(resourceName),
+		CheckDestroy:      testAccEnvServiceOverridesDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEnvironmentServiceOverrides(id, name),
+				Config: testAccEnvServiceOverrides(expectedid, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", expectedid),
+					resource.TestCheckResourceAttr(resourceName, "project_id", expectedid),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func testAccGetPlatformEnvironmentServiceOverrides(resourceName string, state *terraform.State) (*nextgen.PageResponseServiceOverrideResponse, error) {
+func testAccGetPlatformEnvServiceOverrides(resourceName string, state *terraform.State) (*nextgen.PageResponseServiceOverrideResponse, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 
@@ -55,9 +62,9 @@ func testAccGetPlatformEnvironmentServiceOverrides(resourceName string, state *t
 	return resp.Data, nil
 }
 
-func testAccEnvironmentServiceOverridesDestroy(resourceName string) resource.TestCheckFunc {
+func testAccEnvServiceOverridesDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		env, _ := testAccGetPlatformEnvironmentServiceOverrides(resourceName, state)
+		env, _ := testAccGetPlatformEnvServiceOverrides(resourceName, state)
 		if env != nil {
 			return fmt.Errorf("Found environment service override")
 		}
@@ -66,7 +73,7 @@ func testAccEnvironmentServiceOverridesDestroy(resourceName string) resource.Tes
 	}
 }
 
-func testAccEnvironmentServiceOverrides(id string, name string) string {
+func testAccEnvServiceOverrides(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -128,8 +135,6 @@ func testAccEnvironmentServiceOverrides(id string, name string) string {
           gitOpsEnabled: false
 		  EOT
 		}
-
-		
 
 		resource "harness_environment_service_overrides" "test" {
 			identifier = "%[1]s"

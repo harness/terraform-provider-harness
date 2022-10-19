@@ -30,7 +30,7 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 			"yaml": {
 				Description: "Environment Service Overrides YAML",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 		},
 	}
