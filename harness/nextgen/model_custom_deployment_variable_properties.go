@@ -9,9 +9,10 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type CustomDeploymentVariableProperties struct {
+	Fqn          string `json:"fqn"`
+	VariableName string `json:"variableName"`
+	LocalName    string `json:"localName,omitempty"`
+	AliasFqn     string `json:"aliasFqn,omitempty"`
+	Visible      bool   `json:"visible,omitempty"`
 }

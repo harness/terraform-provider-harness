@@ -9,9 +9,8 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type VariableConfigDto struct {
+	// Type of Value of the Variable.
+	ValueType string       `json:"valueType"`
+	Value     *interface{} `json:"value,omitempty"`
 }
