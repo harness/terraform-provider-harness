@@ -124,6 +124,8 @@ type APIClient struct {
 
 	HostsApi *HostsApiService
 
+	Infrastructures *InfrastructuresApiService
+
 	InputSetsApi *InputSetsApiService
 
 	InviteApi *InviteApiService
