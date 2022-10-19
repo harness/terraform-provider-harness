@@ -11,13 +11,14 @@ package nextgen
 
 // This contains the Vault Connector configuration.
 type VaultConnector struct {
+	ConnectorType string `json:"connectorType"`
+	// This is the authentication token for Vault.
 	AuthToken string `json:"authToken,omitempty"`
 	// This is the location of the Vault directory where Secret will be stored.
 	BasePath string `json:"basePath,omitempty"`
 	// URL of the HashiCorp Vault.
-	VaultUrl string `json:"vaultUrl"`
-	// Boolean value to indicate if the Secret Manager created is read only.
-	IsReadOnly bool `json:"isReadOnly,omitempty"`
+	VaultUrl   string `json:"vaultUrl"`
+	IsReadOnly bool   `json:"isReadOnly,omitempty"`
 	// This is the time interval for token renewal.
 	RenewalIntervalMinutes int64 `json:"renewalIntervalMinutes"`
 	// Manually entered Secret Engine.
@@ -26,9 +27,9 @@ type VaultConnector struct {
 	SecretEngineName string `json:"secretEngineName,omitempty"`
 	// ID of App Role.
 	AppRoleId string `json:"appRoleId,omitempty"`
+	// ID of the Secret.
 	SecretId  string `json:"secretId,omitempty"`
-	// Boolean value to indicate if the Secret Manager is your default Secret Manager.
-	IsDefault bool `json:"isDefault,omitempty"`
+	IsDefault bool   `json:"isDefault,omitempty"`
 	// Version of Secret Engine.
 	SecretEngineVersion int32 `json:"secretEngineVersion,omitempty"`
 	// List of Delegate Selectors that belong to the same Delegate and are used to connect to the Secret Manager.
@@ -44,7 +45,8 @@ type VaultConnector struct {
 	// This is the Aws region where aws iam auth will happen.
 	AwsRegion string `json:"awsRegion,omitempty"`
 	// This is the Vault role defined to bind to aws iam account/role being accessed.
-	VaultAwsIamRole      string `json:"vaultAwsIamRole,omitempty"`
+	VaultAwsIamRole string `json:"vaultAwsIamRole,omitempty"`
+	// This is the Aws Iam Header Server ID that has been configured for this Aws Iam instance.
 	XvaultAwsIamServerId string `json:"xvaultAwsIamServerId,omitempty"`
 	// Boolean value to indicate if K8s Auth is used for authentication.
 	UseK8sAuth bool `json:"useK8sAuth,omitempty"`
@@ -52,7 +54,11 @@ type VaultConnector struct {
 	VaultK8sAuthRole string `json:"vaultK8sAuthRole,omitempty"`
 	// This is the SA token path where the token is mounted in the K8s Pod.
 	ServiceAccountTokenPath string `json:"serviceAccountTokenPath,omitempty"`
-	Default_                bool   `json:"default,omitempty"`
-	AccessType              string `json:"accessType,omitempty"`
-	ReadOnly                bool   `json:"readOnly,omitempty"`
+	// This is the path where kubernetes auth is enabled in Vault.
+	K8sAuthEndpoint string `json:"k8sAuthEndpoint,omitempty"`
+	// Boolean value to indicate if appRole token renewal is enabled or not.
+	RenewAppRoleToken bool   `json:"renewAppRoleToken,omitempty"`
+	AccessType        string `json:"accessType,omitempty"`
+	Default_          bool   `json:"default,omitempty"`
+	ReadOnly          bool   `json:"readOnly,omitempty"`
 }

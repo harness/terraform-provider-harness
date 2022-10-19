@@ -53,5 +53,6 @@ type ConnectorInfo struct {
 	Prometheus       *PrometheusConnectorDto  `json:"-"`
 	Splunk           *SplunkConnector         `json:"-"`
 	SumoLogic        *SumoLogicConnectorDto   `json:"-"`
+	Vault            *VaultConnector          `json:"-"`
 	Spec             json.RawMessage          `json:"spec"`
 }

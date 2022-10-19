@@ -49,6 +49,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Github)
 	case ConnectorTypes.Gitlab:
 		err = json.Unmarshal(aux.Spec, &a.Gitlab)
+	case ConnectorTypes.Vault:
+		err = json.Unmarshal(aux.Spec, &a.Vault)
 	case ConnectorTypes.HttpHelmRepo:
 		err = json.Unmarshal(aux.Spec, &a.HttpHelm)
 	case ConnectorTypes.Jira:
@@ -109,6 +111,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Github)
 	case ConnectorTypes.Gitlab:
 		spec, err = json.Marshal(a.Gitlab)
+	case ConnectorTypes.Vault:
+		spec, err = json.Marshal(a.Vault)
 	case ConnectorTypes.HttpHelmRepo:
 		spec, err = json.Marshal(a.HttpHelm)
 	case ConnectorTypes.Jira:
