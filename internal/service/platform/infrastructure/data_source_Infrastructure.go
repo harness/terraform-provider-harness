@@ -33,17 +33,17 @@ func DataSourceInfrastructure() *schema.Resource {
 			"type": {
 				Description: fmt.Sprintf("Type of Infrastructure. Valid values are %s.", strings.Join(nextgen.InfrastructureTypeValues, ", ")),
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"yaml": {
 				Description: "Infrastructure YAML",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"deployment_type": {
 				Description: fmt.Sprintf("Infrastructure deployment type. Valid values are %s.", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -61,10 +61,6 @@ func dataSourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, m
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
-
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
