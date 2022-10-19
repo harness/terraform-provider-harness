@@ -1,6 +1,6 @@
 
-<a name="0.2.11"></a>
-## 0.2.11 (2022-10-19)
+<a name="v0.2.12"></a>
+## v0.2.12 (2022-10-19)
 
 ### Add
 
@@ -68,12 +68,10 @@
 
 * Modify secret file post and put methods
 
-### Regenerated
-
-* regenerated NG API's ([#121](https://github.com/harness/harness-go-sdk/issues/121))
-
 ### Release
 
+* Release version 0.2.11 10-19-2022
+* Release v0.2.11
 * Release version 0.2.10 10-19-2022
 * Release v0.2.10
 * Release version 0.2.9 10-19-2022
@@ -116,8 +114,6 @@
 * Release version 0.1.26 05-20-2022
 * Release v0.1.26
 * Release version 0.1.25 05-20-2022
-* Release v0.1.25
-* Release version 0.1.24 05-11-2022
 
 ### Resource
 
@@ -144,6 +140,9 @@
 
 ### Pull Requests
 
+* Merge pull request [#189](https://github.com/harness/harness-go-sdk/issues/189) from harness/CDS-43547-gitops-agent-cluster-sdk
+* Merge pull request [#190](https://github.com/harness/harness-go-sdk/issues/190) from harness/SPG-522-add-infra-TF-resource
+* Merge pull request [#180](https://github.com/harness/harness-go-sdk/issues/180) from harness/SPG-522-add-infra-TF-resource
 * Merge pull request [#187](https://github.com/harness/harness-go-sdk/issues/187) from harness/generate_variable_sdk
 * Merge pull request [#185](https://github.com/harness/harness-go-sdk/issues/185) from harness/cds-43281
 * Merge pull request [#181](https://github.com/harness/harness-go-sdk/issues/181) from harness/SPG_490
