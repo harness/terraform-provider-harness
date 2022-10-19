@@ -1,11 +1,50 @@
 package cd
 
 import (
-	"testing"
-
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/stretchr/testify/require"
+	"testing"
+	time2 "time"
 )
+
+func TestExportExecutions(t *testing.T) {
+	c := getClient()
+
+	time1 := time2.Date(2022, 10, 7, 0, 0, 0, 0, time2.UTC)
+
+	input := &graphql.ExportExecutionsInput{
+		Filters: []*graphql.ExecutionFilter{
+			{
+				Pipeline: &graphql.IdFilter{
+					Operator: graphql.IdOperatorTypes.Equals,
+					Values:   []string{"dMybjgkpSOGeul6mJmsx5w"},
+				},
+			},
+			{
+				Tag: &graphql.DeploymentTagFilter{
+					EntityType: graphql.DeploymentTagTypes.Service,
+					Tags: []graphql.DeploymentTag{
+						{
+							Name:  "tag",
+							Value: "tag",
+						},
+					},
+				},
+			},
+			{
+				StartTime: &graphql.TimeFilter{
+					Operator:    graphql.TimeOperatorTypes.After,
+					ValueMillis: time1.UnixMilli(),
+				},
+			},
+		},
+	}
+
+	res, err := c.ExecutionClient.ExportExecutions(input)
+	require.NoError(t, err)
+	require.NotNil(t, res.DownloadLink)
+	require.Exactly(t, res.ErrorMessage, "")
+}
 
 func TestGetWorkflowExecutionById(t *testing.T) {
 	c := getClient()
