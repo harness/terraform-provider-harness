@@ -29,8 +29,9 @@ type AgentsApiService service
 /*
 AgentsApiService
 Create agent.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return V1Agent
 */
 func (a *AgentsApiService) AgentServiceForServerCreate(ctx context.Context, body V1Agent) (V1Agent, *http.Response, error) {
@@ -43,7 +44,7 @@ func (a *AgentsApiService) AgentServiceForServerCreate(ctx context.Context, body
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -66,6 +67,9 @@ func (a *AgentsApiService) AgentServiceForServerCreate(ctx context.Context, body
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+
+	localVarQueryParams.Add("routingId", body.AccountIdentifier)
+
 	// body params
 	localVarPostBody = &body
 	if ctx != nil {
@@ -178,7 +182,7 @@ func (a *AgentsApiService) AgentServiceForServerDelete(ctx context.Context, iden
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -187,6 +191,7 @@ func (a *AgentsApiService) AgentServiceForServerDelete(ctx context.Context, iden
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
@@ -341,7 +346,7 @@ func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identif
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -349,6 +354,7 @@ func (a *AgentsApiService) AgentServiceForServerGet(ctx context.Context, identif
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
@@ -490,7 +496,7 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/deploy.yaml"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/deploy.yaml"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -498,6 +504,7 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -633,13 +640,14 @@ func (a *AgentsApiService) AgentServiceForServerList(ctx context.Context, accoun
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
@@ -756,8 +764,9 @@ func (a *AgentsApiService) AgentServiceForServerList(ctx context.Context, accoun
 /*
 AgentsApiService
 Regenerate credentials for agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param identifier
+
 @return V1Agent
 */
 func (a *AgentsApiService) AgentServiceForServerRegenerateCredentials(ctx context.Context, identifier string) (V1Agent, *http.Response, error) {
@@ -770,7 +779,7 @@ func (a *AgentsApiService) AgentServiceForServerRegenerateCredentials(ctx contex
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{identifier}/credentials"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{identifier}/credentials"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -903,7 +912,7 @@ func (a *AgentsApiService) AgentServiceForServerUnique(ctx context.Context, iden
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{identifier}/unique"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{identifier}/unique"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -911,6 +920,7 @@ func (a *AgentsApiService) AgentServiceForServerUnique(ctx context.Context, iden
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
@@ -1026,9 +1036,10 @@ func (a *AgentsApiService) AgentServiceForServerUnique(ctx context.Context, iden
 /*
 AgentsApiService
 Update agents.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param agentIdentifier The gitops-server generated ID for this gitops-agent
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+  - @param agentIdentifier The gitops-server generated ID for this gitops-agent
+
 @return V1Agent
 */
 func (a *AgentsApiService) AgentServiceForServerUpdate(ctx context.Context, body V1Agent, agentIdentifier string) (V1Agent, *http.Response, error) {
@@ -1041,7 +1052,7 @@ func (a *AgentsApiService) AgentServiceForServerUpdate(ctx context.Context, body
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agent.identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agent.identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agent.identifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1065,6 +1076,7 @@ func (a *AgentsApiService) AgentServiceForServerUpdate(ctx context.Context, body
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	localVarQueryParams.Add("routingId", body.AccountIdentifier)
 	// body params
 	localVarPostBody = &body
 	if ctx != nil {

@@ -57,7 +57,7 @@ func (a *ClustersApiService) AgentClusterServiceCreate(ctx context.Context, body
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/clusters"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -66,6 +66,7 @@ func (a *ClustersApiService) AgentClusterServiceCreate(ctx context.Context, body
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -202,7 +203,7 @@ func (a *ClustersApiService) AgentClusterServiceDelete(ctx context.Context, agen
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
@@ -212,6 +213,7 @@ func (a *ClustersApiService) AgentClusterServiceDelete(ctx context.Context, agen
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -357,7 +359,7 @@ func (a *ClustersApiService) AgentClusterServiceGet(ctx context.Context, agentId
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
@@ -366,6 +368,7 @@ func (a *ClustersApiService) AgentClusterServiceGet(ctx context.Context, agentId
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -511,7 +514,7 @@ func (a *ClustersApiService) AgentClusterServiceList(ctx context.Context, agentI
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/clusters"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -519,6 +522,7 @@ func (a *ClustersApiService) AgentClusterServiceList(ctx context.Context, agentI
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -658,7 +662,7 @@ func (a *ClustersApiService) AgentClusterServiceUpdate(ctx context.Context, body
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
@@ -668,6 +672,7 @@ func (a *ClustersApiService) AgentClusterServiceUpdate(ctx context.Context, body
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -791,7 +796,7 @@ func (a *ClustersApiService) AgentGPGKeyServiceList(ctx context.Context, agentId
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/gpgkeys"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -799,6 +804,7 @@ func (a *ClustersApiService) AgentGPGKeyServiceList(ctx context.Context, agentId
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -923,13 +929,14 @@ func (a *ClustersApiService) ClusterServiceExists(ctx context.Context, accountId
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/clusters/exists"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/clusters/exists"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -1045,7 +1052,7 @@ func (a *ClustersApiService) ClusterServiceListClusters(ctx context.Context, bod
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/clusters"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/clusters"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1068,6 +1075,7 @@ func (a *ClustersApiService) ClusterServiceListClusters(ctx context.Context, bod
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	localVarQueryParams.Add("routingId", body.AccountIdentifier)
 	// body params
 	localVarPostBody = &body
 	if ctx != nil {
