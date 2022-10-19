@@ -15,35 +15,35 @@ import (
 func ResourceUserGroup() *schema.Resource {
 	resource := &schema.Resource{
 		Description: fmt.Sprintf(`
-		Resource for creating a Harness User Group.Linking SSO providers with User Groups:
+		Resource for creating a Harness User Group. Linking SSO providers with User Groups:
 
-		When the SSO Provider is of LDAP type, the following values need to be populated:
+		The following fields need to be populated for LDAP SSO Providers:
 		
-		1) linked_sso_id
+		- linked_sso_id
 		
-		2) linked_sso_display_name
+		- linked_sso_display_name
 		
-		3) sso_group_id
+		- sso_group_id
 		
-		4) sso_group_name
+		- sso_group_name
 		
-		5) linked_sso_type
+		- linked_sso_type
 		
-		6) sso_linked
+		- sso_linked
 		
-		When the SSO Provider is of SAML type, the following values need to be populated:
+		The following fields need to be populated for SAML SSO Providers:
 		
-		1) linked_sso_id
+		- linked_sso_id
 		
-		2) linked_sso_display_name
+		- linked_sso_display_name
 		
-		3) sso_group_name
+		- sso_group_name
 		
-		4) sso_group_id // same as sso_group_name
+		- sso_group_id // same as sso_group_name
 		
-		5) linked_sso_type
+		- linked_sso_type
 		
-		6) sso_linked`),
+		- sso_linked`),
 
 		ReadContext:   resourceUserGroupRead,
 		UpdateContext: resourceUserGroupCreateOrUpdate,
