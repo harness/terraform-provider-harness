@@ -124,7 +124,7 @@ type APIClient struct {
 
 	HostsApi *HostsApiService
 
-	Infrastructures *InfrastructuresApiService
+	InfrastructuresApi *InfrastructuresApiService
 
 	InputSetsApi *InputSetsApiService
 
@@ -237,6 +237,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.HarnessResourceGroupApi = (*HarnessResourceGroupApiService)(&c.common)
 	c.HarnessResourceTypeApi = (*HarnessResourceTypeApiService)(&c.common)
 	c.HostsApi = (*HostsApiService)(&c.common)
+	c.InfrastructuresApi = (*InfrastructuresApiService)(&c.common)
 	c.InputSetsApi = (*InputSetsApiService)(&c.common)
 	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
