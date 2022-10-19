@@ -22,7 +22,6 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	projectId := "gitopsagent"
 	clusterName := id
-	// updatedName := fmt.Sprintf("%s_updated", clusterName)
 	resourceName := "harness_platform_gitops_cluster.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -41,7 +40,6 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					// resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
 			{
@@ -69,10 +67,6 @@ func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Se
 
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.Cluster == nil {
-		return nil, nil
 	}
 
 	return &resp, nil

@@ -2,7 +2,6 @@ package gitops_cluster
 
 import (
 	"context"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -670,12 +669,14 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	}
 	var updatedFields []string
 	if request["updated_fields"] != nil {
-		updatedFields = request["updated_fields"].([]string)
+		for i, v := range request["updated_fields"].([]interface{}) {
+			updatedFields[i] = v.(string)
+		}
 	}
 
 	var updateMask map[string]interface{}
-	if request["update_mask"] != nil {
-		updateMask = request["update_mask"].(map[string]interface{})
+	if request["update_mask"] != nil && len(request["update_mask"].([]interface{})) > 0 {
+		updateMask = request["update_mask"].([]interface{})[0].(map[string]interface{})
 	}
 
 	var updateMaskPath []string
