@@ -176,6 +176,8 @@ type APIClient struct {
 
 	ValidateHostApi *ValidateHostApiService
 
+	VariablesApi *VariablesApiService
+
 	WebhookEventHandlerApi *WebhookEventHandlerApiService
 
 	WebhookTriggersApi *WebhookTriggersApiService
@@ -261,6 +263,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.UserApi = (*UserApiService)(&c.common)
 	c.UserGroupApi = (*UserGroupApiService)(&c.common)
 	c.ValidateHostApi = (*ValidateHostApiService)(&c.common)
+	c.VariablesApi = (*VariablesApiService)(&c.common)
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 	c.WebhookTriggersApi = (*WebhookTriggersApiService)(&c.common)
 
