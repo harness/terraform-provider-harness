@@ -1,6 +1,6 @@
 
-<a name="0.2.8"></a>
-## 0.2.8 (2022-10-19)
+<a name="0.2.9"></a>
+## 0.2.9 (2022-10-19)
 
 ### Add
 
@@ -39,9 +39,10 @@
 
 ### Fix
 
+* Fix main
+* Fix main
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
-* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 
 ### Fix
 
@@ -60,6 +61,10 @@
 
 * Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
 
+### Merge
+
+* Merge branch 'main' of github.com:harness/harness-go-sdk
+
 ### Modify
 
 * Modify secret file post and put methods
@@ -70,6 +75,8 @@
 
 ### Release
 
+* Release version 0.2.8 10-19-2022
+* Release v0.2.8
 * Release version 0.2.7 10-13-2022
 * Release v0.2.7
 * Release version 0.2.6 10-06-2022
@@ -111,8 +118,6 @@
 * Release v0.1.24
 * Release version 0.1.23 05-11-2022
 * Release v0.1.23
-* Release version 0.1.22 05-10-2022
-* Release v0.1.22
 
 ### Resource
 
