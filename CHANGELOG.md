@@ -1,6 +1,6 @@
 
-<a name="0.2.10"></a>
-## 0.2.10 (2022-10-19)
+<a name="0.2.11"></a>
+## 0.2.11 (2022-10-19)
 
 ### Add
 
@@ -47,10 +47,6 @@
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 
-### Fix
-
-* fix environment variable overrides with secrets
-
 ### Fixing
 
 * fixing things
@@ -78,6 +74,8 @@
 
 ### Release
 
+* Release version 0.2.10 10-19-2022
+* Release v0.2.10
 * Release version 0.2.9 10-19-2022
 * Release v0.2.9
 * Release version 0.2.8 10-19-2022
@@ -120,8 +118,6 @@
 * Release version 0.1.25 05-20-2022
 * Release v0.1.25
 * Release version 0.1.24 05-11-2022
-* Release v0.1.24
-* Release version 0.1.23 05-11-2022
 
 ### Resource
 
@@ -148,6 +144,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#187](https://github.com/harness/harness-go-sdk/issues/187) from harness/generate_variable_sdk
 * Merge pull request [#185](https://github.com/harness/harness-go-sdk/issues/185) from harness/cds-43281
 * Merge pull request [#181](https://github.com/harness/harness-go-sdk/issues/181) from harness/SPG_490
 * Merge pull request [#175](https://github.com/harness/harness-go-sdk/issues/175) from harness/del-ng-api
