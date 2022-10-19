@@ -1,6 +1,6 @@
 
-<a name="v0.2.12"></a>
-## v0.2.12 (2022-10-19)
+<a name="0.2.13"></a>
+## 0.2.13 (2022-10-19)
 
 ### Add
 
@@ -70,6 +70,8 @@
 
 ### Release
 
+* Release version v0.2.12 10-19-2022
+* Release vv0.2.12
 * Release version 0.2.11 10-19-2022
 * Release v0.2.11
 * Release version 0.2.10 10-19-2022
@@ -113,7 +115,6 @@
 * Release v0.1.27
 * Release version 0.1.26 05-20-2022
 * Release v0.1.26
-* Release version 0.1.25 05-20-2022
 
 ### Resource
 
