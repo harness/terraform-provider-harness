@@ -1,3 +1,13 @@
+# 0.6.8 (October 13,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup:  update doc and added more example ([#233](https://github.com/harness/terraform-provider-harness/issues/233))
+
+BUG FIXES:
+
+* resource/harness_platform_usergroup: Fix user group delete flow ([#238](https://github.com/harness/terraform-provider-harness/issues/238))
+
 # 0.6.7 (October 11,2022)
 
 ENHANCEMENTS:
