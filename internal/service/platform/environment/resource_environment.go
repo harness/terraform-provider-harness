@@ -38,6 +38,11 @@ func ResourceEnvironment() *schema.Resource {
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(nextgen.EnvironmentTypeValues, false),
 			},
+			"yaml": {
+				Description: "Environment YAML",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 
@@ -123,7 +128,8 @@ func buildEnvironment(d *schema.ResourceData) *nextgen.EnvironmentRequest {
 		Color:             d.Get("color").(string),
 		Description:       d.Get("description").(string),
 		Tags:              helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
-		Type_:             nextgen.EnvironmentType(d.Get("type").(string)),
+		Type_:             d.Get("type").(string),
+		Yaml:              d.Get("yaml").(string),
 	}
 }
 
@@ -136,4 +142,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("type", env.Type_.String())
+	if d.Get("yaml").(string) != "" {
+		d.Set("yaml", env.Yaml)
+	}
 }

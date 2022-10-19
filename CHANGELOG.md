@@ -1,3 +1,58 @@
+# 0.6.8 (October 13,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup:  update doc and added more example ([#233](https://github.com/harness/terraform-provider-harness/issues/233))
+
+BUG FIXES:
+
+* resource/harness_platform_usergroup: Fix user group delete flow ([#238](https://github.com/harness/terraform-provider-harness/issues/238))
+
+# 0.6.7 (October 11,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_environment_clusters_mapping:  update docs for cluster resource ([#232](https://github.com/harness/terraform-provider-harness/issues/232))
+* resource/harness_platform_environment_clusters_mapping:  update name for cluster resource ([#231](https://github.com/harness/terraform-provider-harness/issues/231))
+
+BUG FIXES:
+
+* resource/harness_platform_environment: Fix Update tags for the environment ([#234](https://github.com/harness/terraform-provider-harness/issues/234))
+* resource/harness_platform_environment_group: Fix bug in update env group ([#229](https://github.com/harness/terraform-provider-harness/issues/229))
+
+# 0.6.4 (October 6,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_environment: added suport foroptional `yaml` field. ([#221](https://github.com/harness/terraform-provider-harness/issues/221))
+* resource/harness_platform_service: making `yaml` field as optional. ([#218](https://github.com/harness/terraform-provider-harness/issues/218))
+
+BUG FIXES:
+
+* resource/harness_platform_roles: Fix bug in roles resource ([#222](https://github.com/harness/terraform-provider-harness/issues/222))
+
+# 0.6.3 (October 5,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_service_account: Fix account id field in service account ([#219](https://github.com/harness/terraform-provider-harness/issues/219))
+
+# 0.6.2 (October 5,2022)
+
+BUG FIXES:
+
+* resource/harness_platform_service_account: Fix email field in service account ([#217](https://github.com/harness/terraform-provider-harness/issues/217))
+
+# 0.6.1 (October 3,2022)
+
+ENHANCEMENTS:
+
+* resource/harness_platform_service: added documentation for yaml field. ([#215](https://github.com/harness/terraform-provider-harness/issues/215))
+
+BUG FIXES:
+
+* resource/harness_platform_environment_clusters_mapping: Fix added correct batch cluster API. ([#216](https://github.com/harness/terraform-provider-harness/issues/216))
+
 # 0.6.0 (September 30,2022)
 
 FEATURES:

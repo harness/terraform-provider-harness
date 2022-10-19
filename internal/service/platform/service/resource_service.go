@@ -22,7 +22,14 @@ func ResourceService() *schema.Resource {
 		CreateContext: resourceServiceCreateOrUpdate,
 		Importer:      helpers.ProjectResourceImporter,
 
-		Schema: map[string]*schema.Schema{},
+		Schema: map[string]*schema.Schema{
+			"yaml": {
+				Description: "Service YAML",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+		},
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
@@ -86,7 +93,10 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, httpResp, err := c.ProjectApi.DeleteProject(ctx, d.Id(), c.AccountId, &nextgen.ProjectApiDeleteProjectOpts{OrgIdentifier: optional.NewString(d.Get("org_id").(string))})
+	_, httpResp, err := c.ServicesApi.DeleteServiceV2(ctx, d.Id(), c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -102,6 +112,7 @@ func buildService(d *schema.ResourceData) *nextgen.ServiceRequest {
 		Name:              d.Get("name").(string),
 		Description:       d.Get("description").(string),
 		Tags:              helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
+		Yaml:              d.Get("yaml").(string),
 	}
 }
 
@@ -113,4 +124,5 @@ func readService(d *schema.ResourceData, project *nextgen.ServiceResponseDetails
 	d.Set("name", project.Name)
 	d.Set("description", project.Description)
 	d.Set("tags", helpers.FlattenTags(project.Tags))
+	d.Set("yaml", project.Yaml)
 }

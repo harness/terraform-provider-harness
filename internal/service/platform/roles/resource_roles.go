@@ -94,7 +94,7 @@ func resourceRolesCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	if err != nil {
-		helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readRoles(d, resp.Data.Role)

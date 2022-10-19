@@ -105,7 +105,7 @@ func testAccDataSourceUserGroupByName(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			users = ["pTaX1uGFQiSUm5_5lAM8kw"]
+			users = []
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"

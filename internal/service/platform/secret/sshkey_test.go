@@ -84,7 +84,6 @@ func TestAccSecretSSHKey_kerberos_password(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kerberos.0.principal", "principal"),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.0.realm", "realm"),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.0.tgt_generation_method", "Password"),
-					resource.TestCheckResourceAttr(resourceName, "kerberos.0.tgt_password_spec.0.password", "password"),
 				),
 			},
 			{
@@ -98,7 +97,6 @@ func TestAccSecretSSHKey_kerberos_password(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kerberos.0.principal", "principal"),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.0.realm", "realm"),
 					resource.TestCheckResourceAttr(resourceName, "kerberos.0.tgt_generation_method", "Password"),
-					resource.TestCheckResourceAttr(resourceName, "kerberos.0.tgt_password_spec.0.password", "password"),
 				),
 			},
 			{
@@ -115,7 +113,7 @@ func TestAccSecretSSHKey_kerberos_password(t *testing.T) {
 
 func TestAccSecretSSHKey_sshkey_sshReferenceCredential(t *testing.T) {
 
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id := fmt.Sprintf("%s_%s", "TestsshReferenceCredential", utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_secret_sshkey.test"
@@ -135,8 +133,6 @@ func TestAccSecretSSHKey_sshkey_sshReferenceCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.key", "key"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.encrypted_passphrase", "encrypted_passphrase"),
 				),
 			},
 			{
@@ -149,8 +145,6 @@ func TestAccSecretSSHKey_sshkey_sshReferenceCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.key", "key"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.encrypted_passphrase", "encrypted_passphrase"),
 				),
 			},
 			{
@@ -239,7 +233,6 @@ func TestAccSecretSSHKey_sshkey_sshPassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "Password"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.ssh_password_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.ssh_password_credential.0.password", "password"),
 				),
 			},
 			{
@@ -252,7 +245,6 @@ func TestAccSecretSSHKey_sshkey_sshPassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "Password"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.ssh_password_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.ssh_password_credential.0.password", "password"),
 				),
 			},
 			{
@@ -289,6 +281,14 @@ func testAccResourceSecret_sshkey_kerberos_keyFilePath(id string, name string) s
 
 func testAccResourceSecret_sshkey_kerberos_password(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_file" "test" {
+		identifier = "%[1]s_a"
+		name = "%[2]s_a"
+		description = "test"
+		tags = ["foo:bar"]
+		file_path = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
+	}
 		resource "harness_platform_secret_sshkey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -297,18 +297,27 @@ func testAccResourceSecret_sshkey_kerberos_password(id string, name string) stri
 			port = 22
 			kerberos {
 				tgt_password_spec {
-					password = "password"
+					password = harness_platform_secret_file.test.id
 				}
 				principal = "principal"
 				realm = "realm"
 				tgt_generation_method = "Password"
 			}
 		}
-`, id, name)
+`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
 func testAccResourceSecret_sshkey_sshReferenceCredential(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_file" "test" {
+		identifier = "%[1]s_a"
+		name = "%[2]s_a"
+		description = "test"
+		tags = ["foo:bar"]
+		file_path = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
+	}
+
 		resource "harness_platform_secret_sshkey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -318,13 +327,13 @@ func testAccResourceSecret_sshkey_sshReferenceCredential(id string, name string)
 			ssh {
 				sshkey_reference_credential {
 					user_name = "user_name"
-					key = "key"
-					encrypted_passphrase = "encrypted_passphrase"
+					key = harness_platform_secret_file.test.id
+					encrypted_passphrase = harness_platform_secret_file.test.id
 				}
 				credential_type = "KeyReference"
 			}
 		}
-`, id, name)
+`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
 func testAccResourceSecret_sshkey_sshPathCredential(id string, name string) string {
@@ -349,6 +358,14 @@ func testAccResourceSecret_sshkey_sshPathCredential(id string, name string) stri
 
 func testAccResourceSecret_sshkey_sshPassword(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_file" "test" {
+		identifier = "%[1]s_a"
+		name = "%[2]s_a"
+		description = "test"
+		tags = ["foo:bar"]
+		file_path = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
+	}
 	resource "harness_platform_secret_sshkey" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -358,10 +375,10 @@ func testAccResourceSecret_sshkey_sshPassword(id string, name string) string {
 		ssh {
 			ssh_password_credential {
 				user_name = "user_name"
-				password = "password"
+				password = harness_platform_secret_file.test.id
 			}
 			credential_type = "Password"
 		}
 	}
-`, id, name)
+`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
