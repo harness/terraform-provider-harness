@@ -12,12 +12,11 @@ package nextgen
 import (
 	"context"
 	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,6 +25,1118 @@ var (
 )
 
 type ClustersApiService service
+
+/*
+ClustersApiService Create creates a cluster
+Create clusters.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
+ * @param agentIdentifier Agent identifier for entity.
+ * @param optional nil or *ClustersApiAgentClusterServiceCreateOpts - Optional Parameters:
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Identifier" (optional.String) -
+@return Servicev1Cluster
+*/
+
+type ClustersApiAgentClusterServiceCreateOpts struct {
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Identifier        optional.String
+}
+
+func (a *ClustersApiService) AgentClusterServiceCreate(ctx context.Context, body ClustersClusterCreateRequest, agentIdentifier string, localVarOptionals *ClustersApiAgentClusterServiceCreateOpts) (Servicev1Cluster, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue Servicev1Cluster
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Identifier.IsSet() {
+		localVarQueryParams.Add("identifier", parameterToString(localVarOptionals.Identifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v Servicev1Cluster
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService Delete deletes a cluster
+Delete cluster.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param agentIdentifier Agent identifier for entity.
+ * @param identifier
+ * @param optional nil or *ClustersApiAgentClusterServiceDeleteOpts - Optional Parameters:
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "QueryServer" (optional.String) -
+     * @param "QueryName" (optional.String) -
+     * @param "QueryIdType" (optional.String) -  type is the type of the specified cluster identifier ( \&quot;server\&quot; - default, \&quot;name\&quot; ).
+     * @param "QueryIdValue" (optional.String) -  value holds the cluster server URL or cluster name.
+     * @param "QueryProject" (optional.String) -
+@return ClustersClusterResponse
+*/
+
+type ClustersApiAgentClusterServiceDeleteOpts struct {
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	QueryServer       optional.String
+	QueryName         optional.String
+	QueryIdType       optional.String
+	QueryIdValue      optional.String
+	QueryProject      optional.String
+}
+
+func (a *ClustersApiService) AgentClusterServiceDelete(ctx context.Context, agentIdentifier string, identifier string, localVarOptionals *ClustersApiAgentClusterServiceDeleteOpts) (ClustersClusterResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ClustersClusterResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryServer.IsSet() {
+		localVarQueryParams.Add("query.server", parameterToString(localVarOptionals.QueryServer.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryName.IsSet() {
+		localVarQueryParams.Add("query.name", parameterToString(localVarOptionals.QueryName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryIdType.IsSet() {
+		localVarQueryParams.Add("query.id.type", parameterToString(localVarOptionals.QueryIdType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryIdValue.IsSet() {
+		localVarQueryParams.Add("query.id.value", parameterToString(localVarOptionals.QueryIdValue.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v ClustersClusterResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService Get returns a cluster by identifier
+Get cluster.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param agentIdentifier Agent identifier for entity.
+ * @param identifier
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *ClustersApiAgentClusterServiceGetOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "QueryServer" (optional.String) -
+     * @param "QueryName" (optional.String) -
+     * @param "QueryIdType" (optional.String) -  type is the type of the specified cluster identifier ( \&quot;server\&quot; - default, \&quot;name\&quot; ).
+     * @param "QueryIdValue" (optional.String) -  value holds the cluster server URL or cluster name.
+     * @param "QueryProject" (optional.String) -
+@return Servicev1Cluster
+*/
+
+type ClustersApiAgentClusterServiceGetOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	QueryServer       optional.String
+	QueryName         optional.String
+	QueryIdType       optional.String
+	QueryIdValue      optional.String
+	QueryProject      optional.String
+}
+
+func (a *ClustersApiService) AgentClusterServiceGet(ctx context.Context, agentIdentifier string, identifier string, accountIdentifier string, localVarOptionals *ClustersApiAgentClusterServiceGetOpts) (Servicev1Cluster, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue Servicev1Cluster
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryServer.IsSet() {
+		localVarQueryParams.Add("query.server", parameterToString(localVarOptionals.QueryServer.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryName.IsSet() {
+		localVarQueryParams.Add("query.name", parameterToString(localVarOptionals.QueryName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryIdType.IsSet() {
+		localVarQueryParams.Add("query.id.type", parameterToString(localVarOptionals.QueryIdType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryIdValue.IsSet() {
+		localVarQueryParams.Add("query.id.value", parameterToString(localVarOptionals.QueryIdValue.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v Servicev1Cluster
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService List returns list of clusters
+List clusters.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param agentIdentifier Agent identifier for entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *ClustersApiAgentClusterServiceListOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Identifier" (optional.String) -
+     * @param "QueryServer" (optional.String) -
+     * @param "QueryName" (optional.String) -
+     * @param "QueryIdType" (optional.String) -  type is the type of the specified cluster identifier ( \&quot;server\&quot; - default, \&quot;name\&quot; ).
+     * @param "QueryIdValue" (optional.String) -  value holds the cluster server URL or cluster name.
+     * @param "QueryProject" (optional.String) -
+@return ClustersClusterList
+*/
+
+type ClustersApiAgentClusterServiceListOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Identifier        optional.String
+	QueryServer       optional.String
+	QueryName         optional.String
+	QueryIdType       optional.String
+	QueryIdValue      optional.String
+	QueryProject      optional.String
+}
+
+func (a *ClustersApiService) AgentClusterServiceList(ctx context.Context, agentIdentifier string, accountIdentifier string, localVarOptionals *ClustersApiAgentClusterServiceListOpts) (ClustersClusterList, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ClustersClusterList
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Identifier.IsSet() {
+		localVarQueryParams.Add("identifier", parameterToString(localVarOptionals.Identifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryServer.IsSet() {
+		localVarQueryParams.Add("query.server", parameterToString(localVarOptionals.QueryServer.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryName.IsSet() {
+		localVarQueryParams.Add("query.name", parameterToString(localVarOptionals.QueryName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryIdType.IsSet() {
+		localVarQueryParams.Add("query.id.type", parameterToString(localVarOptionals.QueryIdType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryIdValue.IsSet() {
+		localVarQueryParams.Add("query.id.value", parameterToString(localVarOptionals.QueryIdValue.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
+		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v ClustersClusterList
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService Update updates a cluster
+Update cluster.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body
+ * @param agentIdentifier Agent identifier for entity.
+ * @param identifier
+ * @param optional nil or *ClustersApiAgentClusterServiceUpdateOpts - Optional Parameters:
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+@return Servicev1Cluster
+*/
+
+type ClustersApiAgentClusterServiceUpdateOpts struct {
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *ClustersApiService) AgentClusterServiceUpdate(ctx context.Context, body ClustersClusterUpdateRequest, agentIdentifier string, identifier string, localVarOptionals *ClustersApiAgentClusterServiceUpdateOpts) (Servicev1Cluster, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue Servicev1Cluster
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v Servicev1Cluster
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService List all available repository certificates
+List all available repository certificates.
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param agentIdentifier Agent identifier for entity.
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *ClustersApiAgentGPGKeyServiceListOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "QueryKeyID" (optional.String) -  The GPG key ID to query for.
+@return GpgkeysGnuPgPublicKeyList
+*/
+
+type ClustersApiAgentGPGKeyServiceListOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	QueryKeyID        optional.String
+}
+
+func (a *ClustersApiService) AgentGPGKeyServiceList(ctx context.Context, agentIdentifier string, accountIdentifier string, localVarOptionals *ClustersApiAgentGPGKeyServiceListOpts) (GpgkeysGnuPgPublicKeyList, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue GpgkeysGnuPgPublicKeyList
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys"
+	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.QueryKeyID.IsSet() {
+		localVarQueryParams.Add("query.keyID", parameterToString(localVarOptionals.QueryKeyID.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v GpgkeysGnuPgPublicKeyList
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService Checks for whether the cluster exists
+Checks for whether the cluster exists
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *ClustersApiClusterServiceExistsOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "AgentIdentifier" (optional.String) -  Agent identifier for entity.
+     * @param "Server" (optional.String) -
+@return bool
+*/
+
+type ClustersApiClusterServiceExistsOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	AgentIdentifier   optional.String
+	Server            optional.String
+}
+
+func (a *ClustersApiService) ClusterServiceExists(ctx context.Context, accountIdentifier string, localVarOptionals *ClustersApiClusterServiceExistsOpts) (bool, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue bool
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/clusters/exists"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.AgentIdentifier.IsSet() {
+		localVarQueryParams.Add("agentIdentifier", parameterToString(localVarOptionals.AgentIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Server.IsSet() {
+		localVarQueryParams.Add("server", parameterToString(localVarOptionals.Server.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v bool
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService List returns list of Clusters
+List returns list of Clusters
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
+@return V1Clusterlist
+*/
+func (a *ClustersApiService) ClusterServiceListClusters(ctx context.Context, body Servicev1ClusterQuery) (V1Clusterlist, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue V1Clusterlist
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/clusters"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v V1Clusterlist
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
 
 /*
 ClustersApiService Delete a Cluster by identifier
@@ -481,7 +1592,7 @@ ClustersApiService link a Cluster
 */
 
 type ClustersApiLinkClusterOpts struct {
-    Body optional.Interface
+	Body optional.Interface
 }
 
 func (a *ClustersApiService) LinkCluster(ctx context.Context, accountIdentifier string, localVarOptionals *ClustersApiLinkClusterOpts) (ResponseDtoClusterResponse, *http.Response, error) {
@@ -520,11 +1631,10 @@ func (a *ClustersApiService) LinkCluster(ctx context.Context, accountIdentifier 
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
-
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -613,15 +1723,15 @@ ClustersApiService Link Clusters
 */
 
 type ClustersApiLinkClustersOpts struct {
-    Body optional.Interface
+	Body optional.Interface
 }
 
 func (a *ClustersApiService) LinkClusters(ctx context.Context, accountIdentifier string, localVarOptionals *ClustersApiLinkClustersOpts) (ResponseDtoClusterBatchResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoClusterBatchResponse
 	)
 
@@ -652,8 +1762,139 @@ func (a *ClustersApiService) LinkClusters(ctx context.Context, accountIdentifier
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoClusterBatchResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ClustersApiService Unlink Clusters
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *ClustersApiUnlinkClustersInBatchOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of ClusterBatchRequest) -  Details of the createCluster to be created
+@return ResponseDtoClusterBatchResponse
+*/
+
+type ClustersApiUnlinkClustersInBatchOpts struct {
+	Body optional.Interface
+}
+
+func (a *ClustersApiService) UnlinkClustersInBatch(ctx context.Context, accountIdentifier string, localVarOptionals *ClustersApiUnlinkClustersInBatchOpts) (ResponseDtoClusterBatchResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoClusterBatchResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/gitops/clusters/batchunlink"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
