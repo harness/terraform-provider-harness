@@ -16,7 +16,7 @@ func TestGetEnvironmentByName(t *testing.T) {
 	environment := EnvironmentRequest{
 		Identifier: id,
 		Name:       id,
-		Type_:      EnvironmentTypes.PreProduction,
+		Type_:      EnvironmentTypes.PreProduction.String(),
 	}
 
 	resp, _, err := c.EnvironmentsApi.CreateEnvironmentV2(ctx, c.AccountId, &EnvironmentsApiCreateEnvironmentV2Opts{
