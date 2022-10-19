@@ -59,8 +59,7 @@ func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Ag
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := r.Primary.Attributes["identifier"]
 
-	resp, _, err := c.AgentServiceApi.AgentServiceGet(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceGetOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
+	resp, _, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
 		OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_identifier"]),
 		ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_identifier"]),
 	})

@@ -95,7 +95,7 @@ func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	createAgentRequest := buildCreateUpdateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
-	resp, httpResp, err := c.AgentServiceApi.AgentServiceCreate(ctx, *createAgentRequest)
+	resp, httpResp, err := c.AgentApi.AgentServiceForServerCreate(ctx, *createAgentRequest)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -116,8 +116,7 @@ func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta i
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("identifier").(string)
 
-	resp, httpResp, err := c.AgentServiceApi.AgentServiceGet(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceGetOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
+	resp, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
@@ -144,7 +143,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 	agentIdentifier := d.Get("identifier").(string)
 	updateAgentRequest := buildCreateUpdateAgentRequest(d)
 	updateAgentRequest.AccountIdentifier = c.AccountId
-	resp, httpResp, err := c.AgentServiceApi.AgentServiceUpdate(ctx, *updateAgentRequest, agentIdentifier)
+	resp, httpResp, err := c.AgentApi.AgentServiceForServerUpdate(ctx, *updateAgentRequest, agentIdentifier)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -165,7 +164,7 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("identifier").(string)
 
-	_, httpResp, err := c.AgentServiceApi.AgentServiceDelete(ctx, agentIdentifier, &nextgen.AgentServiceApiAgentServiceDeleteOpts{
+	_, httpResp, err := c.AgentApi.AgentServiceForServerDelete(ctx, agentIdentifier, &nextgen.AgentsApiAgentServiceForServerDeleteOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),

@@ -454,8 +454,8 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	createClusterRequest := buildCreateClusterRequest(d)
-	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceCreate(ctx, *createClusterRequest, agentIdentifier,
-		&nextgen.AgentClusterServiceApiAgentClusterServiceCreateOpts{
+	resp, httpResp, err := c.ClustersApi.AgentClusterServiceCreate(ctx, *createClusterRequest, agentIdentifier,
+		&nextgen.ClustersApiAgentClusterServiceCreateOpts{
 			AccountIdentifier: optional.NewString(accountIdentifier),
 			OrgIdentifier:     optional.NewString(orgIdentifier),
 			ProjectIdentifier: optional.NewString(projectIdentifier),
@@ -487,8 +487,7 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 		queryServer = query["server"].(string)
 		queryName = query["name"].(string)
 	}
-	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
+	resp, httpResp, err := c.ClustersApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.ClustersApiAgentClusterServiceGetOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		QueryServer:       optional.NewString(queryServer),
@@ -517,8 +516,8 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
-	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceUpdate(ctx, *updateClusterRequest, agentIdentifier, identifier,
-		&nextgen.AgentClusterServiceApiAgentClusterServiceUpdateOpts{
+	resp, httpResp, err := c.ClustersApi.AgentClusterServiceUpdate(ctx, *updateClusterRequest, agentIdentifier, identifier,
+		&nextgen.ClustersApiAgentClusterServiceUpdateOpts{
 			AccountIdentifier: optional.NewString(c.AccountId),
 			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
@@ -543,7 +542,7 @@ func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, me
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
-	_, httpResp, err := c.AgentClusterApi.AgentClusterServiceDelete(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceDeleteOpts{
+	_, httpResp, err := c.ClustersApi.AgentClusterServiceDelete(ctx, agentIdentifier, identifier, &nextgen.ClustersApiAgentClusterServiceDeleteOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
@@ -652,19 +651,19 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 	}
 }
 
-func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClusterClusterCreateRequest {
+func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterCreateRequest {
 	var upsert bool
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 		upsert = request["upsert"].(bool)
 	}
-	return &nextgen.ClusterClusterCreateRequest{
+	return &nextgen.ClustersClusterCreateRequest{
 		Upsert:  upsert,
 		Cluster: buildClusterDetails(d),
 	}
 }
 
-func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClusterClusterUpdateRequest {
+func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterUpdateRequest {
 	var request map[string]interface{}
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
@@ -684,7 +683,7 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClusterClusterUp
 		updateMaskPath = updateMask["paths"].([]string)
 	}
 
-	return &nextgen.ClusterClusterUpdateRequest{
+	return &nextgen.ClustersClusterUpdateRequest{
 		Cluster:       buildClusterDetails(d),
 		UpdatedFields: updatedFields,
 		UpdateMask: &nextgen.ProtobufFieldMask{
@@ -693,8 +692,8 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClusterClusterUp
 	}
 }
 
-func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Cluster {
-	var clusterDetails nextgen.Applicationv1alpha1Cluster
+func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
+	var clusterDetails nextgen.ClustersCluster
 	var request map[string]interface{}
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
@@ -710,7 +709,7 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 
 			if requestCluster["config"] != nil && len(requestCluster["config"].([]interface{})) > 0 {
 				clusterConfig := requestCluster["config"].([]interface{})[0].(map[string]interface{})
-				clusterDetails.Config = &nextgen.V1alpha1ClusterConfig{}
+				clusterDetails.Config = &nextgen.ClustersClusterConfig{}
 				if clusterConfig["username"] != nil {
 					clusterDetails.Config.Username = clusterConfig["username"].(string)
 				}
@@ -722,7 +721,7 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 				}
 
 				if clusterConfig["tls_client_config"] != nil && len(clusterConfig["tls_client_config"].([]interface{})) > 0 {
-					clusterDetails.Config.TlsClientConfig = &nextgen.V1alpha1TlsClientConfig{}
+					clusterDetails.Config.TlsClientConfig = &nextgen.ClustersTlsClientConfig{}
 					configTlsClientConfig := clusterConfig["tls_client_config"].([]interface{})[0].(map[string]interface{})
 					if configTlsClientConfig["insecure"] != nil {
 						clusterDetails.Config.TlsClientConfig.Insecure = configTlsClientConfig["insecure"].(bool)
@@ -742,7 +741,7 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 				}
 
 				if clusterConfig["aws_auth_config"] != nil && len(clusterConfig["aws_auth_config"].([]interface{})) > 0 {
-					clusterDetails.Config.AwsAuthConfig = &nextgen.V1alpha1AwsAuthConfig{}
+					clusterDetails.Config.AwsAuthConfig = &nextgen.ClustersAwsAuthConfig{}
 					configAwsAuthConfig := clusterConfig["aws_auth_config"].([]interface{})[0].(map[string]interface{})
 					if configAwsAuthConfig["cluster_name"] != nil {
 						clusterDetails.Config.AwsAuthConfig.ClusterName = configAwsAuthConfig["cluster_name"].(string)
@@ -753,7 +752,7 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 				}
 
 				if clusterConfig["exec_provider_config"] != nil && len(clusterConfig["exec_provider_config"].([]interface{})) > 0 {
-					clusterDetails.Config.ExecProviderConfig = &nextgen.V1alpha1ExecProviderConfig{}
+					clusterDetails.Config.ExecProviderConfig = &nextgen.ClustersExecProviderConfig{}
 					configExecProviderConfig := clusterConfig["exec_provider_config"].([]interface{})[0].(map[string]interface{})
 					if configExecProviderConfig["command"] != nil {
 						clusterDetails.Config.ExecProviderConfig.Command = configExecProviderConfig["command"].(string)
@@ -804,10 +803,10 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.Applicationv1alpha1Clu
 			}
 
 			if requestCluster["info"] != nil && len(requestCluster["info"].([]interface{})) > 0 {
-				clusterDetails.Info = &nextgen.V1alpha1ClusterInfo{}
+				clusterDetails.Info = &nextgen.ClustersClusterInfo{}
 				clusterInfo := requestCluster["info"].([]interface{})[0].(map[string]interface{})
 				if clusterInfo["connection_state"] != nil && len(clusterInfo["connection_state"].([]interface{})) > 0 {
-					clusterDetails.Info.ConnectionState = &nextgen.V1alpha1ConnectionState{}
+					clusterDetails.Info.ConnectionState = &nextgen.CommonsConnectionState{}
 					connectionState := clusterInfo["connection_state"].([]interface{})[0].(map[string]interface{})
 					if connectionState["status"] != nil {
 						clusterDetails.Info.ConnectionState.Status = connectionState["status"].(string)

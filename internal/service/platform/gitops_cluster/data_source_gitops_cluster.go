@@ -441,8 +441,7 @@ func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, me
 		queryServer = query["server"].(string)
 		queryName = query["name"].(string)
 	}
-	resp, httpResp, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
+	resp, httpResp, err := c.ClustersApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.ClustersApiAgentClusterServiceGetOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 		QueryServer:       optional.NewString(queryServer),

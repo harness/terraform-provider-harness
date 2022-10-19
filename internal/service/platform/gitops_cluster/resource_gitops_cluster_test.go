@@ -17,7 +17,7 @@ import (
 
 func TestAccResourceGitopsCluster(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	agentId := "terraformtestagent"
+	agentId := "terraformagent"
 	orgId := "gitopstest"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	projectId := "gitopsagent"
@@ -62,8 +62,7 @@ func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Se
 	agentIdentifier := r.Primary.Attributes["agent_id"]
 	identifier := r.Primary.Attributes["identifier"]
 
-	resp, _, err := c.AgentClusterApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, &nextgen.AgentClusterServiceApiAgentClusterServiceGetOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
+	resp, _, err := c.ClustersApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.ClustersApiAgentClusterServiceGetOpts{
 		OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_id"]),
 		ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_id"]),
 	})

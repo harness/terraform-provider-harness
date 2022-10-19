@@ -11,8 +11,8 @@ import (
 
 func TestAccDataSourceGitopsCluster(t *testing.T) {
 
-	id := "terraformct"
-	agentId := "terraformtestagent"
+	id := "terraformcluster1"
+	agentId := "terraformagent"
 	orgId := "gitopstest"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	projectId := "gitopsagent"

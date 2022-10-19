@@ -12,10 +12,10 @@ import (
 func TestAccDataSourceGitopsAgent(t *testing.T) {
 	orgId := "gitopstest"
 	projectId := "gitopsagent"
-	agentId := "terraformtestagent"
+	agentId := "terraformagent"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "data.harness_platform_gitops_agent.test"
-	agentName := "terraform-test-agent"
+	agentName := "terraform-agent"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
