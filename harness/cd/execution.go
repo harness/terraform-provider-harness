@@ -11,6 +11,30 @@ type ExecutionClient struct {
 	ApiClient *ApiClient
 }
 
+func (c *ExecutionClient) ExportExecutions(input *graphql.ExportExecutionsInput) (*graphql.ExportExecutionsPayload, error) {
+
+	query := &GraphQLQuery{
+		Query: fmt.Sprintf(`mutation($input: ExportExecutionsInput!) {
+			exportExecutions(input: $input) {
+				%s
+			}
+		}`, exportExecutionsFields),
+		Variables: map[string]interface{}{
+			"input": &input,
+		},
+	}
+
+	res := struct {
+		ExportExecutions graphql.ExportExecutionsPayload
+	}{}
+	err := c.ApiClient.ExecuteGraphQLQuery(query, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res.ExportExecutions, err
+}
+
 func (c *ExecutionClient) GetWorkflowExecutionById(id string) (*graphql.WorkflowExecution, error) {
 
 	query := &GraphQLQuery{
@@ -197,4 +221,16 @@ tags {
 	name
 	value
 }
+`
+
+const exportExecutionsFields = `
+clientMutationId
+requestId
+status
+totalExecutions
+triggeredAt
+statusLink
+downloadLink
+expiresAt
+errorMessage
 `
