@@ -1,6 +1,6 @@
 
-<a name="0.2.9"></a>
-## 0.2.9 (2022-10-19)
+<a name="0.2.10"></a>
+## 0.2.10 (2022-10-19)
 
 ### Add
 
@@ -14,11 +14,14 @@
 
 ### Adding
 
-* Adding dto files
+* adding test
+* adding better name
+* adding support for export executions
+* adding delegate resource
 
 ### Adding
 
-* adding delegate resource
+* Adding dto files
 
 ### Catch
 
@@ -47,10 +50,10 @@
 ### Fix
 
 * fix environment variable overrides with secrets
-* fix cac error handling
 
 ### Fixing
 
+* fixing things
 * fixing package name
 
 ### Handling
@@ -75,6 +78,8 @@
 
 ### Release
 
+* Release version 0.2.9 10-19-2022
+* Release v0.2.9
 * Release version 0.2.8 10-19-2022
 * Release v0.2.8
 * Release version 0.2.7 10-13-2022
@@ -117,7 +122,6 @@
 * Release version 0.1.24 05-11-2022
 * Release v0.1.24
 * Release version 0.1.23 05-11-2022
-* Release v0.1.23
 
 ### Resource
 
@@ -144,6 +148,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#185](https://github.com/harness/harness-go-sdk/issues/185) from harness/cds-43281
 * Merge pull request [#181](https://github.com/harness/harness-go-sdk/issues/181) from harness/SPG_490
 * Merge pull request [#175](https://github.com/harness/harness-go-sdk/issues/175) from harness/del-ng-api
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
