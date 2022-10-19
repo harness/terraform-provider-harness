@@ -1,6 +1,6 @@
 
-<a name="0.2.7"></a>
-## 0.2.7 (2022-10-13)
+<a name="0.2.8"></a>
+## 0.2.8 (2022-10-19)
 
 ### Add
 
@@ -11,7 +11,6 @@
 * Added attribute filter model
 * Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 * Added resource lookups by name
-* Added artifact sources to service for graphql
 
 ### Adding
 
@@ -29,6 +28,10 @@
 
 * change in package name
 * change model and enums for ssh key secret type
+
+### Changes
+
+* Changes for vault connector resource
 
 ### Error
 
@@ -67,6 +70,8 @@
 
 ### Release
 
+* Release version 0.2.7 10-13-2022
+* Release v0.2.7
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -108,8 +113,6 @@
 * Release v0.1.23
 * Release version 0.1.22 05-10-2022
 * Release v0.1.22
-* Release version 0.1.21 05-06-2022
-* Release v0.1.21
 
 ### Resource
 
@@ -136,6 +139,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#181](https://github.com/harness/harness-go-sdk/issues/181) from harness/SPG_490
 * Merge pull request [#175](https://github.com/harness/harness-go-sdk/issues/175) from harness/del-ng-api
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
