@@ -126,7 +126,7 @@ EOT
 	}
 
 	data "harness_platform_triggers" "test" {
-    identifier = harness_platform_triggers.test.identifier
+    identifier = harness_platform_triggers.test.id
 		org_id = harness_platform_organization.test.id
 		project_id = harness_platform_project.test.id
 		target_id = harness_platform_pipeline.pipeline.id

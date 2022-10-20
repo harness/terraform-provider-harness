@@ -18,7 +18,7 @@ func DataSourcePipeline() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "identifier of the cluster.",
+				Description: "identifier of the pipeline.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
