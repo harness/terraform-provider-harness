@@ -1,4 +1,4 @@
-package gitops_test
+package agent_test
 
 import (
 	"context"
@@ -17,12 +17,10 @@ import (
 
 func TestAccResourceGitopsAgent(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	orgId := "gitopstest"
-	projectId := "gitopsagenttest"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_agent.test"
 	agentName := id
-	namespace := "tf-test"
+	namespace := "terraform-test"
 	updatedNamespace := namespace + "-updated"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -30,13 +28,13 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, agentName, namespace),
+				Config: testAccResourceGitopsAgent(id, accountId, agentName, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", agentName),
 				),
 			},
 			{
-				Config: testAccResourceGitopsAgent(id, accountId, projectId, orgId, agentName, updatedNamespace),
+				Config: testAccResourceGitopsAgent(id, accountId, agentName, updatedNamespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "metadata.0.namespace", updatedNamespace),
 				),
@@ -86,19 +84,29 @@ func testAccResourceGitopsAgentDestroy(resourceName string) resource.TestCheckFu
 
 }
 
-func testAccResourceGitopsAgent(agentId string, accountId string, projectId string, orgId string, agentName string, namespace string) string {
+func testAccResourceGitopsAgent(agentId string, accountId string, agentName string, namespace string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+		}
 		resource "harness_platform_gitops_agent" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
-			project_id = "%[3]s"
-			org_id = "%[4]s"
-			name = "%[5]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			name = "%[3]s"
 			type = "CONNECTED_ARGO_PROVIDER"
 			metadata {
-        namespace = "%[6]s"
+        namespace = "%[4]s"
         high_availability = true
     	}
 		}
-		`, agentId, accountId, projectId, orgId, agentName, namespace)
+		`, agentId, accountId, agentName, namespace)
 }

@@ -1,4 +1,4 @@
-package gitops
+package repository
 
 import (
 	"context"

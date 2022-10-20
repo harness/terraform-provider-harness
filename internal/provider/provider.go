@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -26,7 +28,6 @@ import (
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
-	pl_gitops "github.com/harness/terraform-provider-harness/internal/service/platform/gitops"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -121,8 +122,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment":                  pl_environment.DataSourceEnvironment(),
 				"harness_platform_environment_group":            pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
-				"harness_platform_gitops_agent":                 pl_gitops.DataSourceGitopsAgent(),
-				"harness_platform_gitops_cluster":               pl_gitops.DataSourceGitopsCluster(),
+				"harness_platform_gitops_agent":                 agent.DataSourceGitopsAgent(),
+				"harness_platform_gitops_cluster":               cluster.DataSourceGitopsCluster(),
 				"harness_platform_infrastructure":               pl_infrastructure.DataSourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
@@ -182,8 +183,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":            pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
-				"harness_platform_gitops_agent":                 pl_gitops.ResourceGitopsAgent(),
-				"harness_platform_gitops_cluster":               pl_gitops.ResourceGitopsCluster(),
+				"harness_platform_gitops_agent":                 agent.ResourceGitopsAgent(),
+				"harness_platform_gitops_cluster":               cluster.ResourceGitopsCluster(),
 				"harness_platform_infrastructure":               pl_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),

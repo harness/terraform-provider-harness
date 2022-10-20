@@ -1,4 +1,4 @@
-package gitops_test
+package cluster_test
 
 import (
 	"context"
@@ -17,10 +17,9 @@ import (
 
 func TestAccResourceGitopsCluster(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	agentId := "terraformagent"
-	orgId := "gitopstest"
+	name := id
+	agentId := "account.terraformagent1"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	projectId := "gitopsagent"
 	clusterName := id
 	resourceName := "harness_platform_gitops_cluster.test"
 	resource.UnitTest(t, resource.TestCase{
@@ -29,14 +28,14 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 		// CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsCluster(id, accountId, projectId, orgId, agentId, clusterName),
+				Config: testAccResourceGitopsCluster(id, accountId, name, agentId, clusterName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsCluster(id, accountId, projectId, orgId, agentId, clusterName),
+				Config: testAccResourceGitopsCluster(id, accountId, name, agentId, clusterName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -84,20 +83,30 @@ func testAccResourceGitopsClusterDestroy(resourceName string) resource.TestCheck
 
 }
 
-func testAccResourceGitopsCluster(clusterId string, accoundId string, projectId string, orgId string, agentId string, clusterName string) string {
+func testAccResourceGitopsCluster(id string, accountId string, name string, agentId string, clusterName string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
 		resource "harness_platform_gitops_cluster" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
-			project_id = "%[3]s"
-			org_id = "%[4]s"
-			agent_id = "%[5]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
 
  			request {
 				upsert = false
 				cluster {
 					server = "https://kubernetes.default.svc"
-					name = "%[6]s"
+					name = "%[5]s"
 					config {
 						tls_client_config {
 							insecure = true
@@ -108,6 +117,6 @@ func testAccResourceGitopsCluster(clusterId string, accoundId string, projectId 
 				}
 			}
 		}
-		`, clusterId, accoundId, projectId, orgId, agentId, clusterName)
+		`, id, accountId, name, agentId, clusterName)
 
 }
