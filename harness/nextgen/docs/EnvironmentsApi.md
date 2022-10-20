@@ -1,4 +1,4 @@
-# {{classname}}
+# nextgen{{classname}}
 
 All URIs are relative to *https://app.harness.io/gateway*
 
@@ -6,11 +6,14 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CreateEnvironmentV2**](EnvironmentsApi.md#CreateEnvironmentV2) | **Post** /ng/api/environmentsV2 | Create an Environment
 [**DeleteEnvironmentV2**](EnvironmentsApi.md#DeleteEnvironmentV2) | **Delete** /ng/api/environmentsV2/{environmentIdentifier} | Delete an Environment by identifier
+[**DeleteServiceOverride**](EnvironmentsApi.md#DeleteServiceOverride) | **Delete** /ng/api/environmentsV2/serviceOverrides | Delete a ServiceOverride entity
 [**GetEnvironmentAccessList**](EnvironmentsApi.md#GetEnvironmentAccessList) | **Get** /ng/api/environmentsV2/list/access | Gets Environment Access list
 [**GetEnvironmentList**](EnvironmentsApi.md#GetEnvironmentList) | **Get** /ng/api/environmentsV2 | Gets Environment list for a project
 [**GetEnvironmentV2**](EnvironmentsApi.md#GetEnvironmentV2) | **Get** /ng/api/environmentsV2/{environmentIdentifier} | Gets an Environment by identifier
+[**GetServiceOverridesList**](EnvironmentsApi.md#GetServiceOverridesList) | **Get** /ng/api/environmentsV2/serviceOverrides | Gets Service Overrides list
 [**UpdateEnvironmentV2**](EnvironmentsApi.md#UpdateEnvironmentV2) | **Put** /ng/api/environmentsV2 | Update an Environment by identifier
 [**UpsertEnvironmentV2**](EnvironmentsApi.md#UpsertEnvironmentV2) | **Put** /ng/api/environmentsV2/upsert | Upsert an Environment by identifier
+[**UpsertServiceOverride**](EnvironmentsApi.md#UpsertServiceOverride) | **Post** /ng/api/environmentsV2/serviceOverrides | Upsert
 
 # **CreateEnvironmentV2**
 > ResponseDtoEnvironmentResponse CreateEnvironmentV2(ctx, accountIdentifier, optional)
@@ -21,7 +24,7 @@ Create an Environment
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiCreateEnvironmentV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -56,7 +59,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **environmentIdentifier** | **string**| Environment Identifier for the entity | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiDeleteEnvironmentV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -66,8 +69,47 @@ Name | Type | Description  | Notes
 
 
  **ifMatch** | **optional.String**|  | 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+
+### Return type
+
+[**ResponseDtoBoolean**](ResponseDTOBoolean.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **DeleteServiceOverride**
+> ResponseDtoBoolean DeleteServiceOverride(ctx, accountIdentifier, orgIdentifier, projectIdentifier, optional)
+Delete a ServiceOverride entity
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
+ **optional** | ***EnvironmentsApiDeleteServiceOverrideOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a EnvironmentsApiDeleteServiceOverrideOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **environmentIdentifier** | **optional.String**| Environment Identifier for the Entity. | 
+ **serviceIdentifier** | **optional.String**| Service Identifier for the Entity. | 
 
 ### Return type
 
@@ -93,7 +135,7 @@ Gets Environment Access list
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiGetEnvironmentAccessListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -103,8 +145,8 @@ Name | Type | Description  | Notes
 
  **page** | **optional.Int32**| page | [default to 0]
  **size** | **optional.Int32**| size | [default to 100]
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **searchTerm** | **optional.String**| The word to be searched and included in the list response | 
  **envIdentifiers** | [**optional.Interface of []string**](string.md)| List of EnvironmentIds | 
  **sort** | [**optional.Interface of []string**](string.md)| Specifies sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order | 
@@ -133,7 +175,7 @@ Gets Environment list for a project
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiGetEnvironmentListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -141,10 +183,10 @@ Optional parameters are passed through a pointer to a EnvironmentsApiGetEnvironm
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **page** | **optional.Int32**| Indicates the number of pages. Results for these pages will be retrieved. | [default to 0]
- **size** | **optional.Int32**| The number of the elements to fetch | [default to 100]
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **page** | **optional.Int32**| Page Index of the results to fetch.Default Value: 0 | [default to 0]
+ **size** | **optional.Int32**| Results per page | [default to 100]
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **searchTerm** | **optional.String**| The word to be searched and included in the list response | 
  **envIdentifiers** | [**optional.Interface of []string**](string.md)| List of EnvironmentIds | 
  **sort** | [**optional.Interface of []string**](string.md)| Specifies sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order | 
@@ -174,7 +216,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **environmentIdentifier** | **string**| Environment Identifier for the entity | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiGetEnvironmentV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -183,13 +225,56 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **deleted** | **optional.Bool**| Specify whether Environment is deleted or not | [default to false]
 
 ### Return type
 
 [**ResponseDtoEnvironmentResponse**](ResponseDTOEnvironmentResponse.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **GetServiceOverridesList**
+> ResponseDtoPageResponseServiceOverrideResponse GetServiceOverridesList(ctx, accountIdentifier, orgIdentifier, projectIdentifier, environmentIdentifier, optional)
+Gets Service Overrides list
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
+  **environmentIdentifier** | **string**| Environment Identifier for the Entity. | 
+ **optional** | ***EnvironmentsApiGetServiceOverridesListOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a EnvironmentsApiGetServiceOverridesListOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+
+ **page** | **optional.Int32**| Page Index of the results to fetch.Default Value: 0 | [default to 0]
+ **size** | **optional.Int32**| Results per page | [default to 100]
+ **serviceIdentifier** | **optional.String**| Service Identifier for the Entity. | 
+ **sort** | [**optional.Interface of []string**](string.md)| Specifies the sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order | 
+
+### Return type
+
+[**ResponseDtoPageResponseServiceOverrideResponse**](ResponseDTOPageResponseServiceOverrideResponse.md)
 
 ### Authorization
 
@@ -211,7 +296,7 @@ Update an Environment by identifier
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiUpdateEnvironmentV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -246,7 +331,7 @@ Upsert an Environment by identifier
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***EnvironmentsApiUpsertEnvironmentV2Opts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -260,6 +345,40 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ResponseDtoEnvironmentResponse**](ResponseDTOEnvironmentResponse.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json, application/yaml
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **UpsertServiceOverride**
+> ResponseDtoServiceOverrideResponse UpsertServiceOverride(ctx, accountIdentifier, optional)
+Upsert
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+ **optional** | ***EnvironmentsApiUpsertServiceOverrideOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a EnvironmentsApiUpsertServiceOverrideOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **body** | [**optional.Interface of ServiceOverrideRequest**](ServiceOverrideRequest.md)| Details of the Service Override to be upserted | 
+
+### Return type
+
+[**ResponseDtoServiceOverrideResponse**](ResponseDTOServiceOverrideResponse.md)
 
 ### Authorization
 
