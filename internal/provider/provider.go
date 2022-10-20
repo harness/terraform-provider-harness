@@ -28,6 +28,7 @@ import (
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
+	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -185,6 +186,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_gitops_agent":                 gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_cluster":               gitops_cluster.ResourceGitopsCluster(),
+				"harness_platform_gitops_repository":            gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_infrastructure":               pl_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),
