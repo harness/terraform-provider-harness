@@ -101,6 +101,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Type of the repo.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"name": {
 							Description: "Name of the repo.",
@@ -146,6 +147,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Project of the Repo.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"connection_type": {
 							Description: "Connection type for connecting to the Repo.",
@@ -191,7 +193,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 							Type:        schema.TypeList,
 							Elem: &schema.Schema{
-								Type: schema.TypeList,
+								Type: schema.TypeString,
 							},
 						},
 					},
@@ -375,8 +377,10 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 		}
 	}
 	var updateMaskPath []string
-	if updateMask != nil && updateMask["paths"] != nil {
-		updateMaskPath = updateMask["paths"].([]string)
+	if updateMask != nil && updateMask["paths"] != nil && len(updateMask["paths"].([]interface{})) > 0 {
+		for _, v := range updateMask["paths"].([]interface{}) {
+			updateMaskPath = append(updateMaskPath, v.(string))
+		}
 	}
 	return nextgen.RepositoriesRepoUpdateRequest{
 		Repo: buildRepo(d),
@@ -505,5 +509,4 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		repoList = append(repoList, repoO)
 		d.Set("repo", repoList)
 	}
-
 }

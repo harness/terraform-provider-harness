@@ -1,7 +1,8 @@
-package repository
+package repository_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -15,21 +16,38 @@ import (
 func TestAccResourceGitopsRepository(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	repo := id
+	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	repoName := id
+	repoNameUpdated := id + "_updated"
 	agentId := "account.terraformagent1"
 	resourceName := "harness_platform_gitops_repository.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
+		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsRepository(id, name, repo, repoName, agentId),
+				Config: testAccResourceGitopsRepository(id, name, repo, repoName, agentId, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
+			},
+			{
+				Config: testAccResourceGitopsRepository(id, name, repo, repoNameUpdated, agentId, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "repo.0.name", repoNameUpdated),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
+				ImportStateIdFunc:       acctest.GitopsAgentResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -65,20 +83,35 @@ func testAccResourceGitopsRepositoryDestroy(resourceName string) resource.TestCh
 	}
 }
 
-func testAccResourceGitopsRepository(id string, name string, repo string, repoName string, agentId string) string {
+func testAccResourceGitopsRepository(id string, name string, repo string, repoName string, agentId string, accountId string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+		}
+
 		resource "harness_platform_gitops_repository" "test" {
 			identifier = "%[1]s"
+			account_id = "%[6]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[5]s"
-			"repo": {
-					"repo": "%[3]s",
-        			"name": ""%[4]s",
-        			"insecure": true,
-        			"connectionType": "HTTPS"
-			},
-    		"upsert": true
+			repo {
+					repo = "%[3]s"
+        			name = "%[4]s"
+        			insecure = true
+        			connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+			update_mask {
+				paths = ["name"]
+			}
 		}
-	`, id, name, repo, repoName, agentId)
+	`, id, name, repo, repoName, agentId, accountId)
 }
