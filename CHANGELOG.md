@@ -1,3 +1,10 @@
+# 0.6.10 (October 20,2022)
+
+BUG FIXES:
+
+* harness_platform_gitops_agent : Fix subcategory in documentation
+harness_platform_gitops_cluster : Fix subcategory in documentation ([#242](https://github.com/harness/terraform-provider-harness/issues/242))
+
 # 0.6.9 (October 20,2022)
 
 FEATURES:
