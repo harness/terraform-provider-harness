@@ -80,7 +80,7 @@ func testAccDataSourceEnvironment(id string, name string) string {
 
 		data "harness_platform_environment" "test" {
 			identifier = harness_platform_environment.test.id
-			org_id = harness_platform_environment.test.org_id
+			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_environment.test.project_id
 		}
 `, id, name)

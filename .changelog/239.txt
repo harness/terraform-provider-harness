@@ -1,4 +1,3 @@
-```release-note:bug
-harness_platform_gitops_agent : Fix subcategory in documentation
-harness_platform_gitops_cluster : Fix subcategory in documentation
+```release-note:new-resource
+harness_platform_infrastructure
 ```

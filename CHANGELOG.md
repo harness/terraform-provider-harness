@@ -1,3 +1,15 @@
+# 0.6.9 (October 20,2022)
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitops_agent` ([#214](https://github.com/harness/terraform-provider-harness/issues/214))
+* **New Resource:** `harness_platform_gitops_cluster` ([#214](https://github.com/harness/terraform-provider-harness/issues/214))
+* **New Resource:** `harness_platform_infrastructure` ([#239](https://github.com/harness/terraform-provider-harness/issues/239))
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup:  Added saml and ldap sso provider documentation ([#241](https://github.com/harness/terraform-provider-harness/issues/241))
+
 # 0.6.8 (October 13,2022)
 
 ENHANCEMENTS:

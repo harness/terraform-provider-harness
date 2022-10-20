@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	terraformUtils "github.com/harness/terraform-provider-harness/internal/utils"
@@ -15,7 +16,7 @@ func TestAccDataSourcePermissions(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	resourceName := "data.harness_platform_permissions.test"
-	id_value := fmt.Sprintf("%d", terraformUtils.StringHashcode("VEtocnjdSP6BFPqcI55KKg"+name+name))
+	id_value := fmt.Sprintf("%d", terraformUtils.StringHashcode(helpers.EnvVars.AccountId.Get()+name+name))
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
