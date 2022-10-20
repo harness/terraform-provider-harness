@@ -4,9 +4,9 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentCertificateServiceCreate**](RepositoryCertificatesApi.md#AgentCertificateServiceCreate) | **Post** /gitops/api/api/v1/agents/{agentIdentifier}/certificates | Creates repository certificates on the server
-[**AgentCertificateServiceDelete**](RepositoryCertificatesApi.md#AgentCertificateServiceDelete) | **Delete** /gitops/api/api/v1/agents/{agentIdentifier}/certificates | Delete the certificates that match the RepositoryCertificateQuery
-[**AgentCertificateServiceList**](RepositoryCertificatesApi.md#AgentCertificateServiceList) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/certificates | List all available repository certificates
+[**AgentCertificateServiceCreate**](RepositoryCertificatesApi.md#AgentCertificateServiceCreate) | **Post** /gitops/api/v1/agents/{agentIdentifier}/certificates | Creates repository certificates on the server
+[**AgentCertificateServiceDelete**](RepositoryCertificatesApi.md#AgentCertificateServiceDelete) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/certificates | Delete the certificates that match the RepositoryCertificateQuery
+[**AgentCertificateServiceList**](RepositoryCertificatesApi.md#AgentCertificateServiceList) | **Get** /gitops/api/v1/agents/{agentIdentifier}/certificates | List all available repository certificates
 
 # **AgentCertificateServiceCreate**
 > CertificatesRepositoryCertificateList AgentCertificateServiceCreate(ctx, body, agentIdentifier, optional)

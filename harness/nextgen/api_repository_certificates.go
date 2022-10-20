@@ -55,7 +55,7 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceCreate(ctx con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/certificates"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/certificates"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -191,7 +191,7 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceDelete(ctx con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/certificates"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/certificates"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -333,7 +333,7 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceList(ctx conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/certificates"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/certificates"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
