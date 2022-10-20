@@ -2,6 +2,7 @@ package usergroup
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -13,7 +14,36 @@ import (
 
 func ResourceUserGroup() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness User Group.",
+		Description: fmt.Sprintf(`
+		Resource for creating a Harness User Group. Linking SSO providers with User Groups:
+
+		The following fields need to be populated for LDAP SSO Providers:
+		
+		- linked_sso_id
+		
+		- linked_sso_display_name
+		
+		- sso_group_id
+		
+		- sso_group_name
+		
+		- linked_sso_type
+		
+		- sso_linked
+		
+		The following fields need to be populated for SAML SSO Providers:
+		
+		- linked_sso_id
+		
+		- linked_sso_display_name
+		
+		- sso_group_name
+		
+		- sso_group_id // same as sso_group_name
+		
+		- linked_sso_type
+		
+		- sso_linked`),
 
 		ReadContext:   resourceUserGroupRead,
 		UpdateContext: resourceUserGroupCreateOrUpdate,
