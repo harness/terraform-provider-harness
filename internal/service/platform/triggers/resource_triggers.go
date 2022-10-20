@@ -34,7 +34,7 @@ func ResourceTriggers() *schema.Resource {
 			"yaml": {
 				Description: "trigger yaml",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"if_match": {
 				Description: "if-Match",
