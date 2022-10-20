@@ -1,4 +1,4 @@
-package gitops_cluster
+package cluster
 
 import (
 	"context"
@@ -114,7 +114,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Optional:    true,
 										Type:        schema.TypeList,
 										Elem: &schema.Schema{
-											Type: schema.TypeList,
+											Type: schema.TypeString,
 										},
 									},
 								},
@@ -668,9 +668,9 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 		request = attr.([]interface{})[0].(map[string]interface{})
 	}
 	var updatedFields []string
-	if request["updated_fields"] != nil {
-		for i, v := range request["updated_fields"].([]interface{}) {
-			updatedFields[i] = v.(string)
+	if request["updated_fields"] != nil && len(request["updated_fields"].([]interface{})) > 0 {
+		for _, v := range request["updated_fields"].([]interface{}) {
+			updatedFields = append(updatedFields, v.(string))
 		}
 	}
 
@@ -680,8 +680,10 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	}
 
 	var updateMaskPath []string
-	if updateMask["paths"] != nil {
-		updateMaskPath = updateMask["paths"].([]string)
+	if updateMask["paths"] != nil && len(updateMask["paths"].([]interface{})) > 0 {
+		for _, v := range updateMask["paths"].([]interface{}) {
+			updateMaskPath = append(updateMaskPath, v.(string))
+		}
 	}
 
 	return &nextgen.ClustersClusterUpdateRequest{
