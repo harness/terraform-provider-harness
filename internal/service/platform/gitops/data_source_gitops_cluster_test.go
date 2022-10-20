@@ -1,4 +1,4 @@
-package gitops_cluster_test
+package gitops_test
 
 import (
 	"fmt"

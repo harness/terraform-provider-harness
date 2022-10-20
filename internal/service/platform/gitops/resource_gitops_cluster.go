@@ -1,4 +1,4 @@
-package gitops_cluster
+package gitops
 
 import (
 	"context"

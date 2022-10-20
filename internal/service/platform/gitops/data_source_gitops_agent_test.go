@@ -1,4 +1,4 @@
-package gitops_agent_test
+package gitops_test
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package gitops_agent
+package gitops
 
 import (
 	"context"
