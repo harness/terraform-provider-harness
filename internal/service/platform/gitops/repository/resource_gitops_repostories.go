@@ -13,13 +13,13 @@ import (
 
 func ResourceGitopsRepositories() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Cluster.",
+		Description: "Resource for creating a Harness Gitops Repositories.",
 
 		CreateContext: resourceGitOpsRepositoryCreate,
-		//ReadContext:   resourceGitopsClusterRead,
-		//UpdateContext: resourceGitopsClusterUpdate,
-		//DeleteContext: resourceGitopsClusterDelete,
-		//Importer:      helpers.GitopsAgentResourceImporter,
+		ReadContext:   resourceGitOpsRepositoryRead,
+		UpdateContext: resourceGitOpsRepositoryUpdate,
+		DeleteContext: resourceGitOpsRepositoryDelete,
+		Importer:      helpers.GitopsAgentResourceImporter,
 		Schema: map[string]*schema.Schema{
 			"account_id": {
 				Description: "account identifier of the cluster.",
@@ -165,6 +165,38 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"query_repo": {
+				Description: "Repo to Query.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"query_project": {
+				Description: "Project to Query for Repo.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"query_force_refresh": {
+				Description: "Force refresh query for Repo.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"update_mask": {
+				Description: "Update mask of the Repository.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"paths": {
+							Description: "The set of field mask paths.",
+							Optional:    true,
+							Type:        schema.TypeList,
+							Elem: &schema.Schema{
+								Type: schema.TypeList,
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 	return resource
@@ -208,6 +240,150 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	}
 	setRepositoryDetails(d, &resp)
 	return nil
+}
+
+func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	var orgIdentifier, projectIdentifier, agentIdentifier, identifier, queryRepo, queryProject string
+	var queryForceRefresh bool
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("identifier"); ok {
+		identifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("query_repo"); ok {
+		queryRepo = attr.(string)
+	}
+	if attr, ok := d.GetOk("query_project"); ok {
+		queryProject = attr.(string)
+	}
+	if attr, ok := d.GetOk("query_force_refresh"); ok {
+		queryForceRefresh = attr.(bool)
+	}
+	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.RepositoriesApiAgentRepositoryServiceGetOpts{
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+		QueryRepo:         optional.NewString(queryRepo),
+		QueryForceRefresh: optional.NewBool(queryForceRefresh),
+		QueryProject:      optional.NewString(queryProject),
+	})
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if resp.Repository == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+	setRepositoryDetails(d, &resp)
+	return nil
+
+}
+
+func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("identifier"); ok {
+		identifier = attr.(string)
+	}
+	updateRepoRequest := buildUpdateRepoRequest(d)
+	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceUpdateRepository(ctx, updateRepoRequest, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceUpdateRepositoryOpts{
+		AccountIdentifier: optional.NewString(c.AccountId),
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+	})
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if resp.Repository == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+	setRepositoryDetails(d, &resp)
+	return nil
+}
+
+func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	var orgIdentifier, projectIdentifier, agentIdentifier, identifier, queryRepo, queryProject string
+	var queryForceRefresh bool
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("identifier"); ok {
+		identifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("query_repo"); ok {
+		queryRepo = attr.(string)
+	}
+	if attr, ok := d.GetOk("query_project"); ok {
+		queryProject = attr.(string)
+	}
+	if attr, ok := d.GetOk("query_force_refresh"); ok {
+		queryForceRefresh = attr.(bool)
+	}
+	_, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceDeleteRepository(ctx, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts{
+		AccountIdentifier: optional.NewString(c.AccountId),
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+		QueryRepo:         optional.NewString(queryRepo),
+		QueryForceRefresh: optional.NewBool(queryForceRefresh),
+		QueryProject:      optional.NewString(queryProject),
+	})
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	return nil
+}
+
+func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpdateRequest {
+	var updateMask map[string]interface{}
+	if attr, ok := d.GetOk("update_mask"); ok {
+		if len(attr.([]interface{})) > 0 {
+			updateMask = attr.([]interface{})[0].(map[string]interface{})
+		}
+	}
+	var updateMaskPath []string
+	if updateMask != nil && updateMask["paths"] != nil {
+		updateMaskPath = updateMask["paths"].([]string)
+	}
+	return nextgen.RepositoriesRepoUpdateRequest{
+		Repo: buildRepo(d),
+		UpdateMask: &nextgen.ProtobufFieldMask{
+			Paths: updateMaskPath,
+		},
+	}
 }
 
 func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCreateRequest {
@@ -296,5 +472,38 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 }
 
 func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Repository) {
+	d.SetId(repo.Identifier)
+	d.Set("account_id", repo.AccountIdentifier)
+	d.Set("org_id", repo.OrgIdentifier)
+	d.Set("project_id", repo.ProjectIdentifier)
+	d.Set("agent_id", repo.AgentIdentifier)
+	d.Set("identifier", repo.Identifier)
+	if repo.Repository != nil {
+		repoList := []interface{}{}
+		repoO := map[string]interface{}{}
+		repoO["repo"] = repo.Repository.Repo
+		repoO["username"] = repo.Repository.Username
+		repoO["password"] = repo.Repository.Password
+		repoO["ssh_private_key"] = repo.Repository.SshPrivateKey
+		repoO["insecure_ignore_host_key"] = repo.Repository.InsecureIgnoreHostKey
+		repoO["insecure"] = repo.Repository.Insecure
+		repoO["enable_lfs"] = repo.Repository.EnableLfs
+		repoO["tls_client_cert_data"] = repo.Repository.TlsClientCertData
+		repoO["tls_client_cert_key"] = repo.Repository.TlsClientCertKey
+		repoO["type_"] = repo.Repository.Type_
+		repoO["name"] = repo.Repository.Name
+		repoO["inherited_creds"] = repo.Repository.InheritedCreds
+		repoO["enable_oci"] = repo.Repository.EnableOCI
+		repoO["github_app_private_key"] = repo.Repository.GithubAppPrivateKey
+		repoO["github_app_id"] = repo.Repository.GithubAppID
+		repoO["github_app_installation_id"] = repo.Repository.GithubAppInstallationID
+		repoO["github_app_enterprise_base_url"] = repo.Repository.GithubAppEnterpriseBaseUrl
+		repoO["proxy"] = repo.Repository.Proxy
+		repoO["project"] = repo.Repository.Project
+		repoO["connection_type"] = repo.Repository.ConnectionType
+
+		repoList = append(repoList, repoO)
+		d.Set("repo", repoList)
+	}
 
 }
