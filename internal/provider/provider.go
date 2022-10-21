@@ -125,6 +125,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_gitops_agent":                 gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_cluster":               gitops_cluster.DataSourceGitopsCluster(),
+				"harness_platform_gitops_repository":            gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_infrastructure":               pl_infrastructure.DataSourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),

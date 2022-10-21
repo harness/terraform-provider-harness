@@ -13,7 +13,7 @@ import (
 
 func ResourceGitopsRepositories() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Repositories.",
+		Description: "Resource for creating Harness Gitops Repositories.",
 
 		CreateContext: resourceGitOpsRepositoryCreate,
 		ReadContext:   resourceGitOpsRepositoryRead,
