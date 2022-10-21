@@ -9,9 +9,8 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type ApplicationsHelmParameter struct {
+	Name        string `json:"name,omitempty"`
+	Value       string `json:"value,omitempty"`
+	ForceString bool   `json:"forceString,omitempty"`
 }

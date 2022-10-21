@@ -126,6 +126,8 @@ type APIClient struct {
 
 	HostsApi *HostsApiService
 
+	InfrastructuresApi *InfrastructuresApiService
+
 	InputSetsApi *InputSetsApiService
 
 	InviteApi *InviteApiService
@@ -141,6 +143,8 @@ type APIClient struct {
 	PipelinesDashboardApi *PipelinesDashboardApiService
 
 	ProjectApi *ProjectApiService
+
+	RepositoriesApiService *RepositoriesApiService
 
 	RoleAssignmentsApi *RoleAssignmentsApiService
 
@@ -177,6 +181,8 @@ type APIClient struct {
 	UserGroupApi *UserGroupApiService
 
 	ValidateHostApi *ValidateHostApiService
+
+	VariablesApi *VariablesApiService
 
 	WebhookEventHandlerApi *WebhookEventHandlerApiService
 
@@ -238,6 +244,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.HarnessResourceGroupApi = (*HarnessResourceGroupApiService)(&c.common)
 	c.HarnessResourceTypeApi = (*HarnessResourceTypeApiService)(&c.common)
 	c.HostsApi = (*HostsApiService)(&c.common)
+	c.InfrastructuresApi = (*InfrastructuresApiService)(&c.common)
 	c.InputSetsApi = (*InputSetsApiService)(&c.common)
 	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
@@ -246,6 +253,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.PipelinesApi = (*PipelinesApiService)(&c.common)
 	c.PipelinesDashboardApi = (*PipelinesDashboardApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
+	c.RepositoriesApiService = (*RepositoriesApiService)(&c.common)
 	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
 	c.RolesApi = (*RolesApiService)(&c.common)
 	c.SCIMApi = (*SCIMApiService)(&c.common)
@@ -264,6 +272,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.UserApi = (*UserApiService)(&c.common)
 	c.UserGroupApi = (*UserGroupApiService)(&c.common)
 	c.ValidateHostApi = (*ValidateHostApiService)(&c.common)
+	c.VariablesApi = (*VariablesApiService)(&c.common)
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 	c.WebhookTriggersApi = (*WebhookTriggersApiService)(&c.common)
 

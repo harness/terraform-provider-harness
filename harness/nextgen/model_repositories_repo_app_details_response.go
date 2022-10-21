@@ -9,9 +9,10 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type RepositoriesRepoAppDetailsResponse struct {
+	Type_     string                        `json:"type,omitempty"`
+	Ksonnet   *RepositoriesKsonnetAppSpec   `json:"ksonnet,omitempty"`
+	Helm      *RepositoriesHelmAppSpec      `json:"helm,omitempty"`
+	Kustomize *RepositoriesKustomizeAppSpec `json:"kustomize,omitempty"`
+	Directory *RepositoriesDirectoryAppSpec `json:"directory,omitempty"`
 }

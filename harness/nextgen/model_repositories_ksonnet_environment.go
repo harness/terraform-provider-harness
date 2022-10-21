@@ -9,9 +9,9 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type RepositoriesKsonnetEnvironment struct {
+	Name string `json:"name,omitempty"`
+	// KubernetesVersion is the kubernetes version the targeted cluster is running on.
+	K8sVersion  string                                     `json:"k8sVersion,omitempty"`
+	Destination *RepositoriesKsonnetEnvironmentDestination `json:"destination,omitempty"`
 }

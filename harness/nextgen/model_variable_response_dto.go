@@ -9,9 +9,10 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type VariableResponseDto struct {
+	Variable *VariableDto `json:"variable"`
+	// Time when the Variable was first created.
+	CreatedAt int64 `json:"createdAt,omitempty"`
+	// Time when the Variable was last modified.
+	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
 }

@@ -9,9 +9,8 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type RepositoriesKsonnetAppSpec struct {
+	Name         string                                    `json:"name,omitempty"`
+	Environments map[string]RepositoriesKsonnetEnvironment `json:"environments,omitempty"`
+	Parameters   []ApplicationsKsonnetParameter            `json:"parameters,omitempty"`
 }

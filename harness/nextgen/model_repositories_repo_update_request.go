@@ -9,9 +9,7 @@
  */
 package nextgen
 
-type ResponseDtoBoolean struct {
-	Status        string       `json:"status,omitempty"`
-	Data          bool         `json:"data,omitempty"`
-	MetaData      *interface{} `json:"metaData,omitempty"`
-	CorrelationId string       `json:"correlationId,omitempty"`
+type RepositoriesRepoUpdateRequest struct {
+	Repo       *RepositoriesRepository `json:"repo,omitempty"`
+	UpdateMask *ProtobufFieldMask      `json:"updateMask,omitempty"`
 }
