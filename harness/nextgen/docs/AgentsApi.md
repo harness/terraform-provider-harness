@@ -4,14 +4,14 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentServiceForServerCreate**](AgentsApi.md#AgentServiceForServerCreate) | **Post** /gitops/api/api/v1/agents | 
-[**AgentServiceForServerDelete**](AgentsApi.md#AgentServiceForServerDelete) | **Delete** /gitops/api/api/v1/agents/{identifier} | 
-[**AgentServiceForServerGet**](AgentsApi.md#AgentServiceForServerGet) | **Get** /gitops/api/api/v1/agents/{identifier} | 
-[**AgentServiceForServerGetDeployYaml**](AgentsApi.md#AgentServiceForServerGetDeployYaml) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/deploy.yaml | 
-[**AgentServiceForServerList**](AgentsApi.md#AgentServiceForServerList) | **Get** /gitops/api/api/v1/agents | 
-[**AgentServiceForServerRegenerateCredentials**](AgentsApi.md#AgentServiceForServerRegenerateCredentials) | **Post** /gitops/api/api/v1/agents/{identifier}/credentials | 
-[**AgentServiceForServerUnique**](AgentsApi.md#AgentServiceForServerUnique) | **Get** /gitops/api/api/v1/agents/{identifier}/unique | 
-[**AgentServiceForServerUpdate**](AgentsApi.md#AgentServiceForServerUpdate) | **Put** /gitops/api/api/v1/agents/{agent.identifier} | 
+[**AgentServiceForServerCreate**](AgentsApi.md#AgentServiceForServerCreate) | **Post** /gitops/api/v1/agents | 
+[**AgentServiceForServerDelete**](AgentsApi.md#AgentServiceForServerDelete) | **Delete** /gitops/api/v1/agents/{identifier} | 
+[**AgentServiceForServerGet**](AgentsApi.md#AgentServiceForServerGet) | **Get** /gitops/api/v1/agents/{identifier} | 
+[**AgentServiceForServerGetDeployYaml**](AgentsApi.md#AgentServiceForServerGetDeployYaml) | **Get** /gitops/api/v1/agents/{agentIdentifier}/deploy.yaml | 
+[**AgentServiceForServerList**](AgentsApi.md#AgentServiceForServerList) | **Get** /gitops/api/v1/agents | 
+[**AgentServiceForServerRegenerateCredentials**](AgentsApi.md#AgentServiceForServerRegenerateCredentials) | **Post** /gitops/api/v1/agents/{identifier}/credentials | 
+[**AgentServiceForServerUnique**](AgentsApi.md#AgentServiceForServerUnique) | **Get** /gitops/api/v1/agents/{identifier}/unique | 
+[**AgentServiceForServerUpdate**](AgentsApi.md#AgentServiceForServerUpdate) | **Put** /gitops/api/v1/agents/{agent.identifier} | 
 
 # **AgentServiceForServerCreate**
 > V1Agent AgentServiceForServerCreate(ctx, body)

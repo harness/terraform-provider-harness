@@ -4,14 +4,14 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentClusterServiceCreate**](ClustersApi.md#AgentClusterServiceCreate) | **Post** /gitops/api/api/v1/agents/{agentIdentifier}/clusters | Create creates a cluster
-[**AgentClusterServiceDelete**](ClustersApi.md#AgentClusterServiceDelete) | **Delete** /gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier} | Delete deletes a cluster
-[**AgentClusterServiceGet**](ClustersApi.md#AgentClusterServiceGet) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier} | Get returns a cluster by identifier
-[**AgentClusterServiceList**](ClustersApi.md#AgentClusterServiceList) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/clusters | List returns list of clusters
-[**AgentClusterServiceUpdate**](ClustersApi.md#AgentClusterServiceUpdate) | **Put** /gitops/api/api/v1/agents/{agentIdentifier}/clusters/{identifier} | Update updates a cluster
-[**AgentGPGKeyServiceList**](ClustersApi.md#AgentGPGKeyServiceList) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys | List all available repository certificates
-[**ClusterServiceExists**](ClustersApi.md#ClusterServiceExists) | **Get** /gitops/api/api/v1/clusters/exists | Checks for whether the cluster exists
-[**ClusterServiceListClusters**](ClustersApi.md#ClusterServiceListClusters) | **Post** /gitops/api/api/v1/clusters | List returns list of Clusters
+[**AgentClusterServiceCreate**](ClustersApi.md#AgentClusterServiceCreate) | **Post** /gitops/api/v1/agents/{agentIdentifier}/clusters | Create creates a cluster
+[**AgentClusterServiceDelete**](ClustersApi.md#AgentClusterServiceDelete) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/clusters/{identifier} | Delete deletes a cluster
+[**AgentClusterServiceGet**](ClustersApi.md#AgentClusterServiceGet) | **Get** /gitops/api/v1/agents/{agentIdentifier}/clusters/{identifier} | Get returns a cluster by identifier
+[**AgentClusterServiceList**](ClustersApi.md#AgentClusterServiceList) | **Get** /gitops/api/v1/agents/{agentIdentifier}/clusters | List returns list of clusters
+[**AgentClusterServiceUpdate**](ClustersApi.md#AgentClusterServiceUpdate) | **Put** /gitops/api/v1/agents/{agentIdentifier}/clusters/{identifier} | Update updates a cluster
+[**AgentGPGKeyServiceList**](ClustersApi.md#AgentGPGKeyServiceList) | **Get** /gitops/api/v1/agents/{agentIdentifier}/gpgkeys | List all available repository certificates
+[**ClusterServiceExists**](ClustersApi.md#ClusterServiceExists) | **Get** /gitops/api/v1/clusters/exists | Checks for whether the cluster exists
+[**ClusterServiceListClusters**](ClustersApi.md#ClusterServiceListClusters) | **Post** /gitops/api/v1/clusters | List returns list of Clusters
 [**DeleteCluster**](ClustersApi.md#DeleteCluster) | **Delete** /ng/api/gitops/clusters/{identifier} | Delete a Cluster by identifier
 [**GetCluster**](ClustersApi.md#GetCluster) | **Get** /ng/api/gitops/clusters/{identifier} | Gets a Cluster by identifier
 [**GetClusterList**](ClustersApi.md#GetClusterList) | **Get** /ng/api/gitops/clusters | Gets cluster list
