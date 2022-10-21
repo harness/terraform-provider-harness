@@ -1,6 +1,6 @@
 
-<a name="0.2.13"></a>
-## 0.2.13 (2022-10-19)
+<a name="0.2.14"></a>
+## 0.2.14 (2022-10-21)
 
 ### Add
 
@@ -10,7 +10,6 @@
 
 * Added attribute filter model
 * Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
-* Added resource lookups by name
 
 ### Adding
 
@@ -45,7 +44,6 @@
 * Fix main
 * Fix main
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
-* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 
 ### Fixing
 
@@ -62,6 +60,7 @@
 
 ### Merge
 
+* Merge branch 'main' into CDS-44311-gitops-repositories-api
 * Merge branch 'main' of github.com:harness/harness-go-sdk
 
 ### Modify
@@ -70,6 +69,8 @@
 
 ### Release
 
+* Release version 0.2.13 10-19-2022
+* Release v0.2.13
 * Release version v0.2.12 10-19-2022
 * Release vv0.2.12
 * Release version 0.2.11 10-19-2022
@@ -112,9 +113,6 @@
 * Release version 0.1.28 05-27-2022
 * Release v0.1.28
 * Release version 0.1.27 05-23-2022
-* Release v0.1.27
-* Release version 0.1.26 05-20-2022
-* Release v0.1.26
 
 ### Resource
 
@@ -141,6 +139,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#194](https://github.com/harness/harness-go-sdk/issues/194) from harness/CDS-44311-gitops-repositories-api
+* Merge pull request [#178](https://github.com/harness/harness-go-sdk/issues/178) from harness/SPG-508-adding-service-overrides
 * Merge pull request [#189](https://github.com/harness/harness-go-sdk/issues/189) from harness/CDS-43547-gitops-agent-cluster-sdk
 * Merge pull request [#190](https://github.com/harness/harness-go-sdk/issues/190) from harness/SPG-522-add-infra-TF-resource
 * Merge pull request [#180](https://github.com/harness/harness-go-sdk/issues/180) from harness/SPG-522-add-infra-TF-resource
