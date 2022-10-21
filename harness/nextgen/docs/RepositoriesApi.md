@@ -4,18 +4,18 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentRepositoryServiceCreateRepository**](RepositoriesApi.md#AgentRepositoryServiceCreateRepository) | **Post** /gitops/api/api/v1/agents/{agentIdentifier}/repositories | CreateRepository creates a new repository configuration
-[**AgentRepositoryServiceDeleteRepository**](RepositoriesApi.md#AgentRepositoryServiceDeleteRepository) | **Delete** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier} | DeleteRepository deletes a repository from the configuration
-[**AgentRepositoryServiceGet**](RepositoriesApi.md#AgentRepositoryServiceGet) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier} | Get returns a repository or its credentials
-[**AgentRepositoryServiceGetAppDetails**](RepositoriesApi.md#AgentRepositoryServiceGetAppDetails) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier}/appdetails | GetAppDetails returns application details by given path
-[**AgentRepositoryServiceGetHelmCharts**](RepositoriesApi.md#AgentRepositoryServiceGetHelmCharts) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier}/helmcharts | GetHelmCharts returns list of helm charts in the specified repository
-[**AgentRepositoryServiceListApps**](RepositoriesApi.md#AgentRepositoryServiceListApps) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier}/apps | ListApps returns list of apps in the repo
-[**AgentRepositoryServiceListRefs**](RepositoriesApi.md#AgentRepositoryServiceListRefs) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier}/refs | Returns a list of refs (e.g. branches and tags) in the repo
-[**AgentRepositoryServiceListRepositories**](RepositoriesApi.md#AgentRepositoryServiceListRepositories) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/repositories | ListRepositories gets a list of all configured repositories
-[**AgentRepositoryServiceUpdateRepository**](RepositoriesApi.md#AgentRepositoryServiceUpdateRepository) | **Put** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/{identifier} | UpdateRepository updates a repository configuration
-[**AgentRepositoryServiceValidateAccess**](RepositoriesApi.md#AgentRepositoryServiceValidateAccess) | **Post** /gitops/api/api/v1/agents/{agentIdentifier}/repositories/validate | ValidateAccess gets connection state for a repository
-[**RepositoryServiceExists**](RepositoriesApi.md#RepositoryServiceExists) | **Get** /gitops/api/api/v1/repositories/exists | Checks whether a repository with the given name exists
-[**RepositoryServiceListRepositories**](RepositoriesApi.md#RepositoryServiceListRepositories) | **Post** /gitops/api/api/v1/repositories | List returns list of Repositories
+[**AgentRepositoryServiceCreateRepository**](RepositoriesApi.md#AgentRepositoryServiceCreateRepository) | **Post** /gitops/api/v1/agents/{agentIdentifier}/repositories | CreateRepository creates a new repository configuration
+[**AgentRepositoryServiceDeleteRepository**](RepositoriesApi.md#AgentRepositoryServiceDeleteRepository) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier} | DeleteRepository deletes a repository from the configuration
+[**AgentRepositoryServiceGet**](RepositoriesApi.md#AgentRepositoryServiceGet) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier} | Get returns a repository or its credentials
+[**AgentRepositoryServiceGetAppDetails**](RepositoriesApi.md#AgentRepositoryServiceGetAppDetails) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/appdetails | GetAppDetails returns application details by given path
+[**AgentRepositoryServiceGetHelmCharts**](RepositoriesApi.md#AgentRepositoryServiceGetHelmCharts) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/helmcharts | GetHelmCharts returns list of helm charts in the specified repository
+[**AgentRepositoryServiceListApps**](RepositoriesApi.md#AgentRepositoryServiceListApps) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/apps | ListApps returns list of apps in the repo
+[**AgentRepositoryServiceListRefs**](RepositoriesApi.md#AgentRepositoryServiceListRefs) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/refs | Returns a list of refs (e.g. branches and tags) in the repo
+[**AgentRepositoryServiceListRepositories**](RepositoriesApi.md#AgentRepositoryServiceListRepositories) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories | ListRepositories gets a list of all configured repositories
+[**AgentRepositoryServiceUpdateRepository**](RepositoriesApi.md#AgentRepositoryServiceUpdateRepository) | **Put** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier} | UpdateRepository updates a repository configuration
+[**AgentRepositoryServiceValidateAccess**](RepositoriesApi.md#AgentRepositoryServiceValidateAccess) | **Post** /gitops/api/v1/agents/{agentIdentifier}/repositories/validate | ValidateAccess gets connection state for a repository
+[**RepositoryServiceExists**](RepositoriesApi.md#RepositoryServiceExists) | **Get** /gitops/api/v1/repositories/exists | Checks whether a repository with the given name exists
+[**RepositoryServiceListRepositories**](RepositoriesApi.md#RepositoryServiceListRepositories) | **Post** /gitops/api/v1/repositories | List returns list of Repositories
 
 # **AgentRepositoryServiceCreateRepository**
 > Servicev1Repository AgentRepositoryServiceCreateRepository(ctx, body, agentIdentifier, optional)
