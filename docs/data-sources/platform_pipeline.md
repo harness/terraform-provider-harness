@@ -17,8 +17,8 @@ Data source for retrieving a Harness pipeline.
 
 ### Required
 
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 
 ### Optional
 

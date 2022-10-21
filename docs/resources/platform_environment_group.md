@@ -36,7 +36,7 @@ resource "harness_platform_environment_group" "test" {
 ### Required
 
 - `identifier` (String) identifier of the environment group.
-- `yaml` (String) Input Set YAML
+- `yaml` (String) Env group YAML
 
 ### Optional
 

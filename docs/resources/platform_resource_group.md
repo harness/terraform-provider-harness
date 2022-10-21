@@ -53,8 +53,8 @@ resource "harness_platform_resource_group" "test" {
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
 - `included_scopes` (Block Set) Included scopes (see [below for nested schema](#nestedblock--included_scopes))
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `resource_filter` (Block List) Contains resource filter for a resource group (see [below for nested schema](#nestedblock--resource_filter))
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 

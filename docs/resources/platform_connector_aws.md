@@ -27,8 +27,8 @@ Resource for creating an AWS connector.
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
 - `manual` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--manual))
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 ### Read-Only

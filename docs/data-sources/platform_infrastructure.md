@@ -28,8 +28,8 @@ data "harness_platform_infrastructure" "test" {
 ### Required
 
 - `env_id` (String) environment identifier.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 
 ### Optional
 

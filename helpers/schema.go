@@ -54,7 +54,7 @@ func GetIdentifierSchema(flag SchemaFlagType) *schema.Schema {
 
 func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Unique identifier of the project.",
+		Description: "Unique identifier of the Project.",
 		Type:        schema.TypeString,
 	}
 	SetSchemaFlagType(s, flag)
@@ -63,7 +63,7 @@ func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 
 func GetOrgIdSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Unique identifier of the organization.",
+		Description: "Unique identifier of the Organization.",
 		Type:        schema.TypeString,
 	}
 	SetSchemaFlagType(s, flag)

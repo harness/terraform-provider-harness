@@ -25,8 +25,8 @@ Resource for creating a Gcp connector.
 - `description` (String) Description of the resource.
 - `inherit_from_delegate` (Block List) Inherit configuration from delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `manual` (Block List, Max: 1) Manual credential configuration. (see [below for nested schema](#nestedblock--manual))
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 ### Read-Only
