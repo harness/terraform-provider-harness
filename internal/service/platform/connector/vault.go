@@ -13,7 +13,7 @@ import (
 
 func ResourceConnectorVault() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating a Hashicorp Vault Secret Manager connector.",
+		Description:   "Resource for creating a HashiCorp Vault Secret Manager connector.",
 		ReadContext:   resourceConnectorVaultRead,
 		CreateContext: resourceConnectorVaultCreateOrUpdate,
 		UpdateContext: resourceConnectorVaultCreateOrUpdate,
@@ -22,13 +22,13 @@ func ResourceConnectorVault() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"auth_token": {
-				Description: "This is the authentication token for Vault.",
+				Description: "Authentication token for Vault.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
 			"base_path": {
-				Description: "This is the location of the Vault directory where Secret will be stored.",
+				Description: "Location of the Vault directory where the secret will be stored.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -43,7 +43,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Optional:    true,
 			},
 			"renewal_interval_minutes": {
-				Description: "This is the time interval for token renewal.",
+				Description: "The time interval for the token renewal.",
 				Type:        schema.TypeInt,
 				Required:    true,
 			},
@@ -84,7 +84,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"namespace": {
-				Description: "This is the Vault namespace where Secret will be created.",
+				Description: "Vault namespace where the Secret will be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -94,7 +94,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Optional:    true,
 			},
 			"sink_path": {
-				Description: "This is the location at which auth token is to be read from.",
+				Description: "The location from which the authentication token should be read.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -104,42 +104,42 @@ func ResourceConnectorVault() *schema.Resource {
 				Optional:    true,
 			},
 			"use_aws_iam": {
-				Description: "Boolean value to indicate if Aws Iam is used for authentication.",
+				Description: "Boolean value to indicate if AWS IAM is used for authentication.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"aws_region": {
-				Description: "This is the Aws region where aws iam auth will happen.",
+				Description: "AWS region where the AWS IAM authentication will happen.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"vault_aws_iam_role": {
-				Description: "This is the Vault role defined to bind to aws iam account/role being accessed.",
+				Description: "The Vault role defined to bind to aws iam account/role being accessed.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"xvault_aws_iam_server_id": {
-				Description: "This is the Aws Iam Header Server ID that has been configured for this Aws Iam instance.",
+				Description: "The AWS IAM Header Server ID that has been configured for this AWS IAM instance.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"vault_k8s_auth_role": {
-				Description: "This is the role where K8s auth will happen.",
+				Description: "The role where K8s Auth will happen.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"service_account_token_path": {
-				Description: "This is the SA token path where the token is mounted in the K8s Pod.",
+				Description: "The Service Account token path in the K8s pod where the token is mounted.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"k8s_auth_endpoint": {
-				Description: "This is the path where kubernetes auth is enabled in Vault.",
+				Description: "The path where Kubernetes Auth is enabled in Vault.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"renew_app_role_token": {
-				Description: "Boolean value to indicate if appRole token renewal is enabled or not.",
+				Description: "Boolean value to indicate if AppRole token renewal is enabled or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
