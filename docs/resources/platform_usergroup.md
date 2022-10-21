@@ -148,8 +148,8 @@ resource "harness_platform_usergroup" "sso_type_ldap" {
 - `linked_sso_id` (String) The SSO account ID that the user group is linked to.
 - `linked_sso_type` (String) Type of linked SSO
 - `notification_configs` (Block Set) List of notification settings. (see [below for nested schema](#nestedblock--notification_configs))
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `sso_group_id` (String) Identifier of the userGroup in SSO.
 - `sso_group_name` (String) Name of the SSO userGroup.
 - `sso_linked` (Boolean) Whether sso is linked or not

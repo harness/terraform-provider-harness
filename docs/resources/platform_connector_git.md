@@ -27,8 +27,8 @@ Resource for creating a Git connector.
 
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `validation_repo` (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
 

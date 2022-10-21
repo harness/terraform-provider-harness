@@ -50,8 +50,8 @@ resource "harness_platform_infrastructure" "test" {
 - `env_id` (String) environment identifier.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `type` (String) Type of Infrastructure. Valid values are KUBERNETES_DIRECT, KUBERNETES_GCP, SERVERLESS_AWS_LAMBDA, PDC, KUBERNETES_AZURE, SSH_WINRM_AZURE, SSH_WINRM_AWS, AZURE_WEB_APP, ECS, GITOPS, CUSTOM_DEPLOYMENT.
 - `yaml` (String) Infrastructure YAML
 
