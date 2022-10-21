@@ -27,7 +27,7 @@ resource "harness_platform_project" "test" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
+- `org_id` (String) Unique identifier of the Organization.
 
 ### Optional
 

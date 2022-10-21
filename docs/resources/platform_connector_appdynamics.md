@@ -27,8 +27,8 @@ Resource for creating an App Dynamics connector.
 - `api_token` (Block List, Max: 1) Authenticate to App Dynamics using api token. (see [below for nested schema](#nestedblock--api_token))
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `username_password` (Block List, Max: 1) Authenticate to App Dynamics using username and password. (see [below for nested schema](#nestedblock--username_password))
 

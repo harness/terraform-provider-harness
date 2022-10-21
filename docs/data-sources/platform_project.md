@@ -29,7 +29,7 @@ data "harness_platform_project" "example_by_name" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the organization.
+- `org_id` (String) Unique identifier of the Organization.
 
 ### Optional
 

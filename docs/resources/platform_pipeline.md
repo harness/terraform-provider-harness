@@ -115,8 +115,8 @@ resource "harness_platform_pipeline" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `yaml` (String) YAML of the pipeline.
 
 ### Optional
@@ -128,6 +128,7 @@ resource "harness_platform_pipeline" "example" {
 
 - `id` (String) The ID of this resource.
 
+## Import
 
 Import is supported using the following syntax:
 

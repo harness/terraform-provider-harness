@@ -84,6 +84,7 @@ Optional:
 - `cluster` (Block List) cluster details. (see [below for nested schema](#nestedblock--request--cluster))
 - `id` (Block List) cluster server URL or cluster name (see [below for nested schema](#nestedblock--request--id))
 - `update_mask` (Block List) Update mask of the cluster. (see [below for nested schema](#nestedblock--request--update_mask))
+- `updated_fields` (List of String) Fields which are updated.
 - `upsert` (Boolean) if the cluster should be upserted.
 
 <a id="nestedblock--request--cluster"></a>
@@ -221,7 +222,7 @@ Optional:
 
 Optional:
 
-- `paths` (List of List of String) The set of field mask paths.
+- `paths` (List of String) The set of field mask paths.
 
 ## Import
 

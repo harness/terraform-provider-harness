@@ -75,14 +75,14 @@ resource "harness_platform_environment" "test" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `type` (String) The type of environment. Valid values are PreProduction, Production
 
 ### Optional
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `yaml` (String) Environment YAML
 
