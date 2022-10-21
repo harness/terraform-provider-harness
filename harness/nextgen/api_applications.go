@@ -59,7 +59,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -68,6 +68,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Conte
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -203,7 +204,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceDelete(ctx context.Conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -213,6 +214,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceDelete(ctx context.Conte
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -357,7 +359,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceDeleteResource(ctx conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -367,6 +369,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceDeleteResource(ctx conte
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -516,7 +519,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGet(ctx context.Context,
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 
@@ -525,6 +528,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGet(ctx context.Context,
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryRefresh.IsSet() {
@@ -649,7 +653,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetApplicationSyncWindow
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/syncwindows"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/syncwindows"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 
@@ -658,6 +662,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetApplicationSyncWindow
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
@@ -773,7 +778,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetManifests(ctx context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/manifests"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/manifests"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 
@@ -782,6 +787,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetManifests(ctx context
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryRevision.IsSet() {
@@ -911,7 +917,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetResource(ctx context.
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -921,6 +927,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceGetResource(ctx context.
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -1065,7 +1072,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceList(ctx context.Context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1073,6 +1080,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceList(ctx context.Context
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryName.IsSet() {
@@ -1214,7 +1222,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceListResourceActions(ctx 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -1223,6 +1231,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceListResourceActions(ctx 
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.RequestNamespace.IsSet() {
@@ -1357,7 +1366,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceListResourceEvents(ctx c
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/events"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/events"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 
@@ -1366,6 +1375,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceListResourceEvents(ctx c
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryResourceNamespace.IsSet() {
@@ -1498,7 +1508,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceManagedResources(ctx con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/managed-resources"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/managed-resources"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.applicationName"+"}", fmt.Sprintf("%v", queryApplicationName), -1)
 
@@ -1507,6 +1517,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceManagedResources(ctx con
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryNamespace.IsSet() {
@@ -1629,7 +1640,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePatch(ctx context.Contex
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -1754,7 +1765,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePatchResource(ctx contex
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -1764,6 +1775,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePatchResource(ctx contex
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -1911,7 +1923,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePodLogs(ctx context.Cont
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/pods/{query.podName}/logs"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/pods/{query.podName}/logs"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.podName"+"}", fmt.Sprintf("%v", queryPodName), -1)
@@ -1921,6 +1933,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePodLogs(ctx context.Cont
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryNamespace.IsSet() {
@@ -2101,7 +2114,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePodLogs2(ctx context.Con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/logs"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/logs"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 
@@ -2110,6 +2123,7 @@ func (a *ApplicationsApiService) AgentApplicationServicePodLogs2(ctx context.Con
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryNamespace.IsSet() {
@@ -2275,7 +2289,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceResourceTree(ctx context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/resource-tree"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/resource-tree"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 
@@ -2284,6 +2298,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceResourceTree(ctx context
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryApplicationName.IsSet() {
@@ -2409,7 +2424,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceRevisionMetadata(ctx con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{query.name}/revisions/{query.revision}/metadata"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/revisions/{query.revision}/metadata"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.name"+"}", fmt.Sprintf("%v", queryName), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.revision"+"}", fmt.Sprintf("%v", queryRevision), -1)
@@ -2419,6 +2434,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceRevisionMetadata(ctx con
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
@@ -2529,7 +2545,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceRollback(ctx context.Con
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/rollback"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/rollback"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -2538,6 +2554,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceRollback(ctx context.Con
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
@@ -2657,7 +2674,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceRunResourceAction(ctx co
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -2667,6 +2684,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceRunResourceAction(ctx co
 
 	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
 		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+		localVarQueryParams.Add("routingId", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
@@ -2784,7 +2802,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceSync(ctx context.Context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/sync"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/sync"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -2793,6 +2811,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceSync(ctx context.Context
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
@@ -2904,7 +2923,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceTerminateOperation(ctx c
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/operation"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/operation"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -2913,6 +2932,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceTerminateOperation(ctx c
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
@@ -3031,7 +3051,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.application.metadata.name}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.application.metadata.name}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.application.metadata.name"+"}", fmt.Sprintf("%v", requestApplicationMetadataName), -1)
 
@@ -3040,6 +3060,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Conte
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.ClusterIdentifier.IsSet() {
@@ -3158,7 +3179,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdateSpec(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/applications/{request.name}/spec"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/spec"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"request.name"+"}", fmt.Sprintf("%v", requestName), -1)
 
@@ -3167,6 +3188,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdateSpec(ctx context.C
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
@@ -3292,7 +3314,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceWatch(ctx context.Contex
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/stream/applications"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/stream/applications"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -3300,6 +3322,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceWatch(ctx context.Contex
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	localVarQueryParams.Add("query.name", parameterToString(queryName, ""))
@@ -3439,7 +3462,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceWatchResourceTree(ctx co
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/stream/applications/{query.applicationName}/resource-tree"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/stream/applications/{query.applicationName}/resource-tree"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.applicationName"+"}", fmt.Sprintf("%v", queryApplicationName), -1)
 
@@ -3448,6 +3471,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceWatchResourceTree(ctx co
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.QueryNamespace.IsSet() {
@@ -3577,7 +3601,7 @@ func (a *ApplicationsApiService) ApplicationServiceExists(ctx context.Context, n
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/applications/{name}/exists"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/applications/{name}/exists"
 	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -3585,6 +3609,7 @@ func (a *ApplicationsApiService) ApplicationServiceExists(ctx context.Context, n
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("routingId", parameterToString(accountIdentifier, ""))
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.AgentIdentifier.IsSet() {
@@ -3693,7 +3718,7 @@ func (a *ApplicationsApiService) ApplicationServiceListAppSync(ctx context.Conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/applications/sync"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/applications/sync"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
