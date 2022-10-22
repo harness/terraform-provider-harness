@@ -21,6 +21,6 @@ type VariableDto struct {
 	// Project Identifier for the Entity.
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 	// Type of the Variable.
-	Type_ string             `json:"type"`
-	Spec  *VariableConfigDto `json:"spec"`
+	Type_ string                   `json:"type"`
+	Spec  *StringVariableConfigDto `json:"spec"`
 }
