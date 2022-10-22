@@ -14,7 +14,7 @@ Data source for retrieving a Harness environment.
 
 ```terraform
 data "harness_platform_environment" "test" {
-  name       = "name"
+  identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
 }
@@ -25,8 +25,8 @@ data "harness_platform_environment" "test" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 
 ### Optional
 

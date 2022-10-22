@@ -14,7 +14,7 @@ Data source for retrieving a Harness service.
 
 ```terraform
 data "harness_platform_service" "example" {
-  name       = "name"
+  identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
 }
@@ -25,8 +25,8 @@ data "harness_platform_service" "example" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 
 ### Optional
 

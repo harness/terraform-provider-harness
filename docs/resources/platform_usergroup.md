@@ -3,17 +3,104 @@
 page_title: "harness_platform_usergroup Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness User Group.
+  Resource for creating a Harness User Group. Linking SSO providers with User Groups:
+  
+      The following fields need to be populated for LDAP SSO Providers:
+  
+      - linked_sso_id
+  
+      - linked_sso_display_name
+  
+      - sso_group_id
+  
+      - sso_group_name
+  
+      - linked_sso_type
+  
+      - sso_linked
+  
+      The following fields need to be populated for SAML SSO Providers:
+  
+      - linked_sso_id
+  
+      - linked_sso_display_name
+  
+      - sso_group_name
+  
+      - sso_group_id // same as sso_group_name
+  
+      - linked_sso_type
+  
+      - sso_linked
 ---
 
 # harness_platform_usergroup (Resource)
 
-Resource for creating a Harness User Group.
+Resource for creating a Harness User Group. Linking SSO providers with User Groups:
+
+		The following fields need to be populated for LDAP SSO Providers:
+		
+		- linked_sso_id
+		
+		- linked_sso_display_name
+		
+		- sso_group_id
+		
+		- sso_group_name
+		
+		- linked_sso_type
+		
+		- sso_linked
+		
+		The following fields need to be populated for SAML SSO Providers:
+		
+		- linked_sso_id
+		
+		- linked_sso_display_name
+		
+		- sso_group_name
+		
+		- sso_group_id // same as sso_group_name
+		
+		- linked_sso_type
+		
+		- sso_linked
 
 ## Example Usage
 
 ```terraform
-resource "harness_platform_usergroup" "example" {
+resource "harness_platform_usergroup" "sso_type_saml" {
+  identifier         = "identifier"
+  name               = "name"
+  org_id             = "org_id"
+  project_id         = "project_id"
+  linked_sso_id      = "linked_sso_id"
+  externally_managed = false
+  users              = ["user_id"]
+  notification_configs {
+    type              = "SLACK"
+    slack_webhook_url = "https://google.com"
+  }
+  notification_configs {
+    type        = "EMAIL"
+    group_email = "email@email.com"
+  }
+  notification_configs {
+    type                        = "MSTEAMS"
+    microsoft_teams_webhook_url = "https://google.com"
+  }
+  notification_configs {
+    type           = "PAGERDUTY"
+    pager_duty_key = "pagerDutyKey"
+  }
+  linked_sso_display_name = "linked_sso_display_name"
+  sso_group_id            = "sso_group_name" // When sso linked type is saml sso_group_id is same as sso_group_name
+  sso_group_name          = "sso_group_name"
+  linked_sso_type         = "SAML"
+  sso_linked              = true
+}
+
+resource "harness_platform_usergroup" "sso_type_ldap" {
   identifier         = "identifier"
   name               = "name"
   org_id             = "org_id"
@@ -40,7 +127,7 @@ resource "harness_platform_usergroup" "example" {
   linked_sso_display_name = "linked_sso_display_name"
   sso_group_id            = "sso_group_id"
   sso_group_name          = "sso_group_name"
-  linked_sso_type         = "SAML"
+  linked_sso_type         = "LDAP"
   sso_linked              = true
 }
 ```
@@ -61,8 +148,8 @@ resource "harness_platform_usergroup" "example" {
 - `linked_sso_id` (String) The SSO account ID that the user group is linked to.
 - `linked_sso_type` (String) Type of linked SSO
 - `notification_configs` (Block Set) List of notification settings. (see [below for nested schema](#nestedblock--notification_configs))
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `sso_group_id` (String) Identifier of the userGroup in SSO.
 - `sso_group_name` (String) Name of the SSO userGroup.
 - `sso_linked` (Boolean) Whether sso is linked or not

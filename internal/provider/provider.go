@@ -26,8 +26,12 @@ import (
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
+	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
+	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
+	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
+	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
@@ -119,9 +123,13 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment":                  pl_environment.DataSourceEnvironment(),
 				"harness_platform_environment_group":            pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
+				"harness_platform_gitops_agent":                 gitops_agent.DataSourceGitopsAgent(),
+				"harness_platform_gitops_cluster":               gitops_cluster.DataSourceGitopsCluster(),
+				"harness_platform_infrastructure":               pl_infrastructure.DataSourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
+				"harness_platform_permissions":                  pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                      project.DataSourceProject(),
 				"harness_platform_service":                      pl_service.DataSourceService(),
 				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
@@ -134,6 +142,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_triggers":                     triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":             role_assignments.DataSourceRoleAssignments(),
 				"harness_platform_variables":                    variables.DataSourceVariables(),
+				"harness_platform_connector_vault":              connector.DataSourceConnectorVault(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -177,6 +186,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment":                  pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":            pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping": pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
+				"harness_platform_gitops_agent":                 gitops_agent.ResourceGitopsAgent(),
+				"harness_platform_gitops_cluster":               gitops_cluster.ResourceGitopsCluster(),
+				"harness_platform_infrastructure":               pl_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.ResourceInputSet(),
 				"harness_platform_organization":                 organization.ResourceOrganization(),
 				"harness_platform_pipeline":                     pipeline.ResourcePipeline(),
@@ -192,6 +204,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_triggers":                     triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":             role_assignments.ResourceRoleAssignments(),
 				"harness_platform_variables":                    variables.ResourceVariables(),
+				"harness_platform_connector_vault":              connector.ResourceConnectorVault(),
 
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),

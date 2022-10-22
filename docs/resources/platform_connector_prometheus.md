@@ -46,9 +46,9 @@ resource "harness_platform_connector_prometheus" "example" {
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
 - `headers` (Block Set) Headers. (see [below for nested schema](#nestedblock--headers))
-- `org_id` (String) Unique identifier of the organization.
+- `org_id` (String) Unique identifier of the Organization.
 - `password_ref` (String) Password reference.
-- `project_id` (String) Unique identifier of the project.
+- `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `user_name` (String) User name.
 
