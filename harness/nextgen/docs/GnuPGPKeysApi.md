@@ -4,9 +4,9 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentGPGKeyServiceCreate**](GnuPGPKeysApi.md#AgentGPGKeyServiceCreate) | **Post** /gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys | Create one or more GPG public keys in the server&#x27;s configuration
-[**AgentGPGKeyServiceDelete**](GnuPGPKeysApi.md#AgentGPGKeyServiceDelete) | **Delete** /gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID} | Delete specified GPG public key from the server&#x27;s configuration
-[**AgentGPGKeyServiceGet**](GnuPGPKeysApi.md#AgentGPGKeyServiceGet) | **Get** /gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID} | Get information about specified GPG public key from the server
+[**AgentGPGKeyServiceCreate**](GnuPGPKeysApi.md#AgentGPGKeyServiceCreate) | **Post** /gitops/api/v1/agents/{agentIdentifier}/gpgkeys | Create one or more GPG public keys in the server&#x27;s configuration
+[**AgentGPGKeyServiceDelete**](GnuPGPKeysApi.md#AgentGPGKeyServiceDelete) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID} | Delete specified GPG public key from the server&#x27;s configuration
+[**AgentGPGKeyServiceGet**](GnuPGPKeysApi.md#AgentGPGKeyServiceGet) | **Get** /gitops/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID} | Get information about specified GPG public key from the server
 
 # **AgentGPGKeyServiceCreate**
 > GpgkeysGnuPgPublicKeyCreateResponse AgentGPGKeyServiceCreate(ctx, body, agentIdentifier, optional)

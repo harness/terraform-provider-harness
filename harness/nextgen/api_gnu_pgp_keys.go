@@ -55,7 +55,7 @@ func (a *GnuPGPKeysApiService) AgentGPGKeyServiceCreate(ctx context.Context, bod
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/gpgkeys"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -186,7 +186,7 @@ func (a *GnuPGPKeysApiService) AgentGPGKeyServiceDelete(ctx context.Context, age
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.keyID"+"}", fmt.Sprintf("%v", queryKeyID), -1)
 
@@ -315,7 +315,7 @@ func (a *GnuPGPKeysApiService) AgentGPGKeyServiceGet(ctx context.Context, agentI
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/gpgkeys/{query.keyID}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"query.keyID"+"}", fmt.Sprintf("%v", queryKeyID), -1)
 

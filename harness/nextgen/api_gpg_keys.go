@@ -61,7 +61,7 @@ func (a *GPGKeysApiService) GnuPGKeyServiceListGPGKeys(ctx context.Context, acco
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/gitops/api/api/v1/gpgkeys"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/gpgkeys"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

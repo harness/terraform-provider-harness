@@ -4,7 +4,7 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**GnuPGKeyServiceListGPGKeys**](GPGKeysApi.md#GnuPGKeyServiceListGPGKeys) | **Get** /gitops/api/api/v1/gpgkeys | List all available repository certificates
+[**GnuPGKeyServiceListGPGKeys**](GPGKeysApi.md#GnuPGKeyServiceListGPGKeys) | **Get** /gitops/api/v1/gpgkeys | List all available repository certificates
 
 # **GnuPGKeyServiceListGPGKeys**
 > Servicev1GnuPgPublicKeyList GnuPGKeyServiceListGPGKeys(ctx, accountIdentifier, optional)
