@@ -9,7 +9,6 @@
  */
 package swagger
 
-type GpgkeysGnuPgPublicKeyList struct {
-	Metadata *V1ListMeta `json:"metadata,omitempty"`
-	Items []GpgkeysGnuPgPublicKey `json:"items,omitempty"`
+type GpgkeysGnuPgPublicKeyQuery struct {
+	KeyID string `json:"keyID,omitempty"`
 }
