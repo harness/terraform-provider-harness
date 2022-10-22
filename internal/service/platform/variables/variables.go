@@ -22,6 +22,11 @@ func ResourceVariables() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"type": {
 				Description: "Type of Variable",
 				Type:        schema.TypeString,

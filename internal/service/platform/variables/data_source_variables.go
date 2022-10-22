@@ -19,6 +19,11 @@ func DataSourceVariables() *schema.Resource {
 		ReadContext: dataSourceVariablesRead,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"type": {
 				Description: "Type of Variable",
 				Type:        schema.TypeString,
