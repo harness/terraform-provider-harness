@@ -94,6 +94,12 @@ func Provider(version string) func() *schema.Provider {
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.PlatformApiKey.String(), nil),
 				},
+				"bearer_token": {
+					Description: fmt.Sprintf("The HTTP bearer token for the Harness next gen platform. This can also be set using the `%s` environment variable.", helpers.EnvVars.BearerToken.String()),
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.BearerToken.String(), nil),
+				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"harness_platform_connector_appdynamics":        connector.DatasourceConnectorAppDynamics(),
@@ -283,10 +289,11 @@ func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return &internal.Session{
-			AccountId: d.Get("account_id").(string),
-			Endpoint:  d.Get("endpoint").(string),
-			CDClient:  getCDClient(d, version),
-			PLClient:  getPLClient(d, version),
+			AccountId:   d.Get("account_id").(string),
+			Endpoint:    d.Get("endpoint").(string),
+			CDClient:    getCDClient(d, version),
+			PLClient:    getPLClient(d, version),
+			BearerToken: d.Get("bearer_token").(string),
 		}, nil
 	}
 }

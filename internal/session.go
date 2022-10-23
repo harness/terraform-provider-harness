@@ -8,10 +8,11 @@ import (
 )
 
 type Session struct {
-	AccountId string
-	Endpoint  string
-	CDClient  *cd.ApiClient
-	PLClient  *nextgen.APIClient
+	AccountId   string
+	Endpoint    string
+	BearerToken string // HTTP Bearer token that needs to be passed per-operation for some calls
+	CDClient    *cd.ApiClient
+	PLClient    *nextgen.APIClient
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
@@ -23,5 +24,10 @@ func (s *Session) GetPlatformClientWithContext(ctx context.Context) (*nextgen.AP
 		ctx = context.Background()
 	}
 
-	return s.PLClient.WithAuthContext(ctx)
+	client, ctx := s.PLClient.WithAuthContext(ctx)
+	if s.BearerToken != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAccessToken, s.BearerToken)
+	}
+
+	return client, ctx
 }

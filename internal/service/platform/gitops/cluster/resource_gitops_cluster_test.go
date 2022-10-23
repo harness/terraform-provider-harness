@@ -57,12 +57,6 @@ func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Se
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
-	if c.ApiKey != "" {
-		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
-			Key: c.ApiKey,
-		})
-	}
-
 	agentIdentifier := r.Primary.Attributes["agent_id"]
 	identifier := r.Primary.Attributes["identifier"]
 
