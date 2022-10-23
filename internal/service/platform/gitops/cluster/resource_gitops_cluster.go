@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/antihax/optional"
-	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -437,7 +436,7 @@ func ResourceGitopsCluster() *schema.Resource {
 
 func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	// ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
 	var agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier, identifier string
 	accountIdentifier = c.AccountId
@@ -479,7 +478,7 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 
 func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	// ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
@@ -514,7 +513,7 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	// ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
@@ -542,7 +541,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 
 func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	// ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)

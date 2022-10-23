@@ -1,13 +1,11 @@
 package agent_test
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"testing"
 
 	"github.com/antihax/optional"
-	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -54,7 +52,7 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Agent, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+	// ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
 	agentIdentifier := r.Primary.Attributes["identifier"]
 
