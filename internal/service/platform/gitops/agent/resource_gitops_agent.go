@@ -99,6 +99,7 @@ func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta
 			Key: c.ApiKey,
 		})
 	}
+	return diag.Errorf("Platform API key debug: %v", c.ApiKey)
 
 	createAgentRequest := buildCreateUpdateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
@@ -127,6 +128,7 @@ func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta i
 			Key: c.ApiKey,
 		})
 	}
+	return diag.Errorf("Platform API key debug: %v", c.ApiKey)
 
 	agentIdentifier := d.Get("identifier").(string)
 
@@ -160,6 +162,7 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 			Key: c.ApiKey,
 		})
 	}
+	return diag.Errorf("Platform API key debug: %v", c.ApiKey)
 
 	agentIdentifier := d.Get("identifier").(string)
 	updateAgentRequest := buildCreateUpdateAgentRequest(d)
@@ -189,6 +192,7 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 			Key: c.ApiKey,
 		})
 	}
+	return diag.Errorf("Platform API key debug: %v", c.ApiKey)
 
 	agentIdentifier := d.Get("identifier").(string)
 
