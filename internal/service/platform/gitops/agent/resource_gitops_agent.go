@@ -99,7 +99,6 @@ func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta
 			Key: c.ApiKey,
 		})
 	}
-	return diag.Errorf("Platform API key debug: %v", c.ApiKey)
 
 	createAgentRequest := buildCreateUpdateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
