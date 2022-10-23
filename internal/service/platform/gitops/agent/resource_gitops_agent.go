@@ -93,6 +93,13 @@ func ResourceGitopsAgent() *schema.Resource {
 func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	createAgentRequest := buildCreateUpdateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerCreate(ctx, *createAgentRequest)
@@ -114,6 +121,13 @@ func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("identifier").(string)
 
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
@@ -140,6 +154,13 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("identifier").(string)
 	updateAgentRequest := buildCreateUpdateAgentRequest(d)
 	updateAgentRequest.AccountIdentifier = c.AccountId
@@ -162,6 +183,13 @@ func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("identifier").(string)
 
 	_, httpResp, err := c.AgentApi.AgentServiceForServerDelete(ctx, agentIdentifier, &nextgen.AgentsApiAgentServiceForServerDeleteOpts{

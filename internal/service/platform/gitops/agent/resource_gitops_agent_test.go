@@ -55,6 +55,13 @@ func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Ag
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := r.Primary.Attributes["identifier"]
 
 	resp, _, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{

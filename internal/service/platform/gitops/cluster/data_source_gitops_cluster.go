@@ -433,6 +433,13 @@ func DataSourceGitopsCluster() *schema.Resource {
 func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	var queryName, queryServer string

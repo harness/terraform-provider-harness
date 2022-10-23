@@ -88,6 +88,13 @@ func DataSourceGitopsAgent() *schema.Resource {
 func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("identifier").(string)
 
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{

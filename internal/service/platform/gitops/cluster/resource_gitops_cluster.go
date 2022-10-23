@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -437,6 +438,13 @@ func ResourceGitopsCluster() *schema.Resource {
 func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	var agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier, identifier string
 	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("agent_id"); ok {
@@ -478,6 +486,13 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	var queryName, queryServer string
@@ -512,6 +527,13 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
@@ -539,6 +561,13 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 func resourceGitopsClusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if c.ApiKey != "" {
+		ctx = context.WithValue(ctx, nextgen.ContextAPIKey, nextgen.APIKey{
+			Key: c.ApiKey,
+		})
+	}
+
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	_, httpResp, err := c.ClustersApi.AgentClusterServiceDelete(ctx, agentIdentifier, identifier, &nextgen.ClustersApiAgentClusterServiceDeleteOpts{
