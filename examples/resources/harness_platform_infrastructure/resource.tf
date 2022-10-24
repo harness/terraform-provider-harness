@@ -1,4 +1,4 @@
-resource "harness_platform_infrastructure" "test" {
+resource "harness_platform_infrastructure" "example" {
   identifier      = "identifier"
   name            = "name"
   org_id          = "orgIdentifer"

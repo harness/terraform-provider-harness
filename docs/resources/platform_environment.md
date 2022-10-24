@@ -13,7 +13,7 @@ Resource for creating a Harness environment.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_environment" "test" {
+resource "harness_platform_environment" "example" {
   identifier = "identifier"
   name       = "name"
   org_id     = "org_id"
