@@ -43,7 +43,7 @@ func TestAccResourceInfrastructure(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.InfrastructureResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})

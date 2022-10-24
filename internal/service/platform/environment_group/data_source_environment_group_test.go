@@ -48,7 +48,7 @@ func testAccDataSourceEnvironmentGroup(id string, name string) string {
 
 		resource "harness_platform_environment_group" "test" {
 			identifier = "%[1]s"
-			org_id = harness_platform_project.test.org_id
+			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			color = "#0063F7"
 			yaml = <<-EOT
@@ -56,7 +56,7 @@ func testAccDataSourceEnvironmentGroup(id string, name string) string {
 			                 name: "%[1]s"
 			                 identifier: "%[1]s"
 			                 description: "temp"
-			                 orgIdentifier: ${harness_platform_project.test.org_id}
+			                 orgIdentifier: ${harness_platform_organization.test.id}
 			                 projectIdentifier: ${harness_platform_project.test.id}
 			                 envIdentifiers: []
 		  EOT
@@ -64,8 +64,8 @@ func testAccDataSourceEnvironmentGroup(id string, name string) string {
 
 		data "harness_platform_environment_group" "test" {
 			identifier = "%[1]s"
-			org_id = harness_platform_environment_group.test.org_id
-			project_id = harness_platform_environment_group.test.project_id
+			org_id = harness_platform_environment_group.test.id
+			project_id = harness_platform_environment_group.test.id
 		}
 `, id, name)
 }
