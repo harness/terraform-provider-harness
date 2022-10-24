@@ -13,7 +13,7 @@ Data source for retrieving a Harness environment group.
 ## Example Usage
 
 ```terraform
-data "harness_platform_environment_group" "test" {
+data "harness_platform_environment_group" "example" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"

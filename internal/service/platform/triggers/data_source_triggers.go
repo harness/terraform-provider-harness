@@ -15,6 +15,11 @@ func DataSourceTriggers() *schema.Resource {
 
 		ReadContext: dataTriggersRead,
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the trigger.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"target_id": {
 				Description: "Identifier of the target pipeline",
 				Type:        schema.TypeString,

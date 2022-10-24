@@ -20,7 +20,6 @@ resource "harness_platform_triggers" "example" {
   name       = "name"
   target_id  = "pipelineIdentifier"
   yaml       = <<-EOT
-  ---
   trigger:
     name: "name"
     identifier: "identifier"
@@ -64,6 +63,7 @@ resource "harness_platform_triggers" "example" {
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
 - `target_id` (String) Identifier of the target pipeline
+- `yaml` (String) trigger yaml
 
 ### Optional
 
@@ -71,7 +71,6 @@ resource "harness_platform_triggers" "example" {
 - `if_match` (String) if-Match
 - `ignore_error` (Boolean) ignore error default false
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `yaml` (String) trigger yaml
 
 ### Read-Only
 
