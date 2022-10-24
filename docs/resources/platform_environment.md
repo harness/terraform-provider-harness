@@ -75,8 +75,8 @@ resource "harness_platform_environment" "test" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `type` (String) The type of environment. Valid values are PreProduction, Production
 
 ### Optional

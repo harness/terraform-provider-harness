@@ -14,9 +14,9 @@ Data source for retrieving a Harness pipeline.
 
 ```terraform
 data "harness_platform_pipeline" "test" {
-  identifier = harness_platform_pipeline.test.id
-  org_id     = harness_platform_pipeline.test.org_id
-  project_id = harness_platform_pipeline.test.project_id
+  identifier = "identifier"
+  org_id     = "org_id"
+  project_id = "project_id"
 }
 ```
 

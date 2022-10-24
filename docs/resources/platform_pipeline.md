@@ -15,8 +15,8 @@ Resource for creating a Harness pipeline.
 ```terraform
 resource "harness_platform_pipeline" "example" {
   identifier = "identifier"
-  org_id     = harness_platform_project.test.org_id
-  project_id = harness_platform_project.test.id
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
   name       = "name"
   yaml       = <<-EOT
       pipeline:
