@@ -13,7 +13,7 @@ func TestAccDataSourceEnvironmentServiceOverrides(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	resourceName := "data.harness_environment_service_overrides.test"
+	resourceName := "data.harness_platform_environment_service_overrides.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -93,7 +93,7 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 		  EOT
 		}
 
-		resource "harness_environment_service_overrides" "test" {
+		resource "harness_platform_environment_service_overrides" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
@@ -135,8 +135,8 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 		  EOT
 		}
 
-		data "harness_environment_service_overrides" "test" {
-			identifier = harness_environment_service_overrides.test.id
+		data "harness_platform_environment_service_overrides" "test" {
+			identifier = harness_platform_environment_service_overrides.test.id
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			service_id = harness_platform_service.test.id

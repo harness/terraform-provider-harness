@@ -1,13 +1,13 @@
-resource "harness_environment_service_overrides" "test" {
+resource "harness_platform_environment_service_overrides" "example" {
   identifier = "%[1]s"
-  org_id     = harness_platform_organization.test.id
-  project_id = harness_platform_project.test.id
-  env_id     = harness_platform_environment.test.id
-  service_id = harness_platform_service.test.id
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
+  env_id     = "environmentIdentifier"
+  service_id = "serviceIdentifier"
   yaml       = <<-EOT
         serviceOverrides:
-          environmentRef: ${harness_platform_environment.test.id}
-          serviceRef: ${harness_platform_service.test.id}
+          environmentRef: environmentIdentifier
+          serviceRef: serviceIdentifier
           variables:
            - name: asda
              type: String

@@ -17,7 +17,7 @@ func TestAccEnvServiceOverrides(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
 	expectedid := id + "_" + id
-	resourceName := "harness_environment_service_overrides.test"
+	resourceName := "harness_platform_environment_service_overrides.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -136,7 +136,7 @@ func testAccEnvServiceOverrides(id string, name string) string {
 		  EOT
 		}
 
-		resource "harness_environment_service_overrides" "test" {
+		resource "harness_platform_environment_service_overrides" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
