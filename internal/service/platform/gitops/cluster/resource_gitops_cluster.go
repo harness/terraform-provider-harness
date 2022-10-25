@@ -99,6 +99,7 @@ func ResourceGitopsCluster() *schema.Resource {
 							Description: "Fields which are updated.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -243,6 +244,7 @@ func ResourceGitopsCluster() *schema.Resource {
 																Description: "Arguments to pass to the command when executing it.",
 																Type:        schema.TypeList,
 																Optional:    true,
+																Computed:    true,
 																Elem: &schema.Schema{
 																	Type: schema.TypeString,
 																},
@@ -280,6 +282,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Description: "list of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.",
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -641,8 +644,12 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 			cluster["info"] = clusterInfoList
 		}
 		cluster["project"] = cl.Cluster.Project
-		cluster["annotations"] = cl.Cluster.Annotations
-		cluster["labels"] = cl.Cluster.Labels
+		if cl.Cluster.Annotations != nil {
+			cluster["annotations"] = cl.Cluster.Annotations
+		}
+		if cl.Cluster.Labels != nil {
+			cluster["labels"] = cl.Cluster.Labels
+		}
 		clusterList = append(clusterList, cluster)
 		request["cluster"] = clusterList
 		requestList = append(requestList, request)
@@ -762,8 +769,8 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					}
 					if configExecProviderConfig["args"] != nil {
 						argsString := make([]string, len(configExecProviderConfig["args"].([]interface{})))
-						for i, v := range configExecProviderConfig["args"].([]interface{}) {
-							argsString[i] = v.(string)
+						for _, v := range configExecProviderConfig["args"].([]interface{}) {
+							argsString = append(argsString, v.(string))
 						}
 						clusterDetails.Config.ExecProviderConfig.Args = argsString
 					}
@@ -789,8 +796,8 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 
 			if requestCluster["namespaces"] != nil {
 				namespaces := make([]string, len(requestCluster["namespaces"].([]interface{})))
-				for i, v := range requestCluster["namespaces"].([]interface{}) {
-					namespaces[i] = v.(string)
+				for _, v := range requestCluster["namespaces"].([]interface{}) {
+					namespaces = append(namespaces, v.(string))
 				}
 				clusterDetails.Namespaces = namespaces
 			}

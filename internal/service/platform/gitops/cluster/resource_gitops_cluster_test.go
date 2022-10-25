@@ -103,7 +103,7 @@ func testAccResourceGitopsCluster(id string, accountId string, name string, agen
 			agent_id = "%[4]s"
 
  			request {
-				upsert = false
+				upsert = true
 				cluster {
 					server = "https://kubernetes.default.svc"
 					name = "%[5]s"
@@ -115,6 +115,11 @@ func testAccResourceGitopsCluster(id string, accountId string, name string, agen
 					}
 
 				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert,
+				]
 			}
 		}
 		`, id, accountId, name, agentId, clusterName)

@@ -68,6 +68,11 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 
 				}
 			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert,
+				]
+			}
 		}
 		data "harness_platform_gitops_cluster" "test" {
 			identifier = harness_platform_gitops_cluster.test.id
