@@ -86,8 +86,6 @@ func testAccResourceGitopsGnupg(id string, accountId string, name string, agentI
 	return fmt.Sprintf(`
 		resource "harness_platform_gitops_gnupg" "test" {
 			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
 
  			request {

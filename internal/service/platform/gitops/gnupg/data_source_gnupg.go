@@ -111,7 +111,7 @@ func dataSourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil {
+	if &resp == nil || resp.Content == nil || &resp.Content[0] == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil

@@ -32,6 +32,7 @@ import (
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
+	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -133,6 +134,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_applications":           gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.DataSourceGitopsRepository(),
+				"harness_platform_gitops_gnupg":                  gitops_gnupg.DataSourceGitopsGnupg(),
 				"harness_platform_infrastructure":                pl_infrastructure.DataSourceInfrastructure(),
 				"harness_environment_service_overrides":          pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                     input_set.DataSourceInputSet(),
@@ -199,6 +201,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_applications":           gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.ResourceGitopsRepositories(),
+				"harness_platform_gitops_gnupg":                  gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_infrastructure":                pl_infrastructure.ResourceInfrastructure(),
 				"harness_environment_service_overrides":          pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                     input_set.ResourceInputSet(),

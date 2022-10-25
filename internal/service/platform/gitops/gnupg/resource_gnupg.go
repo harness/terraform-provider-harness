@@ -46,13 +46,13 @@ func ResourceGitopsGnupg() *schema.Resource {
 			"request": {
 				Description: "GnuPGPublicKey is a representation of a GnuPG public key",
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
 							Description: "if the gnupg should be upserted.",
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Required:    true,
 						},
 						"publickey": {
 							Description: "publickey details.",
@@ -63,32 +63,32 @@ func ResourceGitopsGnupg() *schema.Resource {
 									"key_id": {
 										Description: "KeyID specifies the key ID, in hexadecimal string format.",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 									},
 									"fingerprint": {
 										Description: "Fingerprint is the fingerprint of the key",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 									},
 									"owner": {
 										Description: "Owner holds the owner identification, e.g. a name and e-mail address",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 									},
 									"trust": {
 										Description: "Trust holds the level of trust assigned to this key",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 									},
 									"sub_type": {
 										Description: "SubType holds the key's sub type",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Computed:    true,
 									},
 									"key_data": {
 										Description: "KeyData holds the raw key data, in base64 encoded format",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 									},
 								},
 							},
@@ -136,19 +136,19 @@ func resourceGitopsGnupgCreate(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	// respRead, httpRespRead, errRead := c.GnuPGPKeysApi.GnuPGKeyServiceListGPGKeys(ctx, c.AccountId, &nextgen.GPGKeysApiGnuPGKeyServiceListGPGKeysOpts{})
+	respRead, httpRespRead, errRead := c.GnuPGPKeysApi.GnuPGKeyServiceListGPGKeys(ctx, c.AccountId, &nextgen.GPGKeysApiGnuPGKeyServiceListGPGKeysOpts{})
 
-	// if errRead != nil {
-	// 	return helpers.HandleApiError(errRead, d, httpRespRead)
-	// }
-	// // Soft delete lookup error handling
-	// // https://harness.atlassian.net/browse/PL-23765
-	// if &respRead == nil || respRead.Content == nil || &respRead.Content[0] == nil {
-	// 	d.SetId("")
-	// 	d.MarkNewResource()
-	// 	return nil
-	// }
-	// readGnupgKey(d, respRead.Content[0].GnuPGPublicKey)
+	if errRead != nil {
+		return helpers.HandleApiError(errRead, d, httpRespRead)
+	}
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if &respRead == nil || respRead.Content == nil || &respRead.Content[0] == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+	readGnupgKey(d, respRead.Content[0].GnuPGPublicKey)
 	return nil
 }
 
@@ -192,7 +192,7 @@ func resourceGitopsGnupgDelete(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func readGnupgKey(d *schema.ResourceData, gpgkey *nextgen.GpgkeysGnuPgPublicKey) {
-	d.SetId(gpgkey.KeyID)
+	// d.SetId(gpgkey.KeyID)
 	request := map[string]interface{}{}
 	requestList := []interface{}{}
 	publickey := map[string]interface{}{}
