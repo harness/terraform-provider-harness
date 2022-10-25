@@ -5,7 +5,6 @@ resource "harness_platform_triggers" "example" {
   name       = "name"
   target_id  = "pipelineIdentifier"
   yaml       = <<-EOT
-  ---
   trigger:
     name: "name"
     identifier: "identifier"

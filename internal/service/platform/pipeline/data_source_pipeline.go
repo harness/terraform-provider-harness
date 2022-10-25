@@ -17,6 +17,11 @@ func DataSourcePipeline() *schema.Resource {
 		ReadContext: dataSourcePipelineRead,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the pipeline.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"yaml": {
 				Description: "YAML of the pipeline.",
 				Type:        schema.TypeString,
