@@ -60,7 +60,6 @@ func DataSourceVariables() *schema.Resource {
 							Description:  "Type of Value of the Variable. For now only FIXED is supported",
 							Type:         schema.TypeString,
 							Computed:     true,
-							ValidateFunc: validation.StringInSlice([]string{"FIXED"}, false),
 						},
 						"fixed_value": {
 							Description: "FixedValue of the variable",
