@@ -76,7 +76,7 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 					server = "https://34.121.144.229"
 					name = "%[5]s"
 					config {
-						bearer_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImpsQzlJUENCTllITzBBMXg1Rzl3bXgzUWtJRk1yVERDYlIxY1BHTGdtSHcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tNXBxNHMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjEzZmFhNjVhLTBjNmUtNDI2MC05MTFhLWE4MTMwNGQxNzZiYSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.lVyymRAZJLsfrO6jZNJHsZxYfx75nd8mf0cEzTL7Djr_A1ChuimFm2GjnAte6O7yT7vMwf3ITbnuCTxYO-qqtQbCWBh6DFdM9PLq2lTVkKFx-6hv8J7D9poXTCUhDWYdh98Od8eg5JkL9Zz0Xf2M1p4p-QAKs_TmjhDALR2X8DNqfztB7JuPirykyPu0DroIsEkMlcsDDvn9SD0nFg_pKHLgB1AEAPGApwyzf5A37wHCOrFAsyIJ2OSyKa-ul5ZW8hM9HOOjxofOQUJEaWUOXauS1wFdTSYxDfWPuLD5njRPG21E0OxEwl7jSzZ49t7niA3jJiIvGSEO-T0ANGOJwQ"
+						bearer_token = "abc"
 						tls_client_config {
 							insecure = true
 						}
