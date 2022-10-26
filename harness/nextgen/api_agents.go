@@ -562,9 +562,9 @@ func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Contex
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		//err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
+			return string(localVarBody), localVarHttpResponse, err
 		}
 	}
 
