@@ -10,7 +10,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func DataSourceVariables() *schema.Resource {
@@ -60,7 +59,6 @@ func DataSourceVariables() *schema.Resource {
 							Description:  "Type of Value of the Variable. For now only FIXED is supported",
 							Type:         schema.TypeString,
 							Computed:     true,
-							ValidateFunc: validation.StringInSlice([]string{"FIXED"}, false),
 						},
 						"fixed_value": {
 							Description: "FixedValue of the variable",
