@@ -1,6 +1,6 @@
 
-<a name="0.2.15"></a>
-## 0.2.15 (2022-10-25)
+<a name="0.2.16"></a>
+## 0.2.16 (2022-10-26)
 
 ### Add
 
@@ -13,14 +13,14 @@
 
 ### Adding
 
+* Adding dto files
+
+### Adding
+
 * adding test
 * adding better name
 * adding support for export executions
 * adding delegate resource
-
-### Adding
-
-* Adding dto files
 
 ### Catch
 
@@ -54,10 +54,6 @@
 
 * Handling different kinds of errors
 
-### Implemented
-
-* Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
-
 ### Merge
 
 * Merge branch 'main' into CDS-44308-gitops-applications-api
@@ -70,6 +66,8 @@
 
 ### Release
 
+* Release version 0.2.15 10-26-2022
+* Release v0.2.15
 * Release version 0.2.14 10-21-2022
 * Release v0.2.14
 * Release version 0.2.13 10-19-2022
@@ -113,8 +111,6 @@
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
 * Release v0.1.29
-* Release version 0.1.28 05-27-2022
-* Release v0.1.28
 
 ### Resource
 
@@ -141,6 +137,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#205](https://github.com/harness/harness-go-sdk/issues/205) from harness/CDS-45566-add-gitops-agent-deploy-api
 * Merge pull request [#196](https://github.com/harness/harness-go-sdk/issues/196) from harness/CDS-44308-gitops-applications-api
 * Merge pull request [#198](https://github.com/harness/harness-go-sdk/issues/198) from harness/SPG-561_1
 * Merge pull request [#194](https://github.com/harness/harness-go-sdk/issues/194) from harness/CDS-44311-gitops-repositories-api
