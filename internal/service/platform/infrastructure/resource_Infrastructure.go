@@ -22,7 +22,7 @@ func ResourceInfrastructure() *schema.Resource {
 		UpdateContext: resourceInfrastructureCreateOrUpdate,
 		DeleteContext: resourceInfrastructureDelete,
 		CreateContext: resourceInfrastructureCreateOrUpdate,
-		Importer:      helpers.InfrastructureResourceImporter,
+		Importer:      helpers.EnvRelatedResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {

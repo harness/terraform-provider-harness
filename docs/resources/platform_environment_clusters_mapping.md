@@ -13,7 +13,7 @@ Resource for mapping environment with Harness Clusters.
 ## Example Usage
 
 ```terraform
-resource "harness_platform_environment_clusters_mapping" "test" {
+resource "harness_platform_environment_clusters_mapping" "example" {
   identifier = "identifier"
   org_id     = "orgIdentifer"
   project_id = "projectIdentifier"
