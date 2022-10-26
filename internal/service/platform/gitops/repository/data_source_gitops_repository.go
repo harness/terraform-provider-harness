@@ -12,7 +12,7 @@ import (
 
 func DataSourceGitopsRepository() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data Source for Harness Gitops Repositories.",
+		Description: "Data Source for fetching a Harness GitOps Repository.",
 
 		ReadContext: dataSourceGitOpsRepositoryRead,
 

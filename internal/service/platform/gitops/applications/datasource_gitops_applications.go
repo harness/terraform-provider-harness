@@ -13,7 +13,7 @@ import (
 
 func DataSourceGitopsApplications() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for creating a Harness Gitops Application.",
+		Description: "Datasource for fetching a Harness Gitops Application.",
 		ReadContext: datasourceGitopsApplicationRead,
 		Schema: map[string]*schema.Schema{
 			"account_id": {

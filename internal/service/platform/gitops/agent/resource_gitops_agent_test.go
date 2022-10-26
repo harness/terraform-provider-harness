@@ -88,12 +88,12 @@ func testAccResourceGitopsAgent(agentId string, accountId string, agentName stri
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[3]s"
 		}
 
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[3]s"
 			org_id = harness_platform_organization.test.id
 		}
 		resource "harness_platform_gitops_agent" "test" {
@@ -104,9 +104,9 @@ func testAccResourceGitopsAgent(agentId string, accountId string, agentName stri
 			name = "%[3]s"
 			type = "CONNECTED_ARGO_PROVIDER"
 			metadata {
-        namespace = "%[4]s"
-        high_availability = true
-    	}
+				namespace = "%[4]s"
+        		high_availability = false
+    		}
 		}
 		`, agentId, accountId, agentName, namespace)
 }

@@ -2,9 +2,7 @@ package agent
 
 import (
 	"context"
-
 	"github.com/antihax/optional"
-	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -12,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceGitopsAgent() *schema.Resource {
+func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Datasource for fetching a Harness Gitops Agents.",
 
-		ReadContext: dataSourceGitopsAgentRead,
+		ReadContext: dataSourceGitopsAgentDeployYamlRead,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -27,72 +25,41 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"project_id": {
 				Description: "project identifier of the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "organization identifier of the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"identifier": {
 				Description: "identifier of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"name": {
-				Description: "name of the agent.",
+			"namespace": {
+				Description: "namespace of the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"description": {
-				Description: "description of the agent.",
+			"yaml": {
+				Description: "deploy yaml of the agent.",
 				Type:        schema.TypeString,
 				Computed:    true,
-			},
-			"type": {
-				Description: "type of the agent.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"tags": {
-				Description: "tags for the agent.",
-				Type:        schema.TypeMap,
-				Computed:    true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"metadata": {
-				Description: "tags for the agent.",
-				Type:        schema.TypeList,
-				Required:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"namespace": {
-							Description: "namespace of the agent.",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-						"high_availability": {
-							Description: "If the agent should be high availability.",
-							Type:        schema.TypeBool,
-							Optional:    true,
-						},
-					}},
 			},
 		},
 	}
 	return resource
 }
 
-func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("identifier").(string)
 
-	resp, httpResp, err := c.AgentApi.AgentServiceForServerGet(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetOpts{
+	resp, httpResp, err := c.AgentApi.AgentServiceForServerGetDeployYaml(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetDeployYamlOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		Namespace:         optional.NewString(d.Get("namespace").(string)),
 	})
 
 	if err != nil {
@@ -106,6 +73,11 @@ func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta
 		d.MarkNewResource()
 		return nil
 	}
-	readAgent(d, &resp)
+	readAgentYaml(agentIdentifier, d, resp)
 	return nil
+}
+
+func readAgentYaml(agentIdentifier string, d *schema.ResourceData, yaml string) {
+	d.SetId(agentIdentifier)
+	d.Set("yaml", yaml)
 }

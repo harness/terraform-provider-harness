@@ -14,7 +14,7 @@ import (
 
 func DataSourceGitopsCluster() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retreiving a Harness Gitops Cluster.",
+		Description: "Data source for fetching a Harness Gitops Cluster.",
 		ReadContext: dataSourceGitopsClusterRead,
 
 		Schema: map[string]*schema.Schema{
