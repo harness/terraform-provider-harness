@@ -54,5 +54,6 @@ type ConnectorInfo struct {
 	Splunk           *SplunkConnector         `json:"-"`
 	SumoLogic        *SumoLogicConnectorDto   `json:"-"`
 	Vault            *VaultConnector          `json:"-"`
+	GcpSecretManager *GcpSecretManager        `json:"-"`
 	Spec             json.RawMessage          `json:"spec"`
 }
