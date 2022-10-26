@@ -116,7 +116,7 @@ func GitopsAgentResourceImportStateIdFunc(resourceName string) resource.ImportSt
 		orgId := primary.Attributes["org_id"]
 		projId := primary.Attributes["project_id"]
 		agentId := primary.Attributes["agent_id"]
-		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, agentId), nil
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, agentId, id), nil
 	}
 }
 

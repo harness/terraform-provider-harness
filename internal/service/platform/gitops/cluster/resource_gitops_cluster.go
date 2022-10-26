@@ -30,7 +30,7 @@ func ResourceGitopsCluster() *schema.Resource {
 			"project_id": {
 				Description: "project identifier of the cluster.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "organization identifier of the cluster.",
@@ -40,7 +40,7 @@ func ResourceGitopsCluster() *schema.Resource {
 			"agent_id": {
 				Description: "agent identifier of the cluster.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"identifier": {
 				Description: "identifier of the cluster.",
@@ -158,7 +158,7 @@ func ResourceGitopsCluster() *schema.Resource {
 									"config": {
 										Description: "Cluster Config",
 										Type:        schema.TypeList,
-										Optional:    true,
+										Required:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"username": {

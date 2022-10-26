@@ -26,7 +26,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 			"project_id": {
 				Description: "project identifier of the cluster.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "organization identifier of the cluster.",
@@ -36,7 +36,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 			"agent_id": {
 				Description: "agent identifier of the cluster.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"identifier": {
 				Description: "identifier of the cluster.",

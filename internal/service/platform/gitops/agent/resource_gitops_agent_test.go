@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceGitopsAgent(t *testing.T) {
+func TestAccResourceGitopsAgent_AccountLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_agent.test"
@@ -28,13 +28,49 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsAgent(id, accountId, agentName, namespace),
+				Config: testAccResourceGitopsAgentAccountLevel(id, accountId, agentName, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", agentName),
 				),
 			},
 			{
-				Config: testAccResourceGitopsAgent(id, accountId, agentName, updatedNamespace),
+				Config: testAccResourceGitopsAgentAccountLevel(id, accountId, agentName, updatedNamespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "metadata.0.namespace", updatedNamespace),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"account_id", "type"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+
+func TestAccResourceGitopsAgent_ProjectLevel(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resourceName := "harness_platform_gitops_agent.test"
+	agentName := id
+	namespace := "terraform-test"
+	updatedNamespace := namespace + "-updated"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsAgentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsAgentProjectLevel(id, accountId, agentName, namespace),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", agentName),
+				),
+			},
+			{
+				Config: testAccResourceGitopsAgentProjectLevel(id, accountId, agentName, updatedNamespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "metadata.0.namespace", updatedNamespace),
 				),
@@ -84,7 +120,31 @@ func testAccResourceGitopsAgentDestroy(resourceName string) resource.TestCheckFu
 
 }
 
-func testAccResourceGitopsAgent(agentId string, accountId string, agentName string, namespace string) string {
+func testAccResourceGitopsAgentAccountLevel(agentId string, accountId string, agentName string, namespace string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
+		resource "harness_platform_gitops_agent" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			name = "%[3]s"
+			type = "CONNECTED_ARGO_PROVIDER"
+			metadata {
+				namespace = "%[4]s"
+        		high_availability = false
+    		}
+		}
+		`, agentId, accountId, agentName, namespace)
+}
+func testAccResourceGitopsAgentProjectLevel(agentId string, accountId string, agentName string, namespace string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"

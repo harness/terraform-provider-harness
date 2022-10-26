@@ -21,46 +21,46 @@ func ResourceGitopsAgent() *schema.Resource {
 		ReadContext:   resourceGitopsAgentRead,
 		UpdateContext: resourceGitopsAgentUpdate,
 		DeleteContext: resourceGitopsAgentDelete,
-		Importer:      helpers.ProjectResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "account identifier of the agent.",
+				Description: "Account Identifier for the Agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "org identifier of the agent.",
+				Description: "Organization Identifier for the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"project_id": {
-				Description: "org identifier of the agent.",
+				Description: "Project Identifier for the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"identifier": {
-				Description: "identifier of the agent.",
+				Description: "identifier for the gitops-agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"name": {
-				Description: "name of the agent.",
+				Description: "A human readable name for the gitops-agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"description": {
-				Description: "description of the agent.",
+				Description: "A human readable description for the gitops-agent",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"type": {
-				Description: "type of the agent.",
+				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"CONNECTED_ARGO_PROVIDER\" \"MANAGED_ARGO_PROVIDER\"",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"tags": {
-				Description: "tags for the agent.",
+				Description: "Tags that help organize gitops-agents",
 				Type:        schema.TypeMap,
 				Optional:    true,
 				Elem: &schema.Schema{
@@ -68,18 +68,18 @@ func ResourceGitopsAgent() *schema.Resource {
 				},
 			},
 			"metadata": {
-				Description: "tags for the agent.",
+				Description: "MetaData for the agent.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
-							Description: "namespace of the agent.",
+							Description: "The k8s namespace that this agent resides in.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"high_availability": {
-							Description: "If the agent should be high availability.",
+							Description: "Whether or not this deployment should be deployed using deploy-ha.yaml",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},

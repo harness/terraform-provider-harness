@@ -25,7 +25,7 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsCluster(id, accountId, name, agentId, clusterName),
@@ -49,7 +49,6 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 			},
 		},
 	})
-
 }
 
 func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Servicev1Cluster, error) {
