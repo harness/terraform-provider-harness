@@ -27,12 +27,12 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"project_id": {
 				Description: "project identifier of the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "organization identifier of the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"identifier": {
 				Description: "identifier of the agent.",
@@ -40,9 +40,9 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "name of the agent.",
+				Description: "identifier of the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"description": {
 				Description: "description of the agent.",
@@ -52,7 +52,7 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"type": {
 				Description: "type of the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"tags": {
 				Description: "tags for the agent.",
@@ -65,18 +65,18 @@ func DataSourceGitopsAgent() *schema.Resource {
 			"metadata": {
 				Description: "tags for the agent.",
 				Type:        schema.TypeList,
-				Required:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
 							Description: "namespace of the agent.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"high_availability": {
 							Description: "If the agent should be high availability.",
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 						},
 					}},
 			},

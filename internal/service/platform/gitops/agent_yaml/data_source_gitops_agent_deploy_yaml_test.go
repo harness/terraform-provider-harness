@@ -1,4 +1,4 @@
-package agent_test
+package agent_yaml_test
 
 import (
 	"fmt"

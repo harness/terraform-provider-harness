@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -128,7 +129,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":  pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides": pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_gitops_agent":                  gitops_agent.DataSourceGitopsAgent(),
-				"harness_platform_gitops_agent_deploy_yaml":      gitops_agent.DataSourceGitopsAgentDeployYaml(),
+				"harness_platform_gitops_agent_deploy_yaml":      agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":           gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.DataSourceGitopsRepository(),

@@ -26,7 +26,6 @@ func TestAccDataSourceGitopsAgent(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", id),
 				),
 			},
 		},
@@ -55,7 +54,7 @@ func testAccDataSourceGitopsAgent(agentId string, name string, accountId string,
 			type = "CONNECTED_ARGO_PROVIDER"
 			metadata {
         		namespace = "terraform-test"
-        		high_availability = true
+        		high_availability = false
 			}
 		}
 
@@ -64,13 +63,6 @@ func testAccDataSourceGitopsAgent(agentId string, name string, accountId string,
 			account_id = "%[3]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
-			name = harness_platform_gitops_agent.test.name
-			type = "CONNECTED_ARGO_PROVIDER"
-			metadata {
-        		namespace = "terraform-test"
-        		high_availability = true
-			}
-
 		}
 		`, agentId, name, accountId, agentName)
 }
