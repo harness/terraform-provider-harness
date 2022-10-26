@@ -86,7 +86,7 @@ func PipelineResourceImportStateIdFunc(resourceName string) resource.ImportState
 	}
 }
 
-func InfrastructureResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
 		id := primary.ID

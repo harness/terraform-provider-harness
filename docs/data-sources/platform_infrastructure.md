@@ -13,7 +13,7 @@ Data source for retrieving a Harness Infrastructure.
 ## Example Usage
 
 ```terraform
-data "harness_platform_infrastructure" "test" {
+data "harness_platform_infrastructure" "example" {
   identifier = "identifier"
   name       = "name"
   org_id     = "org_id"

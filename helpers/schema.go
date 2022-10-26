@@ -175,7 +175,7 @@ var TriggerResourceImporter = &schema.ResourceImporter{
 	},
 }
 
-var InfrastructureResourceImporter = &schema.ResourceImporter{
+var EnvRelatedResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
 		d.Set("org_id", parts[0])
