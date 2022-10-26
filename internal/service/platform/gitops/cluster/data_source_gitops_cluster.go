@@ -83,7 +83,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 			"request": {
 				Description: "Cluster create/Update request.",
 				Type:        schema.TypeList,
-				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -143,7 +143,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 									"server": {
 										Description: "the API server URL of the Kubernetes cluster.",
 										Type:        schema.TypeString,
-										Required:    true,
+										Optional:    true,
 									},
 									"name": {
 										Description: "Name of the cluster. If omitted, will use the server address",
