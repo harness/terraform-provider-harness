@@ -45,6 +45,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -145,6 +146,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service_account":               service_account.DataSourceServiceAccount(),
 				"harness_platform_triggers":                      triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.DataSourceRoleAssignments(),
+                                "harness_platform_variables":                     variables.DataSourceVariables(),
 				"harness_platform_connector_vault":               connector.DataSourceConnectorVault(),
 				"harness_application":                            application.DataSourceApplication(),
 				"harness_current_account":                        account.DataSourceCurrentAccountConnector(),
@@ -208,6 +210,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service_account":               service_account.ResourceServiceAccount(),
 				"harness_platform_triggers":                      triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.ResourceRoleAssignments(),
+                                "harness_platform_variables":                     variables.ResourceVariables(),
 				"harness_platform_connector_vault":               connector.ResourceConnectorVault(),
 				"harness_add_user_to_group":                      user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                    application.ResourceApplicationGitSync(),
