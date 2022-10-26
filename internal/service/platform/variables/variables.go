@@ -33,7 +33,7 @@ func ResourceVariables() *schema.Resource {
 				Required:    true,
 			},
 			"spec": {
-				Description: "List of Spce Fields.",
+				Description: "List of Spec Fields.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Required:    true,
