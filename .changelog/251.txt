@@ -1,0 +1,3 @@
+```release-note:new-resource
+variables - Added variable resource in Harness terraform provider
+```

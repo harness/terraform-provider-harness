@@ -88,33 +88,10 @@ func testAccGetResourceVariables(resourceName string, state *terraform.State) (*
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
-	orgId := r.Primary.Attributes["org_id"]
-	projId := r.Primary.Attributes["project_id"]
 
 	resp, _, err := c.VariablesApi.GetVariable(ctx, c.AccountId, id, &nextgen.VariablesApiGetVariableOpts{
-		OrgIdentifier:     optional.NewString(orgId),
-		ProjectIdentifier: optional.NewString(projId),
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.Data == nil {
-		return nil, nil
-	}
-
-	return resp.Data.Variable, nil
-}
-
-func testAccGetResourceVariablesOrgLevel(resourceName string, state *terraform.State) (*nextgen.VariableDto, error) {
-	r := acctest.TestAccGetResource(resourceName, state)
-	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	id := r.Primary.ID
-	orgId := r.Primary.Attributes["org_id"]
-
-	resp, _, err := c.VariablesApi.GetVariable(ctx, c.AccountId, id, &nextgen.VariablesApiGetVariableOpts{
-		OrgIdentifier: optional.NewString(orgId),
+		OrgIdentifier:     buildField(r, "org_id"),
+		ProjectIdentifier: buildField(r, "project_id"),
 	})
 
 	if err != nil {
@@ -130,7 +107,7 @@ func testAccGetResourceVariablesOrgLevel(resourceName string, state *terraform.S
 
 func testAccVariablesOrgLevelDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		variable, _ := testAccGetResourceVariablesOrgLevel(resourceName, state)
+		variable, _ := testAccGetResourceVariables(resourceName, state)
 		if variable != nil {
 			return fmt.Errorf("Found variable: %s", variable.Identifier)
 		}
@@ -148,6 +125,13 @@ func testAccVariablesDestroy(resourceName string) resource.TestCheckFunc {
 
 		return nil
 	}
+}
+
+func buildField(r *terraform.ResourceState, field string) optional.String {
+	if attr, ok := r.Primary.Attributes[field]; ok {
+		return optional.NewString(attr)
+	}
+	return optional.EmptyString()
 }
 
 func testAccResourceVariables(id string, name string) string {

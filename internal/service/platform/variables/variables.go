@@ -9,6 +9,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceVariables() *schema.Resource {
@@ -27,6 +28,26 @@ func ResourceVariables() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"name": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"description": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"org_id": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"type": {
 				Description: "Type of Variable",
 				Type:        schema.TypeString,
@@ -40,9 +61,10 @@ func ResourceVariables() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"value_type": {
-							Description: "Type of Value of the Variable. For now only FIXED is supported",
-							Type:        schema.TypeString,
-							Required:    true,
+							Description:  "Type of Value of the Variable. For now only FIXED is supported",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"FIXED"}, false),
 						},
 						"fixed_value": {
 							Description: "FixedValue of the variable",
@@ -54,8 +76,6 @@ func ResourceVariables() *schema.Resource {
 			},
 		},
 	}
-
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }

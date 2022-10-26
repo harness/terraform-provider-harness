@@ -24,6 +24,26 @@ func DataSourceVariables() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"name": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"description": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"org_id": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"type": {
 				Description: "Type of Variable",
 				Type:        schema.TypeString,
@@ -50,8 +70,6 @@ func DataSourceVariables() *schema.Resource {
 			},
 		},
 	}
-
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
 
 	return resource
 }
