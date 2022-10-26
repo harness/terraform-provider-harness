@@ -10,6 +10,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/account"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/application"
@@ -127,19 +128,19 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_infrastructure":               pl_infrastructure.DataSourceInfrastructure(),
 				"harness_platform_input_set":                    input_set.DataSourceInputSet(),
 				"harness_platform_organization":                 organization.DataSourceOrganization(),
-				"harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
-				"harness_platform_permissions":                  pl_permissions.DataSourcePermissions(),
-				"harness_platform_project":                      project.DataSourceProject(),
-				"harness_platform_service":                      pl_service.DataSourceService(),
-				"harness_platform_usergroup":                    usergroup.DataSourceUserGroup(),
-				"harness_platform_secret_text":                  secret.DataSourceSecretText(),
-				"harness_platform_secret_file":                  secret.DataSourceSecretFile(),
-				"harness_platform_secret_sshkey":                secret.DataSourceSecretSSHKey(),
-				"harness_platform_roles":                        roles.DataSourceRoles(),
-				"harness_platform_resource_group":               resource_group.DataSourceResourceGroup(),
-				"harness_platform_service_account":              service_account.DataSourceServiceAccount(),
-				"harness_platform_triggers":                     triggers.DataSourceTriggers(),
-				"harness_platform_role_assignments":             role_assignments.DataSourceRoleAssignments(),
+				// "harness_platform_pipeline":                     pipeline.DataSourcePipeline(),
+				"harness_platform_permissions":      pl_permissions.DataSourcePermissions(),
+				"harness_platform_project":          project.DataSourceProject(),
+				"harness_platform_service":          pl_service.DataSourceService(),
+				"harness_platform_usergroup":        usergroup.DataSourceUserGroup(),
+				"harness_platform_secret_text":      secret.DataSourceSecretText(),
+				"harness_platform_secret_file":      secret.DataSourceSecretFile(),
+				"harness_platform_secret_sshkey":    secret.DataSourceSecretSSHKey(),
+				"harness_platform_roles":            roles.DataSourceRoles(),
+				"harness_platform_resource_group":   resource_group.DataSourceResourceGroup(),
+				"harness_platform_service_account":  service_account.DataSourceServiceAccount(),
+				"harness_platform_triggers":         triggers.DataSourceTriggers(),
+				"harness_platform_role_assignments": role_assignments.DataSourceRoleAssignments(),
 
 				"harness_application":     application.DataSourceApplication(),
 				"harness_current_account": account.DataSourceCurrentAccountConnector(),
@@ -277,6 +278,19 @@ func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
 	return client
 }
 
+func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.APIClient {
+	client := openapi_client_nextgen.NewAPIClient(&openapi_client_nextgen.Configuration{
+		AccountId: d.Get("account_id").(string),
+		BasePath:  d.Get("endpoint").(string),
+		ApiKey:    d.Get("platform_api_key").(string),
+		UserAgent: fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		// HTTPClient:   getHttpClient(),
+		// DebugLogging: logging.IsDebugOrHigher(),
+	})
+
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -285,6 +299,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			Endpoint:  d.Get("endpoint").(string),
 			CDClient:  getCDClient(d, version),
 			PLClient:  getPLClient(d, version),
+			Client:    getClient(d, version),
 		}, nil
 	}
 }
