@@ -6,6 +6,7 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/docker/docker v20.10.21+incompatible
 	github.com/harness/harness-go-sdk v0.2.22
+	github.com/harness/harness-openapi-go-client v0.0.8
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.1
@@ -46,7 +47,6 @@ require (
 	github.com/hashicorp/terraform-registry-address v0.0.0-20220623143253-7d51757b572c // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
-	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/jhump/protoreflect v1.6.1 // indirect
 	github.com/jinzhu/copier v0.3.5 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
@@ -87,3 +87,4 @@ require (
 )
 
 // replace github.com/harness/harness-go-sdk => ../harness-go-sdk
+// replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client
