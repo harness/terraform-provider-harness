@@ -1,6 +1,6 @@
 
-<a name="0.2.14"></a>
-## 0.2.14 (2022-10-21)
+<a name="0.2.15"></a>
+## 0.2.15 (2022-10-25)
 
 ### Add
 
@@ -60,6 +60,7 @@
 
 ### Merge
 
+* Merge branch 'main' into CDS-44308-gitops-applications-api
 * Merge branch 'main' into CDS-44311-gitops-repositories-api
 * Merge branch 'main' of github.com:harness/harness-go-sdk
 
@@ -69,6 +70,8 @@
 
 ### Release
 
+* Release version 0.2.14 10-21-2022
+* Release v0.2.14
 * Release version 0.2.13 10-19-2022
 * Release v0.2.13
 * Release version v0.2.12 10-19-2022
@@ -112,7 +115,6 @@
 * Release v0.1.29
 * Release version 0.1.28 05-27-2022
 * Release v0.1.28
-* Release version 0.1.27 05-23-2022
 
 ### Resource
 
@@ -139,6 +141,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#196](https://github.com/harness/harness-go-sdk/issues/196) from harness/CDS-44308-gitops-applications-api
+* Merge pull request [#198](https://github.com/harness/harness-go-sdk/issues/198) from harness/SPG-561_1
 * Merge pull request [#194](https://github.com/harness/harness-go-sdk/issues/194) from harness/CDS-44311-gitops-repositories-api
 * Merge pull request [#178](https://github.com/harness/harness-go-sdk/issues/178) from harness/SPG-508-adding-service-overrides
 * Merge pull request [#189](https://github.com/harness/harness-go-sdk/issues/189) from harness/CDS-43547-gitops-agent-cluster-sdk
