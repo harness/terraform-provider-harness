@@ -31,17 +31,16 @@ resource "harness_platform_variables" "test" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
-- `spec` (Block List, Min: 1, Max: 1) List of Spce Fields. (see [below for nested schema](#nestedblock--spec))
+- `identifier` (String) Unique identifier of the resource
+- `name` (String) Name of the Variable
+- `spec` (Block List, Min: 1, Max: 1) List of Spec Fields. (see [below for nested schema](#nestedblock--spec))
 - `type` (String) Type of Variable
 
 ### Optional
 
-- `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `description` (String) Description of the entity
+- `org_id` (String) Organization Identifier for the Entity
+- `project_id` (String) Project Identifier for the Entity
 
 ### Read-Only
 

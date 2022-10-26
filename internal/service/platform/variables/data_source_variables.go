@@ -26,22 +26,22 @@ func DataSourceVariables() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "Unique identifier of the resource",
+				Description: "Name of the Variable",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"description": {
-				Description: "Unique identifier of the resource",
+				Description: "Description of the entity",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"org_id": {
-				Description: "Unique identifier of the resource",
+				Description: "Organization Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Unique identifier of the resource",
+				Description: "Project Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

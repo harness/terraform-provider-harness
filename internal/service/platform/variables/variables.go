@@ -29,22 +29,22 @@ func ResourceVariables() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "Unique identifier of the resource",
+				Description: "Name of the Variable",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"description": {
-				Description: "Unique identifier of the resource",
+				Description: "Description of the entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"org_id": {
-				Description: "Unique identifier of the resource",
+				Description: "Organization Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Unique identifier of the resource",
+				Description: "Project Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
