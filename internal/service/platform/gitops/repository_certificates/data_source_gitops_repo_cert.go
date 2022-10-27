@@ -41,7 +41,6 @@ func DataSourceGitOpsRepoCert() *schema.Resource {
 			},
 		},
 	}
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
 
 	return resource
 }
