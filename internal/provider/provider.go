@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -28,6 +29,7 @@ import (
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
+	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
@@ -45,7 +47,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
+	//"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -127,6 +129,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":  pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides": pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_gitops_agent":                  gitops_agent.DataSourceGitopsAgent(),
+				"harness_platform_gitops_agent_deploy_yaml":      agent_yaml.DataSourceGitopsAgentDeployYaml(),
+				"harness_platform_gitops_applications":           gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_infrastructure":                pl_infrastructure.DataSourceInfrastructure(),
@@ -146,22 +150,22 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service_account":               service_account.DataSourceServiceAccount(),
 				"harness_platform_triggers":                      triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.DataSourceRoleAssignments(),
-                                "harness_platform_variables":                     variables.DataSourceVariables(),
-				"harness_platform_connector_vault":               connector.DataSourceConnectorVault(),
-				"harness_application":                            application.DataSourceApplication(),
-				"harness_current_account":                        account.DataSourceCurrentAccountConnector(),
-				"harness_delegate":                               delegate.DataSourceDelegate(),
-				"harness_delegate_ids":                           delegate.DataSourceDelegateIds(),
-				"harness_encrypted_text":                         secrets.DataSourceEncryptedText(),
-				"harness_environment":                            environment.DataSourceEnvironment(),
-				"harness_git_connector":                          cd_connector.DataSourceGitConnector(),
-				"harness_secret_manager":                         secrets.DataSourceSecretManager(),
-				"harness_service":                                service.DataSourceService(),
-				"harness_ssh_credential":                         secrets.DataSourceSshCredential(),
-				"harness_sso_provider":                           sso.DataSourceSSOProvider(),
-				"harness_user_group":                             user.DataSourceUserGroup(),
-				"harness_user":                                   user.DataSourceUser(),
-				"harness_yaml_config":                            yamlconfig.DataSourceYamlConfig(),
+				//"harness_platform_variables":                     variables.DataSourceVariables(),
+				"harness_platform_connector_vault": connector.DataSourceConnectorVault(),
+				"harness_application":              application.DataSourceApplication(),
+				"harness_current_account":          account.DataSourceCurrentAccountConnector(),
+				"harness_delegate":                 delegate.DataSourceDelegate(),
+				"harness_delegate_ids":             delegate.DataSourceDelegateIds(),
+				"harness_encrypted_text":           secrets.DataSourceEncryptedText(),
+				"harness_environment":              environment.DataSourceEnvironment(),
+				"harness_git_connector":            cd_connector.DataSourceGitConnector(),
+				"harness_secret_manager":           secrets.DataSourceSecretManager(),
+				"harness_service":                  service.DataSourceService(),
+				"harness_ssh_credential":           secrets.DataSourceSshCredential(),
+				"harness_sso_provider":             sso.DataSourceSSOProvider(),
+				"harness_user_group":               user.DataSourceUserGroup(),
+				"harness_user":                     user.DataSourceUser(),
+				"harness_yaml_config":              yamlconfig.DataSourceYamlConfig(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_connector_appdynamics":         connector.ResourceConnectorAppDynamics(),
@@ -192,6 +196,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":  pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides": pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_gitops_agent":                  gitops_agent.ResourceGitopsAgent(),
+				"harness_platform_gitops_applications":           gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_infrastructure":                pl_infrastructure.ResourceInfrastructure(),
@@ -210,37 +215,37 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service_account":               service_account.ResourceServiceAccount(),
 				"harness_platform_triggers":                      triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.ResourceRoleAssignments(),
-                                "harness_platform_variables":                     variables.ResourceVariables(),
-				"harness_platform_connector_vault":               connector.ResourceConnectorVault(),
-				"harness_add_user_to_group":                      user.ResourceAddUserToGroup(),
-				"harness_application_gitsync":                    application.ResourceApplicationGitSync(),
-				"harness_application":                            application.ResourceApplication(),
-				"harness_delegate_approval":                      delegate.ResourceDelegateApproval(),
-				"harness_cloudprovider_aws":                      cloudprovider.ResourceCloudProviderAws(),
-				"harness_cloudprovider_azure":                    cloudprovider.ResourceCloudProviderAzure(),
-				"harness_cloudprovider_datacenter":               cloudprovider.ResourceCloudProviderDataCenter(),
-				"harness_cloudprovider_gcp":                      cloudprovider.ResourceCloudProviderGcp(),
-				"harness_cloudprovider_kubernetes":               cloudprovider.ResourceCloudProviderK8s(),
-				"harness_cloudprovider_spot":                     cloudprovider.ResourceCloudProviderSpot(),
-				"harness_cloudprovider_tanzu":                    cloudprovider.ResourceCloudProviderTanzu(),
-				"harness_encrypted_text":                         secrets.ResourceEncryptedText(),
-				"harness_environment":                            environment.ResourceEnvironment(),
-				"harness_git_connector":                          cd_connector.ResourceGitConnector(),
-				"harness_infrastructure_definition":              environment.ResourceInfraDefinition(),
-				"harness_service_ami":                            service.ResourceAMIService(),
-				"harness_service_aws_codedeploy":                 service.ResourceAWSCodeDeployService(),
-				"harness_service_aws_lambda":                     service.ResourceAWSLambdaService(),
-				"harness_service_ecs":                            service.ResourceECSService(),
-				"harness_service_helm":                           service.ResourceHelmService(),
-				"harness_service_kubernetes":                     service.ResourceKubernetesService(),
-				"harness_service_ssh":                            service.ResourceSSHService(),
-				"harness_service_tanzu":                          service.ResourcePCFService(),
-				"harness_service_winrm":                          service.ResourceWinRMService(),
-				"harness_ssh_credential":                         secrets.ResourceSSHCredential(),
-				"harness_user_group":                             user.ResourceUserGroup(),
-				"harness_user_group_permissions":                 user.ResourceUserGroupPermissions(),
-				"harness_user":                                   user.ResourceUser(),
-				"harness_yaml_config":                            yamlconfig.ResourceYamlConfig(),
+				//"harness_platform_variables":                     variables.ResourceVariables(),
+				"harness_platform_connector_vault":  connector.ResourceConnectorVault(),
+				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
+				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
+				"harness_application":               application.ResourceApplication(),
+				"harness_delegate_approval":         delegate.ResourceDelegateApproval(),
+				"harness_cloudprovider_aws":         cloudprovider.ResourceCloudProviderAws(),
+				"harness_cloudprovider_azure":       cloudprovider.ResourceCloudProviderAzure(),
+				"harness_cloudprovider_datacenter":  cloudprovider.ResourceCloudProviderDataCenter(),
+				"harness_cloudprovider_gcp":         cloudprovider.ResourceCloudProviderGcp(),
+				"harness_cloudprovider_kubernetes":  cloudprovider.ResourceCloudProviderK8s(),
+				"harness_cloudprovider_spot":        cloudprovider.ResourceCloudProviderSpot(),
+				"harness_cloudprovider_tanzu":       cloudprovider.ResourceCloudProviderTanzu(),
+				"harness_encrypted_text":            secrets.ResourceEncryptedText(),
+				"harness_environment":               environment.ResourceEnvironment(),
+				"harness_git_connector":             cd_connector.ResourceGitConnector(),
+				"harness_infrastructure_definition": environment.ResourceInfraDefinition(),
+				"harness_service_ami":               service.ResourceAMIService(),
+				"harness_service_aws_codedeploy":    service.ResourceAWSCodeDeployService(),
+				"harness_service_aws_lambda":        service.ResourceAWSLambdaService(),
+				"harness_service_ecs":               service.ResourceECSService(),
+				"harness_service_helm":              service.ResourceHelmService(),
+				"harness_service_kubernetes":        service.ResourceKubernetesService(),
+				"harness_service_ssh":               service.ResourceSSHService(),
+				"harness_service_tanzu":             service.ResourcePCFService(),
+				"harness_service_winrm":             service.ResourceWinRMService(),
+				"harness_ssh_credential":            secrets.ResourceSSHCredential(),
+				"harness_user_group":                user.ResourceUserGroup(),
+				"harness_user_group_permissions":    user.ResourceUserGroupPermissions(),
+				"harness_user":                      user.ResourceUser(),
+				"harness_yaml_config":               yamlconfig.ResourceYamlConfig(),
 			},
 		}
 

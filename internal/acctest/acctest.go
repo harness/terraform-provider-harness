@@ -109,14 +109,23 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 		return fmt.Sprintf("%s/%s/%s", orgId, projId, id), nil
 	}
 }
-func GitopsAgentResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+func GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
 		id := primary.ID
 		orgId := primary.Attributes["org_id"]
 		projId := primary.Attributes["project_id"]
 		agentId := primary.Attributes["agent_id"]
-		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, agentId), nil
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, agentId, id), nil
+	}
+}
+
+func GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		agentId := primary.Attributes["agent_id"]
+		return fmt.Sprintf("%s/%s", agentId, id), nil
 	}
 }
 

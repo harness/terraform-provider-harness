@@ -1,0 +1,15 @@
+```release-note:new-resource
+harness_platform_gitops_applications
+```
+```release-note:new-resource
+harness_platform_gitops_agent_yaml
+```
+```release-note:enhancement
+harness_platform_gitops_agent
+```
+```release-note:enhancement
+harness_platform_gitops_clusters
+```
+```release-note:enhancement
+harness_platform_gitops_repository
+```
