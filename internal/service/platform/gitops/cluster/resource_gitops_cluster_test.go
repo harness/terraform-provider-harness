@@ -15,11 +15,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceGitopsCluster(t *testing.T) {
+func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
 	clusterName := id
 	resourceName := "harness_platform_gitops_cluster.test"
 	resource.UnitTest(t, resource.TestCase{
@@ -28,14 +30,14 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsCluster(id, accountId, name, agentId, clusterName),
+				Config: testAccResourceGitopsClusterAccountLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsCluster(id, accountId, name, agentId, clusterName),
+				Config: testAccResourceGitopsClusterAccountLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -45,7 +47,45 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceGitopsCluster_ProjectLevel(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
+	clusterName := id
+	resourceName := "harness_platform_gitops_cluster.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -82,13 +122,42 @@ func testAccResourceGitopsClusterDestroy(resourceName string) resource.TestCheck
 
 }
 
-func testAccResourceGitopsCluster(id string, accountId string, name string, agentId string, clusterName string) string {
+func testAccResourceGitopsClusterAccountLevel(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[4]s"
+
+ 			request {
+				upsert = true
+				cluster {
+					server = "%[6]s"
+					name = "%[5]s"
+					config {
+						bearer_token = "%[7]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+				]
+			}
+		}
+		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
+}
+
+func testAccResourceGitopsClusterProjectLevel(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
 			name = "%[3]s"
 		}
-
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
 			name = "%[3]s"
@@ -97,30 +166,28 @@ func testAccResourceGitopsCluster(id string, accountId string, name string, agen
 		resource "harness_platform_gitops_cluster" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
+			agent_id = "%[4]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
-
  			request {
 				upsert = true
 				cluster {
-					server = "https://kubernetes.default.svc"
+					server = "%[6]s"
 					name = "%[5]s"
 					config {
+						bearer_token = "%[7]s"
 						tls_client_config {
 							insecure = true
 						}
-						cluster_connection_type = "IN_CLUSTER"
+						cluster_connection_type = "SERVICE_ACCOUNT"
 					}
-
 				}
 			}
 			lifecycle {
 				ignore_changes = [
-					request.0.upsert,
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
 				]
 			}
 		}
-		`, id, accountId, name, agentId, clusterName)
-
+		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
 }

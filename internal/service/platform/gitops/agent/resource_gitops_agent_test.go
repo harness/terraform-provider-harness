@@ -46,6 +46,15 @@ func TestAccResourceGitopsAgent_AccountLevel(t *testing.T) {
 				ImportStateVerifyIgnore: []string{"account_id", "type"},
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"account_id", "type"},
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					return s.RootModule().Resources[resourceName].Primary.ID, nil
+				},
+			},
 		},
 	})
 

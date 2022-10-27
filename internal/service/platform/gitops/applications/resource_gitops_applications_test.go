@@ -51,7 +51,7 @@ func TestAccResourceGitopsApplication(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
