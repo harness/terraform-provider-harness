@@ -11,8 +11,10 @@ package nextgen
 
 // This contains details of the Azure connector
 type AzureConnector struct {
+	ConnectorType     string           `json:"connectorType"`
 	Credential        *AzureCredential `json:"credential"`
 	DelegateSelectors []string         `json:"delegateSelectors,omitempty"`
 	// This specifies the Azure Environment type, which is AZURE by default.
 	AzureEnvironmentType string `json:"azureEnvironmentType"`
+	ExecuteOnDelegate    bool   `json:"executeOnDelegate,omitempty"`
 }

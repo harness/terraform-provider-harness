@@ -31,6 +31,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.AwsKms)
 	case ConnectorTypes.AwsSecretManager:
 		err = json.Unmarshal(aux.Spec, &a.AwsSecretManager)
+	case ConnectorTypes.Azure:
+		err = json.Unmarshal(aux.Spec, &a.Azure)
 	case ConnectorTypes.CEAws:
 		err = json.Unmarshal(aux.Spec, &a.AwsCC)
 	case ConnectorTypes.Bitbucket:
@@ -131,6 +133,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Prometheus)
 	case ConnectorTypes.Splunk:
 		spec, err = json.Marshal(a.Splunk)
+	case ConnectorTypes.Azure:
+		spec, err = json.Marshal(a.Azure)
 	case ConnectorTypes.SumoLogic:
 		spec, err = json.Marshal(a.SumoLogic)
 	case ConnectorTypes.GcpSecretManager:

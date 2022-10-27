@@ -13,4 +13,5 @@ package nextgen
 type AzureUserAssignedMsiAuth struct {
 	// Client Id of the ManagedIdentity resource
 	ClientId string `json:"clientId"`
+	Type_    string `json:"type"`
 }

@@ -7,6 +7,7 @@ var ConnectorTypes = struct {
 	Git              ConnectorType
 	Splunk           ConnectorType
 	AppDynamics      ConnectorType
+	Azure            ConnectorType
 	Prometheus       ConnectorType
 	Dynatrace        ConnectorType
 	Vault            ConnectorType
@@ -68,6 +69,7 @@ var ConnectorTypes = struct {
 	SumoLogic:        "SumoLogic",
 	PagerDuty:        "PagerDuty",
 	GcpSecretManager: "GcpSecretManager",
+	Azure:            "Azure",
 }
 
 var ConnectorTypesSlice = []string{
@@ -103,6 +105,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.SumoLogic.String(),
 	ConnectorTypes.PagerDuty.String(),
 	ConnectorTypes.GcpSecretManager.String(),
+	ConnectorTypes.Azure.String(),
 }
 
 func (c ConnectorType) String() string {
