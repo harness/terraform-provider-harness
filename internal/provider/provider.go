@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"log"
+
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -47,6 +48,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
+
 	//"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
@@ -218,7 +220,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_triggers":                      triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.ResourceRoleAssignments(),
 				//"harness_platform_variables":                     variables.ResourceVariables(),
-				"harness_platform_connector_vault":  connector.ResourceConnectorVault(),
+				"harness_platform_connector_vault":                connector.ResourceConnectorVault(),
+				"harness_platform_connector_azure_cloud_provider": connector.ResourceConnectorAzureCloudProvider(),
+
 				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
 				"harness_application":               application.ResourceApplication(),
