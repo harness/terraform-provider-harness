@@ -50,6 +50,9 @@ import (
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
+
+	//"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
+>>>>>>> ca03353 (Create azure resource)
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -252,6 +255,37 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user_group_permissions":                 user.ResourceUserGroupPermissions(),
 				"harness_user":                                   user.ResourceUser(),
 				"harness_yaml_config":                            yamlconfig.ResourceYamlConfig(),
+				"harness_platform_connector_azure_cloud_provider": connector.ResourceConnectorAzureCloudProvider(),
+
+				"harness_add_user_to_group":         user.ResourceAddUserToGroup(),
+				"harness_application_gitsync":       application.ResourceApplicationGitSync(),
+				"harness_application":               application.ResourceApplication(),
+				"harness_delegate_approval":         delegate.ResourceDelegateApproval(),
+				"harness_cloudprovider_aws":         cloudprovider.ResourceCloudProviderAws(),
+				"harness_cloudprovider_azure":       cloudprovider.ResourceCloudProviderAzure(),
+				"harness_cloudprovider_datacenter":  cloudprovider.ResourceCloudProviderDataCenter(),
+				"harness_cloudprovider_gcp":         cloudprovider.ResourceCloudProviderGcp(),
+				"harness_cloudprovider_kubernetes":  cloudprovider.ResourceCloudProviderK8s(),
+				"harness_cloudprovider_spot":        cloudprovider.ResourceCloudProviderSpot(),
+				"harness_cloudprovider_tanzu":       cloudprovider.ResourceCloudProviderTanzu(),
+				"harness_encrypted_text":            secrets.ResourceEncryptedText(),
+				"harness_environment":               environment.ResourceEnvironment(),
+				"harness_git_connector":             cd_connector.ResourceGitConnector(),
+				"harness_infrastructure_definition": environment.ResourceInfraDefinition(),
+				"harness_service_ami":               service.ResourceAMIService(),
+				"harness_service_aws_codedeploy":    service.ResourceAWSCodeDeployService(),
+				"harness_service_aws_lambda":        service.ResourceAWSLambdaService(),
+				"harness_service_ecs":               service.ResourceECSService(),
+				"harness_service_helm":              service.ResourceHelmService(),
+				"harness_service_kubernetes":        service.ResourceKubernetesService(),
+				"harness_service_ssh":               service.ResourceSSHService(),
+				"harness_service_tanzu":             service.ResourcePCFService(),
+				"harness_service_winrm":             service.ResourceWinRMService(),
+				"harness_ssh_credential":            secrets.ResourceSSHCredential(),
+				"harness_user_group":                user.ResourceUserGroup(),
+				"harness_user_group_permissions":    user.ResourceUserGroupPermissions(),
+				"harness_user":                      user.ResourceUser(),
+				"harness_yaml_config":               yamlconfig.ResourceYamlConfig(),
 			},
 		}
 
