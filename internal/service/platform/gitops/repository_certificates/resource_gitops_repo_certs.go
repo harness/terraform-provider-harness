@@ -26,7 +26,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 			"agent_id": {
 				Description: "agent identifier of the Repository Certificates.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"account_id": {
 				Description: "account identifier of the Repository Certificates.",
@@ -46,7 +46,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 			"request": {
 				Description: "Repository Certificates create/Update request.",
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -58,6 +58,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 							Description: "certificates details.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							Computed:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"metadata": {
@@ -170,7 +171,7 @@ func resourceGitopsRepoCertsCreateOrUpdate(ctx context.Context, d *schema.Resour
 		d.MarkNewResource()
 		return nil
 	}
-	setGitopsRepositoriesCertificates(d, &resp)
+	setGitopsRepositoriesCertificates(d, &resp, accountIdentifier, agentIdentifier)
 	return nil
 }
 
@@ -196,7 +197,7 @@ func resourceGitopsRepoCertsRead(ctx context.Context, d *schema.ResourceData, me
 		d.MarkNewResource()
 		return nil
 	}
-	setGitopsRepositoriesCertificates(d, &resp)
+	setGitopsRepositoriesCertificates(d, &resp, c.AccountId, agentIdentifier)
 	return nil
 }
 
@@ -218,8 +219,10 @@ func resourceGitopsRepoCertsDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func setGitopsRepositoriesCertificates(d *schema.ResourceData, repoCert *nextgen.CertificatesRepositoryCertificateList) {
+func setGitopsRepositoriesCertificates(d *schema.ResourceData, repoCert *nextgen.CertificatesRepositoryCertificateList, accountIdentifier string, agentIdentifier string) {
 	d.SetId("1234") // assigning temp id.
+	d.Set("account_id", accountIdentifier)
+	d.Set("agent_id", agentIdentifier)
 	var repoCertDetails nextgen.Applicationv1alpha1RepositoryCertificateList
 	metadata := &nextgen.V1ListMeta{}
 

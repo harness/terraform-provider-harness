@@ -61,6 +61,6 @@ func dataSourceGitopsRepoCertRead(ctx context.Context, d *schema.ResourceData, m
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	setGitopsRepositoriesCertificates(d, &resp)
+	setGitopsRepositoriesCertificates(d, &resp, c.AccountId, agentIdentifier)
 	return nil
 }
