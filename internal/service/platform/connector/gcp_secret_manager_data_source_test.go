@@ -22,13 +22,11 @@ func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 			{
 				Config: testAccDataSourceConnectorGcpSM(name, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account.acctest_sumo_access_id"),
 				),
 			},
 		},
@@ -37,14 +35,27 @@ func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 
 func testAccDataSourceConnectorGcpSM(id string, name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			secret_manager_identifier = "azureSecretManager"
+			value_type = "Reference"
+			value = "secret"
+		}
+
 		resource "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
-
+			credentials_ref = "account.${harness_platform_secret_text.test.id}"
 			delegate_selectors = ["harness-delegate"]
-			credentials_ref = "account.acctest_sumo_access_id"
+		}
+
+		data "harness_platform_connector_gcp_secret_manager" "test" {
+			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
 		}
 `, id, name)
 }

@@ -30,7 +30,6 @@ func TestAccResourceConnectorGcpSM(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account.acctest_sumo_access_id"),
 					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 				),
 			},
@@ -43,7 +42,6 @@ func TestAccResourceConnectorGcpSM(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials_ref", "account.acctest_sumo_access_id"),
 					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 				),
 			},
@@ -58,6 +56,16 @@ func TestAccResourceConnectorGcpSM(t *testing.T) {
 
 func testAccResourceConnectorGcpSM(id string, name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+			secret_manager_identifier = "azureSecretManager"
+			value_type = "Reference"
+			value = "secret"
+		}
+
 		resource "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -65,7 +73,7 @@ func testAccResourceConnectorGcpSM(id string, name string) string {
 			tags = ["foo:bar"]
 		
 			delegate_selectors = ["harness-delegate"]
-			credentials_ref = "account.acctest_sumo_access_id"
+			credentials_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 `, id, name)
 }

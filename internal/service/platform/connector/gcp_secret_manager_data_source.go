@@ -14,18 +14,18 @@ func DatasourceConnectorGcpSM() *schema.Resource {
 			"is_default": {
 				Description: "Indicative if this is default Secret manager for secrets.",
 				Type:        schema.TypeBool,
-				Optional:    true,
+				Computed:    true,
 			},
 			"delegate_selectors": {
 				Description: "Connect using only the delegates which have these tags.",
 				Type:        schema.TypeSet,
-				Optional:    true,
+				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"credentials_ref": {
 				Description: "Reference to the secret containing credentials of IAM service account for Google Secret Manager.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 		},
 	}
