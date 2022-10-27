@@ -1,6 +1,6 @@
 
-<a name="0.2.16"></a>
-## 0.2.16 (2022-10-26)
+<a name="0.2.17"></a>
+## 0.2.17 (2022-10-27)
 
 ### Add
 
@@ -9,7 +9,6 @@
 ### Added
 
 * Added attribute filter model
-* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 
 ### Adding
 
@@ -21,6 +20,11 @@
 * adding better name
 * adding support for export executions
 * adding delegate resource
+
+### Azure
+
+* Azure cloud provider model changes
+* Azure cloud provider model changes
 
 ### Catch
 
@@ -66,6 +70,8 @@
 
 ### Release
 
+* Release version 0.2.16 10-26-2022
+* Release v0.2.16
 * Release version 0.2.15 10-26-2022
 * Release v0.2.15
 * Release version 0.2.14 10-21-2022
@@ -109,8 +115,6 @@
 * Release v0.1.31
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
-* Release version 0.1.29 06-02-2022
-* Release v0.1.29
 
 ### Resource
 
@@ -137,6 +141,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#208](https://github.com/harness/harness-go-sdk/issues/208) from harness/azure-connector
 * Merge pull request [#205](https://github.com/harness/harness-go-sdk/issues/205) from harness/CDS-45566-add-gitops-agent-deploy-api
 * Merge pull request [#196](https://github.com/harness/harness-go-sdk/issues/196) from harness/CDS-44308-gitops-applications-api
 * Merge pull request [#198](https://github.com/harness/harness-go-sdk/issues/198) from harness/SPG-561_1
