@@ -12,7 +12,7 @@ var AzureMsiAuthTypes = struct {
 
 var AzureMsiAuthTypeValues = []string{
 	AzureMsiAuthTypes.SystemAssignedManagedIdentity.String(),
-	AzureMsiAuthTypes.SystemAssignedManagedIdentity.String(),
+	AzureMsiAuthTypes.UserAssignedManagedIdentity.String(),
 }
 
 func (e AzureMsiAuthType) String() string {
