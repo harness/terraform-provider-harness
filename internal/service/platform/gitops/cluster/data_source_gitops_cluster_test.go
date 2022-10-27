@@ -14,7 +14,7 @@ func TestAccDataSourceGitopsCluster(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterName := id
 	resourceName := "data.harness_platform_gitops_cluster.test"

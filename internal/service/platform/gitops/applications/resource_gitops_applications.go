@@ -22,52 +22,52 @@ func ResourceGitopsApplication() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "account identifier of the Application.",
+				Description: "Account Identifier for the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "org identifier of the Application.",
+				Description: "Organization Identifier for the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "org identifier of the Application.",
+				Description: "Project Identifier for the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "identifier of the Application.",
+				Description: "Identifier of the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"agent_id": {
-				Description: "agent identifier of the Application.",
+				Description: "Agent identifier for the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"cluster_id": {
-				Description: "cluster identifier of the Application.",
+				Description: "Cluster identifier for the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"repo_id": {
-				Description: "Repository identifier of the Application.",
+				Description: "Repository identifier for the Application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"upsert": {
-				Description: "Upsert the application.",
+				Description: "Whether to Upsert the application.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"validate": {
-				Description: "validate the application.",
+				Description: "Whether to validate the application.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"project": {
-				Description: "Project of the application.",
+				Description: "Project is a reference to the project this application belongs to. The empty string means that application belongs to the 'default' project.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -77,27 +77,27 @@ func ResourceGitopsApplication() *schema.Resource {
 				Optional:    true,
 			},
 			"query_refresh": {
-				Description: "Refresh query to get the application.",
+				Description: "forces application reconciliation if set to true.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_project": {
-				Description: "project query to get the application.",
+				Description: "the project names to restrict returned list applications.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_resource_version": {
-				Description: "resource version query to get the application.",
+				Description: "when specified with a watch call, shows changes that occur after that particular version of a resource.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_selector": {
-				Description: "query selector to get the application.",
+				Description: "the selector to to restrict returned list to applications only with matched labels.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_repo": {
-				Description: "repo query to get the application.",
+				Description: "the repoURL to restrict returned list applications.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -127,19 +127,19 @@ func ResourceGitopsApplication() *schema.Resource {
 				Computed:    true,
 			},
 			"application": {
-				Description: "Application data.",
+				Description: "definition of Application resource.",
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
-							Description: "Application data.",
+							Description: "metadata that all persisted resources must have, which includes all objects users must create.",
 							Type:        schema.TypeList,
 							Required:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
-										Description: "name of the application.",
+										Description: "Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. ",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -155,18 +155,18 @@ func ResourceGitopsApplication() *schema.Resource {
 										Computed:    true,
 									},
 									"generation": {
-										Description: "generation of the application.",
+										Description: "A sequence number representing a specific generation of the desired state. Populated by the system. Read-only. ",
 										Type:        schema.TypeString,
 										Optional:    true,
 										Computed:    true,
 									},
 									"uid": {
-										Description: "UID of the application.",
+										Description: "UID is the unique in time and space value for this object. It is typically generated by the server on successful creation of a resource and is not allowed to change on PUT operations.",
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"labels": {
-										Description: "labels to be tagged to the application.",
+										Description: "Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services.",
 										Type:        schema.TypeMap,
 										Optional:    true,
 										Computed:    true,
@@ -175,7 +175,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										},
 									},
 									"annotations": {
-										Description: "annotations of the application.",
+										Description: "Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects.",
 										Type:        schema.TypeMap,
 										Optional:    true,
 										Computed:    true,
@@ -184,7 +184,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										},
 									},
 									"owner_references": {
-										Description: "owner references of the application",
+										Description: "List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller. ",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Elem: &schema.Resource{
@@ -210,12 +210,12 @@ func ResourceGitopsApplication() *schema.Resource {
 													Optional:    true,
 												},
 												"controller": {
-													Description: "Is the referent controller.",
+													Description: "If true, this reference points to the managing controller. ",
 													Type:        schema.TypeBool,
 													Optional:    true,
 												},
 												"block_owner_deletion": {
-													Description: "Block deletion by the owner.",
+													Description: "If true, AND if the owner has the \"foregroundDeletion\" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed. Defaults to false. To set this field, a user needs \"delete\" permission of the owner, otherwise 422 (Unprocessable Entity) will be returned.",
 													Type:        schema.TypeBool,
 													Optional:    true,
 												},
@@ -223,7 +223,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										},
 									},
 									"finalizers": {
-										Description: "Finalizers of the application.",
+										Description: "Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed. Finalizers may be processed and removed in any order. Order is NOT enforced because it introduces significant risk of stuck finalizers. finalizers is a shared field, any actor with permission can reorder it. If the finalizer list is processed in order, then this can lead to a situation in which the component responsible for the first finalizer in the list is waiting for a signal (field value, external system, or other) produced by a component responsible for a finalizer later in the list, resulting in a deadlock. Without enforced ordering finalizers are free to order amongst themselves and are not vulnerable to ordering changes in the list.",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Computed:    true,
@@ -232,7 +232,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										},
 									},
 									"cluster_name": {
-										Description: "Cluster Name of the Application.",
+										Description: "The name of the cluster which the object belongs to. This is used to distinguish resources with same name and namespace in different clusters. This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -240,45 +240,45 @@ func ResourceGitopsApplication() *schema.Resource {
 							},
 						},
 						"spec": {
-							Description: "spec of the application",
+							Description: "represents desired application state. Contains link to repository with application definition and additional parameters link definition revision.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"source": {
-										Description: "spec of the application",
+										Description: "contains all information about the source of an application",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"repo_url": {
-													Description: "Repo URL of the application",
+													Description: "URL to the repository (Git or Helm) that contains the application manifests.",
 													Type:        schema.TypeString,
 													Required:    true,
 												},
 												"path": {
-													Description: "Path in the Repo of the application",
+													Description: "directory path within the Git repository, and is only valid for applications sourced from Git.",
 													Type:        schema.TypeString,
 													Required:    true,
 												},
 												"target_revision": {
-													Description: "target revision of the Repo of the application",
+													Description: "the revision of the source to sync the application to. In case of Git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag for the Chart's version.",
 													Type:        schema.TypeString,
 													Required:    true,
 												},
 												"chart": {
-													Description: "Helm chart name if its a Helm Repo",
+													Description: "Helm chart name, and must be specified for applications sourced from a Helm repo.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"helm": {
-													Description: "Helm config of the application",
+													Description: "holds helm specific options.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"value_files": {
-																Description: "value files of the helm repo application.",
+																Description: "list of Helm value files to use when generating a template",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Schema{
@@ -286,43 +286,43 @@ func ResourceGitopsApplication() *schema.Resource {
 																},
 															},
 															"release_name": {
-																Description: "Release name of the Helm Repo App",
+																Description: "Helm release name to use. If omitted it will use the application name.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"values": {
-																Description: "Values of the Helm Repo App",
+																Description: "Helm values to be passed to helm template, typically defined as a block.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"version": {
-																Description: "Version of the Helm Repo App",
+																Description: "Helm version to use for templating (either \"2\" or \"3\")",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"pass_credentials": {
-																Description: "pass credentials of the Helm Repo App",
+																Description: "pass credentials to all domains (Helm's --pass-credentials)",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
 															"parameters": {
-																Description: "parameters of the Helm Repo App",
+																Description: "list of Helm parameters which are passed to the helm template command upon manifest generation.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"name": {
-																			Description: "Name of the parameters of the Helm Repo App",
+																			Description: "the name of the Helm parameter.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"value": {
-																			Description: "Value of the parameter of the Helm Repo App",
+																			Description: "the value for the Helm parameter.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"force_string": {
-																			Description: "force string value of the parameter of the Helm Repo App",
+																			Description: "determines whether to tell Helm to interpret booleans and numbers as strings.",
 																			Type:        schema.TypeBool,
 																			Optional:    true,
 																		},
@@ -330,18 +330,18 @@ func ResourceGitopsApplication() *schema.Resource {
 																},
 															},
 															"file_parameters": {
-																Description: "File parameters of the Helm Repo App",
+																Description: "file parameters to the helm template.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"name": {
-																			Description: "Name of the file parameter of the Helm Repo App",
+																			Description: "the name of the Helm parameter.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"path": {
-																			Description: "Path of the file parameter of the Helm Repo App",
+																			Description: "the path to the file containing the values for the Helm parameter.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
@@ -352,23 +352,23 @@ func ResourceGitopsApplication() *schema.Resource {
 													},
 												},
 												"kustomize": {
-													Description: "kustomize config of the Application.",
+													Description: "options specific to an Application source specific to Kustomize.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"name_prefix": {
-																Description: "Name prefix of the Kustomize Repo App",
+																Description: "prefix appended to resources for Kustomize apps.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"name_suffix": {
-																Description: "Name suffix of the Kustomize Repo App",
+																Description: "suffix appended to resources for Kustomize apps.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"images": {
-																Description: "List of images of the Kustomize Repo App",
+																Description: "List of Kustomize image override specifications.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Schema{
@@ -376,7 +376,7 @@ func ResourceGitopsApplication() *schema.Resource {
 																},
 															},
 															"common_labels": {
-																Description: "Common Labels of the Kustomize Repo App",
+																Description: "list of additional labels to add to rendered manifests.",
 																Type:        schema.TypeMap,
 																Optional:    true,
 																Elem: &schema.Schema{
@@ -384,12 +384,12 @@ func ResourceGitopsApplication() *schema.Resource {
 																},
 															},
 															"version": {
-																Description: "version of the Kustomize Repo App",
+																Description: "version of Kustomize to use for rendering manifests.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"common_annotations": {
-																Description: "Common Annotations of the Kustomize Repo App",
+																Description: "list of additional annotations to add to rendered manifests.",
 																Type:        schema.TypeMap,
 																Optional:    true,
 																Elem: &schema.Schema{
@@ -397,12 +397,12 @@ func ResourceGitopsApplication() *schema.Resource {
 																},
 															},
 															"force_common_labels": {
-																Description: "Force common labels of the Kustomize Repo App",
+																Description: "whether to force applying common labels to resources for Kustomize apps.",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
 															"force_common_annotations": {
-																Description: "Force common annotations of the Kustomize Repo App",
+																Description: "whether to force applying common annotations to resources for Kustomize apps.",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
@@ -410,34 +410,34 @@ func ResourceGitopsApplication() *schema.Resource {
 													},
 												},
 												"ksonnet": {
-													Description: "Ksonnet config of the application.",
+													Description: "ksonnet specific options.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"environment": {
-																Description: "Environment of the Ksonnet Repo App",
+																Description: "ksonnet application environment name",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"parameters": {
-																Description: "Parameters of the Ksonnet Repo App",
+																Description: "list of ksonnet component parameter override values",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"component": {
-																			Description: "Component of the parameter of the Ksonnet Repo App",
+																			Description: "Component of the parameter of the Ksonnet App",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"name": {
-																			Description: "name of the parameter of the Ksonnet Repo App",
+																			Description: "name of the parameter of the Ksonnet App",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"value": {
-																			Description: "value of the parameter of the Ksonnet Repo App",
+																			Description: "value of the parameter of the Ksonnet App",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
@@ -448,34 +448,34 @@ func ResourceGitopsApplication() *schema.Resource {
 													},
 												},
 												"directory": {
-													Description: "Directory config of the application.",
+													Description: "options for applications of type plain YAML or Jsonnet.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"recurse": {
-																Description: "Recurse config of the Directory Repo App",
+																Description: "whether to scan a directory recursively for manifests.",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
 															"exclude": {
-																Description: "exclude config of the Directory Repo App",
+																Description: "a glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"include": {
-																Description: "include config of the Directory Repo App",
+																Description: "a glob pattern to match paths against that should be explicitly included during manifest generation.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"jsonnet": {
-																Description: "Directory config of the application.",
+																Description: "options specific to applications of type Jsonnet.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"libs": {
-																			Description: "libs of the Directory Repo App",
+																			Description: "Additional library search dirs.",
 																			Type:        schema.TypeList,
 																			Optional:    true,
 																			Elem: &schema.Schema{
@@ -483,23 +483,23 @@ func ResourceGitopsApplication() *schema.Resource {
 																			},
 																		},
 																		"ext_vars": {
-																			Description: "external variables of the Directory Repo App",
+																			Description: "list of Jsonnet External Variables.",
 																			Type:        schema.TypeList,
 																			Optional:    true,
 																			Elem: &schema.Resource{
 																				Schema: map[string]*schema.Schema{
 																					"name": {
-																						Description: "name of the external variables of Jsonnet of the Directory Repo App",
+																						Description: "name of the external variables of Jsonnet App",
 																						Type:        schema.TypeString,
 																						Optional:    true,
 																					},
 																					"value": {
-																						Description: "value of the external variables of Jsonnet of the Directory Repo App",
+																						Description: "value of the external variables of Jsonnet App",
 																						Type:        schema.TypeString,
 																						Optional:    true,
 																					},
 																					"code": {
-																						Description: "code of the external variables of Jsonnet of the Directory Repo App",
+																						Description: "code of the external variables of Jsonnet App",
 																						Type:        schema.TypeBool,
 																						Optional:    true,
 																					},
@@ -507,23 +507,23 @@ func ResourceGitopsApplication() *schema.Resource {
 																			},
 																		},
 																		"tlas": {
-																			Description: "tlas of the Directory Repo App",
+																			Description: "list of Jsonnet Top-level Arguments(TLAS).",
 																			Type:        schema.TypeList,
 																			Optional:    true,
 																			Elem: &schema.Resource{
 																				Schema: map[string]*schema.Schema{
 																					"name": {
-																						Description: "name of the tlas of Jsonnet of the Directory Repo App",
+																						Description: "name of the TLAS of Jsonnet App",
 																						Type:        schema.TypeString,
 																						Optional:    true,
 																					},
 																					"value": {
-																						Description: "value of the tlas of Jsonnet of the Directory Repo App",
+																						Description: "value of the TLAS of Jsonnet App",
 																						Type:        schema.TypeString,
 																						Optional:    true,
 																					},
 																					"code": {
-																						Description: "code of the tlas of Jsonnet of the Directory Repo App",
+																						Description: "code of the TLAS of Jsonnet App",
 																						Type:        schema.TypeBool,
 																						Optional:    true,
 																					},
@@ -537,29 +537,29 @@ func ResourceGitopsApplication() *schema.Resource {
 													},
 												},
 												"plugin": {
-													Description: "Plugin config of the Application.",
+													Description: "options specific to config management plugins.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"name": {
-																Description: "Name of the plugin of the Plugin Repo App",
+																Description: "Name of the plugin.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"env": {
-																Description: "List of env details of the Plugin Repo App",
+																Description: "represents an entry in the application's environment.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"name": {
-																			Description: "name of the environment config of the plugin of the Plugin Repo App",
+																			Description: "name of the variable, usually expressed in uppercase.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"value": {
-																			Description: "value of the environment config of the plugin of the Plugin Repo App",
+																			Description: "value of the variable.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
@@ -573,18 +573,18 @@ func ResourceGitopsApplication() *schema.Resource {
 										},
 									},
 									"destination": {
-										Description: "destination config of the Repo App",
+										Description: "information about the application's destination.",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"name": {
-													Description: "name of the destination of the Application",
+													Description: "the URL of the target cluster and must be set to the Kubernetes control plane API.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"namespace": {
-													Description: "namespace of the destination of the Application",
+													Description: "the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
@@ -597,13 +597,13 @@ func ResourceGitopsApplication() *schema.Resource {
 										},
 									},
 									"sync_policy": {
-										Description: "Sync Policy of the Application",
+										Description: "controls when a sync will be performed in response to updates in git.",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"sync_options": {
-													Description: "Syn Options of the sync policy of the Application",
+													Description: "Options allow you to specify whole app sync-options.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Schema{
@@ -611,23 +611,23 @@ func ResourceGitopsApplication() *schema.Resource {
 													},
 												},
 												"automated": {
-													Description: "Automated Sync Policy of the Application",
+													Description: "controls the behavior of an automated sync.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"prune": {
-																Description: "Enable Prune of the automated sync policy of the Application",
+																Description: "specifies whether to delete resources from the cluster that are not found in the sources anymore as part of automated sync (default: false)",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
 															"self_heal": {
-																Description: "Enable self heal of the automated sync policy of the Application",
+																Description: "specifies whether to revert resources back to their desired state upon modification in the cluster (default: false).",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
 															"allow_empty": {
-																Description: "Enable allow empty of the automated sync policy of the Application",
+																Description: "allows apps have zero live resources (default: false).",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
@@ -635,34 +635,34 @@ func ResourceGitopsApplication() *schema.Resource {
 													},
 												},
 												"retry": {
-													Description: "Retry Sync Policy of the Application",
+													Description: "contains information about the strategy to apply when a sync failed.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"limit": {
-																Description: "maximum number of attempts for retrying a failed sync. If set to 0, no retries will be performed.",
+																Description: "Limit is the maximum number of attempts for retrying a failed sync. If set to 0, no retries will be performed.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"backoff": {
-																Description: "Automated Sync Policy of the Application",
+																Description: "the backoff strategy to use on subsequent retries for failing syncs.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"duration": {
-																			Description: "Duration after which retry is to be attempted.",
+																			Description: "the amount to back off. Default unit is seconds, but could also be a duration (e.g. \"2m\", \"1h\")",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"factor": {
-																			Description: "factor of durations to be retried.",
+																			Description: "a factor to multiply the base duration after each failed retry.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},
 																		"max_duration": {
-																			Description: "max duration of the retries.",
+																			Description: "maximum amount of time allowed for the backoff strategy.",
 																			Type:        schema.TypeString,
 																			Optional:    true,
 																		},

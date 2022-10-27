@@ -15,8 +15,11 @@ func TestAccDataSourceGitopsApplication(t *testing.T) {
 	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
 	id = strings.ReplaceAll(id, "_", "")
 	name := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
+	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	clusterName := id
 	namespace := "test"
 	resourceName := "harness_platform_gitops_applications.test"
@@ -25,7 +28,7 @@ func TestAccDataSourceGitopsApplication(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceGitopsApplication(id, accountId, name, agentId, clusterName, namespace),
+				Config: testAccDataSourceGitopsApplication(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -36,7 +39,7 @@ func TestAccDataSourceGitopsApplication(t *testing.T) {
 
 }
 
-func testAccDataSourceGitopsApplication(id string, accountId string, name string, agentId string, clusterName string, namespace string) string {
+func testAccDataSourceGitopsApplication(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterToken string, repo string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -73,10 +76,10 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
  			request {
 				upsert = true
 				cluster {
-					server = "https://34.121.144.229"
+					server = "%[7]s"
 					name = "%[5]s"
 					config {
-						bearer_token = "abc"
+						bearer_token = "%[8]s"
 						tls_client_config {
 							insecure = true
 						}
@@ -91,6 +94,25 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 				]
 			}
 		}
+		
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
+			repo {
+					repo = "%[9]s"
+        			name = "%[2]s"
+        			insecure = true
+        			connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+			update_mask {
+				paths = ["name"]
+			}
+		}
+
 		resource "harness_platform_gitops_applications" "test" {
     			application {
         			metadata {
@@ -117,13 +139,13 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
             			}
             			source {
                 			target_revision = "master"
-                			repo_url = "https://github.com/willycoll/argocd-example-apps.git"
+                			repo_url = "%[9]s"
                 			path = "helm-guestbook"
                 			
             			}
             			destination {
                 			namespace = "%[6]s"
-                			server = "https://34.121.144.229"
+                			server = "%[7]s"
             			}
         			}
     			}
@@ -132,7 +154,7 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
     			account_id = "%[2]s"
 				identifier = "%[1]s"
 				cluster_id = harness_platform_gitops_cluster.test.id
-				repo_id = "account.testrepo"
+				repo_id = harness_platform_gitops_repository.test.id
 				agent_id = "%[4]s"
 		}
 		data "harness_platform_gitops_applications" "test"{
@@ -141,8 +163,8 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
-			repo_id = "account.testrepo"
+			repo_id = harness_platform_gitops_repository.test.id
 		}
-		`, id, accountId, name, agentId, clusterName, namespace)
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo)
 
 }

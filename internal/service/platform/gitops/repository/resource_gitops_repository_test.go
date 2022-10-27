@@ -19,7 +19,7 @@ func TestAccResourceGitopsRepository(t *testing.T) {
 	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	repoName := id
 	repoNameUpdated := id + "_updated"
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	resourceName := "harness_platform_gitops_repository.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{

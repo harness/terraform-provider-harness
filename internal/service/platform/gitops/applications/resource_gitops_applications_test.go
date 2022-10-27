@@ -18,10 +18,13 @@ func TestAccResourceGitopsApplication(t *testing.T) {
 	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
 	id = strings.ReplaceAll(id, "_", "")
 	name := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
 	clusterName := id
 	namespace := "test"
+	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	namespaceUpdated := namespace + "_updated"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
@@ -30,14 +33,14 @@ func TestAccResourceGitopsApplication(t *testing.T) {
 		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsApplication(id, accountId, name, agentId, clusterName, namespace),
+				Config: testAccResourceGitopsApplication(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsApplication(id, accountId, name, agentId, clusterName, namespaceUpdated),
+				Config: testAccResourceGitopsApplication(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterToken, repo),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -83,7 +86,7 @@ func testAccGetApplication(resourceName string, state *terraform.State) (*nextge
 	return &resp, nil
 }
 
-func testAccResourceGitopsApplication(id string, accountId string, name string, agentId string, clusterName string, namespace string) string {
+func testAccResourceGitopsApplication(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterToken string, repo string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -120,10 +123,10 @@ func testAccResourceGitopsApplication(id string, accountId string, name string, 
  			request {
 				upsert = true
 				cluster {
-					server = "https://34.121.144.229"
+					server = "%[7]s"
 					name = "%[5]s"
 					config {
-						bearer_token = "avc" 
+						bearer_token = "%[8]s"
 						tls_client_config {
 							insecure = true
 						}
@@ -138,6 +141,25 @@ func testAccResourceGitopsApplication(id string, accountId string, name string, 
 				]
 			}
 		}
+		
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
+			repo {
+					repo = "%[9]s"
+        			name = "%[2]s"
+        			insecure = true
+        			connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+			update_mask {
+				paths = ["name"]
+			}
+		}
+
 		resource "harness_platform_gitops_applications" "test" {
     			application {
         			metadata {
@@ -164,13 +186,13 @@ func testAccResourceGitopsApplication(id string, accountId string, name string, 
             			}
             			source {
                 			target_revision = "master"
-                			repo_url = "https://github.com/willycoll/argocd-example-apps.git"
+                			repo_url = "%[9]s"
                 			path = "helm-guestbook"
                 			
             			}
             			destination {
                 			namespace = "%[6]s"
-                			server = "https://34.121.144.229"
+                			server = "%[7]s"
             			}
         			}
     			}
@@ -179,9 +201,9 @@ func testAccResourceGitopsApplication(id string, accountId string, name string, 
     			account_id = "%[2]s"
 				identifier = "%[1]s"
 				cluster_id = harness_platform_gitops_cluster.test.id
-				repo_id = "account.testrepo"
+				repo_id = harness_platform_gitops_repository.test.id
 				agent_id = "%[4]s"
 		}
-		`, id, accountId, name, agentId, clusterName, namespace)
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo)
 
 }
