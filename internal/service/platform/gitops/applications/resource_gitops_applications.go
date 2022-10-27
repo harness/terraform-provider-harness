@@ -1278,7 +1278,7 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 							}
 							kustomizeData.Images = kustomizeImages
 						}
-						if kustomizeSource["common_labels"] != nil && len(kustomizeSource["common_labels"].([]interface{})) > 0 {
+						if kustomizeSource["common_labels"] != nil && len(kustomizeSource["common_labels"].(map[string]interface{})) > 0 {
 							var kustomizeCommonLabels = map[string]string{}
 							for k, v := range kustomizeSource["common_labels"].(map[string]interface{}) {
 								kustomizeCommonLabels[k] = v.(string)
@@ -1288,7 +1288,7 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 						if kustomizeSource["version"] != nil && len(kustomizeSource["version"].(string)) > 0 {
 							kustomizeData.Version = kustomizeSource["version"].(string)
 						}
-						if kustomizeSource["common_annotations"] != nil && len(kustomizeSource["common_annotations"].([]interface{})) > 0 {
+						if kustomizeSource["common_annotations"] != nil && len(kustomizeSource["common_annotations"].(map[string]interface{})) > 0 {
 							var kustomizeCommonAnnotations = map[string]string{}
 							for k, v := range kustomizeSource["common_annotations"].(map[string]interface{}) {
 								kustomizeCommonAnnotations[k] = v.(string)
