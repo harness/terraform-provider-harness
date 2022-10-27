@@ -9,8 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains azure auth details
 type AzureAuth struct {
-	Type_ string               `json:"type"`
-	Spec  *AzureAuthCredential `json:"spec"`
+	Type_                string                `json:"type"`
+	AzureClientKeyCert   *AzureClientKeyCert   `json:"-"`
+	AzureClientSecretKey *AzureClientSecretKey `json:"-"`
+	Spec                 json.RawMessage       `json:"spec,omitempty"`
 }

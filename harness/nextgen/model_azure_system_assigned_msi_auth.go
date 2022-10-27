@@ -11,4 +11,5 @@ package nextgen
 
 // This contains azure SystemAssigned MSI auth details
 type AzureSystemAssignedMsiAuth struct {
+	Type_ string `json:"type"`
 }

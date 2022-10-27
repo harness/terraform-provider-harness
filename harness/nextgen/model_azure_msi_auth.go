@@ -9,6 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains azure MSI auth details
 type AzureMsiAuth struct {
+	Spec           json.RawMessage             `json:"spec,omitempty"`
+	Type_          AzureMsiAuthType            `json:"type"`
+	AzureMSIAuthSA *AzureSystemAssignedMsiAuth `json:"-"`
+	AzureMSIAuthUA *AzureUserAssignedMsiAuth   `json:"-"`
 }

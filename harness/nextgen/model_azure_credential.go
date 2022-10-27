@@ -9,8 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains Azure connector credentials
 type AzureCredential struct {
-	Type_ string               `json:"type"`
-	Spec  *AzureCredentialSpec `json:"spec,omitempty"`
+	Type_                           string                           `json:"type"`
+	AzureManualDetails              *AzureManualDetails              `json:"-"`
+	AzureInheritFromDelegateDetails *AzureInheritFromDelegateDetails `json:"-"`
+	Spec                            json.RawMessage                  `json:"spec,omitempty"`
 }
