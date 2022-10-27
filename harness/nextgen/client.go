@@ -148,6 +148,8 @@ type APIClient struct {
 
 	RepositoriesApiService *RepositoriesApiService
 
+	RepositoryCertificatesApi *RepositoryCertificatesApiService
+
 	RoleAssignmentsApi *RoleAssignmentsApiService
 
 	RolesApi *RolesApiService
@@ -257,6 +259,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.PipelinesDashboardApi = (*PipelinesDashboardApiService)(&c.common)
 	c.ProjectApi = (*ProjectApiService)(&c.common)
 	c.RepositoriesApiService = (*RepositoriesApiService)(&c.common)
+	c.RepositoryCertificatesApi = (*RepositoryCertificatesApiService)(&c.common)
 	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
 	c.RolesApi = (*RolesApiService)(&c.common)
 	c.SCIMApi = (*SCIMApiService)(&c.common)
