@@ -1,6 +1,6 @@
 
-<a name="0.2.17"></a>
-## 0.2.17 (2022-10-27)
+<a name="0.2.18"></a>
+## 0.2.18 (2022-10-28)
 
 ### Add
 
@@ -26,10 +26,6 @@
 * Azure cloud provider model changes
 * Azure cloud provider model changes
 
-### Catch
-
-* Catch service not found issue
-
 ### Change
 
 * change in package name
@@ -38,10 +34,6 @@
 ### Changes
 
 * Changes for vault connector resource
-
-### Error
-
-* error handling after read file
 
 ### Fix
 
@@ -60,16 +52,15 @@
 
 ### Merge
 
+* Merge branch 'main' into abhinav/SPG-567
 * Merge branch 'main' into CDS-44308-gitops-applications-api
 * Merge branch 'main' into CDS-44311-gitops-repositories-api
 * Merge branch 'main' of github.com:harness/harness-go-sdk
 
-### Modify
-
-* Modify secret file post and put methods
-
 ### Release
 
+* Release version 0.2.17 10-27-2022
+* Release v0.2.17
 * Release version 0.2.16 10-26-2022
 * Release v0.2.16
 * Release version 0.2.15 10-26-2022
@@ -113,8 +104,6 @@
 * Release version 0.1.32 07-20-2022
 * Release v0.1.32
 * Release v0.1.31
-* Release version 0.1.30 06-09-2022
-* Release v0.1.30
 
 ### Resource
 
@@ -124,9 +113,9 @@
 
 * restoring the swagger.yaml
 
-### SSH
+### Revert
 
-* SSH key related models and enum changes
+* revert illogical
 
 ### Update
 
@@ -135,12 +124,10 @@
 * Update user group model
 * Update user group model
 
-### Updated
-
-* updated dependencies
-
 ### Pull Requests
 
+* Merge pull request [#207](https://github.com/harness/harness-go-sdk/issues/207) from harness/abhinav/SPG-567
+* Merge pull request [#193](https://github.com/harness/harness-go-sdk/issues/193) from harness/CDS-44872-GitOps-Repositories-Certificates-API
 * Merge pull request [#208](https://github.com/harness/harness-go-sdk/issues/208) from harness/azure-connector
 * Merge pull request [#205](https://github.com/harness/harness-go-sdk/issues/205) from harness/CDS-45566-add-gitops-agent-deploy-api
 * Merge pull request [#196](https://github.com/harness/harness-go-sdk/issues/196) from harness/CDS-44308-gitops-applications-api
