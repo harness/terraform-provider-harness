@@ -207,13 +207,23 @@ var ProjectResourceImporter = &schema.ResourceImporter{
 var GitopsAgentResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
-		d.Set("org_id", parts[0])
-		d.Set("project_id", parts[1])
-		d.Set("identifier", parts[2])
-		d.Set("agent_id", parts[3])
-		d.SetId(parts[2])
+		if len(parts) == 2 { //Account level
+			d.Set("agent_id", parts[0])
+			d.Set("identifier", parts[1])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
 
-		return []*schema.ResourceData{d}, nil
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("agent_id", parts[2])
+			d.Set("identifier", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
 	},
 }
 

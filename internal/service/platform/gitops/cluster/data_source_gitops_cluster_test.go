@@ -14,7 +14,7 @@ func TestAccDataSourceGitopsCluster(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterName := id
 	resourceName := "data.harness_platform_gitops_cluster.test"
@@ -55,7 +55,7 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 			agent_id = "%[4]s"
 
  			request {
-				upsert = false
+				upsert = true
 				cluster {
 					server = "https://kubernetes.default.svc"
 					name = "%[5]s"
@@ -67,6 +67,11 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 					}
 
 				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert,
+				]
 			}
 		}
 		data "harness_platform_gitops_cluster" "test" {

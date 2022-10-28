@@ -14,7 +14,7 @@ import (
 
 func DataSourceGitopsCluster() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retreiving a Harness Gitops Cluster.",
+		Description: "Data source for fetching a Harness Gitops Cluster.",
 		ReadContext: dataSourceGitopsClusterRead,
 
 		Schema: map[string]*schema.Schema{
@@ -26,7 +26,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 			"project_id": {
 				Description: "project identifier of the cluster.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "organization identifier of the cluster.",
@@ -36,7 +36,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 			"agent_id": {
 				Description: "agent identifier of the cluster.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"identifier": {
 				Description: "identifier of the cluster.",
@@ -83,7 +83,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 			"request": {
 				Description: "Cluster create/Update request.",
 				Type:        schema.TypeList,
-				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -143,7 +143,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 									"server": {
 										Description: "the API server URL of the Kubernetes cluster.",
 										Type:        schema.TypeString,
-										Required:    true,
+										Optional:    true,
 									},
 									"name": {
 										Description: "Name of the cluster. If omitted, will use the server address",

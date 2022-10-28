@@ -14,7 +14,7 @@ func TestAccDataSourceGitopsRepository(t *testing.T) {
 	name := id
 	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	repoName := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	resourceName := "harness_platform_gitops_repository.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
@@ -26,8 +26,6 @@ func TestAccDataSourceGitopsRepository(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "repo.0.name", repoName),
 				),
 			},
@@ -51,8 +49,6 @@ func testAccDataSourceGitopsRepository(id string, name string, repo string, repo
 		resource "harness_platform_gitops_repository" "test" {
 			identifier = "%[1]s"
 			account_id = "%[6]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			agent_id = "%[5]s"
 			repo {
 					repo = "%[3]s"
@@ -69,15 +65,7 @@ func testAccDataSourceGitopsRepository(id string, name string, repo string, repo
 		data "harness_platform_gitops_repository" "test" {
 			identifier = harness_platform_gitops_repository.test.id
 			account_id = "%[3]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			agent_id = harness_platform_gitops_repository.test.agent_id
-			repo {
-					repo = harness_platform_gitops_repository.test.repo.0.repo
-        			name = harness_platform_gitops_repository.test.repo.0.name
-        			insecure = true
-        			connection_type = "HTTPS_ANONYMOUS"
-			}
 		}
 	`, id, name, repo, repoName, agentId, accountId)
 }
