@@ -35,6 +35,7 @@ var ConnectorTypes = struct {
 	Datadog          ConnectorType
 	SumoLogic        ConnectorType
 	PagerDuty        ConnectorType
+	GcpSecretManager ConnectorType
 }{
 	K8sCluster:       "K8sCluster",
 	Git:              "Git",
@@ -67,6 +68,7 @@ var ConnectorTypes = struct {
 	Datadog:          "Datadog",
 	SumoLogic:        "SumoLogic",
 	PagerDuty:        "PagerDuty",
+	GcpSecretManager: "GcpSecretManager",
 	Azure:            "Azure",
 }
 
@@ -102,6 +104,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.Datadog.String(),
 	ConnectorTypes.SumoLogic.String(),
 	ConnectorTypes.PagerDuty.String(),
+	ConnectorTypes.GcpSecretManager.String(),
 	ConnectorTypes.Azure.String(),
 }
 
