@@ -27,6 +27,7 @@ import (
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
@@ -146,8 +147,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service_account":               service_account.DataSourceServiceAccount(),
 				"harness_platform_triggers":                      triggers.DataSourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.DataSourceRoleAssignments(),
-                                "harness_platform_variables":                     variables.DataSourceVariables(),
+				"harness_platform_variables":                     variables.DataSourceVariables(),
 				"harness_platform_connector_vault":               connector.DataSourceConnectorVault(),
+				"harness_platform_filters":                       filters.DataSourceFilters(),
 				"harness_application":                            application.DataSourceApplication(),
 				"harness_current_account":                        account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                               delegate.DataSourceDelegate(),
@@ -210,8 +212,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_service_account":               service_account.ResourceServiceAccount(),
 				"harness_platform_triggers":                      triggers.ResourceTriggers(),
 				"harness_platform_role_assignments":              role_assignments.ResourceRoleAssignments(),
-                                "harness_platform_variables":                     variables.ResourceVariables(),
+				"harness_platform_variables":                     variables.ResourceVariables(),
 				"harness_platform_connector_vault":               connector.ResourceConnectorVault(),
+				"harness_platform_filters":                       filters.ResourceFilters(),
 				"harness_add_user_to_group":                      user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                    application.ResourceApplicationGitSync(),
 				"harness_application":                            application.ResourceApplication(),

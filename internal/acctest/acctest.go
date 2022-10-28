@@ -109,6 +109,18 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 		return fmt.Sprintf("%s/%s/%s", orgId, projId, id), nil
 	}
 }
+
+func ProjectFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, type_), nil
+	}
+}
+
 func GitopsAgentResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
@@ -126,6 +138,16 @@ func OrgResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFun
 		id := primary.ID
 		orgId := primary.Attributes["org_id"]
 		return fmt.Sprintf("%s/%s", orgId, id), nil
+	}
+}
+
+func OrgFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s/%s", orgId, id, type_), nil
 	}
 }
 
