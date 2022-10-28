@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -29,6 +30,7 @@ import (
 	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
+	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
@@ -46,7 +48,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
+	//"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -111,6 +113,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_docker":              connector.DatasourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":           connector.DatasourceConnectorDynatrace(),
 				"harness_platform_connector_gcp":                 connector.DatasourceConnectorGcp(),
+				"harness_platform_connector_gcp_secret_manager":  connector.DatasourceConnectorGcpSM(),
 				"harness_platform_connector_git":                 connector.DatasourceConnectorGit(),
 				"harness_platform_connector_github":              connector.DatasourceConnectorGithub(),
 				"harness_platform_connector_gitlab":              connector.DatasourceConnectorGitlab(),
@@ -128,6 +131,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":  pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides": pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_gitops_agent":                  gitops_agent.DataSourceGitopsAgent(),
+				"harness_platform_gitops_agent_deploy_yaml":      agent_yaml.DataSourceGitopsAgentDeployYaml(),
+				"harness_platform_gitops_applications":           gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_infrastructure":                pl_infrastructure.DataSourceInfrastructure(),
@@ -177,6 +182,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_docker":              connector.ResourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":           connector.ResourceConnectorDynatrace(),
 				"harness_platform_connector_gcp":                 connector.ResourceConnectorGcp(),
+				"harness_platform_connector_gcp_secret_manager":  connector.ResourceConnectorGCPSecretManager(),
 				"harness_platform_connector_git":                 connector.ResourceConnectorGit(),
 				"harness_platform_connector_github":              connector.ResourceConnectorGithub(),
 				"harness_platform_connector_gitlab":              connector.ResourceConnectorGitlab(),
@@ -194,6 +200,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_clusters_mapping":  pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides": pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_gitops_agent":                  gitops_agent.ResourceGitopsAgent(),
+				"harness_platform_gitops_applications":           gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_repository":             gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_infrastructure":                pl_infrastructure.ResourceInfrastructure(),

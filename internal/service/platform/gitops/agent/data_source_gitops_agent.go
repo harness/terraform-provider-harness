@@ -14,25 +14,25 @@ import (
 
 func DataSourceGitopsAgent() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for creating a Harness Gitops Agents.",
+		Description: "Datasource for fetching a Harness Gitops Agents.",
 
 		ReadContext: dataSourceGitopsAgentRead,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "account identifier of the agent.",
+				Description: "Account Identifier for the agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "project identifier of the agent.",
+				Description: "Project Identifier for the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"org_id": {
-				Description: "organization identifier of the agent.",
+				Description: "Organization Identifier for the agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"identifier": {
 				Description: "identifier of the agent.",
@@ -40,22 +40,22 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "name of the agent.",
+				Description: "A human readable name for the gitops-agent.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"description": {
-				Description: "description of the agent.",
+				Description: "A human readable description for the gitops-agent",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"type": {
-				Description: "type of the agent.",
+				Description: "Default: \"AGENT_TYPE_UNSET\"\nEnum: \"AGENT_TYPE_UNSET\" \"CONNECTED_ARGO_PROVIDER\" \"MANAGED_ARGO_PROVIDER\"",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"tags": {
-				Description: "tags for the agent.",
+				Description: "Tags that help organize gitops-agents",
 				Type:        schema.TypeMap,
 				Computed:    true,
 				Elem: &schema.Schema{
@@ -63,20 +63,20 @@ func DataSourceGitopsAgent() *schema.Resource {
 				},
 			},
 			"metadata": {
-				Description: "tags for the agent.",
+				Description: "Metadata of the agent.",
 				Type:        schema.TypeList,
-				Required:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
-							Description: "namespace of the agent.",
+							Description: "The k8s namespace that this agent resides in.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Computed:    true,
 						},
 						"high_availability": {
-							Description: "If the agent should be high availability.",
+							Description: "Whether or not this deployment should be deployed using deploy-ha.yaml",
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 						},
 					}},
 			},
