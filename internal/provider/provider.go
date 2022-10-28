@@ -3,8 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"log"
+
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -48,7 +49,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
-	//"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
