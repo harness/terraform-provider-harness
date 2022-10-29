@@ -1,6 +1,6 @@
 
-<a name="0.2.18"></a>
-## 0.2.18 (2022-10-28)
+<a name="0.2.19"></a>
+## 0.2.19 (2022-10-29)
 
 ### Add
 
@@ -29,7 +29,6 @@
 ### Change
 
 * change in package name
-* change model and enums for ssh key secret type
 
 ### Changes
 
@@ -59,6 +58,8 @@
 
 ### Release
 
+* Release version 0.2.18 10-28-2022
+* Release v0.2.18
 * Release version 0.2.17 10-27-2022
 * Release v0.2.17
 * Release version 0.2.16 10-26-2022
@@ -103,7 +104,6 @@
 * Release v0.1.33
 * Release version 0.1.32 07-20-2022
 * Release v0.1.32
-* Release v0.1.31
 
 ### Resource
 
@@ -119,6 +119,8 @@
 
 ### Update
 
+* Update azure connector models
+* Update azure connector models
 * Update role assignments api and models
 * Update prometheus connector dto model
 * Update user group model
@@ -126,6 +128,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#211](https://github.com/harness/harness-go-sdk/issues/211) from harness/azure-conn
 * Merge pull request [#207](https://github.com/harness/harness-go-sdk/issues/207) from harness/abhinav/SPG-567
 * Merge pull request [#193](https://github.com/harness/harness-go-sdk/issues/193) from harness/CDS-44872-GitOps-Repositories-Certificates-API
 * Merge pull request [#208](https://github.com/harness/harness-go-sdk/issues/208) from harness/azure-connector
@@ -155,6 +158,4 @@
 * Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
 * Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
 * Merge pull request [#140](https://github.com/harness/harness-go-sdk/issues/140) from harness/release
-* Merge pull request [#138](https://github.com/harness/harness-go-sdk/issues/138) from harness/PL-25840
-* Merge pull request [#139](https://github.com/harness/harness-go-sdk/issues/139) from harness/PL-25839
 
