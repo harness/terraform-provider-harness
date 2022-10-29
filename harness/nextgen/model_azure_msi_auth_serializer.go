@@ -22,7 +22,7 @@ func (a *AzureMsiAuth) UnmarshalJSON(data []byte) error {
 
 	switch a.Type_ {
 	case AzureMsiAuthTypes.SystemAssignedManagedIdentity.String():
-		err = json.Unmarshal(aux.Spec, &a.AzureMSIAuthSA)
+		// err = json.Unmarshal(aux.Spec, &a.AzureMSIAuthSA)
 	case AzureMsiAuthTypes.UserAssignedManagedIdentity.String():
 		err = json.Unmarshal(aux.Spec, &a.AzureMSIAuthUA)
 	default:

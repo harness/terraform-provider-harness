@@ -13,7 +13,7 @@ import "encoding/json"
 
 // This contains Azure connector credentials
 type AzureCredential struct {
-	Type_                           string                           `json:"type"`
+	Type_                           AzureCredentialType              `json:"type"`
 	AzureManualDetails              *AzureManualDetails              `json:"-"`
 	AzureInheritFromDelegateDetails *AzureInheritFromDelegateDetails `json:"-"`
 	Spec                            json.RawMessage                  `json:"spec,omitempty"`
