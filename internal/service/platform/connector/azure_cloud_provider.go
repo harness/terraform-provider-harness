@@ -61,10 +61,10 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"type": {
-													Description:  "Type can either be Certificate or SecretKey.",
+													Description:  "Type can either be Certificate or Secret.",
 													Type:         schema.TypeString,
 													Optional:     true,
-													ValidateFunc: validation.StringInSlice([]string{"Certificate", "SecretKey"}, false),
+													ValidateFunc: validation.StringInSlice([]string{"Certificate", "Secret"}, false),
 												},
 												"azure_client_key_cert": {
 													Description: "Azure client key certificate details.",
@@ -221,6 +221,7 @@ func buildConnectorAzureCloudProvider(d *schema.ResourceData) *nextgen.Connector
 				if attr, ok := config["azure_manual_details"]; ok {
 					configCredentials := attr.([]interface{})[0].(map[string]interface{})
 
+					connector.Azure.Credential.AzureManualDetails = &nextgen.AzureManualDetails{}
 					if attr, ok := configCredentials["application_id"]; ok {
 						connector.Azure.Credential.AzureManualDetails.ApplicationId = attr.(string)
 					}
@@ -232,24 +233,31 @@ func buildConnectorAzureCloudProvider(d *schema.ResourceData) *nextgen.Connector
 					if attr, ok := configCredentials["auth"]; ok {
 						configCredentialsManualAuth := attr.([]interface{})[0].(map[string]interface{})
 
+						connector.Azure.Credential.AzureManualDetails.Auth = &nextgen.AzureAuth{}
 						if attr, ok := configCredentialsManualAuth["type"]; ok {
 							connector.Azure.Credential.AzureManualDetails.Auth.Type_ = attr.(string)
-						}
 
-						if attr, ok := configCredentialsManualAuth["azure_client_key_cert"]; ok {
-							configCredentialsManualAuthSpec := attr.([]interface{})[0].(map[string]interface{})
+							if attr.(string) == nextgen.AzureAuthTypes.Certificate.String() {
+								if attr, ok := configCredentialsManualAuth["azure_client_key_cert"]; ok {
+									configCredentialsManualAuthSpec := attr.([]interface{})[0].(map[string]interface{})
 
-							if attr, ok := configCredentialsManualAuthSpec["certificate_ref"]; ok {
-								connector.Azure.Credential.AzureManualDetails.Auth.AzureClientKeyCert.CertificateRef = attr.(string)
+									connector.Azure.Credential.AzureManualDetails.Auth.AzureClientKeyCert = &nextgen.AzureClientKeyCert{}
+									if attr, ok := configCredentialsManualAuthSpec["certificate_ref"]; ok {
+										connector.Azure.Credential.AzureManualDetails.Auth.AzureClientKeyCert.CertificateRef = attr.(string)
+									}
+
+								}
 							}
 
-						}
+							if attr.(string) == nextgen.AzureAuthTypes.SecretKey.String() {
+								if attr, ok := configCredentialsManualAuth["azure_client_secret_key"]; ok {
+									configCredentialsManualAuthSpec := attr.([]interface{})[0].(map[string]interface{})
 
-						if attr, ok := configCredentialsManualAuth["azure_client_secret_key"]; ok {
-							configCredentialsManualAuthSpec := attr.([]interface{})[0].(map[string]interface{})
-
-							if attr, ok := configCredentialsManualAuthSpec["secret_ref"]; ok {
-								connector.Azure.Credential.AzureManualDetails.Auth.AzureClientSecretKey.SecretRef = attr.(string)
+									connector.Azure.Credential.AzureManualDetails.Auth.AzureClientSecretKey = &nextgen.AzureClientSecretKey{}
+									if attr, ok := configCredentialsManualAuthSpec["secret_ref"]; ok {
+										connector.Azure.Credential.AzureManualDetails.Auth.AzureClientSecretKey.SecretRef = attr.(string)
+									}
+								}
 							}
 						}
 					}
@@ -272,6 +280,7 @@ func buildConnectorAzureCloudProvider(d *schema.ResourceData) *nextgen.Connector
 								if attr, ok := configCredentials["azure_msi_auth_ua"]; ok {
 									configCredentialsInheritFromDelegate := attr.([]interface{})[0].(map[string]interface{})
 
+									connector.Azure.Credential.AzureInheritFromDelegateDetails.Auth.AzureMSIAuthUA = &nextgen.AzureUserAssignedMsiAuth{}
 									if attr, ok := configCredentialsInheritFromDelegate["client_id"]; ok {
 										connector.Azure.Credential.AzureInheritFromDelegateDetails.Auth.AzureMSIAuthUA.ClientId = attr.(string)
 									}
@@ -376,7 +385,7 @@ func readAzureManualConfigAuth(connector *nextgen.ConnectorInfo) []map[string]in
 		spec = []map[string]interface{}{
 			{
 				"type": connector.Azure.Credential.AzureManualDetails.Auth.Type_,
-				"spec": []map[string]interface{}{
+				"azure_client_key_cert": []map[string]interface{}{
 					{
 						"certificate_ref": connector.Azure.Credential.AzureManualDetails.Auth.AzureClientKeyCert.CertificateRef,
 					},
@@ -387,7 +396,7 @@ func readAzureManualConfigAuth(connector *nextgen.ConnectorInfo) []map[string]in
 		spec = []map[string]interface{}{
 			{
 				"type": connector.Azure.Credential.AzureManualDetails.Auth.Type_,
-				"spec": []map[string]interface{}{
+				"azure_client_secret_key": []map[string]interface{}{
 					{
 						"secret_ref": connector.Azure.Credential.AzureManualDetails.Auth.AzureClientSecretKey.SecretRef,
 					},
