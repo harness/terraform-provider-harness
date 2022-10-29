@@ -20,3 +20,6 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 	}
 	return diag.Errorf(err.Error())
 }
+
+
+
