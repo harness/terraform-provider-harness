@@ -1,7 +1,7 @@
 resource "harness_platform_connector_azure_cloud_provider" "manual_config_secret" {
   identifier  = "identifier"
   name        = "name"
-  description = "test"
+  description = "example"
   tags        = ["foo:bar"]
 
   credentials {
@@ -25,7 +25,7 @@ resource "harness_platform_connector_azure_cloud_provider" "manual_config_secret
 resource "harness_platform_connector_azure_cloud_provider" "manual_config_certificate" {
   identifier  = "identifier"
   name        = "name"
-  description = "test"
+  description = "example"
   tags        = ["foo:bar"]
 
   credentials {
@@ -49,7 +49,7 @@ resource "harness_platform_connector_azure_cloud_provider" "manual_config_certif
 resource "harness_platform_connector_azure_cloud_provider" "inherit_from_delegate_user_assigned_managed_identity" {
   identifier  = "identifier"
   name        = "name"
-  description = "test"
+  description = "example"
   tags        = ["foo:bar"]
 
   credentials {
@@ -71,7 +71,7 @@ resource "harness_platform_connector_azure_cloud_provider" "inherit_from_delegat
 resource "harness_platform_connector_azure_cloud_provider" "inherit_from_delegate_system_assigned_managed_identity" {
   identifier  = "identifier"
   name        = "name"
-  description = "test"
+  description = "example"
   tags        = ["foo:bar"]
 
   credentials {

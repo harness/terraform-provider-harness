@@ -39,7 +39,7 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 										Computed:    true,
 									},
 									"auth": {
-										Description: "Contains Azure Auth details.",
+										Description: "Contains Azure auth details.",
 										Type:        schema.TypeList,
 										Computed:    true,
 										Elem: &schema.Resource{
@@ -56,7 +56,7 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"certificate_ref": {
-																Description: "Secret Reference of the Certificate.",
+																Description: "Reference of the secret for the certificate.",
 																Type:        schema.TypeString,
 																Computed:    true,
 															},
@@ -70,7 +70,7 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"secret_ref": {
-																Description: "Secret Reference of the Secret Key.",
+																Description: "Reference of the secret for the secret key.",
 																Type:        schema.TypeString,
 																Computed:    true,
 															},
@@ -101,7 +101,7 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 													Computed:    true,
 												},
 												"azure_msi_auth_ua": {
-													Description: "Azure UserAssigned MSI Auth details.",
+													Description: "Azure UserAssigned MSI auth details.",
 													Type:        schema.TypeList,
 													Computed:    true,
 													Elem: &schema.Resource{
@@ -130,7 +130,7 @@ func DataSourceConnectorAzureCloudProvider() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"azure_environment_type": {
-				Description: "Specifies the Azure Environment type, which is AZURE by default.Can either be AZURE or AZURE_US_GOVERNMENT",
+				Description: "Specifies the Azure Environment type, which is AZURE by default. Can either be AZURE or AZURE_US_GOVERNMENT",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
