@@ -14,7 +14,7 @@ import (
 
 func ResourceFilters() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Ng Filter.",
+		Description: "Resource for creating a Harness Filter.",
 
 		ReadContext:   resourceFiltersRead,
 		UpdateContext: resourceFiltersCreateOrUpdate,
@@ -40,17 +40,17 @@ func ResourceFilters() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "PipelineSetup", "PipelineExecution", "Deployment", "Audit", "Template", "EnvironmentGroup", "FileStore", "CCMRecommendation", "Anomaly", "Environment"}, false),
 			},
 			"org_id": {
-				Description: "Organization Identifier for the Entity",
+				Description: "organization Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier for the Entity",
+				Description: "project Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"filter_properties": {
-				Description: "Properties of the Filter entity defined in Harness.",
+				Description: "Properties of the filter entity defined in Harness.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Required:    true,
@@ -74,7 +74,7 @@ func ResourceFilters() *schema.Resource {
 				},
 			},
 			"filter_visibility": {
-				Description:  "This indicates visibility of Filter, by default it is Everyone.",
+				Description:  "This indicates visibility of filter, by default it is Everyone.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EveryOne", "OnlyCreator"}, false),

@@ -29,13 +29,13 @@ data "harness_platform_variable" "test" {
 
 ### Optional
 
-- `org_id` (String) Organization Identifier for the Entity
-- `project_id` (String) Project Identifier for the Entity
+- `org_id` (String) organization Identifier for the Entity
+- `project_id` (String) project Identifier for the Entity
 
 ### Read-Only
 
-- `filter_properties` (List of Object) Properties of the Filter entity defined in Harness. (see [below for nested schema](#nestedatt--filter_properties))
-- `filter_visibility` (String) This indicates visibility of Filter, by default it is Everyone.
+- `filter_properties` (List of Object) Properties of the filter entity defined in Harness. (see [below for nested schema](#nestedatt--filter_properties))
+- `filter_visibility` (String) This indicates visibility of filter, by default it is Everyone.
 - `id` (String) The ID of this resource.
 - `name` (String) Name of the Filter
 
@@ -44,7 +44,7 @@ data "harness_platform_variable" "test" {
 
 Read-Only:
 
-- `filter_type` (String)
-- `tags` (Set of String)
+- `filter_type` (String) Corresponding Entity of the filter
+- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

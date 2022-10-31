@@ -8,7 +8,7 @@ description: |-
 
 # harness_platform_filters (Resource)
 
-Resource for creating a Harness Ng Filter.
+Resource for creating a Harness Filter.
 
 ## Example Usage
 
@@ -39,9 +39,9 @@ resource "harness_platform_filters" "test" {
 
 ### Optional
 
-- `filter_visibility` (String) This indicates visibility of Filter, by default it is Everyone.
-- `org_id` (String) Organization Identifier for the Entity
-- `project_id` (String) Project Identifier for the Entity
+- `filter_visibility` (String) This indicates visibility of filter, by default it is Everyone.
+- `org_id` (String) organization Identifier for the Entity
+- `project_id` (String) project Identifier for the Entity
 
 ### Read-Only
 
