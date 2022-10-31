@@ -14,7 +14,7 @@ import (
 
 func ResourceFilters() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Filter.",
+		Description: "Resource for creating a Harness Filter. This resource support filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}",
 
 		ReadContext:   resourceFiltersRead,
 		UpdateContext: resourceFiltersCreateOrUpdate,
@@ -34,10 +34,10 @@ func ResourceFilters() *schema.Resource {
 				Required:    true,
 			},
 			"type": {
-				Description:  "Type of filter",
+				Description:  "Type of filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}",
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "PipelineSetup", "PipelineExecution", "Deployment", "Audit", "Template", "EnvironmentGroup", "FileStore", "CCMRecommendation", "Anomaly", "Environment"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "EnvironmentGroup", "FileStore", "Environment"}, false),
 			},
 			"org_id": {
 				Description: "organization Identifier for the Entity",
@@ -57,10 +57,10 @@ func ResourceFilters() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"filter_type": {
-							Description:  "Corresponding Entity of the filter",
+							Description:  "Corresponding Entity of the filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "PipelineSetup", "PipelineExecution", "Deployment", "Audit", "Template", "EnvironmentGroup", "FileStore", "CCMRecommendation", "Anomaly", "Environment"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "EnvironmentGroup", "FileStore", "Environment"}, false),
 						},
 						"tags": {
 							Description: "Tags to associate with the resource. Tags should be in the form `name:value`.",

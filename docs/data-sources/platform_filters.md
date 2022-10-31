@@ -8,7 +8,7 @@ description: |-
 
 # harness_platform_filters (Data Source)
 
-Data source for retrieving a Harness Filter.
+Data source for retrieving a Harness Filter. This data source allow to fetch filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.
 
 ```terraform
 data "harness_platform_variable" "test" {
@@ -25,7 +25,7 @@ data "harness_platform_variable" "test" {
 ### Required
 
 - `identifier` (String) Unique identifier of the resource
-- `type` (String) Type of filter
+- `type` (String) Type of filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.
 
 ### Optional
 
@@ -44,7 +44,7 @@ data "harness_platform_variable" "test" {
 
 Read-Only:
 
-- `filter_type` (String) Corresponding Entity of the filter
+- `filter_type` (String) Corresponding Entity of the filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 

@@ -15,7 +15,7 @@ import (
 
 func DataSourceFilters() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Filter.",
+		Description: "Data source for retrieving a Harness Filter. This data source allow to fetch filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}",
 
 		ReadContext: dataSourceFiltersRead,
 
@@ -31,10 +31,10 @@ func DataSourceFilters() *schema.Resource {
 				Computed:    true,
 			},
 			"type": {
-				Description:  "Type of filter",
+				Description:  "Type of filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.",
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "PipelineSetup", "PipelineExecution", "Deployment", "Audit", "Template", "EnvironmentGroup", "FileStore", "CCMRecommendation", "Anomaly", "Environment"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "EnvironmentGroup", "FileStore", "Environment"}, false),
 			},
 			"org_id": {
 				Description: "organization Identifier for the Entity",
@@ -53,7 +53,7 @@ func DataSourceFilters() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"filter_type": {
-							Description: "Corresponding Entity of the filter",
+							Description: "Corresponding Entity of the filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},

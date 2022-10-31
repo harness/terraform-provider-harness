@@ -3,7 +3,7 @@
 page_title: "harness_platform_filters Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Ng Filter.
+  Resource for creating a Harness Ng Filter. This resource support filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}"
 ---
 
 # harness_platform_filters (Resource)
@@ -35,7 +35,7 @@ resource "harness_platform_filters" "test" {
 - `filter_properties` (Block List, Min: 1, Max: 1) Properties of the Filter entity defined in Harness. (see [below for nested schema](#nestedblock--filter_properties))
 - `identifier` (String) Unique identifier of the resource
 - `name` (String) Name of the Filter
-- `type` (String) Type of filter
+- `type` (String) Type of filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.
 
 ### Optional
 
@@ -52,7 +52,7 @@ resource "harness_platform_filters" "test" {
 
 Required:
 
-- `filter_type` (String) Corresponding Entity of the filter
+- `filter_type` (String) Corresponding Entity of the filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.
 
 Optional:
 
