@@ -29,6 +29,10 @@ func TestAccResourceFilters(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
 				),
 			},
 			{
@@ -36,6 +40,10 @@ func TestAccResourceFilters(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
 				),
 			},
 			{
@@ -65,6 +73,10 @@ func TestAccResourceFiltersOrgLevel(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "OnlyCreator"),
 				),
 			},
 			{
@@ -72,6 +84,10 @@ func TestAccResourceFiltersOrgLevel(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "OnlyCreator"),
 				),
 			},
 			{
