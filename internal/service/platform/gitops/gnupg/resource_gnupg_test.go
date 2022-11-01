@@ -28,7 +28,7 @@ func TestAccResourceGitopsGnupg(t *testing.T) {
 			{
 				Config: testAccResourceGitopsGnupg(id, accountId, name, agentId),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "1BFB4666240830AA"),
+					resource.TestCheckResourceAttr(resourceName, "id", "1234"),
 					//resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
@@ -43,7 +43,7 @@ func TestAccResourceGitopsGnupg(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})

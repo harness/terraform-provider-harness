@@ -28,6 +28,11 @@ func ResourceGitopsGnupg() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"agent_id": {
+				Description: "agent identifier of the cluster.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"org_id": {
 				Description: "organization Identifier for the Entity.",
 				Type:        schema.TypeString,
@@ -35,11 +40,6 @@ func ResourceGitopsGnupg() *schema.Resource {
 			},
 			"project_id": {
 				Description: "project Identifier for the Entity.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"agent_id": {
-				Description: "agent identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -109,19 +109,11 @@ func resourceGitopsGnupgCreate(ctx context.Context, d *schema.ResourceData, meta
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
-	// if attr, ok := d.GetOk("org_id"); ok {
-	// 	orgIdentifier = attr.(string)
-	// }
-	// if attr, ok := d.GetOk("project_id"); ok {
-	// 	projectIdentifier = attr.(string)
-	// }
 
 	createGnupgRequest := buildGnupgCreateRequest(d)
 	respCreate, httpRespCreate, errCreate := c.GnuPGPKeysApi.AgentGPGKeyServiceCreate(ctx, *createGnupgRequest, agentIdentifier,
 		&nextgen.GnuPGPKeysApiAgentGPGKeyServiceCreateOpts{
 			AccountIdentifier: optional.NewString(accountIdentifier),
-			// OrgIdentifier:     optional.NewString(orgIdentifier),
-			// ProjectIdentifier: optional.NewString(projectIdentifier),
 		})
 
 	if errCreate != nil {
@@ -155,9 +147,10 @@ func resourceGitopsGnupgCreate(ctx context.Context, d *schema.ResourceData, meta
 func resourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	// agentIdentifier := d.Get("agent_id").(string)
+	agentIdentifier := d.Get("agent_id").(string)
+	keyId := d.Get("request.0.publickey.0.key_id").(string)
 
-	resp, httpResp, err := c.GnuPGPKeysApi.GnuPGKeyServiceListGPGKeys(ctx, c.AccountId, &nextgen.GPGKeysApiGnuPGKeyServiceListGPGKeysOpts{})
+	resp, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceGet(ctx, agentIdentifier, keyId, c.AccountId, &nextgen.GnuPGPKeysApiAgentGPGKeyServiceGetOpts{})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -170,7 +163,7 @@ func resourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta i
 		d.MarkNewResource()
 		return nil
 	}
-	readGnupgKey(d, resp.Content[0].GnuPGPublicKey)
+	readGnupgKey(d, &resp)
 	return nil
 }
 
@@ -178,11 +171,10 @@ func resourceGitopsGnupgDelete(ctx context.Context, d *schema.ResourceData, meta
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_id").(string)
+	keyId := d.Get("request.0.publickey.0.key_id").(string)
 
-	_, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceDelete(ctx, agentIdentifier, d.Id(), &nextgen.GnuPGPKeysApiAgentGPGKeyServiceDeleteOpts{
+	_, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceDelete(ctx, agentIdentifier, keyId, &nextgen.GnuPGPKeysApiAgentGPGKeyServiceDeleteOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
-		// OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		// ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
 	if err != nil {
@@ -192,12 +184,13 @@ func resourceGitopsGnupgDelete(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func readGnupgKey(d *schema.ResourceData, gpgkey *nextgen.GpgkeysGnuPgPublicKey) {
-	// d.SetId(gpgkey.KeyID)
+	d.SetId("1234")
 	request := map[string]interface{}{}
 	requestList := []interface{}{}
 	publickey := map[string]interface{}{}
 	publickeyList := []interface{}{}
 
+	publickey["key_id"] = gpgkey.KeyID
 	publickey["fingerprint"] = gpgkey.Fingerprint
 	publickey["owner"] = gpgkey.Owner
 	publickey["trust"] = gpgkey.Trust
@@ -231,8 +224,8 @@ func buildPublickeyDetails(d *schema.ResourceData) *nextgen.GpgkeysGnuPgPublicKe
 
 			requestPublicKey := request["publickey"].([]interface{})[0].(map[string]interface{})
 
-			if requestPublicKey["key_ID"] != nil {
-				publickeyDetails.KeyID = requestPublicKey["key_ID"].(string)
+			if requestPublicKey["key_id"] != nil {
+				publickeyDetails.KeyID = requestPublicKey["key_id"].(string)
 			}
 
 			if requestPublicKey["fingerprint"] != nil {
