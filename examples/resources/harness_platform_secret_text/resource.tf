@@ -9,7 +9,7 @@ resource "harness_platform_secret_text" "inline" {
   value                     = "secret"
 }
 
-resource "harness_platform_secret_text" "referenece" {
+resource "harness_platform_secret_text" "reference" {
   identifier  = "identifier"
   name        = "name"
   description = "example"
