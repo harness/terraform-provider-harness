@@ -46,10 +46,11 @@ func TestAccSecretText_inline(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
@@ -113,11 +114,6 @@ func testAccResourceSecret_text_inline(id string, name string) string {
 			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Inline"
 			value = "secret"
-			lifecycle {
-				ignore_changes = [
-					value,
-				]
-			}
 		}
 `, id, name)
 }
