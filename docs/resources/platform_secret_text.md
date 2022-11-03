@@ -13,20 +13,26 @@ Resource for creating secret of type secret text
 ## Example Usage
 
 ```terraform
-resource "harness_platform_secret_text" "test" {
+resource "harness_platform_secret_text" "inline" {
   identifier  = "identifier"
   name        = "name"
-  description = "test"
+  description = "example"
   tags        = ["foo:bar"]
 
   secret_manager_identifier = "harnessSecretManager"
   value_type                = "Inline"
   value                     = "secret"
-  lifecycle {
-    ignore_changes = [
-      value,
-    ]
-  }
+}
+
+resource "harness_platform_secret_text" "reference" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "example"
+  tags        = ["foo:bar"]
+
+  secret_manager_identifier = "azureSecretManager"
+  value_type                = "Reference"
+  value                     = "secret"
 }
 ```
 
@@ -46,7 +52,7 @@ resource "harness_platform_secret_text" "test" {
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `value` (String) Value of the Secret
+- `value` (String, Sensitive) Value of the Secret
 
 ### Read-Only
 
