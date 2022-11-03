@@ -1,14 +1,66 @@
 package cd
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"path"
 	"strings"
 
+	"github.com/harness/harness-go-sdk/harness/cd/executions"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )
 
 type ExecutionClient struct {
 	ApiClient *ApiClient
+}
+
+func (c *ExecutionClient) AbortOrCancelWorkflowOrPipelineById(id, action, appId, envId string) error {
+	c.ApiClient.Log.Debugf("%s workflow or pipeline by id: %s", action, id)
+
+	var requestBody bytes.Buffer
+
+	body := []*struct {
+		ExeuctionInterruptType string `json:"executionInterruptType"`
+	}{
+		{
+			ExeuctionInterruptType: action,
+		},
+	}
+
+	// JSON encode our body payload
+	if err := json.NewEncoder(&requestBody).Encode(body); err != nil {
+		return err
+	}
+
+	req, err := c.ApiClient.NewAuthorizedRequest(path.Join(utils.DefaultCDApiUrl, "/executions", id), http.MethodPut, &requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	// Add the account ID to the query string
+	q := req.URL.Query()
+	q.Add(helpers.QueryParametersExecutions.ApplicationId.String(), appId)
+	q.Add(helpers.QueryParametersExecutions.EnvironmentId.String(), envId)
+	q.Add(helpers.QueryParametersExecutions.RoutingId.String(), c.ApiClient.Configuration.AccountId)
+	q.Add(helpers.QueryParametersExecutions.SortField.String(), "createdAt")
+	q.Add(helpers.QueryParametersExecutions.SortDirection.String(), "DESC")
+	q.Add(helpers.QueryParametersExecutions.Limit.String(), "10")
+	req.URL.RawQuery = q.Encode()
+
+	_, err = c.ExecuteRequest(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *ExecutionClient) ExportExecutions(input *graphql.ExportExecutionsInput) (*graphql.ExportExecutionsPayload, error) {
@@ -141,6 +193,43 @@ func (c *ExecutionClient) StartExecution(input *graphql.StartExecutionInput) (*g
 	}
 
 	return &res.StartExecution, nil
+}
+
+func (c *ExecutionClient) ExecuteRequest(request *retryablehttp.Request) (*executions.ExecutionItem, error) {
+
+	res, err := c.ApiClient.Configuration.HTTPClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	if ok, err := checkStatusCode(res.StatusCode); !ok {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+
+	// Make sure we can parse the body properly
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, res.Body); err != nil {
+		return nil, fmt.Errorf("error reading body: %s", err)
+	}
+
+	responseObj := &executions.Response{}
+
+	// Unmarshal into our response object
+	if err := json.NewDecoder(&buf).Decode(&responseObj); err != nil {
+		return nil, fmt.Errorf("error decoding response: %s", err)
+	}
+
+	if responseObj.IsEmpty() {
+		return nil, errors.New("received an empty response")
+	}
+
+	if len(responseObj.ResponseMessages) > 0 {
+		return nil, responseObj.ResponseMessages[0].ToError()
+	}
+
+	return responseObj.Resource, nil
 }
 
 var workflowExecutionFields = `

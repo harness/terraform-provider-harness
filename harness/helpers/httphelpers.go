@@ -45,3 +45,19 @@ var QueryParameters = struct {
 	Type:          "type",
 	YamlFilePath:  "yamlFilePath",
 }
+
+var QueryParametersExecutions = struct {
+	ApplicationId QueryParameter
+	EnvironmentId QueryParameter
+	Limit         QueryParameter
+	SortField     QueryParameter
+	SortDirection QueryParameter
+	RoutingId     QueryParameter
+}{
+	ApplicationId: "appId",
+	EnvironmentId: "envId",
+	Limit:         "limit",
+	SortField:     "sort[0][field]",
+	SortDirection: "sort[0][direction]",
+	RoutingId:     "routingId",
+}
