@@ -36,6 +36,7 @@ type ConnectorInfo struct {
 	AwsCC            *CeAwsConnector          `json:"-"`
 	AwsKms           *AwsKmsConnector         `json:"-"`
 	AwsSecretManager *AwsSecretManager        `json:"-"`
+	AzureCloudCost   *CeAzureConnector        `json:"-"`
 	Azure            *AzureConnector          `json:"-"`
 	BitBucket        *BitbucketConnector      `json:"-"`
 	Datadog          *DatadogConnectorDto     `json:"-"`
