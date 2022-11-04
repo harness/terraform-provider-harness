@@ -105,6 +105,7 @@ func Provider(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_azure_cloud_cost":    connector.DataSourceConnectorAzureCloudCost(),
 				"harness_platform_connector_appdynamics":         connector.DatasourceConnectorAppDynamics(),
 				"harness_platform_connector_artifactory":         connector.DatasourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":  connector.DatasourceConnectorAwsSM(),
@@ -175,6 +176,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_yaml_config":                            yamlconfig.DataSourceYamlConfig(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_azure_cloud_cost":     connector.ResourceConnectorAzureCloudCost(),
 				"harness_platform_connector_appdynamics":          connector.ResourceConnectorAppDynamics(),
 				"harness_platform_connector_artifactory":          connector.ResourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":   connector.ResourceConnectorAwsSM(),
@@ -207,7 +209,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_applications":            gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                 gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_repository":              gitops_repository.ResourceGitopsRepositories(),
-				"harness_platform_gitops_repo_cert":              gitops_repo_cert.ResourceGitopsRepoCerts(),
+				"harness_platform_gitops_repo_cert":               gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_infrastructure":                 pl_infrastructure.ResourceInfrastructure(),
 				"harness_environment_service_overrides":           pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                      input_set.ResourceInputSet(),
