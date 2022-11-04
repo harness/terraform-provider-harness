@@ -1,18 +1,10 @@
 
-<a name="0.2.19"></a>
-## 0.2.19 (2022-10-29)
+<a name="0.2.20"></a>
+## 0.2.20 (2022-11-04)
 
 ### Add
 
 * Add approvals for CG to SDK ([#142](https://github.com/harness/harness-go-sdk/issues/142))
-
-### Added
-
-* Added attribute filter model
-
-### Adding
-
-* Adding dto files
 
 ### Adding
 
@@ -20,6 +12,10 @@
 * adding better name
 * adding support for export executions
 * adding delegate resource
+
+### Adding
+
+* Adding dto files
 
 ### Azure
 
@@ -58,6 +54,8 @@
 
 ### Release
 
+* Release version 0.2.19 10-29-2022
+* Release v0.2.19
 * Release version 0.2.18 10-28-2022
 * Release v0.2.18
 * Release version 0.2.17 10-27-2022
@@ -103,7 +101,6 @@
 * Release version 0.1.33 08-13-2022
 * Release v0.1.33
 * Release version 0.1.32 07-20-2022
-* Release v0.1.32
 
 ### Resource
 
@@ -128,6 +125,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#215](https://github.com/harness/harness-go-sdk/issues/215) from harness/SPG-731-updating-infra-doc
 * Merge pull request [#211](https://github.com/harness/harness-go-sdk/issues/211) from harness/azure-conn
 * Merge pull request [#207](https://github.com/harness/harness-go-sdk/issues/207) from harness/abhinav/SPG-567
 * Merge pull request [#193](https://github.com/harness/harness-go-sdk/issues/193) from harness/CDS-44872-GitOps-Repositories-Certificates-API
@@ -156,6 +154,4 @@
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
 * Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
-* Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
-* Merge pull request [#140](https://github.com/harness/harness-go-sdk/issues/140) from harness/release
 
