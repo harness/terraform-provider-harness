@@ -1,0 +1,7 @@
+```release-note:new-resource
+harness_platform_gitops_agent 
+harness_platform_gitops_cluster
+harness_platform_gitops_applications 
+harness_platform_gitops_repository 
+harness_platform_gitops_repo_cert
+```
