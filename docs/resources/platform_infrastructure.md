@@ -22,7 +22,7 @@ resource "harness_platform_infrastructure" "example" {
   type            = "KubernetesDirect"
   deployment_type = "Kubernetes"
   yaml            = <<-EOT
-			   infrastructureDefinition:
+        infrastructureDefinition:
          name: name
          identifier: identifier
          description: ""
