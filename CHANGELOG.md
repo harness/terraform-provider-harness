@@ -1,3 +1,17 @@
+# 0.7.1 (November 4,2022)
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitops_agent 
+harness_platform_gitops_cluster
+harness_platform_gitops_applications 
+harness_platform_gitops_repository 
+harness_platform_gitops_repo_cert` ([#282](https://github.com/harness/terraform-provider-harness/issues/282))
+
+BUG FIXES:
+
+* harness_platform_secret_text : fix value field in secret text resource ([#281](https://github.com/harness/terraform-provider-harness/issues/281))
+
 # 0.7.0 (November 20,2022)
 
 FEATURES:
