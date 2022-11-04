@@ -105,6 +105,7 @@ func Provider(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_gcp_cloud_cost":        connector.DataSourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.DatasourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.DataSourceConnectorAzureCloudCost(),
 				"harness_platform_connector_appdynamics":           connector.DatasourceConnectorAppDynamics(),
@@ -177,6 +178,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_yaml_config":                              yamlconfig.DataSourceYamlConfig(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.ResourceConnectorAzureCloudCost(),
 				"harness_platform_connector_appdynamics":           connector.ResourceConnectorAppDynamics(),
