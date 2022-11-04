@@ -1,11 +1,36 @@
 package cd
 
 import (
-	"github.com/harness/harness-go-sdk/harness/cd/graphql"
-	"github.com/stretchr/testify/require"
+	"bytes"
+	"net/http"
+	"path"
 	"testing"
 	time2 "time"
+
+	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/stretchr/testify/require"
 )
+
+func TestAbortWorkflowOrPipelineById(t *testing.T) {
+	c := getClient()
+	res, err := c.ExecutionClient.AbortWorkflowOrPipelineById("", "")
+
+	require.NoError(t, err)
+	require.NotNil(t, res)
+}
+
+func TestExecuteRequest(t *testing.T) {
+	c := getClient()
+	var requestBody bytes.Buffer
+	req, errReq := c.ExecutionClient.ApiClient.NewAuthorizedRequest(path.Join(utils.DefaultCDApiUrl, "/executions", ""), http.MethodGet, &requestBody)
+
+	require.NoError(t, errReq)
+
+	res, err := c.ExecutionClient.ExecuteRequest(req)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+}
 
 func TestExportExecutions(t *testing.T) {
 	c := getClient()

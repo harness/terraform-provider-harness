@@ -3,11 +3,11 @@ package executions
 import "fmt"
 
 func (i *ExecutionItem) IsEmpty() bool {
-	return i == &ExecutionItem{}
+	return i == nil
 }
 
 func (r *Response) IsEmpty() bool {
-	return r.Metadata != nil && r.Resource.IsEmpty() && len(r.ResponseMessages) == 0
+	return r.Metadata == nil && r.Resource.IsEmpty() && len(r.ResponseMessages) == 0
 }
 
 func (m *ResponseMessage) ToError() error {

@@ -37,3 +37,7 @@ type Response struct {
 	Resource         *ExecutionItem    `json:"resource"`
 	ResponseMessages []ResponseMessage `json:"responseMessages"`
 }
+
+const (
+	ABORT = "ABORT_ALL"
+)

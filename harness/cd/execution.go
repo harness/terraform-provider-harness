@@ -21,46 +21,40 @@ type ExecutionClient struct {
 	ApiClient *ApiClient
 }
 
-func (c *ExecutionClient) AbortOrCancelWorkflowOrPipelineById(id, action, appId, envId string) error {
-	c.ApiClient.Log.Debugf("%s workflow or pipeline by id: %s", action, id)
+func (c *ExecutionClient) AbortWorkflowOrPipelineById(id, appId string) (*executions.Response, error) {
+	c.ApiClient.Log.Debugf("%s workflow or pipeline by id: %s", executions.ABORT, id)
 
 	var requestBody bytes.Buffer
 
-	body := []*struct {
-		ExeuctionInterruptType string `json:"executionInterruptType"`
+	body := struct {
+		ExecutionInterruptType string `json:"executionInterruptType"`
 	}{
-		{
-			ExeuctionInterruptType: action,
-		},
+		ExecutionInterruptType: executions.ABORT,
 	}
 
 	// JSON encode our body payload
 	if err := json.NewEncoder(&requestBody).Encode(body); err != nil {
-		return err
+		return nil, err
 	}
 
 	req, err := c.ApiClient.NewAuthorizedRequest(path.Join(utils.DefaultCDApiUrl, "/executions", id), http.MethodPut, &requestBody)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Add the account ID to the query string
 	q := req.URL.Query()
 	q.Add(helpers.QueryParametersExecutions.ApplicationId.String(), appId)
-	q.Add(helpers.QueryParametersExecutions.EnvironmentId.String(), envId)
 	q.Add(helpers.QueryParametersExecutions.RoutingId.String(), c.ApiClient.Configuration.AccountId)
-	q.Add(helpers.QueryParametersExecutions.SortField.String(), "createdAt")
-	q.Add(helpers.QueryParametersExecutions.SortDirection.String(), "DESC")
-	q.Add(helpers.QueryParametersExecutions.Limit.String(), "10")
 	req.URL.RawQuery = q.Encode()
 
-	_, err = c.ExecuteRequest(req)
+	resp, err := c.ExecuteRequest(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return resp, nil
 }
 
 func (c *ExecutionClient) ExportExecutions(input *graphql.ExportExecutionsInput) (*graphql.ExportExecutionsPayload, error) {
@@ -195,14 +189,10 @@ func (c *ExecutionClient) StartExecution(input *graphql.StartExecutionInput) (*g
 	return &res.StartExecution, nil
 }
 
-func (c *ExecutionClient) ExecuteRequest(request *retryablehttp.Request) (*executions.ExecutionItem, error) {
+func (c *ExecutionClient) ExecuteRequest(request *retryablehttp.Request) (*executions.Response, error) {
 
 	res, err := c.ApiClient.Configuration.HTTPClient.Do(request)
 	if err != nil {
-		return nil, err
-	}
-
-	if ok, err := checkStatusCode(res.StatusCode); !ok {
 		return nil, err
 	}
 
@@ -229,7 +219,7 @@ func (c *ExecutionClient) ExecuteRequest(request *retryablehttp.Request) (*execu
 		return nil, responseObj.ResponseMessages[0].ToError()
 	}
 
-	return responseObj.Resource, nil
+	return responseObj, nil
 }
 
 var workflowExecutionFields = `
