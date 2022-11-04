@@ -20,32 +20,32 @@ func DataSourceGitopsAgent() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "Account Identifier for the agent.",
+				Description: "Account identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier for the agent.",
+				Description: "Project identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"org_id": {
-				Description: "Organization Identifier for the agent.",
+				Description: "Organization identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"identifier": {
-				Description: "identifier of the agent.",
+				Description: "Identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"name": {
-				Description: "A human readable name for the gitops-agent.",
+				Description: "Name of the GitOps agent.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"description": {
-				Description: "A human readable description for the gitops-agent",
+				Description: "Description of the GitOps agent.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -55,7 +55,7 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Computed:    true,
 			},
 			"tags": {
-				Description: "Tags that help organize gitops-agents",
+				Description: "Tags for the GitOps agents. These can be used to search or filter the GitOps agents.",
 				Type:        schema.TypeMap,
 				Computed:    true,
 				Elem: &schema.Schema{
@@ -74,7 +74,7 @@ func DataSourceGitopsAgent() *schema.Resource {
 							Computed:    true,
 						},
 						"high_availability": {
-							Description: "Whether or not this deployment should be deployed using deploy-ha.yaml",
+							Description: "Indicates if the deployment should be deployed using the deploy-ha.yaml",
 							Type:        schema.TypeBool,
 							Computed:    true,
 						},

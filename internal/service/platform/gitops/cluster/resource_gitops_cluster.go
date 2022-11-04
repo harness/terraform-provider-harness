@@ -23,59 +23,59 @@ func ResourceGitopsCluster() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "account identifier of the cluster.",
+				Description: "Account identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "project identifier of the cluster.",
+				Description: "Project identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"org_id": {
-				Description: "organization identifier of the cluster.",
+				Description: "Organization identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"agent_id": {
-				Description: "agent identifier of the cluster.",
+				Description: "Agent identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "identifier of the cluster.",
+				Description: "Identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"query": {
-				Description: "query for cluster resources",
+				Description: "Query for the GitOps cluster resources.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"server": {
-							Description: "server of the cluster",
+							Description: "Server of the GitOps cluster.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"name": {
-							Description: "name of the cluster",
+							Description: "Name of the GitOps cluster.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"id": {
-							Description: "cluster server URL or cluster name",
+							Description: "Cluster server URL or the cluster name.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"type": {
-										Description: "the type of the specified cluster identifier ( 'server' - default, 'name' )",
+										Description: "Type of the specified GitOps cluster identifier ( 'server' - default, 'name' ).",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 									"value": {
-										Description: "the cluster server URL or cluster name",
+										Description: "Cluster server URL or the cluster name.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -85,13 +85,13 @@ func ResourceGitopsCluster() *schema.Resource {
 				},
 			},
 			"request": {
-				Description: "Cluster create/Update request.",
+				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
-							Description: "if the cluster should be upserted.",
+							Description: "Indicates if the GitOps cluster should be updated if existing and inserted if not.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
@@ -105,7 +105,7 @@ func ResourceGitopsCluster() *schema.Resource {
 							},
 						},
 						"update_mask": {
-							Description: "Update mask of the cluster.",
+							Description: "Update mask of the GitOps cluster.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
@@ -122,52 +122,52 @@ func ResourceGitopsCluster() *schema.Resource {
 							},
 						},
 						"id": {
-							Description: "cluster server URL or cluster name",
+							Description: "Cluster server URL or the cluster name.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"type": {
-										Description: "the type of the specified cluster identifier ( 'server' - default, 'name' )",
+										Description: "Type of the specified cluster identifier ( 'server' - default, 'name' ).",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 									"value": {
-										Description: "the cluster server URL or cluster name",
+										Description: "Cluster server URL or the cluster name.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 								}},
 						},
 						"cluster": {
-							Description: "cluster details.",
+							Description: "GitOps cluster details.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"server": {
-										Description: "the API server URL of the Kubernetes cluster.",
+										Description: "API server URL of the kubernetes cluster.",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
 									"name": {
-										Description: "Name of the cluster. If omitted, will use the server address",
+										Description: "Name of the cluster. If omitted, will use the server address.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 									"config": {
-										Description: "Cluster Config",
+										Description: "GitOps cluster config.",
 										Type:        schema.TypeList,
 										Required:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"username": {
-													Description: "username for the server of the cluster.",
+													Description: "Username of the server of the cluster.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"password": {
-													Description: "password for the server of the cluster.",
+													Description: "Password of the server of the cluster.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
@@ -177,33 +177,33 @@ func ResourceGitopsCluster() *schema.Resource {
 													Optional:    true,
 												},
 												"tls_client_config": {
-													Description: "contains settings to enable transport layer security",
+													Description: "Settings to enable transport layer security.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"insecure": {
-																Description: "if the TLS connection to the cluster should be insecure.",
+																Description: "Indicates if the TLS connection to the cluster should be insecure.",
 																Type:        schema.TypeBool,
 																Optional:    true,
 															},
 															"server_name": {
-																Description: "server name for SNI in the client to check server certificates against",
+																Description: "Server name for SNI in the client to check server certificates against.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"cert_data": {
-																Description: "certficate data holds PEM-encoded bytes (typically read from a client certificate file).",
+																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file).",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"key_data": {
-																Description: "key data holds PEM-encoded bytes (typically read from a client certificate key file).",
+																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file).",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"ca_data": {
-																Description: "holds PEM-encoded bytes (typically read from a root certificates bundle).",
+																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle).",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -211,18 +211,18 @@ func ResourceGitopsCluster() *schema.Resource {
 													},
 												},
 												"aws_auth_config": {
-													Description: "contains IAM authentication configuration",
+													Description: "IAM authentication configuration for AWS.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"cluster_name": {
-																Description: "contains AWS cluster name.",
+																Description: "AWS cluster name.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"role_a_r_n": {
-																Description: "contains optional role ARN. If set then AWS IAM Authenticator.",
+																Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -230,13 +230,13 @@ func ResourceGitopsCluster() *schema.Resource {
 													},
 												},
 												"exec_provider_config": {
-													Description: "contains configuration for an exec provider",
+													Description: "Configuration for an exec provider.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"command": {
-																Description: "command to execute.",
+																Description: "Command to execute.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -250,7 +250,7 @@ func ResourceGitopsCluster() *schema.Resource {
 																},
 															},
 															"env": {
-																Description: "additional environment variables to expose to the process.",
+																Description: "Additional environment variables to expose to the process.",
 																Type:        schema.TypeMap,
 																Optional:    true,
 																Elem: &schema.Schema{
@@ -263,7 +263,7 @@ func ResourceGitopsCluster() *schema.Resource {
 																Optional:    true,
 															},
 															"install_hint": {
-																Description: "This text is shown to the user when the executable doesn't seem to be present",
+																Description: "Message displayed when the executable is not found.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -279,7 +279,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"namespaces": {
-										Description: "list of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.",
+										Description: "List of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Computed:    true,
@@ -288,7 +288,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"refresh_requested_at": {
-										Description: "time when cluster cache refresh has been requested.",
+										Description: "Time when cluster cache refresh has been requested.",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Elem: &schema.Resource{
@@ -307,29 +307,29 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"info": {
-										Description: "information about cluster cache and state",
+										Description: "Information about cluster cache and state.",
 										Type:        schema.TypeList,
 										Computed:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {
-													Description: "information about the connection to the cluster",
+													Description: "Information about the connection to the cluster.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"status": {
-																Description: "the current status indicator for the connection",
+																Description: "Current status indicator of the connection.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"message": {
-																Description: "human readable information about the connection status",
+																Description: "Information about the connection status.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"attempted_at": {
-																Description: "time when cluster cache refresh has been requested.",
+																Description: "Time when cluster cache refresh has been requested.",
 																Type:        schema.TypeList,
 																Optional:    true,
 																Elem: &schema.Resource{
@@ -351,28 +351,28 @@ func ResourceGitopsCluster() *schema.Resource {
 													},
 												},
 												"server_version": {
-													Description: "information about the Kubernetes version of the cluster",
+													Description: "Kubernetes version of the cluster.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"cache_info": {
-													Description: "information about the cluster cache",
+													Description: "Information about the cluster cache.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"resources_count": {
-																Description: "number of observed Kubernetes resources",
+																Description: "Number of observed kubernetes resources.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"apis_count": {
-																Description: "number of observed Kubernetes API count",
+																Description: "Number of observed kubernetes API count.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"last_cache_sync_time": {
-																Description: "time of most recent cache synchronization",
+																Description: "Time of most recent cache synchronization.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -380,12 +380,12 @@ func ResourceGitopsCluster() *schema.Resource {
 													},
 												},
 												"applications_count": {
-													Description: "the number of applications managed by Argo CD on the cluster",
+													Description: "Number of applications managed by Argo CD on the cluster.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"api_versions": {
-													Description: "list of API versions supported by the cluster",
+													Description: "List of API versions supported by the cluster.",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
@@ -397,7 +397,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"shard": {
-										Description: " optional shard number. Calculated on the fly by the application controller if not specified.",
+										Description: "Shard number. Calculated on the fly by the application controller if not specified.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -407,12 +407,12 @@ func ResourceGitopsCluster() *schema.Resource {
 										Optional:    true,
 									},
 									"project": {
-										Description: "Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity",
+										Description: "Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.",
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"labels": {
-										Description: "Labels for cluster secret metadata",
+										Description: "Labels for cluster secret metadata.",
 										Type:        schema.TypeMap,
 										Optional:    true,
 										Elem: &schema.Schema{
@@ -420,7 +420,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"annotations": {
-										Description: "Annotations for cluster secret metadata",
+										Description: "Annotations for cluster secret metadata.",
 										Type:        schema.TypeMap,
 										Optional:    true,
 										Elem: &schema.Schema{

@@ -4,7 +4,7 @@ resource "harness_platform_gitops_applications" "example" {
       annotations = {}
       labels = {
         "harness.io/serviceRef" = "service_id"
-        "harness.io/envRef" = "env_id"
+        "harness.io/envRef"     = "env_id"
       }
       name = "appname123"
     }
@@ -24,21 +24,21 @@ resource "harness_platform_gitops_applications" "example" {
       }
       source {
         target_revision = "master"
-        repo_url = "https://github.com/willycoll/argocd-example-apps.git"
-        path = "helm-guestbook"
+        repo_url        = "https://github.com/willycoll/argocd-example-apps.git"
+        path            = "helm-guestbook"
 
       }
       destination {
         namespace = "namespace-123"
-        server = "https://1.3.4.5"
+        server    = "https://1.3.4.5"
       }
     }
   }
   project_id = "project_id"
-  org_id = "org_id"
+  org_id     = "org_id"
   account_id = "account_id"
   identifier = "identifier"
   cluster_id = "cluster_id"
-  repo_id = "repo_id"
-  agent_id = "agent_id"
+  repo_id    = "repo_id"
+  agent_id   = "agent_id"
 }
