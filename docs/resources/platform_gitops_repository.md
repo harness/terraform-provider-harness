@@ -34,54 +34,54 @@ resource "harness_platform_gitops_repository" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the Repository.
-- `agent_id` (String) Agent identifier for the Repository.
-- `identifier` (String) Identifier of the Repository.
-- `repo` (Block List, Min: 1) Repo Details holding application configurations (see [below for nested schema](#nestedblock--repo))
+- `account_id` (String) Account identifier of the GitOps repository.
+- `agent_id` (String) Agent identifier of the GitOps repository.
+- `identifier` (String) Identifier of the GitOps repository.
+- `repo` (Block List, Min: 1) Repo details holding application configurations. (see [below for nested schema](#nestedblock--repo))
 
 ### Optional
 
-- `creds_only` (Boolean) Whether to operate on credential set instead of repository.
-- `org_id` (String) Organization Identifier for the Repository.
-- `project_id` (String) Project Identifier for the  Repository.
-- `query_force_refresh` (Boolean) Force refresh query for Repo.
-- `query_project` (String) Project to Query for Repo.
-- `query_repo` (String) Repo to Query.
-- `update_mask` (Block List) Update mask of the Repository. (see [below for nested schema](#nestedblock--update_mask))
-- `upsert` (Boolean) Whether to create in upsert mode.
+- `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
+- `org_id` (String) Organization identifier of the GitOps repository.
+- `project_id` (String) Project identifier of the GitOps repository.
+- `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
+- `query_project` (String) Project to query for the GitOps repo.
+- `query_repo` (String) GitOps repository to query.
+- `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
+- `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 
 <a id="nestedblock--repo"></a>
 ### Nested Schema for `repo`
 
 Required:
 
-- `connection_type` (String) Identifies the authentication method used to connect to the repository
+- `connection_type` (String) Identifies the authentication method used to connect to the repository.
 - `repo` (String) URL to the remote repository.
 
 Optional:
 
-- `enable_lfs` (Boolean) whether git-lfs support should be enabled for this repo. Only valid for Git repositories.
-- `enable_oci` (Boolean) whether helm-oci support should be enabled for this repo
-- `github_app_enterprise_base_url` (String) the base URL of GitHub Enterprise installation. If empty will default to https://api.github.com
-- `github_app_id` (String) the ID of the GitHub app used to access the repo.
-- `github_app_installation_id` (String) the installation ID of the GitHub App used to access the repo.
-- `github_app_private_key` (String) Github App Private Key PEM data.
-- `inherited_creds` (Boolean) Whether credentials were inherited from a credential set.
-- `insecure` (Boolean) specifies whether the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.
-- `insecure_ignore_host_key` (Boolean) InsecureIgnoreHostKey should not be used anymore, Insecure is favoured Used only for Git repos.
-- `name` (String) name to be used for this repo. Only used with Helm repos.
-- `password` (String) password or PAT used for authenticating at the remote repository.
+- `enable_lfs` (Boolean) Indicates if git-lfs support must be enabled for this repo. This is valid only for Git repositories.
+- `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
+- `github_app_enterprise_base_url` (String) Base URL of GitHub Enterprise installation. If left empty, this defaults to https://api.github.com.
+- `github_app_id` (String) Id of the GitHub app used to access the repo.
+- `github_app_installation_id` (String) Installation id of the GitHub app used to access the repo.
+- `github_app_private_key` (String) GitHub app private key PEM data.
+- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a credential set.
+- `insecure` (Boolean) Indicates if the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.
+- `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos.
+- `name` (String) Name to be used for this repo. Only used with Helm repos.
+- `password` (String) Password or PAT used for authenticating at the remote repository.
 - `project` (String) Reference between project and repository that allow you automatically to be added as item inside SourceRepos project entity.
-- `proxy` (String) the HTTP/HTTPS proxy used to access the repo.
-- `ssh_private_key` (String) the PEM data for authenticating at the repo server. Only used with Git repos.
-- `tls_client_cert_data` (String) certificate in PEM format for authenticating at the repo server.
-- `tls_client_cert_key` (String) private key in PEM format for authenticating at the repo server.
+- `proxy` (String) The HTTP/HTTPS proxy used to access the repo.
+- `ssh_private_key` (String) PEM data for authenticating at the repo server. Only used with Git repos.
+- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server.
+- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server.
 - `type_` (String) Type specifies the type of the repo. Can be either "git" or "helm. "git" is assumed if empty or absent.
-- `username` (String) user name used for authenticating at the remote repository.
+- `username` (String) Username used for authenticating at the remote repository.
 
 
 <a id="nestedblock--update_mask"></a>

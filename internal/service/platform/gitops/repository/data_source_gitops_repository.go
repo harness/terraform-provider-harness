@@ -18,32 +18,32 @@ func DataSourceGitopsRepository() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "Account Identifier for the Repository.",
+				Description: "Account identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier for the  Repository.",
+				Description: "Project identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"org_id": {
-				Description: "Organization Identifier for the Repository.",
+				Description: "Organization identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"agent_id": {
-				Description: "Agent identifier for the Repository.",
+				Description: "Agent identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the Repository.",
+				Description: "Identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"repo": {
-				Description: "Repo Details holding application configurations",
+				Description: "Repo details holding application configurations.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
@@ -54,42 +54,42 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Optional:    true,
 						},
 						"username": {
-							Description: "user name used for authenticating at the remote repository.",
+							Description: "Username used for authenticating at the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"password": {
-							Description: "password or PAT used for authenticating at the remote repository.",
+							Description: "Password or PAT used for authenticating at the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"ssh_private_key": {
-							Description: "the PEM data for authenticating at the repo server. Only used with Git repos.",
+							Description: "PEM data for authenticating at the repo server. Only used with Git repos.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"insecure_ignore_host_key": {
-							Description: "InsecureIgnoreHostKey should not be used anymore, Insecure is favoured Used only for Git repos.",
+							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 						"insecure": {
-							Description: "specifies whether the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.",
+							Description: "Indicates if the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 						"enable_lfs": {
-							Description: " whether git-lfs support should be enabled for this repo. Only valid for Git repositories.",
+							Description: "Indicates if git-lfs support must be enabled for this repo. This is valid only for Git repositories.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 						"tls_client_cert_data": {
-							Description: "certificate in PEM format for authenticating at the repo server.",
+							Description: "Certificate in PEM format for authenticating at the repo server.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_key": {
-							Description: "private key in PEM format for authenticating at the repo server.",
+							Description: "Private key in PEM format for authenticating at the repo server.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -100,42 +100,42 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Computed:    true,
 						},
 						"name": {
-							Description: "name to be used for this repo. Only used with Helm repos.",
+							Description: "Name to be used for this repo. Only used with Helm repos.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"inherited_creds": {
-							Description: "Whether credentials were inherited from a credential set.",
+							Description: "Indicates if the credentials were inherited from a credential set.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 						"enable_oci": {
-							Description: "whether helm-oci support should be enabled for this repo",
+							Description: "Indicates if helm-oci support must be enabled for this repo.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 						"github_app_private_key": {
-							Description: "Github App Private Key PEM data.",
+							Description: "GitHub app private key PEM data.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"github_app_id": {
-							Description: "the ID of the GitHub app used to access the repo.",
+							Description: "Id of the GitHub app used to access the repo.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"github_app_installation_id": {
-							Description: " the installation ID of the GitHub App used to access the repo.",
+							Description: "Installation id of the GitHub app used to access the repo.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"github_app_enterprise_base_url": {
-							Description: "the base URL of GitHub Enterprise installation. If empty will default to https://api.github.com",
+							Description: "Base URL of GitHub Enterprise installation. If left empty, this defaults to https://api.github.com.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"proxy": {
-							Description: "the HTTP/HTTPS proxy used to access the repo.",
+							Description: "The HTTP/HTTPS proxy used to access the repo.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -146,7 +146,7 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Computed:    true,
 						},
 						"connection_type": {
-							Description: "Identifies the authentication method used to connect to the repository",
+							Description: "Identifies the authentication method used to connect to the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -154,32 +154,32 @@ func DataSourceGitopsRepository() *schema.Resource {
 				},
 			},
 			"upsert": {
-				Description: "Whether to create in upsert mode.",
+				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"creds_only": {
-				Description: "Whether to operate on credential set instead of repository.",
+				Description: "Indicates if to operate on credential set instead of repository.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"query_repo": {
-				Description: "Repo to Query.",
+				Description: "GitOps repository to query.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_project": {
-				Description: "Project to Query for Repo.",
+				Description: "Project to query for the GitOps repo.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"query_force_refresh": {
-				Description: "Force refresh query for Repo.",
+				Description: "Indicates to force refresh query for repository.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"update_mask": {
-				Description: "Update mask of the Repository.",
+				Description: "Update mask of the repository.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{

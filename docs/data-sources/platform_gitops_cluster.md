@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_cluster Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for fetching a Harness Gitops Cluster.
+  Data source for fetching a Harness GitOps Cluster.
 ---
 
 # harness_platform_gitops_cluster (Data Source)
 
-Data source for fetching a Harness Gitops Cluster.
+Data source for fetching a Harness GitOps Cluster.
 
 ## Example Usage
 
@@ -27,37 +27,37 @@ data "harness_platform_gitops_cluster" "example" {
 
 ### Required
 
-- `account_id` (String) account identifier of the cluster.
-- `agent_id` (String) agent identifier of the cluster.
-- `identifier` (String) identifier of the cluster.
+- `account_id` (String) Account identifier of the GitOps cluster.
+- `agent_id` (String) Agent identifier of the GitOps cluster.
+- `identifier` (String) Identifier of the GitOps cluster.
 
 ### Optional
 
-- `org_id` (String) organization identifier of the cluster.
-- `project_id` (String) project identifier of the cluster.
-- `query` (Block List) query for cluster resources (see [below for nested schema](#nestedblock--query))
+- `org_id` (String) Organization identifier of the cluster.
+- `project_id` (String) Project identifier of the GitOps cluster.
+- `query` (Block List) Query for the GitOps cluster resources. (see [below for nested schema](#nestedblock--query))
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `request` (List of Object) Cluster create/Update request. (see [below for nested schema](#nestedatt--request))
+- `id` (String) The Id of this resource.
+- `request` (List of Object) Cluster create or update request. (see [below for nested schema](#nestedatt--request))
 
 <a id="nestedblock--query"></a>
 ### Nested Schema for `query`
 
 Optional:
 
-- `id` (Block List) cluster server URL or cluster name (see [below for nested schema](#nestedblock--query--id))
-- `name` (String) name of the cluster
-- `server` (String) server of the cluster
+- `id` (Block List) Cluster server URL or the cluster name. (see [below for nested schema](#nestedblock--query--id))
+- `name` (String) Name of the GitOps cluster.
+- `server` (String) Server of the GitOps cluster.
 
 <a id="nestedblock--query--id"></a>
 ### Nested Schema for `query.id`
 
 Optional:
 
-- `type` (String) the type of the specified cluster identifier ( 'server' - default, 'name' )
-- `value` (String) the cluster server URL or cluster name
+- `type` (String) Type of the specified GitOps cluster identifier ( 'server' - default, 'name' ).
+- `value` (String) Cluster server URL or the cluster name.
 
 
 

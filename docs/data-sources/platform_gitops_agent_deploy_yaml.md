@@ -27,18 +27,18 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the  agent.
-- `identifier` (String) identifier of the agent.
-- `namespace` (String) The k8s namespace that this agent resides in.
+- `account_id` (String) Account identifier of the GitOps agent.
+- `identifier` (String) Identifier of the GitOps agent.
+- `namespace` (String) The k8s namespace that the GitOps agent resides in.
 
 ### Optional
 
-- `org_id` (String) Organization Identifier for the agent.
-- `project_id` (String) Project Identifier for the  agent.
+- `org_id` (String) Organization identifier of the GitOps agent.
+- `project_id` (String) Project identifier of the GitOps agent.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `yaml` (String) deployment yaml of the agent.
+- `id` (String) The Id of this resource.
+- `yaml` (String) Deployment YAML of the GitOps agent.
 
 

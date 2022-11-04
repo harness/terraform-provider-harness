@@ -42,37 +42,37 @@ resource "harness_platform_gitops_cluster" "example" {
 
 ### Required
 
-- `account_id` (String) account identifier of the cluster.
-- `agent_id` (String) agent identifier of the cluster.
-- `identifier` (String) identifier of the cluster.
+- `account_id` (String) Account identifier of the GitOps cluster.
+- `agent_id` (String) Agent identifier of the GitOps cluster.
+- `identifier` (String) Identifier of the GitOps cluster.
 
 ### Optional
 
-- `org_id` (String) organization identifier of the cluster.
-- `project_id` (String) project identifier of the cluster.
-- `query` (Block List) query for cluster resources (see [below for nested schema](#nestedblock--query))
-- `request` (Block List) Cluster create/Update request. (see [below for nested schema](#nestedblock--request))
+- `org_id` (String) Organization identifier of the cluster.
+- `project_id` (String) Project identifier of the GitOps cluster.
+- `query` (Block List) Query for the GitOps cluster resources. (see [below for nested schema](#nestedblock--query))
+- `request` (Block List) Cluster create or update request. (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 
 <a id="nestedblock--query"></a>
 ### Nested Schema for `query`
 
 Optional:
 
-- `id` (Block List) cluster server URL or cluster name (see [below for nested schema](#nestedblock--query--id))
-- `name` (String) name of the cluster
-- `server` (String) server of the cluster
+- `id` (Block List) Cluster server URL or the cluster name. (see [below for nested schema](#nestedblock--query--id))
+- `name` (String) Name of the GitOps cluster.
+- `server` (String) Server of the GitOps cluster.
 
 <a id="nestedblock--query--id"></a>
 ### Nested Schema for `query.id`
 
 Optional:
 
-- `type` (String) the type of the specified cluster identifier ( 'server' - default, 'name' )
-- `value` (String) the cluster server URL or cluster name
+- `type` (String) Type of the specified GitOps cluster identifier ( 'server' - default, 'name' ).
+- `value` (String) Cluster server URL or the cluster name.
 
 
 
@@ -81,55 +81,55 @@ Optional:
 
 Optional:
 
-- `cluster` (Block List) cluster details. (see [below for nested schema](#nestedblock--request--cluster))
-- `id` (Block List) cluster server URL or cluster name (see [below for nested schema](#nestedblock--request--id))
-- `update_mask` (Block List) Update mask of the cluster. (see [below for nested schema](#nestedblock--request--update_mask))
+- `cluster` (Block List) GitOps cluster details. (see [below for nested schema](#nestedblock--request--cluster))
+- `id` (Block List) Cluster server URL or the cluster name. (see [below for nested schema](#nestedblock--request--id))
+- `update_mask` (Block List) Update mask of the GitOps cluster. (see [below for nested schema](#nestedblock--request--update_mask))
 - `updated_fields` (List of String) Fields which are updated.
-- `upsert` (Boolean) if the cluster should be upserted.
+- `upsert` (Boolean) Indicates if the GitOps cluster should be updated if existing and inserted if not.
 
 <a id="nestedblock--request--cluster"></a>
 ### Nested Schema for `request.cluster`
 
 Required:
 
-- `config` (Block List, Min: 1) Cluster Config (see [below for nested schema](#nestedblock--request--cluster--config))
-- `server` (String) the API server URL of the Kubernetes cluster.
+- `config` (Block List, Min: 1) GitOps cluster config. (see [below for nested schema](#nestedblock--request--cluster--config))
+- `server` (String) API server URL of the kubernetes cluster.
 
 Optional:
 
-- `annotations` (Map of String) Annotations for cluster secret metadata
+- `annotations` (Map of String) Annotations for cluster secret metadata.
 - `cluster_resources` (Boolean) Indicates if cluster level resources should be managed. This setting is used only if cluster is connected in a namespaced mode.
-- `labels` (Map of String) Labels for cluster secret metadata
-- `name` (String) Name of the cluster. If omitted, will use the server address
-- `namespaces` (List of String) list of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.
-- `refresh_requested_at` (Block List) time when cluster cache refresh has been requested. (see [below for nested schema](#nestedblock--request--cluster--refresh_requested_at))
-- `shard` (String) optional shard number. Calculated on the fly by the application controller if not specified.
+- `labels` (Map of String) Labels for cluster secret metadata.
+- `name` (String) Name of the cluster. If omitted, will use the server address.
+- `namespaces` (List of String) List of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.
+- `refresh_requested_at` (Block List) Time when cluster cache refresh has been requested. (see [below for nested schema](#nestedblock--request--cluster--refresh_requested_at))
+- `shard` (String) Shard number. Calculated on the fly by the application controller if not specified.
 
 Read-Only:
 
-- `info` (List of Object) information about cluster cache and state (see [below for nested schema](#nestedatt--request--cluster--info))
-- `project` (String) Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity
+- `info` (List of Object) Information about cluster cache and state. (see [below for nested schema](#nestedatt--request--cluster--info))
+- `project` (String) Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.
 
 <a id="nestedblock--request--cluster--config"></a>
 ### Nested Schema for `request.cluster.config`
 
 Optional:
 
-- `aws_auth_config` (Block List) contains IAM authentication configuration (see [below for nested schema](#nestedblock--request--cluster--config--aws_auth_config))
+- `aws_auth_config` (Block List) IAM authentication configuration for AWS. (see [below for nested schema](#nestedblock--request--cluster--config--aws_auth_config))
 - `bearer_token` (String) Bearer authentication token the cluster.
 - `cluster_connection_type` (String) Identifies the authentication method used to connect to the cluster.
-- `exec_provider_config` (Block List) contains configuration for an exec provider (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
-- `password` (String) password for the server of the cluster.
-- `tls_client_config` (Block List) contains settings to enable transport layer security (see [below for nested schema](#nestedblock--request--cluster--config--tls_client_config))
-- `username` (String) username for the server of the cluster.
+- `exec_provider_config` (Block List) Configuration for an exec provider. (see [below for nested schema](#nestedblock--request--cluster--config--exec_provider_config))
+- `password` (String) Password of the server of the cluster.
+- `tls_client_config` (Block List) Settings to enable transport layer security. (see [below for nested schema](#nestedblock--request--cluster--config--tls_client_config))
+- `username` (String) Username of the server of the cluster.
 
 <a id="nestedblock--request--cluster--config--aws_auth_config"></a>
 ### Nested Schema for `request.cluster.config.aws_auth_config`
 
 Optional:
 
-- `cluster_name` (String) contains AWS cluster name.
-- `role_a_r_n` (String) contains optional role ARN. If set then AWS IAM Authenticator.
+- `cluster_name` (String) AWS cluster name.
+- `role_a_r_n` (String) Optional role ARN. If set then used for AWS IAM Authenticator.
 
 
 <a id="nestedblock--request--cluster--config--exec_provider_config"></a>
@@ -139,9 +139,9 @@ Optional:
 
 - `api_version` (String) Preferred input version of the ExecInfo.
 - `args` (List of String) Arguments to pass to the command when executing it.
-- `command` (String) command to execute.
-- `env` (Map of String) additional environment variables to expose to the process.
-- `install_hint` (String) This text is shown to the user when the executable doesn't seem to be present
+- `command` (String) Command to execute.
+- `env` (Map of String) Additional environment variables to expose to the process.
+- `install_hint` (String) Message displayed when the executable is not found.
 
 
 <a id="nestedblock--request--cluster--config--tls_client_config"></a>
@@ -149,11 +149,11 @@ Optional:
 
 Optional:
 
-- `ca_data` (String) holds PEM-encoded bytes (typically read from a root certificates bundle).
-- `cert_data` (String) certficate data holds PEM-encoded bytes (typically read from a client certificate file).
-- `insecure` (Boolean) if the TLS connection to the cluster should be insecure.
-- `key_data` (String) key data holds PEM-encoded bytes (typically read from a client certificate key file).
-- `server_name` (String) server name for SNI in the client to check server certificates against
+- `ca_data` (String) CA data holds PEM-encoded bytes (typically read from a root certificates bundle).
+- `cert_data` (String) Certificate data holds PEM-encoded bytes (typically read from a client certificate file).
+- `insecure` (Boolean) Indicates if the TLS connection to the cluster should be insecure.
+- `key_data` (String) Key data holds PEM-encoded bytes (typically read from a client certificate key file).
+- `server_name` (String) Server name for SNI in the client to check server certificates against.
 
 
 
@@ -213,8 +213,8 @@ Read-Only:
 
 Optional:
 
-- `type` (String) the type of the specified cluster identifier ( 'server' - default, 'name' )
-- `value` (String) the cluster server URL or cluster name
+- `type` (String) Type of the specified cluster identifier ( 'server' - default, 'name' ).
+- `value` (String) Cluster server URL or the cluster name.
 
 
 <a id="nestedblock--request--update_mask"></a>

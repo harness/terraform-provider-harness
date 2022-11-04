@@ -64,60 +64,60 @@ resource "harness_platform_gitops_applications" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the Application.
-- `agent_id` (String) Agent identifier for the Application.
-- `application` (Block List, Min: 1) definition of Application resource. (see [below for nested schema](#nestedblock--application))
-- `cluster_id` (String) Cluster identifier for the Application.
-- `identifier` (String) Identifier of the Application.
-- `org_id` (String) Organization Identifier for the Application.
-- `project_id` (String) Project Identifier for the Application.
-- `repo_id` (String) Repository identifier for the Application.
+- `account_id` (String) Account identifier of the GitOps application.
+- `agent_id` (String) Agent identifier of the GitOps application.
+- `application` (Block List, Min: 1) Definition of the GitOps application resource. (see [below for nested schema](#nestedblock--application))
+- `cluster_id` (String) Cluster identifier of the GitOps application.
+- `identifier` (String) Identifier of the GitOps application.
+- `org_id` (String) Organization identifier of the GitOps application.
+- `project_id` (String) Project identifier of the GitOps application.
+- `repo_id` (String) Repository identifier of the GitOps application.
 
 ### Optional
 
-- `kind` (String) kind of resource.
-- `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the application.
-- `project` (String) Project is a reference to the project this application belongs to. The empty string means that application belongs to the 'default' project.
-- `query_project` (String) the project names to restrict returned list applications.
-- `query_refresh` (String) forces application reconciliation if set to true.
-- `query_repo` (String) the repoURL to restrict returned list applications.
-- `query_resource_version` (String) when specified with a watch call, shows changes that occur after that particular version of a resource.
-- `query_selector` (String) the selector to to restrict returned list to applications only with matched labels.
-- `request_cascade` (Boolean) Request cascade to delete the application.
-- `request_name` (String) Request name to delete the application.
-- `request_propagation_policy` (String) Request propagation policy to delete the application.
-- `upsert` (Boolean) Whether to Upsert the application.
-- `validate` (Boolean) Whether to validate the application.
+- `kind` (String) Kind of the GitOps application.
+- `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
+- `project` (String) Reference to the project corresponding to this GitOps application. An empty string means that the GitOps application belongs to the 'default' project.
+- `query_project` (String) Project names to filter the corresponding GitOps applications.
+- `query_refresh` (String) Forces the GitOps application to reconcile when set to true.
+- `query_repo` (String) Repo URL to restrict returned list applications.
+- `query_resource_version` (String) Shows modifications after a version that is specified with a watch call.
+- `query_selector` (String) Filters GitOps applications corresponding to the labels.
+- `request_cascade` (Boolean) Request cascade to delete the GitOps application.
+- `request_name` (String) Request name to delete the GitOps application.
+- `request_propagation_policy` (String) Request propagation policy to delete the GitOps application.
+- `upsert` (Boolean) Indicates if the GitOps application should be updated if existing and inserted if not.
+- `validate` (Boolean) Indicates if the GitOps application has to be validated.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `name` (String) Name of the application.
+- `id` (String) The Id of this resource.
+- `name` (String) Name of the GitOps application.
 
 <a id="nestedblock--application"></a>
 ### Nested Schema for `application`
 
 Required:
 
-- `metadata` (Block List, Min: 1) metadata that all persisted resources must have, which includes all objects users must create. (see [below for nested schema](#nestedblock--application--metadata))
+- `metadata` (Block List, Min: 1) Metadata corresponding to the resources. This includes all the objects a user must create. (see [below for nested schema](#nestedblock--application--metadata))
 
 Optional:
 
-- `spec` (Block List) represents desired application state. Contains link to repository with application definition and additional parameters link definition revision. (see [below for nested schema](#nestedblock--application--spec))
+- `spec` (Block List) Specifications of the GitOps application. This includes the repository URL, application definition, source, destination and sync policy. (see [below for nested schema](#nestedblock--application--spec))
 
 <a id="nestedblock--application--metadata"></a>
 ### Nested Schema for `application.metadata`
 
 Optional:
 
-- `annotations` (Map of String) Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects.
-- `cluster_name` (String) The name of the cluster which the object belongs to. This is used to distinguish resources with same name and namespace in different clusters. This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.
-- `finalizers` (List of String) Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed. Finalizers may be processed and removed in any order. Order is NOT enforced because it introduces significant risk of stuck finalizers. finalizers is a shared field, any actor with permission can reorder it. If the finalizer list is processed in order, then this can lead to a situation in which the component responsible for the first finalizer in the list is waiting for a signal (field value, external system, or other) produced by a component responsible for a finalizer later in the list, resulting in a deadlock. Without enforced ordering finalizers are free to order amongst themselves and are not vulnerable to ordering changes in the list.
-- `generate_name` (String) an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.  If this field is specified and the generated name exists, the server will NOT return a 409 - instead, it will either return 201 Created or 500 with Reason ServerTimeout indicating a unique name could not be found in the time allotted, and the client should retry (optionally after the time indicated in the Retry-After header).  Applied only if Name is not specified.
-- `generation` (String) A sequence number representing a specific generation of the desired state. Populated by the system. Read-only.
+- `annotations` (Map of String) Annotations are unstructured key value pairs corresponding to a resource. External tools set these to store and retrieve arbitrary metadata.
+- `cluster_name` (String) Name of the cluster corresponding to the object. API server ignores this if set in any create or update request.
+- `finalizers` (List of String) Before the object is removed from the register, it must be empty. Each element serves as a unique identifier for the component that is accountable for removing that entry from the list. Entries in this list can only be removed if the object's deletionTimestamp is not null. The processing and removal of finalizers can happen in any sequence. No order is enforced as it may block the finalizers. Finalizers is a shared field that can be reordered by any actor with authority. If the finalizer list is processed in order, this could result in a scenario where the component in charge of the list's first finalizer is waiting for a signal (generated by a field value, an external system, or another) produced by a component in charge of the list's later finalizer.
+- `generate_name` (String) An optional prefix that the server will only apply if the Name field is empty to create a unique name. The name returned to the client will differ from the name passed if this field is used. A unique suffix will be added to this value as well. The supplied value must adhere to the same validation guidelines as the Name field and may be reduced by the suffix length necessary to ensure that it is unique on the server. The server will NOT return a 409 if this field is supplied and the created name already exists; instead, it will either return 201 Created or 500 with Reason ServerTimeout, indicating that a unique name could not be found in the allotted time and the client should try again later.
+- `generation` (String) A sequence number representing a specific generation of the desired state. This is a read-only value populated by the system.
 - `labels` (Map of String) Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services.
-- `name` (String) Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated.
-- `namespace` (String) namespace of the application. An empty namespace is equivalent to the "default" namespace.
+- `name` (String) Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Name cannot be updated.
+- `namespace` (String) Namespace of the GitOps application. An empty namespace is equivalent to the "default" namespace.
 - `owner_references` (Block List) List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller. (see [below for nested schema](#nestedblock--application--metadata--owner_references))
 
 Read-Only:
@@ -131,7 +131,7 @@ Optional:
 
 - `api_version` (String) API version of the referent.
 - `block_owner_deletion` (Boolean) If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed. Defaults to false. To set this field, a user needs "delete" permission of the owner, otherwise 422 (Unprocessable Entity) will be returned.
-- `controller` (Boolean) If true, this reference points to the managing controller.
+- `controller` (Boolean) Indicates if the reference points to the managing controller.
 - `kind` (String) Kind of the referent.
 - `name` (String) Name of the referent.
 - `uid` (String) UID of the referent.
@@ -143,18 +143,18 @@ Optional:
 
 Optional:
 
-- `destination` (Block List) information about the application's destination. (see [below for nested schema](#nestedblock--application--spec--destination))
-- `source` (Block List) contains all information about the source of an application (see [below for nested schema](#nestedblock--application--spec--source))
-- `sync_policy` (Block List) controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
+- `destination` (Block List) Information about the GitOps application's destination. (see [below for nested schema](#nestedblock--application--spec--destination))
+- `source` (Block List) Contains all information about the source of a GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
+- `sync_policy` (Block List) Controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
 
 <a id="nestedblock--application--spec--destination"></a>
 ### Nested Schema for `application.spec.destination`
 
 Optional:
 
-- `name` (String) the URL of the target cluster and must be set to the Kubernetes control plane API.
-- `namespace` (String) the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.
-- `server` (String) server of the destination of the Application
+- `name` (String) URL of the target cluster and must be set to the kubernetes control plane API.
+- `namespace` (String) Target namespace of the GitOps application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.
+- `server` (String) Server of the destination of the GitOps application.
 
 
 <a id="nestedblock--application--spec--source"></a>
@@ -162,46 +162,46 @@ Optional:
 
 Required:
 
-- `path` (String) directory path within the Git repository, and is only valid for applications sourced from Git.
-- `repo_url` (String) URL to the repository (Git or Helm) that contains the application manifests.
-- `target_revision` (String) the revision of the source to sync the application to. In case of Git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag for the Chart's version.
+- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
+- `repo_url` (String) URL to the repository (git or helm) that contains the GitOps application manifests.
+- `target_revision` (String) Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.
 
 Optional:
 
-- `chart` (String) Helm chart name, and must be specified for applications sourced from a Helm repo.
-- `directory` (Block List) options for applications of type plain YAML or Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory))
-- `helm` (Block List) holds helm specific options. (see [below for nested schema](#nestedblock--application--spec--source--helm))
-- `ksonnet` (Block List) ksonnet specific options. (see [below for nested schema](#nestedblock--application--spec--source--ksonnet))
-- `kustomize` (Block List) options specific to an Application source specific to Kustomize. (see [below for nested schema](#nestedblock--application--spec--source--kustomize))
-- `plugin` (Block List) options specific to config management plugins. (see [below for nested schema](#nestedblock--application--spec--source--plugin))
+- `chart` (String) Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.
+- `directory` (Block List) Options for applications of type plain YAML or Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory))
+- `helm` (Block List) Holds helm specific options. (see [below for nested schema](#nestedblock--application--spec--source--helm))
+- `ksonnet` (Block List) Ksonnet specific options. (see [below for nested schema](#nestedblock--application--spec--source--ksonnet))
+- `kustomize` (Block List) Options specific to a GitOps application source specific to Kustomize. (see [below for nested schema](#nestedblock--application--spec--source--kustomize))
+- `plugin` (Block List) Options specific to config management plugins. (see [below for nested schema](#nestedblock--application--spec--source--plugin))
 
 <a id="nestedblock--application--spec--source--directory"></a>
 ### Nested Schema for `application.spec.source.directory`
 
 Optional:
 
-- `exclude` (String) a glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.
-- `include` (String) a glob pattern to match paths against that should be explicitly included during manifest generation.
-- `jsonnet` (Block List) options specific to applications of type Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory--jsonnet))
-- `recurse` (Boolean) whether to scan a directory recursively for manifests.
+- `exclude` (String) Glob pattern to match paths against that should be explicitly excluded from being used during manifest generation.
+- `include` (String) Glob pattern to match paths against that should be explicitly included during manifest generation.
+- `jsonnet` (Block List) Options specific to applications of type Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory--jsonnet))
+- `recurse` (Boolean) Indicates to scan a directory recursively for manifests.
 
 <a id="nestedblock--application--spec--source--directory--jsonnet"></a>
 ### Nested Schema for `application.spec.source.directory.jsonnet`
 
 Optional:
 
-- `ext_vars` (Block List) list of Jsonnet External Variables. (see [below for nested schema](#nestedblock--application--spec--source--directory--jsonnet--ext_vars))
+- `ext_vars` (Block List) List of jsonnet external variables. (see [below for nested schema](#nestedblock--application--spec--source--directory--jsonnet--ext_vars))
 - `libs` (List of String) Additional library search dirs.
-- `tlas` (Block List) list of Jsonnet Top-level Arguments(TLAS). (see [below for nested schema](#nestedblock--application--spec--source--directory--jsonnet--tlas))
+- `tlas` (Block List) List of jsonnet top-level arguments(TLAS). (see [below for nested schema](#nestedblock--application--spec--source--directory--jsonnet--tlas))
 
 <a id="nestedblock--application--spec--source--directory--jsonnet--ext_vars"></a>
 ### Nested Schema for `application.spec.source.directory.jsonnet.ext_vars`
 
 Optional:
 
-- `code` (Boolean) code of the external variables of Jsonnet App
-- `name` (String) name of the external variables of Jsonnet App
-- `value` (String) value of the external variables of Jsonnet App
+- `code` (Boolean) Code of the external variables of jsonnet application.
+- `name` (String) Name of the external variables of jsonnet application.
+- `value` (String) Value of the external variables of jsonnet application.
 
 
 <a id="nestedblock--application--spec--source--directory--jsonnet--tlas"></a>
@@ -209,9 +209,9 @@ Optional:
 
 Optional:
 
-- `code` (Boolean) code of the TLAS of Jsonnet App
-- `name` (String) name of the TLAS of Jsonnet App
-- `value` (String) value of the TLAS of Jsonnet App
+- `code` (Boolean) Code of the TLAS of the jsonnet application.
+- `name` (String) Name of the TLAS of the jsonnet application.
+- `value` (String) Value of the TLAS of the jsonnet application.
 
 
 
@@ -221,11 +221,11 @@ Optional:
 
 Optional:
 
-- `file_parameters` (Block List) file parameters to the helm template. (see [below for nested schema](#nestedblock--application--spec--source--helm--file_parameters))
-- `parameters` (Block List) list of Helm parameters which are passed to the helm template command upon manifest generation. (see [below for nested schema](#nestedblock--application--spec--source--helm--parameters))
-- `pass_credentials` (Boolean) pass credentials to all domains (Helm's --pass-credentials)
-- `release_name` (String) Helm release name to use. If omitted it will use the application name.
-- `value_files` (List of String) list of Helm value files to use when generating a template
+- `file_parameters` (Block List) File parameters to the helm template. (see [below for nested schema](#nestedblock--application--spec--source--helm--file_parameters))
+- `parameters` (Block List) List of helm parameters which are passed to the helm template command upon manifest generation. (see [below for nested schema](#nestedblock--application--spec--source--helm--parameters))
+- `pass_credentials` (Boolean) Indicates if to pass credentials to all domains (helm's --pass-credentials)
+- `release_name` (String) Helm release name to use. If omitted it will use the GitOps application name.
+- `value_files` (List of String) List of helm value files to use when generating a template.
 - `values` (String) Helm values to be passed to helm template, typically defined as a block.
 - `version` (String) Helm version to use for templating (either "2" or "3")
 
@@ -234,8 +234,8 @@ Optional:
 
 Optional:
 
-- `name` (String) the name of the Helm parameter.
-- `path` (String) the path to the file containing the values for the Helm parameter.
+- `name` (String) Name of the helm parameter.
+- `path` (String) Path to the file containing the values of the helm parameter.
 
 
 <a id="nestedblock--application--spec--source--helm--parameters"></a>
@@ -243,9 +243,9 @@ Optional:
 
 Optional:
 
-- `force_string` (Boolean) determines whether to tell Helm to interpret booleans and numbers as strings.
-- `name` (String) the name of the Helm parameter.
-- `value` (String) the value for the Helm parameter.
+- `force_string` (Boolean) Indicates if helm should interpret booleans and numbers as strings.
+- `name` (String) Name of the helm parameter.
+- `value` (String) Value of the Helm parameter.
 
 
 
@@ -254,17 +254,17 @@ Optional:
 
 Optional:
 
-- `environment` (String) ksonnet application environment name
-- `parameters` (Block List) list of ksonnet component parameter override values (see [below for nested schema](#nestedblock--application--spec--source--ksonnet--parameters))
+- `environment` (String) Ksonnet application environment name.
+- `parameters` (Block List) List of ksonnet component parameter override values. (see [below for nested schema](#nestedblock--application--spec--source--ksonnet--parameters))
 
 <a id="nestedblock--application--spec--source--ksonnet--parameters"></a>
 ### Nested Schema for `application.spec.source.ksonnet.parameters`
 
 Optional:
 
-- `component` (String) Component of the parameter of the Ksonnet App
-- `name` (String) name of the parameter of the Ksonnet App
-- `value` (String) value of the parameter of the Ksonnet App
+- `component` (String) Component of the parameter of the ksonnet application.
+- `name` (String) Name of the parameter of the ksonnet application.
+- `value` (String) Value of the parameter of the ksonnet application.
 
 
 
@@ -273,14 +273,14 @@ Optional:
 
 Optional:
 
-- `common_annotations` (Map of String) list of additional annotations to add to rendered manifests.
-- `common_labels` (Map of String) list of additional labels to add to rendered manifests.
-- `force_common_annotations` (Boolean) whether to force applying common annotations to resources for Kustomize apps.
-- `force_common_labels` (Boolean) whether to force applying common labels to resources for Kustomize apps.
-- `images` (List of String) List of Kustomize image override specifications.
-- `name_prefix` (String) prefix appended to resources for Kustomize apps.
-- `name_suffix` (String) suffix appended to resources for Kustomize apps.
-- `version` (String) version of Kustomize to use for rendering manifests.
+- `common_annotations` (Map of String) List of additional annotations to add to rendered manifests.
+- `common_labels` (Map of String) List of additional labels to add to rendered manifests.
+- `force_common_annotations` (Boolean) Indicates if to force applying common annotations to resources for kustomize apps.
+- `force_common_labels` (Boolean) Indicates if to force apply common labels to resources for kustomize apps.
+- `images` (List of String) List of kustomize image override specifications.
+- `name_prefix` (String) Prefix prepended to resources for kustomize apps.
+- `name_suffix` (String) Suffix appended to resources for kustomize apps.
+- `version` (String) Version of kustomize to use for rendering manifests.
 
 
 <a id="nestedblock--application--spec--source--plugin"></a>
@@ -288,7 +288,7 @@ Optional:
 
 Optional:
 
-- `env` (Block List) represents an entry in the application's environment. (see [below for nested schema](#nestedblock--application--spec--source--plugin--env))
+- `env` (Block List) Entry in the GitOps application's environment. (see [below for nested schema](#nestedblock--application--spec--source--plugin--env))
 - `name` (String) Name of the plugin.
 
 <a id="nestedblock--application--spec--source--plugin--env"></a>
@@ -296,8 +296,8 @@ Optional:
 
 Optional:
 
-- `name` (String) name of the variable, usually expressed in uppercase.
-- `value` (String) value of the variable.
+- `name` (String) Name of the variable, usually expressed in uppercase.
+- `value` (String) Value of the variable.
 
 
 
@@ -307,8 +307,8 @@ Optional:
 
 Optional:
 
-- `automated` (Block List) controls the behavior of an automated sync. (see [below for nested schema](#nestedblock--application--spec--sync_policy--automated))
-- `retry` (Block List) contains information about the strategy to apply when a sync failed. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry))
+- `automated` (Block List) Controls the behavior of an automated sync. (see [below for nested schema](#nestedblock--application--spec--sync_policy--automated))
+- `retry` (Block List) Contains information about the strategy to apply when a sync failed. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry))
 - `sync_options` (List of String) Options allow you to specify whole app sync-options.
 
 <a id="nestedblock--application--spec--sync_policy--automated"></a>
@@ -316,9 +316,9 @@ Optional:
 
 Optional:
 
-- `allow_empty` (Boolean) allows apps have zero live resources (default: false).
-- `prune` (Boolean) specifies whether to delete resources from the cluster that are not found in the sources anymore as part of automated sync (default: false)
-- `self_heal` (Boolean) specifies whether to revert resources back to their desired state upon modification in the cluster (default: false).
+- `allow_empty` (Boolean) Indicates to allows apps to have zero live resources (default: false).
+- `prune` (Boolean) Indicates whether to delete resources from the cluster that are not found in the sources anymore as part of automated sync (default: false).
+- `self_heal` (Boolean) Indicates whether to revert resources back to their desired state upon modification in the cluster (default: false).
 
 
 <a id="nestedblock--application--spec--sync_policy--retry"></a>
@@ -326,7 +326,7 @@ Optional:
 
 Optional:
 
-- `backoff` (Block List) the backoff strategy to use on subsequent retries for failing syncs. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry--backoff))
+- `backoff` (Block List) Backoff strategy to use on subsequent retries for failing syncs. (see [below for nested schema](#nestedblock--application--spec--sync_policy--retry--backoff))
 - `limit` (String) Limit is the maximum number of attempts for retrying a failed sync. If set to 0, no retries will be performed.
 
 <a id="nestedblock--application--spec--sync_policy--retry--backoff"></a>
@@ -334,9 +334,9 @@ Optional:
 
 Optional:
 
-- `duration` (String) the amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h")
-- `factor` (String) a factor to multiply the base duration after each failed retry.
-- `max_duration` (String) maximum amount of time allowed for the backoff strategy.
+- `duration` (String) Amount to back off. Default unit is seconds, but could also be a duration (e.g. "2m", "1h").
+- `factor` (String) Factor to multiply the base duration after each failed retry.
+- `max_duration` (String) Maximum amount of time allowed of the backoff strategy.
 
 ## Import
 

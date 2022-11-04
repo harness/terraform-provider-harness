@@ -26,21 +26,21 @@ data "harness_platform_gitops_agent" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the agent.
-- `identifier` (String) identifier of the agent.
+- `account_id` (String) Account identifier of the GitOps agent.
+- `identifier` (String) Identifier of the GitOps agent.
 
 ### Optional
 
-- `org_id` (String) Organization Identifier for the agent.
-- `project_id` (String) Project Identifier for the agent.
+- `org_id` (String) Organization identifier of the GitOps agent.
+- `project_id` (String) Project identifier of the GitOps agent.
 
 ### Read-Only
 
-- `description` (String) A human readable description for the gitops-agent
-- `id` (String) The ID of this resource.
+- `description` (String) Description of the GitOps agent.
+- `id` (String) The Id of this resource.
 - `metadata` (List of Object) Metadata of the agent. (see [below for nested schema](#nestedatt--metadata))
-- `name` (String) A human readable name for the gitops-agent.
-- `tags` (Map of String) Tags that help organize gitops-agents
+- `name` (String) Name of the GitOps agent.
+- `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
 Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 

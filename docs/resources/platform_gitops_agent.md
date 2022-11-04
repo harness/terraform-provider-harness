@@ -32,30 +32,30 @@ resource "harness_platform_gitops_agent" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the Agent.
-- `identifier` (String) identifier for the gitops-agent.
-- `name` (String) A human readable name for the gitops-agent.
+- `account_id` (String) Account identifier of the GitOps agent.
+- `identifier` (String) Identifier of the GitOps agent.
+- `name` (String) Name of the GitOps agent.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
 Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 ### Optional
 
-- `description` (String) A human readable description for the gitops-agent
-- `metadata` (Block List) MetaData for the agent. (see [below for nested schema](#nestedblock--metadata))
-- `org_id` (String) Organization Identifier for the agent.
-- `project_id` (String) Project Identifier for the agent.
-- `tags` (Map of String) Tags that help organize gitops-agents
+- `description` (String) Description of the GitOps agent.
+- `metadata` (Block List) Metadata of the agent. (see [below for nested schema](#nestedblock--metadata))
+- `org_id` (String) Organization identifier of the GitOps agent.
+- `project_id` (String) Project identifier of the GitOps agent.
+- `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 
 <a id="nestedblock--metadata"></a>
 ### Nested Schema for `metadata`
 
 Optional:
 
-- `high_availability` (Boolean) Whether or not this deployment should be deployed using deploy-ha.yaml
+- `high_availability` (Boolean) Indicates if the deployment should be deployed using the deploy-ha.yaml
 - `namespace` (String) The k8s namespace that this agent resides in.
 
 ## Import

@@ -27,25 +27,25 @@ data "harness_platform_gitops_repository" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for the Repository.
-- `agent_id` (String) Agent identifier for the Repository.
-- `identifier` (String) Identifier of the Repository.
+- `account_id` (String) Account identifier of the GitOps repository.
+- `agent_id` (String) Agent identifier of the GitOps repository.
+- `identifier` (String) Identifier of the GitOps repository.
 
 ### Optional
 
-- `creds_only` (Boolean) Whether to operate on credential set instead of repository.
-- `org_id` (String) Organization Identifier for the Repository.
-- `project_id` (String) Project Identifier for the  Repository.
-- `query_force_refresh` (Boolean) Force refresh query for Repo.
-- `query_project` (String) Project to Query for Repo.
-- `query_repo` (String) Repo to Query.
-- `update_mask` (Block List) Update mask of the Repository. (see [below for nested schema](#nestedblock--update_mask))
-- `upsert` (Boolean) Whether to create in upsert mode.
+- `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
+- `org_id` (String) Organization identifier of the GitOps repository.
+- `project_id` (String) Project identifier of the GitOps repository.
+- `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
+- `query_project` (String) Project to query for the GitOps repo.
+- `query_repo` (String) GitOps repository to query.
+- `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
+- `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
-- `repo` (List of Object) Repo Details holding application configurations (see [below for nested schema](#nestedatt--repo))
+- `id` (String) The Id of this resource.
+- `repo` (List of Object) Repo details holding application configurations. (see [below for nested schema](#nestedatt--repo))
 
 <a id="nestedblock--update_mask"></a>
 ### Nested Schema for `update_mask`
