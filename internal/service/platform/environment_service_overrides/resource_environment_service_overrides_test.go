@@ -151,20 +151,19 @@ func testAccEnvServiceOverrides(id string, name string) string {
              type: String
              value: asddad
           manifests:
-                - manifest:
-                    identifier: manifest1
-                    type: K8sManifest
-                    spec:
-                      store:
-                        type: Github
-                        spec:
-                          connectorRef: <+input>
-                          gitFetchType: Branch
-                          paths:
-                            - files1
-                          repoName: <+input>
-                          branch: master
-                      skipResourceVersioning: false
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
           configFiles:
              - configFile:
                  identifier: configFileEnv

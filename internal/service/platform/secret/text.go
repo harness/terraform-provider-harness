@@ -34,6 +34,7 @@ func ResourceSecretText() *schema.Resource {
 			},
 			"value": {
 				Description: "Value of the Secret",
+				Sensitive:   true,
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -99,7 +100,8 @@ func readSecretText(d *schema.ResourceData, secret *nextgen.Secret) error {
 	}
 	d.Set("secret_manager_identifier", secret.Text.SecretManagerIdentifier)
 	d.Set("value_type", secret.Text.ValueType)
-	d.Set("value", secret.Text.Value)
-
+	if secret.Text.ValueType == "Reference" {
+		d.Set("value", secret.Text.Value)
+	}
 	return nil
 }
