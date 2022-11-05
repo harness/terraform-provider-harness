@@ -1,6 +1,6 @@
 
-<a name="0.2.21"></a>
-## 0.2.21 (2022-11-04)
+<a name="0.2.22"></a>
+## 0.2.22 (2022-11-05)
 
 ### Adding
 
@@ -31,7 +31,6 @@
 
 * Fix main
 * Fix main
-* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 
 ### Fixing
 
@@ -51,6 +50,8 @@
 
 ### Release
 
+* Release version 0.2.21 11-04-2022
+* Release v0.2.21
 * Release version 0.2.20 11-04-2022
 * Release v0.2.20
 * Release version 0.2.19 10-29-2022
@@ -98,11 +99,6 @@
 * Release version 0.1.34 09-13-2022
 * Release v0.1.34
 * Release version 0.1.33 08-13-2022
-* Release v0.1.33
-
-### Resource
-
-* Resource selector model change
 
 ### Restoring
 
@@ -114,6 +110,7 @@
 
 ### Update
 
+* Update connector info
 * Update azure connector models
 * Update azure connector models
 * Update role assignments api and models
@@ -123,6 +120,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#219](https://github.com/harness/harness-go-sdk/issues/219) from harness/gcp-cloud-cost
 * Merge pull request [#217](https://github.com/harness/harness-go-sdk/issues/217) from harness/azure-cloud-cost
 * Merge pull request [#215](https://github.com/harness/harness-go-sdk/issues/215) from harness/SPG-731-updating-infra-doc
 * Merge pull request [#211](https://github.com/harness/harness-go-sdk/issues/211) from harness/azure-conn
@@ -152,5 +150,4 @@
 * Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
 * Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
-* Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
 
