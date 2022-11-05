@@ -1,0 +1,3 @@
+```release-note:new-resource
+platform_connector_kubernetes_cloud_provider - Added kubernetes cloud cost connector resource in Harness terraform provider
+```
