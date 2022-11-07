@@ -42,6 +42,7 @@ func ResourceRoleAssignments() *schema.Resource {
 				Description: "Principal.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"scope_level": {

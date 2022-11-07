@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -54,16 +55,19 @@ func ResourcePipeline() *schema.Resource {
 							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"connector_ref": {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							// Computed:    true,
 						},
 						"store_type": {
-							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
-							Type:         schema.TypeString,
-							Optional:     true,
+							Description: "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							// Computed:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
 						},
 						"repo_name": {
@@ -75,11 +79,13 @@ func ResourcePipeline() *schema.Resource {
 							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"last_commit_id": {
 							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 					},
 				},
@@ -109,19 +115,27 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
 	template_applied := d.Get("template_applied").(bool)
-
+	var branch_name optional.String
+	branch_name = helpers.BuildField(d, "git_details.0.branch_name")
+	var store_type = helpers.BuildField(d, "git_details.0.store_type")
+	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
+	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
+	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
+	//TODO: Change
+	var object_id = helpers.BuildField(d, "git_details.0.object_id")
 	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx,
 		org_id,
 		project_id,
 		id,
-		&nextgen.PipelinesApiGetPipelineOpts{},
+		&nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: branch_name},
 	)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
+	print(object_id.Value())
 
-	readPipeline(d, resp, org_id, project_id, template_applied)
+	readPipeline(d, resp, org_id, project_id, template_applied, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
 }
@@ -130,6 +144,13 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetClientWithContext(ctx)
 
 	var err error
+	var pipeline_id string
+	var branch_name string
+	var store_type optional.String
+	var base_branch optional.String
+	var commit_message optional.String
+	var connector_ref optional.String
+	// var object_id optional.String
 	var httpResp *http.Response
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
@@ -138,10 +159,24 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		pipeline := buildCreatePipeline(d)
-		_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id, &nextgen.PipelinesApiCreatePipelineOpts{})
+		base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
+		store_type = optional.NewString(pipeline.GitDetails.StoreType)
+		commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+		connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
+		pipeline_id = pipeline.Slug
+		branch_name = pipeline.GitDetails.BranchName
+		_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
+			&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
 	} else {
 		pipeline := buildUpdatePipeline(d)
-		_, httpResp, err = c.PipelinesApi.UpdatePipeline(ctx, pipeline, org_id, project_id, id, &nextgen.PipelinesApiUpdatePipelineOpts{})
+		store_type = helpers.BuildField(d, "git_details.0.store_type")
+		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
+		pipeline_id = pipeline.Slug
+		base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
+		branch_name = pipeline.GitDetails.BranchName
+		commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+		_, httpResp, err = c.PipelinesApi.UpdatePipeline(ctx, pipeline, org_id, project_id, id,
+			&nextgen.PipelinesApiUpdatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
 	}
 
 	if err != nil {
@@ -149,12 +184,13 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	// The create/update methods don't return the yaml in the response, so we need to query for it again.
-	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx, org_id, project_id, id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx, org_id, project_id, pipeline_id,
+		&nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: optional.NewString(branch_name)})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readPipeline(d, resp, org_id, project_id, template_applied)
+	readPipeline(d, resp, org_id, project_id, template_applied, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
 }
@@ -166,7 +202,9 @@ func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta in
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
 
-	httpResp, err := c.PipelinesApi.DeletePipeline(ctx, org_id, project_id, id, &nextgen.PipelinesApiDeletePipelineOpts{})
+	httpResp, err := c.PipelinesApi.DeletePipeline(ctx, org_id, project_id, id, &nextgen.PipelinesApiDeletePipelineOpts{
+		HarnessAccount: optional.NewString(c.AccountId),
+	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -184,7 +222,8 @@ func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBo
 	}
 
 	if attr, ok := d.GetOk("git_details"); ok {
-		config := attr.(map[string]interface{})
+		config := attr.([]interface{})[0].(map[string]interface{})
+		pipeline.GitDetails = &nextgen.GitCreateDetails{}
 		if attr, ok := config["branch_name"]; ok {
 			pipeline.GitDetails.BranchName = attr.(string)
 		}
@@ -220,28 +259,34 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 	}
 
 	if attr, ok := d.GetOk("git_details"); ok {
-		config := attr.(map[string]interface{})
-		if attr, ok := config["branch_name"]; ok {
-			pipeline.GitDetails.BranchName = attr.(string)
-		}
-		if attr, ok := config["commit_message"]; ok {
-			pipeline.GitDetails.CommitMessage = attr.(string)
-		}
-		if attr, ok := config["base_branch"]; ok {
-			pipeline.GitDetails.BaseBranch = attr.(string)
-		}
-		if attr, ok := config["last_object_id"]; ok {
-			pipeline.GitDetails.LastObjectId = attr.(string)
-		}
-		if attr, ok := config["last_commit_id"]; ok {
-			pipeline.GitDetails.LastCommitId = attr.(string)
+		configs := attr.([]interface{})
+		if len(configs) > 0 {
+			config := configs[0].(map[string]interface{})
+
+			pipeline.GitDetails = &nextgen.GitUpdateDetails{}
+
+			if attr, ok := config["branch_name"]; ok {
+				pipeline.GitDetails.BranchName = attr.(string)
+			}
+			if attr, ok := config["commit_message"]; ok {
+				pipeline.GitDetails.CommitMessage = attr.(string)
+			}
+			if attr, ok := config["base_branch"]; ok {
+				pipeline.GitDetails.BaseBranch = attr.(string)
+			}
+			if attr, ok := config["last_object_id"]; ok {
+				pipeline.GitDetails.LastObjectId = attr.(string)
+			}
+			if attr, ok := config["last_commit_id"]; ok {
+				pipeline.GitDetails.LastCommitId = attr.(string)
+			}
 		}
 	}
 	return pipeline
 }
 
 // Read response from API out to the stored identifiers
-func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBody, org_id string, project_id string, template_applied bool) {
+func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBody, org_id string, project_id string, template_applied bool, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
 	d.SetId(pipeline.Slug)
 	d.Set("identifier", pipeline.Slug)
 	d.Set("name", pipeline.Name)
@@ -251,4 +296,30 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)
 	d.Set("template_applied", template_applied)
+	if pipeline.GitDetails != nil {
+		d.Set("git_details", []interface{}{readGitDetails(pipeline, store_type, base_branch, commit_message, connector_ref)})
+	}
+}
+
+func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
+	git_details := map[string]interface{}{
+		"branch_name":    pipeline.GitDetails.BranchName,
+		"file_path":      pipeline.GitDetails.FilePath,
+		"repo_name":      pipeline.GitDetails.RepoName,
+		"last_commit_id": pipeline.GitDetails.CommitId,
+		"last_object_id": pipeline.GitDetails.EntityIdentifier,
+	}
+	if store_type.IsSet() {
+		git_details["store_type"] = store_type.Value()
+	}
+	if base_branch.IsSet() {
+		git_details["base_branch"] = base_branch.Value()
+	}
+	if commit_message.IsSet() {
+		git_details["commit_message"] = commit_message.Value()
+	}
+	if connector_ref.IsSet() {
+		git_details["connector_ref"] = connector_ref.Value()
+	}
+	return git_details
 }
