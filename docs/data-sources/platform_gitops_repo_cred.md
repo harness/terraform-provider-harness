@@ -27,9 +27,9 @@ data "harness_platform_gitops_repo_cred" "test" {
 
 ### Required
 
-- `account_id` (String) account identifier of the Repository Certificates.
-- `agent_id` (String) agent identifier of the Repository Certificates.
-- `identifier` (String) Identifier of the Repository Certificates.
+- `account_id` (String) account identifier of the Repository Credentials.
+- `agent_id` (String) agent identifier of the Repository Credentials.
+- `identifier` (String) Identifier of the Repository Credentials.
 
 ### Optional
 

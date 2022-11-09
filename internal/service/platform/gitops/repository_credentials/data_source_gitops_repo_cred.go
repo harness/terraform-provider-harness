@@ -20,17 +20,17 @@ func DataSourceGitOpsRepoCred() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "agent identifier of the Repository Certificates.",
+				Description: "agent identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "account identifier of the Repository Certificates.",
+				Description: "account identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the Repository Certificates.",
+				Description: "Identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
