@@ -21,12 +21,12 @@ Resource for creating a Bitbucket connector.
 - `credentials` (Block List, Min: 1, Max: 1) Credentials to use for the connection. (see [below for nested schema](#nestedblock--credentials))
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) Url of the BitBucket repository or account.
+- `url` (String) URL of the BitBucket repository or account.
 
 ### Optional
 
 - `api_authentication` (Block List, Max: 1) Configuration for using the BitBucket api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses. (see [below for nested schema](#nestedblock--api_authentication))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
@@ -50,9 +50,9 @@ Optional:
 
 Optional:
 
-- `password_ref` (String) Reference to a secret containing the password to use for authentication.
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `username` (String) Username to use for authentication.
-- `username_ref` (String) Reference to a secret containing the username to use for authentication.
+- `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--credentials--ssh"></a>
@@ -60,7 +60,7 @@ Optional:
 
 Required:
 
-- `ssh_key_ref` (String) Reference to the Harness secret containing the ssh key.
+- `ssh_key_ref` (String) Reference to the Harness secret containing the ssh key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 
@@ -69,11 +69,11 @@ Required:
 
 Required:
 
-- `token_ref` (String) Personal access token for interacting with the BitBucket api.
+- `token_ref` (String) Personal access token for interacting with the BitBucket api. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
 - `username` (String) The username used for connecting to the api.
-- `username_ref` (String) The name of the Harness secret containing the username.
+- `username_ref` (String) The name of the Harness secret containing the username. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 

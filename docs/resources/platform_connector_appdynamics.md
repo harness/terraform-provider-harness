@@ -20,12 +20,12 @@ Resource for creating an App Dynamics connector.
 - `account_name` (String) The App Dynamics account name.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) Url of the App Dynamics controller.
+- `url` (String) URL of the App Dynamics controller.
 
 ### Optional
 
 - `api_token` (Block List, Max: 1) Authenticate to App Dynamics using api token. (see [below for nested schema](#nestedblock--api_token))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
@@ -42,7 +42,7 @@ Resource for creating an App Dynamics connector.
 Required:
 
 - `client_id` (String) The client id used for connecting to App Dynamics.
-- `client_secret_ref` (String) Reference to the Harness secret containing the App Dynamics client secret.
+- `client_secret_ref` (String) Reference to the Harness secret containing the App Dynamics client secret. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--username_password"></a>
@@ -50,7 +50,7 @@ Required:
 
 Required:
 
-- `password_ref` (String) Reference to a secret containing the password to use for authentication.
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `username` (String) Username to use for authentication.
 
 

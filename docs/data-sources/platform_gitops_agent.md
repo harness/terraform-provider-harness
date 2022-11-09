@@ -37,7 +37,7 @@ data "harness_platform_gitops_agent" "example" {
 ### Read-Only
 
 - `description` (String) Description of the GitOps agent.
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 - `metadata` (List of Object) Metadata of the agent. (see [below for nested schema](#nestedatt--metadata))
 - `name` (String) Name of the GitOps agent.
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.

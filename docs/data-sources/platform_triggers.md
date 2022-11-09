@@ -26,13 +26,13 @@ data "harness_platform_triggers" "example" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Unique identifier of the Organization.
+- `project_id` (String) Unique identifier of the Project.
 - `target_id` (String) Identifier of the target pipeline
 
 ### Optional
 
+- `identifier` (String) Unique identifier of the resource.
 - `ignore_error` (Boolean) ignore error default false
 - `name` (String) Name of the resource.
 

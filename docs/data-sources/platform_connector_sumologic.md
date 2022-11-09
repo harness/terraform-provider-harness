@@ -24,12 +24,12 @@ Datasource for looking up a Sumologic connector.
 
 ### Read-Only
 
-- `access_id_ref` (String) Reference to the Harness secret containing the access id.
-- `access_key_ref` (String) Reference to the Harness secret containing the access key.
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `access_id_ref` (String) Reference to the Harness secret containing the access id. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `access_key_ref` (String) Reference to the Harness secret containing the access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `url` (String) Url of the SumoLogic server.
+- `url` (String) URL of the SumoLogic server.
 
 

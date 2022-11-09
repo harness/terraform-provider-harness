@@ -91,7 +91,7 @@ resource "harness_platform_gitops_applications" "example" {
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 - `name` (String) Name of the GitOps application.
 
 <a id="nestedblock--application"></a>

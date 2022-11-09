@@ -25,7 +25,7 @@ Resource for looking up an App Dynamics connector.
 ### Read-Only
 
 - `credentials` (List of Object) Credentials to use for authentication. (see [below for nested schema](#nestedatt--credentials))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.

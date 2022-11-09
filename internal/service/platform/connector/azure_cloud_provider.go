@@ -74,7 +74,7 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"certificate_ref": {
-																Description: "Reference of the secret for the certificate.",
+																Description: "Reference of the secret for the certificate." + secret_ref_text,
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -89,7 +89,7 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"secret_ref": {
-																Description: "Reference of the secret for the secret key.",
+																Description: "Reference of the secret for the secret key." + secret_ref_text,
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -149,7 +149,7 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 				},
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
