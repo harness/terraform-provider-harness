@@ -14,7 +14,7 @@ func TestAccDataSourceGitOpsRepoCred(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterName := id
 	resourceName := "data.harness_platform_gitops_repo_cred.test"
@@ -68,6 +68,8 @@ func testAccDataSourceRepoCred(id string, accountId string, name string, agentId
 
 		data "harness_platform_gitops_repo_cred" "test" {
 			identifier = harness_platform_gitops_repo_cred.test.id
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
 		}
