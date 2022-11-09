@@ -307,7 +307,7 @@ func readGitDetails(pipeline nextgen.PipelineGetResponseBody, store_type optiona
 		"file_path":      pipeline.GitDetails.FilePath,
 		"repo_name":      pipeline.GitDetails.RepoName,
 		"last_commit_id": pipeline.GitDetails.CommitId,
-		"last_object_id": pipeline.GitDetails.EntityIdentifier,
+		"last_object_id": pipeline.GitDetails.ObjectId,
 	}
 	if store_type.IsSet() {
 		git_details["store_type"] = store_type.Value()
