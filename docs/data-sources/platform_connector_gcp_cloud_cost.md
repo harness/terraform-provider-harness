@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_gcp_cloud_cost Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for looking up an GCP Cloud Cost Connector.
+  Datasource for looking up a GCP Cloud Cost Connector.
 ---
 
 # harness_platform_connector_gcp_cloud_cost (Data Source)
 
-Datasource for looking up an GCP Cloud Cost Connector.
+Datasource for looking up a GCP Cloud Cost Connector.
 
 ## Example Usage
 
@@ -30,12 +30,12 @@ data "harness_platform_connector_gcp_cloud_cost" "example" {
 
 ### Read-Only
 
-- `billing_export_spec` (List of Object) Returns Billing details. (see [below for nested schema](#nestedatt--billing_export_spec))
+- `billing_export_spec` (List of Object) Returns billing details. (see [below for nested schema](#nestedatt--billing_export_spec))
 - `description` (String) Description of the resource.
-- `features_enabled` (Set of String) Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY
+- `features_enabled` (Set of String) Indicates which features to enable among Billing, Optimization, and Visibility.
 - `gcp_project_id` (String) GCP Project Id.
 - `id` (String) The ID of this resource.
-- `service_account_email` (String) Service Account Email.
+- `service_account_email` (String) Email corresponding to the Service Account.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 
 <a id="nestedatt--billing_export_spec"></a>

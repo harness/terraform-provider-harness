@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_gcp_cloud_cost Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating an GCP Cloud Cost connector in Harness.
+  Resource for creating a GCP Cloud Cost connector in Harness.
 ---
 
 # harness_platform_connector_gcp_cloud_cost (Resource)
 
-Resource for creating an GCP Cloud Cost connector in Harness.
+Resource for creating a GCP Cloud Cost connector in Harness.
 
 ## Example Usage
 
@@ -34,15 +34,15 @@ resource "harness_platform_connector_gcp_cloud_cost" "test" {
 
 ### Required
 
-- `features_enabled` (Set of String) Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY
+- `features_enabled` (Set of String) Indicates which features to enable among Billing, Optimization, and Visibility.
 - `gcp_project_id` (String) GCP Project Id.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `service_account_email` (String) Service Account Email.
+- `service_account_email` (String) Email corresponding to the Service Account.
 
 ### Optional
 
-- `billing_export_spec` (Block List, Max: 1) Returns Billing details. (see [below for nested schema](#nestedblock--billing_export_spec))
+- `billing_export_spec` (Block List, Max: 1) Returns billing details. (see [below for nested schema](#nestedblock--billing_export_spec))
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
