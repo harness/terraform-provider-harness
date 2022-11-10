@@ -30,9 +30,9 @@ data "harness_platform_connector_azure_cloud_cost" "example" {
 
 ### Read-Only
 
-- `billing_export_spec` (List of Object) Returns Billing details like StorageAccount's Name, container's Name, directory's Name, report Name and subscription Id. (see [below for nested schema](#nestedatt--billing_export_spec))
+- `billing_export_spec` (List of Object) Returns billing details for the Azure account. (see [below for nested schema](#nestedatt--billing_export_spec))
 - `description` (String) Description of the resource.
-- `features_enabled` (Set of String) Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY
+- `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `id` (String) The ID of this resource.
 - `subscription_id` (String) Subsription id.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.

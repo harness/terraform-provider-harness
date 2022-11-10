@@ -37,7 +37,7 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 
 ### Required
 
-- `features_enabled` (Set of String) Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY
+- `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `subscription_id` (String) Subsription id.
@@ -45,7 +45,7 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 
 ### Optional
 
-- `billing_export_spec` (Block List, Max: 1) Returns Billing details like StorageAccount's Name, container's Name, directory's Name, report Name and subscription Id. (see [below for nested schema](#nestedblock--billing_export_spec))
+- `billing_export_spec` (Block List, Max: 1) Returns billing details for the Azure account. (see [below for nested schema](#nestedblock--billing_export_spec))
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
@@ -61,9 +61,9 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 Required:
 
 - `container_name` (String) Container Name.
-- `directory_name` (String) Directory Name.
-- `report_name` (String) Report Name.
-- `storage_account_name` (String) Storage Account Name.
+- `directory_name` (String) Name of the directory.
+- `report_name` (String) Name of the report.
+- `storage_account_name` (String) Name of the storage account.
 - `subscription_id` (String) Subsription Id.
 
 ## Import
