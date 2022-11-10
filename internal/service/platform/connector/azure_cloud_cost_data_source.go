@@ -12,7 +12,7 @@ func DataSourceConnectorAzureCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"features_enabled": {
-				Description: "Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY",
+				Description: "Indicates which feature to enable among Billing, Optimization, and Visibility.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem: &schema.Schema{
@@ -30,13 +30,13 @@ func DataSourceConnectorAzureCloudCost() *schema.Resource {
 				Computed:    true,
 			},
 			"billing_export_spec": {
-				Description: "Returns Billing details like StorageAccount's Name, container's Name, directory's Name, report Name and subscription Id.",
+				Description: "Returns billing details for the Azure account.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"storage_account_name": {
-							Description: "Storage Account Name.",
+							Description: "Name of the storage account.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -46,12 +46,12 @@ func DataSourceConnectorAzureCloudCost() *schema.Resource {
 							Computed:    true,
 						},
 						"directory_name": {
-							Description: "Directory Name.",
+							Description: "Name of the directory.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"report_name": {
-							Description: "Report Name.",
+							Description: "Name of the report.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
