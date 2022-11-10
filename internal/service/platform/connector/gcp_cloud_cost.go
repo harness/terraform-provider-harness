@@ -12,7 +12,7 @@ import (
 
 func ResourceConnectorGCPCloudCost() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an GCP Cloud Cost connector in Harness.",
+		Description:   "Resource for creating a GCP Cloud Cost connector in Harness.",
 		ReadContext:   resourceConnectorGCPCloudCostRead,
 		CreateContext: resourceConnectorGCPCloudCostCreateOrUpdate,
 		UpdateContext: resourceConnectorGCPCloudCostCreateOrUpdate,
@@ -21,7 +21,7 @@ func ResourceConnectorGCPCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"features_enabled": {
-				Description: "Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY",
+				Description: "Indicates which features to enable among Billing, Optimization, and Visibility.",
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem: &schema.Schema{
@@ -35,12 +35,12 @@ func ResourceConnectorGCPCloudCost() *schema.Resource {
 				Required:    true,
 			},
 			"service_account_email": {
-				Description: "Service Account Email.",
+				Description: "Email corresponding to the Service Account.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"billing_export_spec": {
-				Description: "Returns Billing details.",
+				Description: "Returns billing details.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,

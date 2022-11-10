@@ -7,12 +7,12 @@ import (
 
 func DataSourceConnectorGCPCloudCost() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up an GCP Cloud Cost Connector.",
+		Description: "Datasource for looking up a GCP Cloud Cost Connector.",
 		ReadContext: resourceConnectorGCPCloudCostRead,
 
 		Schema: map[string]*schema.Schema{
 			"features_enabled": {
-				Description: "Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY",
+				Description: "Indicates which features to enable among Billing, Optimization, and Visibility.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem: &schema.Schema{
@@ -25,12 +25,12 @@ func DataSourceConnectorGCPCloudCost() *schema.Resource {
 				Computed:    true,
 			},
 			"service_account_email": {
-				Description: "Service Account Email.",
+				Description: "Email corresponding to the Service Account.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"billing_export_spec": {
-				Description: "Returns Billing details.",
+				Description: "Returns billing details.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
