@@ -193,6 +193,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_policy":                          policy.DataSourcePolicy(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_template":                        pl_template.ResourceTemplate(),
 				"harness_platform_connector_azure_key_vault":       connector.ResourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
