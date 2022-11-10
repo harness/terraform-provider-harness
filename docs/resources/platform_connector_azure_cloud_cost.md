@@ -60,7 +60,7 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 
 Required:
 
-- `container_name` (String) Container Name.
+- `container_name` (String) Name of the container.
 - `directory_name` (String) Name of the directory.
 - `report_name` (String) Name of the report.
 - `storage_account_name` (String) Name of the storage account.
