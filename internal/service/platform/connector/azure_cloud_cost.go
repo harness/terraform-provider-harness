@@ -52,7 +52,7 @@ func ResourceConnectorAzureCloudCost() *schema.Resource {
 							Required:    true,
 						},
 						"container_name": {
-							Description: "Container Name.",
+							Description: "Name of the container.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},

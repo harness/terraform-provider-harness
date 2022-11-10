@@ -41,7 +41,7 @@ func DataSourceConnectorAzureCloudCost() *schema.Resource {
 							Computed:    true,
 						},
 						"container_name": {
-							Description: "Container Name.",
+							Description: "Name of the container.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
