@@ -116,7 +116,7 @@ func ResourceTemplate() *schema.Resource {
 func resourceTemplateRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetClientWithContext(ctx)
 
-	id := d.Id()
+	template_id := d.Id()
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
 	var comments = helpers.BuildField(d, "comments")
@@ -126,25 +126,46 @@ func resourceTemplateRead(ctx context.Context, d *schema.ResourceData, meta inte
 	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 	var branch_name optional.String
 	branch_name = helpers.BuildField(d, "git_details.0.branch_name")
+	version := d.Get("version").(string)
 
 	var err error
 	var resp nextgen.TemplateWithInputsResponse
 	var httpResp *http.Response
 
 	if project_id != "" {
-		resp, httpResp, err = c.ProjectTemplateApi.GetTemplateStableProject(ctx, project_id, id, org_id, &nextgen.ProjectTemplateApiGetTemplateStableProjectOpts{
-			HarnessAccount: optional.NewString(c.AccountId),
-			BranchName:     branch_name})
+		if version == "" {
+			resp, httpResp, err = c.ProjectTemplateApi.GetTemplateStableProject(ctx, org_id, project_id, template_id, &nextgen.ProjectTemplateApiGetTemplateStableProjectOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+				BranchName:     branch_name})
+		} else {
+			resp, httpResp, err = c.ProjectTemplateApi.GetTemplateProject(ctx, org_id, project_id, template_id, version, &nextgen.ProjectTemplateApiGetTemplateProjectOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+				BranchName:     branch_name})
+		}
 	} else if org_id != "" && project_id == "" {
-		resp, httpResp, err = c.OrgTemplateApi.GetTemplateStableOrg(ctx, org_id, id, &nextgen.OrgTemplateApiGetTemplateStableOrgOpts{
-			HarnessAccount: optional.NewString(c.AccountId),
-			BranchName:     branch_name,
-		})
+		if version == "" {
+			resp, httpResp, err = c.OrgTemplateApi.GetTemplateStableOrg(ctx, org_id, template_id, &nextgen.OrgTemplateApiGetTemplateStableOrgOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+				BranchName:     branch_name,
+			})
+		} else {
+			resp, httpResp, err = c.OrgTemplateApi.GetTemplateOrg(ctx, org_id, template_id, version, &nextgen.OrgTemplateApiGetTemplateOrgOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+				BranchName:     branch_name,
+			})
+		}
 	} else {
-		resp, httpResp, err = c.AccountTemplateApi.GetTemplateStableAcc(ctx, id, &nextgen.AccountTemplateApiGetTemplateStableAccOpts{
-			HarnessAccount: optional.NewString(c.AccountId),
-			BranchName:     branch_name,
-		})
+		if version == "" {
+			resp, httpResp, err = c.AccountTemplateApi.GetTemplateStableAcc(ctx, template_id, &nextgen.AccountTemplateApiGetTemplateStableAccOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+				BranchName:     branch_name,
+			})
+		} else {
+			resp, httpResp, err = c.AccountTemplateApi.GetTemplateAcc(ctx, template_id, version, &nextgen.AccountTemplateApiGetTemplateAccOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+				BranchName:     branch_name,
+			})
+		}
 	}
 
 	if err != nil {
@@ -314,7 +335,7 @@ func buildUpdateTemplate(d *schema.ResourceData) nextgen.TemplateUpdateRequestBo
 
 	if attr, ok := d.GetOk("git_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		template.GitDetails = &nextgen.GitUpdateDetails1{}
+		template.GitDetails = &nextgen.GitUpdateDetails{}
 
 		if attr, ok := config["branch_name"]; ok {
 			template.GitDetails.BranchName = attr.(string)
@@ -322,6 +343,10 @@ func buildUpdateTemplate(d *schema.ResourceData) nextgen.TemplateUpdateRequestBo
 
 		if attr, ok := config["file_path"]; ok {
 			template.GitDetails.FilePath = attr.(string)
+		}
+
+		if attr, ok := config["last_object_id"]; ok {
+			template.GitDetails.LastObjectId = attr.(string)
 		}
 
 		if attr, ok := config["commit_message"]; ok {
@@ -358,7 +383,7 @@ func buildCreateTemplate(d *schema.ResourceData) nextgen.TemplateCreateRequestBo
 
 	if attr, ok := d.GetOk("git_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		template.GitDetails = &nextgen.GitCreateDetails1{}
+		template.GitDetails = &nextgen.GitCreateDetails{}
 
 		if attr, ok := config["branch_name"]; ok {
 			template.GitDetails.BranchName = attr.(string)
@@ -394,27 +419,28 @@ func buildCreateTemplate(d *schema.ResourceData) nextgen.TemplateCreateRequestBo
 }
 
 func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsResponse, comments string, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
-	d.SetId(template.TemplateResponse.Slug)
-	d.Set("identifier", template.TemplateResponse.Slug)
-	d.Set("name", template.TemplateResponse.Name)
-	d.Set("org_id", template.TemplateResponse.Org)
-	d.Set("project_id", template.TemplateResponse.Project)
-	d.Set("template_yaml", template.TemplateResponse.Yaml)
-	d.Set("is_stable", template.TemplateResponse.StableTemplate)
-	d.Set("description", template.TemplateResponse.Description)
+	d.SetId(template.Template.Slug)
+	d.Set("identifier", template.Template.Slug)
+	d.Set("name", template.Template.Name)
+	d.Set("org_id", template.Template.Org)
+	d.Set("project_id", template.Template.Project)
+	d.Set("template_yaml", template.Template.Yaml)
+	d.Set("is_stable", template.Template.StableTemplate)
+	d.Set("description", template.Template.Description)
+	d.Set("version", template.Template.VersionLabel)
 	d.Set("comments", comments)
-	if template.TemplateResponse.GitDetails != nil {
+	if template.Template.GitDetails != nil {
 		d.Set("git_details", []interface{}{readGitDetails(template, store_type, base_branch, commit_message, connector_ref)})
 	}
 }
 
 func readGitDetails(template nextgen.TemplateWithInputsResponse, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
 	git_details := map[string]interface{}{
-		"branch_name":    template.TemplateResponse.GitDetails.BranchName,
-		"file_path":      template.TemplateResponse.GitDetails.FilePath,
-		"repo_name":      template.TemplateResponse.GitDetails.RepoName,
-		"last_commit_id": template.TemplateResponse.GitDetails.CommitId,
-		"last_object_id": template.TemplateResponse.GitDetails.EntityIdentifier,
+		"branch_name":    template.Template.GitDetails.BranchName,
+		"file_path":      template.Template.GitDetails.FilePath,
+		"repo_name":      template.Template.GitDetails.RepoName,
+		"last_commit_id": template.Template.GitDetails.CommitId,
+		"last_object_id": template.Template.GitDetails.ObjectId,
 	}
 	if store_type.IsSet() {
 		git_details["store_type"] = store_type.Value()
