@@ -12,12 +12,12 @@ func DatasourceConnectorKubernetesCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"connector_ref": {
-				Description: "Referenve of the Connector.",
+				Description: "Reference of the Connector.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"features_enabled": {
-				Description: "Which feature to enable among BILLING, OPTIMIZATION, VISIBILITY",
+				Description: "Indicates which feature to enable among Billing, Optimization, and Visibility.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem: &schema.Schema{
