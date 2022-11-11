@@ -1,0 +1,3 @@
+```release-note:new-resource
+platform_connector_azure_cloud_provider - Added gcp cloud cost connector resource in Harness terraform provider
+```
