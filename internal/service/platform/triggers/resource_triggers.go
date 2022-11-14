@@ -13,7 +13,7 @@ import (
 
 func ResourceTriggers() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for craeting triggers in Harness.",
+		Description:   "Resource for creating triggers in Harness.",
 		ReadContext:   resourceTriggersRead,
 		UpdateContext: resourceTriggersCreateOrUpdate,
 		CreateContext: resourceTriggersCreateOrUpdate,

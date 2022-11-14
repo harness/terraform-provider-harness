@@ -1,4 +1,4 @@
-data "harness_platform_gitops_repo_cert" "test" {
+data "harness_platform_gitops_repo_cred" "test" {
   identifier = "identifier"
   account_id = "account_id"
   project_id = "project_id"
