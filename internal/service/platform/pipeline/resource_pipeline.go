@@ -155,12 +155,15 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		pipeline := buildCreatePipeline(d)
-		base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
-		store_type = optional.NewString(pipeline.GitDetails.StoreType)
-		commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
-		connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
+		if pipeline.GitDetails != nil {
+			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
+			store_type = optional.NewString(pipeline.GitDetails.StoreType)
+			commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+			connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
+			branch_name = pipeline.GitDetails.BranchName
+		}
+
 		pipeline_id = pipeline.Slug
-		branch_name = pipeline.GitDetails.BranchName
 		_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
 			&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
 	} else {
@@ -168,9 +171,11 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 		pipeline_id = pipeline.Slug
-		base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
-		branch_name = pipeline.GitDetails.BranchName
-		commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+		if pipeline.GitDetails != nil {
+			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
+			branch_name = pipeline.GitDetails.BranchName
+			commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+		}
 		_, httpResp, err = c.PipelinesApi.UpdatePipeline(ctx, pipeline, org_id, project_id, id,
 			&nextgen.PipelinesApiUpdatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
 	}
