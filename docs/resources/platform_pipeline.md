@@ -122,11 +122,29 @@ resource "harness_platform_pipeline" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
+- `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `template_applied` (Boolean) If true, returns Pipeline YAML with Templates applied on it.
+- `template_applied_pipeline_yaml` (String) Pipeline YAML after resolving Templates (returned as a String).
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
+
+Optional:
+
+- `base_branch` (String) Name of the default branch (this checks out a new branch titled by branch_name).
+- `branch_name` (String) Name of the branch.
+- `commit_message` (String) Commit message used for the merge commit.
+- `connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Entity.
+- `file_path` (String) File path of the Entity in the repository.
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Pipeline.
+- `repo_name` (String) Name of the repository.
+- `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.
 
 ## Import
 
