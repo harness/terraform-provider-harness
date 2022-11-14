@@ -1,4 +1,4 @@
-# 0.8.0 (November 14,2022)
+# 0.8.1 (November 14,2022)
 
 FEATURES:
 
@@ -24,7 +24,7 @@ BUG FIXES:
 
 * harness_platform_secret_text : fix value field in secret text resource ([#281](https://github.com/harness/terraform-provider-harness/issues/281))
 
-# 0.7.0 (November 20,2022)
+# 0.7.0 (November 2,2022)
 
 FEATURES:
 
