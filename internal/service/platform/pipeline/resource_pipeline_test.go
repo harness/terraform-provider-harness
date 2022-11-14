@@ -77,26 +77,36 @@ func testAccPipelineDestroy(resourceName string) resource.TestCheckFunc {
 
 func testAccResourcePipeline(id string, name string) string {
 	return fmt.Sprintf(`
+				resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+				resource "harness_platform_project" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+					org_id = harness_platform_organization.test.id
+					color = "#472848"
+				}
         resource "harness_platform_pipeline" "test" {
                         identifier = "%[1]s"
-                        org_id = "default"
-                        project_id = "test"
+                        org_id = harness_platform_project.test.org_id
+						project_id = harness_platform_project.test.id
                         name = "%[2]s"
                         git_details {
                             branch_name = "main"
                             commit_message = "Commit"
                             file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-                            connector_ref = "account.RichaGithub"
+                            connector_ref = "account.Jajoo"
                             store_type = "REMOTE"
-                            repo_name = "rjajoo"
+                            repo_name = "jajoo_git"
                         }
             yaml = <<-EOT
                 pipeline:
                     name: %[2]s
                     identifier: %[1]s
                     allowStageExecutions: false
-                    projectIdentifier: test
-                    orgIdentifier: default
+                    projectIdentifier: ${harness_platform_project.test.id}
+                    orgIdentifier: ${harness_platform_project.test.org_id}
                     tags: {}
                     stages:
                         - stage:
