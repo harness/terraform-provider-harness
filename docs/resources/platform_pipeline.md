@@ -18,7 +18,16 @@ resource "harness_platform_pipeline" "example" {
   org_id     = "orgIdentifier"
   project_id = "projectIdentifier"
   name       = "name"
-  yaml       = <<-EOT
+  git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
+
+  yaml = <<-EOT
       pipeline:
           name: name
           identifier: identifier
