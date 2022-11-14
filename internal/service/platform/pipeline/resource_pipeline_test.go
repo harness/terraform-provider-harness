@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -38,35 +39,36 @@ func TestAccResourcePipeline(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type"},
 			},
 		},
 	})
 }
 
-func testAccGetPipeline(resourceName string, state *terraform.State) (*nextgen.PmsPipelineResponse, error) {
+func testAccGetPipeline(resourceName string, state *terraform.State) (*openapi_client_nextgen.PipelineGetResponseBody, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
-	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+	c, ctx := acctest.TestAccGetClientWithContext()
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx, c.AccountId, orgId, projId, id, &nextgen.PipelinesApiGetPipelineOpts{})
+	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Data, nil
+	return &resp, nil
 }
 
 func testAccPipelineDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		pipeline, _ := testAccGetPipeline(resourceName, state)
 		if pipeline != nil {
-			return fmt.Errorf("Found pipeline: %s", pipeline.YamlPipeline)
+			return fmt.Errorf("Found pipeline: %s", pipeline.PipelineYaml)
 		}
 
 		return nil
@@ -79,19 +81,25 @@ func testAccResourcePipeline(id string, name string) string {
 					identifier = "%[1]s"
 					name = "%[2]s"
 				}
-
 				resource "harness_platform_project" "test" {
 					identifier = "%[1]s"
 					name = "%[2]s"
 					org_id = harness_platform_organization.test.id
 					color = "#472848"
 				}
-
         resource "harness_platform_pipeline" "test" {
-						identifier = "%[1]s"
-						org_id = harness_platform_project.test.org_id
+                        identifier = "%[1]s"
+                        org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
-						name = "%[2]s"
+                        name = "%[2]s"
+                        git_details {
+                            branch_name = "main"
+                            commit_message = "Commit"
+                            file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
+                            connector_ref = "account.Jajoo"
+                            store_type = "REMOTE"
+                            repo_name = "jajoo_git"
+                        }
             yaml = <<-EOT
                 pipeline:
                     name: %[2]s
