@@ -61,13 +61,11 @@ func ResourcePipeline() *schema.Resource {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity.",
 							Type:        schema.TypeString,
 							Optional:    true,
-							// Computed:    true,
 						},
 						"store_type": {
-							Description: "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							// Computed:     true,
+							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Type:         schema.TypeString,
+							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
 						},
 						"repo_name": {
@@ -121,7 +119,6 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
 	var commit_message = helpers.BuildField(d, "git_details.0.commit_message")
 	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
-	//TODO: Change
 	var object_id = helpers.BuildField(d, "git_details.0.object_id")
 	resp, httpResp, err := c.PipelinesApi.GetPipeline(ctx,
 		org_id,
@@ -150,7 +147,6 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var base_branch optional.String
 	var commit_message optional.String
 	var connector_ref optional.String
-	// var object_id optional.String
 	var httpResp *http.Response
 	id := d.Id()
 	org_id := d.Get("org_id").(string)
