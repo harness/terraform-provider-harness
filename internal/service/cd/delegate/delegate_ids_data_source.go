@@ -47,7 +47,9 @@ func DataSourceDelegateIds() *schema.Resource {
 func dataSourceDelegateIdsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	// use the meta value to retrieve your client from the provider configure method
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	name := d.Get("name").(string)
 	status := d.Get("status").(string)
 	delegateType := d.Get("type").(string)

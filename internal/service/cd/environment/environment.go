@@ -6,6 +6,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -94,7 +95,9 @@ func ResourceEnvironment() *schema.Resource {
 
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var env *cac.Environment
 	var err error
 
@@ -129,7 +132,9 @@ func readEnvironment(d *schema.ResourceData, env *cac.Environment) diag.Diagnost
 
 func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	appId := d.Get("app_id").(string)
 	id := d.Get("id").(string)
 
@@ -209,7 +214,9 @@ func expandVariableOverrides(d []interface{}) []*cac.VariableOverride {
 
 func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	envName := d.Get("name").(string)
 	appId := d.Get("app_id").(string)
 
