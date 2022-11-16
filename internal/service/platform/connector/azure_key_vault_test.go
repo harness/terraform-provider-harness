@@ -28,9 +28,9 @@ func TestAccResourceConnectorAzureKeyVault(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tenant_id", "tenant_id"),
-					resource.TestCheckResourceAttr(resourceName, "subscription", "subscription"),
-					resource.TestCheckResourceAttr(resourceName, "client_id", "client_id"),
+					resource.TestCheckResourceAttr(resourceName, "tenant_id", "b229b2bb-5f33-4d22-bce0-730f6474e906"),
+					resource.TestCheckResourceAttr(resourceName, "subscription", "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"),
+					resource.TestCheckResourceAttr(resourceName, "vault_name", "Aman-test"),
 					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 				),
 			},
@@ -42,9 +42,9 @@ func TestAccResourceConnectorAzureKeyVault(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tenant_id", "tenant_id"),
-					resource.TestCheckResourceAttr(resourceName, "subscription", "subscription"),
-					resource.TestCheckResourceAttr(resourceName, "client_id", "client_id"),
+					resource.TestCheckResourceAttr(resourceName, "tenant_id", "b229b2bb-5f33-4d22-bce0-730f6474e906"),
+					resource.TestCheckResourceAttr(resourceName, "subscription", "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"),
+					resource.TestCheckResourceAttr(resourceName, "vault_name", "Aman-test"),
 					resource.TestCheckResourceAttr(resourceName, "is_default", "false"),
 				),
 			},
@@ -59,16 +59,6 @@ func TestAccResourceConnectorAzureKeyVault(t *testing.T) {
 
 func testAccResourceConnectorAzureKeyVault(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_secret_text" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-
-		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Inline"
-		value = "0ac78b03-57f0-b205-e85b-4931fb814366"
-	}
 
 	resource "harness_platform_connector_azure_key_vault" "test" {
 		identifier = "%[1]s"
@@ -76,15 +66,14 @@ func testAccResourceConnectorAzureKeyVault(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 
-		client_id = "client_id"
-		secret_key = 
-		tenant_id = "tenant_id"
-		vault_name = 
-		subscription = "subscription"
+		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
+		secret_key = "account.azuretest"
+		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
+		vault_name = "Aman-test"
+		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
 		is_default = false
 
 		azure_environment_type = "AZURE"
-		delegate_selectors = ["harness-delegate"]
 	}
 `, id, name)
 }
