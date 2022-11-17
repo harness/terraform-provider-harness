@@ -30,13 +30,13 @@ data "harness_platform_connector_prometheus" "example" {
 
 ### Read-Only
 
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `headers` (Set of Object) Headers. (see [below for nested schema](#nestedatt--headers))
 - `id` (String) The ID of this resource.
-- `password_ref` (String) Password reference.
+- `password_ref` (String) Reference to the Harness secret containing the password. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `url` (String) Url of the Prometheus server.
+- `url` (String) URL of the Prometheus server.
 - `user_name` (String) User name.
 
 <a id="nestedatt--headers"></a>

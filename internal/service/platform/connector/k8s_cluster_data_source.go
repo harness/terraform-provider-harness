@@ -53,12 +53,12 @@ func DatasourceConnectorKubernetes() *schema.Resource {
 							Computed:    true,
 						},
 						"username_ref": {
-							Description: "Reference to the secret containing the username for the connector.",
+							Description: "Reference to the secret containing the username for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"password_ref": {
-							Description: "Reference to the secret containing the password for the connector.",
+							Description: "Reference to the secret containing the password for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -77,7 +77,7 @@ func DatasourceConnectorKubernetes() *schema.Resource {
 							Computed:    true,
 						},
 						"service_account_token_ref": {
-							Description: "Reference to the secret containing the service account token for the connector.",
+							Description: "Reference to the secret containing the service account token for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -106,22 +106,22 @@ func DatasourceConnectorKubernetes() *schema.Resource {
 							Computed:    true,
 						},
 						"username_ref": {
-							Description: "Reference to the secret containing the username for the connector.",
+							Description: "Reference to the secret containing the username for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"client_id_ref": {
-							Description: "Reference to the secret containing the client ID for the connector.",
+							Description: "Reference to the secret containing the client ID for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"password_ref": {
-							Description: "Reference to the secret containing the password for the connector.",
+							Description: "Reference to the secret containing the password for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"secret_ref": {
-							Description: "Reference to the secret containing the client secret for the connector.",
+							Description: "Reference to the secret containing the client secret for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -146,22 +146,22 @@ func DatasourceConnectorKubernetes() *schema.Resource {
 							Computed:    true,
 						},
 						"ca_cert_ref": {
-							Description: "Reference to the secret containing the CA certificate for the connector.",
+							Description: "Reference to the secret containing the CA certificate for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"client_cert_ref": {
-							Description: "Reference to the secret containing the client certificate for the connector.",
+							Description: "Reference to the secret containing the client certificate for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"client_key_ref": {
-							Description: "Reference to the secret containing the client key for the connector.",
+							Description: "Reference to the secret containing the client key for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"client_key_passphrase_ref": {
-							Description: "Reference to the secret containing the client key passphrase for the connector.",
+							Description: "Reference to the secret containing the client key passphrase for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},

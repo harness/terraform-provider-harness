@@ -23,12 +23,12 @@ func DatasourceConnectorAws() *schema.Resource {
 							Computed:    true,
 						},
 						"access_key_ref": {
-							Description: "Reference to the Harness secret containing the aws access key.",
+							Description: "Reference to the Harness secret containing the aws access key." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"secret_key_ref": {
-							Description: "Reference to the Harness secret containing the aws secret key.",
+							Description: "Reference to the Harness secret containing the aws secret key." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},

@@ -12,22 +12,22 @@ func DatasourceConnectorSumologic() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the SumoLogic server.",
+				Description: "URL of the SumoLogic server.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"access_id_ref": {
-				Description: "Reference to the Harness secret containing the access id.",
+				Description: "Reference to the Harness secret containing the access id." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"access_key_ref": {
-				Description: "Reference to the Harness secret containing the access key.",
+				Description: "Reference to the Harness secret containing the access key." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

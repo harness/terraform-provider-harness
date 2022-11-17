@@ -96,7 +96,7 @@ func ResourceConnectorK8s() *schema.Resource {
 							ConflictsWith: []string{"username_password.0.username_ref"},
 						},
 						"username_ref": {
-							Description: "Reference to the secret containing the username for the connector.",
+							Description: "Reference to the secret containing the username for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 							ExactlyOneOf: []string{
@@ -106,7 +106,7 @@ func ResourceConnectorK8s() *schema.Resource {
 							ConflictsWith: []string{"username_password.0.username"},
 						},
 						"password_ref": {
-							Description: "Reference to the secret containing the password for the connector.",
+							Description: "Reference to the secret containing the password for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -139,7 +139,7 @@ func ResourceConnectorK8s() *schema.Resource {
 							Required:    true,
 						},
 						"service_account_token_ref": {
-							Description: "Reference to the secret containing the service account token for the connector.",
+							Description: "Reference to the secret containing the service account token for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -187,7 +187,7 @@ func ResourceConnectorK8s() *schema.Resource {
 							ConflictsWith: []string{"openid_connect.0.username_ref"},
 						},
 						"username_ref": {
-							Description: "Reference to the secret containing the username for the connector.",
+							Description: "Reference to the secret containing the username for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 							ExactlyOneOf: []string{
@@ -197,17 +197,17 @@ func ResourceConnectorK8s() *schema.Resource {
 							ConflictsWith: []string{"openid_connect.0.username"},
 						},
 						"client_id_ref": {
-							Description: "Reference to the secret containing the client ID for the connector.",
+							Description: "Reference to the secret containing the client ID for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"password_ref": {
-							Description: "Reference to the secret containing the password for the connector.",
+							Description: "Reference to the secret containing the password for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"secret_ref": {
-							Description: "Reference to the secret containing the client secret for the connector.",
+							Description: "Reference to the secret containing the client secret for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -246,22 +246,22 @@ func ResourceConnectorK8s() *schema.Resource {
 							Required:    true,
 						},
 						"ca_cert_ref": {
-							Description: "Reference to the secret containing the CA certificate for the connector.",
+							Description: "Reference to the secret containing the CA certificate for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"client_cert_ref": {
-							Description: "Reference to the secret containing the client certificate for the connector.",
+							Description: "Reference to the secret containing the client certificate for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"client_key_ref": {
-							Description: "Reference to the secret containing the client key for the connector.",
+							Description: "Reference to the secret containing the client key for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"client_key_passphrase_ref": {
-							Description: "Reference to the secret containing the client key passphrase for the connector.",
+							Description: "Reference to the secret containing the client key passphrase for the connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 						},

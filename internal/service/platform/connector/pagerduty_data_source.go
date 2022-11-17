@@ -12,12 +12,12 @@ func DatasourceConnectorPagerDuty() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"api_token_ref": {
-				Description: "Reference to the Harness secret containing the api token.",
+				Description: "Reference to the Harness secret containing the api token." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

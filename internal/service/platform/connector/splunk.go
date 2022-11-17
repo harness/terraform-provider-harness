@@ -21,7 +21,7 @@ func ResourceConnectorSplunk() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Splunk server.",
+				Description: "URL of the Splunk server.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -36,12 +36,12 @@ func ResourceConnectorSplunk() *schema.Resource {
 				Required:    true,
 			},
 			"password_ref": {
-				Description: "The reference to the Harness secret containing the Splunk password.",
+				Description: "The reference to the Harness secret containing the Splunk password." + secret_ref_text,
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

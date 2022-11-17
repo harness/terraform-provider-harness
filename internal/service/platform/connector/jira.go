@@ -21,7 +21,7 @@ func ResourceConnectorJira() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Jira server.",
+				Description: "URL of the Jira server.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -33,19 +33,19 @@ func ResourceConnectorJira() *schema.Resource {
 				ExactlyOneOf:  []string{"username", "username_ref"},
 			},
 			"username_ref": {
-				Description:   "Reference to a secret containing the username to use for authentication.",
+				Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
 				Type:          schema.TypeString,
 				Optional:      true,
 				ConflictsWith: []string{"username"},
 				ExactlyOneOf:  []string{"username", "username_ref"},
 			},
 			"password_ref": {
-				Description: "Reference to a secret containing the password to use for authentication.",
+				Description: "Reference to a secret containing the password to use for authentication." + secret_ref_text,
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

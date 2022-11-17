@@ -17,15 +17,15 @@ Resource for creating an AWS KMS connector.
 
 ### Required
 
-- `arn_ref` (String) A reference to the Harness secret containing the ARN of the AWS KMS.
-- `credentials` (Block List, Min: 1, Max: 1) The credentials to use for connecting to aws. (see [below for nested schema](#nestedblock--credentials))
+- `arn_ref` (String) A reference to the Harness secret containing the ARN of the AWS KMS. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `credentials` (Block List, Min: 1, Max: 1) Credentials to connect to AWS. (see [below for nested schema](#nestedblock--credentials))
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `region` (String) The AWS region where the AWS Secret Manager is.
 
 ### Optional
 
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
@@ -62,7 +62,7 @@ Optional:
 
 Required:
 
-- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key.
-- `secret_key_ref` (String) The reference to the Harness secret containing the AWS secret key.
+- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `secret_key_ref` (String) The reference to the Harness secret containing the AWS secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 

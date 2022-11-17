@@ -21,12 +21,12 @@ func DatasourceConnectorDocker() *schema.Resource {
 				Computed:    true,
 			},
 			"url": {
-				Description: "The url of the docker registry.",
+				Description: "The URL of the docker registry.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -43,12 +43,12 @@ func DatasourceConnectorDocker() *schema.Resource {
 							Computed:    true,
 						},
 						"username_ref": {
-							Description: "The reference to the username to use for the docker registry.",
+							Description: "The reference to the Harness secret containing the username to use for the docker registry." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"password_ref": {
-							Description: "The reference to the password to use for the docker registry.",
+							Description: "The reference to the Harness secret containing the password to use for the docker registry." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
