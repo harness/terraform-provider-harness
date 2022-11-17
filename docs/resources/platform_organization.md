@@ -13,7 +13,7 @@ Resource for creating a Harness organization.
 ## Example Usage
 
 ```terraform
-resource "harness_organization" "this" {
+resource "harness_platform_organization" "this" {
   identifier  = "MyOrg"
   name        = "My Otganization"
   description = "An example organization"
@@ -44,5 +44,5 @@ Import is supported using the following syntax:
 
 ```shell
 # Import using organization id
-terraform import harness_organization.example <organization_id>
+terraform import harness_platform_organization.example <organization_id>
 ```
