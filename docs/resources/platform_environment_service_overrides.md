@@ -14,7 +14,6 @@ Resource for creating a Harness environment service overrides.
 
 ```terraform
 resource "harness_platform_environment_service_overrides" "example" {
-  identifier = "identifier"
   org_id     = "orgIdentifier"
   project_id = "projectIdentifier"
   env_id     = "environmentIdentifier"
@@ -61,7 +60,6 @@ resource "harness_platform_environment_service_overrides" "example" {
 ### Required
 
 - `env_id` (String) The env ID to which the overrides associated.
-- `identifier` (String) identifier of the service overrides.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
 - `service_id` (String) The service ID to which the overrides applies.

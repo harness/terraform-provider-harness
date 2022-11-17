@@ -94,7 +94,6 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 		}
 
 		resource "harness_platform_environment_service_overrides" "test" {
-			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
@@ -135,10 +134,10 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 		}
 
 		data "harness_platform_environment_service_overrides" "test" {
-			identifier = harness_platform_environment_service_overrides.test.id
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
+			service_id = harness_platform_service.test.id
 		}
 `, id, name)
 }
