@@ -136,9 +136,7 @@ func readEnvironmentServiceOverridesList(d *schema.ResourceData, env *nextgen.Pa
 }
 
 func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.ServiceOverrideResponse) {
-	serviceOverrideID := so.ServiceRef + "_" + so.EnvironmentRef
-	d.SetId(serviceOverrideID)
-	d.Set("identifier", so.OrgIdentifier)
+	d.SetId(so.ServiceRef)
 	d.Set("org_id", so.OrgIdentifier)
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
