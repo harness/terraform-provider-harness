@@ -1057,8 +1057,8 @@ github.com/grpc-ecosystem/grpc-gateway v1.9.5/go.mod h1:vNeuVxBJEsws4ogUvrchl83t
 github.com/grpc-ecosystem/grpc-gateway v1.12.1/go.mod h1:8XEsbTttt/W+VvjtQhLACqCisSPWTxCZ7sBRjU6iH9c=
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
 github.com/harness/harness-go-sdk v0.2.16/go.mod h1:xBYHR1R7Srk+TysVnVnTjVLu3dhhyxAQ5IkRNSMKc/4=
-github.com/harness/harness-go-sdk v0.2.23 h1:nlTX1odaD1h/VTbS/c4RUQBNselRmDU6Puqjuih2pLA=
-github.com/harness/harness-go-sdk v0.2.23/go.mod h1:xBYHR1R7Srk+TysVnVnTjVLu3dhhyxAQ5IkRNSMKc/4=
+github.com/harness/harness-go-sdk v0.2.24 h1:S0KlPhR4XakuueU6vPOBdWxq1GbsgB/LQr+FTfo2Yrs=
+github.com/harness/harness-go-sdk v0.2.24/go.mod h1:xBYHR1R7Srk+TysVnVnTjVLu3dhhyxAQ5IkRNSMKc/4=
 github.com/harness/harness-openapi-go-client v0.0.8 h1:mSgPzWzcMiTIfNi2WtivHG37y2A7G18JRmMQ8t5AWoA=
 github.com/harness/harness-openapi-go-client v0.0.8/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/hashicorp/consul/api v1.1.0/go.mod h1:VmuI/Lkw1nC05EYQWNKwWGbkg+FbDBtguAZLlVdkD9Q=
