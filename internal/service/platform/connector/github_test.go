@@ -31,10 +31,11 @@ func TestAccResourceConnectorGithub_Http(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://github.com/account"),
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "crizstian"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.crizstian_github_token"),
 				),
 			},
 			{
@@ -44,9 +45,10 @@ func TestAccResourceConnectorGithub_Http(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "crizstian"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.crizstian_github_token"),
 				),
 			},
 			{
@@ -117,11 +119,11 @@ func TestAccResourceConnectorGithub_api_app(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "crizstian"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.crizstian_github_token"),
 					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.installation_id", "install123"),
 					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.application_id", "app123"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.private_key_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.private_key_ref", "account.crizstian_github_token"),
 				),
 			},
 			{
@@ -132,11 +134,11 @@ func TestAccResourceConnectorGithub_api_app(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "crizstian"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.crizstian_github_token"),
 					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.installation_id", "install123"),
 					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.application_id", "app123"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.private_key_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.private_key_ref", "account.crizstian_github_token"),
 				),
 			},
 			{
@@ -172,8 +174,8 @@ func TestAccResourceConnectorGithub_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.token_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "crizstian"),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.token_ref", "account.crizstian_github_token"),
 				),
 			},
 			{
@@ -184,9 +186,9 @@ func TestAccResourceConnectorGithub_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.token_ref", "account.TEST_aws_secret_key"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "crizstian"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.crizstian_github_token"),
+					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.token_ref", "account.crizstian_github_token"),
 				),
 			},
 			{
@@ -209,11 +211,12 @@ func testAccResourceConnectorGithub_http(id string, name string) string {
 			url = "https://github.com/account"
 			connection_type = "Account"
 			validation_repo = "some_repo"
+			execute_on_delegate = false
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
-					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					username = "crizstian"
+					token_ref = "account.crizstian_github_token"
 				}
 			}
 		}
@@ -234,15 +237,15 @@ func testAccResourceConnectorGithub_api_app(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
-					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					username = "crizstian"
+					token_ref = "account.crizstian_github_token"
 				}
 			}
 			api_authentication {
 				github_app {
 					installation_id = "install123"
 					application_id = "app123"
-					private_key_ref = "account.TEST_aws_secret_key"
+					private_key_ref = "account.crizstian_github_token"
 				}
 			}
 		}
@@ -263,12 +266,12 @@ func testAccResourceConnectorGithub_token(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				http {
-					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					username = "crizstian"
+					token_ref = "account.crizstian_github_token"
 				}
 			}
 			api_authentication {
-				token_ref = "account.TEST_aws_secret_key"
+				token_ref = "account.crizstian_github_token"
 			}
 		}
 `, id, name)

@@ -45,6 +45,11 @@ func ResourceConnectorGithub() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Test connection through a delegate",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
@@ -200,6 +205,9 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	if attr, ok := d.GetOk("validation_repo"); ok {
 		connector.Github.ValidationRepo = attr.(string)
 	}
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Github.ExecuteOnDelegate = attr.(bool)
+	}
 
 	if attr, ok := d.GetOk("connection_type"); ok {
 		connector.Github.Type_ = nextgen.GitConnectorType(attr.(string))
@@ -281,6 +289,7 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("connection_type", connector.Github.Type_.String())
 	d.Set("delegate_selectors", connector.Github.DelegateSelectors)
 	d.Set("validation_repo", connector.Github.ValidationRepo)
+	d.Set("execute_on_delegate", connector.Github.ExecuteOnDelegate)
 
 	if connector.Github.Authentication != nil {
 		switch connector.Github.Authentication.Type_ {
