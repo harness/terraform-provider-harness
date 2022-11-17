@@ -136,7 +136,6 @@ func testAccEnvServiceOverrides(id string, name string) string {
 		}
 
 		resource "harness_platform_environment_service_overrides" "test" {
-			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id

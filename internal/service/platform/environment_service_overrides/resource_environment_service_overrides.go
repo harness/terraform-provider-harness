@@ -20,14 +20,9 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 		UpdateContext: resourceEnvironmentServiceOverridesCreateOrUpdate,
 		DeleteContext: resourceEnvironmentServiceOverridesDelete,
 		CreateContext: resourceEnvironmentServiceOverridesCreateOrUpdate,
-		Importer:      helpers.EnvRelatedResourceImporter,
+		Importer:      helpers.ServiceOverrideResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "identifier of the service overrides.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
@@ -68,7 +63,7 @@ func resourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Reso
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Data == nil {
+	if &resp == nil || resp.Data == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -93,6 +88,14 @@ func resourceEnvironmentServiceOverridesCreateOrUpdate(ctx context.Context, d *s
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if &resp == nil || resp.Data == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
 	readEnvironmentServiceOverrides(d, resp.Data)
@@ -136,7 +139,8 @@ func readEnvironmentServiceOverridesList(d *schema.ResourceData, env *nextgen.Pa
 }
 
 func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.ServiceOverrideResponse) {
-	d.SetId(so.ServiceRef)
+	serviceOverrideID := so.ServiceRef + "-" + so.EnvironmentRef
+	d.SetId(serviceOverrideID)
 	d.Set("org_id", so.OrgIdentifier)
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
