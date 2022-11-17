@@ -24,8 +24,8 @@ Datasource for looking up an AWS Secret Manager connector.
 
 ### Read-Only
 
-- `credentials` (List of Object) The credentials to use for connecting to aws. (see [below for nested schema](#nestedatt--credentials))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `credentials` (List of Object) Credentials to connect to AWS. (see [below for nested schema](#nestedatt--credentials))
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `region` (String) The AWS region where the AWS Secret Manager is.

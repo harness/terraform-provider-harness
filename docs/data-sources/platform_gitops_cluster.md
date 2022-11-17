@@ -39,7 +39,7 @@ data "harness_platform_gitops_cluster" "example" {
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 - `request` (List of Object) Cluster create or update request. (see [below for nested schema](#nestedatt--request))
 
 <a id="nestedblock--query"></a>

@@ -39,7 +39,7 @@ func DataSourceGitConnector() *schema.Resource {
 				Computed:    true,
 			},
 			"url": {
-				Description: "The url of the git repository or account/organization.",
+				Description: "The URL of the git repository or account/organization.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

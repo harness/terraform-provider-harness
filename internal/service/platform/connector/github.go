@@ -24,7 +24,7 @@ func ResourceConnectorGithub() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Githubhub repository or account.",
+				Description: "URL of the Githubhub repository or account.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -40,7 +40,7 @@ func ResourceConnectorGithub() *schema.Resource {
 				Optional:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -72,7 +72,7 @@ func ResourceConnectorGithub() *schema.Resource {
 										Required:    true,
 									},
 									"private_key_ref": {
-										Description: "Reference to the secret containing the private key.",
+										Description: "Reference to the secret containing the private key." + secret_ref_text,
 										Type:        schema.TypeString,
 										Required:    true,
 									},
@@ -80,7 +80,7 @@ func ResourceConnectorGithub() *schema.Resource {
 							},
 						},
 						"token_ref": {
-							Description:   "Personal access token for interacting with the github api.",
+							Description:   "Personal access token for interacting with the github api." + secret_ref_text,
 							Type:          schema.TypeString,
 							Optional:      true,
 							AtLeastOneOf:  []string{"api_authentication.0.token_ref", "api_authentication.0.github_app"},
@@ -113,14 +113,14 @@ func ResourceConnectorGithub() *schema.Resource {
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
 									},
 									"username_ref": {
-										Description:   "Reference to a secret containing the username to use for authentication.",
+										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username"},
 										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
 									},
 									"token_ref": {
-										Description: "Reference to a secret containing the personal access to use for authentication.",
+										Description: "Reference to a secret containing the personal access to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
 										Required:    true,
 									},
@@ -137,7 +137,7 @@ func ResourceConnectorGithub() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"ssh_key_ref": {
-										Description: "Reference to the Harness secret containing the ssh key.",
+										Description: "Reference to the Harness secret containing the ssh key." + secret_ref_text,
 										Type:        schema.TypeString,
 										Required:    true,
 									},

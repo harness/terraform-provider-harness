@@ -21,12 +21,12 @@ func ResourceConnectorPrometheus() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Prometheus server.",
+				Description: "URL of the Prometheus server.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -37,7 +37,7 @@ func ResourceConnectorPrometheus() *schema.Resource {
 				Optional:    true,
 			},
 			"password_ref": {
-				Description: "Password reference.",
+				Description: "Reference to the Harness secret containing the password." + secret_ref_text,
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -53,7 +53,7 @@ func ResourceConnectorPrometheus() *schema.Resource {
 							Required:    true,
 						},
 						"encrypted_value_ref": {
-							Description: "Encrypted value reference.",
+							Description: "Reference to the Harness secret containing the encrypted value." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 						},

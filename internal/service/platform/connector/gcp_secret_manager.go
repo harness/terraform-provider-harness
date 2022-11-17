@@ -26,13 +26,13 @@ func ResourceConnectorGCPSecretManager() *schema.Resource {
 				Optional:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"credentials_ref": {
-				Description: "Reference to the secret containing credentials of IAM service account for Google Secret Manager.",
+				Description: "Reference to the secret containing credentials of IAM service account for Google Secret Manager." + secret_ref_text,
 				Type:        schema.TypeString,
 				Required:    true,
 			},

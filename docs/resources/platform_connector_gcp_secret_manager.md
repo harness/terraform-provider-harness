@@ -29,13 +29,13 @@ resource "harness_platform_connector_gcp_secret_manager" "gcp_sm" {
 
 ### Required
 
-- `credentials_ref` (String) Reference to the secret containing credentials of IAM service account for Google Secret Manager.
+- `credentials_ref` (String) Reference to the secret containing credentials of IAM service account for Google Secret Manager. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
 ### Optional
 
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `is_default` (Boolean) Indicative if this is default Secret manager for secrets.
 - `org_id` (String) Unique identifier of the Organization.
