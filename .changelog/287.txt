@@ -1,0 +1,3 @@
+```release-note:new-resource
+platform_connector_azure_key_vault - Added Azure Key Vault connector resource in Harness terraform provider
+```
