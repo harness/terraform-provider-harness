@@ -251,7 +251,9 @@ func ResourceCloudProviderK8s() *schema.Resource {
 
 func resourceCloudProviderK8sRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	cp := &cac.KubernetesCloudProvider{}
 	id := d.Id()
 
@@ -285,7 +287,9 @@ func readCloudProviderK8s(c *cd.ApiClient, d *schema.ResourceData, cp *cac.Kuber
 
 func resourceCloudProviderK8sCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var input *cac.KubernetesCloudProvider
 	var err error
 

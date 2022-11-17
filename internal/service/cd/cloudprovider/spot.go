@@ -50,7 +50,9 @@ func ResourceCloudProviderSpot() *schema.Resource {
 
 func resourceCloudProviderSpotRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	cp := &cac.SpotInstCloudProvider{}
 	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
@@ -77,7 +79,9 @@ func readCloudProviderSpot(c *cd.ApiClient, d *schema.ResourceData, cp *cac.Spot
 
 func resourceCloudProviderSpotCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var input *cac.SpotInstCloudProvider
 	var err error
 
