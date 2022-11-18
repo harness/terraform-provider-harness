@@ -1,18 +1,20 @@
 
-<a name="0.2.17"></a>
-## 0.2.17 (2022-10-27)
+<a name="0.2.24"></a>
+## 0.2.24 (2022-11-17)
 
 ### Add
 
-* Add approvals for CG to SDK ([#142](https://github.com/harness/harness-go-sdk/issues/142))
+* Add azure key vault connector type
+* Add models and enum for win rm secret type
+* Add models and enum for win rm secret type
+* Add models and enum for win rm secret type
+* Add ability to list services ([#103](https://github.com/harness/harness-go-sdk/issues/103))
 
 ### Added
 
-* Added attribute filter model
-
-### Adding
-
-* Adding dto files
+* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
+* Added resource lookups by name
+* Added artifact sources to service for graphql
 
 ### Adding
 
@@ -20,56 +22,119 @@
 * adding better name
 * adding support for export executions
 * adding delegate resource
+* adding irsa credentials options to aws cloud provider
 
 ### Azure
 
 * Azure cloud provider model changes
 * Azure cloud provider model changes
 
+### Bump
+
+* Bump github.com/docker/docker
+
 ### Catch
 
 * Catch service not found issue
 
-### Change
-
-* change in package name
-* change model and enums for ssh key secret type
-
 ### Changes
 
+* Changes to add azure cloud cost connector
 * Changes for vault connector resource
+
+### Docker
+
+* Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
 
 ### Error
 
-* error handling after read file
+* error handling
+
+### Extra
+
+* Extra check in test
 
 ### Fix
 
 * Fix main
 * Fix main
-* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
+* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
+* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
+* Fix timestamp parsing for delegate query
+
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
+
+### Fixed
+
+* Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
+
+### Fixed
+
+* fixed tests
 
 ### Fixing
 
 * fixing things
-* fixing package name
+
+### Gitsync
+
+* Gitsync setup
+
+### Handle
+
+* Handle upsert error
 
 ### Handling
 
 * Handling different kinds of errors
 
+### Implement
+
+* Implement new cac delete method
+
+### Implemented
+
+* Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
+
 ### Merge
 
+* Merge branch 'main' into abhinav/SPG-567
 * Merge branch 'main' into CDS-44308-gitops-applications-api
 * Merge branch 'main' into CDS-44311-gitops-repositories-api
 * Merge branch 'main' of github.com:harness/harness-go-sdk
 
 ### Modify
 
-* Modify secret file post and put methods
+* Modify delegate tests
+
+### Refactored
+
+* refactored ng client
+
+### Regenerated
+
+* regenerated NG API's ([#121](https://github.com/harness/harness-go-sdk/issues/121))
 
 ### Release
 
+* Release version 0.2.23 11-14-2022
+* Release v0.2.23
+* Release version 0.2.22 11-05-2022
+* Release v0.2.22
+* Release version 0.2.21 11-04-2022
+* Release v0.2.21
+* Release version 0.2.20 11-04-2022
+* Release v0.2.20
+* Release version 0.2.19 10-29-2022
+* Release v0.2.19
+* Release version 0.2.18 10-28-2022
+* Release v0.2.18
+* Release version 0.2.17 10-27-2022
+* Release v0.2.17
 * Release version 0.2.16 10-26-2022
 * Release v0.2.16
 * Release version 0.2.15 10-26-2022
@@ -104,43 +169,71 @@
 * Release v0.2.1
 * Release version 0.2.0 09-15-2022
 * Release v0.2.0
-* Release version 0.1.35 09-14-2022
-* Release v0.1.35
-* Release version 0.1.34 09-13-2022
-* Release v0.1.34
-* Release version 0.1.33 08-13-2022
-* Release v0.1.33
-* Release version 0.1.32 07-20-2022
-* Release v0.1.32
-* Release v0.1.31
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
+* Release version 0.1.29 06-02-2022
+* Release v0.1.29
+* Release version 0.1.28 05-27-2022
+* Release v0.1.28
+* Release version 0.1.27 05-23-2022
+* Release v0.1.27
+* Release version 0.1.26 05-20-2022
+* Release v0.1.26
+* Release version 0.1.25 05-20-2022
+* Release v0.1.25
+* Release version 0.1.24 05-11-2022
+* Release v0.1.24
+* Release version 0.1.23 05-11-2022
+* Release v0.1.23
+* Release version 0.1.22 05-10-2022
+* Release v0.1.22
+* Release version 0.1.21 05-06-2022
+* Release v0.1.21
+* Release version 0.1.20 04-20-2022
+* Release v0.1.20
+* Release version 0.1.19 04-13-2022
+* Release v0.1.19
+* Release version 0.1.18 03-25-2022
+* Release v0.1.18
+* Release version v0.1.18 03-25-2022
+* Release vv0.1.18
+* Release version 0.1.17 03-24-2022
+* Release v0.1.17
+* Release version 0.1.16 03-17-2022
+* Release v0.1.16
 
-### Resource
+### Revert
 
-* Resource selector model change
-
-### Restoring
-
-* restoring the swagger.yaml
-
-### SSH
-
-* SSH key related models and enum changes
+* revert illogical
 
 ### Update
 
+* Update connector info
+* Update azure connector models
+* Update azure connector models
 * Update role assignments api and models
 * Update prometheus connector dto model
-* Update user group model
-* Update user group model
+
+### Updated
+
+* Updated environmens
 
 ### Updated
 
 * updated dependencies
+* updated deps
 
 ### Pull Requests
 
+* Merge pull request [#223](https://github.com/harness/harness-go-sdk/issues/223) from harness/azure-key-vault
+* Merge pull request [#137](https://github.com/harness/harness-go-sdk/issues/137) from harness/PL-26059
+* Merge pull request [#221](https://github.com/harness/harness-go-sdk/issues/221) from harness/CDS-44317-Add-gitops-repo-cred-TF
+* Merge pull request [#219](https://github.com/harness/harness-go-sdk/issues/219) from harness/gcp-cloud-cost
+* Merge pull request [#217](https://github.com/harness/harness-go-sdk/issues/217) from harness/azure-cloud-cost
+* Merge pull request [#215](https://github.com/harness/harness-go-sdk/issues/215) from harness/SPG-731-updating-infra-doc
+* Merge pull request [#211](https://github.com/harness/harness-go-sdk/issues/211) from harness/azure-conn
+* Merge pull request [#207](https://github.com/harness/harness-go-sdk/issues/207) from harness/abhinav/SPG-567
+* Merge pull request [#193](https://github.com/harness/harness-go-sdk/issues/193) from harness/CDS-44872-GitOps-Repositories-Certificates-API
 * Merge pull request [#208](https://github.com/harness/harness-go-sdk/issues/208) from harness/azure-connector
 * Merge pull request [#205](https://github.com/harness/harness-go-sdk/issues/205) from harness/CDS-45566-add-gitops-agent-deploy-api
 * Merge pull request [#196](https://github.com/harness/harness-go-sdk/issues/196) from harness/CDS-44308-gitops-applications-api
@@ -162,12 +255,4 @@
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
-* Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
-* Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
-* Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
-* Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
-* Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
-* Merge pull request [#140](https://github.com/harness/harness-go-sdk/issues/140) from harness/release
-* Merge pull request [#138](https://github.com/harness/harness-go-sdk/issues/138) from harness/PL-25840
-* Merge pull request [#139](https://github.com/harness/harness-go-sdk/issues/139) from harness/PL-25839
 

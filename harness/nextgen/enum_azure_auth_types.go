@@ -7,7 +7,7 @@ var AzureAuthTypes = struct {
 	SecretKey   AzureAuthType
 }{
 	Certificate: "Certificate",
-	SecretKey:   "SecretKey",
+	SecretKey:   "Secret",
 }
 
 var AzureAuthTypeValues = []string{

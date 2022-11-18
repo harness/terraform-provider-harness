@@ -29,7 +29,8 @@ type Secret struct {
 	Description string          `json:"description,omitempty"`
 	Spec        json.RawMessage `json:"spec"`
 
-	File   *SecretFileSpe  `json:"-"`
-	Text   *SecretTextSpec `json:"-"`
-	SSHKey *SshKeySpec     `json:"-"`
+	File             *SecretFileSpe        `json:"-"`
+	Text             *SecretTextSpec       `json:"-"`
+	SSHKey           *SshKeySpec           `json:"-"`
+	WinRmCredentials *WinRmCredentialsSpec `json:"-"`
 }

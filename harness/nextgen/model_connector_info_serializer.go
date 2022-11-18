@@ -33,8 +33,14 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.AwsSecretManager)
 	case ConnectorTypes.Azure:
 		err = json.Unmarshal(aux.Spec, &a.Azure)
+	case ConnectorTypes.AzureKeyVault:
+		err = json.Unmarshal(aux.Spec, &a.AzureKeyVault)
+	case ConnectorTypes.CEAzure:
+		err = json.Unmarshal(aux.Spec, &a.AzureCloudCost)
 	case ConnectorTypes.CEAws:
 		err = json.Unmarshal(aux.Spec, &a.AwsCC)
+	case ConnectorTypes.CEK8sCluster:
+		err = json.Unmarshal(aux.Spec, &a.K8sClusterCloudCost)
 	case ConnectorTypes.Bitbucket:
 		err = json.Unmarshal(aux.Spec, &a.BitBucket)
 	case ConnectorTypes.Datadog:
@@ -45,6 +51,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Dynatrace)
 	case ConnectorTypes.Gcp:
 		err = json.Unmarshal(aux.Spec, &a.Gcp)
+	case ConnectorTypes.GcpCloudCost:
+		err = json.Unmarshal(aux.Spec, &a.GcpCloudCost)
 	case ConnectorTypes.Git:
 		err = json.Unmarshal(aux.Spec, &a.Git)
 	case ConnectorTypes.Github:
@@ -71,6 +79,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Splunk)
 	case ConnectorTypes.SumoLogic:
 		err = json.Unmarshal(aux.Spec, &a.SumoLogic)
+	case ConnectorTypes.GcpSecretManager:
+		err = json.Unmarshal(aux.Spec, &a.GcpSecretManager)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}
@@ -107,6 +117,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Dynatrace)
 	case ConnectorTypes.Gcp:
 		spec, err = json.Marshal(a.Gcp)
+	case ConnectorTypes.GcpCloudCost:
+		spec, err = json.Marshal(a.GcpCloudCost)
 	case ConnectorTypes.Git:
 		spec, err = json.Marshal(a.Git)
 	case ConnectorTypes.Github:
@@ -133,8 +145,16 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Splunk)
 	case ConnectorTypes.Azure:
 		spec, err = json.Marshal(a.Azure)
+	case ConnectorTypes.AzureKeyVault:
+		spec, err = json.Marshal(a.AzureKeyVault)
+	case ConnectorTypes.CEAzure:
+		spec, err = json.Marshal(a.AzureCloudCost)
+	case ConnectorTypes.CEK8sCluster:
+		spec, err = json.Marshal(a.K8sClusterCloudCost)
 	case ConnectorTypes.SumoLogic:
 		spec, err = json.Marshal(a.SumoLogic)
+	case ConnectorTypes.GcpSecretManager:
+		spec, err = json.Marshal(a.GcpSecretManager)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}

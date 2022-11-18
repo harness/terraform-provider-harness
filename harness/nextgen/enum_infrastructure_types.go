@@ -15,17 +15,17 @@ var InfrastructureTypes = struct {
 	GITOPS                InfrastructureType
 	CUSTOM_DEPLOYMENT     InfrastructureType
 }{
-	KUBERNETES_DIRECT:     "KUBERNETES_DIRECT",
-	KUBERNETES_GCP:        "KUBERNETES_GCP",
-	SERVERLESS_AWS_LAMBDA: "SERVERLESS_AWS_LAMBDA",
-	PDC:                   "PDC",
-	KUBERNETES_AZURE:      "KUBERNETES_AZURE",
-	SSH_WINRM_AZURE:       "SSH_WINRM_AZURE",
-	SSH_WINRM_AWS:         "SSH_WINRM_AWS",
-	AZURE_WEB_APP:         "AZURE_WEB_APP",
+	KUBERNETES_DIRECT:     "KubernetesDirect",
+	KUBERNETES_GCP:        "KubernetesGcp",
+	SERVERLESS_AWS_LAMBDA: "ServerlessAwsLambda",
+	PDC:                   "Pdc",
+	KUBERNETES_AZURE:      "KubernetesAzure",
+	SSH_WINRM_AZURE:       "SshWinRmAzure",
+	SSH_WINRM_AWS:         "SshWinRmAws",
+	AZURE_WEB_APP:         "AzureWebApp",
 	ECS:                   "ECS",
-	GITOPS:                "GITOPS",
-	CUSTOM_DEPLOYMENT:     "CUSTOM_DEPLOYMENT",
+	GITOPS:                "GitOps",
+	CUSTOM_DEPLOYMENT:     "CustomDeployment",
 }
 
 var InfrastructureTypeValues = []string{
