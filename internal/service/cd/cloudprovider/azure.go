@@ -65,7 +65,9 @@ func ResourceCloudProviderAzure() *schema.Resource {
 
 func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	cp := &cac.AzureCloudProvider{}
 	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
@@ -80,7 +82,9 @@ func resourceCloudProviderAzureRead(ctx context.Context, d *schema.ResourceData,
 
 func resourceCloudProviderAzureCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var input *cac.AzureCloudProvider
 	var err error
 

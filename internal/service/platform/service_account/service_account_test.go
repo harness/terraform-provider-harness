@@ -2,6 +2,7 @@ package service_account_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -17,6 +18,7 @@ func TestAccResourceServiceAccount(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resourceName := "harness_platform_service_account.test"
 
@@ -26,11 +28,11 @@ func TestAccResourceServiceAccount(t *testing.T) {
 		CheckDestroy:      testAccServiceAccountDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceServiceAccount(id, name),
+				Config: testAccResourceServiceAccount(id, name, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "account_id", "UKh5Yts7THSMAbccG3HrLA"),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
@@ -38,11 +40,11 @@ func TestAccResourceServiceAccount(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceServiceAccount(id, updatedName),
+				Config: testAccResourceServiceAccount(id, updatedName, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "account_id", "UKh5Yts7THSMAbccG3HrLA"),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
@@ -93,7 +95,7 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 	return optional.EmptyString()
 }
 
-func testAccResourceServiceAccount(id string, name string) string {
+func testAccResourceServiceAccount(id string, name string, accountId string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -113,9 +115,9 @@ func testAccResourceServiceAccount(id string, name string) string {
 		email = "email@service.harness.io"
 		description = "test"
 		tags = ["foo:bar"]
-		account_id = "UKh5Yts7THSMAbccG3HrLA"
+		account_id = "%[3]s"
 		org_id = harness_platform_project.test.org_id
 		project_id = harness_platform_project.test.id
 	}
-	`, id, name)
+	`, id, name, accountId)
 }

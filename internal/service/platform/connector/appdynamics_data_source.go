@@ -12,7 +12,7 @@ func DatasourceConnectorAppDynamics() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the App Dynamics controller.",
+				Description: "URL of the App Dynamics controller.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -33,7 +33,7 @@ func DatasourceConnectorAppDynamics() *schema.Resource {
 							Computed:    true,
 						},
 						"password_ref": {
-							Description: "Reference to a secret containing the password to use for authentication.",
+							Description: "Reference to a secret containing the password to use for authentication." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -47,7 +47,7 @@ func DatasourceConnectorAppDynamics() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"client_secret_ref": {
-							Description: "Reference to the Harness secret containing the App Dynamics client secret.",
+							Description: "Reference to the Harness secret containing the App Dynamics client secret." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -60,7 +60,7 @@ func DatasourceConnectorAppDynamics() *schema.Resource {
 				},
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

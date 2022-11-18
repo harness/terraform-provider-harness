@@ -45,14 +45,14 @@ func ResourceConnectorAws() *schema.Resource {
 							AtLeastOneOf:  []string{"manual.0.access_key", "manual.0.access_key_ref"},
 						},
 						"access_key_ref": {
-							Description:   "Reference to the Harness secret containing the aws access key.",
+							Description:   "Reference to the Harness secret containing the aws access key." + secret_ref_text,
 							Type:          schema.TypeString,
 							Optional:      true,
 							ConflictsWith: []string{"manual.0.access_key"},
 							AtLeastOneOf:  []string{"manual.0.access_key", "manual.0.access_key_ref"},
 						},
 						"secret_key_ref": {
-							Description: "Reference to the Harness secret containing the aws secret key.",
+							Description: "Reference to the Harness secret containing the aws secret key." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},

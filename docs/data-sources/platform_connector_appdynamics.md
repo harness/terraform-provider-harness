@@ -26,11 +26,11 @@ Datasource for looking up an App Dynamics connector.
 
 - `account_name` (String) The App Dynamics account name.
 - `api_token` (List of Object) Authenticate to App Dynamics using api token. (see [below for nested schema](#nestedatt--api_token))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `url` (String) Url of the App Dynamics controller.
+- `url` (String) URL of the App Dynamics controller.
 - `username_password` (List of Object) Authenticate to App Dynamics using username and password. (see [below for nested schema](#nestedatt--username_password))
 
 <a id="nestedatt--api_token"></a>

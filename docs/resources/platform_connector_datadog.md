@@ -17,15 +17,15 @@ Resource for creating a Datadog connector.
 
 ### Required
 
-- `api_key_ref` (String) Reference to the Harness secret containing the api key.
-- `application_key_ref` (String) Reference to the Harness secret containing the application key.
+- `api_key_ref` (String) Reference to the Harness secret containing the api key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `application_key_ref` (String) Reference to the Harness secret containing the application key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) Url of the Datadog server.
+- `url` (String) URL of the Datadog server.
 
 ### Optional
 
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.

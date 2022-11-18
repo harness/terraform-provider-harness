@@ -18,7 +18,7 @@ func DatasourceConnectorGcp() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"secret_key_ref": {
-							Description: "Reference to the Harness secret containing the secret key.",
+							Description: "Reference to the Harness secret containing the secret key." + secret_ref_text,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},

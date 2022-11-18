@@ -1,3 +1,15 @@
+# 0.8.3 (November 14,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_connector_azure_cloud_cost - Added azure cloud cost connector resource in Harness terraform provider` ([#284](https://github.com/harness/terraform-provider-harness/issues/284))
+* **New Resource:** `platform_connector_azure_cloud_provider - Added gcp cloud cost connector resource in Harness terraform provider` ([#285](https://github.com/harness/terraform-provider-harness/issues/285))
+* **New Resource:** `platform_connector_kubernetes_cloud_cost - Added kubernetes cloud cost connector resource in Harness terraform provider` ([#286](https://github.com/harness/terraform-provider-harness/issues/286))
+
+ENHANCEMENTS:
+
+* platform_pipeline - Added support for pipelines with new Git Experience. ([#294](https://github.com/harness/terraform-provider-harness/issues/294))
+
 # 0.7.1 (November 4,2022)
 
 FEATURES:
@@ -12,7 +24,7 @@ BUG FIXES:
 
 * harness_platform_secret_text : fix value field in secret text resource ([#281](https://github.com/harness/terraform-provider-harness/issues/281))
 
-# 0.7.0 (November 20,2022)
+# 0.7.0 (November 2,2022)
 
 FEATURES:
 

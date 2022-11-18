@@ -28,7 +28,7 @@ func ResourceConnectorNexus() *schema.Resource {
 				Required:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
@@ -53,14 +53,14 @@ func ResourceConnectorNexus() *schema.Resource {
 							ExactlyOneOf:  []string{"credentials.0.username", "credentials.0.username_ref"},
 						},
 						"username_ref": {
-							Description:   "Reference to a secret containing the username to use for authentication.",
+							Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
 							Type:          schema.TypeString,
 							Optional:      true,
 							ConflictsWith: []string{"credentials.0.username"},
 							ExactlyOneOf:  []string{"credentials.0.username", "credentials.0.username_ref"},
 						},
 						"password_ref": {
-							Description: "Reference to a secret containing the password to use for authentication.",
+							Description: "Reference to a secret containing the password to use for authentication." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
 						},

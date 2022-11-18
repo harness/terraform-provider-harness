@@ -21,7 +21,7 @@ func ResourceConnectorNewRelic() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the NewRelic server.",
+				Description: "URL of the NewRelic server.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -31,12 +31,12 @@ func ResourceConnectorNewRelic() *schema.Resource {
 				Required:    true,
 			},
 			"api_key_ref": {
-				Description: "Reference to the Harness secret containing the api key.",
+				Description: "Reference to the Harness secret containing the api key." + secret_ref_text,
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

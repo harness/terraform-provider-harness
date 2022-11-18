@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -37,7 +38,9 @@ func DataSourceCurrentAccountConnector() *schema.Resource {
 
 func dataSourceGitConnectorCurrentAccount(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	d.SetId(c.Configuration.AccountId)
 	d.Set("account_id", c.Configuration.AccountId)
 	d.Set("endpoint", c.Configuration.Endpoint)

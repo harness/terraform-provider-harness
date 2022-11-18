@@ -1,6 +1,7 @@
 package account_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -11,6 +12,7 @@ func TestAccDataSourceCurrentAccount(t *testing.T) {
 
 	var (
 		resourceName = "data.harness_current_account.test"
+		accountId    = os.Getenv("HARNESS_ACCOUNT_ID")
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -20,7 +22,7 @@ func TestAccDataSourceCurrentAccount(t *testing.T) {
 			{
 				Config: testAccDataSourceCurrentAccount(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "account_id", "UKh5Yts7THSMAbccG3HrLA"),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "endpoint", "https://app.harness.io/gateway"),
 				),
 			},

@@ -24,7 +24,7 @@ Resource for creating a Helm connector.
 ### Optional
 
 - `credentials` (Block List, Max: 1) Credentials to use for authentication. (see [below for nested schema](#nestedblock--credentials))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
@@ -39,11 +39,11 @@ Resource for creating a Helm connector.
 
 Required:
 
-- `password_ref` (String) Reference to a secret containing the password to use for authentication.
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
 - `username` (String) Username to use for authentication.
-- `username_ref` (String) Reference to a secret containing the username to use for authentication.
+- `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 

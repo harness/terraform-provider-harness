@@ -44,7 +44,7 @@ data "harness_platform_gitops_repository" "example" {
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 - `repo` (List of Object) Repo details holding application configurations. (see [below for nested schema](#nestedatt--repo))
 
 <a id="nestedblock--update_mask"></a>

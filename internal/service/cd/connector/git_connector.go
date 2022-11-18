@@ -38,7 +38,7 @@ func ResourceGitConnector() *schema.Resource {
 				Computed:    true,
 			},
 			"url": {
-				Description: "The url of the git repository or account/organization",
+				Description: "The URL of the git repository or account/organization",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -127,7 +127,9 @@ func ResourceGitConnector() *schema.Resource {
 
 func resourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	connId := d.Get("id").(string)
 
 	conn, err := c.ConnectorClient.GetGitConnectorById(connId)
@@ -204,7 +206,9 @@ func setGitConnectorConfig(d *schema.ResourceData, connInput *graphql.GitConnect
 
 func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	connInput := &graphql.GitConnectorInput{}
 	err := setGitConnectorConfig(d, connInput, false)
 	if err != nil {
@@ -221,7 +225,9 @@ func resourceGitConnectorCreate(ctx context.Context, d *schema.ResourceData, met
 
 func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	id := d.Get("id").(string)
 
 	connInput := &graphql.GitConnectorInput{}
@@ -240,7 +246,9 @@ func resourceGitConnectorUpdate(ctx context.Context, d *schema.ResourceData, met
 
 func resourceGitConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	id := d.Get("id").(string)
 
 	err := c.ConnectorClient.DeleteConnector(id)

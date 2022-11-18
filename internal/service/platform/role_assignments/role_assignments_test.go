@@ -2,6 +2,7 @@ package role_assignments_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -16,6 +17,7 @@ func TestAccRoleAssignments(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_role_assignments.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -23,7 +25,7 @@ func TestAccRoleAssignments(t *testing.T) {
 		CheckDestroy:      testAccRoleAssignmentsDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRoleAssignments(id, name, "false"),
+				Config: testAccResourceRoleAssignments(id, name, "false", accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -34,7 +36,7 @@ func TestAccRoleAssignments(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceRoleAssignments(id, name, "true"),
+				Config: testAccResourceRoleAssignments(id, name, "true", accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -92,7 +94,7 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 	return optional.EmptyString()
 }
 
-func testAccResourceRoleAssignments(id string, name string, disabled string) string {
+func testAccResourceRoleAssignments(id string, name string, disabled string, accountId string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -112,7 +114,7 @@ func testAccResourceRoleAssignments(id string, name string, disabled string) str
 		email = "email@service.harness.io"
 		description = "test"
 		tags = ["foo:bar"]
-		account_id = "UKh5Yts7THSMAbccG3HrLA"
+		account_id = "%[4]s"
 		org_id = harness_platform_project.test.org_id
 		project_id = harness_platform_project.test.id
 	}
@@ -141,5 +143,5 @@ func testAccResourceRoleAssignments(id string, name string, disabled string) str
 		disabled = %[3]s
 		managed = false
 	}
-	`, id, name, disabled)
+	`, id, name, disabled, accountId)
 }

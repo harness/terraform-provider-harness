@@ -40,7 +40,7 @@ resource "harness_git_connector" "example" {
 ### Required
 
 - `name` (String) Name of the git connector.
-- `url` (String) The url of the git repository or account/organization
+- `url` (String) The URL of the git repository or account/organization
 - `url_type` (String) The type of git url being used. Options are `ACCOUNT`, and `REPO.`
 
 ### Optional
