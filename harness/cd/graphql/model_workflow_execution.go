@@ -2,6 +2,7 @@ package graphql
 
 type WorkflowExecution struct {
 	ExecutionBase
-	Artifacts         []*Artifact `json:"artifacts,omitempty"`
-	RollbackArtifacts []*Artifact `json:"rollbackArtifacts,omitempty"`
+	Artifacts         []*Artifact      `json:"artifacts,omitempty"`
+	RollbackArtifacts []*Artifact      `json:"rollbackArtifacts,omitempty"`
+	InputVariables    []*InputVariable `json:"inputVariables,omitempty"`
 }

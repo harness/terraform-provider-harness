@@ -48,6 +48,11 @@ type Variable struct {
 	Type                   string
 }
 
+type InputVariable struct {
+	Name  string
+	Value string
+}
+
 type EnvironmentConnection struct {
 	Nodes    []Environment
 	PageInfo PageInfo
