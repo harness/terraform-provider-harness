@@ -42,6 +42,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
@@ -165,6 +166,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_variables":                       variables.DataSourceVariables(),
 				"harness_platform_connector_vault":                 connector.DataSourceConnectorVault(),
 				"harness_platform_filters":                         filters.DataSourceFilters(),
+				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                 delegate.DataSourceDelegate(),
@@ -238,6 +240,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_variables":                       variables.ResourceVariables(),
 				"harness_platform_connector_vault":                 connector.ResourceConnectorVault(),
 				"harness_platform_filters":                         filters.ResourceFilters(),
+				"harness_platform_pipeline_filters":                pipeline_filters.ResourcePipelineFilters(),
 				"harness_add_user_to_group":                        user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                      application.ResourceApplicationGitSync(),
 				"harness_application":                              application.ResourceApplication(),
