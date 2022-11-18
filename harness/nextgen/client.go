@@ -122,6 +122,8 @@ type APIClient struct {
 
 	GitSyncSettingsApi *GitSyncSettingsApiService
 
+	GnuPGPKeysApi *GnuPGPKeysApiService
+
 	HarnessResourceGroupApi *HarnessResourceGroupApiService
 
 	HarnessResourceTypeApi *HarnessResourceTypeApiService
@@ -248,6 +250,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.GitSyncApi = (*GitSyncApiService)(&c.common)
 	c.GitSyncErrorsApi = (*GitSyncErrorsApiService)(&c.common)
 	c.GitSyncSettingsApi = (*GitSyncSettingsApiService)(&c.common)
+	c.GnuPGPKeysApi = (*GnuPGPKeysApiService)(&c.common)
 	c.HarnessResourceGroupApi = (*HarnessResourceGroupApiService)(&c.common)
 	c.HarnessResourceTypeApi = (*HarnessResourceTypeApiService)(&c.common)
 	c.HostsApi = (*HostsApiService)(&c.common)

@@ -10,10 +10,10 @@
 package nextgen
 
 type GpgkeysGnuPgPublicKey struct {
-	KeyID       string `json:"keyID,omitempty"`
+	KeyID string `json:"keyID,omitempty"`
 	Fingerprint string `json:"fingerprint,omitempty"`
-	Owner       string `json:"owner,omitempty"`
-	Trust       string `json:"trust,omitempty"`
-	SubType     string `json:"subType,omitempty"`
-	KeyData     string `json:"keyData,omitempty"`
+	Owner string `json:"owner,omitempty"`
+	Trust string `json:"trust,omitempty"`
+	SubType string `json:"subType,omitempty"`
+	KeyData string `json:"keyData,omitempty"`
 }

@@ -9,7 +9,12 @@
  */
 package nextgen
 
-type GpgkeysGnuPgPublicKeyList struct {
-	Metadata *V1ListMeta `json:"metadata,omitempty"`
-	Items []GpgkeysGnuPgPublicKey `json:"items,omitempty"`
+type Servicev1GnuPgPublicKeyList struct {
+	Content []V1Gnupg `json:"content,omitempty"`
+	TotalPages int32 `json:"totalPages,omitempty"`
+	TotalItems int32 `json:"totalItems,omitempty"`
+	PageItemCount int32 `json:"pageItemCount,omitempty"`
+	PageSize int32 `json:"pageSize,omitempty"`
+	PageIndex int32 `json:"pageIndex,omitempty"`
+	Empty bool `json:"empty,omitempty"`
 }

@@ -9,7 +9,7 @@
  */
 package nextgen
 
-type GpgkeysGnuPgPublicKeyList struct {
-	Metadata *V1ListMeta `json:"metadata,omitempty"`
-	Items []GpgkeysGnuPgPublicKey `json:"items,omitempty"`
+type GpgkeysGnuPgPublicKeyCreateResponse struct {
+	Created *GpgkeysGnuPgPublicKeyList `json:"created,omitempty"`
+	Skipped []string `json:"skipped,omitempty"`
 }
