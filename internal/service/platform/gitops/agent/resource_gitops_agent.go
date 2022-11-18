@@ -25,32 +25,32 @@ func ResourceGitopsAgent() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "Account Identifier for the Agent.",
+				Description: "Account identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "Organization Identifier for the agent.",
+				Description: "Organization identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier for the agent.",
+				Description: "Project identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"identifier": {
-				Description: "identifier for the gitops-agent.",
+				Description: "Identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"name": {
-				Description: "A human readable name for the gitops-agent.",
+				Description: "Name of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"description": {
-				Description: "A human readable description for the gitops-agent",
+				Description: "Description of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -60,7 +60,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				Required:    true,
 			},
 			"tags": {
-				Description: "Tags that help organize gitops-agents",
+				Description: "Tags for the GitOps agents. These can be used to search or filter the GitOps agents.",
 				Type:        schema.TypeMap,
 				Optional:    true,
 				Elem: &schema.Schema{
@@ -68,7 +68,7 @@ func ResourceGitopsAgent() *schema.Resource {
 				},
 			},
 			"metadata": {
-				Description: "MetaData for the agent.",
+				Description: "Metadata of the agent.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
@@ -79,7 +79,7 @@ func ResourceGitopsAgent() *schema.Resource {
 							Optional:    true,
 						},
 						"high_availability": {
-							Description: "Whether or not this deployment should be deployed using deploy-ha.yaml",
+							Description: "Indicates if the deployment should be deployed using the deploy-ha.yaml",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},

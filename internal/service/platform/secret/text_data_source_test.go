@@ -46,11 +46,6 @@ func testAccDataSourceSecret_text(name string) string {
 			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Inline"
 			value = "secret"
-			lifecycle {
-				ignore_changes = [
-					value,
-				]
-			}
 		}
 
 		data "harness_platform_secret_text" "test"{

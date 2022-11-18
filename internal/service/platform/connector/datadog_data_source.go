@@ -12,22 +12,22 @@ func DatasourceConnectorDatadog() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Datadog server.",
+				Description: "URL of the Datadog server.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"application_key_ref": {
-				Description: "Reference to the Harness secret containing the application key.",
+				Description: "Reference to the Harness secret containing the application key." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"api_key_ref": {
-				Description: "Reference to the Harness secret containing the api key.",
+				Description: "Reference to the Harness secret containing the api key." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

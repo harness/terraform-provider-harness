@@ -18,14 +18,14 @@ Resource for creating a New Relic connector.
 ### Required
 
 - `account_id` (String) Account ID of the NewRelic account.
-- `api_key_ref` (String) Reference to the Harness secret containing the api key.
+- `api_key_ref` (String) Reference to the Harness secret containing the api key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) Url of the NewRelic server.
+- `url` (String) URL of the NewRelic server.
 
 ### Optional
 
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.

@@ -1,3 +1,47 @@
+# 0.8.3 (November 14,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_connector_azure_cloud_cost - Added azure cloud cost connector resource in Harness terraform provider` ([#284](https://github.com/harness/terraform-provider-harness/issues/284))
+* **New Resource:** `platform_connector_azure_cloud_provider - Added gcp cloud cost connector resource in Harness terraform provider` ([#285](https://github.com/harness/terraform-provider-harness/issues/285))
+* **New Resource:** `platform_connector_kubernetes_cloud_cost - Added kubernetes cloud cost connector resource in Harness terraform provider` ([#286](https://github.com/harness/terraform-provider-harness/issues/286))
+
+ENHANCEMENTS:
+
+* platform_pipeline - Added support for pipelines with new Git Experience. ([#294](https://github.com/harness/terraform-provider-harness/issues/294))
+
+# 0.7.1 (November 4,2022)
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitops_agent 
+harness_platform_gitops_cluster
+harness_platform_gitops_applications 
+harness_platform_gitops_repository 
+harness_platform_gitops_repo_cert` ([#282](https://github.com/harness/terraform-provider-harness/issues/282))
+
+BUG FIXES:
+
+* harness_platform_secret_text : fix value field in secret text resource ([#281](https://github.com/harness/terraform-provider-harness/issues/281))
+
+# 0.7.0 (November 2,2022)
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitops_agent_yaml` ([#253](https://github.com/harness/terraform-provider-harness/issues/253))
+* **New Resource:** `harness_platform_gitops_applications` ([#253](https://github.com/harness/terraform-provider-harness/issues/253))
+* **New Resource:** `platform_connector_azure_cloud_provider - Added azure cloud provider connector resource in Harness terraform provider` ([#274](https://github.com/harness/terraform-provider-harness/issues/274))
+* **New Resource:** `platform_connector_gcp_secret_manager - Added gcp secret manager resource in Harness terraform provider` ([#254](https://github.com/harness/terraform-provider-harness/issues/254))
+* **New Resource:** `platform_filters - Added resource to add filters in Harness through terraform` ([#255](https://github.com/harness/terraform-provider-harness/issues/255))
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_agent ([#253](https://github.com/harness/terraform-provider-harness/issues/253))
+* harness_platform_gitops_clusters ([#253](https://github.com/harness/terraform-provider-harness/issues/253))
+* harness_platform_gitops_repository ([#253](https://github.com/harness/terraform-provider-harness/issues/253))
+
+# 0.6.11 (November 2,2022)
+
 # 0.6.10 (October 20,2022)
 
 BUG FIXES:

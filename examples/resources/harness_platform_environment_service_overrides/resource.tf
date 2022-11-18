@@ -1,5 +1,4 @@
 resource "harness_platform_environment_service_overrides" "example" {
-  identifier = "identifier"
   org_id     = "orgIdentifier"
   project_id = "projectIdentifier"
   env_id     = "environmentIdentifier"
@@ -13,20 +12,19 @@ resource "harness_platform_environment_service_overrides" "example" {
              type: String
              value: asddad
           manifests:
-                - manifest:
-                    identifier: manifest1
-                    type: K8sManifest
-                    spec:
-                      store:
-                        type: Github
-                        spec:
-                          connectorRef: <+input>
-                          gitFetchType: Branch
-                          paths:
-                            - files1
-                          repoName: <+input>
-                          branch: master
-                      skipResourceVersioning: false
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
           configFiles:
              - configFile:
                  identifier: configFileEnv

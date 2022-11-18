@@ -38,11 +38,11 @@ data "harness_platform_infrastructure" "example" {
 
 ### Read-Only
 
-- `deployment_type` (String) Infrastructure deployment type. Valid values are KUBERNETES_DIRECT, KUBERNETES_GCP, SERVERLESS_AWS_LAMBDA, PDC, KUBERNETES_AZURE, SSH_WINRM_AZURE, SSH_WINRM_AWS, AZURE_WEB_APP, ECS, GITOPS, CUSTOM_DEPLOYMENT.
+- `deployment_type` (String) Infrastructure deployment type. Valid values are Kubernetes, NativeHelm, Ssh, WinRm, ServerlessAwsLambda, AzureWebApp, Custom, ECS.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `type` (String) Type of Infrastructure. Valid values are KUBERNETES_DIRECT, KUBERNETES_GCP, SERVERLESS_AWS_LAMBDA, PDC, KUBERNETES_AZURE, SSH_WINRM_AZURE, SSH_WINRM_AWS, AZURE_WEB_APP, ECS, GITOPS, CUSTOM_DEPLOYMENT.
+- `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment.
 - `yaml` (String) Infrastructure YAML
 
 

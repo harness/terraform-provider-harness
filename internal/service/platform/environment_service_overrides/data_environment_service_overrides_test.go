@@ -94,7 +94,6 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 		}
 
 		resource "harness_platform_environment_service_overrides" "test" {
-			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
@@ -108,20 +107,19 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
              type: String
              value: asddad
           manifests:
-                - manifest:
-                    identifier: manifest1
-                    type: K8sManifest
-                    spec:
-                      store:
-                        type: Github
-                        spec:
-                          connectorRef: <+input>
-                          gitFetchType: Branch
-                          paths:
-                            - files1
-                          repoName: <+input>
-                          branch: master
-                      skipResourceVersioning: false
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
           configFiles:
              - configFile:
                  identifier: configFileEnv
@@ -136,11 +134,10 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 		}
 
 		data "harness_platform_environment_service_overrides" "test" {
-			identifier = harness_platform_environment_service_overrides.test.id
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
-			service_id = harness_platform_service.test.id
 			env_id = harness_platform_environment.test.id
+			service_id = harness_platform_service.test.id
 		}
 `, id, name)
 }

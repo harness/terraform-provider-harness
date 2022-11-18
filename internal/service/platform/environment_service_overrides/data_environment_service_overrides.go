@@ -20,7 +20,7 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"env_id": {
 				Description: "The env ID to which the overrides associated.",
@@ -35,7 +35,7 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
+	SetProjectLevelDataResourceSchemaForServiceOverride(resource.Schema)
 
 	return resource
 }
@@ -48,14 +48,16 @@ func dataSourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Re
 	envId := d.Get("env_id").(string)
 
 	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, orgId, projId, envId,
-		&nextgen.EnvironmentsApiGetServiceOverridesListOpts{})
+		&nextgen.EnvironmentsApiGetServiceOverridesListOpts{
+			ServiceIdentifier: helpers.BuildField(d, "service_id"),
+		})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Data == nil {
+	if &resp == nil || resp.Data == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -64,4 +66,9 @@ func dataSourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Re
 	readEnvironmentServiceOverridesList(d, resp.Data)
 
 	return nil
+}
+
+func SetProjectLevelDataResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
+	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Required)
+	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Required)
 }

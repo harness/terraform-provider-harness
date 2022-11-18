@@ -16,7 +16,6 @@ func TestAccEnvServiceOverrides(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 	name := id
-	expectedid := id + "_" + id
 	resourceName := "harness_platform_environment_service_overrides.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -25,10 +24,10 @@ func TestAccEnvServiceOverrides(t *testing.T) {
 		CheckDestroy:      testAccEnvServiceOverridesDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccEnvServiceOverrides(expectedid, name),
+				Config: testAccEnvServiceOverrides(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", expectedid),
-					resource.TestCheckResourceAttr(resourceName, "project_id", expectedid),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
@@ -137,7 +136,6 @@ func testAccEnvServiceOverrides(id string, name string) string {
 		}
 
 		resource "harness_platform_environment_service_overrides" "test" {
-			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
@@ -151,20 +149,19 @@ func testAccEnvServiceOverrides(id string, name string) string {
              type: String
              value: asddad
           manifests:
-                - manifest:
-                    identifier: manifest1
-                    type: K8sManifest
-                    spec:
-                      store:
-                        type: Github
-                        spec:
-                          connectorRef: <+input>
-                          gitFetchType: Branch
-                          paths:
-                            - files1
-                          repoName: <+input>
-                          branch: master
-                      skipResourceVersioning: false
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
           configFiles:
              - configFile:
                  identifier: configFileEnv

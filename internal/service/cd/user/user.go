@@ -86,7 +86,9 @@ func ResourceUser() *schema.Resource {
 
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	log.Printf("[DEBUG] Creating user %s", d.Get("email").(string))
 
 	input := &graphql.CreateUserInput{
@@ -105,7 +107,9 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	email := d.Get("email").(string)
 
 	log.Printf("[DEBUG] Looking for user by email %s", email)
@@ -139,7 +143,9 @@ func readUser(d *schema.ResourceData, user *graphql.User) diag.Diagnostics {
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	log.Printf("[DEBUG] Updating user %s", d.Id())
 
 	input := &graphql.UpdateUserInput{
@@ -157,7 +163,9 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	if err := c.UserClient.DeleteUser(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}

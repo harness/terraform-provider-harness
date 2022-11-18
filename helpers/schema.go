@@ -188,6 +188,18 @@ var EnvRelatedResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+var ServiceOverrideResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+		d.Set("env_id", parts[2])
+		d.SetId(parts[3])
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
 // ProjectResourceImporter defines the importer configuration for all project level resources.
 // The id used for the import should be in the format <org_id>/<project_id>/<identifier>
 var ProjectResourceImporter = &schema.ResourceImporter{
@@ -224,6 +236,15 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 		}
 
 		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+var GitopsRepoCertResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("agent_id", parts[0])
+		d.SetId(parts[1])
+		return []*schema.ResourceData{d}, nil
 	},
 }
 
@@ -272,6 +293,43 @@ var MultiLevelResourceImporter = &schema.ResourceImporter{
 			d.Set("identifier", parts[2])
 			d.Set("project_id", parts[1])
 			d.Set("org_id", parts[0])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+var MultiLevelFilterImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+
+		partCount := len(parts)
+		isAccountConnector := partCount == 2
+		isOrgConnector := partCount == 3
+		isProjectConnector := partCount == 4
+
+		if isAccountConnector {
+			d.SetId(parts[0])
+			d.Set("identifier", parts[0])
+			d.Set("type", parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if isOrgConnector {
+			d.SetId(parts[1])
+			d.Set("identifier", parts[1])
+			d.Set("org_id", parts[0])
+			d.Set("type", parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if isProjectConnector {
+			d.SetId(parts[2])
+			d.Set("identifier", parts[2])
+			d.Set("project_id", parts[1])
+			d.Set("org_id", parts[0])
+			d.Set("type", parts[3])
 			return []*schema.ResourceData{d}, nil
 		}
 

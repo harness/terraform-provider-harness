@@ -18,32 +18,32 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "Account Identifier for the  agent.",
+				Description: "Account identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier for the  agent.",
+				Description: "Project identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"org_id": {
-				Description: "Organization Identifier for the agent.",
+				Description: "Organization identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"identifier": {
-				Description: "identifier of the agent.",
+				Description: "Identifier of the GitOps agent.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"namespace": {
-				Description: "The k8s namespace that this agent resides in.",
+				Description: "The k8s namespace that the GitOps agent resides in.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"yaml": {
-				Description: "deployment yaml of the agent.",
+				Description: "Deployment YAML of the GitOps agent.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

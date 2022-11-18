@@ -10,6 +10,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -61,6 +62,10 @@ func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context)
 	return TestAccProvider.Meta().(*internal.Session).GetPlatformClientWithContext(context.Background())
 }
 
+func TestAccGetClientWithContext() (*openapi_client_nextgen.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetClientWithContext(context.Background())
+}
+
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
 	r := TestAccGetResource(resourceName, state)
 	c := TestAccGetApiClientFromProvider()
@@ -109,6 +114,18 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 		return fmt.Sprintf("%s/%s/%s", orgId, projId, id), nil
 	}
 }
+
+func ProjectFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, type_), nil
+	}
+}
+
 func GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
@@ -135,6 +152,16 @@ func OrgResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFun
 		id := primary.ID
 		orgId := primary.Attributes["org_id"]
 		return fmt.Sprintf("%s/%s", orgId, id), nil
+	}
+}
+
+func OrgFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s/%s", orgId, id, type_), nil
 	}
 }
 

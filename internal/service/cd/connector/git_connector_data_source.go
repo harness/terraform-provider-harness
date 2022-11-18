@@ -39,7 +39,7 @@ func DataSourceGitConnector() *schema.Resource {
 				Computed:    true,
 			},
 			"url": {
-				Description: "The url of the git repository or account/organization.",
+				Description: "The URL of the git repository or account/organization.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -116,7 +116,9 @@ func DataSourceGitConnector() *schema.Resource {
 
 func dataSourceGitConnectorRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var conn *graphql.GitConnector
 	var err error
 
