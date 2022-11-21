@@ -898,6 +898,6 @@ type TriggerAction struct {
 }
 
 type ArtifactSelection struct {
-	Sevice_id    string `json:"serviceId,omitempty"`
+	Service_id   string `json:"serviceId,omitempty"`
 	Service_name string `json:"serviceName,omitempty"`
 }
