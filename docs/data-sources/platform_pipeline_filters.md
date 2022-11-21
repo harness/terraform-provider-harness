@@ -18,7 +18,7 @@ Data source for retrieving a Harness Pipeline Filter.
 ### Required
 
 - `identifier` (String) Unique identifier of the resource
-- `type` (String) Type of filter. Currently supported types are {Connector, DelegateProfile, Delegate, PipelineSetup, PipelineExecution, Deployment, Audit, Template, EnvironmentGroup, FileStore, CCMRecommendation, Anomaly, Environment}.
+- `type` (String) Type of filter. Currently supported types are {PipelineSetup, PipelineExecution, Deployment, Template, EnvironmentGroup, Environment}.
 
 ### Optional
 
