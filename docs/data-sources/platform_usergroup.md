@@ -59,6 +59,7 @@ Read-Only:
 - `group_email` (String) Group email
 - `microsoft_teams_webhook_url` (String) Url of Microsoft teams webhook
 - `pager_duty_key` (String) Pager duty key
+- `send_email_to_all_users` (Boolean) Send email to all the group members
 - `slack_webhook_url` (String) Url of slack webhook
 - `type` (String) Can be one of EMAIL, SLACK, PAGERDUTY, MSTEAMS
 

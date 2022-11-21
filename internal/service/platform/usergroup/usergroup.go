@@ -52,12 +52,6 @@ func ResourceUserGroup() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			// "is_sso_linked": {
-			// 	Description: "Whether the user group is linked to an SSO account.",
-			// 	Type:        schema.TypeBool,
-			// 	Optional:    true,
-			// 	Computed:    true,
-			// },
 			"linked_sso_id": {
 				Description: "The SSO account ID that the user group is linked to.",
 				Type:        schema.TypeString,
@@ -78,7 +72,7 @@ func ResourceUserGroup() *schema.Resource {
 			},
 			"notification_configs": {
 				Description: "List of notification settings.",
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -106,6 +100,12 @@ func ResourceUserGroup() *schema.Resource {
 							Description: "Group email",
 							Type:        schema.TypeString,
 							Optional:    true,
+						},
+						"send_email_to_all_users": {
+							Description: "Send email to all the group members",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
 						},
 					},
 				},
@@ -249,7 +249,7 @@ func buildUserGroup(d *schema.ResourceData) nextgen.UserGroup {
 	}
 
 	if attr, ok := d.GetOk("notification_configs"); ok {
-		userGroup.NotificationConfigs = expandNotificationConfig(attr.(*schema.Set).List())
+		userGroup.NotificationConfigs = expandNotificationConfig(attr.([]interface{}))
 	}
 
 	if attr, ok := d.GetOk("is_sso_linked"); ok {
@@ -318,6 +318,7 @@ func expandNotificationConfig(notificationConfigs []interface{}) []nextgen.Notif
 		}
 		if resultNotificationConfig.Type_ == "EMAIL" {
 			resultNotificationConfig.GroupEmail = v["group_email"].(string)
+			resultNotificationConfig.SendEmailToAllUsers = v["send_email_to_all_users"].(bool)
 		}
 		if resultNotificationConfig.Type_ == "MSTEAMS" {
 			resultNotificationConfig.MicrosoftTeamsWebhookUrl = v["microsoft_teams_webhook_url"].(string)
@@ -341,8 +342,9 @@ func flattenNotificationConfig(notificationConfigs []nextgen.NotificationSetting
 		}
 		if notificationConfig.Type_ == "EMAIL" {
 			result = append(result, map[string]interface{}{
-				"type":        notificationConfig.Type_,
-				"group_email": notificationConfig.GroupEmail,
+				"type":                    notificationConfig.Type_,
+				"group_email":             notificationConfig.GroupEmail,
+				"send_email_to_all_users": notificationConfig.SendEmailToAllUsers,
 			})
 		}
 		if notificationConfig.Type_ == "MSTEAMS" {

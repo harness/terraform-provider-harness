@@ -69,6 +69,11 @@ func DataSourceUserGroup() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"send_email_to_all_users": {
+							Description: "Send email to all the group members",
+							Type:        schema.TypeBool,
+							Computed:    true,
+						},
 					},
 				},
 			},
