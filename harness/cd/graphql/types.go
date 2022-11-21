@@ -874,3 +874,30 @@ type ApproveOrRejectApprovals struct {
 	ClientMutationId string `json:"clientMutationId,omitempty"`
 	Success          bool   `json:"success,omitempty"`
 }
+
+type Trigger struct {
+	CommonMetadata
+	Action    *TriggerAction    `json:"triggerAction,omitempty"`
+	Condition *TriggerCondition `json:"condition,omitempty"`
+}
+
+type TriggerCondition struct {
+	TriggerConditionType string          `json:"triggerConditionType,omitempty"`
+	WebhookDetails       *WebhookDetails `json:"webhookDetails,omitempty"`
+}
+
+type WebhookDetails struct {
+	Payload    string `json:"payload,omitempty"`
+	WebhookUrl string `json:"webhookUrl,omitempty"`
+	Method     string `json:"method,omitempty"`
+	Header     string `json:"header,omitempty"`
+}
+
+type TriggerAction struct {
+	ArtifactSelections *ArtifactSelection `json:"artifactSelection,omitempty"`
+}
+
+type ArtifactSelection struct {
+	Service_id   string `json:"serviceId,omitempty"`
+	Service_name string `json:"serviceName,omitempty"`
+}
