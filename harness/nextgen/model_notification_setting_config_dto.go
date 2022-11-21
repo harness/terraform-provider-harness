@@ -13,6 +13,7 @@ type NotificationSettingConfigDto struct {
 	Type_                    string `json:"type,omitempty"`
 	SlackWebhookUrl          string `json:"slackWebhookUrl,omitempty"`
 	GroupEmail               string `json:"groupEmail,omitempty"`
+	SendEmailToAllUsers      bool   `json:"sendEmailToAllUsers,omitempty"`
 	MicrosoftTeamsWebhookUrl string `json:"microsoftTeamsWebhookUrl,omitempty"`
 	PagerDutyKey             string `json:"pagerDutyKey,omitempty"`
 }
