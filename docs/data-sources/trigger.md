@@ -18,9 +18,9 @@ Data source for retrieving a Harness trigger.
 ### Optional
 
 - `app_id` (String) The id of the application.
-- `description` (String) The trigger description
+- `description` (String) The trigger description.
 - `id` (String) Unique identifier of the trigger.
-- `name` (String) The name of the trigger
+- `name` (String) The name of the trigger.
 
 ### Read-Only
 
