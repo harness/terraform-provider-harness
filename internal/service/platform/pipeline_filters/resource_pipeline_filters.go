@@ -24,12 +24,12 @@ func ResourcePipelineFilters() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Unique identifier of the resource",
+				Description: "Unique identifier of the resource.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"name": {
-				Description: "Name of the pipeline filters",
+				Description: "Name of the pipeline filters.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -40,12 +40,12 @@ func ResourcePipelineFilters() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"PipelineSetup", "PipelineExecution", "Deployment", "Template", "EnvironmentGroup", "Environment"}, false),
 			},
 			"org_id": {
-				Description: "organization Identifier for the Entity",
+				Description: "Organization Identifier for the Entity.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project Identifier for the Entity",
+				Description: "Project Identifier for the Entity.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

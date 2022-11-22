@@ -33,15 +33,15 @@ resource "harness_platform_pipeline_filters" "test" {
 ### Required
 
 - `filter_properties` (Block List, Min: 1, Max: 1) Properties of the filters entity defined in Harness. (see [below for nested schema](#nestedblock--filter_properties))
-- `identifier` (String) Unique identifier of the resource
-- `name` (String) Name of the pipeline filters
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the pipeline filters.
 - `type` (String) Type of pipeline filters. Currently supported types are {PipelineSetup, PipelineExecution, Deployment, Template, EnvironmentGroup, Environment}
 
 ### Optional
 
 - `filter_visibility` (String) This indicates visibility of filters, by default it is Everyone.
-- `org_id` (String) organization Identifier for the Entity
-- `project_id` (String) project Identifier for the Entity
+- `org_id` (String) Organization Identifier for the Entity.
+- `project_id` (String) Project Identifier for the Entity.
 
 ### Read-Only
 

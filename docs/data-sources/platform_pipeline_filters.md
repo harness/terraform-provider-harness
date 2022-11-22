@@ -17,20 +17,20 @@ Data source for retrieving a Harness Pipeline Filter.
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource
+- `identifier` (String) Unique identifier of the resource.
 - `type` (String) Type of filter. Currently supported types are {PipelineSetup, PipelineExecution, Deployment, Template, EnvironmentGroup, Environment}.
 
 ### Optional
 
-- `org_id` (String) organization Identifier for the Entity
-- `project_id` (String) project Identifier for the Entity
+- `org_id` (String) Organization Identifier for the Entity.
+- `project_id` (String) Project Identifier for the Entity.
 
 ### Read-Only
 
 - `filter_properties` (List of Object) Properties of the filter entity defined in Harness. (see [below for nested schema](#nestedatt--filter_properties))
 - `filter_visibility` (String) This indicates visibility of filter, by default it is Everyone.
 - `id` (String) The ID of this resource.
-- `name` (String) Name of the Filter
+- `name` (String) Name of the Filter.
 
 <a id="nestedatt--filter_properties"></a>
 ### Nested Schema for `filter_properties`
