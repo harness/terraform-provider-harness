@@ -24,7 +24,7 @@ func DataSourceTrigger() *schema.Resource {
 				Optional:    true,
 			},
 			"name": {
-				Description: "The name of the trigger",
+				Description: "The name of the trigger.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -34,7 +34,7 @@ func DataSourceTrigger() *schema.Resource {
 				Optional:    true,
 			},
 			"description": {
-				Description: "The trigger description",
+				Description: "The trigger description.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
