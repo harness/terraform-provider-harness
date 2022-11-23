@@ -13,5 +13,5 @@ package nextgen
 type SpotConnector struct {
 	Credential        *SpotCredential `json:"credential"`
 	DelegateSelectors []string        `json:"delegateSelectors,omitempty"`
-	ExecuteOnDelegate bool            `json:"executeOnDelegate,omitempty"`
+	ExecuteOnDelegate bool            `json:"executeOnDelegate"`
 }
