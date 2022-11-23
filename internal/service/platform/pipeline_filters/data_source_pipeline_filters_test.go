@@ -118,9 +118,9 @@ func testAccDataSourcePipelineFiltersOrgLevel(id string, name string) string {
 	}
 
 	data "harness_platform_pipeline_filters" "test" {
-			identifier = harness_platform_filters.test.identifier
-			org_id = harness_platform_filters.test.org_id
-			type = harness_platform_filters.test.type
+			identifier = harness_platform_pipeline_filters.test.identifier
+			org_id = harness_platform_pipeline_filters.test.org_id
+			type = harness_platform_pipeline_filters.test.type
 		}
 `, id, name)
 }
