@@ -3,7 +3,7 @@
 page_title: "harness_platform_filters Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Ng Filter. This resource support filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}"
+  Resource for creating a Harness Filter. This resource support filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}
 ---
 
 # harness_platform_filters (Resource)
@@ -64,5 +64,5 @@ Import is supported using the following syntax:
 
 ```shell
 # Import using filter id
-terraform import harness_platform_variables.example <filter_id>
+terraform import harness_platform_filters.example <filter_id>
 ```

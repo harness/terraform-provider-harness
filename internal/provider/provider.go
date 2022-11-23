@@ -23,6 +23,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/service"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
+	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
@@ -42,6 +43,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
@@ -144,7 +146,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_repository":               gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.DataSourceGitOpsRepoCert(),
-				"harness_platform_gitops_repo_cred":              gitops_repo_cred.DataSourceGitOpsRepoCred(),
+				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.DataSourceInfrastructure(),
 				"harness_environment_service_overrides":            pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                       input_set.DataSourceInputSet(),
@@ -165,6 +167,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_variables":                       variables.DataSourceVariables(),
 				"harness_platform_connector_vault":                 connector.DataSourceConnectorVault(),
 				"harness_platform_filters":                         filters.DataSourceFilters(),
+				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                 delegate.DataSourceDelegate(),
@@ -179,6 +182,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user_group":                               user.DataSourceUserGroup(),
 				"harness_user":                                     user.DataSourceUser(),
 				"harness_yaml_config":                              yamlconfig.DataSourceYamlConfig(),
+				"harness_platform_connector_azure_cloud_provider":  connector.DataSourceConnectorAzureCloudProvider(),
+				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
@@ -217,7 +222,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
-				"harness_platform_gitops_repo_cred":               gitops_repo_cred.ResourceGitopsRepoCred(),
+				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.ResourceInfrastructure(),
 				"harness_environment_service_overrides":            pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                       input_set.ResourceInputSet(),
@@ -237,6 +242,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_variables":                       variables.ResourceVariables(),
 				"harness_platform_connector_vault":                 connector.ResourceConnectorVault(),
 				"harness_platform_filters":                         filters.ResourceFilters(),
+				"harness_platform_pipeline_filters":                pipeline_filters.ResourcePipelineFilters(),
 				"harness_add_user_to_group":                        user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                      application.ResourceApplicationGitSync(),
 				"harness_application":                              application.ResourceApplication(),
