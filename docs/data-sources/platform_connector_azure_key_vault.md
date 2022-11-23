@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_azure_key_vault Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data Source for looking up an Azure key vault Connector.
+  Data source for looking up an Azure key vault connector.
 ---
 
 # harness_platform_connector_azure_key_vault (Data Source)
 
-Data Source for looking up an Azure key vault Connector.
+Data source for looking up an Azure key vault connector.
 
 ## Example Usage
 
