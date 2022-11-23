@@ -148,13 +148,13 @@ resource "harness_platform_usergroup" "sso_type_ldap" {
 - `externally_managed` (Boolean) Whether the user group is externally managed.
 - `linked_sso_display_name` (String) Name of the linked SSO.
 - `linked_sso_id` (String) The SSO account ID that the user group is linked to.
-- `linked_sso_type` (String) Type of linked SSO
+- `linked_sso_type` (String) Type of linked SSO.
 - `notification_configs` (Block List) List of notification settings. (see [below for nested schema](#nestedblock--notification_configs))
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
 - `sso_group_id` (String) Identifier of the userGroup in SSO.
 - `sso_group_name` (String) Name of the SSO userGroup.
-- `sso_linked` (Boolean) Whether sso is linked or not
+- `sso_linked` (Boolean) Whether sso is linked or not.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `users` (Set of String) List of users in the UserGroup.
 
@@ -167,12 +167,12 @@ resource "harness_platform_usergroup" "sso_type_ldap" {
 
 Optional:
 
-- `group_email` (String) Group email
-- `microsoft_teams_webhook_url` (String) Url of Microsoft teams webhook
-- `pager_duty_key` (String) Pager duty key
-- `send_email_to_all_users` (Boolean) Send email to all the group members
-- `slack_webhook_url` (String) Url of slack webhook
-- `type` (String) Can be one of EMAIL, SLACK, PAGERDUTY, MSTEAMS
+- `group_email` (String) Group email.
+- `microsoft_teams_webhook_url` (String) Url of Microsoft teams webhook.
+- `pager_duty_key` (String) Pager duty key.
+- `send_email_to_all_users` (Boolean) Send email to all the group members.
+- `slack_webhook_url` (String) Url of slack webhook.
+- `type` (String) Can be one of EMAIL, SLACK, PAGERDUTY, MSTEAMS.
 
 ## Import
 

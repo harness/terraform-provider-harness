@@ -77,32 +77,32 @@ func ResourceUserGroup() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Description: "Can be one of EMAIL, SLACK, PAGERDUTY, MSTEAMS",
+							Description: "Can be one of EMAIL, SLACK, PAGERDUTY, MSTEAMS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"slack_webhook_url": {
-							Description: "Url of slack webhook",
+							Description: "Url of slack webhook.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"microsoft_teams_webhook_url": {
-							Description: "Url of Microsoft teams webhook",
+							Description: "Url of Microsoft teams webhook.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"pager_duty_key": {
-							Description: "Pager duty key",
+							Description: "Pager duty key.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"group_email": {
-							Description: "Group email",
+							Description: "Group email.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"send_email_to_all_users": {
-							Description: "Send email to all the group members",
+							Description: "Send email to all the group members.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
@@ -126,12 +126,12 @@ func ResourceUserGroup() *schema.Resource {
 				Optional:    true,
 			},
 			"linked_sso_type": {
-				Description: "Type of linked SSO",
+				Description: "Type of linked SSO.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"sso_linked": {
-				Description: "Whether sso is linked or not",
+				Description: "Whether sso is linked or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
