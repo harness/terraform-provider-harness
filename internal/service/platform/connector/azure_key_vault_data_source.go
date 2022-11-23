@@ -7,7 +7,7 @@ import (
 
 func DataSourceConnectorAzureKeyVault() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data Source for looking up an Azure key vault Connector.",
+		Description: "Data source for looking up an Azure key vault connector.",
 		ReadContext: resourceConnectorAzureKeyVaultRead,
 
 		Schema: map[string]*schema.Schema{
