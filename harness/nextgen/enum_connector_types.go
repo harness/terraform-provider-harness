@@ -36,6 +36,7 @@ var ConnectorTypes = struct {
 	SumoLogic        ConnectorType
 	PagerDuty        ConnectorType
 	GcpSecretManager ConnectorType
+	Spot             ConnectorType
 }{
 	K8sCluster:       "K8sCluster",
 	Git:              "Git",
@@ -70,6 +71,7 @@ var ConnectorTypes = struct {
 	PagerDuty:        "PagerDuty",
 	GcpSecretManager: "GcpSecretManager",
 	Azure:            "Azure",
+	Spot:             "Spot",
 }
 
 var ConnectorTypesSlice = []string{
@@ -106,6 +108,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.PagerDuty.String(),
 	ConnectorTypes.GcpSecretManager.String(),
 	ConnectorTypes.Azure.String(),
+	ConnectorTypes.Spot.String(),
 }
 
 func (c ConnectorType) String() string {
