@@ -1,6 +1,6 @@
 
-<a name="0.2.26"></a>
-## 0.2.26 (2022-11-21)
+<a name="0.2.27"></a>
+## 0.2.27 (2022-11-23)
 
 ### Add
 
@@ -54,19 +54,9 @@
 
 * Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
 
-### Error
-
-* error handling
-
 ### Extra
 
 * Extra check in test
-
-### Fix
-
-* fix environment variable overrides with secrets
-* fix cac error handling
-* fix json serialization
 
 ### Fix
 
@@ -75,6 +65,12 @@
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
+
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
 
 ### Fixed
 
@@ -118,6 +114,8 @@
 
 ### Release
 
+* Release version 0.2.26 11-21-2022
+* Release v0.2.26
 * Release version 0.2.25 11-21-2022
 * Release v0.2.25
 * Release version 0.2.24 11-17-2022
@@ -173,7 +171,6 @@
 * Release version 0.1.35 09-14-2022
 * Release v0.1.35
 * Release version 0.1.34 09-13-2022
-* Release v0.1.34
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -204,16 +201,10 @@
 * Release vv0.1.18
 * Release version 0.1.17 03-24-2022
 * Release v0.1.17
-* Release version 0.1.16 03-17-2022
-* Release v0.1.16
 
 ### Removing
 
 * removing redundant api and doc
-
-### Restoring
-
-* restoring the swagger.yaml
 
 ### Revert
 
@@ -231,7 +222,6 @@
 * Update azure connector models
 * Update role assignments api and models
 * Update prometheus connector dto model
-* Update user group model
 
 ### Updated
 
@@ -240,6 +230,9 @@
 
 ### Pull Requests
 
+* Merge pull request [#231](https://github.com/harness/harness-go-sdk/issues/231) from harness/CDS-45294-spot-connector-go-sdk
+* Merge pull request [#226](https://github.com/harness/harness-go-sdk/issues/226) from harness/SPG-823-pipeline-filter-TF-resource
+* Merge pull request [#214](https://github.com/harness/harness-go-sdk/issues/214) from harness/CDS-43019
 * Merge pull request [#229](https://github.com/harness/harness-go-sdk/issues/229) from harness/cg-trigger-1
 * Merge pull request [#227](https://github.com/harness/harness-go-sdk/issues/227) from harness/SPG-495
 * Merge pull request [#197](https://github.com/harness/harness-go-sdk/issues/197) from harness/CDS-44314-gnupg-tf-resource
@@ -275,5 +268,4 @@
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
-* Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 
