@@ -23,6 +23,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/service"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
+	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
@@ -182,6 +183,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user":                                     user.DataSourceUser(),
 				"harness_yaml_config":                              yamlconfig.DataSourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.DataSourceConnectorAzureCloudProvider(),
+				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
