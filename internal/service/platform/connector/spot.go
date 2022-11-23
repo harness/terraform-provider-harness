@@ -57,6 +57,7 @@ func ResourceConnectorSpot() *schema.Resource {
 							Description: "Execute on delegate or not.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Default:     true,
 						},
 					},
 				},
@@ -122,9 +123,7 @@ func buildConnectorSpot(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.Spot.Credential.PermanentTokenConfig.ApiTokenRef = attr
 		}
 
-		if attr := config["execute_on_delegate"].(bool); attr {
-			connector.Spot.ExecuteOnDelegate = attr
-		}
+		connector.Spot.ExecuteOnDelegate = config["execute_on_delegate"].(bool)
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Spot.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
