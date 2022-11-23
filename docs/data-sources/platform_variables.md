@@ -10,8 +10,10 @@ description: |-
 
 Data source for retrieving a Harness Variable.
 
+## Example Usage
+
 ```terraform
-data "harness_platform_variable" "test" {
+data "harness_platform_usergroup" "example" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
