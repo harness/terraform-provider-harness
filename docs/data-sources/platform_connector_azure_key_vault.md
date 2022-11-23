@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_azure_key_vault Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for looking up an Azure Cloud Provider Connector.
+  Data Source for looking up an Azure key vault Connector.
 ---
 
 # harness_platform_connector_azure_key_vault (Data Source)
 
-Datasource for looking up an Azure Cloud Provider Connector.
+Data Source for looking up an Azure key vault Connector.
 
 ## Example Usage
 
@@ -30,16 +30,16 @@ data "harness_platform_connector_azure_key_vault" "example" {
 
 ### Read-Only
 
-- `azure_environment_type` (String) Specifies the Azure Environment type, which is AZURE by default. Can either be AZURE or AZURE_US_GOVERNMENT
+- `azure_environment_type` (String) Azure environment type. Possible values: AZURE or AZURE_US_GOVERNMENT. Default value: AZURE
 - `client_id` (String) Application ID of the Azure App.
 - `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `is_default` (Boolean) Is default or not.
+- `is_default` (Boolean) Specifies whether or not is the default value.
 - `secret_key` (String) The Harness text secret with the Azure authentication key as its value.
-- `subscription` (String) Azure Subscription ID.
+- `subscription` (String) Azure subscription ID.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `tenant_id` (String) The Azure Active Directory (AAD) directory ID where you created your application.
-- `vault_name` (String) The Azure Active Directory (AAD) directory ID where you created your application.
+- `vault_name` (String) Name of the vault.
 
 

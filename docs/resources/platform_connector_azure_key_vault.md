@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_azure_key_vault Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating an Azure Key Vault in Harness.
+  Resource for creating an Azure key vault in Harness.
 ---
 
 # harness_platform_connector_azure_key_vault (Resource)
 
-Resource for creating an Azure Key Vault in Harness.
+Resource for creating an Azure key vault in Harness.
 
 ## Example Usage
 
@@ -39,16 +39,16 @@ resource "harness_platform_connector_azure_key_vault" "example" {
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `secret_key` (String) The Harness text secret with the Azure authentication key as its value.
-- `subscription` (String) Azure Subscription ID.
-- `tenant_id` (String) The Azure Active Directory (AAD) directory ID where you created your application.
-- `vault_name` (String) The Azure Active Directory (AAD) directory ID where you created your application.
+- `subscription` (String) Azure subscription ID.
+- `tenant_id` (String) The Azure Active Directory (Azure AD) directory ID where you created your application.
+- `vault_name` (String) Name of the vault.
 
 ### Optional
 
-- `azure_environment_type` (String) Specifies the Azure Environment type, which is AZURE by default. Can either be AZURE or AZURE_US_GOVERNMENT
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `azure_environment_type` (String) Azure environment type. Possible values: AZURE or AZURE_US_GOVERNMENT. Default value: AZURE
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
-- `is_default` (Boolean) Is default or not.
+- `is_default` (Boolean) Specifies whether or not is the default value.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
