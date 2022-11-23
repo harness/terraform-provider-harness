@@ -1,6 +1,6 @@
 
-<a name="v0.2.29"></a>
-## v0.2.29 (2022-11-23)
+<a name="0.2.30"></a>
+## 0.2.30 (2022-11-23)
 
 ### Add
 
@@ -37,10 +37,6 @@
 
 * Catch service not found issue
 
-### Change
-
-* change in package name
-
 ### Changes
 
 * Changes to add azure cloud cost connector
@@ -62,7 +58,6 @@
 
 * fix environment variable overrides with secrets
 * fix cac error handling
-* fix json serialization
 
 ### Fixed
 
@@ -106,6 +101,8 @@
 
 ### Release
 
+* Release version v0.2.29 11-23-2022
+* Release vv0.2.29
 * Release version 0.2.28 11-23-2022
 * Release v0.2.28
 * Release version 0.2.27 11-23-2022
@@ -164,7 +161,6 @@
 * Release v0.2.1
 * Release version 0.2.0 09-15-2022
 * Release v0.2.0
-* Release version 0.1.35 09-14-2022
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
