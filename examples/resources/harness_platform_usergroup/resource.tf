@@ -11,8 +11,9 @@ resource "harness_platform_usergroup" "sso_type_saml" {
     slack_webhook_url = "https://google.com"
   }
   notification_configs {
-    type        = "EMAIL"
-    group_email = "email@email.com"
+    type                    = "EMAIL"
+    group_email             = "email@email.com"
+    send_email_to_all_users = true
   }
   notification_configs {
     type                        = "MSTEAMS"
@@ -42,8 +43,9 @@ resource "harness_platform_usergroup" "sso_type_ldap" {
     slack_webhook_url = "https://google.com"
   }
   notification_configs {
-    type        = "EMAIL"
-    group_email = "email@email.com"
+    type                    = "EMAIL"
+    group_email             = "email@email.com"
+    send_email_to_all_users = true
   }
   notification_configs {
     type                        = "MSTEAMS"
