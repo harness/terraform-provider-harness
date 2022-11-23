@@ -13,7 +13,7 @@ import (
 
 func ResourceConnectorAzureKeyVault() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an Azure Key Vault in Harness.",
+		Description:   "Resource for creating an Azure key vault in Harness.",
 		ReadContext:   resourceConnectorAzureKeyVaultRead,
 		CreateContext: resourceConnectorAzureKeyVaultCreateOrUpdate,
 		UpdateContext: resourceConnectorAzureKeyVaultCreateOrUpdate,
@@ -32,34 +32,34 @@ func ResourceConnectorAzureKeyVault() *schema.Resource {
 				Required:    true,
 			},
 			"tenant_id": {
-				Description: "The Azure Active Directory (AAD) directory ID where you created your application.",
+				Description: "The Azure Active Directory (Azure AD) directory ID where you created your application.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"vault_name": {
-				Description: "The Azure Active Directory (AAD) directory ID where you created your application.",
+				Description: "Name of the vault.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"subscription": {
-				Description: "Azure Subscription ID.",
+				Description: "Azure subscription ID.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"is_default": {
-				Description: "Is default or not.",
+				Description: "Specifies whether or not is the default value.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"azure_environment_type": {
-				Description:  "Specifies the Azure Environment type, which is AZURE by default. Can either be AZURE or AZURE_US_GOVERNMENT",
+				Description:  "Azure environment type. Possible values: AZURE or AZURE_US_GOVERNMENT. Default value: AZURE",
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
 				ValidateFunc: validation.StringInSlice([]string{"AZURE", "AZURE_US_GOVERNMENT"}, false),
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

@@ -7,7 +7,7 @@ import (
 
 func DataSourceConnectorAzureKeyVault() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up an Azure Cloud Provider Connector.",
+		Description: "Data Source for looking up an Azure key vault Connector.",
 		ReadContext: resourceConnectorAzureKeyVaultRead,
 
 		Schema: map[string]*schema.Schema{
@@ -27,22 +27,22 @@ func DataSourceConnectorAzureKeyVault() *schema.Resource {
 				Computed:    true,
 			},
 			"vault_name": {
-				Description: "The Azure Active Directory (AAD) directory ID where you created your application.",
+				Description: "Name of the vault.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"subscription": {
-				Description: "Azure Subscription ID.",
+				Description: "Azure subscription ID.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"is_default": {
-				Description: "Is default or not.",
+				Description: "Specifies whether or not is the default value.",
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
 			"azure_environment_type": {
-				Description: "Specifies the Azure Environment type, which is AZURE by default. Can either be AZURE or AZURE_US_GOVERNMENT",
+				Description: "Azure environment type. Possible values: AZURE or AZURE_US_GOVERNMENT. Default value: AZURE",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
