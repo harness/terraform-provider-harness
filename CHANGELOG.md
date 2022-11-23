@@ -1,6 +1,6 @@
 
-<a name="0.2.28"></a>
-## 0.2.28 (2022-11-23)
+<a name="v0.2.29"></a>
+## v0.2.29 (2022-11-23)
 
 ### Add
 
@@ -37,6 +37,10 @@
 
 * Catch service not found issue
 
+### Change
+
+* change in package name
+
 ### Changes
 
 * Changes to add azure cloud cost connector
@@ -58,6 +62,7 @@
 
 * fix environment variable overrides with secrets
 * fix cac error handling
+* fix json serialization
 
 ### Fixed
 
@@ -101,6 +106,8 @@
 
 ### Release
 
+* Release version 0.2.28 11-23-2022
+* Release v0.2.28
 * Release version 0.2.27 11-23-2022
 * Release v0.2.27
 * Release version 0.2.26 11-21-2022
@@ -157,6 +164,7 @@
 * Release v0.2.1
 * Release version 0.2.0 09-15-2022
 * Release v0.2.0
+* Release version 0.1.35 09-14-2022
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -216,6 +224,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#202](https://github.com/harness/harness-go-sdk/issues/202) from tphoney/policy-mgmt
 * Merge pull request [#233](https://github.com/harness/harness-go-sdk/issues/233) from harness/CDS-45294-spot-connector-go-sdk
 * Merge pull request [#231](https://github.com/harness/harness-go-sdk/issues/231) from harness/CDS-45294-spot-connector-go-sdk
 * Merge pull request [#226](https://github.com/harness/harness-go-sdk/issues/226) from harness/SPG-823-pipeline-filter-TF-resource
