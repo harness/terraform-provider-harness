@@ -1,3 +1,10 @@
+# 0.8.4 (November 23,2022) 
+
+ENHANCEMENTS:
+
+* data-source/harness_trigger: - Added data source for trigger in first gen ([#309](https://github.com/harness/terraform-provider-harness/issues/309))
+* platform_user_group - Added support for "Send email to all users" in user group notification configuration. ([#313](https://github.com/harness/terraform-provider-harness/issues/313))
+
 # 0.8.3 (November 14,2022)
 
 FEATURES:
