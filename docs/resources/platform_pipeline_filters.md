@@ -3,12 +3,12 @@
 page_title: "harness_platform_pipeline_filters Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Pipeline Filters.
+  Resource for creating Harness Pipeline Filters.
 ---
 
 # harness_platform_pipeline_filters (Resource)
 
-Resource for creating a Harness Pipeline Filters.
+Resource for creating Harness Pipeline Filters.
 
 ## Example Usage
 
@@ -39,7 +39,7 @@ resource "harness_platform_pipeline_filters" "test" {
 
 ### Optional
 
-- `filter_visibility` (String) This indicates visibility of filters, by default it is Everyone.
+- `filter_visibility` (String) This indicates visibility of filters. By default, everyone can view this filter.
 - `org_id` (String) Organization Identifier for the Entity.
 - `project_id` (String) Project Identifier for the Entity.
 

@@ -1,4 +1,4 @@
-package pipeline_filters
+package template_filters
 
 import (
 	"context"
@@ -12,14 +12,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func ResourcePipelineFilters() *schema.Resource {
+func ResourceTemplateFilters() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating Harness Pipeline Filters.",
+		Description: "Resource for creating a Harness Template Filters.",
 
-		ReadContext:   resourcePipelineFiltersRead,
-		UpdateContext: resourcePipelineFiltersCreateOrUpdate,
-		DeleteContext: resourcePipelineFiltersDelete,
-		CreateContext: resourcePipelineFiltersCreateOrUpdate,
+		ReadContext:   resourceTemplateFiltersRead,
+		UpdateContext: resourceTemplateFiltersCreateOrUpdate,
+		DeleteContext: resourceTemplateFiltersDelete,
+		CreateContext: resourceTemplateFiltersCreateOrUpdate,
 		Importer:      helpers.MultiLevelFilterImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -29,15 +29,15 @@ func ResourcePipelineFilters() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "Name of the pipeline filters.",
+				Description: "Name of the template filters.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"type": {
-				Description:  "Type of pipeline filters. Currently supported types are {PipelineSetup, PipelineExecution, Deployment, Template, EnvironmentGroup, Environment}",
+				Description:  "Type of template filters. Currently supported types are { Template}",
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"PipelineSetup", "PipelineExecution", "Deployment", "Template", "EnvironmentGroup", "Environment"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"Template"}, false),
 			},
 			"org_id": {
 				Description: "Organization Identifier for the Entity.",
@@ -57,10 +57,10 @@ func ResourcePipelineFilters() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"filter_type": {
-							Description:  "Corresponding Entity of the filters. Currently supported types are {Connector, DelegateProfile, Delegate, PipelineSetup, PipelineExecution, Deployment, Audit, Template, EnvironmentGroup, FileStore, CCMRecommendation, Anomaly, Environment}.",
+							Description:  "Corresponding Entity of the filters. Currently supported types are {TemplateSetup, TemplateExecution, Template}.",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "PipelineSetup", "PipelineExecution", "Deployment", "Audit", "Template", "EnvironmentGroup", "FileStore", "CCMRecommendation", "Anomaly", "Environment"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"TemplateSetup", "TemplateExecution", "Template"}, false),
 						},
 						"tags": {
 							Description: "Tags to associate with the resource. Tags should be in the form `name:value`.",
@@ -85,13 +85,13 @@ func ResourcePipelineFilters() *schema.Resource {
 	return resource
 }
 
-func resourcePipelineFiltersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceTemplateFiltersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 
 	type_ := d.Get("type").(string)
-	resp, httpResp, err := c.FilterApi.PipelinegetFilter(ctx, c.AccountId, id, type_, &nextgen.FilterApiPipelinegetFilterOpts{
+	resp, httpResp, err := c.FilterApi.TemplategetFilter(ctx, c.AccountId, id, type_, &nextgen.FilterApiTemplategetFilterOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -106,12 +106,12 @@ func resourcePipelineFiltersRead(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	readPipelineFilter(d, resp.Data)
+	readTemplateFilter(d, resp.Data)
 
 	return nil
 }
 
-func resourcePipelineFiltersCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceTemplateFiltersCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
@@ -119,29 +119,29 @@ func resourcePipelineFiltersCreateOrUpdate(ctx context.Context, d *schema.Resour
 	var httpResp *http.Response
 
 	id := d.Id()
-	filter := buildPipelineFilter(d)
+	filter := buildTemplateFilter(d)
 
 	if id == "" {
-		resp, httpResp, err = c.FilterApi.PipelinepostFilter(ctx, *filter, c.AccountId)
+		resp, httpResp, err = c.FilterApi.TemplatepostFilter(ctx, *filter, c.AccountId)
 	} else {
-		resp, httpResp, err = c.FilterApi.PipelineupdateFilter(ctx, *filter, c.AccountId)
+		resp, httpResp, err = c.FilterApi.TemplateupdateFilter(ctx, *filter, c.AccountId)
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readPipelineFilter(d, resp.Data)
+	readTemplateFilter(d, resp.Data)
 
 	return nil
 }
 
-func resourcePipelineFiltersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceTemplateFiltersDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	type_ := d.Get("type").(string)
 
-	_, httpResp, err := c.FilterApi.PipelinedeleteFilter(ctx, c.AccountId, d.Id(), type_, &nextgen.FilterApiPipelinedeleteFilterOpts{
+	_, httpResp, err := c.FilterApi.TemplatedeleteFilter(ctx, c.AccountId, d.Id(), type_, &nextgen.FilterApiTemplatedeleteFilterOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -153,7 +153,7 @@ func resourcePipelineFiltersDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func buildPipelineFilter(d *schema.ResourceData) *nextgen.Filter {
+func buildTemplateFilter(d *schema.ResourceData) *nextgen.Filter {
 	filter := &nextgen.Filter{
 		FilterProperties: &nextgen.FilterProperties{},
 	}
@@ -192,7 +192,7 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.Filter {
 	return filter
 }
 
-func readPipelineFilter(d *schema.ResourceData, filter *nextgen.Filter) {
+func readTemplateFilter(d *schema.ResourceData, filter *nextgen.Filter) {
 	d.SetId(filter.Identifier)
 	d.Set("identifier", filter.Identifier)
 	d.Set("org_id", filter.OrgIdentifier)
