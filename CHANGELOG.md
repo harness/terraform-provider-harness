@@ -1,3 +1,9 @@
+# 0.9.0 (November 24,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_azure_key_vault - Added the Azure Key Vault connector resource to the Harness Terraform provider.` ([#287](https://github.com/harness/terraform-provider-harness/issues/287))
+
 # 0.8.4 (November 23,2022) 
 
 ENHANCEMENTS:
