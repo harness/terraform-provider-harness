@@ -2,6 +2,7 @@ package resource_group_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -13,13 +14,14 @@ func TestAccDataSourceResourceGroup(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		resourceName = "data.harness_platform_resource_group.test"
+		accountId    = os.Getenv("HARNESS_ACCOUNT_ID")
 	)
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceResourceGroup(name),
+				Config: testAccDataSourceResourceGroup(name, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -34,7 +36,7 @@ func TestAccDataSourceResourceGroup(t *testing.T) {
 	})
 }
 
-func testAccDataSourceResourceGroup(name string) string {
+func testAccDataSourceResourceGroup(name string, accountId string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_resource_group" "test" {
 		identifier = "%[1]s"
@@ -42,11 +44,11 @@ func testAccDataSourceResourceGroup(name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 
-		account_id = "UKh5Yts7THSMAbccG3HrLA"
+		account_id = "%[2]s"
 		allowed_scope_levels =["account"]
 		included_scopes {
 			filter = "EXCLUDING_CHILD_SCOPES"
-			account_id = "UKh5Yts7THSMAbccG3HrLA"
+			account_id = "%[2]s"
 		}
 		resource_filter {
 			include_all_resources = false
@@ -63,5 +65,5 @@ func testAccDataSourceResourceGroup(name string) string {
 		data "harness_platform_resource_group" "test" {
 			identifier = harness_platform_resource_group.test.identifier
 		}
-	`, name)
+	`, name, accountId)
 }

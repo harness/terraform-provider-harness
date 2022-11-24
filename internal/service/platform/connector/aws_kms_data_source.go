@@ -12,7 +12,7 @@ func DatasourceConnectorAwsKms() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"arn_ref": {
-				Description: "A reference to the Harness secret containing the ARN of the AWS KMS.",
+				Description: "A reference to the Harness secret containing the ARN of the AWS KMS." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -22,13 +22,13 @@ func DatasourceConnectorAwsKms() *schema.Resource {
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"credentials": {
-				Description: "The credentials to use for connecting to aws.",
+				Description: "Credentials to connect to AWS.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
@@ -40,12 +40,12 @@ func DatasourceConnectorAwsKms() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"access_key_ref": {
-										Description: "The reference to the Harness secret containing the AWS access key.",
+										Description: "The reference to the Harness secret containing the AWS access key." + secret_ref_text,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
 									"secret_key_ref": {
-										Description: "The reference to the Harness secret containing the AWS secret key.",
+										Description: "The reference to the Harness secret containing the AWS secret key." + secret_ref_text,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},

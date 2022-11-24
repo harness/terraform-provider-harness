@@ -13,14 +13,13 @@ If you have any questions please open a [new issue](https://github.com/harness/t
 - [Example project](https://github.com/harness/terraform-demo)
 - [Provider usage](https://registry.terraform.io/providers/harness/harness/latest/docs)
 
-
 ## Requirements
 
 -	[Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
--	[Go](https://golang.org/doc/install) >= 1.15
+-	[Go](https://golang.org/doc/install) >= 1.17
 
 ## Documentation
 
 Full, comprehensive documentation is available on the Terraform website:
 
-https://registry.terraform.io/providers/harness/harness/latest/docs
+<https://registry.terraform.io/providers/harness/harness/latest/docs>

@@ -52,7 +52,7 @@ resource "harness_platform_gitops_repository" "example" {
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--repo"></a>
 ### Nested Schema for `repo`

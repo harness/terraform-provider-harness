@@ -6,6 +6,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -40,7 +41,9 @@ func ResourceUserGroupPermissions() *schema.Resource {
 
 func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	id := d.Get("user_group_id").(string)
 	ug, err := c.UserClient.GetUserGroupById(id)
 	if err != nil {
@@ -74,7 +77,9 @@ func resourceUserGroupPermissionsCreateOrUpdate(ctx context.Context, d *schema.R
 
 func resourceUserGroupPermissionsRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	id := d.Get("user_group_id").(string)
 
 	userGroup, err := c.UserClient.GetUserGroupById(id)
@@ -107,7 +112,9 @@ func readUserGroupPermissions(d *schema.ResourceData, userGroup *graphql.UserGro
 
 func resourceUserGroupPermissionsDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	id := d.Id()
 
 	ug, err := c.UserClient.GetUserGroupById(id)

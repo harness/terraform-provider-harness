@@ -3,12 +3,12 @@
 page_title: "harness_platform_triggers Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for craeting triggers in Harness.
+  Resource for creating triggers in Harness.
 ---
 
 # harness_platform_triggers (Resource)
 
-Resource for craeting triggers in Harness.
+Resource for creating triggers in Harness.
 
 ## Example Usage
 

@@ -68,7 +68,9 @@ func ResourceCloudProviderTanzu() *schema.Resource {
 
 func resourceCloudProviderTanzuRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	cp := &cac.PcfCloudProvider{}
 	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
@@ -100,7 +102,9 @@ func readCloudProviderTanzu(c *cd.ApiClient, d *schema.ResourceData, cp *cac.Pcf
 
 func resourceCloudProviderTanzuCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var input *cac.PcfCloudProvider
 	var err error
 

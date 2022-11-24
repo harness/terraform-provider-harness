@@ -48,7 +48,7 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 
 <a id="nestedblock--metadata"></a>
 ### Nested Schema for `metadata`

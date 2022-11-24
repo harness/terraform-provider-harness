@@ -27,11 +27,11 @@ Datasource for looking up a Gitlab connector.
 - `api_authentication` (List of Object) Configuration for using the gitlab api. API Access is Computed for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses. (see [below for nested schema](#nestedatt--api_authentication))
 - `connection_type` (String) Whether the connection we're making is to a gitlab repository or a gitlab account. Valid values are Account, Repo.
 - `credentials` (List of Object) Credentials to use for the connection. (see [below for nested schema](#nestedatt--credentials))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `url` (String) Url of the gitlab repository or account.
+- `url` (String) URL of the gitlab repository or account.
 - `validation_repo` (String) Repository to test the connection with. This is only used when `connection_type` is `Account`.
 
 <a id="nestedatt--api_authentication"></a>

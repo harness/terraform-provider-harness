@@ -20,12 +20,12 @@ Resource for creating a Docker connector.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `type` (String) The type of the docker registry. Valid options are DockerHub, Harbor, Other, Quay
-- `url` (String) The url of the docker registry.
+- `url` (String) The URL of the docker registry.
 
 ### Optional
 
 - `credentials` (Block List, Max: 1) The credentials to use for the docker registry. If not specified then the connection is made to the registry anonymously. (see [below for nested schema](#nestedblock--credentials))
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
@@ -40,11 +40,11 @@ Resource for creating a Docker connector.
 
 Required:
 
-- `password_ref` (String) The reference to the password to use for the docker registry.
+- `password_ref` (String) The reference to the Harness secret containing the password to use for the docker registry. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
 - `username` (String) The username to use for the docker registry.
-- `username_ref` (String) The reference to the username to use for the docker registry.
+- `username_ref` (String) The reference to the Harness secret containing the username to use for the docker registry. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 

@@ -9,7 +9,9 @@ import (
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/terraform-provider-harness/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -59,6 +61,14 @@ func TestAccGetApiClientFromProvider() *internal.Session {
 
 func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context) {
 	return TestAccProvider.Meta().(*internal.Session).GetPlatformClientWithContext(context.Background())
+}
+
+func TestAccGetClientWithContext() (*openapi_client_nextgen.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetClientWithContext(context.Background())
+}
+
+func TestAccGetPolicyManagementClient() *policymgmt.APIClient {
+	return TestAccProvider.Meta().(*internal.Session).GetPolicyManagementClient()
 }
 
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {

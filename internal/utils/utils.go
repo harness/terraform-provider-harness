@@ -8,6 +8,7 @@ import (
 
 const CacDescription string = "This resource uses the config-as-code API's. When updating the `name` or `path` of this resource you should typically also set the `create_before_destroy = true` lifecycle setting."
 const NextgenDescription string = "This resource is part of the Harness nextgen platform."
+const CDClientAPIKeyError = "Please provide the value for FirstGen API Key in the provider configuration's api_key field."
 
 func ConfigAsCodeDescription(descripton string) string {
 	return fmt.Sprintf("%s %s", descripton, CacDescription)

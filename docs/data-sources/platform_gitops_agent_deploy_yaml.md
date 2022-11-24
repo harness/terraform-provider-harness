@@ -38,7 +38,7 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 ### Read-Only
 
-- `id` (String) The Id of this resource.
+- `id` (String) The ID of this resource.
 - `yaml` (String) Deployment YAML of the GitOps agent.
 
 

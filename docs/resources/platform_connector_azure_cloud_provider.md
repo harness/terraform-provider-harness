@@ -115,7 +115,7 @@ resource "harness_platform_connector_azure_cloud_provider" "inherit_from_delegat
 ### Optional
 
 - `azure_environment_type` (String) Specifies the Azure Environment type, which is AZURE by default. Can either be AZURE or AZURE_US_GOVERNMENT
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `org_id` (String) Unique identifier of the Organization.
@@ -189,7 +189,7 @@ Optional:
 
 Optional:
 
-- `certificate_ref` (String) Reference of the secret for the certificate.
+- `certificate_ref` (String) Reference of the secret for the certificate. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--credentials--azure_manual_details--auth--azure_client_secret_key"></a>
@@ -197,7 +197,7 @@ Optional:
 
 Optional:
 
-- `secret_ref` (String) Reference of the secret for the secret key.
+- `secret_ref` (String) Reference of the secret for the secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 

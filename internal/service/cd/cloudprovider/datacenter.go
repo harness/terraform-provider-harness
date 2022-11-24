@@ -33,7 +33,9 @@ func ResourceCloudProviderDataCenter() *schema.Resource {
 
 func resourceCloudProviderDataCenterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	cp := &cac.PhysicalDatacenterCloudProvider{}
 	if err := c.ConfigAsCodeClient.GetCloudProviderById(d.Id(), cp); err != nil {
 		return diag.FromErr(err)
@@ -62,7 +64,9 @@ func readCloudProviderDataCenter(c *cd.ApiClient, d *schema.ResourceData, cp *ca
 
 func resourceCloudProviderDataCenterCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	var input *cac.PhysicalDatacenterCloudProvider
 	var err error
 

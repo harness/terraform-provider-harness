@@ -19,18 +19,18 @@ Resource for creating a Jira connector.
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `password_ref` (String) Reference to a secret containing the password to use for authentication.
-- `url` (String) Url of the Jira server.
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `url` (String) URL of the Jira server.
 
 ### Optional
 
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the Organization.
 - `project_id` (String) Unique identifier of the Project.
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
 - `username` (String) Username to use for authentication.
-- `username_ref` (String) Reference to a secret containing the username to use for authentication.
+- `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ### Read-Only
 
