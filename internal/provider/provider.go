@@ -109,6 +109,7 @@ func Provider(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_azure_key_vault":       connector.DataSourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.DataSourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.DatasourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.DataSourceConnectorAzureCloudCost(),
@@ -186,6 +187,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_azure_key_vault":       connector.ResourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.ResourceConnectorAzureCloudCost(),
