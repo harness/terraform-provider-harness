@@ -1,3 +1,9 @@
+# 0.9.1 (November 24,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_pipeline: Fix error propagation from api ([#318](https://github.com/harness/terraform-provider-harness/issues/318))
+
 # 0.9.0 (November 24,2022) 
 
 FEATURES:
