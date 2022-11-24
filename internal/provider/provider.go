@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -186,6 +187,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_yaml_config":                              yamlconfig.DataSourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.DataSourceConnectorAzureCloudProvider(),
 				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
+				"harness_platform_policy":                          policy.DataSourcePolicy(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_connector_azure_key_vault":       connector.ResourceConnectorAzureKeyVault(),
@@ -277,6 +279,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user":                                     user.ResourceUser(),
 				"harness_yaml_config":                              yamlconfig.ResourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.ResourceConnectorAzureCloudProvider(),
+				"harness_platform_policy":                          policy.ResourcePolicy(),
 			},
 		}
 
