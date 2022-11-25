@@ -24,24 +24,29 @@ func ResourceGitopsGnupg() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "account Identifier for the Entity.",
+				Description: "Account Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"agent_id": {
-				Description: "agent identifier of the cluster.",
+				Description: "Agent identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "organization Identifier for the Entity.",
+				Description: "Organization Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project Identifier for the Entity.",
+				Description: "Project Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
+			},
+			"identifier": {
+				Description: "Identifier for the GnuPG Key.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"request": {
 				Description: "GnuPGPublicKey is a representation of a GnuPG public key",
@@ -50,12 +55,12 @@ func ResourceGitopsGnupg() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
-							Description: "if the gnupg should be upserted.",
+							Description: "Indicates if the GnuPG Key should be inserted if not present or updated if present.",
 							Type:        schema.TypeBool,
 							Required:    true,
 						},
 						"publickey": {
-							Description: "publickey details.",
+							Description: "Public key details.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
@@ -104,16 +109,23 @@ func ResourceGitopsGnupg() *schema.Resource {
 func resourceGitopsGnupgCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	var agentIdentifier, accountIdentifier string
+	var agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier string
 	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
-
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
 	createGnupgRequest := buildGnupgCreateRequest(d)
 	respCreate, httpRespCreate, errCreate := c.GnuPGPKeysApi.AgentGPGKeyServiceCreate(ctx, *createGnupgRequest, agentIdentifier,
 		&nextgen.GnuPGPKeysApiAgentGPGKeyServiceCreateOpts{
 			AccountIdentifier: optional.NewString(accountIdentifier),
+			OrgIdentifier:     optional.NewString(orgIdentifier),
+			ProjectIdentifier: optional.NewString(projectIdentifier),
 		})
 
 	if errCreate != nil {
@@ -128,29 +140,28 @@ func resourceGitopsGnupgCreate(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	respRead, httpRespRead, errRead := c.GnuPGPKeysApi.GnuPGKeyServiceListGPGKeys(ctx, c.AccountId, &nextgen.GPGKeysApiGnuPGKeyServiceListGPGKeysOpts{})
-
-	if errRead != nil {
-		return helpers.HandleApiError(errRead, d, httpRespRead)
-	}
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &respRead == nil || respRead.Content == nil || &respRead.Content[0] == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-	readGnupgKey(d, respRead.Content[0].GnuPGPublicKey)
+	readGnupgKeyCreate(d, &respCreate, accountIdentifier, agentIdentifier, orgIdentifier, projectIdentifier)
 	return nil
 }
 
 func resourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	agentIdentifier := d.Get("agent_id").(string)
-	keyId := d.Get("request.0.publickey.0.key_id").(string)
-
-	resp, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceGet(ctx, agentIdentifier, keyId, c.AccountId, &nextgen.GnuPGPKeysApiAgentGPGKeyServiceGetOpts{})
+	var agentIdentifier, orgIdentifier, projectIdentifier string
+	keyId := d.Get("identifier").(string)
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	resp, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceGet(ctx, agentIdentifier, keyId, c.AccountId, &nextgen.GnuPGPKeysApiAgentGPGKeyServiceGetOpts{
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+	})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -163,18 +174,29 @@ func resourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta i
 		d.MarkNewResource()
 		return nil
 	}
-	readGnupgKey(d, &resp)
+	readGnupgKey(d, &resp, c.AccountId, agentIdentifier, orgIdentifier, projectIdentifier)
 	return nil
 }
 
 func resourceGitopsGnupgDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	agentIdentifier := d.Get("agent_id").(string)
-	keyId := d.Get("request.0.publickey.0.key_id").(string)
+	var agentIdentifier, orgIdentifier, projectIdentifier string
+	keyId := d.Get("identifier").(string)
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
 
 	_, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceDelete(ctx, agentIdentifier, keyId, &nextgen.GnuPGPKeysApiAgentGPGKeyServiceDeleteOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
 	})
 
 	if err != nil {
@@ -183,8 +205,17 @@ func resourceGitopsGnupgDelete(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func readGnupgKey(d *schema.ResourceData, gpgkey *nextgen.GpgkeysGnuPgPublicKey) {
-	d.SetId("1234")
+func readGnupgKeyCreate(d *schema.ResourceData, gpgKey *nextgen.GpgkeysGnuPgPublicKeyCreateResponse, accountIdentifier string, agentIdentifier string, orgIdentifier string, projectIdentifier string) {
+	readGnupgKey(d, &gpgKey.Created.Items[0], accountIdentifier, agentIdentifier, orgIdentifier, projectIdentifier)
+}
+
+func readGnupgKey(d *schema.ResourceData, gpgkey *nextgen.GpgkeysGnuPgPublicKey, accountIdentifier string, agentIdentifier string, orgIdentifier string, projectIdentifier string) {
+	d.SetId(gpgkey.KeyID)
+	d.Set("identifier", gpgkey.KeyID)
+	d.Set("account_id", accountIdentifier)
+	d.Set("agent_id", agentIdentifier)
+	d.Set("org_id", orgIdentifier)
+	d.Set("project_id", projectIdentifier)
 	request := map[string]interface{}{}
 	requestList := []interface{}{}
 	publickey := map[string]interface{}{}

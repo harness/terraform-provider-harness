@@ -2,6 +2,7 @@ package gnupg
 
 import (
 	"context"
+	"github.com/antihax/optional"
 
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -19,22 +20,27 @@ func DataSourceGitopsGnupg() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
-				Description: "account Identifier for the Entity.",
+				Description: "Account Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "organization Identifier for the Entity.",
+				Description: "Organization Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project Identifier for the Entity.",
+				Description: "Project Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"agent_id": {
-				Description: "agent identifier.",
+				Description: "Agent identifier for the GnuPG Key.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"identifier": {
+				Description: "Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -45,12 +51,12 @@ func DataSourceGitopsGnupg() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
-							Description: "if the gnupg should be upserted.",
+							Description: "Indicates if the GnuPG Key should be inserted if not present or updated if present.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 						"publickey": {
-							Description: "publickey details.",
+							Description: "Public key details.",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
@@ -99,11 +105,23 @@ func DataSourceGitopsGnupg() *schema.Resource {
 
 func dataSourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	// agentIdentifier := d.Get("agent_id").(string)
+	var agentIdentifier, orgIdentifier, projectIdentifier string
+	keyId := d.Get("identifier").(string)
+	if attr, ok := d.GetOk("agent_id"); ok {
+		agentIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
 
-	resp, httpResp, err := c.GnuPGPKeysApi.GnuPGKeyServiceListGPGKeys(ctx, c.AccountId, &nextgen.GPGKeysApiGnuPGKeyServiceListGPGKeysOpts{})
+	resp, httpResp, err := c.GnuPGPKeysApi.AgentGPGKeyServiceGet(ctx, agentIdentifier, keyId, c.AccountId, &nextgen.GnuPGPKeysApiAgentGPGKeyServiceGetOpts{
+		OrgIdentifier:     optional.NewString(orgIdentifier),
+		ProjectIdentifier: optional.NewString(projectIdentifier),
+	})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -111,12 +129,11 @@ func dataSourceGitopsGnupgRead(ctx context.Context, d *schema.ResourceData, meta
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil || resp.Content == nil || &resp.Content[0] == nil {
+	if &resp == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
 	}
-
-	readGnupgKey(d, resp.Content[0].GnuPGPublicKey)
+	readGnupgKey(d, &resp, c.AccountId, agentIdentifier, orgIdentifier, projectIdentifier)
 	return nil
 }
