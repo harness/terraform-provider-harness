@@ -71,7 +71,7 @@ type Configuration struct {
 
 func NewConfiguration() *Configuration {
 	logger := logging.NewLogger()
-	if helpers.EnvVars.DebugEnabled.Get() == "true" {
+	if helpers.EnvVars.TfLog.Get() == "DEBUG" {
 		logger.SetLevel(log.DebugLevel)
 	}
 
