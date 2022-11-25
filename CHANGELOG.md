@@ -1,6 +1,6 @@
 
-<a name="0.2.30"></a>
-## 0.2.30 (2022-11-23)
+<a name="0.3.0"></a>
+## 0.3.0 (2022-11-25)
 
 ### Add
 
@@ -75,10 +75,6 @@
 
 * Handling different kinds of errors
 
-### Implement
-
-* Implement new cac delete method
-
 ### Implemented
 
 * Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
@@ -101,6 +97,8 @@
 
 ### Release
 
+* Release version 0.2.30 11-23-2022
+* Release v0.2.30
 * Release version v0.2.29 11-23-2022
 * Release vv0.2.29
 * Release version 0.2.28 11-23-2022
@@ -160,7 +158,6 @@
 * Release version 0.2.1 09-21-2022
 * Release v0.2.1
 * Release version 0.2.0 09-15-2022
-* Release v0.2.0
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -189,8 +186,6 @@
 * Release v0.1.18
 * Release version v0.1.18 03-25-2022
 * Release vv0.1.18
-* Release version 0.1.17 03-24-2022
-* Release v0.1.17
 
 ### Removing
 
@@ -220,6 +215,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#238](https://github.com/harness/harness-go-sdk/issues/238) from harness/SPG-435
 * Merge pull request [#202](https://github.com/harness/harness-go-sdk/issues/202) from tphoney/policy-mgmt
 * Merge pull request [#233](https://github.com/harness/harness-go-sdk/issues/233) from harness/CDS-45294-spot-connector-go-sdk
 * Merge pull request [#231](https://github.com/harness/harness-go-sdk/issues/231) from harness/CDS-45294-spot-connector-go-sdk
@@ -257,6 +253,4 @@
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
-* Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
-* Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 
