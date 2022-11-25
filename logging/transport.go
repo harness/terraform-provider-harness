@@ -8,6 +8,7 @@ import (
 	"net/http/httputil"
 	"strings"
 
+	"github.com/harness/harness-go-sdk/harness/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,7 +23,7 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if IsDebugOrHigher(t.logger) {
 		reqData, err := httputil.DumpRequestOut(req, true)
 		if err == nil {
-			t.logger.Debugf(logReqMsg, t.name, prettyPrintJsonLines(reqData))
+			t.logger.Debugf(logReqMsg, t.name, MaskAPIKey(prettyPrintJsonLines(reqData)))
 		} else {
 			t.logger.Errorf("%s API Request error: %#v", t.name, err)
 		}
@@ -36,13 +37,25 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if IsDebugOrHigher(t.logger) {
 		respData, err := httputil.DumpResponse(resp, true)
 		if err == nil {
-			t.logger.Debugf(logRespMsg, t.name, prettyPrintJsonLines(respData))
+			t.logger.Debugf(logRespMsg, t.name, MaskAPIKey(prettyPrintJsonLines(respData)))
 		} else {
 			t.logger.Errorf("%s API Response error: %#v", t.name, err)
 		}
 	}
 
 	return resp, nil
+}
+
+func MaskAPIKey(stringToMask string) string {
+	apiKey := helpers.EnvVars.ApiKey.Get()
+	platformApiKey := helpers.EnvVars.PlatformApiKey.Get()
+	if apiKey != "" {
+		stringToMask = strings.ReplaceAll(stringToMask, apiKey, "****")
+	}
+	if platformApiKey != "" {
+		stringToMask = strings.ReplaceAll(stringToMask, platformApiKey, "****")
+	}
+	return stringToMask
 }
 
 func NewTransport(name string, logger *log.Logger, t http.RoundTripper) *transport {
