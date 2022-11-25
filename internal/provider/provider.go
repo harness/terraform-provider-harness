@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
+	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -23,6 +25,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/secrets"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/service"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/sso"
+	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
@@ -43,6 +46,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
@@ -55,10 +59,11 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 
+	"github.com/harness/harness-go-sdk/logging"
+	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -108,6 +113,7 @@ func Provider(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_azure_key_vault":       connector.DataSourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.DataSourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.DatasourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.DataSourceConnectorAzureCloudCost(),
@@ -133,6 +139,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_pagerduty":             connector.DatasourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.DatasourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":                connector.DatasourceConnectorSplunk(),
+				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_current_user":                    pl_user.DataSourceCurrentUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
@@ -167,6 +174,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_variables":                       variables.DataSourceVariables(),
 				"harness_platform_connector_vault":                 connector.DataSourceConnectorVault(),
 				"harness_platform_filters":                         filters.DataSourceFilters(),
+				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                 delegate.DataSourceDelegate(),
@@ -181,8 +189,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user_group":                               user.DataSourceUserGroup(),
 				"harness_user":                                     user.DataSourceUser(),
 				"harness_yaml_config":                              yamlconfig.DataSourceYamlConfig(),
+				"harness_platform_connector_azure_cloud_provider":  connector.DataSourceConnectorAzureCloudProvider(),
+				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
+				"harness_platform_policy":                          policy.DataSourcePolicy(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_connector_azure_key_vault":       connector.ResourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.ResourceConnectorAzureCloudCost(),
@@ -209,6 +221,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_pagerduty":             connector.ResourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.ResourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":                connector.ResourceConnectorSplunk(),
+				"harness_platform_connector_spot":                  connector.ResourceConnectorSpot(),
 				"harness_platform_connector_sumologic":             connector.ResourceConnectorSumologic(),
 				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
@@ -240,6 +253,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_variables":                       variables.ResourceVariables(),
 				"harness_platform_connector_vault":                 connector.ResourceConnectorVault(),
 				"harness_platform_filters":                         filters.ResourceFilters(),
+				"harness_platform_pipeline_filters":                pipeline_filters.ResourcePipelineFilters(),
 				"harness_add_user_to_group":                        user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                      application.ResourceApplicationGitSync(),
 				"harness_application":                              application.ResourceApplication(),
@@ -270,6 +284,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user":                                     user.ResourceUser(),
 				"harness_yaml_config":                              yamlconfig.ResourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.ResourceConnectorAzureCloudProvider(),
+				"harness_platform_policy":                          policy.ResourcePolicy(),
 			},
 		}
 
@@ -279,9 +294,16 @@ func Provider(version string) func() *schema.Provider {
 	}
 }
 
-func getHttpClient() *retryablehttp.Client {
+func getHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
-	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.RetryMax = 10
+	return httpClient
+}
+
+func getOpenApiHttpClient(logger *logrus.Logger) *retryablehttp.Client {
+	httpClient := retryablehttp.NewClient()
+	httpClient.HTTPClient.Transport = openapi_client_logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
 	return httpClient
 }
@@ -292,8 +314,8 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 	cfg.Endpoint = d.Get("endpoint").(string)
 	cfg.APIKey = d.Get("api_key").(string)
 	cfg.UserAgent = fmt.Sprintf("terraform-provider-harness-%s", version)
-	cfg.HTTPClient = getHttpClient()
-	cfg.DebugLogging = logging.IsDebugOrHigher()
+	cfg.HTTPClient = getHttpClient(cfg.Logger)
+	cfg.DebugLogging = logging.IsDebugOrHigher(cfg.Logger)
 
 	client, err := cd.NewClient(cfg)
 
@@ -305,26 +327,28 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 }
 
 func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
+	cfg := nextgen.NewConfiguration()
 	client := nextgen.NewAPIClient(&nextgen.Configuration{
 		AccountId:    d.Get("account_id").(string),
 		BasePath:     d.Get("endpoint").(string),
 		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:   getHttpClient(),
-		DebugLogging: logging.IsDebugOrHigher(),
+		HTTPClient:   getHttpClient(cfg.Logger),
+		DebugLogging: logging.IsDebugOrHigher(cfg.Logger),
 	})
 
 	return client
 }
 
 func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.APIClient {
+	cfg := openapi_client_nextgen.NewConfiguration()
 	client := openapi_client_nextgen.NewAPIClient(&openapi_client_nextgen.Configuration{
 		AccountId:    d.Get("account_id").(string),
 		BasePath:     d.Get("endpoint").(string),
 		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:   getHttpClient(),
-		DebugLogging: logging.IsDebugOrHigher(),
+		HTTPClient:   getOpenApiHttpClient(cfg.Logger),
+		DebugLogging: openapi_client_logging.IsDebugOrHigher(cfg.Logger),
 	})
 
 	return client

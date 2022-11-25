@@ -113,6 +113,7 @@ func testAccDataSourceUserGroupByName(id string, name string) string {
 			notification_configs {
 				type = "EMAIL"
 				group_email = "email@email.com"
+				send_email_to_all_users = true
 			}
 			notification_configs {
 				type = "MSTEAMS"

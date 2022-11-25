@@ -1,3 +1,22 @@
+# 0.9.1 (November 24,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_pipeline: Fix error propagation from api ([#318](https://github.com/harness/terraform-provider-harness/issues/318))
+
+# 0.9.0 (November 24,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_azure_key_vault - Added the Azure Key Vault connector resource to the Harness Terraform provider.` ([#287](https://github.com/harness/terraform-provider-harness/issues/287))
+
+# 0.8.4 (November 23,2022) 
+
+ENHANCEMENTS:
+
+* data-source/harness_trigger: - Added data source for trigger in first gen ([#309](https://github.com/harness/terraform-provider-harness/issues/309))
+* platform_user_group - Added support for "Send email to all users" in user group notification configuration. ([#313](https://github.com/harness/terraform-provider-harness/issues/313))
+
 # 0.8.3 (November 14,2022)
 
 FEATURES:

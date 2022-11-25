@@ -5,6 +5,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/cd"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 )
 
@@ -34,4 +35,12 @@ func (s *Session) GetClientWithContext(ctx context.Context) (*openapi_client_nex
 	}
 
 	return s.Client.WithAuthContext(ctx)
+}
+
+func (s *Session) GetPolicyManagementClient() *policymgmt.APIClient {
+	c := policymgmt.NewAPIClient(
+		policymgmt.NewConfiguration(),
+	)
+	c.ChangeBasePath(s.Endpoint + "/pm")
+	return c
 }
