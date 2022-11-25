@@ -7,6 +7,7 @@ import (
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
+	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -57,10 +58,11 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 
+	"github.com/harness/harness-go-sdk/logging"
+	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -289,9 +291,16 @@ func Provider(version string) func() *schema.Provider {
 	}
 }
 
-func getHttpClient() *retryablehttp.Client {
+func getHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
-	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.RetryMax = 10
+	return httpClient
+}
+
+func getOpenApiHttpClient(logger *logrus.Logger) *retryablehttp.Client {
+	httpClient := retryablehttp.NewClient()
+	httpClient.HTTPClient.Transport = openapi_client_logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
 	return httpClient
 }
@@ -302,8 +311,8 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 	cfg.Endpoint = d.Get("endpoint").(string)
 	cfg.APIKey = d.Get("api_key").(string)
 	cfg.UserAgent = fmt.Sprintf("terraform-provider-harness-%s", version)
-	cfg.HTTPClient = getHttpClient()
-	cfg.DebugLogging = logging.IsDebugOrHigher()
+	cfg.HTTPClient = getHttpClient(cfg.Logger)
+	cfg.DebugLogging = logging.IsDebugOrHigher(cfg.Logger)
 
 	client, err := cd.NewClient(cfg)
 
@@ -315,26 +324,28 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 }
 
 func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
+	cfg := nextgen.NewConfiguration()
 	client := nextgen.NewAPIClient(&nextgen.Configuration{
 		AccountId:    d.Get("account_id").(string),
 		BasePath:     d.Get("endpoint").(string),
 		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:   getHttpClient(),
-		DebugLogging: logging.IsDebugOrHigher(),
+		HTTPClient:   getHttpClient(cfg.Logger),
+		DebugLogging: logging.IsDebugOrHigher(cfg.Logger),
 	})
 
 	return client
 }
 
 func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.APIClient {
+	cfg := openapi_client_nextgen.NewConfiguration()
 	client := openapi_client_nextgen.NewAPIClient(&openapi_client_nextgen.Configuration{
 		AccountId:    d.Get("account_id").(string),
 		BasePath:     d.Get("endpoint").(string),
 		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:   getHttpClient(),
-		DebugLogging: logging.IsDebugOrHigher(),
+		HTTPClient:   getOpenApiHttpClient(cfg.Logger),
+		DebugLogging: openapi_client_logging.IsDebugOrHigher(cfg.Logger),
 	})
 
 	return client
