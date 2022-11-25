@@ -19,4 +19,9 @@ resource "harness_platform_gitops_cluster" "example" {
 
     }
   }
+  lifecycle {
+    ignore_changes = [
+      request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+    ]
+  }
 }
