@@ -25,8 +25,8 @@ data "harness_platform_connector_gcp_secret_manager" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
@@ -35,6 +35,6 @@ data "harness_platform_connector_gcp_secret_manager" "example" {
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `is_default` (Boolean) Indicative if this is default Secret manager for secrets.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 

@@ -10,9 +10,11 @@ description: |-
 
 Data source for retrieving a Harness Filter. This data source allow to fetch filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}
 
+## Example Usage
+
 ```terraform
-data "harness_platform_variable" "test" {
-  identifier  = "identifier"
+data "harness_platform_filters" "test" {
+  identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
   type       = "Connector"

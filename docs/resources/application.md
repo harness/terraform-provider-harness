@@ -35,7 +35,7 @@ resource "harness_application" "myapp" {
 
 - `description` (String) The application description
 - `is_manual_trigger_authorized` (Boolean) When this is set to true, all manual triggers will require API Key authorization
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 

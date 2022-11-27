@@ -14,6 +14,7 @@ Data source for retrieving a GitOps RepoCert.
 
 ```terraform
 data "harness_platform_gitops_repo_cert" "test" {
+  identifier = "identifier"
   account_id = "account_id"
   project_id = "project_id"
   org_id     = "org_id"
@@ -26,13 +27,13 @@ data "harness_platform_gitops_repo_cert" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the Repository Certificates.
+- `account_id` (String) account identifier of the Repository Certificates.
 
 ### Optional
 
-- `agent_id` (String) Agent identifier of the Repository Certificates.
-- `org_id` (String) Organization identifier of the Repository Certificates.
-- `project_id` (String) Project identifier of the Repository Certificates.
+- `agent_id` (String) agent identifier of the Repository Certificates.
+- `org_id` (String) organization identifier of the Repository Certificates.
+- `project_id` (String) project identifier of the Repository Certificates.
 
 ### Read-Only
 

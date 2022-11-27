@@ -124,15 +124,15 @@ resource "harness_platform_pipeline" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `yaml` (String) YAML of the pipeline.
 
 ### Optional
 
 - `description` (String) Description of the resource.
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `template_applied` (Boolean) If true, returns Pipeline YAML with Templates applied on it.
 - `template_applied_pipeline_yaml` (String) Pipeline YAML after resolving Templates (returned as a String).
 
@@ -160,6 +160,6 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using pipeline id
-terraform import harness_platform_pipeline.example <pipeline_id>
+# Import pipeline
+terraform import harness_platform_pipeline.example <org_id>/<project_id>/<pipeline_id>
 ```
