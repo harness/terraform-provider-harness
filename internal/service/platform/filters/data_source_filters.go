@@ -15,7 +15,7 @@ import (
 
 func DataSourceFilters() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Filter. This data sources allows you to fetch filters of the following types:: {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}",
+		Description: "Data source for retrieving a Harness Filter. This data source allows you to fetch filters of the following types: {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}",
 
 		ReadContext: dataSourceFiltersRead,
 
