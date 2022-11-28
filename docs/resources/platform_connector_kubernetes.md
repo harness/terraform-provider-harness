@@ -108,10 +108,10 @@ resource "harness_platform_connector_kubernetes" "inheritFromDelegate" {
 - `description` (String) Description of the resource.
 - `inherit_from_delegate` (Block List, Max: 1) Credentials are inherited from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `openid_connect` (Block List, Max: 1) OpenID configuration for the connector. (see [below for nested schema](#nestedblock--openid_connect))
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `service_account` (Block List, Max: 1) Service account for the connector. (see [below for nested schema](#nestedblock--service_account))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `username_password` (Block List, Max: 1) Username and password for the connector. (see [below for nested schema](#nestedblock--username_password))
 
 ### Read-Only
@@ -187,6 +187,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using kubernetes connector id
+# Import account level kubernetes connector 
 terraform import harness_platform_connector_kubernetes.example <connector_id>
+
+# Import org level kubernetes connector 
+terraform import harness_platform_connector_kubernetes.example <ord_id>/<connector_id>
+
+# Import project level kubernetes connector 
+terraform import harness_platform_connector_kubernetes.example <org_id>/<project_id>/<connector_id>
 ```

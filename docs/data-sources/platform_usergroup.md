@@ -33,8 +33,8 @@ data "harness_platform_usergroup" "example_by_name" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
@@ -48,7 +48,7 @@ data "harness_platform_usergroup" "example_by_name" {
 - `sso_group_id` (String) Identifier of the userGroup in SSO.
 - `sso_group_name` (String) Name of the SSO userGroup.
 - `sso_linked` (Boolean) Whether sso is linked or not.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `users` (Set of String) List of users in the UserGroup.
 
 <a id="nestedblock--notification_configs"></a>

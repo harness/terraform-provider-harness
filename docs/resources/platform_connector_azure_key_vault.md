@@ -49,9 +49,9 @@ resource "harness_platform_connector_azure_key_vault" "example" {
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `is_default` (Boolean) Specifies whether or not is the default value.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -62,6 +62,12 @@ resource "harness_platform_connector_azure_key_vault" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using azure key vault connector id
+# Import account level azure key vault connector 
 terraform import harness_platform_connector_azure_key_vault.example <connector_id>
+
+# Import org level azure key vault connector 
+terraform import harness_platform_connector_azure_key_vault.example <ord_id>/<connector_id>
+
+# Import project level azure key vault connector 
+terraform import harness_platform_connector_azure_key_vault.example <org_id>/<project_id>/<connector_id>
 ```

@@ -150,12 +150,12 @@ resource "harness_platform_usergroup" "sso_type_ldap" {
 - `linked_sso_id` (String) The SSO account ID that the user group is linked to.
 - `linked_sso_type` (String) Type of linked SSO.
 - `notification_configs` (Block List) List of notification settings. (see [below for nested schema](#nestedblock--notification_configs))
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `sso_group_id` (String) Identifier of the userGroup in SSO.
 - `sso_group_name` (String) Name of the SSO userGroup.
 - `sso_linked` (Boolean) Whether sso is linked or not.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `users` (Set of String) List of users in the UserGroup.
 
 ### Read-Only
@@ -179,6 +179,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using user group id
+# Import account level user group
 terraform import harness_platform_usergroup.example <usergroup_id>
+
+# Import org level user group
+terraform import harness_platform_usergroup.example <ord_id>/<usergroup_id>
+
+# Import project level user group
+terraform import harness_platform_usergroup.example <org_id>/<project_id>/<usergroup_id>
 ```

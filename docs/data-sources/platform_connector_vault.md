@@ -25,8 +25,8 @@ data "harness_platform_connector_vault" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
@@ -52,7 +52,7 @@ data "harness_platform_connector_vault" "example" {
 - `secret_id` (String) ID of the Secret.
 - `service_account_token_path` (String) The SA token path where the token is mounted in the K8s Pod.
 - `sink_path` (String) The location at which auth token is to be read from.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `use_aws_iam` (Boolean) Boolean value to indicate if AWS IAM is used for authentication.
 - `use_k8s_auth` (Boolean) Boolean value to indicate if K8s Auth is used for authentication.
 - `use_vault_agent` (Boolean) Boolean value to indicate if Vault Agent is used for authentication.

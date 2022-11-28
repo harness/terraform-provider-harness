@@ -46,10 +46,10 @@ resource "harness_platform_connector_prometheus" "example" {
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `headers` (Block Set) Headers. (see [below for nested schema](#nestedblock--headers))
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 - `password_ref` (String) Reference to the Harness secret containing the password. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 - `user_name` (String) User name.
 
 ### Read-Only
@@ -74,6 +74,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using prometheus connector id
+# Import account level prometheus connector 
 terraform import harness_platform_connector_prometheus.example <connector_id>
+
+# Import org level prometheus connector 
+terraform import harness_platform_connector_prometheus.example <ord_id>/<connector_id>
+
+# Import project level prometheus connector 
+terraform import harness_platform_connector_prometheus.example <org_id>/<project_id>/<connector_id>
 ```

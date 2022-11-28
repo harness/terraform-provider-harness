@@ -53,9 +53,9 @@ resource "harness_platform_input_set" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -66,6 +66,6 @@ resource "harness_platform_input_set" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using input set id
-terraform import harness_platform_input_set.example <input_set_id>
+# Import input set 
+terraform import harness_platform_input_set.example <org_id>/<project_id>/<pipeline_id>/<input_set_id>
 ```

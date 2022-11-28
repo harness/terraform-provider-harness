@@ -36,9 +36,9 @@ resource "harness_platform_service_account" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -49,6 +49,12 @@ resource "harness_platform_service_account" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using secret sshkey id
+# Import account level service account
 terraform import harness_platform_service_account.example <service_account_id>
+
+# Import org level service account
+terraform import harness_platform_service_account.example <ord_id>/<service_account_id>
+
+# Import project level service account
+terraform import harness_platform_service_account.example <org_id>/<project_id>/<service_account_id>
 ```

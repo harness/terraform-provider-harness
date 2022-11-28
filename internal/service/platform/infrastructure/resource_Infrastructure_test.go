@@ -30,6 +30,7 @@ func TestAccResourceInfrastructure(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
 				),
 			},
 			{
@@ -37,6 +38,7 @@ func TestAccResourceInfrastructure(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
 				),
 			},
 			{
@@ -150,7 +152,6 @@ func testAccResourceInfrastructure(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
 			type = "KubernetesDirect"
-			deployment_type = "Kubernetes"
 			yaml = <<-EOT
 			   infrastructureDefinition:
          name: "%[2]s"

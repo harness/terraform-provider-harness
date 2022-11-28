@@ -47,9 +47,9 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 
 - `billing_export_spec` (Block List, Max: 1) Returns billing details for the Azure account. (see [below for nested schema](#nestedblock--billing_export_spec))
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -71,6 +71,12 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-# Import using azure cloud cost connector id
+# Import account level azure cloud cost connector 
 terraform import harness_platform_connector_azure_cloud_cost.example <connector_id>
+
+# Import org level azure cloud cost connector 
+terraform import harness_platform_connector_azure_cloud_cost.example <ord_id>/<connector_id>
+
+# Import project level azure cloud cost connector 
+terraform import harness_platform_connector_azure_cloud_cost.example <org_id>/<project_id>/<connector_id>
 ```

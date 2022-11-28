@@ -60,8 +60,8 @@ resource "harness_platform_triggers" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `target_id` (String) Identifier of the target pipeline
 - `yaml` (String) trigger yaml
 
@@ -70,7 +70,7 @@ resource "harness_platform_triggers" "example" {
 - `description` (String) Description of the resource.
 - `if_match` (String) if-Match
 - `ignore_error` (Boolean) ignore error default false
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -81,6 +81,6 @@ resource "harness_platform_triggers" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using trigger id
-terraform import harness_platform_triggers.example <triggers_id>
+# Import trigger 
+terraform import harness_platform_triggers.example <org_id>/<project_id>/<target_id>/<triggers_id>
 ```
