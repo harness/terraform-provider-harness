@@ -15,7 +15,6 @@ Resource for creating role assignments in Harness.
 ```terraform
 //To create a role binding in service account
 resource "harness_platform_role_assignments" "example1" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -30,7 +29,6 @@ resource "harness_platform_role_assignments" "example1" {
 
 //To create a role binding in user group 
 resource "harness_platform_role_assignments" "example1" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -58,7 +56,6 @@ resource "harness_platform_role_assignments" "example2" {
 }
 
 resource "harness_platform_role_assignments" "example2" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -72,7 +69,6 @@ resource "harness_platform_role_assignments" "example2" {
 }
 
 resource "harness_platform_role_assignments" "example2" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
