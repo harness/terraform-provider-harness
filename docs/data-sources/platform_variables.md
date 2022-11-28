@@ -13,7 +13,7 @@ Data source for retrieving a Harness Variable.
 ## Example Usage
 
 ```terraform
-data "harness_platform_usergroup" "example" {
+data "harness_platform_variables" "example" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"

@@ -1,2 +1,2 @@
-# Import using infrastructure id
-terraform import harness_platform_infrastructure.example <infrastructure_id>
+# Import infrastructure
+terraform import harness_platform_infrastructure.example <org_id>/<project_id>/<env_id>/<infrastructure_id>

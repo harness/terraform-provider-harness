@@ -50,8 +50,8 @@ resource "harness_platform_infrastructure" "example" {
 - `env_id` (String) environment identifier.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment.
 - `yaml` (String) Infrastructure YAML
 
@@ -59,7 +59,7 @@ resource "harness_platform_infrastructure" "example" {
 
 - `deployment_type` (String) Infrastructure deployment type. Valid values are Kubernetes, NativeHelm, Ssh, WinRm, ServerlessAwsLambda, AzureWebApp, Custom, ECS.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -70,6 +70,6 @@ resource "harness_platform_infrastructure" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using infrastructure id
-terraform import harness_platform_infrastructure.example <infrastructure_id>
+# Import infrastructure
+terraform import harness_platform_infrastructure.example <org_id>/<project_id>/<env_id>/<infrastructure_id>
 ```

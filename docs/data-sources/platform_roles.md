@@ -28,14 +28,14 @@ data "harness_platform_roles" "example" {
 - `allowed_scope_levels` (Set of String) The scope levels at which this role can be used
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 - `permissions` (Set of String) List of the permission identifiers
-- `project_id` (String) Unique identifier of the Project.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 

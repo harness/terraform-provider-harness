@@ -53,10 +53,10 @@ resource "harness_platform_resource_group" "test" {
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
 - `included_scopes` (Block Set) Included scopes (see [below for nested schema](#nestedblock--included_scopes))
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `resource_filter` (Block List) Contains resource filter for a resource group (see [below for nested schema](#nestedblock--resource_filter))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -109,6 +109,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using resource group id
+# Import account level resource group
 terraform import harness_platform_resource_group.example <resource_group_id>
+
+# Import org level resource group
+terraform import harness_platform_resource_group.example <ord_id>/<resource_group_id>
+
+# Import project level resource group
+terraform import harness_platform_resource_group.example <org_id>/<project_id>/<resource_group_id>
 ```

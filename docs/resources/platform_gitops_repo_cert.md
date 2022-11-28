@@ -38,14 +38,14 @@ resource "harness_platform_gitops_repo_cert" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the Repository Certificates.
-- `agent_id` (String) Agent identifier of the Repository Certificates.
+- `account_id` (String) account identifier of the Repository Certificates.
+- `agent_id` (String) agent identifier of the Repository Certificates.
 - `request` (Block List, Min: 1) Repository Certificates create/Update request. (see [below for nested schema](#nestedblock--request))
 
 ### Optional
 
-- `org_id` (String) Organization identifier of the Repository Certificates.
-- `project_id` (String) Project identifier of the Repository Certificates.
+- `org_id` (String) organization identifier of the Repository Certificates.
+- `project_id` (String) project identifier of the Repository Certificates.
 
 ### Read-Only
 
@@ -56,8 +56,8 @@ resource "harness_platform_gitops_repo_cert" "example" {
 
 Optional:
 
-- `certificates` (Block List) Certificates details. (see [below for nested schema](#nestedblock--request--certificates))
-- `upsert` (Boolean) Indicates if the GitOps Repository Certificates should be updated if existing and inserted if not.
+- `certificates` (Block List) certificates details. (see [below for nested schema](#nestedblock--request--certificates))
+- `upsert` (Boolean) if the Repository Certificates should be upserted.
 
 <a id="nestedblock--request--certificates"></a>
 ### Nested Schema for `request.certificates`
@@ -65,7 +65,7 @@ Optional:
 Optional:
 
 - `items` (Block List) List of certificates to be processed. (see [below for nested schema](#nestedblock--request--certificates--items))
-- `metadata` (Block List) Metadata details. (see [below for nested schema](#nestedblock--request--certificates--metadata))
+- `metadata` (Block List) metadata details (see [below for nested schema](#nestedblock--request--certificates--metadata))
 
 <a id="nestedblock--request--certificates--items"></a>
 ### Nested Schema for `request.certificates.items`
@@ -84,10 +84,10 @@ Optional:
 
 Optional:
 
-- `continue` (String) Continue may be set if the user set a limit on the number of items returned.
-- `remaining_item_count` (String) Subsequent items in the list.
-- `resource_version` (String) Identifies the server's internal version.
-- `self_link` (String) SelfLink is a URL representing this object.
+- `continue` (String) continue may be set if the user set a limit on the number of items returned.
+- `remaining_item_count` (String) subsequent items in the list.
+- `resource_version` (String) dentifies the server's internal version.
+- `self_link` (String) selfLink is a URL representing this object.
 
 ## Import
 
