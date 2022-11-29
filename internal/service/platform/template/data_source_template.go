@@ -186,14 +186,16 @@ func readDataTemplate(d *schema.ResourceData, template nextgen.TemplateWithInput
 	d.Set("connector_ref", template.Template.ConnectorRef)
 	d.Set("child_type", template.Template.ChildType)
 	if template.Template.GitDetails != nil {
-		d.Set("git_details", map[string]interface{}{
-			"branch_name":    template.Template.GitDetails.BranchName,
-			"file_path":      template.Template.GitDetails.FilePath,
-			"repo_name":      template.Template.GitDetails.RepoName,
-			"repo_url":       template.Template.GitDetails.RepoUrl,
-			"file_url":       template.Template.GitDetails.FileUrl,
-			"last_commit_id": template.Template.GitDetails.CommitId,
-			"last_object_id": template.Template.GitDetails.ObjectId,
+		d.Set("git_details", []map[string]interface{}{
+			{
+				"branch_name":    template.Template.GitDetails.BranchName,
+				"file_path":      template.Template.GitDetails.FilePath,
+				"repo_name":      template.Template.GitDetails.RepoName,
+				"repo_url":       template.Template.GitDetails.RepoUrl,
+				"file_url":       template.Template.GitDetails.FileUrl,
+				"last_commit_id": template.Template.GitDetails.CommitId,
+				"last_object_id": template.Template.GitDetails.ObjectId,
+			},
 		})
 	}
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceTemplate(t *testing.T) {
+func TestAccResourceTemplateProjectScope(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", id)
@@ -25,17 +25,58 @@ func TestAccResourceTemplate(t *testing.T) {
 		CheckDestroy:      testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceTemplate(id, name),
+				Config: testAccResourceTemplateProjectScope(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
 			{
-				Config: testAccResourceTemplate(id, updatedName),
+				Config: testAccResourceTemplateProjectScope(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplateProjectScopeInline(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", id)
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateProjectScopeInline(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				Config: testAccResourceTemplateProjectScopeInline(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
 			{
@@ -66,6 +107,7 @@ func TestAccResourceTemplate_OrgScope(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
 			{
@@ -73,6 +115,46 @@ func TestAccResourceTemplate_OrgScope(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_OrgScopeInline(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", id)
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateOrgScopeInline(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				Config: testAccResourceTemplateOrgScopeInline(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
 			{
@@ -103,6 +185,7 @@ func TestAccResourceTemplate_AccountScope(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
 			{
@@ -110,6 +193,7 @@ func TestAccResourceTemplate_AccountScope(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
 			{
@@ -132,6 +216,45 @@ func testAccTemplateDestroy(resourceName string) resource.TestCheckFunc {
 
 		return nil
 	}
+}
+
+func TestAccResourceTemplate_AccountScopeInline(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", id)
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateAccScopeInline(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				Config: testAccResourceTemplateAccScopeInline(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
 }
 
 func testAccGetTemplate(resourceName string, state *terraform.State) (*openapi_client_nextgen.TemplateWithInputsResponse, error) {
@@ -195,6 +318,78 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 	return optional.EmptyString()
 }
 
+func testAccResourceTemplateAccScopeInline(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_template" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			comments = "comments"
+			version = "ab"
+			is_stable = true
+			git_details {
+				branch_name = "main"
+				commit_message = "Commit"
+				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
+				connector_ref = "account.Jajoo"
+				store_type = "REMOTE"
+				repo_name = "jajoo_git"
+		}
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: ab
+      type: Pipeline
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+    
+      EOT
+	}
+	`, id, name)
+}
+
 func testAccResourceTemplateAccScope(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_template" "test" {
@@ -207,9 +402,9 @@ func testAccResourceTemplateAccScope(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.RichaGithub"
+				connector_ref = "account.Jajoo"
 				store_type = "REMOTE"
-				repo_name = "rjajoo"
+				repo_name = "jajoo_git"
 		}
 			template_yaml = <<-EOT
 			template:
@@ -217,6 +412,77 @@ func testAccResourceTemplateAccScope(id string, name string) string {
       identifier: "%[1]s"
       versionLabel: ab
       type: Pipeline
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+    
+      EOT
+	}
+	`, id, name)
+}
+
+func testAccResourceTemplateOrgScopeInline(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_template" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "ab"
+			is_stable = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: ab
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
       tags: {}
       spec:
         stages:
@@ -285,9 +551,9 @@ func testAccResourceTemplateOrgScope(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.RichaGithub"
+				connector_ref = "account.Jajoo"
 				store_type = "REMOTE"
-				repo_name = "rjajoo"
+				repo_name = "jajoo_git"
 		}
 			template_yaml = <<-EOT
 			template:
@@ -346,7 +612,7 @@ func testAccResourceTemplateOrgScope(id string, name string) string {
 	`, id, name)
 }
 
-func testAccResourceTemplate(id string, name string) string {
+func testAccResourceTemplateProjectScope(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -372,10 +638,90 @@ func testAccResourceTemplate(id string, name string) string {
 				branch_name = "main"
 				commit_message = "Commit"
 				file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-				connector_ref = "account.RichaGithub"
+				connector_ref = "account.Jajoo"
 				store_type = "REMOTE"
-				repo_name = "rjajoo"
+				repo_name = "jajoo_git"
 		}
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: ab
+      type: Pipeline
+      projectIdentifier: ${harness_platform_project.test.id}
+      orgIdentifier: ${harness_platform_project.test.org_id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+    
+      EOT
+	}
+	`, id, name)
+}
+
+func testAccResourceTemplateProjectScopeInline(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		color = "#472848"
+	}
+
+	resource "harness_platform_template" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "ab"
+			is_stable = true
 			template_yaml = <<-EOT
 			template:
       name: "%[2]s"

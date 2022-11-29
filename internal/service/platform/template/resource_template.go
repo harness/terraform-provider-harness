@@ -49,22 +49,26 @@ func ResourceTemplate() *schema.Resource {
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
 							Description: "Name of the branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"file_path": {
 							Description: "File path of the Entity in the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"commit_message": {
 							Description: "Commit message used for the merge commit.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"base_branch": {
 							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
@@ -76,19 +80,20 @@ func ResourceTemplate() *schema.Resource {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity.",
 							Type:        schema.TypeString,
 							Optional:    true,
-							// Computed:    true,
+							Computed:    true,
 						},
 						"store_type": {
-							Description: "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							// Computed:     true,
+							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							Computed:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
 						},
 						"repo_name": {
 							Description: "Name of the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"last_object_id": {
 							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
@@ -197,11 +202,13 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		template := buildCreateTemplate(d)
-		base_branch = optional.NewString(template.GitDetails.BaseBranch)
-		store_type = optional.NewString(template.GitDetails.StoreType)
-		commit_message = optional.NewString(template.GitDetails.CommitMessage)
-		connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
-		branch_name = template.GitDetails.BranchName
+		if template.GitDetails != nil {
+			base_branch = optional.NewString(template.GitDetails.BaseBranch)
+			store_type = optional.NewString(template.GitDetails.StoreType)
+			commit_message = optional.NewString(template.GitDetails.CommitMessage)
+			connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
+			branch_name = template.GitDetails.BranchName
+		}
 		if project_id != "" {
 			resp, httpResp, err = c.ProjectTemplateApi.CreateTemplatesProject(ctx, org_id, project_id, &nextgen.ProjectTemplateApiCreateTemplatesProjectOpts{
 				Body:           optional.NewInterface(template),
@@ -223,12 +230,13 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	} else {
 		template := buildUpdateTemplate(d)
-		base_branch = optional.NewString(template.GitDetails.BaseBranch)
-		branch_name = template.GitDetails.BranchName
-		store_type = optional.NewString(template.GitDetails.StoreType)
-		commit_message = optional.NewString(template.GitDetails.CommitMessage)
-		connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
-
+		if template.GitDetails != nil {
+			base_branch = optional.NewString(template.GitDetails.BaseBranch)
+			branch_name = template.GitDetails.BranchName
+			store_type = optional.NewString(template.GitDetails.StoreType)
+			commit_message = optional.NewString(template.GitDetails.CommitMessage)
+			connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
+		}
 		if project_id != "" {
 			resp, httpResp, err = c.ProjectTemplateApi.UpdateTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateProjectOpts{
 				Body:           optional.NewInterface(template),
@@ -335,40 +343,44 @@ func buildUpdateTemplate(d *schema.ResourceData) nextgen.TemplateUpdateRequestBo
 
 	if attr, ok := d.GetOk("git_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		template.GitDetails = &nextgen.GitUpdateDetails1{}
-
-		if attr, ok := config["branch_name"]; ok {
-			template.GitDetails.BranchName = attr.(string)
-		}
-
-		if attr, ok := config["file_path"]; ok {
-			template.GitDetails.FilePath = attr.(string)
-		}
-
-		if attr, ok := config["last_object_id"]; ok {
-			template.GitDetails.LastObjectId = attr.(string)
-		}
-
-		if attr, ok := config["commit_message"]; ok {
-			template.GitDetails.CommitMessage = attr.(string)
-		}
-
-		if attr, ok := config["base_branch"]; ok {
-			template.GitDetails.BaseBranch = attr.(string)
-		}
-
-		if attr, ok := config["connector_ref"]; ok {
-			template.GitDetails.ConnectorRef = attr.(string)
-		}
 
 		if attr, ok := config["store_type"]; ok {
-			template.GitDetails.StoreType = attr.(string)
-		}
+			if attr != "" {
+				template.GitDetails = &nextgen.GitUpdateDetails1{}
 
-		if attr, ok := config["repo_name"]; ok {
-			template.GitDetails.RepoName = attr.(string)
-		}
+				if attr, ok := config["branch_name"]; ok {
+					template.GitDetails.BranchName = attr.(string)
+				}
 
+				if attr, ok := config["file_path"]; ok {
+					template.GitDetails.FilePath = attr.(string)
+				}
+
+				if attr, ok := config["last_object_id"]; ok {
+					template.GitDetails.LastObjectId = attr.(string)
+				}
+
+				if attr, ok := config["commit_message"]; ok {
+					template.GitDetails.CommitMessage = attr.(string)
+				}
+
+				if attr, ok := config["base_branch"]; ok {
+					template.GitDetails.BaseBranch = attr.(string)
+				}
+
+				if attr, ok := config["connector_ref"]; ok {
+					template.GitDetails.ConnectorRef = attr.(string)
+				}
+
+				if attr, ok := config["store_type"]; ok {
+					template.GitDetails.StoreType = attr.(string)
+				}
+
+				if attr, ok := config["repo_name"]; ok {
+					template.GitDetails.RepoName = attr.(string)
+				}
+			}
+		}
 	}
 
 	return template
