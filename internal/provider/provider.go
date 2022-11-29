@@ -37,6 +37,7 @@ import (
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
+	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
@@ -149,6 +150,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
+				"harness_platform_gitops_gnupg":                    gitops_gnupg.DataSourceGitopsGnupg(),
 				"harness_platform_gitops_repository":               gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.DataSourceGitOpsRepoCert(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
@@ -227,6 +229,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
+				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
