@@ -335,7 +335,7 @@ func buildUpdateTemplate(d *schema.ResourceData) nextgen.TemplateUpdateRequestBo
 
 	if attr, ok := d.GetOk("git_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		template.GitDetails = &nextgen.GitUpdateDetails{}
+		template.GitDetails = &nextgen.GitUpdateDetails1{}
 
 		if attr, ok := config["branch_name"]; ok {
 			template.GitDetails.BranchName = attr.(string)
@@ -383,7 +383,7 @@ func buildCreateTemplate(d *schema.ResourceData) nextgen.TemplateCreateRequestBo
 
 	if attr, ok := d.GetOk("git_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		template.GitDetails = &nextgen.GitCreateDetails{}
+		template.GitDetails = &nextgen.GitCreateDetails1{}
 
 		if attr, ok := config["branch_name"]; ok {
 			template.GitDetails.BranchName = attr.(string)

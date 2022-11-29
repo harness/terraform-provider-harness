@@ -1059,6 +1059,10 @@ github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFb
 github.com/harness/harness-go-sdk v0.2.16/go.mod h1:xBYHR1R7Srk+TysVnVnTjVLu3dhhyxAQ5IkRNSMKc/4=
 github.com/harness/harness-go-sdk v0.3.0 h1:7J8Z7zq68ubISYXa6wvGYzkWGCRgzYxTkqeATiSbMBM=
 github.com/harness/harness-go-sdk v0.3.0/go.mod h1:xBYHR1R7Srk+TysVnVnTjVLu3dhhyxAQ5IkRNSMKc/4=
+github.com/harness/harness-openapi-go-client v0.0.5 h1:upPTVvPHRrV1itm+8zfsc693eifp6PjsRiq3lg9jT+4=
+github.com/harness/harness-openapi-go-client v0.0.5/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
+github.com/harness/harness-openapi-go-client v0.0.6 h1:b+ZhD970bAvLF6x+AqLs7CY9L8363BGx+BYmmG4F80E=
+github.com/harness/harness-openapi-go-client v0.0.6/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/harness/harness-openapi-go-client v0.0.9 h1:Sib0ddgkDUVpPldhNwRTkBei53912yaYWdyBRK/MZMA=
 github.com/harness/harness-openapi-go-client v0.0.9/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/hashicorp/consul/api v1.1.0/go.mod h1:VmuI/Lkw1nC05EYQWNKwWGbkg+FbDBtguAZLlVdkD9Q=
