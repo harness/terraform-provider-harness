@@ -200,8 +200,8 @@ func testAccResourceServiceWithYaml(id string, name string, varValue string) str
       project_id = harness_platform_project.test.id
       yaml = <<-EOT
         service:
-          name: %[1]s
-          identifier: %[2]s
+          name: %[2]s
+          identifier: %[1]s
           serviceDefinition:
             spec:
               manifests:
