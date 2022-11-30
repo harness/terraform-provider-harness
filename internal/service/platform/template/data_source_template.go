@@ -133,7 +133,7 @@ func dataTemplateRead(ctx context.Context, d *schema.ResourceData, meta interfac
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name})
 		} else {
-			resp, httpResp, err = c.ProjectTemplateApi.GetTemplateProject(ctx, org_id, project_id, template_id, version, &nextgen.ProjectTemplateApiGetTemplateProjectOpts{
+			resp, httpResp, err = c.ProjectTemplateApi.GetTemplateProject(ctx, project_id, template_id, org_id, version, &nextgen.ProjectTemplateApiGetTemplateProjectOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name})
 		}
@@ -144,7 +144,7 @@ func dataTemplateRead(ctx context.Context, d *schema.ResourceData, meta interfac
 				BranchName:     branch_name,
 			})
 		} else {
-			resp, httpResp, err = c.OrgTemplateApi.GetTemplateOrg(ctx, org_id, template_id, version, &nextgen.OrgTemplateApiGetTemplateOrgOpts{
+			resp, httpResp, err = c.OrgTemplateApi.GetTemplateOrg(ctx, template_id, org_id, version, &nextgen.OrgTemplateApiGetTemplateOrgOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				BranchName:     branch_name,
 			})

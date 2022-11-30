@@ -15,7 +15,7 @@ resource "harness_platform_template" "remote" {
     repo_name      = "repo_name"
   }
   template_yaml = <<-EOT
-			template:
+template:
       name: "name"
       identifier: "identifier"
       versionLabel: ab
@@ -79,7 +79,7 @@ resource "harness_platform_template" "inline" {
   version       = "ab"
   is_stable     = true
   template_yaml = <<-EOT
-			template:
+template:
       name: "name"
       identifier: "identifier"
       versionLabel: ab
