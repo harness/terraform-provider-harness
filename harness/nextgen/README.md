@@ -394,9 +394,11 @@ Class | Method | HTTP request | Description
 *UserGroupApi* | [**GetUserGroupList**](docs/UserGroupApi.md#getusergrouplist) | **Get** /ng/api/user-groups | List the User Groups in an account/org/project
 *UserGroupApi* | [**GetUserListInUserGroup**](docs/UserGroupApi.md#getuserlistinusergroup) | **Post** /ng/api/user-groups/{identifier}/users | List the users in a User Group in an account/org/project
 *UserGroupApi* | [**LinkUserGroupToSAML**](docs/UserGroupApi.md#linkusergrouptosaml) | **Put** /ng/api/user-groups/{userGroupId}/link/saml/{samlId} | Link SAML Group to the User Group in an account/org/project
-*UserGroupApi* | [**PostUserGroup**](docs/UserGroupApi.md#postusergroup) | **Post** /ng/api/user-groups | Create a User Group in an account/org/project
-*UserGroupApi* | [**PutMember**](docs/UserGroupApi.md#putmember) | **Put** /ng/api/user-groups/{identifier}/member/{userIdentifier} | Add a user to the user group in an account/org/project
-*UserGroupApi* | [**PutUserGroup**](docs/UserGroupApi.md#putusergroup) | **Put** /ng/api/user-groups | Update a User Group in an account/org/project
+*UserGroupApi* | [**PostUserGroup**](docs/UserGroupApi.md#postusergroup) | **Post** /ng/api/user-groups | Create User Group
+*UserGroupApi* | [**PostUserGroupV2**](docs/UserGroupApi.md#postusergroupv2) | **Post** /ng/api/v2/user-groups | Create User Group
+*UserGroupApi* | [**PutMember**](docs/UserGroupApi.md#putmember) | **Put** /ng/api/user-groups/{identifier}/member/{userIdentifier} | Add user to User Group
+*UserGroupApi* | [**PutUserGroup**](docs/UserGroupApi.md#putusergroup) | **Put** /ng/api/user-groups | Update User Group
+*UserGroupApi* | [**PutUserGroupV2**](docs/UserGroupApi.md#putusergroupv2) | **Put** /ng/api/v2/user-groups | Update User Group
 *UserGroupApi* | [**UnlinkUserGroupfromSSO**](docs/UserGroupApi.md#unlinkusergroupfromsso) | **Put** /ng/api/user-groups/{userGroupId}/unlink | Unlink SSO Group from the User Group in an account/org/project
 *ValidateHostApi* | [**ValidateSshHosts**](docs/ValidateHostApi.md#validatesshhosts) | **Post** /ng/api/host-validation/ssh | Validates hosts connectivity using SSH credentials
 *WebhookEventHandlerApi* | [**ProcessWebhookEvent**](docs/WebhookEventHandlerApi.md#processwebhookevent) | **Post** /ng/api/webhook | Process event payload for webhook triggers.
