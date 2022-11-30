@@ -27,7 +27,7 @@ func SetSchemaFlagType(s *schema.Schema, flag SchemaFlagType) {
 
 func GetTagsSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Tags to associate with the resource. Tags should be in the form `name:value`.",
+		Description: "Tags to associate with the resource.",
 		Type:        schema.TypeSet,
 		Elem: &schema.Schema{
 			Type: schema.TypeString,
@@ -54,7 +54,7 @@ func GetIdentifierSchema(flag SchemaFlagType) *schema.Schema {
 
 func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Unique identifier of the Project.",
+		Description: "Unique identifier of the project.",
 		Type:        schema.TypeString,
 	}
 	SetSchemaFlagType(s, flag)
@@ -63,7 +63,7 @@ func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 
 func GetOrgIdSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Unique identifier of the Organization.",
+		Description: "Unique identifier of the organization.",
 		Type:        schema.TypeString,
 	}
 	SetSchemaFlagType(s, flag)
@@ -182,6 +182,18 @@ var EnvRelatedResourceImporter = &schema.ResourceImporter{
 		d.Set("project_id", parts[1])
 		d.Set("env_id", parts[2])
 		d.Set("identifier", parts[3])
+		d.SetId(parts[3])
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
+var ServiceOverrideResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+		d.Set("env_id", parts[2])
 		d.SetId(parts[3])
 
 		return []*schema.ResourceData{d}, nil

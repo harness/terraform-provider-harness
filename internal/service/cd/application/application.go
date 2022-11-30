@@ -9,6 +9,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/pkg/errors"
@@ -66,7 +67,9 @@ func ResourceApplication() *schema.Resource {
 
 func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	input := &graphql.CreateApplicationInput{
 		Name:                      d.Get("name").(string),
 		Description:               d.Get("description").(string),
@@ -94,7 +97,9 @@ func resourceApplicationCreate(ctx context.Context, d *schema.ResourceData, meta
 
 func resourceApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	appId := d.Get("id").(string)
 
 	app, err := c.ApplicationClient.GetApplicationById(appId)
@@ -143,7 +148,9 @@ func applicationRead(d *schema.ResourceData, app *graphql.Application) {
 
 func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	input := &graphql.UpdateApplicationInput{
 		ApplicationId:             d.Id(),
 		Description:               d.Get("description").(string),
@@ -184,7 +191,9 @@ func resourceApplicationUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 func resourceApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).CDClient
-
+	if c == nil {
+		return diag.Errorf(utils.CDClientAPIKeyError)
+	}
 	if err := c.ApplicationClient.DeleteApplication(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}

@@ -12,7 +12,7 @@ func DatasourceConnectorJira() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Jira server.",
+				Description: "URL of the Jira server.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -22,17 +22,17 @@ func DatasourceConnectorJira() *schema.Resource {
 				Computed:    true,
 			},
 			"username_ref": {
-				Description: "Reference to a secret containing the username to use for authentication.",
+				Description: "Reference to a secret containing the username to use for authentication." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"password_ref": {
-				Description: "Reference to a secret containing the password to use for authentication.",
+				Description: "Reference to a secret containing the password to use for authentication." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

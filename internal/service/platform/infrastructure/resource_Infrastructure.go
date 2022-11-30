@@ -49,6 +49,7 @@ func ResourceInfrastructure() *schema.Resource {
 				Description: fmt.Sprintf("Infrastructure deployment type. Valid values are %s.", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}

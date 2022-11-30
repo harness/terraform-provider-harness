@@ -12,17 +12,17 @@ func DatasourceConnectorDynatrace() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "Url of the Dynatrace server.",
+				Description: "URL of the Dynatrace server.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"api_token_ref": {
-				Description: "The reference to the Harness secret containing the api token.",
+				Description: "The reference to the Harness secret containing the api token." + secret_ref_text,
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"delegate_selectors": {
-				Description: "Connect using only the delegates which have these tags.",
+				Description: "Tags to filter delegates for connection.",
 				Type:        schema.TypeSet,
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},

@@ -1,5 +1,4 @@
 resource "harness_platform_environment_service_overrides" "example" {
-  identifier = "identifier"
   org_id     = "orgIdentifier"
   project_id = "projectIdentifier"
   env_id     = "environmentIdentifier"

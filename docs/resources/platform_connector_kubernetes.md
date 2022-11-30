@@ -108,10 +108,10 @@ resource "harness_platform_connector_kubernetes" "inheritFromDelegate" {
 - `description` (String) Description of the resource.
 - `inherit_from_delegate` (Block List, Max: 1) Credentials are inherited from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `openid_connect` (Block List, Max: 1) OpenID configuration for the connector. (see [below for nested schema](#nestedblock--openid_connect))
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `service_account` (Block List, Max: 1) Service account for the connector. (see [below for nested schema](#nestedblock--service_account))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `username_password` (Block List, Max: 1) Username and password for the connector. (see [below for nested schema](#nestedblock--username_password))
 
 ### Read-Only
@@ -123,15 +123,15 @@ resource "harness_platform_connector_kubernetes" "inheritFromDelegate" {
 
 Required:
 
-- `client_cert_ref` (String) Reference to the secret containing the client certificate for the connector.
+- `client_cert_ref` (String) Reference to the secret containing the client certificate for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `client_key_algorithm` (String) The algorithm used to generate the client key for the connector. Valid values are RSA, EC
-- `client_key_ref` (String) Reference to the secret containing the client key for the connector.
+- `client_key_ref` (String) Reference to the secret containing the client key for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `master_url` (String) The URL of the Kubernetes cluster.
 
 Optional:
 
-- `ca_cert_ref` (String) Reference to the secret containing the CA certificate for the connector.
-- `client_key_passphrase_ref` (String) Reference to the secret containing the client key passphrase for the connector.
+- `ca_cert_ref` (String) Reference to the secret containing the CA certificate for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `client_key_passphrase_ref` (String) Reference to the secret containing the client key passphrase for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--inherit_from_delegate"></a>
@@ -147,17 +147,17 @@ Required:
 
 Required:
 
-- `client_id_ref` (String) Reference to the secret containing the client ID for the connector.
+- `client_id_ref` (String) Reference to the secret containing the client ID for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `issuer_url` (String) The URL of the OpenID Connect issuer.
 - `master_url` (String) The URL of the Kubernetes cluster.
-- `password_ref` (String) Reference to the secret containing the password for the connector.
+- `password_ref` (String) Reference to the secret containing the password for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
 - `scopes` (List of String) Scopes to request for the connector.
-- `secret_ref` (String) Reference to the secret containing the client secret for the connector.
+- `secret_ref` (String) Reference to the secret containing the client secret for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `username` (String) Username for the connector.
-- `username_ref` (String) Reference to the secret containing the username for the connector.
+- `username_ref` (String) Reference to the secret containing the username for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--service_account"></a>
@@ -166,7 +166,7 @@ Optional:
 Required:
 
 - `master_url` (String) The URL of the Kubernetes cluster.
-- `service_account_token_ref` (String) Reference to the secret containing the service account token for the connector.
+- `service_account_token_ref` (String) Reference to the secret containing the service account token for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedblock--username_password"></a>
@@ -175,18 +175,24 @@ Required:
 Required:
 
 - `master_url` (String) The URL of the Kubernetes cluster.
-- `password_ref` (String) Reference to the secret containing the password for the connector.
+- `password_ref` (String) Reference to the secret containing the password for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 Optional:
 
 - `username` (String) Username for the connector.
-- `username_ref` (String) Reference to the secret containing the username for the connector.
+- `username_ref` (String) Reference to the secret containing the username for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using kubernetes connector id
+# Import account level kubernetes connector 
 terraform import harness_platform_connector_kubernetes.example <connector_id>
+
+# Import org level kubernetes connector 
+terraform import harness_platform_connector_kubernetes.example <ord_id>/<connector_id>
+
+# Import project level kubernetes connector 
+terraform import harness_platform_connector_kubernetes.example <org_id>/<project_id>/<connector_id>
 ```

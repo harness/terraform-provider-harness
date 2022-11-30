@@ -83,7 +83,7 @@ resource "harness_platform_environment" "example" {
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Environment YAML
 
 ### Read-Only
@@ -96,5 +96,5 @@ Import is supported using the following syntax:
 
 ```shell
 # Import using environment id
-terraform import harness_platform_environment.example <environment_id>
+terraform import harness_platform_environment.example <org_id>/<project_id>/<environment_id>
 ```

@@ -25,16 +25,16 @@ data "harness_platform_connector_gcp_secret_manager" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
-- `credentials_ref` (String) Reference to the secret containing credentials of IAM service account for Google Secret Manager.
-- `delegate_selectors` (Set of String) Connect using only the delegates which have these tags.
+- `credentials_ref` (String) Reference to the secret containing credentials of IAM service account for Google Secret Manager. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `is_default` (Boolean) Indicative if this is default Secret manager for secrets.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 

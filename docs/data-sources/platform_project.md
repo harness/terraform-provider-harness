@@ -29,7 +29,7 @@ data "harness_platform_project" "example_by_name" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 
 ### Optional
 
@@ -42,6 +42,6 @@ data "harness_platform_project" "example_by_name" {
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `modules` (Set of String) Modules in the project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 

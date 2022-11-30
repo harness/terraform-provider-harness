@@ -1,3 +1,51 @@
+# 0.10.1 (November 30,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_template: Fix template resource ([#329](https://github.com/harness/terraform-provider-harness/issues/329))
+
+# 0.10.0 (November 30,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_spot - Added spot connector resource in Harness terraform provider` ([#314](https://github.com/harness/terraform-provider-harness/issues/314))
+* **New Resource:** `platform_template - Added template resource in Harness terraform provider` ([#326](https://github.com/harness/terraform-provider-harness/issues/326))
+
+ENHANCEMENTS:
+
+* resource/harness_platform_policy: Adding the policy management provider ([#319](https://github.com/harness/terraform-provider-harness/issues/319))
+
+# 0.9.1 (November 24,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_pipeline: Fix error propagation from api ([#318](https://github.com/harness/terraform-provider-harness/issues/318))
+
+# 0.9.0 (November 24,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_azure_key_vault - Added the Azure Key Vault connector resource to the Harness Terraform provider.` ([#287](https://github.com/harness/terraform-provider-harness/issues/287))
+
+# 0.8.4 (November 23,2022) 
+
+ENHANCEMENTS:
+
+* data-source/harness_trigger: - Added data source for trigger in first gen ([#309](https://github.com/harness/terraform-provider-harness/issues/309))
+* platform_user_group - Added support for "Send email to all users" in user group notification configuration. ([#313](https://github.com/harness/terraform-provider-harness/issues/313))
+
+# 0.8.3 (November 14,2022)
+
+FEATURES:
+
+* **New Resource:** `platform_connector_azure_cloud_cost - Added azure cloud cost connector resource in Harness terraform provider` ([#284](https://github.com/harness/terraform-provider-harness/issues/284))
+* **New Resource:** `platform_connector_azure_cloud_provider - Added gcp cloud cost connector resource in Harness terraform provider` ([#285](https://github.com/harness/terraform-provider-harness/issues/285))
+* **New Resource:** `platform_connector_kubernetes_cloud_cost - Added kubernetes cloud cost connector resource in Harness terraform provider` ([#286](https://github.com/harness/terraform-provider-harness/issues/286))
+
+ENHANCEMENTS:
+
+* platform_pipeline - Added support for pipelines with new Git Experience. ([#294](https://github.com/harness/terraform-provider-harness/issues/294))
+
 # 0.7.1 (November 4,2022)
 
 FEATURES:
@@ -12,7 +60,7 @@ BUG FIXES:
 
 * harness_platform_secret_text : fix value field in secret text resource ([#281](https://github.com/harness/terraform-provider-harness/issues/281))
 
-# 0.7.0 (November 20,2022)
+# 0.7.0 (November 2,2022)
 
 FEATURES:
 

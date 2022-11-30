@@ -105,11 +105,11 @@ resource "harness_platform_secret_sshkey" "ssh_password" {
 
 - `description` (String) Description of the resource.
 - `kerberos` (Block List, Max: 1) Kerberos authentication scheme (see [below for nested schema](#nestedblock--kerberos))
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 - `port` (Number) SSH port
-- `project_id` (String) Unique identifier of the Project.
+- `project_id` (String) Unique identifier of the project.
 - `ssh` (Block List, Max: 1) Kerberos authentication scheme (see [below for nested schema](#nestedblock--ssh))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -198,6 +198,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using secret sshkey id
+# Import account level secret sshkey
 terraform import harness_platform_secret_sshkey.example <secret_sshkey_id>
+
+# Import org level secret sshkey
+terraform import harness_platform_secret_sshkey.example <ord_id>/<secret_sshkey_id>
+
+# Import project level secret sshkey
+terraform import harness_platform_secret_sshkey.example <org_id>/<project_id>/<secret_sshkey_id>
 ```
