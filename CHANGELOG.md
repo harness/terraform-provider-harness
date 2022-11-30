@@ -1,3 +1,14 @@
+# 0.10.0 (November 30,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_spot - Added spot connector resource in Harness terraform provider` ([#314](https://github.com/harness/terraform-provider-harness/issues/314))
+* **New Resource:** `platform_template - Added template resource in Harness terraform provider` ([#326](https://github.com/harness/terraform-provider-harness/issues/326))
+
+ENHANCEMENTS:
+
+* resource/harness_platform_policy: Adding the policy management provider ([#319](https://github.com/harness/terraform-provider-harness/issues/319))
+
 # 0.9.1 (November 24,2022) 
 
 BUG FIXES:
