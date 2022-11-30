@@ -1,3 +1,9 @@
+# 0.10.1 (November 30,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_template: Fix template resource ([#329](https://github.com/harness/terraform-provider-harness/issues/329))
+
 # 0.10.0 (November 30,2022) 
 
 FEATURES:
