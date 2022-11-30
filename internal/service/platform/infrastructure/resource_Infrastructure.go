@@ -79,7 +79,7 @@ func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	readInfrastructure(d, &resp.Data)
+	readInfrastructure(d, resp.Data)
 
 	return nil
 }

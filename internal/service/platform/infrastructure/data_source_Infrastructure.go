@@ -66,7 +66,7 @@ func dataSourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, m
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readInfrastructure(d, &resp.Data)
+	readInfrastructure(d, resp.Data)
 
 	return nil
 }
