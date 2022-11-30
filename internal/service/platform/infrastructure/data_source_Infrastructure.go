@@ -57,7 +57,7 @@ func dataSourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, m
 
 	env_id := d.Get("env_id").(string)
 
-	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructureList(ctx, c.AccountId, env_id, &nextgen.InfrastructuresApiGetInfrastructureListOpts{
+	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiGetInfrastructureOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
@@ -66,7 +66,7 @@ func dataSourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, m
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readInfrastructure(d, &resp.Data.Content[0])
+	readInfrastructure(d, resp.Data)
 
 	return nil
 }
