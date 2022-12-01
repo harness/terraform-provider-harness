@@ -48,11 +48,11 @@ func testAccInfraDefCustom(name string) string {
 		}
 
 		resource "harness_yaml_config" "test" {
-			path = "Setup/Template Library/AutomationOneNow/rishabh_custom_test.yaml"
+			path = "Setup/Template Library/AutomationOneNow/custom_test.yaml"
 			content = <<EOF
 harnessApiVersion: '1.0'
 type: CUSTOM_DEPLOYMENT_TYPE
-fetchInstanceScript: curl http://localhost:8081/instances.json >> $${INSTANCE_OUTPUT_PATH}
+fetchInstanceScript: curl http://localhost:8081/instances.json >> ${INSTANCE_OUTPUT_PATH}
 hostAttributes:
   hostname: host
 hostObjectArrayPath: hosts

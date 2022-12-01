@@ -1,8 +1,6 @@
 package environment
 
 import (
-	"log"
-
 	"github.com/harness/harness-go-sdk/harness/cd/cac"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -46,8 +44,6 @@ func expandCustomConfiguration(d []interface{}, infraDef *cac.InfrastructureDefi
 	config := d[0].(map[string]interface{})
 	details := &cac.InfrastructureCustom{}
 
-	log.Printf("[WARN] Config: %s", d)
-	log.Printf("[WARN] Vars: %s", config["variable"])
 	if attr := config["deployment_type_template_version"]; attr != "" {
 		details.DeploymentTypeTemplateVersion = attr.(string)
 	}
@@ -56,8 +52,6 @@ func expandCustomConfiguration(d []interface{}, infraDef *cac.InfrastructureDefi
 	}
 
 	infraDef.InfrastructureDetail = details.ToInfrastructureDetail()
-	log.Printf("[WARN] InfrastructureDetail: %+v", infraDef.InfrastructureDetail[0])
-	log.Printf("[WARN] InfrastructureDetail variables: %+v", infraDef.InfrastructureDetail[0].InfraVariables)
 }
 
 func flattenCustomConfiguration(d *schema.ResourceData, infraDef *cac.InfrastructureDefinition) []interface{} {
@@ -83,7 +77,6 @@ func flattenCustomConfiguration(d *schema.ResourceData, infraDef *cac.Infrastruc
 }
 
 func expandVariables(d []interface{}) []*cac.InfraVariable {
-	log.Printf("[WARN] Vars: %+v", d)
 	if len(d) == 0 {
 		return make([]*cac.InfraVariable, 0)
 	}
@@ -97,8 +90,6 @@ func expandVariables(d []interface{}) []*cac.InfraVariable {
 			Value: data["value"].(string),
 		}
 	}
-	log.Printf("[WARN] Processes Vars: %s", variables[0])
-	log.Printf("[WARN] Processes Vars: %s", variables[1])
 
 	return variables
 }
