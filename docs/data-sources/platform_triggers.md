@@ -26,8 +26,8 @@ data "harness_platform_triggers" "example" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `target_id` (String) Identifier of the target pipeline
 
 ### Optional
@@ -40,7 +40,7 @@ data "harness_platform_triggers" "example" {
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) trigger yaml
 
 

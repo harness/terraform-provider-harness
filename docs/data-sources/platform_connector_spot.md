@@ -25,15 +25,15 @@ data "harness_platform_connector_spot" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `permanent_token` (List of Object) Authenticate to Spot using account id and permanent token. (see [below for nested schema](#nestedatt--permanent_token))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--permanent_token"></a>
 ### Nested Schema for `permanent_token`

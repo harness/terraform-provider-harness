@@ -1,2 +1,2 @@
-# Import using pipeline id
-terraform import harness_platform_pipeline.example <pipeline_id>
+# Import pipeline
+terraform import harness_platform_pipeline.example <org_id>/<project_id>/<pipeline_id>

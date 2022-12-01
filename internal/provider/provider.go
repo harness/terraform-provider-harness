@@ -7,6 +7,7 @@ import (
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
+	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -36,6 +37,7 @@ import (
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
+	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
@@ -52,15 +54,17 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
 
+	"github.com/harness/harness-go-sdk/logging"
+	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -110,6 +114,7 @@ func Provider(version string) func() *schema.Provider {
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
+				"harness_platform_template":                        pl_template.DataSourceTemplate(),
 				"harness_platform_connector_azure_key_vault":       connector.DataSourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.DataSourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.DatasourceConnectorKubernetesCloudCost(),
@@ -147,11 +152,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
+				"harness_platform_gitops_gnupg":                    gitops_gnupg.DataSourceGitopsGnupg(),
 				"harness_platform_gitops_repository":               gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.DataSourceGitOpsRepoCert(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.DataSourceInfrastructure(),
-				"harness_environment_service_overrides":            pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                       input_set.DataSourceInputSet(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
@@ -190,6 +195,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_policy":                          policy.DataSourcePolicy(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
+				"harness_platform_template":                        pl_template.ResourceTemplate(),
 				"harness_platform_connector_azure_key_vault":       connector.ResourceConnectorAzureKeyVault(),
 				"harness_platform_connector_gcp_cloud_cost":        connector.ResourceConnectorGCPCloudCost(),
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
@@ -226,11 +232,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
+				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.ResourceInfrastructure(),
-				"harness_environment_service_overrides":            pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
 				"harness_platform_input_set":                       input_set.ResourceInputSet(),
 				"harness_platform_organization":                    organization.ResourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.ResourcePipeline(),
@@ -289,9 +295,16 @@ func Provider(version string) func() *schema.Provider {
 	}
 }
 
-func getHttpClient() *retryablehttp.Client {
+func getHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
-	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
+	httpClient.RetryMax = 10
+	return httpClient
+}
+
+func getOpenApiHttpClient(logger *logrus.Logger) *retryablehttp.Client {
+	httpClient := retryablehttp.NewClient()
+	httpClient.HTTPClient.Transport = openapi_client_logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
 	return httpClient
 }
@@ -302,8 +315,8 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 	cfg.Endpoint = d.Get("endpoint").(string)
 	cfg.APIKey = d.Get("api_key").(string)
 	cfg.UserAgent = fmt.Sprintf("terraform-provider-harness-%s", version)
-	cfg.HTTPClient = getHttpClient()
-	cfg.DebugLogging = logging.IsDebugOrHigher()
+	cfg.HTTPClient = getHttpClient(cfg.Logger)
+	cfg.DebugLogging = logging.IsDebugOrHigher(cfg.Logger)
 
 	client, err := cd.NewClient(cfg)
 
@@ -315,26 +328,28 @@ func getCDClient(d *schema.ResourceData, version string) *cd.ApiClient {
 }
 
 func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
+	cfg := nextgen.NewConfiguration()
 	client := nextgen.NewAPIClient(&nextgen.Configuration{
 		AccountId:    d.Get("account_id").(string),
 		BasePath:     d.Get("endpoint").(string),
 		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:   getHttpClient(),
-		DebugLogging: logging.IsDebugOrHigher(),
+		HTTPClient:   getHttpClient(cfg.Logger),
+		DebugLogging: logging.IsDebugOrHigher(cfg.Logger),
 	})
 
 	return client
 }
 
 func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.APIClient {
+	cfg := openapi_client_nextgen.NewConfiguration()
 	client := openapi_client_nextgen.NewAPIClient(&openapi_client_nextgen.Configuration{
 		AccountId:    d.Get("account_id").(string),
 		BasePath:     d.Get("endpoint").(string),
 		ApiKey:       d.Get("platform_api_key").(string),
 		UserAgent:    fmt.Sprintf("terraform-provider-harness-platform-%s", version),
-		HTTPClient:   getHttpClient(),
-		DebugLogging: logging.IsDebugOrHigher(),
+		HTTPClient:   getOpenApiHttpClient(cfg.Logger),
+		DebugLogging: openapi_client_logging.IsDebugOrHigher(cfg.Logger),
 	})
 
 	return client
