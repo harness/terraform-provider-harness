@@ -55,7 +55,7 @@ resource "harness_infrastructure_definition" "k8s" {
 
 - `app_id` (String) The id of the application the infrastructure definition belongs to.
 - `cloud_provider_type` (String) The type of the cloud provider to connect with. Valid options are AWS, AZURE, CUSTOM, PHYSICAL_DATA_CENTER, KUBERNETES_CLUSTER, PCF, SPOT_INST
-- `deployment_type` (String) The type of the deployment to use. Valid options are AMI, AWS_CODEDEPLOY, AWS_LAMBDA, AZURE_VMSS, AZURE_WEBAPP, Custom, ECS, HELM, KUBERNETES, PCF, SSH, WINRM
+- `deployment_type` (String) The type of the deployment to use. Valid options are AMI, AWS_CODEDEPLOY, AWS_LAMBDA, AZURE_VMSS, AZURE_WEBAPP, CUSTOM, ECS, HELM, KUBERNETES, PCF, SSH, WINRM
 - `env_id` (String) The id of the environment the infrastructure definition belongs to.
 - `name` (String) The name of the infrastructure definition
 
@@ -76,6 +76,7 @@ resource "harness_infrastructure_definition" "k8s" {
 - `provisioner_name` (String) The name of the infrastructure provisioner to use.
 - `scoped_services` (Set of String) The list of service names to scope this infrastructure definition to.
 - `tanzu` (Block List, Max: 1) The configuration details for PCF deployments. (see [below for nested schema](#nestedblock--tanzu))
+- `custom` (Block List, Max: 1) The configuration details for Custom deployments. (see [below for nested schema](#nestedblock--custom))
 
 ### Read-Only
 
@@ -263,6 +264,27 @@ Required:
 - `cloud_provider_name` (String) The name of the cloud provider to connect with.
 - `organization` (String) The PCF organization to use.
 - `space` (String) The PCF space to deploy to.
+
+
+<a id="nestedblock--custom"></a>
+### Nested Schema for `custom`
+
+Required:
+
+- `deployment_type_template_version` (String) The version of the template.
+
+Optional:
+
+- `variable` (Block Set) Variables to be used in the infrastructure (see [below for nested schema](#nestedblock--variable))
+
+
+<a id="nestedblock--variable"></a>
+### Nested Schema for `variable`
+
+Required:
+
+- `name` (String) Name of the variable
+- `value` (String) Value of the variable
 
 ## Import
 
