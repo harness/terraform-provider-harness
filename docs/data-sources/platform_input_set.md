@@ -17,9 +17,9 @@ Data source for retrieving a Harness input set.
 
 ### Required
 
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 - `pipeline_id` (String) Identifier of the pipeline
-- `project_id` (String) Unique identifier of the Project.
+- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
@@ -30,7 +30,7 @@ Data source for retrieving a Harness input set.
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Input Set YAML
 
 

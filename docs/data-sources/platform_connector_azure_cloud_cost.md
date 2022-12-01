@@ -25,8 +25,8 @@ data "harness_platform_connector_azure_cloud_cost" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
@@ -35,7 +35,7 @@ data "harness_platform_connector_azure_cloud_cost" "example" {
 - `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `id` (String) The ID of this resource.
 - `subscription_id` (String) Subsription id.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `tenant_id` (String) Tenant id.
 
 <a id="nestedatt--billing_export_spec"></a>

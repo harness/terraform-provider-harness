@@ -137,7 +137,7 @@ func testAccDataSourceEnvironmentServiceOverrides(id string, name string) string
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
-			service_id = harness_platform_service.test.id
+			service_id = harness_platform_environment_service_overrides.test.service_id
 		}
 `, id, name)
 }

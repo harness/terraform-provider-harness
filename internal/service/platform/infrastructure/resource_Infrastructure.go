@@ -49,6 +49,7 @@ func ResourceInfrastructure() *schema.Resource {
 				Description: fmt.Sprintf("Infrastructure deployment type. Valid values are %s.", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -62,7 +63,7 @@ func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, met
 
 	env_id := d.Get("env_id").(string)
 
-	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructureList(ctx, c.AccountId, env_id, &nextgen.InfrastructuresApiGetInfrastructureListOpts{
+	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiGetInfrastructureOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
@@ -79,7 +80,7 @@ func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, met
 		return nil
 	}
 
-	readInfrastructure(d, &resp.Data.Content[0])
+	readInfrastructure(d, resp.Data)
 
 	return nil
 }

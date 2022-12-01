@@ -28,8 +28,8 @@ data "harness_platform_infrastructure" "example" {
 ### Required
 
 - `env_id` (String) environment identifier.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
@@ -41,7 +41,7 @@ data "harness_platform_infrastructure" "example" {
 - `deployment_type` (String) Infrastructure deployment type. Valid values are Kubernetes, NativeHelm, Ssh, WinRm, ServerlessAwsLambda, AzureWebApp, Custom, ECS.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment.
 - `yaml` (String) Infrastructure YAML
 

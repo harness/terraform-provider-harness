@@ -35,10 +35,10 @@ resource "harness_platform_roles" "example" {
 
 - `allowed_scope_levels` (Set of String) The scope levels at which this role can be used
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 - `permissions` (Set of String) List of the permission identifiers
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -49,6 +49,12 @@ resource "harness_platform_roles" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using roles id
+# Import account level roles
 terraform import harness_platform_roles.example <roles_id>
+
+# Import org level roles
+terraform import harness_platform_roles.example <ord_id>/<roles_id>
+
+# Import project level roles
+terraform import harness_platform_roles.example <org_id>/<project_id>/<roles_id>
 ```
