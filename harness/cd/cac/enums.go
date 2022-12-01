@@ -117,7 +117,7 @@ var DeploymenTypesSlice = []string{
 	"AWS_LAMBDA",
 	"AZURE_VMSS",
 	"AZURE_WEBAPP",
-	"Custom",
+	"CUSTOM",
 	"ECS",
 	"HELM",
 	"KUBERNETES",

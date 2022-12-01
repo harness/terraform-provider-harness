@@ -321,7 +321,8 @@ type InfrastructureDetail struct {
 	HostNameConvention            string             `yaml:"hostNameConvention,omitempty"`
 	HostNames                     []string           `yaml:"hostNames,omitempty"`
 	IamRole                       string             `yaml:"iamRole,omitempty"`
-	InfraVariables                *InfraVariable     `yaml:"infraVariables,omitempty"`
+	DeploymentTypeTemplateVersion string             `yaml:"deploymentTypeTemplateVersion,omitempty"`
+	InfraVariables                []*InfraVariable   `yaml:"infraVariables,omitempty"`
 	LaunchType                    string             `yaml:"launchType,omitempty"`
 	LoadBalancerName              string             `yaml:"loadBalancerName,omitempty"`
 	Namespace                     string             `yaml:"namespace,omitempty"`
@@ -485,7 +486,8 @@ type InfrastructureAwsWinRM struct {
 }
 
 type InfrastructureCustom struct {
-	InfraVariables *InfraVariable `yaml:"infraVariables,omitempty"`
+	DeploymentTypeTemplateVersion string           `yaml:"deploymentTypeTemplateVersion,omitempty"`
+	InfraVariables                []*InfraVariable `yaml:"infraVariables,omitempty"`
 }
 
 type InfraVariable struct {
