@@ -52,7 +52,7 @@ func testAccInfraDefCustom(name string) string {
 			content = <<EOF
 harnessApiVersion: '1.0'
 type: CUSTOM_DEPLOYMENT_TYPE
-fetchInstanceScript: curl http://localhost:8081/instances.json >> ${INSTANCE_OUTPUT_PATH}
+fetchInstanceScript: curl http://localhost:8081/instances.json >> $${INSTANCE_OUTPUT_PATH}
 hostAttributes:
   hostname: host
 hostObjectArrayPath: hosts
