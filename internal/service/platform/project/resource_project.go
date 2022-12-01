@@ -55,6 +55,12 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta inter
 		OrgIdentifier: optional.NewString(d.Get("org_id").(string)),
 	})
 
+	if resp.Data == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
