@@ -28,6 +28,7 @@ import (
 	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
@@ -176,6 +177,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_vault":                 connector.DataSourceConnectorVault(),
 				"harness_platform_filters":                         filters.DataSourceFilters(),
 				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
+				"harness_platform_ccm_filters":                     ccm_filters.DataSourceCCMFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
 				"harness_delegate":                                 delegate.DataSourceDelegate(),
@@ -255,6 +257,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_vault":                 connector.ResourceConnectorVault(),
 				"harness_platform_filters":                         filters.ResourceFilters(),
 				"harness_platform_pipeline_filters":                pipeline_filters.ResourcePipelineFilters(),
+				"harness_platform_ccm_filters":                     ccm_filters.ResourceCCMFilters(),
 				"harness_add_user_to_group":                        user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                      application.ResourceApplicationGitSync(),
 				"harness_application":                              application.ResourceApplication(),
