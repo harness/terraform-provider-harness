@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -123,14 +122,14 @@ func dataSourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta i
 	if id != "" {
 		var resp nextgen.ResponseDtoUserGroup
 		resp, httpResp, err = c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 		ug = resp.Data
 	} else if name != "" {
 		ug, httpResp, err = c.UserGroupApi.GetUserGroupByName(ctx, c.AccountId, name, &nextgen.UserGroupApiGetUserGroupByNameOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
 		return diag.FromErr(errors.New("either identifier or name must be specified"))
