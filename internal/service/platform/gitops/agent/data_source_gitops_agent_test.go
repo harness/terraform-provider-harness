@@ -51,7 +51,7 @@ func testAccDataSourceGitopsAgent(agentId string, name string, accountId string,
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
 			name = "%[4]s"
-			type = "CONNECTED_ARGO_PROVIDER"
+			type = "MANAGED_ARGO_PROVIDER"
 			metadata {
         		namespace = "terraform-test"
         		high_availability = false

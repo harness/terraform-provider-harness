@@ -48,7 +48,7 @@ func testAccDataSourceGitopsAgentDeployYaml(agentId string, accountId string, ag
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
 			name = "%[3]s"
-			type = "CONNECTED_ARGO_PROVIDER"
+			type = "MANAGED_ARGO_PROVIDER"
 			metadata {
         		namespace = "%[4]s"
         		high_availability = false
