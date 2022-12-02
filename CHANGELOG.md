@@ -1,3 +1,13 @@
+# 0.11.0 (December 02,2022) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_infrastructure_definition: Add new infrastructure type CUSTOM for CG` ([#335](https://github.com/harness/terraform-provider-harness/issues/335))
+
+BUG FIXES:
+
+* resource/harness_platform_project: Fix project refresh ([#333](https://github.com/harness/terraform-provider-harness/issues/333))
+
 # 0.10.3 (December 02,2022) 
 
 BUG FIXES:
