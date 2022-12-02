@@ -4,7 +4,7 @@ resource "harness_platform_gitops_agent" "example" {
   project_id = "project_id"
   org_id     = "org_id"
   name       = "name"
-  type       = "CONNECTED_ARGO_PROVIDER"
+  type       = "MANAGED_ARGO_PROVIDER"
   metadata {
     namespace         = "namespace"
     high_availability = true
