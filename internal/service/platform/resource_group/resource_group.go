@@ -66,7 +66,7 @@ func ResourceResourceGroup() *schema.Resource {
 						"filter": {
 							Description: "Can be one of these 2 EXCLUDING_CHILD_SCOPES or INCLUDING_CHILD_SCOPES",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 					}},
 			},
