@@ -1,3 +1,9 @@
+# 0.10.2 (December 01,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_infrastructure: Fix infrastructure resource when creating multiple infrastructure in same env ([#330](https://github.com/harness/terraform-provider-harness/issues/330))
+
 # 0.10.1 (November 30,2022) 
 
 BUG FIXES:
