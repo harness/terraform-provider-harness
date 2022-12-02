@@ -6,9 +6,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httputil"
+	"regexp"
 	"strings"
 
-	"github.com/harness/harness-go-sdk/harness/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -47,14 +47,8 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 func MaskAPIKey(stringToMask string) string {
-	apiKey := helpers.EnvVars.ApiKey.Get()
-	platformApiKey := helpers.EnvVars.PlatformApiKey.Get()
-	if apiKey != "" {
-		stringToMask = strings.ReplaceAll(stringToMask, apiKey, "****")
-	}
-	if platformApiKey != "" {
-		stringToMask = strings.ReplaceAll(stringToMask, platformApiKey, "****")
-	}
+	reg := regexp.MustCompile(`X-Api-Key: ([a-zA-Z0-9.+-=]+)`)
+	stringToMask = reg.ReplaceAllString(stringToMask, "X-Api-Key: ****")
 	return stringToMask
 }
 
