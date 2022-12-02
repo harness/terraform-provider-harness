@@ -30,6 +30,7 @@ var infraDetailTypes = []string{
 	"aws_winrm",
 	"azure_vmss",
 	"azure_webapp",
+	"custom",
 	"tanzu",
 	"datacenter_winrm",
 	"datacenter_ssh",
@@ -185,6 +186,15 @@ func ResourceInfraDefinition() *schema.Resource {
 				ConflictsWith: utils.GetConflictsWithSlice(infraDetailTypes, "tanzu"),
 				ExactlyOneOf:  infraDetailTypes,
 			},
+			"custom": {
+				Description:   "The configuration details for Custom deployments.",
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				Elem:          infraDetailsCustom(),
+				ConflictsWith: utils.GetConflictsWithSlice(infraDetailTypes, "custom"),
+				ExactlyOneOf:  infraDetailTypes,
+			},
 			"datacenter_winrm": {
 				Description:   "The configuration details for WinRM datacenter deployments.",
 				Type:          schema.TypeList,
@@ -314,6 +324,7 @@ func resourceInfraDefinitionCreateOrUpdate(ctx context.Context, d *schema.Resour
 	expandAwsLambdaConfiguration(d.Get("aws_lambda").([]interface{}), input)
 	expandAwsWinRMConfiguration(d.Get("aws_winrm").([]interface{}), input)
 	expandTanzuConfiguration(d.Get("tanzu").([]interface{}), input)
+	expandCustomConfiguration(d.Get("custom").([]interface{}), input)
 	expandAzureWebAppConfiguration(d.Get("azure_webapp").([]interface{}), input)
 
 	infraDef, err := c.CDClient.ConfigAsCodeClient.UpsertInfraDefinition(input)
@@ -370,6 +381,10 @@ func readInfraDefinition(d *schema.ResourceData, infraDef *cac.InfrastructureDef
 
 	if config := flattenTanzuConfiguration(d, infraDef); len(config) > 0 {
 		d.Set("tanzu", config)
+	}
+
+	if config := flattenCustomConfiguration(d, infraDef); len(config) > 0 {
+		d.Set("custom", config)
 	}
 
 	if config := flattenAzureWebAppConfiguration(d, infraDef); len(config) > 0 {

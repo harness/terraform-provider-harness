@@ -1,0 +1,3 @@
+```release-note:new-resource
+resource/harness_infrastructure_definition: Add new infrastructure type CUSTOM for CG
+```
