@@ -64,7 +64,7 @@ func ResourceUserGroup() *schema.Resource {
 			},
 			"users": {
 				Description: "List of users in the UserGroup.",
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -174,7 +174,7 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
-	var resp nextgen.ResponseDtoUserGroup
+	var resp nextgen.ResponseDtoUserGroupRequestV2
 	var httpResp *http.Response
 
 	id := d.Id()
@@ -182,12 +182,12 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 	ug.AccountIdentifier = c.AccountId
 
 	if id == "" {
-		resp, httpResp, err = c.UserGroupApi.PostUserGroup(ctx, ug, c.AccountId, &nextgen.UserGroupApiPostUserGroupOpts{
+		resp, httpResp, err = c.UserGroupApi.PostUserGroupV2(ctx, ug, c.AccountId, &nextgen.UserGroupApiPostUserGroupV2Opts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		resp, httpResp, err = c.UserGroupApi.PutUserGroup(ctx, ug, c.AccountId, &nextgen.UserGroupApiPutUserGroupOpts{
+		resp, httpResp, err = c.UserGroupApi.PutUserGroupV2(ctx, ug, c.AccountId, &nextgen.UserGroupApiPutUserGroupV2Opts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
@@ -197,7 +197,7 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUserGroup(d, resp.Data)
+	readUserGroupV2(d, resp.Data)
 
 	return nil
 }
@@ -217,8 +217,8 @@ func resourceUserGroupDelete(ctx context.Context, d *schema.ResourceData, meta i
 	return nil
 }
 
-func buildUserGroup(d *schema.ResourceData) nextgen.UserGroup {
-	userGroup := &nextgen.UserGroup{}
+func buildUserGroup(d *schema.ResourceData) nextgen.UserGroupRequestV2 {
+	userGroup := &nextgen.UserGroupRequestV2{}
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		userGroup.OrgIdentifier = attr.(string)
@@ -245,7 +245,7 @@ func buildUserGroup(d *schema.ResourceData) nextgen.UserGroup {
 	}
 
 	if attr, ok := d.GetOk("users"); ok {
-		userGroup.Users = helpers.ExpandField(attr.(*schema.Set).List())
+		userGroup.Users = helpers.ExpandField(attr.([]interface{}))
 	}
 
 	if attr, ok := d.GetOk("notification_configs"); ok {
@@ -285,6 +285,25 @@ func buildUserGroup(d *schema.ResourceData) nextgen.UserGroup {
 	}
 
 	return *userGroup
+}
+
+func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupRequestV2) {
+	d.SetId(env.Identifier)
+	d.Set("identifier", env.Identifier)
+	d.Set("org_id", env.OrgIdentifier)
+	d.Set("project_id", env.ProjectIdentifier)
+	d.Set("name", env.Name)
+	d.Set("description", env.Description)
+	d.Set("tags", helpers.FlattenTags(env.Tags))
+	d.Set("users", env.Users)
+	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
+	d.Set("linked_sso_id", env.LinkedSsoId)
+	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
+	d.Set("sso_group_id", env.SsoGroupId)
+	d.Set("sso_group_name", env.SsoGroupName)
+	d.Set("linked_sso_type", env.LinkedSsoType)
+	d.Set("externally_managed", env.ExternallyManaged)
+	d.Set("sso_linked", env.SsoLinked)
 }
 
 func readUserGroup(d *schema.ResourceData, env *nextgen.UserGroup) {

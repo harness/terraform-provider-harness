@@ -142,7 +142,7 @@ func testAccResourceUserGroup(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			users = []
+			users = ["richa.jajoo@harness.io"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
