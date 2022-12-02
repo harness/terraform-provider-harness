@@ -35,7 +35,7 @@ resource "harness_infrastructure_definition" "k8s" {
 
 # Creating a Deployment Template for CUSTOM infrastructure type
 resource "harness_yaml_config" "example_yaml" {
-  path = "Setup/Template Library/Example Folder/deployment_template.yaml"
+  path    = "Setup/Template Library/Example Folder/deployment_template.yaml"
   content = <<EOF
 harnessApiVersion: '1.0'
 type: CUSTOM_DEPLOYMENT_TYPE
@@ -53,22 +53,22 @@ EOF
 
 # Creating a infrastructure of type CUSTOM
 resource "harness_infrastructure_definition" "custom" {
-  name = "custom-infra"
-  app_id = harness_application.example.id
-  env_id = harness_environment.dev.id
-  cloud_provider_type = "CUSTOM"
-  deployment_type = "CUSTOM"
+  name                    = "custom-infra"
+  app_id                  = harness_application.example.id
+  env_id                  = harness_environment.dev.id
+  cloud_provider_type     = "CUSTOM"
+  deployment_type         = "CUSTOM"
   deployment_template_uri = "Example Folder/${harness_yaml_config.example_yaml.name}"
 
   custom {
     deployment_type_template_version = "1"
     variable {
-      name = "url"
+      name  = "url"
       value = "localhost:8081"
     }
 
     variable {
-      name = "file_name"
+      name  = "file_name"
       value = "instances.json"
     }
   }
