@@ -95,7 +95,7 @@ func resourceCCMFiltersRead(ctx context.Context, d *schema.ResourceData, meta in
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if resp.Data == nil {
