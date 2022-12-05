@@ -1,6 +1,6 @@
 
-<a name="0.3.1"></a>
-## 0.3.1 (2022-12-02)
+<a name="0.3.2"></a>
+## 0.3.2 (2022-12-05)
 
 ### Add
 
@@ -12,13 +12,13 @@
 
 ### Added
 
-* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
-* Added resource lookups by name
-* Added artifact sources to service for graphql
+* added version and changed variable type for custom deployment
 
 ### Added
 
-* added version and changed variable type for custom deployment
+* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
+* Added resource lookups by name
+* Added artifact sources to service for graphql
 
 ### Adding
 
@@ -57,7 +57,6 @@
 * Fix main
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
-* Fix timestamp parsing for delegate query
 
 ### Fixing
 
@@ -93,6 +92,8 @@
 
 ### Release
 
+* Release version 0.3.1 12-02-2022
+* Release v0.3.1
 * Release version 0.3.0 11-25-2022
 * Release v0.3.0
 * Release version 0.2.30 11-23-2022
@@ -152,8 +153,6 @@
 * Release version 0.2.3 09-29-2022
 * Release v0.2.3
 * Release version 0.2.2 09-23-2022
-* Release v0.2.2
-* Release version 0.2.1 09-21-2022
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -179,8 +178,6 @@
 * Release version 0.1.19 04-13-2022
 * Release v0.1.19
 * Release version 0.1.18 03-25-2022
-* Release v0.1.18
-* Release version v0.1.18 03-25-2022
 
 ### Removing
 
@@ -201,7 +198,6 @@
 * Update azure connector models
 * Update azure connector models
 * Update role assignments api and models
-* Update prometheus connector dto model
 
 ### Updated
 
@@ -210,6 +206,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#242](https://github.com/harness/harness-go-sdk/issues/242) from harness/SPG-435-fix
 * Merge pull request [#240](https://github.com/harness/harness-go-sdk/issues/240) from harness/CDS-46959
 * Merge pull request [#237](https://github.com/harness/harness-go-sdk/issues/237) from harness/SPG-823-TF-resource-for-template
 * Merge pull request [#238](https://github.com/harness/harness-go-sdk/issues/238) from harness/SPG-435
@@ -248,5 +245,4 @@
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
-* Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 
