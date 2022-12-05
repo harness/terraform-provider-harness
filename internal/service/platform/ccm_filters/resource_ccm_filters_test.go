@@ -10,7 +10,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceCCMFilters(t *testing.T) {
@@ -150,40 +149,6 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 		return optional.NewString(attr)
 	}
 	return optional.EmptyString()
-}
-
-func TestAccResourceCCMFilter_DeleteUnderlyingResource(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	resourceName := "harness_platform_ccm_filters.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceCCMFilters(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-				),
-			},
-			{
-				PreConfig: func() {
-					acctest.TestAccConfigureProvider()
-					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.FilterApi.CcmdeleteFilter(ctx, id, c.AccountId, "CCMRecommendation", &nextgen.FilterApiCcmdeleteFilterOpts{
-						OrgIdentifier:     optional.NewString(id),
-						ProjectIdentifier: optional.NewString(id),
-					})
-					require.NoError(t, err)
-				},
-				Config:             testAccResourceCCMFilters(id, name),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
 }
 
 func testAccResourceCCMFilters(id string, name string) string {
