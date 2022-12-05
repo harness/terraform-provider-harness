@@ -69,7 +69,7 @@ func DataSourceFilters() *schema.Resource {
 				},
 			},
 			"filter_visibility": {
-				Description: "This indicates visibility of filter, by default it is Everyone.",
+				Description: "This indicates visibility of filter. By default, everyone can view this filter.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

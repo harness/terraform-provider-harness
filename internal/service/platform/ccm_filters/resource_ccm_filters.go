@@ -29,12 +29,12 @@ func ResourceCCMFilters() *schema.Resource {
 				Required:    true,
 			},
 			"name": {
-				Description: "Name of the pipeline filters.",
+				Description: "Name of the ccm filters.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"type": {
-				Description: "Type of pipeline filters.",
+				Description: "Type of ccm filters.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -56,7 +56,7 @@ func ResourceCCMFilters() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"filter_type": {
-							Description: "Corresponding Entity of the filters.",
+							Description: "Type of CCM filters.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},

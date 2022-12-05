@@ -61,7 +61,7 @@ func TestAccResourceCCMFiltersOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_pipeline_filters.test"
+	resourceName := "harness_platform_ccm_filters.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },

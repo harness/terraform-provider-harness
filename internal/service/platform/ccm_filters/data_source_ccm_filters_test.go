@@ -40,7 +40,7 @@ func TestAccDataSourceCCMFiltersOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
-	resourceName := "data.harness_platform_pipeline_filters.test"
+	resourceName := "data.harness_platform_ccm_filters.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -109,10 +109,10 @@ func testAccDataSourceCCMFiltersOrgLevel(id string, name string) string {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = harness_platform_organization.test.id
-		type = "CCMExecution"
+		type = "CCMRecommendation"
 		filter_properties {
 			tags = ["foo:bar"]
-			filter_type = "CCMExecution"
+			filter_type = "CCMRecommendation"
 		}
 		filter_visibility = "OnlyCreator"
 	}
