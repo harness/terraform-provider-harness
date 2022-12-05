@@ -1,0 +1,1 @@
+```release-note:new-resource resource/harness_platform_ccm_filters: Resource for creating a Harness CCM Filters ```

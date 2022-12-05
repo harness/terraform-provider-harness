@@ -37,7 +37,7 @@ data "harness_platform_filters" "test" {
 ### Read-Only
 
 - `filter_properties` (List of Object) Properties of the filter entity defined in Harness. (see [below for nested schema](#nestedatt--filter_properties))
-- `filter_visibility` (String) This indicates visibility of filter, by default it is Everyone.
+- `filter_visibility` (String) This indicates visibility of filter. By default, everyone can view this filter.
 - `id` (String) The ID of this resource.
 - `name` (String) Name of the Filter
 

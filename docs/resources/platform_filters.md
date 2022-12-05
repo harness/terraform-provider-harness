@@ -39,7 +39,7 @@ resource "harness_platform_filters" "test" {
 
 ### Optional
 
-- `filter_visibility` (String) This indicates visibility of filter, by default it is Everyone.
+- `filter_visibility` (String) This indicates visibility of filter. By default, everyone can view this filter.
 - `org_id` (String) organization Identifier for the Entity
 - `project_id` (String) project Identifier for the Entity
 
