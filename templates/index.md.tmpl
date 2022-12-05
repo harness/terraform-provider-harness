@@ -3,12 +3,12 @@
 page_title: "harness Provider"
 subcategory: ""
 description: |-
-  For an explanation of how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider .
+  For an explanation of how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
 ---
 
 # harness Provider
 
-
+For an explanation of how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
 
 ## Example Usage
 
