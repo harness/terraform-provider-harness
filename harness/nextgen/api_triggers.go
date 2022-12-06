@@ -1,7 +1,7 @@
 /*
  * Harness NextGen Software Delivery Platform API Reference
  *
- * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
+ * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub
  *
  * API version: 3.0
  * Contact: contact@harness.io
@@ -35,9 +35,18 @@ TriggersApiService Creates Trigger for triggering target pipeline identifier.
  * @param orgIdentifier
  * @param projectIdentifier
  * @param targetIdentifier Identifier of the target pipeline
+ * @param optional nil or *TriggersApiCreateTriggerOpts - Optional Parameters:
+     * @param "IgnoreError" (optional.Bool) -
+     * @param "WithServiceV2" (optional.Bool) -
 @return ResponseDtongTriggerResponse
 */
-func (a *TriggersApiService) CreateTrigger(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, targetIdentifier string) (ResponseDtongTriggerResponse, *http.Response, error) {
+
+type TriggersApiCreateTriggerOpts struct {
+	IgnoreError   optional.Bool
+	WithServiceV2 optional.Bool
+}
+
+func (a *TriggersApiService) CreateTrigger(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, targetIdentifier string, localVarOptionals *TriggersApiCreateTriggerOpts) (ResponseDtongTriggerResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -57,6 +66,12 @@ func (a *TriggersApiService) CreateTrigger(ctx context.Context, body string, acc
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	localVarQueryParams.Add("targetIdentifier", parameterToString(targetIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.IgnoreError.IsSet() {
+		localVarQueryParams.Add("ignoreError", parameterToString(localVarOptionals.IgnoreError.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.WithServiceV2.IsSet() {
+		localVarQueryParams.Add("withServiceV2", parameterToString(localVarOptionals.WithServiceV2.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -446,12 +461,13 @@ func (a *TriggersApiService) GetListForTarget(ctx context.Context, accountIdenti
 
 /*
 TriggersApiService Gets the trigger by accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier and triggerIdentifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
- * @param targetIdentifier Identifier of the target pipeline under which trigger resides
- * @param triggerIdentifier
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier
+  - @param orgIdentifier
+  - @param projectIdentifier
+  - @param targetIdentifier Identifier of the target pipeline under which trigger resides
+  - @param triggerIdentifier
+
 @return ResponseDtongTriggerResponse
 */
 func (a *TriggersApiService) GetTrigger(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, targetIdentifier string, triggerIdentifier string) (ResponseDtongTriggerResponse, *http.Response, error) {
@@ -571,13 +587,134 @@ func (a *TriggersApiService) GetTrigger(ctx context.Context, accountIdentifier s
 }
 
 /*
+TriggersApiService Lists all Triggers
+Lists all the Triggers for the given Account ID.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier Account Identifier for the Entity.
+
+@return ResponseDtoTriggerCatalogResponse
+*/
+func (a *TriggersApiService) GetTriggerCatalog(ctx context.Context, accountIdentifier string) (ResponseDtoTriggerCatalogResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoTriggerCatalogResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/triggers/catalog"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoTriggerCatalogResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
 TriggersApiService Fetches Trigger details for a specific accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier, triggerIdentifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
- * @param triggerIdentifier Identifier of the target pipeline
- * @param targetIdentifier
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier
+  - @param orgIdentifier
+  - @param projectIdentifier
+  - @param triggerIdentifier Identifier of the target pipeline
+  - @param targetIdentifier
+
 @return ResponseDtongTriggerDetailsResponseDto
 */
 func (a *TriggersApiService) GetTriggerDetails(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, triggerIdentifier string, targetIdentifier string) (ResponseDtongTriggerDetailsResponseDto, *http.Response, error) {
@@ -707,11 +844,13 @@ TriggersApiService Updates trigger for pipeline with target pipeline identifier.
  * @param triggerIdentifier
  * @param optional nil or *TriggersApiUpdateTriggerOpts - Optional Parameters:
      * @param "IfMatch" (optional.String) -
+     * @param "IgnoreError" (optional.Bool) -
 @return ResponseDtongTriggerResponse
 */
 
 type TriggersApiUpdateTriggerOpts struct {
-	IfMatch optional.String
+	IfMatch     optional.String
+	IgnoreError optional.Bool
 }
 
 func (a *TriggersApiService) UpdateTrigger(ctx context.Context, body string, accountIdentifier string, orgIdentifier string, projectIdentifier string, targetIdentifier string, triggerIdentifier string, localVarOptionals *TriggersApiUpdateTriggerOpts) (ResponseDtongTriggerResponse, *http.Response, error) {
@@ -735,6 +874,9 @@ func (a *TriggersApiService) UpdateTrigger(ctx context.Context, body string, acc
 	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
 	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	localVarQueryParams.Add("targetIdentifier", parameterToString(targetIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.IgnoreError.IsSet() {
+		localVarQueryParams.Add("ignoreError", parameterToString(localVarOptionals.IgnoreError.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -821,134 +963,6 @@ func (a *TriggersApiService) UpdateTrigger(ctx context.Context, body string, acc
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtongTriggerResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-TriggersApiService Activates or deactivate trigger for pipeline with target pipeline identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier
- * @param orgIdentifier
- * @param projectIdentifier
- * @param targetIdentifier Identifier of the target pipeline under which trigger resides
- * @param triggerIdentifier
- * @param status
-@return ResponseDtoBoolean
-*/
-func (a *TriggersApiService) UpdateTriggerStatus(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, targetIdentifier string, triggerIdentifier string, status bool) (ResponseDtoBoolean, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Put")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoBoolean
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/pipeline/api/triggers/{triggerIdentifier}/status"
-	localVarPath = strings.Replace(localVarPath, "{"+"triggerIdentifier"+"}", fmt.Sprintf("%v", triggerIdentifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
-	localVarQueryParams.Add("targetIdentifier", parameterToString(targetIdentifier, ""))
-	localVarQueryParams.Add("status", parameterToString(status, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 400 {
-			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoBoolean
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
