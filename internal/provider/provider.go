@@ -102,13 +102,13 @@ func Provider(version string) func() *schema.Provider {
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.AccountId.String(), nil),
 				},
 				"api_key": {
-					Description: fmt.Sprintf("The Harness API key. This can also be set using the `%s` environment variable.", helpers.EnvVars.ApiKey.String()),
+					Description: fmt.Sprintf("The Harness API key. This can also be set using the `%s` environment variable. For more information to create an API key in FirstGen, see https://docs.harness.io/article/smloyragsm-api-keys#create_an_api_key.", helpers.EnvVars.ApiKey.String()),
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.ApiKey.String(), nil),
 				},
 				"platform_api_key": {
-					Description: fmt.Sprintf("The API key for the Harness next gen platform. This can also be set using the `%s` environment variable.", helpers.EnvVars.PlatformApiKey.String()),
+					Description: fmt.Sprintf("The API key for the Harness next gen platform. This can also be set using the `%s` environment variable. For more information to create an API key in NextGen, see https://docs.harness.io/article/tdoad7xrh9-add-and-manage-api-keys.", helpers.EnvVars.PlatformApiKey.String()),
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.PlatformApiKey.String(), nil),
