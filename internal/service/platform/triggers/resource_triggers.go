@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -78,7 +79,9 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		resp, httpResp, err = c.TriggersApi.CreateTrigger(ctx, d.Get("yaml").(string), c.AccountId,
 			d.Get("org_id").(string),
 			d.Get("project_id").(string),
-			d.Get("target_id").(string))
+			d.Get("target_id").(string), &nextgen.TriggersApiCreateTriggerOpts{
+				WithServiceV2: optional.NewBool(true),
+			})
 	} else {
 		resp, httpResp, err = c.TriggersApi.UpdateTrigger(ctx, d.Get("yaml").(string), c.AccountId, d.Get("org_id").(string),
 			d.Get("project_id").(string),
