@@ -1,6 +1,6 @@
 
-<a name="0.3.2"></a>
-## 0.3.2 (2022-12-05)
+<a name="0.3.3"></a>
+## 0.3.3 (2022-12-07)
 
 ### Add
 
@@ -26,7 +26,6 @@
 * adding better name
 * adding support for export executions
 * adding delegate resource
-* adding irsa credentials options to aws cloud provider
 
 ### Azure
 
@@ -92,6 +91,8 @@
 
 ### Release
 
+* Release version 0.3.2 12-05-2022
+* Release v0.3.2
 * Release version 0.3.1 12-02-2022
 * Release v0.3.1
 * Release version 0.3.0 11-25-2022
@@ -151,8 +152,6 @@
 * Release version 0.2.4 10-03-2022
 * Release v0.2.4
 * Release version 0.2.3 09-29-2022
-* Release v0.2.3
-* Release version 0.2.2 09-23-2022
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -177,7 +176,6 @@
 * Release v0.1.20
 * Release version 0.1.19 04-13-2022
 * Release v0.1.19
-* Release version 0.1.18 03-25-2022
 
 ### Removing
 
@@ -197,7 +195,6 @@
 * Update connector info
 * Update azure connector models
 * Update azure connector models
-* Update role assignments api and models
 
 ### Updated
 
@@ -206,6 +203,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#244](https://github.com/harness/harness-go-sdk/issues/244) from harness/SPG-822-updating-triggers-API
 * Merge pull request [#242](https://github.com/harness/harness-go-sdk/issues/242) from harness/SPG-435-fix
 * Merge pull request [#240](https://github.com/harness/harness-go-sdk/issues/240) from harness/CDS-46959
 * Merge pull request [#237](https://github.com/harness/harness-go-sdk/issues/237) from harness/SPG-823-TF-resource-for-template
@@ -244,5 +242,4 @@
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
-* Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 
