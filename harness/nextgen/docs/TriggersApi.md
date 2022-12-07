@@ -1,4 +1,4 @@
-# {{classname}}
+# nextgen{{classname}}
 
 All URIs are relative to *https://app.harness.io/gateway*
 
@@ -6,15 +6,14 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CreateTrigger**](TriggersApi.md#CreateTrigger) | **Post** /pipeline/api/triggers | Creates Trigger for triggering target pipeline identifier.
 [**DeleteTrigger**](TriggersApi.md#DeleteTrigger) | **Delete** /pipeline/api/triggers/{triggerIdentifier} | Deletes Trigger by identifier.
-[**GenerateWebhookToken**](TriggersApi.md#GenerateWebhookToken) | **Get** /pipeline/api/triggers/regenerateToken | Generates random webhook token for new triggers.
 [**GetListForTarget**](TriggersApi.md#GetListForTarget) | **Get** /pipeline/api/triggers | Gets the paginated list of triggers for accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier.
 [**GetTrigger**](TriggersApi.md#GetTrigger) | **Get** /pipeline/api/triggers/{triggerIdentifier} | Gets the trigger by accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier and triggerIdentifier.
-[**GetTriggerDetails**](TriggersApi.md#GetTriggerDetails) | **Get** /pipeline/api/triggers/{triggerIdentifier}/details | Gets the list of triggers for accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier.
+[**GetTriggerCatalog**](TriggersApi.md#GetTriggerCatalog) | **Get** /pipeline/api/triggers/catalog | Lists all Triggers
+[**GetTriggerDetails**](TriggersApi.md#GetTriggerDetails) | **Get** /pipeline/api/triggers/{triggerIdentifier}/details | Fetches Trigger details for a specific accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier, triggerIdentifier.
 [**UpdateTrigger**](TriggersApi.md#UpdateTrigger) | **Put** /pipeline/api/triggers/{triggerIdentifier} | Updates trigger for pipeline with target pipeline identifier.
-[**UpdateTriggerStatus**](TriggersApi.md#UpdateTriggerStatus) | **Put** /pipeline/api/triggers/{triggerIdentifier}/status | Activates or deactivate trigger for pipeline with target pipeline identifier.
 
 # **CreateTrigger**
-> ResponseDtongTriggerResponse CreateTrigger(ctx, body, accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier)
+> ResponseDtongTriggerResponse CreateTrigger(ctx, body, accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier, optional)
 Creates Trigger for triggering target pipeline identifier.
 
 ### Required Parameters
@@ -27,6 +26,19 @@ Name | Type | Description  | Notes
   **orgIdentifier** | **string**|  | 
   **projectIdentifier** | **string**|  | 
   **targetIdentifier** | **string**| Identifier of the target pipeline | 
+ **optional** | ***TriggersApiCreateTriggerOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a TriggersApiCreateTriggerOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+
+
+ **ignoreError** | **optional.**|  | [default to false]
+ **withServiceV2** | **optional.**|  | [default to false]
 
 ### Return type
 
@@ -73,28 +85,6 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ResponseDtoBoolean**](ResponseDTOBoolean.md)
-
-### Authorization
-
-[ApiKey](../README.md#ApiKey)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json, application/yaml
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **GenerateWebhookToken**
-> RestResponseString GenerateWebhookToken(ctx, )
-Generates random webhook token for new triggers.
-
-### Required Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-[**RestResponseString**](RestResponseString.md)
 
 ### Authorization
 
@@ -181,9 +171,37 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **GetTriggerCatalog**
+> ResponseDtoTriggerCatalogResponse GetTriggerCatalog(ctx, accountIdentifier)
+Lists all Triggers
+
+Lists all the Triggers for the given Account ID.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+
+### Return type
+
+[**ResponseDtoTriggerCatalogResponse**](ResponseDTOTriggerCatalogResponse.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **GetTriggerDetails**
 > ResponseDtongTriggerDetailsResponseDto GetTriggerDetails(ctx, accountIdentifier, orgIdentifier, projectIdentifier, triggerIdentifier, targetIdentifier)
-Gets the list of triggers for accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier.
+Fetches Trigger details for a specific accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier, triggerIdentifier.
 
 ### Required Parameters
 
@@ -239,6 +257,7 @@ Name | Type | Description  | Notes
 
 
  **ifMatch** | **optional.**|  | 
+ **ignoreError** | **optional.**|  | [default to false]
 
 ### Return type
 
@@ -251,37 +270,6 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json, application/yaml
- - **Accept**: application/json, application/yaml
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **UpdateTriggerStatus**
-> ResponseDtoBoolean UpdateTriggerStatus(ctx, accountIdentifier, orgIdentifier, projectIdentifier, targetIdentifier, triggerIdentifier, status)
-Activates or deactivate trigger for pipeline with target pipeline identifier.
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**|  | 
-  **orgIdentifier** | **string**|  | 
-  **projectIdentifier** | **string**|  | 
-  **targetIdentifier** | **string**| Identifier of the target pipeline under which trigger resides | 
-  **triggerIdentifier** | **string**|  | 
-  **status** | **bool**|  | 
-
-### Return type
-
-[**ResponseDtoBoolean**](ResponseDTOBoolean.md)
-
-### Authorization
-
-[ApiKey](../README.md#ApiKey)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
  - **Accept**: application/json, application/yaml
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
