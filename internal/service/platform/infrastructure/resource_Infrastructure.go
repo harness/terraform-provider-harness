@@ -69,15 +69,7 @@ func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, met
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Data == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readInfrastructure(d, resp.Data)

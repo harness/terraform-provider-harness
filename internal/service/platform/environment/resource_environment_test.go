@@ -88,7 +88,6 @@ func TestAccResourceEnvironment_withYaml(t *testing.T) {
 }
 
 func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip()
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_environment.test"
