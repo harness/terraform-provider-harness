@@ -97,13 +97,7 @@ func resourceTemplateFiltersRead(ctx context.Context, d *schema.ResourceData, me
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	if resp.Data == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readTemplateFilter(d, resp.Data)

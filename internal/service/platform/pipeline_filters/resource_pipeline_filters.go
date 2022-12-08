@@ -128,7 +128,7 @@ func resourcePipelineFiltersCreateOrUpdate(ctx context.Context, d *schema.Resour
 	}
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readPipelineFilter(d, resp.Data)
@@ -147,7 +147,7 @@ func resourcePipelineFiltersDelete(ctx context.Context, d *schema.ResourceData, 
 	})
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil
