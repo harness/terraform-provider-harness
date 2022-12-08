@@ -7,5 +7,6 @@ type PipelineStageExecution struct {
 	Status                 ExecutionStatusType `json:"status,omitempty"`
 	ApprovalStepType       ApprovalStepType    `json:"approvalStepType,omitempty"`
 	RuntimeInputVariables  []*Variable         `json:"runtimeInputVariables,omitempty"`
+	InputVariables         []*InputVariable    `json:"inputVariables,omitempty"`
 	WorkflowExecutionId    string              `json:"workflowExecutionId,omitempty"`
 }
