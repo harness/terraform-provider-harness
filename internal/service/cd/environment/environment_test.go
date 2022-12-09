@@ -64,7 +64,7 @@ func TestAccResourceEnvironment_WithVariables(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceEnvironment_WithVariables(name, cac.EnvironmentTypes.NonProd),
@@ -219,13 +219,6 @@ func testAccResourceEnvironment_WithVariables(name string, envType cac.Environme
 			value = "someval"
 			secret_manager_id = data.harness_secret_manager.default.id
 
-			usage_scope {
-				environment_filter_type = "PRODUCTION_ENVIRONMENTS"
-			}
-
-			usage_scope {
-				environment_filter_type = "NON_PRODUCTION_ENVIRONMENTS"
-			}
 		}
 		
 		resource "harness_application" "test" {
