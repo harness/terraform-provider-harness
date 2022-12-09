@@ -255,6 +255,10 @@ id
 notes
 startedAt
 status
+inputVariables {
+	name
+	value
+}
 tags {
 	name
 	value
@@ -284,6 +288,10 @@ pipelineStageExecutions {
 			name
 			required
 			type
+		}
+		inputVariables {
+			name
+			value
 		}
 		workflowExecutionId
 		status
