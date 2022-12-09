@@ -1,3 +1,9 @@
+# 0.11.3 (December 09,2022) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_platform_template_filters: Resource for creating a Harness template filters` ([#337](https://github.com/harness/terraform-provider-harness/issues/337))
+
 # 0.11.2 (December 07,2022) 
 
 BUG FIXES:
