@@ -238,7 +238,7 @@ func testAccResourceUserGroupPermissions_AccountPermissions(name string) string 
 		resource "harness_user_group_permissions" "test" {
 			user_group_id = data.harness_user_group.test.id
 			
-			account_permissions = ["VIEW_CE", "ADMINISTER_OTHER_ACCOUNT_FUNCTIONS", "MANAGE_API_KEYS"]
+			account_permissions = ["ADMINISTER_OTHER_ACCOUNT_FUNCTIONS", "MANAGE_API_KEYS"]
 		}
 `, name)
 }

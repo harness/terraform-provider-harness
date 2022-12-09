@@ -25,7 +25,7 @@ func resourceConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta
 
 	resp, httpResp, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, getReadConnectorOpts(d))
 	if err != nil {
-		return nil, helpers.HandleApiError(err, d, httpResp)
+		return nil, helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if connType != resp.Data.Connector.Type_ {

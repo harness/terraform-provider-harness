@@ -3,12 +3,12 @@
 page_title: "harness Provider"
 subcategory: ""
 description: |-
-  For an explanation of how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
+  For an explanation on how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
 ---
 
 # harness Provider
 
-For an explanation of how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
+For an explanation on how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
 
 ## Example Usage
 
@@ -42,6 +42,6 @@ provider "harness" {
 ### Optional
 
 - `account_id` (String) The Harness account id. This can also be set using the `HARNESS_ACCOUNT_ID` environment variable.
-- `api_key` (String) The Harness API key. This can also be set using the `HARNESS_API_KEY` environment variable.
+- `api_key` (String) The Harness API key. This can also be set using the `HARNESS_API_KEY` environment variable. For more information to create an API key in FirstGen, see https://docs.harness.io/article/smloyragsm-api-keys#create_an_api_key.
 - `endpoint` (String) The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway`. This can also be set using the `HARNESS_ENDPOINT` environment variable.
-- `platform_api_key` (String) The API key for the Harness next gen platform. This can also be set using the `HARNESS_PLATFORM_API_KEY` environment variable.
+- `platform_api_key` (String) The API key for the Harness next gen platform. This can also be set using the `HARNESS_PLATFORM_API_KEY` environment variable. For more information to create an API key in NextGen, see https://docs.harness.io/article/tdoad7xrh9-add-and-manage-api-keys.

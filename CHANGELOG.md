@@ -1,3 +1,11 @@
+# 0.11.2 (December 07,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_environment: Handle case when environment is deleted from somewhere else and refresh fails ([#343](https://github.com/harness/terraform-provider-harness/issues/343))
+
+# 0.11.1 (December 06,2022) 
+
 # 0.11.0 (December 02,2022) 
 
 FEATURES:

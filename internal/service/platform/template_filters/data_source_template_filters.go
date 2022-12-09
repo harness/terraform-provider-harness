@@ -1,4 +1,4 @@
-package filters
+package template_filters
 
 import (
 	"context"
@@ -13,36 +13,36 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func DataSourceFilters() *schema.Resource {
+func DataSourceTemplateFilters() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Filter. This data source allows you to fetch filters of the following types: {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}",
+		Description: "Data source for retrieving a Harness Template Filter.",
 
-		ReadContext: dataSourceFiltersRead,
+		ReadContext: dataSourceTemplateFiltersRead,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Unique identifier of the resource",
+				Description: "Unique identifier of the resource.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"name": {
-				Description: "Name of the Filter",
+				Description: "Name of the Filter.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"type": {
-				Description:  "Type of filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.",
+				Description:  "Type of filter. Currently supported types are {TemplateSetup, TemplateExecution, Deployment, Template, EnvironmentGroup, Environment}.",
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Connector", "DelegateProfile", "Delegate", "EnvironmentGroup", "FileStore", "Environment"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"TemplateSetup", "TemplateExecution", "Deployment", "Template", "EnvironmentGroup", "Environment"}, false),
 			},
 			"org_id": {
-				Description: "organization Identifier for the Entity",
+				Description: "Organization Identifier for the Entity.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project Identifier for the Entity",
+				Description: "Project Identifier for the Entity.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -53,7 +53,7 @@ func DataSourceFilters() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"filter_type": {
-							Description: "Corresponding Entity of the filter. Currently supported types are {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}.",
+							Description: "Corresponding Entity of the filters. Currently supported types are {Connector, DelegateProfile, Delegate, TemplateSetup, TemplateExecution, Deployment, Audit, Template, EnvironmentGroup, FileStore, CCMRecommendation, Anomaly, Environment}.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -79,7 +79,7 @@ func DataSourceFilters() *schema.Resource {
 	return resource
 }
 
-func dataSourceFiltersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceTemplateFiltersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var filter *nextgen.Filter
@@ -91,7 +91,7 @@ func dataSourceFiltersRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	if id != "" {
 		var resp nextgen.ResponseDtoFilter
-		resp, httpResp, err = c.FilterApi.GetFilter(ctx, c.AccountId, id, type_, &nextgen.FilterApiGetFilterOpts{
+		resp, httpResp, err = c.FilterApi.TemplategetFilter(ctx, c.AccountId, id, type_, &nextgen.FilterApiTemplategetFilterOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
@@ -110,7 +110,7 @@ func dataSourceFiltersRead(ctx context.Context, d *schema.ResourceData, meta int
 		return nil
 	}
 
-	readFilter(d, filter)
+	readTemplateFilter(d, filter)
 
 	return nil
 }

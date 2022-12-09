@@ -48,13 +48,7 @@ func resourceServiceRead(ctx context.Context, d *schema.ResourceData, meta inter
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	if resp.Data == nil || resp.Data.Service == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readService(d, resp.Data.Service)
