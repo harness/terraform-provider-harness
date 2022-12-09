@@ -48,7 +48,7 @@ func testAccInfraDefCustom(name string) string {
 		}
 
 		resource "harness_yaml_config" "test" {
-			path = "Setup/Template Library/Harness/custom_test.yaml"
+			path = "Setup/Template Library/Micah Testing Acount/custom_test.yaml"
 			content = <<EOF
 harnessApiVersion: '1.0'
 type: CUSTOM_DEPLOYMENT_TYPE
@@ -70,7 +70,7 @@ EOF
 			env_id = harness_environment.test.id
 			cloud_provider_type = "CUSTOM"
 			deployment_type = "CUSTOM"
-			deployment_template_uri = "Harness/${harness_yaml_config.test.name}"
+			deployment_template_uri = "Micah Testing Acount/${harness_yaml_config.test.name}"
 
 			custom {
 				deployment_type_template_version = "1"
