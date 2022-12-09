@@ -227,6 +227,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("description", agent.Description)
 	d.Set("tags", agent.Tags)
 	d.Set("org_id", agent.OrgIdentifier)
+	d.Set("type", agent.Type_)
 	d.Set("project_id", agent.ProjectIdentifier)
 	metadata := []interface{}{}
 	metaDataMap := map[string]interface{}{}
