@@ -104,7 +104,7 @@ func testAccYamlConfigApp(name string) string {
 
 resource "harness_yaml_config" "test" {
 	app_id = harness_application.test.id
-	path = "Setup/Applications/%[1]s+a/Services/%[1]s/Index.yaml"
+	path = "Setup/Applications/%[1]s/Services/%[1]s/Index.yaml"
 	content = <<EOF
 harnessApiVersion: '1.0'
 type: SERVICE
