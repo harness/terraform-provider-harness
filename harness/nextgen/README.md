@@ -327,6 +327,10 @@ Class | Method | HTTP request | Description
 *ServicesApi* | [**GetServiceV2**](docs/ServicesApi.md#getservicev2) | **Get** /ng/api/servicesV2/{serviceIdentifier} | Gets a Service by identifier
 *ServicesApi* | [**UpdateServiceV2**](docs/ServicesApi.md#updateservicev2) | **Put** /ng/api/servicesV2 | Update a Service by identifier
 *ServicesApi* | [**UpsertServiceV2**](docs/ServicesApi.md#upsertservicev2) | **Put** /ng/api/servicesV2/upsert | Upsert a Service by identifier
+*SloApi* | [**DeleteSLODataNg**](docs/SloApi.md#deleteslodatang) | **Delete** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/identifier/{identifier} | delete slo data
+*SloApi* | [**GetServiceLevelObjectiveNg**](docs/SloApi.md#getservicelevelobjectiveng) | **Get** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/identifier/{identifier} | get service level objective data
+*SloApi* | [**SaveSLODataNg**](docs/SloApi.md#saveslodatang) | **Post** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier} | saves slo data
+*SloApi* | [**UpdateSLODataNg**](docs/SloApi.md#updateslodatang) | **Put** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/identifier/{identifier} | update slo data
 *SourceCodeManagerApi* | [**CreateSourceCodeManager**](docs/SourceCodeManagerApi.md#createsourcecodemanager) | **Post** /ng/api/source-code-manager | Creates Source Code Manager
 *SourceCodeManagerApi* | [**DeleteSourceCodeManager**](docs/SourceCodeManagerApi.md#deletesourcecodemanager) | **Delete** /ng/api/source-code-manager/{identifier} | Deletes the Source Code Manager corresponding to the specified Source Code Manager Id
 *SourceCodeManagerApi* | [**GetSourceCodeManagers**](docs/SourceCodeManagerApi.md#getsourcecodemanagers) | **Get** /ng/api/source-code-manager | Lists Source Code Managers for the given account
@@ -525,6 +529,8 @@ Class | Method | HTTP request | Description
  - [BudgetScope](docs/BudgetScope.md)
  - [BuildDetails](docs/BuildDetails.md)
  - [ByteString](docs/ByteString.md)
+ - [CalenderSloTargetSpec](docs/CalenderSloTargetSpec.md)
+ - [CalenderSpec](docs/CalenderSpec.md)
  - [CcmAggregation](docs/CcmAggregation.md)
  - [CcmConnectorFilter](docs/CcmConnectorFilter.md)
  - [CcmFilter](docs/CcmFilter.md)
@@ -565,6 +571,7 @@ Class | Method | HTTP request | Description
  - [ClusterBudgetScope](docs/ClusterBudgetScope.md)
  - [ClusterData](docs/ClusterData.md)
  - [ClusterRecommendationAccuracy](docs/ClusterRecommendationAccuracy.md)
+ - [CompositeServiceLevelObjectiveSpec](docs/CompositeServiceLevelObjectiveSpec.md)
  - [Connector](docs/Connector.md)
  - [ConnectorActivityDetails](docs/ConnectorActivityDetails.md)
  - [ConnectorCatalogueItem](docs/ConnectorCatalogueItem.md)
@@ -850,6 +857,7 @@ Class | Method | HTTP request | Description
  - [ModuleLicense](docs/ModuleLicense.md)
  - [MonitoredServiceDto](docs/MonitoredServiceDto.md)
  - [MonitoredServiceResponse](docs/MonitoredServiceResponse.md)
+ - [MonthlyCalenderSpec](docs/MonthlyCalenderSpec.md)
  - [NamePart](docs/NamePart.md)
  - [NamePartOrBuilder](docs/NamePartOrBuilder.md)
  - [NewRelicConnectorDto](docs/NewRelicConnectorDto.md)
@@ -1033,7 +1041,9 @@ Class | Method | HTTP request | Description
  - [QlceViewRule](docs/QlceViewRule.md)
  - [QlceViewTimeFilter](docs/QlceViewTimeFilter.md)
  - [QlceViewTimeTruncGroupBy](docs/QlceViewTimeTruncGroupBy.md)
+ - [QuarterlyCalenderSpec](docs/QuarterlyCalenderSpec.md)
  - [QueryDto](docs/QueryDto.md)
+ - [RatioSliMetricSpec](docs/RatioSliMetricSpec.md)
  - [RdsDatabase](docs/RdsDatabase.md)
  - [RecommendClusterRequest](docs/RecommendClusterRequest.md)
  - [RecommendationDetailsDto](docs/RecommendationDetailsDto.md)
@@ -1230,6 +1240,7 @@ Class | Method | HTTP request | Description
  - [RestResponseLoginTypeResponse](docs/RestResponseLoginTypeResponse.md)
  - [RestResponseMonitoredServiceResponse](docs/RestResponseMonitoredServiceResponse.md)
  - [RestResponsePasswordStrengthPolicy](docs/RestResponsePasswordStrengthPolicy.md)
+ - [RestResponseServiceLevelObjectiveV2Response](docs/RestResponseServiceLevelObjectiveV2Response.md)
  - [RestResponseSsoConfig](docs/RestResponseSsoConfig.md)
  - [RestResponseUserGroup](docs/RestResponseUserGroup.md)
  - [Results](docs/Results.md)
@@ -1253,6 +1264,7 @@ Class | Method | HTTP request | Description
  - [RoleAssignmentValidationResponse](docs/RoleAssignmentValidationResponse.md)
  - [RoleBinding](docs/RoleBinding.md)
  - [RoleResponse](docs/RoleResponse.md)
+ - [RollingSloTargetSpec](docs/RollingSloTargetSpec.md)
  - [RoutingData](docs/RoutingData.md)
  - [RoutingDataK8s](docs/RoutingDataK8s.md)
  - [RoutingRule](docs/RoutingRule.md)
@@ -1310,11 +1322,21 @@ Class | Method | HTTP request | Description
  - [ServiceUsageRecord](docs/ServiceUsageRecord.md)
  - [ServicesResponse](docs/ServicesResponse.md)
  - [ServingRule](docs/ServingRule.md)
+ - [ServiceLevelIndicatorDto](docs/ServiceLevelIndicatorDto.md)
+ - [ServiceLevelIndicatorSpec](docs/ServiceLevelIndicatorSpec.md)
+ - [ServiceLevelObjectiveDetailsDto](docs/ServiceLevelObjectiveDetailsDto.md)
+ - [ServiceLevelObjectiveSpec](docs/ServiceLevelObjectiveSpec.md)
+ - [ServiceLevelObjectiveV2Dto](docs/ServiceLevelObjectiveV2Dto.md)
+ - [ServiceLevelObjectiveV2Response](docs/ServiceLevelObjectiveV2Response.md)
+ - [SimpleServiceLevelObjectiveSpec](docs/SimpleServiceLevelObjectiveSpec.md)
  - [SkipInfo](docs/SkipInfo.md)
  - [SkipTaskExecutableResponse](docs/SkipTaskExecutableResponse.md)
  - [SkipTaskExecutableResponseOrBuilder](docs/SkipTaskExecutableResponseOrBuilder.md)
  - [SlackConfigDto](docs/SlackConfigDto.md)
  - [Slidto](docs/Slidto.md)
+ - [SliMetricSpec](docs/SliMetricSpec.md)
+ - [SloTargetDto](docs/SloTargetDto.md)
+ - [SloTargetSpec](docs/SloTargetSpec.md)
  - [SmtpConfig](docs/SmtpConfig.md)
  - [Sort](docs/Sort.md)
  - [SortOrder](docs/SortOrder.md)
@@ -1374,6 +1396,7 @@ Class | Method | HTTP request | Description
  - [TgtGenerationSpecDto](docs/TgtGenerationSpecDto.md)
  - [TgtKeyTabFilePathSpecDto](docs/TgtKeyTabFilePathSpecDto.md)
  - [TgtPasswordSpecDto](docs/TgtPasswordSpecDto.md)
+ - [ThresholdSliMetricSpec](docs/ThresholdSliMetricSpec.md)
  - [Throwable](docs/Throwable.md)
  - [TimeInDay](docs/TimeInDay.md)
  - [TimeSchedule](docs/TimeSchedule.md)
@@ -1425,6 +1448,7 @@ Class | Method | HTTP request | Description
  - [WebhookAutoRegistrationStatus](docs/WebhookAutoRegistrationStatus.md)
  - [WebhookDetails](docs/WebhookDetails.md)
  - [WebhookEventProcessingDetails](docs/WebhookEventProcessingDetails.md)
+ - [WeeklyCalendarSpec](docs/WeeklyCalendarSpec.md)
  - [WeightedVariation](docs/WeightedVariation.md)
  - [WorkloadRecommendationDto](docs/WorkloadRecommendationDto.md)
  - [YamlDiffRecordDto](docs/YamlDiffRecordDto.md)

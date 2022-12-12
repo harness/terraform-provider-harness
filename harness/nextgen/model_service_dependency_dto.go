@@ -9,7 +9,13 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type ServiceDependencyDto struct {
 	MonitoredServiceIdentifier string `json:"monitoredServiceIdentifier,omitempty"`
-	DependencyMetadata *ServiceDependencyMetadata `json:"dependencyMetadata,omitempty"`
+
+	Type_               DependencyMetadataType        `json:"type,omitempty"`
+	KUBERNETES          *KubernetesDependencyMetadata `json:"-"`
+
+	DependencyMetadata  json.RawMessage               `json:"dependencyMetadata"`
 }

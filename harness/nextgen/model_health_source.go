@@ -9,9 +9,29 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type HealthSource struct {
 	Name string `json:"name,omitempty"`
 	Identifier string `json:"identifier,omitempty"`
-	Type_ string `json:"type,omitempty"`
-	Spec *HealthSourceSpec `json:"spec"`
+
+	Type_              HealthSourceType                   `json:"type,omitempty"`
+	AppDynamics        *AppDynamicsHealthSourceSpec       `json:"-"`
+	NewRelic           *NewRelicHealthSourceSpec          `json:"-"`
+	StackdriverLog     *StackdriverLogHealthSourceSpec    `json:"-"`
+	Splunk             *SplunkHealthSourceSpec            `json:"-"`
+	Prometheus         *PrometheusHealthSourceSpec        `json:"-"`
+	Stackdriver        *StackdriverMetricHealthSourceSpec `json:"-"`
+	DatadogMetrics     *DatadogMetricHealthSourceSpec     `json:"-"`
+	DatadogLog         *DatadogLogHealthSourceSpec        `json:"-"`
+	Dynatrace          *DynatraceHealthSourceSpec         `json:"-"`
+	ErrorTracking      *ErrorTrackingHealthSourceSpec     `json:"-"`
+	CustomHealthMetric *CustomHealthSourceMetricSpec      `json:"-"`
+	CustomHealthLog    *CustomHealthSourceLogSpec         `json:"-"`
+	SplunkMetric       *SplunkMetricHealthSourceSpec      `json:"-"`
+	ElasticSearch      *ElkHealthSourceSpec               `json:"-"`
+	CloudWatchMetrics  *CloudWatchMetricsHealthSourceSpec `json:"-"`
+	AwsPrometheus      *AwsPrometheusHealthSourceSpec     `json:"-"`
+
+	Spec               json.RawMessage                    `json:"spec"`
 }
