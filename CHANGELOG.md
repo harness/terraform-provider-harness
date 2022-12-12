@@ -1,9 +1,10 @@
 
-<a name="0.3.4"></a>
-## 0.3.4 (2022-12-08)
+<a name="0.3.5"></a>
+## 0.3.5 (2022-12-12)
 
 ### Add
 
+* Add models for jenkins connector
 * Add azure key vault connector type
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
@@ -12,13 +13,13 @@
 
 ### Added
 
-* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
-* Added resource lookups by name
-* Added artifact sources to service for graphql
+* added version and changed variable type for custom deployment
 
 ### Added
 
-* added version and changed variable type for custom deployment
+* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
+* Added resource lookups by name
+* Added artifact sources to service for graphql
 
 ### Adding
 
@@ -28,10 +29,6 @@
 * adding support for export executions
 * adding delegate resource
 * adding irsa credentials options to aws cloud provider
-
-### Adding
-
-* Adding dto files
 
 ### Azure
 
@@ -59,13 +56,11 @@
 
 * Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
 
-### Error
+### Fix
 
-* error handling
-
-### Extra
-
-* Extra check in test
+* fix environment variable overrides with secrets
+* fix cac error handling
+* fix json serialization
 
 ### Fix
 
@@ -75,12 +70,6 @@
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
 * Fix timestamp parsing for delegate query
 
-### Fix
-
-* fix environment variable overrides with secrets
-* fix cac error handling
-* fix json serialization
-
 ### Fixed
 
 * Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
@@ -88,7 +77,6 @@
 ### Fixing
 
 * fixing things
-* fixing package name
 
 ### Handle
 
@@ -108,6 +96,8 @@
 
 ### Merge
 
+* Merge branch 'main' into SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
+* Merge branch 'main' into SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
 * Merge branch 'main' into CDS-44314-gnupg-tf-resource
 * Merge branch 'main' into abhinav/SPG-567
 * Merge branch 'main' into CDS-44308-gitops-applications-api
@@ -124,6 +114,8 @@
 
 ### Release
 
+* Release version 0.3.4 12-08-2022
+* Release v0.3.4
 * Release version 0.3.3 12-07-2022
 * Release v0.3.3
 * Release version 0.3.2 12-05-2022
@@ -195,10 +187,6 @@
 * Release version 0.2.0 09-15-2022
 * Release v0.2.0
 * Release version 0.1.35 09-14-2022
-* Release v0.1.35
-* Release version 0.1.34 09-13-2022
-* Release v0.1.34
-* Release version 0.1.33 08-13-2022
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -229,16 +217,10 @@
 * Release vv0.1.18
 * Release version 0.1.17 03-24-2022
 * Release v0.1.17
-* Release version 0.1.16 03-17-2022
-* Release v0.1.16
 
 ### Removing
 
 * removing redundant api and doc
-
-### Restoring
-
-* restoring the swagger.yaml
 
 ### Revert
 
@@ -250,14 +232,13 @@
 
 ### Update
 
+* Update package
 * Update trigger in cg
 * Update connector info
 * Update azure connector models
 * Update azure connector models
 * Update role assignments api and models
 * Update prometheus connector dto model
-* Update user group model
-* Update user group model
 
 ### Updated
 
@@ -266,6 +247,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#245](https://github.com/harness/harness-go-sdk/issues/245) from harness/SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
+* Merge pull request [#248](https://github.com/harness/harness-go-sdk/issues/248) from harness/jenkin
 * Merge pull request [#225](https://github.com/harness/harness-go-sdk/issues/225) from harness/cds-44991
 * Merge pull request [#244](https://github.com/harness/harness-go-sdk/issues/244) from harness/SPG-822-updating-triggers-API
 * Merge pull request [#242](https://github.com/harness/harness-go-sdk/issues/242) from harness/SPG-435-fix
@@ -311,6 +294,4 @@
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
-* Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
-* Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 
