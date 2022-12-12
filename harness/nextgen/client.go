@@ -138,6 +138,8 @@ type APIClient struct {
 
 	LicensesApi *LicensesApiService
 
+	MonitoredServiceApi *MonitoredServiceApiService
+
 	OrganizationApi *OrganizationApiService
 
 	PermissionsApi *PermissionsApiService
@@ -171,6 +173,8 @@ type APIClient struct {
 	ServiceAccountApi *ServiceAccountApiService
 
 	ServicesApi *ServicesApiService
+
+	SloApi * SloApiService
 
 	SourceCodeManagerApi *SourceCodeManagerApiService
 
@@ -258,6 +262,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.InputSetsApi = (*InputSetsApiService)(&c.common)
 	c.InviteApi = (*InviteApiService)(&c.common)
 	c.LicensesApi = (*LicensesApiService)(&c.common)
+	c.MonitoredServiceApi = (*MonitoredServiceApiService)(&c.common)
 	c.OrganizationApi = (*OrganizationApiService)(&c.common)
 	c.PermissionsApi = (*PermissionsApiService)(&c.common)
 	c.PipelinesApi = (*PipelinesApiService)(&c.common)
@@ -275,6 +280,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.SecretsApi = (*SecretsApiService)(&c.common)
 	c.ServiceAccountApi = (*ServiceAccountApiService)(&c.common)
 	c.ServicesApi = (*ServicesApiService)(&c.common)
+	c.SloApi = (*SloApiService)(&c.common)
 	c.SourceCodeManagerApi = (*SourceCodeManagerApiService)(&c.common)
 	c.TargetGroupsApi = (*TargetGroupsApiService)(&c.common)
 	c.TargetsApi = (*TargetsApiService)(&c.common)
