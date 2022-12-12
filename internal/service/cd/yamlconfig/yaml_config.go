@@ -100,6 +100,18 @@ func resourceYamlConfigCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	app_id := d.Get("app_id").(string)
 	content := d.Get("content").(string)
 
+	if _, ok := d.GetOk("app_id"); ok {
+		app, get_app_err := c.CDClient.ApplicationClient.GetApplicationById(app_id)
+		if get_app_err != nil {
+			return diag.FromErr(get_app_err)
+		}
+
+		appNameFromPath := extractAppName(path.String())
+		if app.Name != appNameFromPath {
+			return diag.Errorf("Application name for the app with id %s is %s which is different than the one provided in path", app_id, app.Name)
+		}
+	}
+
 	_, err := c.CDClient.ConfigAsCodeClient.UpsertRawYaml(path, []byte(content))
 	if err != nil {
 		return diag.FromErr(err)
@@ -129,4 +141,18 @@ func resourceYamlConfigDelete(ctx context.Context, d *schema.ResourceData, meta 
 	}
 
 	return nil
+}
+
+func extractAppName(path string) string {
+	result := ""
+	first := strings.LastIndex(path, "Setup/Applications/")
+	for c, ch := range path {
+		if c > first+18 {
+			if string(ch) == "/" {
+				break
+			}
+			result = result + string(ch)
+		}
+	}
+	return result
 }
