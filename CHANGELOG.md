@@ -1,3 +1,9 @@
+# 0.11.4 (December 13,2022) 
+
+BUG FIXES:
+
+* resource/harness_yaml_config: Fix yaml config resource ([#349](https://github.com/harness/terraform-provider-harness/issues/349))
+
 # 0.11.3 (December 09,2022) 
 
 FEATURES:
