@@ -164,14 +164,6 @@ func resourceSloCreate(ctx context.Context, d *schema.ResourceData, meta interfa
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &respCreate == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-
 	readSlo(d, &respCreate.Resource, accountIdentifier)
 	return nil
 }
@@ -193,7 +185,7 @@ func resourceSloRead(ctx context.Context, d *schema.ResourceData, meta interface
 	resp, httpResp, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -230,14 +222,6 @@ func resourceSloUpdate(ctx context.Context, d *schema.ResourceData, meta interfa
 
 	if errCreate != nil {
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
-	}
-
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &respCreate == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
 	}
 
 	readSlo(d, &respCreate.Resource, accountIdentifier)

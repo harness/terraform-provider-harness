@@ -245,14 +245,6 @@ func resourceMonitoredServiceCreate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &respCreate == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-
 	readMonitoredService(d, &respCreate.Resource, accountIdentifier)
 	return nil
 }
@@ -274,7 +266,7 @@ func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, m
 	resp, httpResp, err := c.MonitoredServiceApi.GetMonitoredService(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -303,14 +295,6 @@ func resourceMonitoredServiceUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if errCreate != nil {
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
-	}
-
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &respCreate == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
 	}
 
 	readMonitoredService(d, &respCreate.Resource, accountIdentifier)

@@ -52,7 +52,6 @@ func TestAccResourceMonitoredService(t *testing.T) {
 }
 
 func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip()
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")

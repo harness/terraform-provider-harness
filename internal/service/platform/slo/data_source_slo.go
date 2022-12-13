@@ -63,13 +63,6 @@ func dataSourceSloRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 	readSlo(d, &resp.Resource, accountIdentifier)
 	return nil
 }
