@@ -49,7 +49,6 @@ resource "harness_platform_slo" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for / of the SLO.
 - `identifier` (String) Identifier for / of the SLO.
 - `org_id` (String) Organization Identifier for / of the SLO.
 - `project_id` (String) Project Identifier of the SLO.

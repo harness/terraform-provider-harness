@@ -83,7 +83,6 @@ resource "harness_platform_monitored_service" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier for / of the monitored service.
 - `identifier` (String) Identifier for / of the monitored service.
 - `org_id` (String) Organization Identifier for / of the monitored service.
 - `project_id` (String) Project Identifier of the monitored service.

@@ -26,7 +26,6 @@ data "harness_platform_monitored_service" "example" {
 
 ### Required
 
-- `account_id` (String) Account Identifier of the monitored service.
 - `identifier` (String) Identifier of the monitored service.
 - `org_id` (String) Organization Identifier of the monitored service.
 - `project_id` (String) Project Identifier of the monitored service.
