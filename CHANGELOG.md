@@ -1,9 +1,10 @@
 
-<a name="0.3.5"></a>
-## 0.3.5 (2022-12-12)
+<a name="0.3.6"></a>
+## 0.3.6 (2022-12-13)
 
 ### Add
 
+* Add jenkins authentication serializer
 * Add models for jenkins connector
 * Add azure key vault connector type
 * Add models and enum for win rm secret type
@@ -13,13 +14,13 @@
 
 ### Added
 
-* added version and changed variable type for custom deployment
-
-### Added
-
 * Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 * Added resource lookups by name
 * Added artifact sources to service for graphql
+
+### Added
+
+* added version and changed variable type for custom deployment
 
 ### Adding
 
@@ -43,10 +44,6 @@
 
 * Catch service not found issue
 
-### Change
-
-* change in package name
-
 ### Changes
 
 * Changes to add azure cloud cost connector
@@ -60,7 +57,6 @@
 
 * fix environment variable overrides with secrets
 * fix cac error handling
-* fix json serialization
 
 ### Fix
 
@@ -86,10 +82,6 @@
 
 * Handling different kinds of errors
 
-### Implement
-
-* Implement new cac delete method
-
 ### Implemented
 
 * Implemented AttachTag and DetachTag functionality ([#126](https://github.com/harness/harness-go-sdk/issues/126))
@@ -114,6 +106,8 @@
 
 ### Release
 
+* Release version 0.3.5 12-12-2022
+* Release v0.3.5
 * Release version 0.3.4 12-08-2022
 * Release v0.3.4
 * Release version 0.3.3 12-07-2022
@@ -186,7 +180,6 @@
 * Release v0.2.1
 * Release version 0.2.0 09-15-2022
 * Release v0.2.0
-* Release version 0.1.35 09-14-2022
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -216,7 +209,6 @@
 * Release version v0.1.18 03-25-2022
 * Release vv0.1.18
 * Release version 0.1.17 03-24-2022
-* Release v0.1.17
 
 ### Removing
 
@@ -247,6 +239,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#250](https://github.com/harness/harness-go-sdk/issues/250) from harness/SPG-1287
 * Merge pull request [#245](https://github.com/harness/harness-go-sdk/issues/245) from harness/SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
 * Merge pull request [#248](https://github.com/harness/harness-go-sdk/issues/248) from harness/jenkin
 * Merge pull request [#225](https://github.com/harness/harness-go-sdk/issues/225) from harness/cds-44991
@@ -293,5 +286,4 @@
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 * Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
-* Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 
