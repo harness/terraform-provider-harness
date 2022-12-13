@@ -372,4 +372,13 @@ func readSlo(d *schema.ResourceData, serviceLevelObjectiveV2Response **nextgen.S
 	d.Set("org_id", (*serviceLevelObjectiveV2Dto).OrgIdentifier)
 	d.Set("project_id", (*serviceLevelObjectiveV2Dto).ProjectIdentifier)
 	d.Set("identifier", (*serviceLevelObjectiveV2Dto).Identifier)
+	d.Set("request", []map[string]interface{}{
+		{
+			"name": (*serviceLevelObjectiveV2Dto).Name,
+			"description": (*serviceLevelObjectiveV2Dto).Description,
+			"tags": helpers.FlattenTags((*serviceLevelObjectiveV2Dto).Tags),
+			"user_journey_refs": (*serviceLevelObjectiveV2Dto).UserJourneyRefs,
+			"type": (*serviceLevelObjectiveV2Dto).Type_,
+		},
+	})
 }

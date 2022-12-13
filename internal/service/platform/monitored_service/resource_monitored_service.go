@@ -489,4 +489,16 @@ func readMonitoredService(d *schema.ResourceData, monitoredServiceResponse **nex
 	d.Set("org_id", (*monitoredServiceDto).OrgIdentifier)
 	d.Set("project_id", (*monitoredServiceDto).ProjectIdentifier)
 	d.Set("identifier", (*monitoredServiceDto).Identifier)
+	d.Set("request", []map[string]interface{}{
+		{
+			"name": (*monitoredServiceDto).Name,
+			"type": (*monitoredServiceDto).Type_,
+			"description": (*monitoredServiceDto).Description,
+			"service_ref": (*monitoredServiceDto).ServiceRef,
+			"environment_ref": (*monitoredServiceDto).EnvironmentRef,
+			"environment_ref_list": (*monitoredServiceDto).EnvironmentRefList,
+			"tags": helpers.FlattenTags((*monitoredServiceDto).Tags),
+			"enabled": (*monitoredServiceDto).Enabled,
+		},
+	})
 }
