@@ -2,7 +2,6 @@ package monitored_service
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -24,11 +23,6 @@ func ResourceMonitoredService() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Description: "Account Identifier for / of the monitored service.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"org_id": {
 				Description: "Organization Identifier for / of the monitored service.",
 				Type:        schema.TypeString,
@@ -245,7 +239,7 @@ func resourceMonitoredServiceCreate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	readMonitoredService(d, &respCreate.Resource, accountIdentifier)
+	readMonitoredService(d, &respCreate.Resource)
 	return nil
 }
 
@@ -254,9 +248,7 @@ func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, m
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	identifier := d.Get("identifier").(string)
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -277,7 +269,7 @@ func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, m
 		return nil
 	}
 
-	readMonitoredService(d, &resp.Data, accountIdentifier)
+	readMonitoredService(d, &resp.Data)
 	return nil
 }
 
@@ -297,7 +289,7 @@ func resourceMonitoredServiceUpdate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	readMonitoredService(d, &respCreate.Resource, accountIdentifier)
+	readMonitoredService(d, &respCreate.Resource)
 	return nil
 }
 
@@ -306,9 +298,7 @@ func resourceMonitoredServiceDelete(ctx context.Context, d *schema.ResourceData,
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	identifier := d.Get("identifier").(string)
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -367,53 +357,16 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 		hss := make([]nextgen.HealthSource, len(healthSources))
 		for i, healthSource := range healthSources {
 			hs := healthSource.(map[string]interface{})
-			healthSourceType := hs["type"].(string)
-			healthSourceSpec := hs["spec"].(string)
-			if healthSourceType == "ElasticSearch" {
-				data := nextgen.ElkHealthSourceSpec{}
-				json.Unmarshal([]byte(healthSourceSpec), &data)
-
-				hss[i] = nextgen.HealthSource{
-					Name:          hs["name"].(string),
-					Identifier:    hs["identifier"].(string),
-					Type_: nextgen.HealthSourceType(healthSourceType),
-					ElasticSearch: &data,
-				}
-			}
+			healthSourceDto := getHealthSourceByType(hs)
+			hss[i] = healthSourceDto
 		}
 
 		changeSources := request["change_sources"].(*schema.Set).List()
 		csDto := make([]nextgen.ChangeSourceDto, len(changeSources))
 		for i, changeSource := range changeSources {
 			cs := changeSource.(map[string]interface{})
-			changeSourceType := cs["type"].(string)
-			changeSourceSpec := cs["spec"].(string)
-			if changeSourceType == "HarnessCDNextGen" {
-				data := nextgen.HarnessCdChangeSourceSpec{}
-				json.Unmarshal([]byte(changeSourceSpec), &data)
-
-				csDto[i] = nextgen.ChangeSourceDto{
-					Name:          cs["name"].(string),
-					Identifier:    cs["identifier"].(string),
-					Type_: nextgen.ChangeSourceType(changeSourceType),
-					HarnessCDNextGen: &data,
-					Enabled: cs["enabled"].(bool),
-					Category: cs["category"].(string),
-				}
-			}
-			if changeSourceType == "PagerDuty" {
-				data := nextgen.PagerDutyChangeSourceSpec{}
-				json.Unmarshal([]byte(changeSourceSpec), &data)
-
-				csDto[i] = nextgen.ChangeSourceDto{
-					Name:          cs["name"].(string),
-					Identifier:    cs["identifier"].(string),
-					Type_: nextgen.ChangeSourceType(changeSourceType),
-					PagerDuty: &data,
-					Enabled: cs["enabled"].(bool),
-					Category: cs["category"].(string),
-				}
-			}
+			changeSourceDto := getChangeSourceByType(cs)
+			csDto[i] = changeSourceDto
 		}
 
 		monitoredServiceDto.Sources = &nextgen.Sources{
@@ -425,19 +378,8 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 		serviceDependencyDto := make([]nextgen.ServiceDependencyDto, len(dependencies))
 		for i, dependency := range dependencies {
 			sd := dependency.(map[string]interface{})
-
-			dependencyType := sd["type"].(string)
-			dependencyMetadata := sd["dependency_metadata"].(string)
-			if dependencyType == "KUBERNETES" {
-				data := nextgen.KubernetesDependencyMetadata{}
-				json.Unmarshal([]byte(dependencyMetadata), &data)
-
-				serviceDependencyDto[i] = nextgen.ServiceDependencyDto{
-					MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
-					Type_:                      nextgen.DependencyMetadataType(dependencyType),
-					KUBERNETES:                 &data,
-				}
-			}
+			serviceDependency := getServiceDependencyByType(sd)
+			serviceDependencyDto[i] = serviceDependency
 		}
 		monitoredServiceDto.Dependencies = serviceDependencyDto
 
@@ -464,25 +406,12 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 	return monitoredServiceDto
 }
 
-func readMonitoredService(d *schema.ResourceData, monitoredServiceResponse **nextgen.MonitoredServiceResponse, accountIdentifier string) {
+func readMonitoredService(d *schema.ResourceData, monitoredServiceResponse **nextgen.MonitoredServiceResponse) {
 	monitoredServiceDto := &(*monitoredServiceResponse).MonitoredService
 
 	d.SetId((*monitoredServiceDto).Identifier)
 
-	d.Set("account_id", accountIdentifier)
 	d.Set("org_id", (*monitoredServiceDto).OrgIdentifier)
 	d.Set("project_id", (*monitoredServiceDto).ProjectIdentifier)
 	d.Set("identifier", (*monitoredServiceDto).Identifier)
-	d.Set("request", []map[string]interface{}{
-		{
-			"name": (*monitoredServiceDto).Name,
-			"type": (*monitoredServiceDto).Type_,
-			"description": (*monitoredServiceDto).Description,
-			"service_ref": (*monitoredServiceDto).ServiceRef,
-			"environment_ref": (*monitoredServiceDto).EnvironmentRef,
-			"environment_ref_list": (*monitoredServiceDto).EnvironmentRefList,
-			"tags": helpers.FlattenTags((*monitoredServiceDto).Tags),
-			"enabled": (*monitoredServiceDto).Enabled,
-		},
-	})
 }

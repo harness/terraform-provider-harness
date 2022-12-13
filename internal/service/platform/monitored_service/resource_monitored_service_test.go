@@ -2,7 +2,7 @@ package monitored_service_test
 
 import (
 	"fmt"
-	"os"
+	"github.com/antihax/optional"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -10,89 +10,45 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceMonitoredService(t *testing.T) {
-
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	org := "default"
-	project := "default_project"
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_monitored_service.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName, org, project),
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceMonitoredService(id, name, accountId),
+				Config: testAccResourceMonitoredService(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceMonitoredService(id, updatedName, accountId),
+				Config: testAccResourceMonitoredService(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	org := "default"
-	project := "default_project"
-	resourceName := "harness_platform_monitored_service.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName, org, project),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceMonitoredService(id, name, accountId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-				),
-			},
-			{
-				PreConfig: func() {
-					acctest.TestAccConfigureProvider()
-					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					resp, _, err := c.MonitoredServiceApi.DeleteMonitoredService(ctx, id, c.AccountId, org, project)
-					require.NoError(t, err)
-					require.True(t, resp.Resource)
-				},
-				Config:             testAccResourceMonitoredService(id, name, accountId),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}
-
-func testAccGetMonitoredService(resourceName string, org string, project string, state *terraform.State) (*nextgen.MonitoredServiceDto, error) {
+func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredServiceDto, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
-
-	resp, _, err := c.MonitoredServiceApi.GetMonitoredService(ctx, id, c.AccountId, org, project)
+	resp, _, err := c.MonitoredServiceApi.GetMonitoredService(ctx, id, c.AccountId, buildField(r, "org_id").Value(), buildField(r, "project_id").Value())
 	if err != nil {
 		return nil, err
 	}
@@ -100,9 +56,9 @@ func testAccGetMonitoredService(resourceName string, org string, project string,
 	return resp.Data.MonitoredService, nil
 }
 
-func testAccMonitoredServiceDestroy(resourceName string, org string, project string) resource.TestCheckFunc {
+func testAccMonitoredServiceDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		monitoredService, _ := testAccGetMonitoredService(resourceName, org, project, state)
+		monitoredService, _ := testAccGetMonitoredService(resourceName, state)
 		if monitoredService != nil {
 			return fmt.Errorf("Found monitored service: %s", monitoredService.Identifier)
 		}
@@ -111,12 +67,30 @@ func testAccMonitoredServiceDestroy(resourceName string, org string, project str
 	}
 }
 
-func testAccResourceMonitoredService(id string, name string, accountId string) string {
+func buildField(r *terraform.ResourceState, field string) optional.String {
+	if attr, ok := r.Primary.Attributes[field]; ok {
+		return optional.NewString(attr)
+	}
+	return optional.EmptyString()
+}
+
+func testAccResourceMonitoredService(id string, name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
 		resource "harness_platform_monitored_service" "test" {
-			account_id = "%[3]s"
-			org_id     = "default"
-			project_id = "default_project"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
 			identifier = "%[1]s"
 			request {
 				name = "%[2]s"
@@ -162,15 +136,6 @@ func testAccResourceMonitoredService(id string, name string, accountId string) s
 					})
 					category = "Deployment"
 				}
-				dependencies {
-					monitored_service_identifier = "monitored_service_identifier"
-					type = "KUBERNETES"
-					dependency_metadata = jsonencode({
-						namespace = "namespace"
-						workload = "workload"
-						type = "KUBERNETES"
-					})
-				}
 				notification_rule_refs {
 					notification_rule_ref = "notification_rule_ref"
 					enabled = true
@@ -184,5 +149,5 @@ func testAccResourceMonitoredService(id string, name string, accountId string) s
 				enabled = true
 			}
 		}
-`, id, name, accountId)
+`, id, name)
 }

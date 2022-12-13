@@ -17,11 +17,6 @@ func DataSourceSloService() *schema.Resource {
 		ReadContext: dataSourceSloRead,
 
 		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Description: "Account Identifier of the SLO.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"org_id": {
 				Description: "Organization Identifier of the SLO.",
 				Type:        schema.TypeString,
@@ -48,9 +43,7 @@ func dataSourceSloRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	identifier := d.Get("identifier").(string)
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -63,6 +56,6 @@ func dataSourceSloRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readSlo(d, &resp.Resource, accountIdentifier)
+	readSlo(d, &resp.Resource)
 	return nil
 }

@@ -17,11 +17,6 @@ func DataSourceMonitoredService() *schema.Resource {
 		ReadContext: dataSourceMonitoredServiceRead,
 
 		Schema: map[string]*schema.Schema{
-			"account_id": {
-				Description: "Account Identifier of the monitored service.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"org_id": {
 				Description: "Organization Identifier of the monitored service.",
 				Type:        schema.TypeString,
@@ -48,9 +43,7 @@ func dataSourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData,
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
 	identifier := d.Get("identifier").(string)
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -63,6 +56,6 @@ func dataSourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readMonitoredService(d, &resp.Data, accountIdentifier)
+	readMonitoredService(d, &resp.Data)
 	return nil
 }

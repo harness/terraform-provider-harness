@@ -2,7 +2,7 @@ package slo_test
 
 import (
 	"fmt"
-	"os"
+	"github.com/antihax/optional"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -10,89 +10,46 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceSlo(t *testing.T) {
-
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	org := "default"
-	project := "default_project"
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_slo.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccSloDestroy(resourceName, org, project),
+		CheckDestroy:      testAccSloDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSlo(id, name, accountId),
+				Config: testAccResourceSlo(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
 			{
-				Config: testAccResourceSlo(id, updatedName, accountId),
+				Config: testAccResourceSlo(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func TestAccResourceSlo_DeleteUnderlyingResource(t *testing.T) {
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	org := "default"
-	project := "default_project"
-	resourceName := "harness_platform_slo.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccSloDestroy(resourceName, org, project),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceSlo(id, name, accountId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-				),
-			},
-			{
-				PreConfig: func() {
-					acctest.TestAccConfigureProvider()
-					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					resp, _, err := c.SloApi.DeleteSLODataNg(ctx, id, c.AccountId, org, project)
-					require.NoError(t, err)
-					require.True(t, resp.Resource)
-				},
-				Config:             testAccResourceSlo(id, name, accountId),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}
-
-func testAccGetSlo(resourceName string, org string, project string, state *terraform.State) (*nextgen.ServiceLevelObjectiveV2Dto, error) {
+func testAccGetSlo(resourceName string, state *terraform.State) (*nextgen.ServiceLevelObjectiveV2Dto, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
-	resp, _, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, id, c.AccountId, org, project)
+	resp, _, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, id, c.AccountId, buildField(r, "org_id").Value(), buildField(r, "project_id").Value())
 	if err != nil {
 		return nil, err
 	}
@@ -100,9 +57,9 @@ func testAccGetSlo(resourceName string, org string, project string, state *terra
 	return resp.Resource.ServiceLevelObjectiveV2, nil
 }
 
-func testAccSloDestroy(resourceName string, org string, project string) resource.TestCheckFunc {
+func testAccSloDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		slo, _ := testAccGetSlo(resourceName, org, project, state)
+		slo, _ := testAccGetSlo(resourceName, state)
 		if slo != nil {
 			return fmt.Errorf("Found SLO: %s", slo.Identifier)
 		}
@@ -111,12 +68,92 @@ func testAccSloDestroy(resourceName string, org string, project string) resource
 	}
 }
 
-func testAccResourceSlo(id string, name string, accountId string) string {
+func buildField(r *terraform.ResourceState, field string) optional.String {
+	if attr, ok := r.Primary.Attributes[field]; ok {
+		return optional.NewString(attr)
+	}
+	return optional.EmptyString()
+}
+
+func testAccResourceSlo(id string, name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "ElasticSearch"
+					spec = jsonencode({
+					connectorRef = "connectorRef"
+					feature = "feature"
+					queries = [
+						{
+							name   = "name"
+							query = "query"
+							index = "index"
+							serviceInstanceIdentifier = "serviceInstanceIdentifier"
+							timeStampIdentifier = "timeStampIdentifier"
+							timeStampFormat = "timeStampFormat"
+							messageIdentifier = "messageIdentifier"
+						},
+						{
+							name   = "name2"
+							query = "query2"
+							index = "index2"
+							serviceInstanceIdentifier = "serviceInstanceIdentifier2"
+							timeStampIdentifier = "timeStampIdentifier2"
+							timeStampFormat = "timeStampFormat2"
+							messageIdentifier = "messageIdentifier2"
+						}
+					]})
+				}
+				change_sources {
+					name = "csName1"
+					identifier = "harness_cd_next_gen"
+					type = "HarnessCDNextGen"
+					enabled = true
+					spec = jsonencode({
+					})
+					category = "Deployment"
+				}
+				notification_rule_refs {
+					notification_rule_ref = "notification_rule_ref"
+					enabled = true
+				}
+				notification_rule_refs {
+					notification_rule_ref = "notification_rule_ref1"
+					enabled = false
+				}
+				template_ref = "template_ref"
+				version_label = "version_label"
+				enabled = true
+			}
+		}
+
 		resource "harness_platform_slo" "test" {
-			account_id = "%[3]s"
-			org_id     = "default"
-			project_id = "default_project"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
 			identifier = "%[1]s"
 			request {
 				  name = "%[2]s"
@@ -132,7 +169,7 @@ func testAccResourceSlo(id string, name string, accountId string) string {
 				  }
 				  type = "Simple"
 				  spec = jsonencode({
-						monitoredServiceRef = "monitoredServiceRef"
+						monitoredServiceRef = harness_platform_monitored_service.test.identifier
 						healthSourceRef = "healthSourceRef"
 						serviceLevelIndicatorType = "serviceLevelIndicatorType"
 				  })
@@ -142,5 +179,5 @@ func testAccResourceSlo(id string, name string, accountId string) string {
 				  }
 			}
 		}
-`, id, name, accountId)
+`, id, name)
 }
