@@ -50,6 +50,7 @@ type ConnectorInfo struct {
 	Gitlab              *GitlabConnector              `json:"-"`
 	HttpHelm            *HttpHelmConnector            `json:"-"`
 	Jira                *JiraConnector                `json:"-"`
+	Jenkins             *JenkinsConnector             `json:"-"`
 	K8sCluster          *KubernetesClusterConfig      `json:"-"`
 	K8sClusterCloudCost *CeKubernetesClusterConfigDto `json:"-"`
 	NewRelic            *NewRelicConnectorDto         `json:"-"`

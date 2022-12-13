@@ -9,8 +9,12 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This entity contains the details for Jenkins Authentication
 type JenkinsAuthentication struct {
-	Type_ string                     `json:"type"`
-	Spec  *JenkinsAuthCredentialsDto `json:"spec,omitempty"`
+	Type_                   string                      `json:"type"`
+	JenkinsBearerToken      *JenkinsBearerTokenDto      `json:"-"`
+	JenkinsUserNamePassword *JenkinsUserNamePasswordDto `json:"-"`
+	Spec                    json.RawMessage             `json:"spec"`
 }
