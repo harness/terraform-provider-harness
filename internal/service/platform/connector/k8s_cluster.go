@@ -287,6 +287,10 @@ func resourceConnectorK8sRead(ctx context.Context, d *schema.ResourceData, meta 
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorK8s(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
