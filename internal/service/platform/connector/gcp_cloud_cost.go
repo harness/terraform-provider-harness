@@ -72,6 +72,10 @@ func resourceConnectorGCPCloudCostRead(ctx context.Context, d *schema.ResourceDa
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorGCPCloudCost(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

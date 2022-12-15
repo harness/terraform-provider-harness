@@ -117,6 +117,10 @@ func resourceConnectorGitRead(ctx context.Context, d *schema.ResourceData, meta 
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorGit(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

@@ -180,6 +180,10 @@ func resourceConnectorAzureCloudProviderRead(ctx context.Context, d *schema.Reso
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAzureCloudProvider(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

@@ -83,6 +83,10 @@ func resourceConnectorPrometheusRead(ctx context.Context, d *schema.ResourceData
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorPrometheus(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

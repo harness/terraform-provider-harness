@@ -126,6 +126,10 @@ func resourceConnectorAwsKmsRead(ctx context.Context, d *schema.ResourceData, me
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAwsKms(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

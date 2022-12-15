@@ -48,6 +48,10 @@ func resourceConnectorKubernetesCloudCostRead(ctx context.Context, d *schema.Res
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorKubernetesCloudCost(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

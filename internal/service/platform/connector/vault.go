@@ -172,6 +172,10 @@ func resourceConnectorVaultRead(ctx context.Context, d *schema.ResourceData, met
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorVault(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
