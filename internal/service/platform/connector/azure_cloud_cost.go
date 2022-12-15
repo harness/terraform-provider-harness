@@ -88,6 +88,10 @@ func resourceConnectorAzureCloudCostRead(ctx context.Context, d *schema.Resource
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAzureCloudCost(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

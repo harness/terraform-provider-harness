@@ -87,6 +87,10 @@ func resourceConnectorDockerRead(ctx context.Context, d *schema.ResourceData, me
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorDocker(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

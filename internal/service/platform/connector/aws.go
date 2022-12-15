@@ -149,6 +149,10 @@ func resourceConnectorAwsRead(ctx context.Context, d *schema.ResourceData, meta 
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAws(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

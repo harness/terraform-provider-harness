@@ -146,6 +146,10 @@ func resourceConnectorBitbucketRead(ctx context.Context, d *schema.ResourceData,
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorBitbucket(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
