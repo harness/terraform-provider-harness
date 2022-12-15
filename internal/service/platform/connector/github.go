@@ -161,6 +161,10 @@ func resourceConnectorGithubRead(ctx context.Context, d *schema.ResourceData, me
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorGithub(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

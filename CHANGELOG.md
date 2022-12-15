@@ -1,3 +1,9 @@
+# 0.11.5 (December 14,2022) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_github: Fix terraform refresh for github connector ([#352](https://github.com/harness/terraform-provider-harness/issues/352))
+
 # 0.11.4 (December 13,2022) 
 
 BUG FIXES:
