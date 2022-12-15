@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Emails** | **[]string** |  | [optional] [default to null]
+**Emails** | **[]string** |  | [default to null]
 **RoleBindings** | [**[]RoleBinding**](RoleBinding.md) |  | [optional] [default to null]
 **UserGroups** | **[]string** |  | [optional] [default to null]
 
