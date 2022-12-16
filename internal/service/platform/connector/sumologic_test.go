@@ -30,8 +30,6 @@ func TestAccResourceConnectorSumologic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://api.us2.sumologic.com/"),
-					resource.TestCheckResourceAttr(resourceName, "access_id_ref", "account.acctest_sumo_access_id"),
-					resource.TestCheckResourceAttr(resourceName, "access_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -44,8 +42,6 @@ func TestAccResourceConnectorSumologic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://api.us2.sumologic.com/"),
-					resource.TestCheckResourceAttr(resourceName, "access_id_ref", "account.acctest_sumo_access_id"),
-					resource.TestCheckResourceAttr(resourceName, "access_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -60,6 +56,17 @@ func TestAccResourceConnectorSumologic(t *testing.T) {
 
 func testAccResourceConnectorSumologic(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_sumologic" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -68,8 +75,8 @@ func testAccResourceConnectorSumologic(id string, name string) string {
 
 			url = "https://api.us2.sumologic.com/"
 			delegate_selectors = ["harness-delegate"]
-			access_id_ref = "account.acctest_sumo_access_id"
-			access_key_ref = "account.acctest_sumo_access_key"
+			access_id_ref = "account.${harness_platform_secret_text.test.id}"
+			access_key_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 `, id, name)
 }

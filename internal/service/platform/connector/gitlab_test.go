@@ -34,7 +34,6 @@ func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -46,7 +45,6 @@ func TestAccResourceConnectorGitlab_Http_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -81,7 +79,6 @@ func TestAccResourceConnectorGitlab_Ssh(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.ssh.0.ssh_key_ref", "account.test"),
 				),
 			},
 			{
@@ -118,7 +115,6 @@ func TestAccResourceConnectorGitlab_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.token_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -130,8 +126,6 @@ func TestAccResourceConnectorGitlab_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.token_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -145,6 +139,17 @@ func TestAccResourceConnectorGitlab_token(t *testing.T) {
 
 func testAccResourceConnectorGitlab_http_token(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -158,7 +163,7 @@ func testAccResourceConnectorGitlab_http_token(id string, name string) string {
 			credentials {
 				http {
 					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 		}
@@ -167,6 +172,17 @@ func testAccResourceConnectorGitlab_http_token(id string, name string) string {
 
 func testAccResourceConnectorGitlab_token(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -180,11 +196,11 @@ func testAccResourceConnectorGitlab_token(id string, name string) string {
 			credentials {
 				http {
 					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 			api_authentication {
-				token_ref = "account.TEST_aws_secret_key"
+				token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 `, id, name)
@@ -192,6 +208,17 @@ func testAccResourceConnectorGitlab_token(id string, name string) string {
 
 func testAccResourceConnectorGitlab_ssh(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -204,7 +231,7 @@ func testAccResourceConnectorGitlab_ssh(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				ssh {
-					ssh_key_ref = "account.test"
+					ssh_key_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 		}

@@ -80,7 +80,6 @@ func TestAccResourceConnectorNexus_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "version", "3.x"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.test"),
 				),
 			},
 			{
@@ -94,6 +93,17 @@ func TestAccResourceConnectorNexus_UsernamePassword(t *testing.T) {
 
 func testAccResourceConnectorNexus_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_nexus" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -105,7 +115,7 @@ func testAccResourceConnectorNexus_usernamepassword(id string, name string) stri
 			version = "3.x"
 			credentials {
 				username = "admin"
-				password_ref = "account.test"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 `, id, name)

@@ -27,7 +27,7 @@ func TestAccDataSourceConnectorKubernetesCloudCost(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "connector_ref", "demo"),
+					resource.TestCheckResourceAttr(resourceName, "connector_ref", name+"s"),
 				),
 			},
 		},
@@ -36,15 +36,26 @@ func TestAccDataSourceConnectorKubernetesCloudCost(t *testing.T) {
 
 func testAccDataSourceConnector_kubernetesCloudCost(name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_connector_kubernetes_cloud_cost" "test" {
-		identifier = "%[1]s"
-		name = "%[1]s"
+	resource "harness_platform_connector_kubernetes" "test" {
+		identifier = "%[1]ss"
+		name = "%[1]ss"
 		description = "test"
 		tags = ["foo:bar"]
 
-		features_enabled = ["VISIBILITY", "OPTIMIZATION"]
-		connector_ref = "demo"
+		inherit_from_delegate {
+			delegate_selectors = ["harness-delegate"]
+		}
 	}
+
+		resource "harness_platform_connector_kubernetes_cloud_cost" "test" {
+			identifier = "%[1]s"
+			name = "%[1]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			features_enabled = ["VISIBILITY", "OPTIMIZATION"]
+			connector_ref = harness_platform_connector_kubernetes.test.id
+		}
 
 		data "harness_platform_connector_kubernetes_cloud_cost" "test" {
 			identifier = harness_platform_connector_kubernetes_cloud_cost.test.identifier
