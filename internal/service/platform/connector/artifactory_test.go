@@ -123,7 +123,6 @@ func TestAccResourceConnectorArtifactoryUserNamePassWord_ProjectScope(t *testing
 					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -137,7 +136,6 @@ func TestAccResourceConnectorArtifactoryUserNamePassWord_ProjectScope(t *testing
 					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -172,7 +170,6 @@ func TestAccResourceConnectorArtifactoryUsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -186,6 +183,17 @@ func TestAccResourceConnectorArtifactoryUsernamePassword(t *testing.T) {
 
 func testAccResourceConnectorArtifactoryusernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_artifactory" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -196,7 +204,7 @@ func testAccResourceConnectorArtifactoryusernamepassword(id string, name string)
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				username = "admin"
-				password_ref = "account.TEST_aws_secret_key"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 `, id, name)
@@ -246,6 +254,17 @@ func testAccResourceConnectorArtifactoryanonymousProjectScope(id string, name st
 
 func testAccResourceConnectorArtifactoryUserNamePasswordProjectScope(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -270,7 +289,7 @@ func testAccResourceConnectorArtifactoryUserNamePasswordProjectScope(id string, 
 		delegate_selectors = ["harness-delegate"]
 		credentials {
 			username = "admin"
-			password_ref = "account.TEST_aws_secret_key"
+			password_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 	}
 `, id, name)

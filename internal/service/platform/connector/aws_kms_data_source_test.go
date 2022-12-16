@@ -37,13 +37,24 @@ func TestAccDataSourceConnectorAwsKms(t *testing.T) {
 
 func testAccDataSourceConnectorAwsKms(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_awskms" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			arn_ref = "account.acctest_sumo_access_id"
+			arn_ref = "account.${harness_platform_secret_text.test.id}"
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {

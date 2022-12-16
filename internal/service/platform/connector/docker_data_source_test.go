@@ -32,7 +32,6 @@ func TestAccDataSourceConnectorDocker(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://hub.docker.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.TEST_k8s_client_test"),
 				),
 			},
 		},
@@ -41,6 +40,17 @@ func TestAccDataSourceConnectorDocker(t *testing.T) {
 
 func testAccDataSourceConnectorDocker(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_docker" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -52,7 +62,7 @@ func testAccDataSourceConnectorDocker(name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				username = "admin"
-				password_ref = "account.TEST_k8s_client_test"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 

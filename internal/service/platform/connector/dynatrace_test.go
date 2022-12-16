@@ -30,7 +30,6 @@ func TestAccResourceConnectorDynatrace(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://dynatrace.com/"),
-					resource.TestCheckResourceAttr(resourceName, "api_token_ref", "account.acctest_sumo_access_id"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -43,7 +42,6 @@ func TestAccResourceConnectorDynatrace(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://dynatrace.com/"),
-					resource.TestCheckResourceAttr(resourceName, "api_token_ref", "account.acctest_sumo_access_id"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -58,6 +56,17 @@ func TestAccResourceConnectorDynatrace(t *testing.T) {
 
 func testAccResourceConnectorDynatrace(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_dynatrace" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -66,7 +75,7 @@ func testAccResourceConnectorDynatrace(id string, name string) string {
 
 			url = "https://dynatrace.com/"
 			delegate_selectors = ["harness-delegate"]
-			api_token_ref = "account.acctest_sumo_access_id"
+			api_token_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 `, id, name)
 }
