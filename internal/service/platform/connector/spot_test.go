@@ -45,7 +45,6 @@ func execute(t *testing.T, config string, executeOnDelegate string, id string, n
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.spot_account_id_ref", "account.TEST_spot_account_id"),
-					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.api_token_ref", "account.TEST_spot_api_token"),
 					resource.TestCheckResourceAttr(resourceName, "permanent_token.0.execute_on_delegate", executeOnDelegate),
 				),
 			},
