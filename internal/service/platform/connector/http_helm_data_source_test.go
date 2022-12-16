@@ -38,6 +38,17 @@ func TestAccDataSourceConnectorHelm(t *testing.T) {
 
 func testAccDataSourceConnectorHelm(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -48,7 +59,7 @@ func testAccDataSourceConnectorHelm(name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				username = "admin"
-				password_ref = "account.TEST_aws_secret_key"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 
