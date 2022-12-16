@@ -91,8 +91,6 @@ func TestAccResourceConnectorAws_Manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.access_key_ref", "account.TEST_aws_access_key"),
-					resource.TestCheckResourceAttr(resourceName, "manual.0.secret_key_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -136,6 +134,17 @@ func testAccResourceConnectorAws_irsa(id string, name string) string {
 
 func testAccResourceConnectorAws_manual(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_aws" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -143,8 +152,8 @@ func testAccResourceConnectorAws_manual(id string, name string) string {
 			tags = ["foo:bar"]
 
 			manual {
-				access_key_ref = "account.TEST_aws_access_key"
-				secret_key_ref = "account.TEST_aws_secret_key"
+				access_key_ref = "account.${harness_platform_secret_text.test.id}"
+				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
 			}
 		}
