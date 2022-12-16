@@ -82,6 +82,17 @@ func testAccDataSourceConnectorK8sInheritFromDelegate(name string) string {
 
 func testAccDataSourceConnectorK8sServiceAccount(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_kubernetes" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -90,7 +101,7 @@ func testAccDataSourceConnectorK8sServiceAccount(name string) string {
 
 			service_account {
 				master_url = "https://kubernetes.example.com"
-				service_account_token_ref = "account.TEST_k8s_client_test"
+				service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 
 			delegate_selectors = ["harness-delegate"]
