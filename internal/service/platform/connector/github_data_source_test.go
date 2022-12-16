@@ -42,6 +42,17 @@ func TestAccDataSourceConnectorGithub(t *testing.T) {
 
 func testAccDataSourceConnectorGithub(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_github" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -55,7 +66,7 @@ func testAccDataSourceConnectorGithub(name string) string {
 			credentials {
 				http {
 					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 		}
