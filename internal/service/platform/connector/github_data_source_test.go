@@ -33,7 +33,6 @@ func TestAccDataSourceConnectorGithub(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 		},
