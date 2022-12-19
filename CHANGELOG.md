@@ -1,6 +1,6 @@
 
-<a name="0.3.7"></a>
-## 0.3.7 (2022-12-19)
+<a name="0.3.8"></a>
+## 0.3.8 (2022-12-19)
 
 ### Add
 
@@ -63,10 +63,6 @@
 * fix environment variable overrides with secrets
 * fix cac error handling
 
-### Fixed
-
-* Fixed LastHeartBeat for delegate model. Closes [#96](https://github.com/harness/harness-go-sdk/issues/96)
-
 ### Fixing
 
 * fixing things
@@ -103,6 +99,8 @@
 
 ### Release
 
+* Release version 0.3.7 12-19-2022
+* Release v0.3.7
 * Release version 0.3.6 12-13-2022
 * Release v0.3.6
 * Release version 0.3.5 12-12-2022
@@ -175,8 +173,6 @@
 * Release v0.2.3
 * Release version 0.2.2 09-23-2022
 * Release v0.2.2
-* Release version 0.2.1 09-21-2022
-* Release v0.2.1
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -203,8 +199,6 @@
 * Release v0.1.19
 * Release version 0.1.18 03-25-2022
 * Release v0.1.18
-* Release version v0.1.18 03-25-2022
-* Release vv0.1.18
 
 ### Removing
 
@@ -220,6 +214,7 @@
 
 ### Update
 
+* Update connector types enum to include jenkins type
 * Update package
 * Update trigger in cg
 * Update connector info
@@ -235,6 +230,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#256](https://github.com/harness/harness-go-sdk/issues/256) from harness/SPG-1287-1
 * Merge pull request [#254](https://github.com/harness/harness-go-sdk/issues/254) from harness/fix-vault
 * Merge pull request [#250](https://github.com/harness/harness-go-sdk/issues/250) from harness/SPG-1287
 * Merge pull request [#245](https://github.com/harness/harness-go-sdk/issues/245) from harness/SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
@@ -281,5 +277,4 @@
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
-* Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
 
