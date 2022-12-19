@@ -11,6 +11,7 @@ var TestEnvVars = struct {
 	DelegateWaitTimeout EnvVar
 	SpotInstAccountId   EnvVar
 	SpotInstToken       EnvVar
+	VaultRootToken      EnvVar
 }{
 	AwsAccessKeyId:      "HARNESS_TEST_AWS_ACCESS_KEY_ID",
 	AwsSecretAccessKey:  "HARNESS_TEST_AWS_SECRET_ACCESS_KEY",
@@ -22,4 +23,5 @@ var TestEnvVars = struct {
 	DelegateWaitTimeout: "HARNESS_TEST_DELEGATE_WAIT_TIMEOUT",
 	SpotInstAccountId:   "HARNESS_TEST_SPOT_ACCT_ID",
 	SpotInstToken:       "HARNESS_TEST_SPOT_TOKEN",
+	VaultRootToken:      "HARNESS_TEST_VAULT_ROOT_TOKEN",
 }
