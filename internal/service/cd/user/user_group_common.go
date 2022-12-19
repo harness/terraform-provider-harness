@@ -10,7 +10,7 @@ import (
 
 var actionsAll = []string{"CREATE", "READ", "UPDATE", "DELETE", "EXECUTE_WORKFLOW", "EXECUTE_PIPELINE", "ROLLBACK_WORKFLOW"}
 var standardActions = []string{"CREATE", "READ", "UPDATE", "DELETE"}
-var deploymentActions = []string{"READ", "EXECUTE_WORKFLOW", "EXECUTE_PIPELINE", "ROLLBACK_WORKFLOW"}
+var deploymentActions = []string{"READ", "EXECUTE_WORKFLOW", "EXECUTE_PIPELINE", "ROLLBACK_WORKFLOW", "ABORT_WORKFLOW"}
 
 func getUserGroupAccountPermissionsSchema() *schema.Schema {
 	return &schema.Schema{
