@@ -10,7 +10,7 @@
 package nextgen
 
 type EmailConfigDto struct {
-    Type_ string `json:"type,omitempty"`
-    GroupEmail string `json:"groupEmail"`
-    SendEmailToAllUsers bool `json:"sendEmailToAllUsers"`
+	Type_ string `json:"type,omitempty"`
+	GroupEmail string `json:"groupEmail"`
+	SendEmailToAllUsers bool `json:"sendEmailToAllUsers"`
 }
