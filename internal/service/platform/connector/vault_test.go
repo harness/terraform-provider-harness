@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -29,9 +30,9 @@ func TestAccResourceConnectorVault_Token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "base_path", "base_path"),
+					resource.TestCheckResourceAttr(resourceName, "base_path", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
-					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "10"),
+					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "0"),
 					resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
 					resource.TestCheckResourceAttr(resourceName, "access_type", "TOKEN"),
 				),
@@ -44,9 +45,9 @@ func TestAccResourceConnectorVault_Token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "base_path", "base_path"),
+					resource.TestCheckResourceAttr(resourceName, "base_path", "harness"),
 					resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
-					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "10"),
+					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "0"),
 					resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
 					resource.TestCheckResourceAttr(resourceName, "access_type", "TOKEN"),
 				),
@@ -451,9 +452,9 @@ func testAccResourceConnectorVault_token(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 
-		secret_manager_identifier = "azureSecretManager"
-		value_type = "Reference"
-		value = "secret"
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "%[3]s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -463,18 +464,17 @@ func testAccResourceConnectorVault_token(id string, name string) string {
 		tags = ["foo:bar"]
 
 		auth_token = "account.${harness_platform_secret_text.test.id}"
-		base_path = "base_path"
+		base_path = "harness"
 		access_type = "TOKEN"
 		default = false
-		namespace = "namespace"
 		read_only = true
-		renewal_interval_minutes = 10
+		renewal_interval_minutes = 0
 		secret_engine_manually_configured = true
-		secret_engine_name = "secret_engine_name"
+		secret_engine_name = "QA_Secrets"
 		secret_engine_version = 2
 		use_aws_iam = false
 		use_k8s_auth = false
-		vault_url = "https://vault_url.com"
+		vault_url = "https://vaultqa.harness.io"
 	}
-	`, id, name)
+	`, id, name, helpers.TestEnvVars.VaultRootToken.Get())
 }
