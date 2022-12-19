@@ -21,6 +21,7 @@ var ConnectorTypes = struct {
 	Aws              ConnectorType
 	Artifactory      ConnectorType
 	Jira             ConnectorType
+	Jenkins          ConnectorType
 	Nexus            ConnectorType
 	Github           ConnectorType
 	Gitlab           ConnectorType
@@ -55,6 +56,7 @@ var ConnectorTypes = struct {
 	Aws:              "Aws",
 	Artifactory:      "Artifactory",
 	Jira:             "Jira",
+	Jenkins:          "Jenkins",
 	Nexus:            "Nexus",
 	Github:           "Github",
 	Gitlab:           "Gitlab",
@@ -92,6 +94,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.Aws.String(),
 	ConnectorTypes.Artifactory.String(),
 	ConnectorTypes.Jira.String(),
+	ConnectorTypes.Jenkins.String(),
 	ConnectorTypes.Nexus.String(),
 	ConnectorTypes.Github.String(),
 	ConnectorTypes.Gitlab.String(),
