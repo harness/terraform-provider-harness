@@ -65,6 +65,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.HttpHelm)
 	case ConnectorTypes.Jira:
 		err = json.Unmarshal(aux.Spec, &a.Jira)
+	case ConnectorTypes.Jenkins:
+		err = json.Unmarshal(aux.Spec, &a.Jenkins)
 	case ConnectorTypes.K8sCluster:
 		err = json.Unmarshal(aux.Spec, &a.K8sCluster)
 	case ConnectorTypes.Nexus:
@@ -133,6 +135,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.HttpHelm)
 	case ConnectorTypes.Jira:
 		spec, err = json.Marshal(a.Jira)
+	case ConnectorTypes.Jenkins:
+		spec, err = json.Marshal(a.Jenkins)
 	case ConnectorTypes.K8sCluster:
 		spec, err = json.Marshal(a.K8sCluster)
 	case ConnectorTypes.NewRelic:
