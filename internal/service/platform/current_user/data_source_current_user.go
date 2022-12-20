@@ -91,6 +91,22 @@ func dataSourceCurrentUserRead(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
-	readUser(d, resp.Data)
+
+	user := resp.Data
+	d.SetId(user.Uuid)
+	d.Set("uuid", user.Uuid)
+	d.Set("name", user.Name)
+	d.Set("email", user.Email)
+	d.Set("token", user.Token)
+	d.Set("default_account_id", user.DefaultAccountId)
+	d.Set("intent", user.Intent)
+	d.Set("admin", user.Admin)
+	d.Set("is_two_factor_auth_enabled", user.TwoFactorAuthenticationEnabled)
+	d.Set("email_verified", user.EmailVerified)
+	d.Set("locked", user.Locked)
+	d.Set("signup_action", user.SignupAction)
+	d.Set("edition", user.Edition)
+	d.Set("billing_frequency", user.BillingFrequency)
+
 	return nil
 }
