@@ -636,7 +636,7 @@ type AwsCloudProvider struct {
 	CloudProvider
 	CEHealthStatus         *CEHealthStatus            `json:"ceHealthStatus,omitempty"`
 	CredentialsType        AwsCredentialsType         `json:"credentialsType,omitempty"`
-	CrossAccountAttributes *AwsCrossAccountAttributes `json:"awsCrossAccountAttributes,omitempty"`
+	CrossAccountAttributes *AwsCrossAccountAttributes `json:"crossAccountAttributes,omitempty"`
 	DefaultRegion          string                     `json:"defaultRegion,omitempty"`
 	Ec2IamCredentials      *Ec2IamCredentials         `json:"ec2IamCredentials,omitempty"`
 	ManualCredentials      *AwsManualCredentials      `json:"manualCredentials,omitempty"`
