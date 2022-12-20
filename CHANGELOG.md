@@ -1,6 +1,6 @@
 
-<a name="0.3.8"></a>
-## 0.3.8 (2022-12-19)
+<a name="0.3.9"></a>
+## 0.3.9 (2022-12-20)
 
 ### Add
 
@@ -99,6 +99,8 @@
 
 ### Release
 
+* Release version 0.3.8 12-19-2022
+* Release v0.3.8
 * Release version 0.3.7 12-19-2022
 * Release v0.3.7
 * Release version 0.3.6 12-13-2022
@@ -214,6 +216,7 @@
 
 ### Update
 
+* Update connector info serializer
 * Update connector types enum to include jenkins type
 * Update package
 * Update trigger in cg
@@ -230,6 +233,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#259](https://github.com/harness/harness-go-sdk/issues/259) from harness/SPG-1287-2
+* Merge pull request [#252](https://github.com/harness/harness-go-sdk/issues/252) from harness/SPG-443-Add-User-resource-in-harness-terraform-provider
 * Merge pull request [#256](https://github.com/harness/harness-go-sdk/issues/256) from harness/SPG-1287-1
 * Merge pull request [#254](https://github.com/harness/harness-go-sdk/issues/254) from harness/fix-vault
 * Merge pull request [#250](https://github.com/harness/harness-go-sdk/issues/250) from harness/SPG-1287
