@@ -3,12 +3,12 @@
 page_title: "harness_platform_monitored_service Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating monitored service.
+  Resource for creating a monitored service.
 ---
 
 # harness_platform_monitored_service (Resource)
 
-Resource for creating monitored service.
+Resource for creating a monitored service.
 
 ## Example Usage
 
@@ -83,13 +83,13 @@ resource "harness_platform_monitored_service" "example" {
 
 ### Required
 
-- `identifier` (String) Identifier for / of the monitored service.
-- `org_id` (String) Organization Identifier for / of the monitored service.
-- `project_id` (String) Project Identifier of the monitored service.
+- `identifier` (String) Identifier of the monitored service.
+- `org_id` (String) Identifier of the organization in which the monitored service is configured.
+- `project_id` (String) Identifier of the project in which the monitored service is configured.
 
 ### Optional
 
-- `request` (Block List, Max: 1) Request for creating / updating monitored service. (see [below for nested schema](#nestedblock--request))
+- `request` (Block List, Max: 1) Request for creating or updating a monitored service. (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
 
@@ -101,9 +101,9 @@ resource "harness_platform_monitored_service" "example" {
 Required:
 
 - `change_sources` (Block Set, Min: 1, Max: 4) Set of change sources for the monitored service. (see [below for nested schema](#nestedblock--request--change_sources))
-- `environment_ref` (String) Environment reference for the monitored service.
+- `environment_ref` (String) Environment in which the service is deployed.
 - `health_sources` (Block Set, Min: 1, Max: 16) Set of health sources for the monitored service. (see [below for nested schema](#nestedblock--request--health_sources))
-- `name` (String) Name of the monitored service.
+- `name` (String) Name for the monitored service.
 - `service_ref` (String) Service reference for the monitored service.
 - `template_ref` (String) Template reference for the monitored service.
 - `type` (String) Type of the monitored service.
@@ -113,10 +113,10 @@ Optional:
 
 - `dependencies` (Block Set) Dependencies of the monitored service. (see [below for nested schema](#nestedblock--request--dependencies))
 - `description` (String) Description for the monitored service.
-- `enabled` (Boolean) Enable / Disable the monitored service.
+- `enabled` (Boolean) Enable or disable the monitored service.
 - `environment_ref_list` (List of String) Environment reference list for the monitored service.
 - `notification_rule_refs` (Block List) Notification rule references for the monitored service. (see [below for nested schema](#nestedblock--request--notification_rule_refs))
-- `tags` (Set of String) Tags for the monitored service.
+- `tags` (Set of String) Tags for the monitored service. comma-separated key value string pairs.
 
 <a id="nestedblock--request--change_sources"></a>
 ### Nested Schema for `request.change_sources`
@@ -130,8 +130,8 @@ Required:
 
 Optional:
 
-- `enabled` (Boolean) Enable / Disable the change source.
-- `spec` (String) Specification of the change source. Depends of the type of the change source.
+- `enabled` (Boolean) Enable or disable the change source.
+- `spec` (String) Specification of the change source. Depends on the type of the change source.
 
 
 <a id="nestedblock--request--health_sources"></a>
@@ -141,7 +141,7 @@ Required:
 
 - `identifier` (String) Identifier of the health source.
 - `name` (String) Name of the health source.
-- `spec` (String) Specification of the health source. Depends of the type of the health source.
+- `spec` (String) Specification of the health source. Depends on the type of the health source.
 - `type` (String) Type of the health source.
 
 
@@ -150,12 +150,12 @@ Required:
 
 Required:
 
-- `monitored_service_identifier` (String) monitored service identifier of the dependency
+- `monitored_service_identifier` (String) Monitored service identifier of the dependency.
 - `type` (String) Type of the service dependency.
 
 Optional:
 
-- `dependency_metadata` (String) dependency metadata for the monitored service.
+- `dependency_metadata` (String) Dependency metadata for the monitored service.
 
 
 <a id="nestedblock--request--notification_rule_refs"></a>
@@ -163,7 +163,7 @@ Optional:
 
 Required:
 
-- `enabled` (Boolean) Enable / Disable notification rule reference for the monitored service.
+- `enabled` (Boolean) Enable or disable notification rule reference for the monitored service.
 - `notification_rule_ref` (String) Notification rule reference for the monitored service.
 
 ## Import
@@ -174,7 +174,7 @@ Import is supported using the following syntax:
 # Import account level monitored_service
 terraform import harness_platform_monitored_service.example <monitored_service_id>
 
-# Import org level monitored_service
+# Import organization level monitored_service
 terraform import harness_platform_monitored_service.example <org_id>/<monitored_service_id>
 
 # Import project level monitored_service

@@ -3,12 +3,12 @@
 page_title: "harness_platform_slo Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a SLO.
+  Data source for retrieving an SLO.
 ---
 
 # harness_platform_slo (Data Source)
 
-Data source for retrieving a SLO.
+Data source for retrieving an SLO.
 
 ## Example Usage
 
@@ -27,8 +27,8 @@ data "harness_platform_slo" "example" {
 ### Required
 
 - `identifier` (String) Identifier of the SLO.
-- `org_id` (String) Organization Identifier of the SLO.
-- `project_id` (String) Project Identifier of the SLO.
+- `org_id` (String) Identifier of the organization in which the SLO is configured.
+- `project_id` (String) Identifier of the project in which the SLO is configured.
 
 ### Read-Only
 

@@ -1,4 +1,4 @@
 ```release-note:new-resource
-platform_monitored_service - Added monitored service resource in Harness terraform provider
-platform_slo - Added slo resource in Harness terraform provider
+platform_monitored_service - Added monitored service resources to the Harness Terraform Provider.
+platform_slo - Added service-level objective (SLO) resources to the Harness Terraform provider.
 ```

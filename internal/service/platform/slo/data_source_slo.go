@@ -12,18 +12,18 @@ import (
 
 func DataSourceSloService() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a SLO.",
+		Description: "Data source for retrieving an SLO.",
 
 		ReadContext: dataSourceSloRead,
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Organization Identifier of the SLO.",
+				Description: "Identifier of the organization in which the SLO is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier of the SLO.",
+				Description: "Identifier of the project in which the SLO is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

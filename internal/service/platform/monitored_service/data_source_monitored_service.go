@@ -18,12 +18,12 @@ func DataSourceMonitoredService() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Organization Identifier of the monitored service.",
+				Description: "Identifier of the organization in which the monitored service is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier of the monitored service.",
+				Description: "Identifier of the project in which the monitored service is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

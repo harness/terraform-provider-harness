@@ -27,8 +27,8 @@ data "harness_platform_monitored_service" "example" {
 ### Required
 
 - `identifier` (String) Identifier of the monitored service.
-- `org_id` (String) Organization Identifier of the monitored service.
-- `project_id` (String) Project Identifier of the monitored service.
+- `org_id` (String) Identifier of the organization in which the monitored service is configured.
+- `project_id` (String) Identifier of the project in which the monitored service is configured.
 
 ### Read-Only
 

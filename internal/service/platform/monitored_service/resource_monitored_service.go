@@ -14,7 +14,7 @@ import (
 
 func ResourceMonitoredService() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating monitored service.",
+		Description: "Resource for creating a monitored service.",
 
 		CreateContext: resourceMonitoredServiceCreate,
 		ReadContext:   resourceMonitoredServiceRead,
@@ -24,22 +24,22 @@ func ResourceMonitoredService() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Organization Identifier for / of the monitored service.",
+				Description: "Identifier of the organization in which the monitored service is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier of the monitored service.",
+				Description: "Identifier of the project in which the monitored service is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier for / of the monitored service.",
+				Description: "Identifier of the monitored service.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"request": {
-				Description: "Request for creating / updating monitored service.",
+				Description: "Request for creating or updating a monitored service.",
 				Type:        schema.TypeList,
 				MinItems:    1,
 				MaxItems:    1,
@@ -47,7 +47,7 @@ func ResourceMonitoredService() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Description: "Name of the monitored service.",
+							Description: "Name for the monitored service.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -67,7 +67,7 @@ func ResourceMonitoredService() *schema.Resource {
 							Required:    true,
 						},
 						"environment_ref": {
-							Description: "Environment reference for the monitored service.",
+							Description: "Environment in which the service is deployed.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -78,7 +78,7 @@ func ResourceMonitoredService() *schema.Resource {
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 						"tags": {
-							Description: "Tags for the monitored service.",
+							Description: "Tags for the monitored service. comma-separated key value string pairs.",
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem: &schema.Schema{
@@ -109,7 +109,7 @@ func ResourceMonitoredService() *schema.Resource {
 										Required:    true,
 									},
 									"spec": {
-										Description: "Specification of the health source. Depends of the type of the health source.",
+										Description: "Specification of the health source. Depends on the type of the health source.",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
@@ -140,12 +140,12 @@ func ResourceMonitoredService() *schema.Resource {
 										Required:    true,
 									},
 									"enabled": {
-										Description: "Enable / Disable the change source.",
+										Description: "Enable or disable the change source.",
 										Type:        schema.TypeBool,
 										Optional:    true,
 									},
 									"spec": {
-										Description: "Specification of the change source. Depends of the type of the change source.",
+										Description: "Specification of the change source. Depends on the type of the change source.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -164,7 +164,7 @@ func ResourceMonitoredService() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"monitored_service_identifier": {
-										Description: "monitored service identifier of the dependency",
+										Description: "Monitored service identifier of the dependency.",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
@@ -174,7 +174,7 @@ func ResourceMonitoredService() *schema.Resource {
 										Required:    true,
 									},
 									"dependency_metadata": {
-										Description: "dependency metadata for the monitored service.",
+										Description: "Dependency metadata for the monitored service.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -193,7 +193,7 @@ func ResourceMonitoredService() *schema.Resource {
 										Required:    true,
 									},
 									"enabled": {
-										Description: "Enable / Disable notification rule reference for the monitored service.",
+										Description: "Enable or disable notification rule reference for the monitored service.",
 										Type:        schema.TypeBool,
 										Required:    true,
 									},
@@ -211,7 +211,7 @@ func ResourceMonitoredService() *schema.Resource {
 							Required:    true,
 						},
 						"enabled": {
-							Description: "Enable / Disable the monitored service.",
+							Description: "Enable or disable the monitored service.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},

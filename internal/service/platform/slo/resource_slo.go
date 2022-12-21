@@ -15,7 +15,7 @@ import (
 
 func ResourceSloService() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a SLO.",
+		Description: "Resource for creating an SLO.",
 
 		CreateContext: resourceSloCreate,
 		ReadContext:   resourceSloRead,
@@ -25,22 +25,22 @@ func ResourceSloService() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Organization Identifier for / of the SLO.",
+				Description: "Identifier of the organization in which the SLO is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier of the SLO.",
+				Description: "Identifier of the project in which the SLO is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier for / of the SLO.",
+				Description: "Identifier of the SLO.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"request": {
-				Description: "Request for creating / updating SLO.",
+				Description: "Request for creating or updating SLO.",
 				Type:        schema.TypeList,
 				MinItems:    1,
 				MaxItems:    1,
@@ -48,7 +48,7 @@ func ResourceSloService() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Description: "Name of the SLO.",
+							Description: "Name for the SLO.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -58,7 +58,7 @@ func ResourceSloService() *schema.Resource {
 							Optional:    true,
 						},
 						"tags": {
-							Description: "Tags for the SLO.",
+							Description: "Tags for the SLO. comma-separated key value string pairs.",
 							Type:        schema.TypeSet,
 							Optional:    true,
 							Elem: &schema.Schema{
@@ -119,7 +119,7 @@ func ResourceSloService() *schema.Resource {
 										Required:    true,
 									},
 									"enabled": {
-										Description: "Enable / Disable notification rule reference for the SLO.",
+										Description: "Enable or disable notification rule reference for the SLO.",
 										Type:        schema.TypeBool,
 										Required:    true,
 									},
@@ -175,7 +175,7 @@ func resourceSloRead(ctx context.Context, d *schema.ResourceData, meta interface
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	resp, httpResp, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
+	resp, httpResp, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier)
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)

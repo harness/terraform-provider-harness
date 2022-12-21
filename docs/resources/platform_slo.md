@@ -3,12 +3,12 @@
 page_title: "harness_platform_slo Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a SLO.
+  Resource for creating an SLO.
 ---
 
 # harness_platform_slo (Resource)
 
-Resource for creating a SLO.
+Resource for creating an SLO.
 
 ## Example Usage
 
@@ -49,13 +49,13 @@ resource "harness_platform_slo" "example" {
 
 ### Required
 
-- `identifier` (String) Identifier for / of the SLO.
-- `org_id` (String) Organization Identifier for / of the SLO.
-- `project_id` (String) Project Identifier of the SLO.
+- `identifier` (String) Identifier of the SLO.
+- `org_id` (String) Identifier of the organization in which the SLO is configured.
+- `project_id` (String) Identifier of the project in which the SLO is configured.
 
 ### Optional
 
-- `request` (Block List, Max: 1) Request for creating / updating SLO. (see [below for nested schema](#nestedblock--request))
+- `request` (Block List, Max: 1) Request for creating or updating SLO. (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
 
@@ -66,7 +66,7 @@ resource "harness_platform_slo" "example" {
 
 Required:
 
-- `name` (String) Name of the SLO.
+- `name` (String) Name for the SLO.
 - `slo_target` (Block Set, Min: 1, Max: 1) SLO Target specification. (see [below for nested schema](#nestedblock--request--slo_target))
 - `spec` (String) Specification of the SLO.
 - `type` (String) Type of the SLO.
@@ -76,7 +76,7 @@ Optional:
 
 - `description` (String) Description for the SLO.
 - `notification_rule_refs` (Block List) Notification rule references for the SLO. (see [below for nested schema](#nestedblock--request--notification_rule_refs))
-- `tags` (Set of String) Tags for the SLO.
+- `tags` (Set of String) Tags for the SLO. comma-separated key value string pairs.
 
 <a id="nestedblock--request--slo_target"></a>
 ### Nested Schema for `request.slo_target`
@@ -93,7 +93,7 @@ Required:
 
 Required:
 
-- `enabled` (Boolean) Enable / Disable notification rule reference for the SLO.
+- `enabled` (Boolean) Enable or disable notification rule reference for the SLO.
 - `notification_rule_ref` (String) Notification rule reference for the SLO.
 
 ## Import
@@ -104,7 +104,7 @@ Import is supported using the following syntax:
 # Import account level SLO
 terraform import harness_platform_slo.example <slo_id>
 
-# Import org level SLO
+# Import organization level SLO
 terraform import harness_platform_slo.example <org_id>/<slo_id>
 
 # Import project level SLO
