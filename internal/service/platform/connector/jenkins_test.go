@@ -31,7 +31,7 @@ func TestAccConnectorJenkins_usernamepassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_user_name_password.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.jenkins_user_name_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -44,7 +44,7 @@ func TestAccConnectorJenkins_usernamepassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "jenkins_url", "https://jenkinss.com/"),
-					resource.TestCheckResourceAttr(resourceName, "jenkins_user_name_password.0.username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.jenkins_user_name_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -198,7 +198,7 @@ func testAccResourceConnector_jenkins_bearerToken(id string, name string) string
 			jenkins_url = "https://jenkinss.com/"
 			delegate_selectors = ["harness-delegate"]
 			auth {
-				type = "BearerToken"
+				type = "Bearer Token(HTTP Header)"
 				jenkins_bearer_token {
 					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}

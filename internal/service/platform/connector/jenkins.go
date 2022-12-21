@@ -40,10 +40,10 @@ func ResourceConnectorJenkins() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
-							Description:  "Can be one of UsernamePassword, Anonymous, BearerToken",
+							Description:  "Can be one of UsernamePassword, Anonymous, Bearer Token(HTTP Header)",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"UsernamePassword", "Anonymous", "BearerToken"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"UsernamePassword", "Anonymous", "Bearer Token(HTTP Header)"}, false),
 						},
 						"jenkins_bearer_token": {
 							Description:   "Authenticate to App Dynamics using bearer token.",
@@ -212,7 +212,7 @@ func readJenkinsUsernamePassword(d *schema.ResourceData, connector *nextgen.Conn
 				"password_ref": connector.Jenkins.Auth.JenkinsUserNamePassword.PasswordRef,
 			},
 		}
-	case "BearerToken":
+	case "Bearer Token(HTTP Header)":
 		//noop
 	}
 	return spec
@@ -223,7 +223,7 @@ func readJenkinsBearerToken(d *schema.ResourceData, connector *nextgen.Connector
 	switch connector.Jenkins.Auth.Type_ {
 	case "UsernamePassword":
 		//noop
-	case "BearerToken":
+	case "Bearer Token(HTTP Header)":
 		spec = []interface{}{
 			map[string]interface{}{
 				"token_ref": connector.Jenkins.Auth.JenkinsBearerToken.TokenRef,
