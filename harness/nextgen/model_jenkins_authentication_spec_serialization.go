@@ -20,7 +20,7 @@ func (a *JenkinsAuthentication) UnmarshalJSON(data []byte) error {
 	}
 
 	switch a.Type_ {
-	case "BearerToken":
+	case "Bearer Token(HTTP Header)":
 		err = json.Unmarshal(aux.Spec, &a.JenkinsBearerToken)
 	case "UsernamePassword":
 		err = json.Unmarshal(aux.Spec, &a.JenkinsUserNamePassword)
@@ -40,7 +40,7 @@ func (a *JenkinsAuthentication) MarshalJSON() ([]byte, error) {
 	var err error
 
 	switch a.Type_ {
-	case "BearerToken":
+	case "Bearer Token(HTTP Header)":
 		spec, err = json.Marshal(a.JenkinsBearerToken)
 	case "UsernamePassword":
 		spec, err = json.Marshal(a.JenkinsUserNamePassword)
