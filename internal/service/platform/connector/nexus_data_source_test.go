@@ -40,6 +40,17 @@ func TestAccDataSourceConnectorNexus(t *testing.T) {
 
 func testAccDataSourceConnectorNexus(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_nexus" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -51,7 +62,7 @@ func testAccDataSourceConnectorNexus(name string) string {
 			version = "3.x"
 			credentials {
 				username = "admin"
-				password_ref = "account.test"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 

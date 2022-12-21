@@ -29,8 +29,6 @@ func TestAccDataSourceConnectorDatadog(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://datadog.com"),
-					resource.TestCheckResourceAttr(resourceName, "application_key_ref", "account.acctest_datadog_app_key"),
-					resource.TestCheckResourceAttr(resourceName, "api_key_ref", "account.acctest_datadog_api_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -40,6 +38,17 @@ func TestAccDataSourceConnectorDatadog(t *testing.T) {
 
 func testAccDataSourceConnectorDatadog(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_datadog" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -48,8 +57,8 @@ func testAccDataSourceConnectorDatadog(name string) string {
 
 			url = "https://datadog.com"
 			delegate_selectors = ["harness-delegate"]
-			application_key_ref = "account.acctest_datadog_app_key"
-			api_key_ref = "account.acctest_datadog_api_key"
+			application_key_ref = "account.${harness_platform_secret_text.test.id}"
+			api_key_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 
 		data "harness_platform_connector_datadog" "test" {

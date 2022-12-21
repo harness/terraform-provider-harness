@@ -77,8 +77,6 @@ func TestAccResourceConnectorAwsSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "account.acctest_sumo_access_id"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "account.acctest_appd_password"),
 				),
 			},
 			{
@@ -91,8 +89,6 @@ func TestAccResourceConnectorAwsSM_manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.secret_key_ref", "account.acctest_sumo_access_id"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.manual.0.access_key_ref", "account.acctest_appd_password"),
 				),
 			},
 			{
@@ -175,6 +171,17 @@ func testAccResourceConnectorAwsSM_inherit(id string, name string) string {
 
 func testAccResourceConnectorAwsSM_manual(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_aws_secret_manager" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -186,8 +193,8 @@ func testAccResourceConnectorAwsSM_manual(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				manual {
-					secret_key_ref = "account.acctest_sumo_access_id"
-					access_key_ref = "account.acctest_appd_password"
+					secret_key_ref = "account.${harness_platform_secret_text.test.id}"
+					access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 		}

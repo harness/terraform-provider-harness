@@ -141,6 +141,10 @@ func resourceConnectorGitlabRead(ctx context.Context, d *schema.ResourceData, me
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorGitlab(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

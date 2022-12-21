@@ -33,7 +33,6 @@ func TestAccDataSourceConnectorBitbucket(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 		},
@@ -42,6 +41,17 @@ func TestAccDataSourceConnectorBitbucket(t *testing.T) {
 
 func testAccDataSourceConnectorBitbucket(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_bitbucket" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -55,7 +65,7 @@ func testAccDataSourceConnectorBitbucket(name string) string {
 			credentials {
 				http {
 					username = "admin"
-					password_ref = "account.TEST_aws_secret_key"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 		}

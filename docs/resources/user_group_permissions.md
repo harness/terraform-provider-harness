@@ -59,7 +59,7 @@ Optional:
 
 Required:
 
-- `actions` (Set of String) The actions allowed to be performed. Valid options are READ, EXECUTE_WORKFLOW, EXECUTE_PIPELINE, ROLLBACK_WORKFLOW
+- `actions` (Set of String) The actions allowed to be performed. Valid options are READ, EXECUTE_WORKFLOW, EXECUTE_PIPELINE, ROLLBACK_WORKFLOW, ABORT_WORKFLOW
 - `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
 
 Optional:

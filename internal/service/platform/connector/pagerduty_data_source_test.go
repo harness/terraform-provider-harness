@@ -28,7 +28,6 @@ func TestAccDataSourceConnectorPagerDuty(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "api_token_ref", "account.acctest_pagerduty_token"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -38,6 +37,17 @@ func TestAccDataSourceConnectorPagerDuty(t *testing.T) {
 
 func testAccDataSourceConnectorPagerDuty(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_pagerduty" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -45,7 +55,7 @@ func testAccDataSourceConnectorPagerDuty(name string) string {
 			tags = ["foo:bar"]
 
 			delegate_selectors = ["harness-delegate"]
-			api_token_ref = "account.acctest_pagerduty_token"
+			api_token_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 
 		data "harness_platform_connector_pagerduty" "test" {

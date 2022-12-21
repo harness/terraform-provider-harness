@@ -76,7 +76,6 @@ func TestAccResourceConnector_httphelm_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://helm.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -90,6 +89,17 @@ func TestAccResourceConnector_httphelm_UsernamePassword(t *testing.T) {
 
 func testAccResourceConnector_httphelm_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -100,7 +110,7 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				username = "admin"
-				password_ref = "account.TEST_aws_secret_key"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 `, id, name)

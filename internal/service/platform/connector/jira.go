@@ -64,6 +64,10 @@ func resourceConnectorJiraRead(ctx context.Context, d *schema.ResourceData, meta
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorJira(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

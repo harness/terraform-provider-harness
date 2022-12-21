@@ -32,7 +32,6 @@ func TestAccConnectorAppDynamics_usernamepassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://appdynamics.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_name", "myaccount"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "username_password.0.password_ref", "account.acctest_appd_password"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -47,7 +46,6 @@ func TestAccConnectorAppDynamics_usernamepassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://appdynamics.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_name", "myaccount"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "username_password.0.password_ref", "account.acctest_appd_password"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -83,7 +81,6 @@ func TestAccResourceConnectorAppDynamics_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://appdynamics.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_name", "myaccount"),
 					resource.TestCheckResourceAttr(resourceName, "api_token.0.client_id", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_token.0.client_secret_ref", "account.acctest_appd_password"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -98,7 +95,6 @@ func TestAccResourceConnectorAppDynamics_token(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://appdynamics.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_name", "myaccount"),
 					resource.TestCheckResourceAttr(resourceName, "api_token.0.client_id", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_token.0.client_secret_ref", "account.acctest_appd_password"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -113,6 +109,17 @@ func TestAccResourceConnectorAppDynamics_token(t *testing.T) {
 
 func testAccResourceConnector_appdynamics_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_appdynamics" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -124,7 +131,7 @@ func testAccResourceConnector_appdynamics_usernamepassword(id string, name strin
 			delegate_selectors = ["harness-delegate"]
 			username_password {
 				username = "admin"
-				password_ref = "account.acctest_appd_password"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 `, id, name)
@@ -132,6 +139,17 @@ func testAccResourceConnector_appdynamics_usernamepassword(id string, name strin
 
 func testAccResourceConnector_appdynamics_token(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_appdynamics" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -143,7 +161,7 @@ func testAccResourceConnector_appdynamics_token(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			api_token {
 				client_id = "admin"
-				client_secret_ref = "account.acctest_appd_password"
+				client_secret_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 		}
 `, id, name)

@@ -74,6 +74,10 @@ func resourceConnectorArtifactoryRead(ctx context.Context, d *schema.ResourceDat
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorArtifactory(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

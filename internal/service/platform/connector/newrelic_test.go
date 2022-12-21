@@ -31,7 +31,6 @@ func TestAccResourceConnectorNewRelic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://newrelic.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", "nr_account_id"),
-					resource.TestCheckResourceAttr(resourceName, "api_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -45,7 +44,6 @@ func TestAccResourceConnectorNewRelic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://newrelic.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", "nr_account_id"),
-					resource.TestCheckResourceAttr(resourceName, "api_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -60,6 +58,17 @@ func TestAccResourceConnectorNewRelic(t *testing.T) {
 
 func testAccResourceConnectorNewRelic(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_newrelic" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -69,7 +78,7 @@ func testAccResourceConnectorNewRelic(id string, name string) string {
 			url = "https://newrelic.com/"
 			delegate_selectors = ["harness-delegate"]
 			account_id = "nr_account_id"
-			api_key_ref = "account.acctest_sumo_access_key"
+			api_key_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 `, id, name)
 }

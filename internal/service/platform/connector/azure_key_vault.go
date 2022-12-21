@@ -78,6 +78,10 @@ func resourceConnectorAzureKeyVaultRead(ctx context.Context, d *schema.ResourceD
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAzureKeyVault(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

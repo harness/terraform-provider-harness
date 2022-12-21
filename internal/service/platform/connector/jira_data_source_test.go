@@ -30,7 +30,6 @@ func TestAccDataSourceConnectorJira(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://jira.com"),
 					resource.TestCheckResourceAttr(resourceName, "username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "password_ref", "account.TEST_aws_secret_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -40,6 +39,17 @@ func TestAccDataSourceConnectorJira(t *testing.T) {
 
 func testAccDataSourceConnectorJira(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_jira" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -49,7 +59,7 @@ func testAccDataSourceConnectorJira(name string) string {
 			url = "https://jira.com"
 			delegate_selectors = ["harness-delegate"]
 			username = "admin"
-			password_ref = "account.TEST_aws_secret_key"
+			password_ref = "account.${harness_platform_secret_text.test.id}"
 		}
 
 		data "harness_platform_connector_jira" "test" {
