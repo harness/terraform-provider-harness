@@ -1,6 +1,6 @@
 
-<a name="0.3.10"></a>
-## 0.3.10 (2022-12-21)
+<a name="0.3.11"></a>
+## 0.3.11 (2022-12-21)
 
 ### Add
 
@@ -115,6 +115,8 @@
 
 ### Release
 
+* Release version 0.3.10 12-21-2022
+* Release v0.3.10
 * Release version 0.3.9 12-20-2022
 * Release v0.3.9
 * Release version 0.3.8 12-19-2022
@@ -258,6 +260,7 @@
 ### Update
 
 * Update jenkins auth serializer
+* Update jenkins auth serializer
 * Update jenkin authentication serializer
 * Update connector info serializer
 * Update connector types enum to include jenkins type
@@ -274,10 +277,10 @@
 ### Updated
 
 * updated dependencies
-* updated deps
 
 ### Pull Requests
 
+* Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
 * Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
 * Merge pull request [#174](https://github.com/harness/harness-go-sdk/issues/174) from jennynilsen/fix-awscloudprovider-json-tag
 * Merge pull request [#261](https://github.com/harness/harness-go-sdk/issues/261) from harness/SPG-1287-3
