@@ -1,6 +1,6 @@
 
-<a name="0.3.9"></a>
-## 0.3.9 (2022-12-20)
+<a name="0.3.10"></a>
+## 0.3.10 (2022-12-21)
 
 ### Add
 
@@ -8,6 +8,7 @@
 * Add jenkins authentication serializer
 * Add models for jenkins connector
 * Add azure key vault connector type
+* Add approvals for CG to SDK ([#142](https://github.com/harness/harness-go-sdk/issues/142))
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
@@ -15,6 +16,7 @@
 
 ### Added
 
+* Added attribute filter model
 * Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 * Added resource lookups by name
 * Added artifact sources to service for graphql
@@ -30,7 +32,10 @@
 * adding better name
 * adding support for export executions
 * adding delegate resource
-* adding irsa credentials options to aws cloud provider
+
+### Adding
+
+* Adding dto files
 
 ### Azure
 
@@ -41,6 +46,11 @@
 
 * Catch service not found issue
 
+### Change
+
+* change in package name
+* change model and enums for ssh key secret type
+
 ### Changes
 
 * Changes to add azure cloud cost connector
@@ -50,22 +60,28 @@
 
 * Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
 
-### Fix
+### Error
 
-* Fix main
-* Fix main
-* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
-* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
-* Fix timestamp parsing for delegate query
+* error handling after read file
 
 ### Fix
 
 * fix environment variable overrides with secrets
 * fix cac error handling
 
+### Fix
+
+* Fix main
+* Fix main
+* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
+* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
+* Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
+
 ### Fixing
 
 * fixing things
+* fixing json tag for AwsCloudProvider type
+* fixing package name
 
 ### Handle
 
@@ -91,7 +107,7 @@
 
 ### Modify
 
-* Modify delegate tests
+* Modify secret file post and put methods
 
 ### Regenerated
 
@@ -99,6 +115,8 @@
 
 ### Release
 
+* Release version 0.3.9 12-20-2022
+* Release v0.3.9
 * Release version 0.3.8 12-19-2022
 * Release v0.3.8
 * Release version 0.3.7 12-19-2022
@@ -175,6 +193,19 @@
 * Release v0.2.3
 * Release version 0.2.2 09-23-2022
 * Release v0.2.2
+* Release version 0.2.1 09-21-2022
+* Release v0.2.1
+* Release version 0.2.0 09-15-2022
+* Release v0.2.0
+* Release version 0.1.35 09-14-2022
+* Release v0.1.35
+* Release version 0.1.34 09-13-2022
+* Release v0.1.34
+* Release version 0.1.33 08-13-2022
+* Release v0.1.33
+* Release version 0.1.32 07-20-2022
+* Release v0.1.32
+* Release v0.1.31
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
 * Release version 0.1.29 06-02-2022
@@ -199,12 +230,18 @@
 * Release v0.1.20
 * Release version 0.1.19 04-13-2022
 * Release v0.1.19
-* Release version 0.1.18 03-25-2022
-* Release v0.1.18
 
 ### Removing
 
 * removing redundant api and doc
+
+### Resource
+
+* Resource selector model change
+
+### Restoring
+
+* restoring the swagger.yaml
 
 ### Revert
 
@@ -214,8 +251,14 @@
 
 * Review comment
 
+### SSH
+
+* SSH key related models and enum changes
+
 ### Update
 
+* Update jenkins auth serializer
+* Update jenkin authentication serializer
 * Update connector info serializer
 * Update connector types enum to include jenkins type
 * Update package
@@ -225,6 +268,8 @@
 * Update azure connector models
 * Update role assignments api and models
 * Update prometheus connector dto model
+* Update user group model
+* Update user group model
 
 ### Updated
 
@@ -233,6 +278,9 @@
 
 ### Pull Requests
 
+* Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
+* Merge pull request [#174](https://github.com/harness/harness-go-sdk/issues/174) from jennynilsen/fix-awscloudprovider-json-tag
+* Merge pull request [#261](https://github.com/harness/harness-go-sdk/issues/261) from harness/SPG-1287-3
 * Merge pull request [#259](https://github.com/harness/harness-go-sdk/issues/259) from harness/SPG-1287-2
 * Merge pull request [#252](https://github.com/harness/harness-go-sdk/issues/252) from harness/SPG-443-Add-User-resource-in-harness-terraform-provider
 * Merge pull request [#256](https://github.com/harness/harness-go-sdk/issues/256) from harness/SPG-1287-1
@@ -282,4 +330,14 @@
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
+* Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
+* Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
+* Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
+* Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
+* Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
+* Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
+* Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
+* Merge pull request [#140](https://github.com/harness/harness-go-sdk/issues/140) from harness/release
+* Merge pull request [#138](https://github.com/harness/harness-go-sdk/issues/138) from harness/PL-25840
+* Merge pull request [#139](https://github.com/harness/harness-go-sdk/issues/139) from harness/PL-25839
 
