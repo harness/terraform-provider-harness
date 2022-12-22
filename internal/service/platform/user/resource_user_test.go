@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -20,7 +21,7 @@ func TestAccResourceUser(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		// CheckDestroy:      testAccUserDestroy(resourceName),
+		CheckDestroy:      testAccUserDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceUser(id, name),
@@ -47,27 +48,41 @@ func TestAccResourceUser(t *testing.T) {
 	})
 }
 
-func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextgen.UserInfo, error) {
-	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+func buildField(r *terraform.ResourceState, field string) optional.String {
+	if attr, ok := r.Primary.Attributes[field]; ok {
+		return optional.NewString(attr)
+	}
+	return optional.EmptyString()
+}
 
-	resp, _, err := c.UserApi.GetCurrentUserInfo((ctx), c.AccountId)
+func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextgen.UserAggregate, error) {
+
+	r := acctest.TestAccGetResource(resourceName, state)
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+	emails := r.Primary.Attributes["emails"]
+
+	resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+		OrgIdentifier:     buildField(r, "org_id"),
+		ProjectIdentifier: buildField(r, "project_id"),
+		SearchTerm:        optional.NewString(emails),
+	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.Data == nil {
+	if &resp == nil || resp.Data == nil || resp.Data.Empty {
 		return nil, nil
 	}
 
-	return resp.Data, nil
+	return &resp.Data.Content[0], nil
 }
 
 func testAccUserDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		user, _ := testAccGetPlatformUser(resourceName, state)
 		if user != nil {
-			return fmt.Errorf("Found user: %s", user.Uuid)
+			return fmt.Errorf("Found user: %s", user.User.Uuid)
 		}
 
 		return nil

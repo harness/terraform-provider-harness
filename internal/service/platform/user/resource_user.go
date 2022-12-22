@@ -29,43 +29,28 @@ func ResourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"org_id": {
+				Description: "Organization identifier of the user.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"project_id": {
+				Description: "Project identifier of the user.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"name": {
 				Description: "Name of the user.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
 			"email": {
-				Description: "Email address of the user.",
+				Description: "The email of the user.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"token": {
-				Description: "Token used to authenticate the user.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"default_account_id": {
-				Description: "Default account ID of the user.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"intent": {
-				Description: "Intent of the user.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"admin": {
-				Description: "Whether the user is an administrator.",
-				Type:        schema.TypeBool,
-				Computed:    true,
-			},
-			"is_two_factor_auth_enabled": {
-				Description: "Whether 2FA is enabled for the user.",
-				Type:        schema.TypeBool,
-				Computed:    true,
-			},
-			"email_verified": {
-				Description: "Whether the user's email address has been verified.",
+			"disabled": {
+				Description: "Whether or not the user account is disabled.",
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
@@ -74,30 +59,10 @@ func ResourceUser() *schema.Resource {
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
-			"signup_action": {
-				Description: "Signup action of the user.",
-				Type:        schema.TypeString,
+			"externally_managed": {
+				Description: "Whether or not the user account is externally managed.",
+				Type:        schema.TypeBool,
 				Computed:    true,
-			},
-			"edition": {
-				Description: "Edition of the platform being used.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"billing_frequency": {
-				Description: "Billing frequency of the user.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-			"org_id": {
-				Description: "Organization identifier of the user.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description: "Project identifier of the user.",
-				Type:        schema.TypeString,
-				Optional:    true,
 			},
 			"emails": {
 				Description: "The email of the user.",
@@ -110,7 +75,7 @@ func ResourceUser() *schema.Resource {
 			"role_bindings": {
 				Description: "Role Bindings of the user.",
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_group_identifier": {
@@ -149,12 +114,23 @@ func ResourceUser() *schema.Resource {
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	resp, httpResp, err := c.UserApi.GetCurrentUserInfo(ctx, c.AccountId)
+	emails := []string{}
+	var email = ""
+	if attr, ok := d.GetOk("emails"); ok {
+		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+		email = emails[0]
+	}
+
+	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		SearchTerm:        optional.NewString(email),
+	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUser(d, resp.Data)
+	readUser(d, &resp.Data.Content[0])
 
 	return nil
 }
@@ -183,12 +159,22 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	resp, httpResp, err := c.UserApi.GetCurrentUserInfo(ctx, c.AccountId)
+	emails := []string{}
+	if attr, ok := d.GetOk("emails"); ok {
+		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	}
+
+	var email = emails[0]
+	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		SearchTerm:        optional.NewString(email),
+	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUser(d, resp.Data)
+	readUser(d, &resp.Data.Content[0])
 
 	return nil
 }
@@ -248,19 +234,12 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	return &addUsersDto
 }
 
-func readUser(d *schema.ResourceData, user *nextgen.UserInfo) {
-	d.SetId(user.Uuid)
-	d.Set("identifier", user.Uuid)
-	d.Set("name", user.Name)
-	d.Set("email", user.Email)
-	d.Set("token", user.Token)
-	d.Set("default_account_id", user.DefaultAccountId)
-	d.Set("intent", user.Intent)
-	d.Set("admin", user.Admin)
-	d.Set("is_two_factor_auth_enabled", user.TwoFactorAuthenticationEnabled)
-	d.Set("email_verified", user.EmailVerified)
-	d.Set("locked", user.Locked)
-	d.Set("signup_action", user.SignupAction)
-	d.Set("edition", user.Edition)
-	d.Set("billing_frequency", user.BillingFrequency)
+func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {
+	d.SetId(UserAggregate.User.Uuid)
+	d.Set("identifier", UserAggregate.User.Uuid)
+	d.Set("name", UserAggregate.User.Name)
+	d.Set("email", UserAggregate.User.Email)
+	d.Set("locked", UserAggregate.User.Locked)
+	d.Set("disabled", UserAggregate.User.Disabled)
+	d.Set("externally_managed", UserAggregate.User.ExternallyManaged)
 }
