@@ -42,7 +42,7 @@ func TestAccResourceUser(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"emails", "role_bindings"},
+				ImportStateVerifyIgnore: []string{"emails", "role_bindings", "user_groups"},
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
@@ -141,6 +141,7 @@ func testAccResourceUser(id string, name string) string {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			emails = ["rajendra.baviskar@harness.io"]
+			user_groups = ["_project_all_users"]
 			role_bindings {
 				resource_group_identifier = "_all_project_level_resources"
 				role_identifier = "_project_viewer"

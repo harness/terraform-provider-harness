@@ -1,7 +1,8 @@
 resource "harness_platform_user" "example" {
-  org_id     = "org_id"
-  project_id = "project_id"
-  emails     = ["john.doe@harness.io"]
+  org_id      = "org_id"
+  project_id  = "project_id"
+  emails      = ["john.doe@harness.io"]
+  user_groups = ["_project_all_users"]
   role_bindings {
     resource_group_identifier = "_all_project_level_resources"
     role_identifier           = "_project_viewer"

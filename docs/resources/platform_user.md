@@ -14,9 +14,10 @@ Resource for creating a Harness User.
 
 ```terraform
 resource "harness_platform_user" "example" {
-  org_id     = "org_id"
-  project_id = "project_id"
-  emails     = ["john.doe@harness.io"]
+  org_id      = "org_id"
+  project_id  = "project_id"
+  emails      = ["john.doe@harness.io"]
+  user_groups = ["_project_all_users"]
   role_bindings {
     resource_group_identifier = "_all_project_level_resources"
     role_identifier           = "_project_viewer"
@@ -36,6 +37,7 @@ resource "harness_platform_user" "example" {
 - `org_id` (String) Organization identifier of the user.
 - `project_id` (String) Project identifier of the user.
 - `role_bindings` (Block List, Min: 1) Role Bindings of the user. (see [below for nested schema](#nestedblock--role_bindings))
+- `user_groups` (Set of String) The user group of the user.
 
 ### Read-Only
 

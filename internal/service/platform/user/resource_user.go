@@ -72,6 +72,14 @@ func ResourceUser() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"user_groups": {
+				Description: "The user group of the user.",
+				Type:        schema.TypeSet,
+				Required:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"role_bindings": {
 				Description: "Role Bindings of the user.",
 				Type:        schema.TypeList,
@@ -199,6 +207,10 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	var addUsersDto nextgen.AddUsersDto
 	if attr, ok := d.GetOk("emails"); ok {
 		addUsersDto.Emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	}
+
+	if attr, ok := d.GetOk("user_groups"); ok {
+		addUsersDto.UserGroups = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
 	var ipRoleBindings map[string]interface{}
