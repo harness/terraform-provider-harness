@@ -3,20 +3,20 @@
 page_title: "harness_platform_connector_jenkins Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating an Jenkins connector.
+  Resource for creating a Jenkins connector.
 ---
 
 # harness_platform_connector_jenkins (Resource)
 
-Resource for creating an Jenkins connector.
+Resource for creating a Jenkins connector.
 
 ## Example Usage
 
 ```terraform
 # Auth mechanism username password
 resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "%[1]s"
-  name        = "%[2]s"
+  identifier  = "identifier"
+  name        = "name"
   description = "test"
   tags        = ["foo:bar"]
 
@@ -25,7 +25,7 @@ resource "harness_platform_connector_jenkins" "test" {
   auth {
     type = "UsernamePassword"
     jenkins_user_name_password {
-      username     = "admin"
+      username     = "username"
       password_ref = "account.${harness_platform_secret_text.test.id}"
     }
   }
@@ -33,8 +33,8 @@ resource "harness_platform_connector_jenkins" "test" {
 
 # Auth mechanism anonymous
 resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "%[1]s"
-  name        = "%[2]s"
+  identifier  = "identifier"
+  name        = "name"
   description = "test"
   tags        = ["foo:bar"]
 
@@ -47,8 +47,8 @@ resource "harness_platform_connector_jenkins" "test" {
 
 # Auth mechanism bearer token
 resource "harness_platform_connector_jenkins" "test" {
-  identifier  = "%[1]s"
-  name        = "%[2]s"
+  identifier  = "identifier"
+  name        = "name"
   description = "test"
   tags        = ["foo:bar"]
 

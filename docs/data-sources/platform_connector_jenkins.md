@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_jenkins Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for looking up an Jenkins connector.
+  Datasource for looking up a Jenkins connector.
 ---
 
 # harness_platform_connector_jenkins (Data Source)
 
-Datasource for looking up an Jenkins connector.
+Datasource for looking up a Jenkins connector.
 
 ## Example Usage
 
