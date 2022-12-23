@@ -1,2 +1,8 @@
-# Import using the email address of the user
-terraform import harness_user.john_doe john.doe@example.com
+# Import account level
+terraform import harness_platform_user.john_doe <email_id>
+
+# Import org level 
+terraform import harness_platform_user.john_doe <ord_id>/<email_id>
+
+# Import project level
+terraform import harness_platform_user.john_doe <org_id>/<project_id>/<email_id>

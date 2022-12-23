@@ -127,7 +127,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		SearchTerm:        optional.NewString(email),
 	})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readUser(d, &resp.Data.Content[0])
@@ -156,7 +156,7 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	emails := []string{}
