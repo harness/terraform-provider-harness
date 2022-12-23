@@ -1,3 +1,9 @@
+# 0.12.0 (December 23,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_jenkins - Added jenkins connector resource in Harness terraform provider.` ([#365](https://github.com/harness/terraform-provider-harness/issues/365))
+
 # 0.11.5 (December 14,2022) 
 
 BUG FIXES:
