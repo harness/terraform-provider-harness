@@ -11,7 +11,7 @@ import (
 
 func DataSourceConnectorJenkins() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up an Jenkins connector.",
+		Description: "Datasource for looking up a Jenkins connector.",
 		ReadContext: dataConnectorJenkinsRead,
 
 		Schema: map[string]*schema.Schema{

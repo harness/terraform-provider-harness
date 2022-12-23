@@ -13,7 +13,7 @@ import (
 
 func ResourceConnectorJenkins() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an Jenkins connector.",
+		Description:   "Resource for creating a Jenkins connector.",
 		ReadContext:   resourceConnectorJenkinsRead,
 		CreateContext: resourceConnectorCreateOrUpdate,
 		UpdateContext: resourceConnectorCreateOrUpdate,
