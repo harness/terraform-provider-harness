@@ -1,3 +1,0 @@
-```release-note:new-resource 
-resource/harness_platform_user: Resource for creating a Harness User 
-```
