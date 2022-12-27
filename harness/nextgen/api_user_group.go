@@ -1,7 +1,7 @@
 /*
  * Harness NextGen Software Delivery Platform API Reference
  *
- * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub  # Authentication  <!-- ReDoc-Inject: <security-definitions> -->
+ * This is the Open Api Spec 3 for the NextGen Manager. This is under active development. Beware of the breaking change with respect to the generated code stub
  *
  * API version: 3.0
  * Contact: contact@harness.io
@@ -28,14 +28,13 @@ var (
 type UserGroupApiService service
 
 /*
-UserGroupApiService Copy User Group
-Copy a User Group in an account/org/project
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param body List of scopes
-  - @param accountIdentifier Account Identifier for the Entity.
-  - @param groupIdentifier groupIdentifier
-
-@return ResponseDtoBoolean
+ UserGroupApiService Copy User Group
+ Copy a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body List of scopes
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param groupIdentifier groupIdentifier
+ @return ResponseDtoBoolean
 */
 func (a *UserGroupApiService) CopyUserGroup(ctx context.Context, body []Scope, accountIdentifier string, groupIdentifier string) (ResponseDtoBoolean, *http.Response, error) {
 	var (
@@ -153,16 +152,16 @@ func (a *UserGroupApiService) CopyUserGroup(ctx context.Context, body []Scope, a
 }
 
 /*
-UserGroupApiService Remove user from User Group
-Remove a user from the user group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param identifier Identifier of the user group
- * @param userIdentifier Identifier of the user
- * @param optional nil or *UserGroupApiDeleteMemberOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroup
+ UserGroupApiService Remove user from User Group
+ Remove a user from the user group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param identifier Identifier of the user group
+	* @param userIdentifier Identifier of the user
+	* @param optional nil or *UserGroupApiDeleteMemberOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroup
 */
 
 type UserGroupApiDeleteMemberOpts struct {
@@ -291,15 +290,15 @@ func (a *UserGroupApiService) DeleteMember(ctx context.Context, accountIdentifie
 }
 
 /*
-UserGroupApiService Delete a User Group in an account/org/project
-Delete User Group
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param identifier Identifier of the user group
- * @param optional nil or *UserGroupApiDeleteUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroup
+ UserGroupApiService Delete a User Group in an account/org/project
+ Delete User Group
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param identifier Identifier of the user group
+	* @param optional nil or *UserGroupApiDeleteUserGroupOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroup
 */
 
 type UserGroupApiDeleteUserGroupOpts struct {
@@ -427,13 +426,12 @@ func (a *UserGroupApiService) DeleteUserGroup(ctx context.Context, accountIdenti
 }
 
 /*
-UserGroupApiService List User Groups by filter
-List the User Groups selected by a filter in an account/org/project
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param body User Group Filter
-  - @param accountIdentifier Account Identifier for the Entity.
-
-@return ResponseDtoListUserGroup
+ UserGroupApiService List User Groups by filter
+ List the User Groups selected by a filter in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body User Group Filter
+	* @param accountIdentifier Account Identifier for the Entity.
+ @return ResponseDtoListUserGroup
 */
 func (a *UserGroupApiService) GetBatchUsersGroupList(ctx context.Context, body UserGroupFilter, accountIdentifier string) (ResponseDtoListUserGroup, *http.Response, error) {
 	var (
@@ -550,16 +548,152 @@ func (a *UserGroupApiService) GetBatchUsersGroupList(ctx context.Context, body U
 }
 
 /*
-UserGroupApiService Check user membership
-Check if the user is part of the user group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param identifier Identifier of the user group
- * @param userIdentifier Identifier of the user
- * @param optional nil or *UserGroupApiGetMemberOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoBoolean
+ UserGroupApiService Get Inheriting Child Scopes
+ List the Child Scopes inheriting this User Group
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param identifier Identifier of the user group
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiGetInheritingChildScopeListOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoListScopeName
+*/
+
+type UserGroupApiGetInheritingChildScopeListOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *UserGroupApiService) GetInheritingChildScopeList(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *UserGroupApiGetInheritingChildScopeListOpts) (ResponseDtoListScopeName, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoListScopeName
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/user-groups/{identifier}/scopes"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoListScopeName
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ UserGroupApiService Check user membership
+ Check if the user is part of the user group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param identifier Identifier of the user group
+	* @param userIdentifier Identifier of the user
+	* @param optional nil or *UserGroupApiGetMemberOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoBoolean
 */
 
 type UserGroupApiGetMemberOpts struct {
@@ -688,15 +822,15 @@ func (a *UserGroupApiService) GetMember(ctx context.Context, accountIdentifier s
 }
 
 /*
-UserGroupApiService Get User Group
-Get a User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param identifier Identifier of the user group
- * @param optional nil or *UserGroupApiGetUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroup
+ UserGroupApiService Get User Group
+ Get a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param identifier Identifier of the user group
+	* @param optional nil or *UserGroupApiGetUserGroupOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroup
 */
 
 type UserGroupApiGetUserGroupOpts struct {
@@ -824,19 +958,19 @@ func (a *UserGroupApiService) GetUserGroup(ctx context.Context, accountIdentifie
 }
 
 /*
-UserGroupApiService List the User Groups in an account/org/project
-List User Groups
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *UserGroupApiGetUserGroupListOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "SearchTerm" (optional.String) -  Search filter which matches by user group name/identifier
-     * @param "FilterType" (optional.String) -
-     * @param "PageIndex" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
-     * @param "PageSize" (optional.Int32) -  Results per page(max 100)Default Value: 50
-     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-@return ResponseDtoPageResponseUserGroup
+ UserGroupApiService List the User Groups in an account/org/project
+ List User Groups
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiGetUserGroupListOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+			* @param "SearchTerm" (optional.String) -  Search filter which matches by user group name/identifier
+			* @param "FilterType" (optional.String) -
+			* @param "PageIndex" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
+			* @param "PageSize" (optional.Int32) -  Results per page(max 100)Default Value: 50
+			* @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+ @return ResponseDtoPageResponseUserGroup
 */
 
 type UserGroupApiGetUserGroupListOpts struct {
@@ -983,19 +1117,19 @@ func (a *UserGroupApiService) GetUserGroupList(ctx context.Context, accountIdent
 }
 
 /*
-UserGroupApiService List users in User Group
-List the users in a User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param identifier Identifier of the user group
- * @param optional nil or *UserGroupApiGetUserListInUserGroupOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of UserFilter) -  Filter users based on multiple parameters
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "PageIndex" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
-     * @param "PageSize" (optional.Int32) -  Results per page(max 100)Default Value: 50
-     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
-@return ResponseDtoPageResponseUserMetadata
+ UserGroupApiService List users in User Group
+ List the users in a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param identifier Identifier of the user group
+	* @param optional nil or *UserGroupApiGetUserListInUserGroupOpts - Optional Parameters:
+			* @param "Body" (optional.Interface of UserFilter) -  Filter users based on multiple parameters
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+			* @param "PageIndex" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
+			* @param "PageSize" (optional.Int32) -  Results per page(max 100)Default Value: 50
+			* @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+ @return ResponseDtoPageResponseUserMetadata
 */
 
 type UserGroupApiGetUserListInUserGroupOpts struct {
@@ -1142,16 +1276,16 @@ func (a *UserGroupApiService) GetUserListInUserGroup(ctx context.Context, accoun
 }
 
 /*
-UserGroupApiService Link LDAP Group to the User Group to an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body LDAP Link Group Request
- * @param accountIdentifier Account Identifier for the Entity.
- * @param userGroupId Identifier of the user group
- * @param ldapId LDAP entity identifier
- * @param optional nil or *UserGroupApiLinkUserGroupToLDAPOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return RestResponseUserGroup
+ UserGroupApiService Link LDAP Group to the User Group to an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body LDAP Link Group Request
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param userGroupId Identifier of the user group
+	* @param ldapId LDAP entity identifier
+	* @param optional nil or *UserGroupApiLinkUserGroupToLDAPOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return RestResponseUserGroup
 */
 
 type UserGroupApiLinkUserGroupToLDAPOpts struct {
@@ -1282,16 +1416,16 @@ func (a *UserGroupApiService) LinkUserGroupToLDAP(ctx context.Context, body Ldap
 }
 
 /*
-UserGroupApiService Link SAML Group to the User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Saml Link Group Request
- * @param accountIdentifier Account Identifier for the Entity.
- * @param userGroupId Identifier of the user group
- * @param samlId Saml Group entity identifier
- * @param optional nil or *UserGroupApiLinkUserGroupToSAMLOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return RestResponseUserGroup
+ UserGroupApiService Link SAML Group to the User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body Saml Link Group Request
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param userGroupId Identifier of the user group
+	* @param samlId Saml Group entity identifier
+	* @param optional nil or *UserGroupApiLinkUserGroupToSAMLOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return RestResponseUserGroup
 */
 
 type UserGroupApiLinkUserGroupToSAMLOpts struct {
@@ -1422,15 +1556,15 @@ func (a *UserGroupApiService) LinkUserGroupToSAML(ctx context.Context, body Saml
 }
 
 /*
-UserGroupApiService Create User Group
-Create a User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body User Group entity to be created
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *UserGroupApiPostUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroup
+ UserGroupApiService Create User Group
+ Create a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body User Group entity to be created
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiPostUserGroupOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroup
 */
 
 type UserGroupApiPostUserGroupOpts struct {
@@ -1559,15 +1693,15 @@ func (a *UserGroupApiService) PostUserGroup(ctx context.Context, body UserGroup,
 }
 
 /*
-UserGroupApiService Create User Group
-Create a User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body User Group entity to be created
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *UserGroupApiPostUserGroupV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroupRequestV2
+ UserGroupApiService Create User Group
+ Create a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body User Group entity to be created
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiPostUserGroupV2Opts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroupResponseV2
 */
 
 type UserGroupApiPostUserGroupV2Opts struct {
@@ -1575,13 +1709,13 @@ type UserGroupApiPostUserGroupV2Opts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *UserGroupApiService) PostUserGroupV2(ctx context.Context, body UserGroupRequestV2, accountIdentifier string, localVarOptionals *UserGroupApiPostUserGroupV2Opts) (ResponseDtoUserGroupRequestV2, *http.Response, error) {
+func (a *UserGroupApiService) PostUserGroupV2(ctx context.Context, body UserGroupRequestV2, accountIdentifier string, localVarOptionals *UserGroupApiPostUserGroupV2Opts) (ResponseDtoUserGroupResponseV2, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoUserGroupRequestV2
+		localVarReturnValue ResponseDtoUserGroupResponseV2
 	)
 
 	// create path and map variables
@@ -1680,7 +1814,7 @@ func (a *UserGroupApiService) PostUserGroupV2(ctx context.Context, body UserGrou
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoUserGroupRequestV2
+			var v ResponseDtoUserGroupResponseV2
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1696,16 +1830,16 @@ func (a *UserGroupApiService) PostUserGroupV2(ctx context.Context, body UserGrou
 }
 
 /*
-UserGroupApiService Add user to User Group
-Add a user to the user group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param identifier Identifier of the user group
- * @param userIdentifier Identifier of the user
- * @param optional nil or *UserGroupApiPutMemberOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroup
+ UserGroupApiService Add user to User Group
+ Add a user to the user group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param identifier Identifier of the user group
+	* @param userIdentifier Identifier of the user
+	* @param optional nil or *UserGroupApiPutMemberOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroup
 */
 
 type UserGroupApiPutMemberOpts struct {
@@ -1834,15 +1968,15 @@ func (a *UserGroupApiService) PutMember(ctx context.Context, accountIdentifier s
 }
 
 /*
-UserGroupApiService Update User Group
-Update a User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body User Group entity with the updates
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *UserGroupApiPutUserGroupOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroup
+ UserGroupApiService Update User Group
+ Update a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body User Group entity with the updates
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiPutUserGroupOpts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroup
 */
 
 type UserGroupApiPutUserGroupOpts struct {
@@ -1971,15 +2105,15 @@ func (a *UserGroupApiService) PutUserGroup(ctx context.Context, body UserGroup, 
 }
 
 /*
-UserGroupApiService Update User Group
-Update a User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body User Group entity with the updates
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *UserGroupApiPutUserGroupV2Opts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoUserGroupRequestV2
+ UserGroupApiService Update User Group
+ Update a User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param body User Group entity with the updates
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiPutUserGroupV2Opts - Optional Parameters:
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return ResponseDtoUserGroupResponseV2
 */
 
 type UserGroupApiPutUserGroupV2Opts struct {
@@ -1987,13 +2121,13 @@ type UserGroupApiPutUserGroupV2Opts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *UserGroupApiService) PutUserGroupV2(ctx context.Context, body UserGroupRequestV2, accountIdentifier string, localVarOptionals *UserGroupApiPutUserGroupV2Opts) (ResponseDtoUserGroupRequestV2, *http.Response, error) {
+func (a *UserGroupApiService) PutUserGroupV2(ctx context.Context, body UserGroupRequestV2, accountIdentifier string, localVarOptionals *UserGroupApiPutUserGroupV2Opts) (ResponseDtoUserGroupResponseV2, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoUserGroupRequestV2
+		localVarReturnValue ResponseDtoUserGroupResponseV2
 	)
 
 	// create path and map variables
@@ -2092,7 +2226,7 @@ func (a *UserGroupApiService) PutUserGroupV2(ctx context.Context, body UserGroup
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
-			var v ResponseDtoUserGroupRequestV2
+			var v ResponseDtoUserGroupResponseV2
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2108,15 +2242,15 @@ func (a *UserGroupApiService) PutUserGroupV2(ctx context.Context, body UserGroup
 }
 
 /*
-UserGroupApiService Unlink SSO Group from the User Group in an account/org/project
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param userGroupId Identifier of the user group
- * @param accountIdentifier Account Identifier for the Entity.
- * @param optional nil or *UserGroupApiUnlinkUserGroupfromSSOOpts - Optional Parameters:
-     * @param "RetainMembers" (optional.Bool) -  Retain currently synced members of the user group
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return RestResponseUserGroup
+ UserGroupApiService Unlink SSO Group from the User Group in an account/org/project
+	* @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	* @param userGroupId Identifier of the user group
+	* @param accountIdentifier Account Identifier for the Entity.
+	* @param optional nil or *UserGroupApiUnlinkUserGroupfromSSOOpts - Optional Parameters:
+			* @param "RetainMembers" (optional.Bool) -  Retain currently synced members of the user group
+			* @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+			* @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ @return RestResponseUserGroup
 */
 
 type UserGroupApiUnlinkUserGroupfromSSOOpts struct {
