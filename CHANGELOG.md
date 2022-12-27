@@ -1,6 +1,6 @@
 
-<a name="0.3.11"></a>
-## 0.3.11 (2022-12-21)
+<a name="0.3.12"></a>
+## 0.3.12 (2022-12-27)
 
 ### Add
 
@@ -56,18 +56,9 @@
 * Changes to add azure cloud cost connector
 * Changes for vault connector resource
 
-### Docker
-
-* Docker test fixes ([#100](https://github.com/harness/harness-go-sdk/issues/100))
-
 ### Error
 
 * error handling after read file
-
-### Fix
-
-* fix environment variable overrides with secrets
-* fix cac error handling
 
 ### Fix
 
@@ -76,6 +67,11 @@
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 * Fix serialization of service variable when encrypted text is used ([#114](https://github.com/harness/harness-go-sdk/issues/114))
+
+### Fix
+
+* fix environment variable overrides with secrets
+* fix cac error handling
 
 ### Fixing
 
@@ -115,6 +111,8 @@
 
 ### Release
 
+* Release version 0.3.11 12-21-2022
+* Release v0.3.11
 * Release version 0.3.10 12-21-2022
 * Release v0.3.10
 * Release version 0.3.9 12-20-2022
@@ -230,8 +228,6 @@
 * Release v0.1.21
 * Release version 0.1.20 04-20-2022
 * Release v0.1.20
-* Release version 0.1.19 04-13-2022
-* Release v0.1.19
 
 ### Removing
 
@@ -278,8 +274,13 @@
 
 * updated dependencies
 
+### Upsate
+
+* Upsate user group
+
 ### Pull Requests
 
+* Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
 * Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
 * Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
 * Merge pull request [#174](https://github.com/harness/harness-go-sdk/issues/174) from jennynilsen/fix-awscloudprovider-json-tag
