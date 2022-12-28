@@ -327,10 +327,10 @@ Class | Method | HTTP request | Description
 *ServicesApi* | [**GetServiceV2**](docs/ServicesApi.md#getservicev2) | **Get** /ng/api/servicesV2/{serviceIdentifier} | Gets a Service by identifier
 *ServicesApi* | [**UpdateServiceV2**](docs/ServicesApi.md#updateservicev2) | **Put** /ng/api/servicesV2 | Update a Service by identifier
 *ServicesApi* | [**UpsertServiceV2**](docs/ServicesApi.md#upsertservicev2) | **Put** /ng/api/servicesV2/upsert | Upsert a Service by identifier
-*SloApi* | [**DeleteSLODataNg**](docs/SloApi.md#deleteslodatang) | **Delete** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/identifier/{identifier} | delete slo data
-*SloApi* | [**GetServiceLevelObjectiveNg**](docs/SloApi.md#getservicelevelobjectiveng) | **Get** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/identifier/{identifier} | get service level objective data
-*SloApi* | [**SaveSLODataNg**](docs/SloApi.md#saveslodatang) | **Post** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier} | saves slo data
-*SloApi* | [**UpdateSLODataNg**](docs/SloApi.md#updateslodatang) | **Put** /slo/v2/account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/identifier/{identifier} | update slo data
+*SloApi* | [**DeleteSLODataNg**](docs/SloApi.md#deleteslodatang) | **Delete** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | delete slo data
+*SloApi* | [**GetServiceLevelObjectiveNg**](docs/SloApi.md#getservicelevelobjectiveng) | **Get** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | get service level objective data
+*SloApi* | [**SaveSLODataNg**](docs/SloApi.md#saveslodatang) | **Post** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2 | saves slo data
+*SloApi* | [**UpdateSLODataNg**](docs/SloApi.md#updateslodatang) | **Put** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | update slo data
 *SourceCodeManagerApi* | [**CreateSourceCodeManager**](docs/SourceCodeManagerApi.md#createsourcecodemanager) | **Post** /ng/api/source-code-manager | Creates Source Code Manager
 *SourceCodeManagerApi* | [**DeleteSourceCodeManager**](docs/SourceCodeManagerApi.md#deletesourcecodemanager) | **Delete** /ng/api/source-code-manager/{identifier} | Deletes the Source Code Manager corresponding to the specified Source Code Manager Id
 *SourceCodeManagerApi* | [**GetSourceCodeManagers**](docs/SourceCodeManagerApi.md#getsourcecodemanagers) | **Get** /ng/api/source-code-manager | Lists Source Code Managers for the given account
