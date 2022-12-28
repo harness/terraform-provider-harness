@@ -95,6 +95,10 @@ func resourceConnectorAppDynamicsRead(ctx context.Context, d *schema.ResourceDat
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAppDynamics(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

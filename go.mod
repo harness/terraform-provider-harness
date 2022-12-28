@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/antihax/optional v1.0.0
 	github.com/docker/docker v20.10.21+incompatible
-	github.com/harness/harness-go-sdk v0.3.7
+	github.com/harness/harness-go-sdk v0.3.11
 	github.com/harness/harness-openapi-go-client v0.0.10
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
 	github.com/pkg/errors v0.9.1
