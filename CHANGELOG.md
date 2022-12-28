@@ -1,6 +1,6 @@
 
-<a name="0.3.12"></a>
-## 0.3.12 (2022-12-27)
+<a name="0.3.13"></a>
+## 0.3.13 (2022-12-28)
 
 ### Add
 
@@ -12,7 +12,6 @@
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
-* Add ability to list services ([#103](https://github.com/harness/harness-go-sdk/issues/103))
 
 ### Added
 
@@ -111,6 +110,8 @@
 
 ### Release
 
+* Release version 0.3.12 12-27-2022
+* Release v0.3.12
 * Release version 0.3.11 12-21-2022
 * Release v0.3.11
 * Release version 0.3.10 12-21-2022
@@ -226,8 +227,6 @@
 * Release v0.1.22
 * Release version 0.1.21 05-06-2022
 * Release v0.1.21
-* Release version 0.1.20 04-20-2022
-* Release v0.1.20
 
 ### Removing
 
