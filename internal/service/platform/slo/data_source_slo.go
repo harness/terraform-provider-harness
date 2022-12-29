@@ -50,7 +50,7 @@ func dataSourceSloRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	resp, httpResp, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
+	resp, httpResp, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
