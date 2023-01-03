@@ -1,3 +1,9 @@
+# 0.12.2 (January 03,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup: Add example to create user group by adding email. ([#373](https://github.com/harness/terraform-provider-harness/issues/373))
+
 # 0.12.1 (January 03,2023) 
 
 ENHANCEMENTS:
