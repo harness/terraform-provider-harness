@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_usergroup:  Allow TF resource to support creating of user-groups by adding User email id.
+```

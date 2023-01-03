@@ -102,6 +102,7 @@ func testAccDataSourceUserGroupAccountLevel(id string, name string) string {
 		resource "harness_platform_usergroup" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
+			users = []
 		}
 
 		data "harness_platform_usergroup" "test" {
@@ -127,6 +128,7 @@ func testAccDataSourceUserGroup(id string, name string) string {
 		resource "harness_platform_usergroup" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
+			users = []
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 		}
