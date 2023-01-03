@@ -156,7 +156,8 @@ resource "harness_platform_usergroup" "sso_type_ldap" {
 - `sso_group_name` (String) Name of the SSO userGroup.
 - `sso_linked` (Boolean) Whether sso is linked or not.
 - `tags` (Set of String) Tags to associate with the resource.
-- `users` (Set of String) List of users in the UserGroup.
+- `user_emails` (List of String) List of user emails in the UserGroup. Either provide list of users or list of user emails.
+- `users` (List of String) List of users in the UserGroup. Either provide list of users or list of user emails.
 
 ### Read-Only
 
