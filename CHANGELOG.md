@@ -1,3 +1,9 @@
+# 0.12.1 (January 03,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup:  Allow TF resource to support creating of user-groups by adding User email id. ([#371](https://github.com/harness/terraform-provider-harness/issues/371))
+
 # 0.12.0 (December 23,2022) 
 
 FEATURES:
