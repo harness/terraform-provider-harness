@@ -63,9 +63,19 @@ func ResourceUserGroup() *schema.Resource {
 				Optional:    true,
 			},
 			"users": {
-				Description: "List of users in the UserGroup.",
-				Type:        schema.TypeList,
-				Optional:    true,
+				Description:  "List of users in the UserGroup. Either provide list of users or list of user emails.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				ExactlyOneOf: []string{"users", "user_emails"},
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"user_emails": {
+				Description:  "List of user emails in the UserGroup. Either provide list of users or list of user emails.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				ExactlyOneOf: []string{"users", "user_emails"},
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -165,6 +175,12 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return nil
 	}
 
+	if attr, ok := d.GetOk("user_emails"); ok {
+		d.Set("user_emails", attr)
+	}
+	if _, ok := d.GetOk("users"); ok {
+		d.Set("users", resp.Data.Users)
+	}
 	readUserGroup(d, resp.Data)
 
 	return nil
@@ -173,12 +189,42 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
+	if _, ok := d.GetOk("user_emails"); !ok {
+		var err error
+		var resp nextgen.ResponseDtoUserGroup
+		var httpResp *http.Response
+
+		id := d.Id()
+		ug := buildUserGroup(d)
+		ug.AccountIdentifier = c.AccountId
+
+		if id == "" {
+			resp, httpResp, err = c.UserGroupApi.PostUserGroup(ctx, ug, c.AccountId, &nextgen.UserGroupApiPostUserGroupOpts{
+				OrgIdentifier:     helpers.BuildField(d, "org_id"),
+				ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			})
+		} else {
+			resp, httpResp, err = c.UserGroupApi.PutUserGroup(ctx, ug, c.AccountId, &nextgen.UserGroupApiPutUserGroupOpts{
+				OrgIdentifier:     helpers.BuildField(d, "org_id"),
+				ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			})
+		}
+
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+		readUserGroup(d, resp.Data)
+
+		return nil
+	}
+
 	var err error
-	var resp nextgen.ResponseDtoUserGroupRequestV2
+	var resp nextgen.ResponseDtoUserGroupResponseV2
 	var httpResp *http.Response
 
 	id := d.Id()
-	ug := buildUserGroup(d)
+	ug := buildUserGroupV2(d)
 	ug.AccountIdentifier = c.AccountId
 
 	if id == "" {
@@ -217,8 +263,8 @@ func resourceUserGroupDelete(ctx context.Context, d *schema.ResourceData, meta i
 	return nil
 }
 
-func buildUserGroup(d *schema.ResourceData) nextgen.UserGroupRequestV2 {
-	userGroup := &nextgen.UserGroupRequestV2{}
+func buildUserGroup(d *schema.ResourceData) nextgen.UserGroup {
+	userGroup := &nextgen.UserGroup{}
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		userGroup.OrgIdentifier = attr.(string)
@@ -287,7 +333,77 @@ func buildUserGroup(d *schema.ResourceData) nextgen.UserGroupRequestV2 {
 	return *userGroup
 }
 
-func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupRequestV2) {
+func buildUserGroupV2(d *schema.ResourceData) nextgen.UserGroupRequestV2 {
+	userGroup := &nextgen.UserGroupRequestV2{}
+
+	if attr, ok := d.GetOk("org_id"); ok {
+		userGroup.OrgIdentifier = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("project_id"); ok {
+		userGroup.ProjectIdentifier = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("description"); ok {
+		userGroup.Description = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("name"); ok {
+		userGroup.Name = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("identifier"); ok {
+		userGroup.Identifier = attr.(string)
+	}
+
+	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
+		userGroup.Tags = helpers.ExpandTags(attr)
+	}
+
+	if attr, ok := d.GetOk("user_emails"); ok {
+		userGroup.Users = helpers.ExpandField(attr.([]interface{}))
+	}
+
+	if attr, ok := d.GetOk("notification_configs"); ok {
+		userGroup.NotificationConfigs = expandNotificationConfig(attr.([]interface{}))
+	}
+
+	if attr, ok := d.GetOk("is_sso_linked"); ok {
+		userGroup.IsSsoLinked = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("linked_sso_id"); ok {
+		userGroup.LinkedSsoId = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("linked_sso_display_name"); ok {
+		userGroup.LinkedSsoDisplayName = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("sso_group_id"); ok {
+		userGroup.SsoGroupId = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("sso_group_name"); ok {
+		userGroup.SsoGroupName = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("linked_sso_type"); ok {
+		userGroup.LinkedSsoType = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("externally_managed"); ok {
+		userGroup.ExternallyManaged = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("sso_linked"); ok {
+		userGroup.SsoLinked = attr.(bool)
+	}
+
+	return *userGroup
+}
+
+func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
@@ -295,7 +411,7 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupRequestV2) {
 	d.Set("name", env.Name)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	d.Set("users", env.Users)
+	d.Set("user_emails", flattenUserInfo(env.Users))
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
@@ -314,7 +430,6 @@ func readUserGroup(d *schema.ResourceData, env *nextgen.UserGroup) {
 	d.Set("name", env.Name)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	d.Set("users", env.Users)
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
@@ -323,6 +438,16 @@ func readUserGroup(d *schema.ResourceData, env *nextgen.UserGroup) {
 	d.Set("linked_sso_type", env.LinkedSsoType)
 	d.Set("externally_managed", env.ExternallyManaged)
 	d.Set("sso_linked", env.SsoLinked)
+}
+
+func fetchUserIds(userInfos []nextgen.UserInfo) []string {
+	var result []string
+
+	for _, userInfo := range userInfos {
+		result = append(result, userInfo.Uuid)
+	}
+
+	return result
 }
 
 func expandNotificationConfig(notificationConfigs []interface{}) []nextgen.NotificationSettingConfigDto {
@@ -346,6 +471,14 @@ func expandNotificationConfig(notificationConfigs []interface{}) []nextgen.Notif
 			resultNotificationConfig.PagerDutyKey = v["pager_duty_key"].(string)
 		}
 		result = append(result, resultNotificationConfig)
+	}
+	return result
+}
+
+func flattenUserInfo(userInfos []nextgen.UserInfo) []string {
+	var result []string
+	for _, userInfo := range userInfos {
+		result = append(result, userInfo.Email)
 	}
 	return result
 }
