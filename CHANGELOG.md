@@ -1,3 +1,9 @@
+# 0.12.3 (January 04,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_github: Fix connector delete context. ([#377](https://github.com/harness/terraform-provider-harness/issues/377))
+
 # 0.12.2 (January 03,2023) 
 
 ENHANCEMENTS:
