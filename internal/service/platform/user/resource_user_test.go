@@ -61,22 +61,21 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 			{
 				Config: testAccResourceUser(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "Rajendra Baviskar", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", name),
 				),
 			},
 			{
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.UserApi.RemoveUser(ctx, c.AccountId, id, &nextgen.UserApiRemoveUserOpts{
+					_, _, err := c.UserApi.RemoveUser(ctx, "rajendra.baviskar@harness.io", c.AccountId, &nextgen.UserApiRemoveUserOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceUser(id, name),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
+				Config:   testAccResourceUser(id, name),
+				PlanOnly: true,
 			},
 		},
 	})
