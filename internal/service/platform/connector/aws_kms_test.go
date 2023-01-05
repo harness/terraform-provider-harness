@@ -195,7 +195,7 @@ func testAccResourceConnectorAwsKms_manual(id string, name string) string {
 			tags = ["foo:bar"]
 
 			
-			arn_ref = "account.acctest_sumo_access_id"
+			arn_ref = "account.${harness_platform_secret_text.test.id}"
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
