@@ -158,12 +158,13 @@ EOT
       pipelineIdentifier: "${harness_platform_pipeline.pipeline.id}"
       source:
         type: "Webhook"
+        pollInterval: "0"
         spec:
           type: "Github"
           spec:
             type: "Push"
             spec:
-              connectorRef: "account.TestAccResourceConnectorGithub_Ssh_IZBeG"
+              connectorRef: "account.Jajoo"
               autoAbortPreviousExecutions: false
               payloadConditions:
               - key: "changedFiles"
