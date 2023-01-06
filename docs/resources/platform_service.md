@@ -19,7 +19,13 @@ resource "harness_platform_service" "example" {
   description = "test"
   org_id      = "org_id"
   project_id  = "project_id"
-  yaml        = <<-EOT
+
+  ## SERVICE V2 UPDATE
+  ## We now take in a YAML that can define the service definition for a given Service
+  ## It isn't mandatory for Service creation 
+  ## It is mandatory for Service use in a pipeline
+
+  yaml = <<-EOT
                 service:
                   name: name
                   identifier: identifier

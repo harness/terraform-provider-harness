@@ -5,7 +5,12 @@ resource "harness_platform_environment" "example" {
   project_id = "project_id"
   tags       = ["foo:bar", "baz"]
   type       = "PreProduction"
-  yaml       = <<-EOT
+
+  ## ENVIRONMENT V2 Update
+  ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
+  ## Not Mandatory for Environment Creation nor Pipeline Usage
+
+  yaml = <<-EOT
 			   environment:
          name: name
          identifier: identifier
