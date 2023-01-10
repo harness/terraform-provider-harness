@@ -89,7 +89,7 @@ func testAccGetResourceVariables(resourceName string, state *terraform.State) (*
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
-	resp, _, err := c.VariablesApi.GetVariable(ctx, c.AccountId, id, &nextgen.VariablesApiGetVariableOpts{
+	resp, _, err := c.VariablesApi.GetVariable(ctx, id, c.AccountId, &nextgen.VariablesApiGetVariableOpts{
 		OrgIdentifier:     buildField(r, "org_id"),
 		ProjectIdentifier: buildField(r, "project_id"),
 	})
