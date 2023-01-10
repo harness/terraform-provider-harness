@@ -11,6 +11,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccRoleAssignments(t *testing.T) {
@@ -51,6 +52,40 @@ func TestAccRoleAssignments(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_role_assignments.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceRoleAssignments(id, name, "false", accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.RoleAssignmentsApi.DeleteRoleAssignment(ctx, c.AccountId, id, &nextgen.RoleAssignmentsApiDeleteRoleAssignmentOpts{
+						OrgIdentifier:     optional.NewString(id),
+						ProjectIdentifier: optional.NewString(id),
+					})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceRoleAssignments(id, name, "false", accountId),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
