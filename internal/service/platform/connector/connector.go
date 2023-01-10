@@ -112,7 +112,7 @@ func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta i
 		ProjectIdentifier: helpers.BuildField(d, "project_id")})
 
 	if err != nil {
-		helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

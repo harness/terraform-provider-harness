@@ -198,7 +198,7 @@ func testAccResourceConnectorBitbucket_api_token(id string, name string) string 
 			credentials {
 				http {
 					username = "admin"
-					password_ref = "account.TEST_aws_secret_key"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
 
