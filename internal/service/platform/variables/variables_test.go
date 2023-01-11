@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceVariables(t *testing.T) {
@@ -79,6 +80,40 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_variables.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceVariables(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.VariablesApi.DeleteVariable(ctx, c.AccountId, id, &nextgen.VariablesApiDeleteVariableOpts{
+						OrgIdentifier:     optional.NewString(id),
+						ProjectIdentifier: optional.NewString(id),
+					})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceVariables(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
