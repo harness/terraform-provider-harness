@@ -57,7 +57,7 @@ func TestAccRoleAssignments(t *testing.T) {
 	})
 }
 
-func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
+func TestAccResourceRoleAssignments_DeleteUnderlyingResource(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	resourceName := "harness_platform_role_assignments.test"
