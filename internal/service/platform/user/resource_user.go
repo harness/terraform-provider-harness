@@ -134,6 +134,13 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		SearchTerm:        optional.NewString(email),
 	})
+
+	if resp.Data.Empty {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
@@ -180,6 +187,10 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if &resp == nil || resp.Data == nil || resp.Data.Empty {
+		return nil
 	}
 
 	readUser(d, &resp.Data.Content[0])
