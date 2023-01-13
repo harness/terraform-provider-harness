@@ -126,6 +126,8 @@ func resourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta inte
 	var branch_name optional.String
 
 	branch_name = helpers.BuildField(d, "git_details.0.branch_name")
+	parent_entity_connector_ref := helpers.BuildField(d, "git_details.0.parent_entity_connector_ref")
+	parent_entity_repo_name := helpers.BuildField(d, "git_details.0.parent_entity_repo_name")
 
 	var store_type = helpers.BuildField(d, "git_details.0.store_type")
 	var base_branch = helpers.BuildField(d, "git_details.0.base_branch")
@@ -133,8 +135,10 @@ func resourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta inte
 	var connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 
 	resp, httpResp, err := c.InputSetsApi.GetInputSet(ctx, orgId, projectId, id, pipelineId, &nextgen.InputSetsApiGetInputSetOpts{
-		HarnessAccount: optional.NewString(c.AccountId),
-		BranchName:     branch_name,
+		HarnessAccount:           optional.NewString(c.AccountId),
+		BranchName:               branch_name,
+		ParentEntityConnectorRef: parent_entity_connector_ref,
+		ParentEntityRepoName:     parent_entity_repo_name,
 	})
 
 	if err != nil {
@@ -301,7 +305,9 @@ func readInputSet(d *schema.ResourceData, inputSet *nextgen.InputSetResponseBody
 	d.Set("project_id", inputSet.Project)
 	d.Set("pipeline_id", pipelineId)
 	d.Set("yaml", inputSet.InputSetYaml)
-	d.Set("git_details", []interface{}{readGitDetails(inputSet, store_type, base_branch, commit_message, connector_ref)})
+	if inputSet.GitDetails != nil {
+		d.Set("git_details", []interface{}{readGitDetails(inputSet, store_type, base_branch, commit_message, connector_ref)})
+	}
 }
 
 func readGitDetails(inputSet *nextgen.InputSetResponseBody, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) map[string]interface{} {
