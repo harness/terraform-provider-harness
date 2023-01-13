@@ -60,17 +60,6 @@ func TestAccResourceConnectorSplunk(t *testing.T) {
 
 func testAccResourceConnectorSplunk(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_secret_text" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-
-		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Inline"
-		value = "secret"
-	}
-
 		resource "harness_platform_connector_splunk" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -81,7 +70,7 @@ func testAccResourceConnectorSplunk(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			account_id = "splunk_account_id"
 			username = "admin"
-			password_ref = "account.${harness_platform_secret_text.test.id}"
+			password_ref = "account.doNotDeleteHSM"
 		}
 `, id, name)
 }
