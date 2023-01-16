@@ -25,13 +25,13 @@ func TestAccResourceGitopsApplication_HelmApp(t *testing.T) {
 	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
 	clusterName := id
 	namespace := "test"
-	repo := "https://github.com/argoproj/argocd-example-apps"
+	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
 	namespaceUpdated := namespace + "_updated"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
@@ -69,13 +69,13 @@ func TestAccResourceGitopsApplication_KustomizeApp(t *testing.T) {
 	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
 	clusterName := id
 	namespace := "test"
-	repo := "https://github.com/argoproj/argocd-example-apps"
+	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
 	namespaceUpdated := namespace + "_updated"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
