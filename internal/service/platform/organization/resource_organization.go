@@ -43,7 +43,7 @@ func resourceOrganizationRead(ctx context.Context, d *schema.ResourceData, meta 
 	resp, httpResp, err := c.OrganizationApi.GetOrganization(ctx, d.Id(), c.AccountId)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readOrganization(d, resp.Data.Organization)

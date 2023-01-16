@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/harness_platform_environment_service_overrides: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_organization: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_role_assignments: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_variables: Mark new resource if resource is deleted during terraform refresh
+```
