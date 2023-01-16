@@ -23,6 +23,7 @@ Data source for retrieving a Harness input set.
 
 ### Optional
 
+- `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
@@ -32,5 +33,25 @@ Data source for retrieving a Harness input set.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Input Set YAML
+
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
+
+Optional:
+
+- `base_branch` (String) Name of the default branch (this checks out a new branch titled by branch_name).
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Pipeline.
+
+Read-Only:
+
+- `branch_name` (String) Name of the branch.
+- `commit_message` (String) Commit message used for the merge commit.
+- `connector_ref` (String) Identifier of the Harness Connector used for CRUD operations on the Entity.
+- `file_path` (String) File path of the Entity in the repository.
+- `parent_entity_connector_ref` (String) Connector reference for Parent Entity (Pipeline).
+- `parent_entity_repo_name` (String) Repository name for Parent Entity (Pipeline).
+- `repo_name` (String) Name of the repository.
+- `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.
 
 
