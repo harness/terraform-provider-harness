@@ -26,8 +26,8 @@ resource "harness_platform_input_set" "example" {
 
 # Remote InputSet
 resource "harness_platform_input_set" "test" {
-  identifier = "%[1]s"
-  name       = "%[2]s"
+  identifier = "identifier"
+  name       = "name"
   tags = [
     "foo:bar",
   ]
@@ -44,8 +44,8 @@ resource "harness_platform_input_set" "test" {
   }
   yaml = <<-EOT
 inputSet:
-  identifier: "%[1]s"
-  name: "%[2]s"
+  identifier: "identifier"
+  name: "name"
   tags:
     foo: "bar"
   orgIdentifier: "${harness_platform_organization.test.id}"
