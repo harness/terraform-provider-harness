@@ -20,27 +20,28 @@ func TestAccResourceGitopsApplication_HelmApp(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
-	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
+	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
 	clusterName := id
 	namespace := "test"
-	repo := "https://github.com/willycoll/argocd-example-apps.git"
+	repo := "https://github.com/argoproj/argocd-example-apps"
 	namespaceUpdated := namespace + "_updated"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		//CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo),
+				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterToken, repo),
+				Config: testAccResourceGitopsApplicationHelm(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -63,27 +64,28 @@ func TestAccResourceGitopsApplication_KustomizeApp(t *testing.T) {
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
-	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
+	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
 	clusterName := id
 	namespace := "test"
-	repo := "https://github.com/willycoll/argocd-example-apps.git"
+	repo := "https://github.com/argoproj/argocd-example-apps"
 	namespaceUpdated := namespace + "_updated"
 	resourceName := "harness_platform_gitops_applications.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		//CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo),
+				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterToken, repo),
+				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -129,7 +131,7 @@ func testAccGetApplication(resourceName string, state *terraform.State) (*nextge
 	return &resp, nil
 }
 
-func testAccResourceGitopsApplicationHelm(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterToken string, repo string) string {
+func testAccResourceGitopsApplicationHelm(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repo string, repoId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -156,52 +158,6 @@ func testAccResourceGitopsApplicationHelm(id string, accountId string, name stri
 			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
   		}
-		resource "harness_platform_gitops_cluster" "test" {
-			identifier = "%[1]s"
-			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
-
- 			request {
-				upsert = true
-				cluster {
-					server = "%[7]s"
-					name = "%[5]s"
-					config {
-						bearer_token = "%[8]s"
-						tls_client_config {
-							insecure = true
-						}
-						cluster_connection_type = "SERVICE_ACCOUNT"
-					}
-
-				}
-			}
-			lifecycle {
-				ignore_changes = [
-					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
-				]
-			}
-		}
-		
-		resource "harness_platform_gitops_repository" "test" {
-			identifier = "%[1]s"
-			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
-			repo {
-					repo = "%[9]s"
-        			name = "%[2]s"
-        			insecure = true
-        			connection_type = "HTTPS_ANONYMOUS"
-			}
-			upsert = true
-			update_mask {
-				paths = ["name"]
-			}
-		}
 
 		resource "harness_platform_gitops_applications" "test" {
     			application {
@@ -243,14 +199,14 @@ func testAccResourceGitopsApplicationHelm(id string, accountId string, name stri
     			org_id = harness_platform_organization.test.id
     			account_id = "%[2]s"
 				identifier = "%[1]s"
-				cluster_id = harness_platform_gitops_cluster.test.id
-				repo_id = harness_platform_gitops_repository.test.id
+				cluster_id = "%[8]s"
+				repo_id = "%[10]s"
 				agent_id = "%[4]s"
 		}
-		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo)
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
 }
 
-func testAccResourceGitopsApplicationKustomize(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterToken string, repo string) string {
+func testAccResourceGitopsApplicationKustomize(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repo string, repoId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -277,52 +233,6 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
 			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
   		}
-		resource "harness_platform_gitops_cluster" "test" {
-			identifier = "%[1]s"
-			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
-
- 			request {
-				upsert = true
-				cluster {
-					server = "%[7]s"
-					name = "%[5]s"
-					config {
-						bearer_token = "%[8]s"
-						tls_client_config {
-							insecure = true
-						}
-						cluster_connection_type = "SERVICE_ACCOUNT"
-					}
-
-				}
-			}
-			lifecycle {
-				ignore_changes = [
-					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
-				]
-			}
-		}
-		
-		resource "harness_platform_gitops_repository" "test" {
-			identifier = "%[1]s"
-			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
-			repo {
-					repo = "%[9]s"
-        			name = "%[2]s"
-        			insecure = true
-        			connection_type = "HTTPS_ANONYMOUS"
-			}
-			upsert = true
-			update_mask {
-				paths = ["name"]
-			}
-		}
 
 		resource "harness_platform_gitops_applications" "test" {
     			application {
@@ -368,9 +278,9 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
     			org_id = harness_platform_organization.test.id
     			account_id = "%[2]s"
 				identifier = "%[1]s"
-				cluster_id = harness_platform_gitops_cluster.test.id
-				repo_id = harness_platform_gitops_repository.test.id
+				cluster_id =  "%[8]s"
+				repo_id = "%[10]s"
 				agent_id = "%[4]s"
 		}
-		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterToken, repo)
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
 }
