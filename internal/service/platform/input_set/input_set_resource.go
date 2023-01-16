@@ -182,6 +182,10 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		})
 	} else {
 		inputSet := buildUpdateInputSet(d)
+		if inputSet.GitDetails != nil {
+			base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
+			commit_message = optional.NewString(inputSet.GitDetails.CommitMessage)
+		}
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 
