@@ -56,17 +56,6 @@ func TestAccResourceConnectorSumologic(t *testing.T) {
 
 func testAccResourceConnectorSumologic(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_secret_text" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-
-		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Inline"
-		value = "secret"
-	}
-
 		resource "harness_platform_connector_sumologic" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -75,8 +64,8 @@ func testAccResourceConnectorSumologic(id string, name string) string {
 
 			url = "https://api.us2.sumologic.com/"
 			delegate_selectors = ["harness-delegate"]
-			access_id_ref = "account.${harness_platform_secret_text.test.id}"
-			access_key_ref = "account.${harness_platform_secret_text.test.id}"
+			access_id_ref = "account.doNotDeleteHSM"
+			access_key_ref = "account.doNotDeleteHSM"
 		}
 `, id, name)
 }

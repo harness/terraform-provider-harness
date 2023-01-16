@@ -58,17 +58,6 @@ func TestAccResourceConnectorNewRelic(t *testing.T) {
 
 func testAccResourceConnectorNewRelic(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_secret_text" "test" {
-		identifier = "%[1]s"
-		name = "%[2]s"
-		description = "test"
-		tags = ["foo:bar"]
-
-		secret_manager_identifier = "harnessSecretManager"
-		value_type = "Inline"
-		value = "secret"
-	}
-
 		resource "harness_platform_connector_newrelic" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -78,7 +67,7 @@ func testAccResourceConnectorNewRelic(id string, name string) string {
 			url = "https://newrelic.com/"
 			delegate_selectors = ["harness-delegate"]
 			account_id = "nr_account_id"
-			api_key_ref = "account.${harness_platform_secret_text.test.id}"
+			api_key_ref = "account.doNotDeleteHSM"
 		}
 `, id, name)
 }
