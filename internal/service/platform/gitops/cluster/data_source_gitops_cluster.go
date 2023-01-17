@@ -302,7 +302,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 									"info": {
 										Description: "Information about cluster cache and state.",
 										Type:        schema.TypeList,
-										Optional:    true,
+										Computed:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {
