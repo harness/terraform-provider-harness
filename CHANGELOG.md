@@ -1,3 +1,10 @@
+# 0.13.0 (January 17,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_monitored_service - Added monitored service resources to the Harness Terraform Provider.
+platform_slo - Added service-level objective (SLO) resources to the Harness Terraform provider.` ([#348](https://github.com/harness/terraform-provider-harness/issues/348))
+
 # 0.12.4 (January 16,2023) 
 
 ENHANCEMENTS:
