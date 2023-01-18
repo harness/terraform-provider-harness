@@ -1,3 +1,23 @@
+# 0.13.0 (January 17,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_monitored_service - Added monitored service resources to the Harness Terraform Provider.
+platform_slo - Added service-level objective (SLO) resources to the Harness Terraform provider.` ([#348](https://github.com/harness/terraform-provider-harness/issues/348))
+
+# 0.12.4 (January 16,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_environment_service_overrides: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_organization: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_role_assignments: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_variables: Mark new resource if resource is deleted during terraform refresh ([#387](https://github.com/harness/terraform-provider-harness/issues/387))
+* resource/harness_platform_input_set: Added gitx support for inputSet resource.
+data-source/harness_platform_input_set: Added gitx support for inputSet resource. ([#389](https://github.com/harness/terraform-provider-harness/issues/389))
+* resource/harness_platform_service: Updating the documentation.
+resource/harness_platform_environment: Updating the documentation. ([#378](https://github.com/harness/terraform-provider-harness/issues/378))
+
 # 0.12.3 (January 04,2023) 
 
 BUG FIXES:

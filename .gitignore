@@ -38,3 +38,5 @@ website/vendor
 *.winfile eol=crlf
 
 terraform-provider-harness
+
+.terraform.lock.hcl

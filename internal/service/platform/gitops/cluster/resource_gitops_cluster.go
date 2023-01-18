@@ -315,23 +315,23 @@ func ResourceGitopsCluster() *schema.Resource {
 												"connection_state": {
 													Description: "Information about the connection to the cluster.",
 													Type:        schema.TypeList,
-													Optional:    true,
+													Computed:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"status": {
 																Description: "Current status indicator of the connection.",
 																Type:        schema.TypeString,
-																Optional:    true,
+																Computed:    true,
 															},
 															"message": {
 																Description: "Information about the connection status.",
 																Type:        schema.TypeString,
-																Optional:    true,
+																Computed:    true,
 															},
 															"attempted_at": {
 																Description: "Time when cluster cache refresh has been requested.",
 																Type:        schema.TypeList,
-																Optional:    true,
+																Computed:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"seconds": {
@@ -353,12 +353,12 @@ func ResourceGitopsCluster() *schema.Resource {
 												"server_version": {
 													Description: "Kubernetes version of the cluster.",
 													Type:        schema.TypeString,
-													Optional:    true,
+													Computed:    true,
 												},
 												"cache_info": {
 													Description: "Information about the cluster cache.",
 													Type:        schema.TypeList,
-													Optional:    true,
+													Computed:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"resources_count": {
@@ -409,6 +409,7 @@ func ResourceGitopsCluster() *schema.Resource {
 									"project": {
 										Description: "Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.",
 										Type:        schema.TypeString,
+										Optional:    true,
 										Computed:    true,
 									},
 									"labels": {

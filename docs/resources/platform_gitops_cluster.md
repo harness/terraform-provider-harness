@@ -107,13 +107,13 @@ Optional:
 - `labels` (Map of String) Labels for cluster secret metadata.
 - `name` (String) Name of the cluster. If omitted, will use the server address.
 - `namespaces` (List of String) List of namespaces which are accessible in that cluster. Cluster level resources will be ignored if namespace list is not empty.
+- `project` (String) Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.
 - `refresh_requested_at` (Block List) Time when cluster cache refresh has been requested. (see [below for nested schema](#nestedblock--request--cluster--refresh_requested_at))
 - `shard` (String) Shard number. Calculated on the fly by the application controller if not specified.
 
 Read-Only:
 
 - `info` (List of Object) Information about cluster cache and state. (see [below for nested schema](#nestedatt--request--cluster--info))
-- `project` (String) Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.
 
 <a id="nestedblock--request--cluster--config"></a>
 ### Nested Schema for `request.cluster.config`
