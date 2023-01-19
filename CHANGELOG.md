@@ -1,6 +1,6 @@
 
-<a name="0.3.13"></a>
-## 0.3.13 (2022-12-28)
+<a name="0.3.14"></a>
+## 0.3.14 (2023-01-19)
 
 ### Add
 
@@ -18,7 +18,6 @@
 * Added attribute filter model
 * Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
 * Added resource lookups by name
-* Added artifact sources to service for graphql
 
 ### Added
 
@@ -26,15 +25,14 @@
 
 ### Adding
 
+* Adding dto files
+
+### Adding
+
 * adding input variables
 * adding test
 * adding better name
 * adding support for export executions
-* adding delegate resource
-
-### Adding
-
-* Adding dto files
 
 ### Azure
 
@@ -53,7 +51,6 @@
 ### Changes
 
 * Changes to add azure cloud cost connector
-* Changes for vault connector resource
 
 ### Error
 
@@ -77,10 +74,6 @@
 * fixing things
 * fixing json tag for AwsCloudProvider type
 * fixing package name
-
-### Handle
-
-* Handle upsert error
 
 ### Handling
 
@@ -110,6 +103,8 @@
 
 ### Release
 
+* Release version 0.3.13 12-28-2022
+* Release v0.3.13
 * Release version 0.3.12 12-27-2022
 * Release v0.3.12
 * Release version 0.3.11 12-21-2022
@@ -183,7 +178,6 @@
 * Release version 0.2.8 10-19-2022
 * Release v0.2.8
 * Release version 0.2.7 10-13-2022
-* Release v0.2.7
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -226,7 +220,6 @@
 * Release version 0.1.22 05-10-2022
 * Release v0.1.22
 * Release version 0.1.21 05-06-2022
-* Release v0.1.21
 
 ### Removing
 
@@ -279,6 +272,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
 * Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
 * Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
 * Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
@@ -326,7 +320,6 @@
 * Merge pull request [#187](https://github.com/harness/harness-go-sdk/issues/187) from harness/generate_variable_sdk
 * Merge pull request [#185](https://github.com/harness/harness-go-sdk/issues/185) from harness/cds-43281
 * Merge pull request [#181](https://github.com/harness/harness-go-sdk/issues/181) from harness/SPG_490
-* Merge pull request [#175](https://github.com/harness/harness-go-sdk/issues/175) from harness/del-ng-api
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
