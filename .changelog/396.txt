@@ -1,0 +1,4 @@
+```release-note:bug
+resource/harness_platform_pipeline: Update terraform resource to reflect the backend changes in api.
+resource/harness_platform_input_set: Update terraform resource to reflect the backend changes in api.
+```
