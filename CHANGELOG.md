@@ -1,3 +1,10 @@
+# 0.13.3 (January 19,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_pipeline: Update terraform resource to reflect the backend changes in api.
+resource/harness_platform_input_set: Update terraform resource to reflect the backend changes in api. ([#396](https://github.com/harness/terraform-provider-harness/issues/396))
+
 # 0.13.2 (January 19,2023) 
 
 # 0.13.1 (January 19,2023) 
