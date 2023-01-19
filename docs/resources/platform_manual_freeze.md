@@ -20,8 +20,8 @@ resource "harness_platform_manual_freeze" "example" {
   account_id = "accountIdentifier"
   yaml       = <<-EOT
       freeze:
-        name: %[2]s
-        identifier: %[1]s
+        name: freezeName
+        identifier: identifier
         entityConfigs:
           - name: r1
             entities:
