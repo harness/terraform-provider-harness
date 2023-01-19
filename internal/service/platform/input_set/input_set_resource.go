@@ -222,7 +222,7 @@ func resourceInputSetDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 func buildCreateInputSet(d *schema.ResourceData) nextgen.InputSetCreateRequestBody {
 	inputSet := nextgen.InputSetCreateRequestBody{
-		Slug:         d.Get("identifier").(string),
+		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
@@ -259,7 +259,7 @@ func buildCreateInputSet(d *schema.ResourceData) nextgen.InputSetCreateRequestBo
 
 func buildUpdateInputSet(d *schema.ResourceData) nextgen.InputSetUpdateRequestBody {
 	inputSet := nextgen.InputSetUpdateRequestBody{
-		Slug:         d.Get("identifier").(string),
+		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
@@ -300,8 +300,8 @@ func buildUpdateInputSet(d *schema.ResourceData) nextgen.InputSetUpdateRequestBo
 }
 
 func readInputSet(d *schema.ResourceData, inputSet *nextgen.InputSetResponseBody, pipelineId string, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
-	d.SetId(inputSet.Slug)
-	d.Set("identifier", inputSet.Slug)
+	d.SetId(inputSet.Identifier)
+	d.Set("identifier", inputSet.Identifier)
 	d.Set("name", inputSet.Name)
 	d.Set("description", inputSet.Description)
 	d.Set("tags", helpers.FlattenTags(inputSet.Tags))

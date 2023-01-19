@@ -58,7 +58,7 @@ func testAccInputSetDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		inputSet, _ := testAccGetInputSet(resourceName, state)
 		if inputSet != nil {
-			return fmt.Errorf("Found input set: %s", inputSet.Slug)
+			return fmt.Errorf("Found input set: %s", inputSet.Identifier)
 		}
 		return nil
 	}
