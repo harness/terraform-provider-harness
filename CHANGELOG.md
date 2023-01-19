@@ -1,3 +1,58 @@
+# 0.13.3 (January 19,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_pipeline: Update terraform resource to reflect the backend changes in api.
+resource/harness_platform_input_set: Update terraform resource to reflect the backend changes in api. ([#396](https://github.com/harness/terraform-provider-harness/issues/396))
+
+# 0.13.2 (January 19,2023) 
+
+# 0.13.1 (January 19,2023) 
+
+# 0.13.0 (January 17,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_monitored_service - Added monitored service resources to the Harness Terraform Provider.
+platform_slo - Added service-level objective (SLO) resources to the Harness Terraform provider.` ([#348](https://github.com/harness/terraform-provider-harness/issues/348))
+
+# 0.12.4 (January 16,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_environment_service_overrides: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_organization: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_role_assignments: Mark new resource if resource is deleted during terraform refresh
+resource/harness_platform_variables: Mark new resource if resource is deleted during terraform refresh ([#387](https://github.com/harness/terraform-provider-harness/issues/387))
+* resource/harness_platform_input_set: Added gitx support for inputSet resource.
+data-source/harness_platform_input_set: Added gitx support for inputSet resource. ([#389](https://github.com/harness/terraform-provider-harness/issues/389))
+* resource/harness_platform_service: Updating the documentation.
+resource/harness_platform_environment: Updating the documentation. ([#378](https://github.com/harness/terraform-provider-harness/issues/378))
+
+# 0.12.3 (January 04,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_github: Fix connector delete context. ([#377](https://github.com/harness/terraform-provider-harness/issues/377))
+
+# 0.12.2 (January 03,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup: Add example to create user group by adding email. ([#373](https://github.com/harness/terraform-provider-harness/issues/373))
+
+# 0.12.1 (January 03,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_usergroup:  Allow TF resource to support creating of user-groups by adding User email id. ([#371](https://github.com/harness/terraform-provider-harness/issues/371))
+
+# 0.12.0 (December 23,2022) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_jenkins - Added jenkins connector resource in Harness terraform provider.` ([#365](https://github.com/harness/terraform-provider-harness/issues/365))
+
 # 0.11.5 (December 14,2022) 
 
 BUG FIXES:

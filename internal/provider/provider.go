@@ -45,6 +45,7 @@ import (
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
@@ -56,6 +57,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
 	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/template_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
@@ -139,6 +141,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_gitlab":                connector.DatasourceConnectorGitlab(),
 				"harness_platform_connector_helm":                  connector.DatasourceConnectorHelm(),
 				"harness_platform_connector_jira":                  connector.DatasourceConnectorJira(),
+				"harness_platform_connector_jenkins":               connector.DataSourceConnectorJenkins(),
 				"harness_platform_connector_kubernetes":            connector.DatasourceConnectorKubernetes(),
 				"harness_platform_connector_nexus":                 connector.DatasourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.DatasourceConnectorPagerDuty(),
@@ -161,6 +164,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.DataSourceInfrastructure(),
 				"harness_platform_input_set":                       input_set.DataSourceInputSet(),
+				"harness_platform_monitored_service":               monitored_service.DataSourceMonitoredService(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
@@ -190,6 +194,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_git_connector":                            cd_connector.DataSourceGitConnector(),
 				"harness_secret_manager":                           secrets.DataSourceSecretManager(),
 				"harness_service":                                  service.DataSourceService(),
+				"harness_platform_slo":                             slo.DataSourceSloService(),
 				"harness_ssh_credential":                           secrets.DataSourceSshCredential(),
 				"harness_sso_provider":                             sso.DataSourceSSOProvider(),
 				"harness_user_group":                               user.DataSourceUserGroup(),
@@ -223,6 +228,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_gitlab":                connector.ResourceConnectorGitlab(),
 				"harness_platform_connector_helm":                  connector.ResourceConnectorHelm(),
 				"harness_platform_connector_jira":                  connector.ResourceConnectorJira(),
+				"harness_platform_connector_jenkins":               connector.ResourceConnectorJenkins(),
 				"harness_platform_connector_kubernetes":            connector.ResourceConnectorK8s(),
 				"harness_platform_connector_newrelic":              connector.ResourceConnectorNewRelic(),
 				"harness_platform_connector_nexus":                 connector.ResourceConnectorNexus(),
@@ -244,6 +250,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.ResourceInfrastructure(),
 				"harness_platform_input_set":                       input_set.ResourceInputSet(),
+				"harness_platform_monitored_service":               monitored_service.ResourceMonitoredService(),
 				"harness_platform_organization":                    organization.ResourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.ResourcePipeline(),
 				"harness_platform_project":                         project.ResourceProject(),
@@ -287,6 +294,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service_ssh":                              service.ResourceSSHService(),
 				"harness_service_tanzu":                            service.ResourcePCFService(),
 				"harness_service_winrm":                            service.ResourceWinRMService(),
+				"harness_platform_slo":                             slo.ResourceSloService(),
 				"harness_ssh_credential":                           secrets.ResourceSSHCredential(),
 				"harness_user_group":                               user.ResourceUserGroup(),
 				"harness_user_group_permissions":                   user.ResourceUserGroupPermissions(),

@@ -37,6 +37,28 @@ func resourceConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta
 	return resp.Data.Connector, nil
 }
 
+func dataConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
+	}
+
+	resp, httpResp, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, getReadConnectorOpts(d))
+	if err != nil {
+		return nil, helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if connType != resp.Data.Connector.Type_ {
+		return nil, diag.FromErr(fmt.Errorf("expected connector to be of type %s, but got %s", connType, resp.Data.Connector.Type_))
+	}
+
+	readCommonConnectorData(d, resp.Data.Connector)
+
+	return resp.Data.Connector, nil
+}
+
 func getReadConnectorOpts(d *schema.ResourceData) *nextgen.ConnectorsApiGetConnectorOpts {
 	connOpts := &nextgen.ConnectorsApiGetConnectorOpts{}
 
@@ -90,7 +112,7 @@ func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta i
 		ProjectIdentifier: helpers.BuildField(d, "project_id")})
 
 	if err != nil {
-		helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	return nil

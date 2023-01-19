@@ -58,15 +58,7 @@ func resourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Reso
 			ServiceIdentifier: helpers.BuildField(d, "service_id"),
 		})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil || resp.Data == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readEnvironmentServiceOverridesList(d, resp.Data)

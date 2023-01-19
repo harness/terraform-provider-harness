@@ -163,14 +163,14 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			branch_name = pipeline.GitDetails.BranchName
 		}
 
-		pipeline_id = pipeline.Slug
+		pipeline_id = pipeline.Identifier
 		_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
 			&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
 	} else {
 		pipeline := buildUpdatePipeline(d)
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
-		pipeline_id = pipeline.Slug
+		pipeline_id = pipeline.Identifier
 		if pipeline.GitDetails != nil {
 			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 			branch_name = pipeline.GitDetails.BranchName
@@ -215,7 +215,7 @@ func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBody {
 	pipeline := nextgen.PipelineCreateRequestBody{
-		Slug:         d.Get("identifier").(string),
+		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
@@ -252,7 +252,7 @@ func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBo
 
 func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBody {
 	pipeline := nextgen.PipelineUpdateRequestBody{
-		Slug:         d.Get("identifier").(string),
+		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
@@ -288,8 +288,8 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 
 // Read response from API out to the stored identifiers
 func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBody, org_id string, project_id string, template_applied bool, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
-	d.SetId(pipeline.Slug)
-	d.Set("identifier", pipeline.Slug)
+	d.SetId(pipeline.Identifier)
+	d.Set("identifier", pipeline.Identifier)
 	d.Set("name", pipeline.Name)
 	d.Set("org_id", org_id)
 	d.Set("project_id", project_id)

@@ -19,7 +19,10 @@ func TestAccConnectorAppDynamics_usernamepassword(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnector_appdynamics_usernamepassword(id, name),
@@ -68,7 +71,10 @@ func TestAccResourceConnectorAppDynamics_token(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnector_appdynamics_token(id, name),
@@ -133,6 +139,13 @@ func testAccResourceConnector_appdynamics_usernamepassword(id string, name strin
 				username = "admin"
 				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
@@ -163,6 +176,13 @@ func testAccResourceConnector_appdynamics_token(id string, name string) string {
 				client_id = "admin"
 				client_secret_ref = "account.${harness_platform_secret_text.test.id}"
 			}
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
