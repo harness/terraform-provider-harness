@@ -112,6 +112,8 @@ type APIClient struct {
 
 	FilterApi *FilterApiService
 
+	FreezeCRUDApi *FreezeCRUDApiService
+
 	GitBranchesApi *GitBranchesApiService
 
 	GitFullSyncApi *GitFullSyncApiService
@@ -174,7 +176,7 @@ type APIClient struct {
 
 	ServicesApi *ServicesApiService
 
-	SloApi * SloApiService
+	SloApi *SloApiService
 
 	SourceCodeManagerApi *SourceCodeManagerApiService
 
@@ -249,6 +251,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.FeatureFlagsApi = (*FeatureFlagsApiService)(&c.common)
 	c.FileStoreApi = (*FileStoreApiService)(&c.common)
 	c.FilterApi = (*FilterApiService)(&c.common)
+	c.FreezeCRUDApi = (*FreezeCRUDApiService)(&c.common)
 	c.GitBranchesApi = (*GitBranchesApiService)(&c.common)
 	c.GitFullSyncApi = (*GitFullSyncApiService)(&c.common)
 	c.GitSyncApi = (*GitSyncApiService)(&c.common)
