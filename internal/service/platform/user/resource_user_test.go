@@ -68,7 +68,7 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.UserApi.RemoveUser(ctx, "rajendra.baviskar@mailinator.com", c.AccountId, &nextgen.UserApiRemoveUserOpts{
+					_, _, err := c.UserApi.RemoveUser(ctx, "rajendra.baviskar@harness.io", c.AccountId, &nextgen.UserApiRemoveUserOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
@@ -139,7 +139,7 @@ func testAccResourceUser(id string, name string) string {
 		resource "harness_platform_user" "test" {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			emails = ["rajendra.baviskar@mailinator.com"]
+			emails = ["rajendra.baviskar@harness.io"]
 			user_groups = ["_project_all_users"]
 			role_bindings {
 				resource_group_identifier = "_all_project_level_resources"
