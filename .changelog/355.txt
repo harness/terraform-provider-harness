@@ -1,0 +1,4 @@
+
+```release-note:new-resource
+platform_manual_freeze - Added manual deployment freeze resource in Harness terraform provider
+```
