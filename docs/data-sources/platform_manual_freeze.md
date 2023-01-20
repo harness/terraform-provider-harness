@@ -13,7 +13,7 @@ DataSource for deployment freeze in harness.
 ## Example Usage
 
 ```terraform
-data "harness_platform_pipeline" "example" {
+data "harness_platform_manual_freeze" "example" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"

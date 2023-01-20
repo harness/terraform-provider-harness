@@ -11,6 +11,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceManualFreezeWithRecurrence(t *testing.T) {
@@ -94,7 +95,44 @@ func TestAccResourceManualFreeze_WithoutRecurrence(t *testing.T) {
 			},
 		},
 	})
+}
 
+func TestAccResourceManualFreeze_DeleteUnderlyingResource(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_manual_freeze.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceManualFreeze(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "scope", "project"),
+					resource.TestCheckResourceAttr(resourceName, "freeze_windows.0.recurrence.0.type", "Daily"),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, err := c.FreezeCRUDApi.DeleteFreeze(ctx, c.AccountId, id, &nextgen.FreezeCRUDApiDeleteFreezeOpts{
+						OrgIdentifier:     optional.NewString(id),
+						ProjectIdentifier: optional.NewString(id),
+					})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceManualFreeze(id, name, accountId),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
 }
 
 func testAccResourceGroupDestroy(resourceName string) resource.TestCheckFunc {
