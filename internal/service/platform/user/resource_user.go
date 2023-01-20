@@ -42,7 +42,7 @@ func ResourceUser() *schema.Resource {
 			"name": {
 				Description: "Name of the user.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
 			},
 			"email": {
 				Description: "The email of the user.",
@@ -154,19 +154,20 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
-	addUserBody := createAddUserBody(d)
 
 	var err error
 	var httpResp *http.Response
 
 	if id == "" {
+		addUserBody := createAddUserBody(d)
 		_, httpResp, err = c.UserApi.AddUsers(ctx, *addUserBody, c.AccountId, &nextgen.UserApiAddUsersOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
+		updateUSerBody := updateAddUserBody(d)
 		_, httpResp, err = c.UserApi.UpdateUserInfo(ctx, c.AccountId, &nextgen.UserApiUpdateUserInfoOpts{
-			Body: optional.NewInterface(addUserBody),
+			Body: optional.NewInterface(updateUSerBody),
 		})
 	}
 
@@ -255,6 +256,13 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	}
 
 	return &addUsersDto
+}
+
+func updateAddUserBody(d *schema.ResourceData) *nextgen.UserInfo {
+	return &nextgen.UserInfo{
+		Uuid: d.Get("identifier").(string),
+		Name: d.Get("name").(string),
+	}
 }
 
 func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {

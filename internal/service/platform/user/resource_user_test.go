@@ -15,8 +15,9 @@ import (
 
 func TestAccResourceUser(t *testing.T) {
 
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	name := "Rajendra Baviskar"
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_user.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -32,10 +33,11 @@ func TestAccResourceUser(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceUser(id, name),
+				Config: testAccResourceUser(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
 			{
@@ -139,6 +141,7 @@ func testAccResourceUser(id string, name string) string {
 		resource "harness_platform_user" "test" {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
+			name = "%[2]s"
 			emails = ["rajendra.baviskar@harness.io"]
 			user_groups = ["_project_all_users"]
 			role_bindings {
@@ -148,6 +151,8 @@ func testAccResourceUser(id string, name string) string {
 				resource_group_name = "All Project Level Resources"
 				managed_role = true
 			}
+
+			
 		}
 `, id, name)
 }
