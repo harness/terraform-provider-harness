@@ -20,6 +20,11 @@ func DataSourceProject() *schema.Resource {
 		ReadContext: dataSourceProjectRead,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "Unique identifier of the project",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"color": {
 				Description: "Color of the project.",
 				Type:        schema.TypeString,
