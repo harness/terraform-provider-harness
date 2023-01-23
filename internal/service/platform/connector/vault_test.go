@@ -2,6 +2,7 @@ package connector_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/helpers"
@@ -175,6 +176,7 @@ func TestAccResourceConnectorVault_AppRole(t *testing.T) {
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
+	vault_sercet := os.Getenv("HARNESS_TEST_VAULT_SECRET")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -182,7 +184,7 @@ func TestAccResourceConnectorVault_AppRole(t *testing.T) {
 		CheckDestroy:      testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorVault_app_role(id, name),
+				Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -198,7 +200,7 @@ func TestAccResourceConnectorVault_AppRole(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorVault_app_role(id, updatedName),
+				Config: testAccResourceConnectorVault_app_role(id, updatedName, vault_sercet),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -319,7 +321,7 @@ func testAccResourceConnectorVault_aws_auth(id string, name string) string {
 	`, id, name)
 }
 
-func testAccResourceConnectorVault_app_role(id string, name string) string {
+func testAccResourceConnectorVault_app_role(id string, name string, vault_secret string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -329,7 +331,7 @@ func testAccResourceConnectorVault_app_role(id string, name string) string {
 
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
-		value = "0ac78b03-57f0-b205-e85b-4931fb814366"
+		value = "%[3]s"
 		lifecycle {
 			ignore_changes = [
 				value,
@@ -360,7 +362,7 @@ func testAccResourceConnectorVault_app_role(id string, name string) string {
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 	}
-	`, id, name)
+	`, id, name, vault_secret)
 }
 
 func testAccResourceConnectorVault_k8s_auth(id string, name string) string {
