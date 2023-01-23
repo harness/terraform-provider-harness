@@ -19,7 +19,10 @@ func TestAccResourceConnectorDynatrace(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorDynatrace(id, name),
@@ -76,6 +79,12 @@ func testAccResourceConnectorDynatrace(id string, name string) string {
 			url = "https://dynatrace.com/"
 			delegate_selectors = ["harness-delegate"]
 			api_token_ref = "account.${harness_platform_secret_text.test.id}"
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
