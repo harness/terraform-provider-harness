@@ -65,7 +65,10 @@ func TestAccResourceConnectorAwsSM_manual(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorAwsSM_manual(id, name),
@@ -197,6 +200,12 @@ func testAccResourceConnectorAwsSM_manual(id string, name string) string {
 					access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }

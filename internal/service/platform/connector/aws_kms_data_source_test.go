@@ -18,6 +18,9 @@ func TestAccDataSourceConnectorAwsKms(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorAwsKms(name),
@@ -60,6 +63,13 @@ func testAccDataSourceConnectorAwsKms(name string) string {
 			credentials {
 				inherit_from_delegate = true
 			}
+			
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 
 		data "harness_platform_connector_awskms" "test" {
