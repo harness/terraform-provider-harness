@@ -62,7 +62,10 @@ func TestAccResourceConnectorK8s_ClientKeyCert(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_ClientKeyCert(id, name),
@@ -109,7 +112,10 @@ func TestAccResourceConnectorK8s_UsernamePassword(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_UsernamePassword(id, name),
@@ -156,7 +162,10 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_ServiceAccount(id, name),
@@ -201,7 +210,10 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_OpenIDConnect(id, name),
@@ -269,6 +281,13 @@ func testAccResourceConnectorK8s_ClientKeyCert(id string, name string) string {
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
@@ -299,6 +318,13 @@ func testAccResourceConnectorK8s_UsernamePassword(id string, name string) string
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
@@ -327,6 +353,13 @@ func testAccResourceConnectorK8s_ServiceAccount(id string, name string) string {
 				service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
@@ -364,6 +397,13 @@ func testAccResourceConnectorK8s_OpenIDConnect(id string, name string) string {
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }

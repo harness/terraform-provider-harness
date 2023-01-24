@@ -21,7 +21,10 @@ func TestAccResourceConnectorVault_Token(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorVault_token(id, name),
@@ -72,7 +75,10 @@ func TestAccResourceConnectorVault_VaultAgent(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorVault_vault_agent(id, name),
@@ -127,7 +133,10 @@ func TestAccResourceConnectorVault_K8sAuth(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorVault_k8s_auth(id, name),
@@ -181,7 +190,10 @@ func TestAccResourceConnectorVault_AppRole(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
@@ -235,7 +247,10 @@ func TestAccResourceConnectorVault_AwsAuth(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorVault_aws_auth(id, name, vault_sercet),
@@ -318,6 +333,13 @@ func testAccResourceConnectorVault_aws_auth(id string, name string, vault_secret
 		use_vault_agent = false
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
+
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
 	}
 	`, id, name, vault_secret)
 }
@@ -362,6 +384,13 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 		renew_app_role_token = true
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
+
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
 	}
 	`, id, name, vault_secret)
 }
@@ -404,6 +433,13 @@ func testAccResourceConnectorVault_k8s_auth(id string, name string) string {
 		vault_aws_iam_role = "vault_aws_iam_role"
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
+
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
 	}
 	`, id, name)
 }
@@ -443,6 +479,13 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 		sink_path = "sink_path"
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
+
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
 	}
 	`, id, name)
 }
@@ -478,6 +521,13 @@ func testAccResourceConnectorVault_token(id string, name string) string {
 		use_aws_iam = false
 		use_k8s_auth = false
 		vault_url = "https://vaultqa.harness.io"
+
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
 	}
 	`, id, name, helpers.TestEnvVars.VaultRootToken.Get())
 }
