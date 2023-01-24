@@ -63,7 +63,10 @@ func TestAccResourceConnector_httphelm_UsernamePassword(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnector_httphelm_usernamepassword(id, name),
@@ -112,6 +115,12 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 				username = "admin"
 				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }

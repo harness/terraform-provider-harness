@@ -45,6 +45,9 @@ func TestAccDataSourceConnectorK8sServiceAccount(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorK8sServiceAccount(name),
@@ -105,6 +108,13 @@ func testAccDataSourceConnectorK8sServiceAccount(name string) string {
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 
 		data "harness_platform_connector_kubernetes" "test" {
