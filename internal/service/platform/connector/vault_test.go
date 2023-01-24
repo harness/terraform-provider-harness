@@ -381,7 +381,6 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 		use_aws_iam = false
 		use_k8s_auth = false
 		use_vault_agent = false
-		renew_app_role_token = true
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
