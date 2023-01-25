@@ -31,6 +31,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
+	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
@@ -149,7 +150,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_splunk":                connector.DatasourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
-				"harness_platform_current_user":                    pl_user.DataSourceCurrentUser(),
+				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
+				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
 				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
@@ -255,6 +257,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_pipeline":                        pipeline.ResourcePipeline(),
 				"harness_platform_project":                         project.ResourceProject(),
 				"harness_platform_service":                         pl_service.ResourceService(),
+				"harness_platform_user":                            pl_user.ResourceUser(),
 				"harness_platform_usergroup":                       usergroup.ResourceUserGroup(),
 				"harness_platform_secret_text":                     secret.ResourceSecretText(),
 				"harness_platform_secret_file":                     secret.ResourceSecretFile(),
