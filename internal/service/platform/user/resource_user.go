@@ -145,6 +145,10 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
+	if &resp == nil || resp.Data == nil || resp.Data.Empty {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
 	readUser(d, &resp.Data.Content[0])
 
 	return nil
