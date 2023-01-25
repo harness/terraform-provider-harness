@@ -82,6 +82,10 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if &resp == nil || resp.Data == nil || resp.Data.Empty {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
 	readUser(d, &resp.Data.Content[0])
 
 	return nil

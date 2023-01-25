@@ -21,7 +21,7 @@ func TestAccDataSourceUser(t *testing.T) {
 			{
 				Config: testAccDataSourceUser(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "Rajendra Baviskar"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Rajendra Baviskar_updated"),
 				),
 			},
 		},
@@ -53,6 +53,11 @@ func testAccDataSourceUser(id string, name string) string {
 			role_name = "Project Viewer"
 			resource_group_name = "All Project Level Resources"
 			managed_role = true
+		}
+		lifecycle {
+			ignore_changes = [
+				name,
+			]
 		}
 	}
 

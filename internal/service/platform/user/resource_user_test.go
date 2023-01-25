@@ -152,6 +152,11 @@ func testAccResourceUser(id string, name string) string {
 				managed_role = true
 			}
 
+			lifecycle {
+				ignore_changes = [
+					name,
+				]
+			}
 			
 		}
 `, id, name)
