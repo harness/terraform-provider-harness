@@ -142,6 +142,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Description: "Boolean value to indicate if AppRole token renewal is enabled or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Computed:    true,
 			},
 			"access_type": {
 				Description:  "Access type.",
