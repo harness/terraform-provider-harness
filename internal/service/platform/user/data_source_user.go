@@ -79,6 +79,10 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 		SearchTerm:        optional.NewString(email),
 	})
 
+	if resp.Data == nil {
+		return nil
+	}
+
 	if resp.Data.Empty {
 		d.SetId("")
 		d.MarkNewResource()

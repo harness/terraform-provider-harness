@@ -135,6 +135,10 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		SearchTerm:        optional.NewString(email),
 	})
 
+	if resp.Data == nil {
+		return nil
+	}
+	
 	if resp.Data.Empty {
 		d.SetId("")
 		d.MarkNewResource()
@@ -186,6 +190,10 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		SearchTerm:        optional.NewString(email),
 	})
+
+	if resp.Data == nil {
+		return nil
+	}
 
 	if resp.Data.Empty {
 		d.SetId("")
