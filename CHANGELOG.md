@@ -1,3 +1,10 @@
+# 0.14.0 (January 27,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_manual_freeze - Added manual deployment freeze resource in Harness terraform provider` ([#355](https://github.com/harness/terraform-provider-harness/issues/355))
+* **New Resource:** `resource/harness_platform_user: Resource for creating a Harness User` ([#353](https://github.com/harness/terraform-provider-harness/issues/353))
+
 # 0.13.3 (January 19,2023) 
 
 BUG FIXES:
