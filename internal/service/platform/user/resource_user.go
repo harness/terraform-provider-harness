@@ -135,7 +135,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		SearchTerm:        optional.NewString(email),
 	})
 
-	if resp.Data.Empty {
+	if &resp == nil || resp.Data == nil || resp.Data.Empty {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -145,13 +145,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
-
-	readUser(d, &resp.Data.Content[0])
+	readUserList(d, resp.Data)
 
 	return nil
 }
@@ -192,15 +186,18 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		SearchTerm:        optional.NewString(email),
 	})
+
+	if &resp == nil || resp.Data == nil || resp.Data.Empty {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		return nil
-	}
-
-	readUser(d, &resp.Data.Content[0])
+	readUserList(d, resp.Data)
 
 	return nil
 }
@@ -268,6 +265,13 @@ func updateAddUserBody(d *schema.ResourceData) *nextgen.UserInfo {
 	return &nextgen.UserInfo{
 		Uuid: d.Get("identifier").(string),
 		Name: d.Get("name").(string),
+	}
+}
+
+func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggregate) {
+	userInfoList := userInfo.Content
+	for _, value := range userInfoList {
+		readUser(d, &value)
 	}
 }
 

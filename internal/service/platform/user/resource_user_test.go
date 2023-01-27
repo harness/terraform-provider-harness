@@ -102,12 +102,8 @@ func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextg
 		SearchTerm:        optional.NewString(emails),
 	})
 
-	if err != nil {
+	if err != nil || resp.Data.Empty {
 		return nil, err
-	}
-
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		return nil, nil
 	}
 
 	return &resp.Data.Content[0], nil

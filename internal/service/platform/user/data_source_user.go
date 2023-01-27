@@ -78,9 +78,6 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		SearchTerm:        optional.NewString(email),
 	})
-	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
-	}
 
 	if &resp == nil || resp.Data == nil || resp.Data.Empty {
 		d.SetId("")
@@ -88,7 +85,11 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 		return nil
 	}
 
-	readUser(d, &resp.Data.Content[0])
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	readUserList(d, resp.Data)
 
 	return nil
 }
