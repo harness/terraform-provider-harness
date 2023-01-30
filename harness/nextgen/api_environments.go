@@ -167,6 +167,7 @@ EnvironmentsApiService Delete an Environment by identifier
      * @param "IfMatch" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "ForceDelete" (optional.Bool) - If true, the Entity will be forced delete, without checking any references/usages
 @return ResponseDtoBoolean
 */
 
@@ -174,6 +175,7 @@ type EnvironmentsApiDeleteEnvironmentV2Opts struct {
 	IfMatch           optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
+	ForceDelete       optional.Bool
 }
 
 func (a *EnvironmentsApiService) DeleteEnvironmentV2(ctx context.Context, environmentIdentifier string, accountIdentifier string, localVarOptionals *EnvironmentsApiDeleteEnvironmentV2Opts) (ResponseDtoBoolean, *http.Response, error) {
@@ -200,6 +202,9 @@ func (a *EnvironmentsApiService) DeleteEnvironmentV2(ctx context.Context, enviro
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+    		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+    }
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 

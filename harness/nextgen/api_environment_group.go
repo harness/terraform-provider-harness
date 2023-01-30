@@ -41,6 +41,7 @@ EnvironmentGroupApiService Delete en Environment Group by Identifier
      * @param "FilePath" (optional.String) -  File Path of the Entity.
      * @param "CommitMsg" (optional.String) -  Commit Message to use for the merge commit.
      * @param "LastObjectId" (optional.String) -  Last Object Id
+     * @param "ForceDelete" (optional.Bool) - If true, the Entity will be forced delete, without checking any references/usages
 @return ResponseDtoEnvironmentGroupDelete
 */
 
@@ -52,6 +53,7 @@ type EnvironmentGroupApiDeleteEnvironmentGroupOpts struct {
     FilePath optional.String
     CommitMsg optional.String
     LastObjectId optional.String
+    ForceDelete optional.Bool
 }
 
 func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context, envGroupIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *EnvironmentGroupApiDeleteEnvironmentGroupOpts) (ResponseDtoEnvironmentGroupDelete, *http.Response, error) {
@@ -92,6 +94,9 @@ func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context,
 	if localVarOptionals != nil && localVarOptionals.LastObjectId.IsSet() {
 		localVarQueryParams.Add("lastObjectId", parameterToString(localVarOptionals.LastObjectId.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+    		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+    }
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
