@@ -18,6 +18,9 @@ func TestAccDataSourceInputSet(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceInputSet(id, name),
@@ -155,6 +158,8 @@ EOT
             org_id = harness_platform_organization.test.id
             project_id = harness_platform_project.test.id
             pipeline_id = harness_platform_pipeline.test.id
+            depends_on = [time_sleep.wait_5_seconds]
+
             yaml = <<-EOT
     inputSet:
       identifier: "%[1]s"
@@ -170,6 +175,11 @@ EOT
           type: "String"
           value: "value"
 EOT
+    }
+
+    resource "time_sleep" "wait_5_seconds" {
+        depends_on = [harness_platform_pipeline.test]
+        create_duration = "5s"
     }
 
             data "harness_platform_input_set" "test" {

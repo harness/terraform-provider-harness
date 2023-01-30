@@ -21,7 +21,10 @@ func TestAccResourceInputSet(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccInputSetDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccInputSetDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInputSet(id, name),
@@ -73,7 +76,10 @@ func TestAccResourceInputSetRemote(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccInputSetDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccInputSetDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInputSetRemote(id, name),
@@ -116,7 +122,10 @@ func TestAccResourceInputSetInline(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccInputSetDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccInputSetDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInputSetInline(id, name),
@@ -304,6 +313,8 @@ resource "harness_platform_input_set" "test" {
     org_id = harness_platform_organization.test.id
     project_id = harness_platform_project.test.id
     pipeline_id = harness_platform_pipeline.test.id
+    depends_on = [time_sleep.wait_5_seconds]
+
     yaml = <<-EOT
 inputSet:
   identifier: "%[1]s"
@@ -319,6 +330,11 @@ inputSet:
       type: "String"
       value: "value"
 EOT
+}
+
+resource "time_sleep" "wait_5_seconds" {
+    depends_on = [harness_platform_pipeline.test]
+    create_duration = "5s"
 }
     `, id, name)
 }
@@ -460,6 +476,9 @@ resource "harness_platform_input_set" "test" {
         store_type = "REMOTE"
         repo_name = "jajoo_git"
     }
+
+    depends_on = [time_sleep.wait_5_seconds]
+
     yaml = <<-EOT
 inputSet:
   identifier: "%[1]s"
@@ -475,6 +494,11 @@ inputSet:
       type: "String"
       value: "value"
 EOT
+}
+
+resource "time_sleep" "wait_5_seconds" {
+    depends_on = [harness_platform_pipeline.test]
+    create_duration = "5s"
 }
     `, id, name)
 }
@@ -601,6 +625,8 @@ func testAccResourceInputSet(id string, name string) string {
 						org_id = harness_platform_organization.test.id
 						project_id = harness_platform_project.test.id
 						pipeline_id = harness_platform_pipeline.test.id
+                        depends_on = [time_sleep.wait_5_seconds]
+
 						yaml = <<-EOT
                 inputSet:
                   identifier: "%[1]s"
@@ -617,5 +643,10 @@ func testAccResourceInputSet(id string, name string) string {
                       value: "value"
             EOT
 				}
+
+                resource "time_sleep" "wait_5_seconds" {
+                    depends_on = [harness_platform_pipeline.test]
+                    create_duration = "5s"
+                }
         `, id, name)
 }
