@@ -210,8 +210,14 @@ func TestAccResourceTemplate_AccountScope(t *testing.T) {
 func testAccTemplateDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		template, _ := testAccGetTemplate(resourceName, state)
+		var template_identifier string
 		if template != nil {
-			return fmt.Errorf("Found template: %s", template.Template.Slug)
+			if template.Template.Identifier != "" {
+				template_identifier = template.Template.Identifier
+			} else {
+				template_identifier = template.Template.Slug
+			}
+			return fmt.Errorf("Found template: %s", template_identifier)
 		}
 
 		return nil

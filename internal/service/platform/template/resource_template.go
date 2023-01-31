@@ -214,19 +214,31 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 				Body:           optional.NewInterface(template),
 				HarnessAccount: optional.NewString(c.AccountId),
 			})
-			template_id = resp.Slug
+			if resp.Identifier != "" {
+				template_id = resp.Identifier
+			} else {
+				template_id = resp.Slug
+			}
 		} else if org_id != "" && project_id == "" {
 			resp, httpResp, err = c.OrgTemplateApi.CreateTemplatesOrg(ctx, org_id, &nextgen.OrgTemplateApiCreateTemplatesOrgOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				Body:           optional.NewInterface(template),
 			})
-			template_id = resp.Slug
+			if resp.Identifier != "" {
+				template_id = resp.Identifier
+			} else {
+				template_id = resp.Slug
+			}
 		} else {
 			resp, httpResp, err = c.AccountTemplateApi.CreateTemplatesAcc(ctx, &nextgen.AccountTemplateApiCreateTemplatesAccOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				Body:           optional.NewInterface(template),
 			})
-			template_id = resp.Slug
+			if resp.Identifier != "" {
+				template_id = resp.Identifier
+			} else {
+				template_id = resp.Slug
+			}
 		}
 	} else {
 		template := buildUpdateTemplate(d)
@@ -242,19 +254,31 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 				Body:           optional.NewInterface(template),
 				HarnessAccount: optional.NewString(c.AccountId),
 			})
-			template_id = resp.Slug
+			if resp.Identifier != "" {
+				template_id = resp.Identifier
+			} else {
+				template_id = resp.Slug
+			}
 		} else if org_id != "" && project_id == "" {
 			resp, httpResp, err = c.OrgTemplateApi.UpdateTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateOrgOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				Body:           optional.NewInterface(template),
 			})
-			template_id = resp.Slug
+			if resp.Identifier != "" {
+				template_id = resp.Identifier
+			} else {
+				template_id = resp.Slug
+			}
 		} else {
 			resp, httpResp, err = c.AccountTemplateApi.UpdateTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateAccOpts{
 				HarnessAccount: optional.NewString(c.AccountId),
 				Body:           optional.NewInterface(template),
 			})
-			template_id = resp.Slug
+			if resp.Identifier != "" {
+				template_id = resp.Identifier
+			} else {
+				template_id = resp.Slug
+			}
 		}
 	}
 
@@ -431,8 +455,16 @@ func buildCreateTemplate(d *schema.ResourceData) nextgen.TemplateCreateRequestBo
 }
 
 func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsResponse, comments string, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
-	d.SetId(template.Template.Slug)
-	d.Set("identifier", template.Template.Slug)
+	if template.Template.Identifier != "" {
+		d.SetId(template.Template.Identifier)
+	} else {
+		d.SetId(template.Template.Slug)
+	}
+	if template.Template.Identifier != "" {
+		d.Set("identifier", template.Template.Identifier)
+	} else {
+		d.Set("identifier", template.Template.Slug)
+	}
 	d.Set("name", template.Template.Name)
 	d.Set("org_id", template.Template.Org)
 	d.Set("project_id", template.Template.Project)

@@ -173,8 +173,16 @@ func dataTemplateRead(ctx context.Context, d *schema.ResourceData, meta interfac
 }
 
 func readDataTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsResponse) {
-	d.SetId(template.Template.Slug)
-	d.Set("identifier", template.Template.Slug)
+	if template.Template.Identifier != "" {
+		d.SetId(template.Template.Identifier)
+	} else {
+		d.SetId(template.Template.Slug)
+	}
+	if template.Template.Identifier != "" {
+		d.Set("identifier", template.Template.Identifier)
+	} else {
+		d.Set("identifier", template.Template.Slug)
+	}
 	d.Set("name", template.Template.Name)
 	d.Set("org_id", template.Template.Org)
 	d.Set("project_id", template.Template.Project)
