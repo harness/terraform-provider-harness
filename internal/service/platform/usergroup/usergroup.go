@@ -63,19 +63,19 @@ func ResourceUserGroup() *schema.Resource {
 				Optional:    true,
 			},
 			"users": {
-				Description:  "List of users in the UserGroup. Either provide list of users or list of user emails.",
-				Type:         schema.TypeList,
-				Optional:     true,
-				ExactlyOneOf: []string{"users", "user_emails"},
+				Description:   "List of users in the UserGroup. Either provide list of users or list of user emails.",
+				Type:          schema.TypeList,
+				Optional:      true,
+				ConflictsWith: []string{"user_emails"},
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 			"user_emails": {
-				Description:  "List of user emails in the UserGroup. Either provide list of users or list of user emails.",
-				Type:         schema.TypeList,
-				Optional:     true,
-				ExactlyOneOf: []string{"users", "user_emails"},
+				Description:   "List of user emails in the UserGroup. Either provide list of users or list of user emails.",
+				Type:          schema.TypeList,
+				Optional:      true,
+				ConflictsWith: []string{"users"},
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
