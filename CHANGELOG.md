@@ -1,3 +1,13 @@
+# 0.14.1 (January 31,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_template: In template api slug field is updated to identifier. Made relevent changes in terraform resource. ([#412](https://github.com/harness/terraform-provider-harness/issues/412))
+
+BUG FIXES:
+
+* resource/harness_platform_usergroup: Fix users and user_emails field in user group schema. ([#411](https://github.com/harness/terraform-provider-harness/issues/411))
+
 # 0.14.0 (January 27,2023) 
 
 FEATURES:
