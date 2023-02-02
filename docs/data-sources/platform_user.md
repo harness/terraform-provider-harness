@@ -26,12 +26,12 @@ data "harness_platform_user" "example" {
 ### Required
 
 - `email` (String) The email of the user.
-- `org_id` (String) Organization identifier of the user.
-- `project_id` (String) Project identifier of the user.
 
 ### Optional
 
 - `name` (String) Name of the user.
+- `org_id` (String) Organization identifier of the user.
+- `project_id` (String) Project identifier of the user.
 
 ### Read-Only
 
