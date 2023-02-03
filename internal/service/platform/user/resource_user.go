@@ -32,12 +32,12 @@ func ResourceUser() *schema.Resource {
 			"org_id": {
 				Description: "Organization identifier of the user.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the user.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"name": {
 				Description: "Name of the user.",

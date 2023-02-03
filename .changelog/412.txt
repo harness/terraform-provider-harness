@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_template: In template api slug field is updated to identifier. Made relevent changes in terraform resource.
+```
