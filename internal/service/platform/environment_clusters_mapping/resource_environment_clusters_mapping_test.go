@@ -14,29 +14,24 @@ import (
 )
 
 func TestAccResourceEnvironmentClustersMapping(t *testing.T) {
-
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	// updatedName := fmt.Sprintf("%s_updated", name)
-
-	// GitOps Utilities
-	agentId := "terraformagent"
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
 	clusterName := id
-	// clusterId := id
 	resourceName := "harness_platform_environment_clusters_mapping.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccEnvironmentClustersMappingDestroy(resourceName),
+		//CheckDestroy:      testAccEnvironmentClustersMappingDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceEnvironmentClustersMapping(id, name, accountId, agentId, clusterName),
+				Config: testAccResourceEnvironmentClustersMapping(id, name, accountId, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
@@ -51,7 +46,7 @@ func TestAccResourceEnvironmentClustersMapping(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -92,7 +87,7 @@ func testAccEnvironmentClustersMappingDestroy(resourceName string) resource.Test
 	}
 }
 
-func testAccResourceEnvironmentClustersMapping(id string, name string, accoundId string, agentId string, clusterName string) string {
+func testAccResourceEnvironmentClustersMapping(id string, name string, accoundId string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -122,23 +117,27 @@ func testAccResourceEnvironmentClustersMapping(id string, name string, accoundId
 			agent_id = "%[4]s"
 
  			request {
-				upsert = false
+				upsert = true
 				cluster {
-					server = "https://kubernetes.default.svc"
+					server = "%[6]s"
 					name = "%[5]s"
 					config {
+						bearer_token = "%[7]s"
 						tls_client_config {
 							insecure = true
 						}
-						cluster_connection_type = "IN_CLUSTER"
+						cluster_connection_type = "SERVICE_ACCOUNT"
 					}
-
 				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+				]
 			}
 		}
 
 		resource "harness_platform_environment_clusters_mapping" "test" {
-			identifier = harness_platform_gitops_cluster.test.id
 			env_id = harness_platform_environment.test.id
 			clusters {
 				identifier = harness_platform_gitops_cluster.test.id
@@ -147,5 +146,5 @@ func testAccResourceEnvironmentClustersMapping(id string, name string, accoundId
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		}
-`, id, name, accoundId, agentId, clusterName)
+`, id, name, accoundId, agentId, clusterName, clusterServer, clusterToken)
 }

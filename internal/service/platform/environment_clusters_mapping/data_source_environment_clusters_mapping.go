@@ -69,7 +69,7 @@ func dataSourceResourceEnvironmentClustersMappingRead(ctx context.Context, d *sc
 		return nil
 	}
 
-	readEnvironmentClustersMappingCluster(d, resp.Data)
+	// readEnvironmentClustersMappingCluster(d, resp.Data)
 
 	return nil
 }

@@ -17,7 +17,7 @@ func ResourceEnvironmentClustersMapping() *schema.Resource {
 		Description: "Resource for mapping environment with Harness Clusters.",
 
 		ReadContext:   resourceEnvironmentClustersMappingRead,
-		DeleteContext: resourceEnvironmentClustersMappingDelete,
+		DeleteContext: resourceEnvironmentClustersMappingClusterUnlink,
 		CreateContext: resourceEnvironmentClustersMappingClusterLink,
 		UpdateContext: resourceEnvironmentClustersMappingClusterLink,
 		Importer:      helpers.ProjectResourceImporter,
@@ -26,7 +26,7 @@ func ResourceEnvironmentClustersMapping() *schema.Resource {
 			"identifier": {
 				Description: "identifier of the cluster.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"env_id": {
 				Description: "environment identifier.",
@@ -97,17 +97,17 @@ func resourceEnvironmentClustersMappingRead(ctx context.Context, d *schema.Resou
 		return nil
 	}
 
-	readEnvironmentClustersMappingCluster(d, &resp.Data.Content[0])
+	readEnvironmentClustersMappingCluster(d, &resp.Data.Content[0], d.Get("org_id").(string), d.Get("project_id").(string))
 
 	return nil
 }
 
-func resourceEnvironmentClustersMappingDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceEnvironmentClustersMappingClusterUnlink(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	envId := d.Get("env_id").(string)
-	_, httpResp, err := c.ClustersApi.DeleteCluster(ctx, d.Id(), c.AccountId, envId, &nextgen.ClustersApiDeleteClusterOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	env := buildEnvironmentClustersMappingCluster(d)
+
+	_, httpResp, err := c.ClustersApi.UnlinkClustersInBatch(ctx, c.AccountId, &nextgen.ClustersApiUnlinkClustersInBatchOpts{
+		Body: optional.NewInterface(env),
 	})
 
 	if err != nil {
@@ -132,8 +132,27 @@ func resourceEnvironmentClustersMappingClusterLink(ctx context.Context, d *schem
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
+	// make read call
+	var resptwo nextgen.ResponseDtoPageResponseClusterResponse
 
-	readEnvironmentClustersMappingLinkedCluster(d, resp.Data)
+	resptwo, httpResp, err = c.ClustersApi.GetClusterList(ctx, c.AccountId, d.Get("env_id").(string), &nextgen.ClustersApiGetClusterListOpts{
+		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
+		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+	})
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	// Soft delete lookup error handling
+	// https://harness.atlassian.net/browse/PL-23765
+	if resp.Data == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
+	readEnvironmentClustersMappingCluster(d, &resptwo.Data.Content[0], d.Get("org_id").(string), d.Get("project_id").(string))
 	return nil
 }
 
@@ -160,14 +179,11 @@ func ExpandEnvironmentClustersMappingCluster(clusterBasicDTO []interface{}) []ne
 	return result
 }
 
-func readEnvironmentClustersMappingCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
+func readEnvironmentClustersMappingCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse, org_id string, project_id string) {
+	d.SetId(cl.ClusterRef)
 	d.Set("identifier", cl.ClusterRef)
-	d.Set("org_id", cl.OrgIdentifier)
-	d.Set("project_id", cl.ProjectIdentifier)
+	d.Set("org_id", org_id)
+	d.Set("project_id", project_id)
 	d.Set("env_id", cl.EnvRef)
 	d.Set("scope", cl.Scope)
-}
-
-func readEnvironmentClustersMappingLinkedCluster(d *schema.ResourceData, cl *nextgen.ClusterBatchResponse) {
-	d.SetId("123456") //temp id unitl we get gitops agent and cluster utility setup
 }
