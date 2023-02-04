@@ -39,10 +39,18 @@ func DataSourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"emails": {
+				Description: "The email of the user.",
+				Type:        schema.TypeSet,
+				Required:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"email": {
 				Description: "The email of the user.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"disabled": {
 				Description: "Whether or not the user account is disabled.",

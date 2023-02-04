@@ -187,6 +187,24 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 		SearchTerm:        optional.NewString(email),
 	})
 
+	var respinvite nextgen.ResponseDtoPageResponseInvite
+	if resp.Data.Empty {
+		// make pending invite api call
+		respinvite, httpResp, err = c.InviteApi.GetInvites(ctx, c.AccountId, &nextgen.InviteApiGetInvitesOpts{
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		})
+
+		if &respinvite == nil || respinvite.Data == nil || respinvite.Data.Empty {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+
+		readInvitedUserList(d, respinvite.Data, email)
+		return nil
+	}
+
 	if &resp == nil || resp.Data == nil || resp.Data.Empty {
 		d.SetId("")
 		d.MarkNewResource()
@@ -283,4 +301,19 @@ func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {
 	d.Set("locked", UserAggregate.User.Locked)
 	d.Set("disabled", UserAggregate.User.Disabled)
 	d.Set("externally_managed", UserAggregate.User.ExternallyManaged)
+}
+
+func readInvitedUserList(d *schema.ResourceData, invitedUserList *nextgen.PageResponseInvite, Email string) {
+	invites := invitedUserList.Content
+	for _, value := range invites {
+		readInvitedUser(d, &value, Email)
+	}
+}
+
+func readInvitedUser(d *schema.ResourceData, InvitedUser *nextgen.Invite, Email string) {
+	d.SetId("123")
+	d.Set("identifier", d.Id())
+	d.Set("org_id", InvitedUser.OrgIdentifier)
+	d.Set("project_id", InvitedUser.ProjectIdentifier)
+	d.Set("email", Email)
 }

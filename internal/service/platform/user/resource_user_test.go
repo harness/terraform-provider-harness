@@ -138,7 +138,7 @@ func testAccResourceUser(id string, name string) string {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			name = "%[2]s"
-			emails = ["rajendra.baviskar@harness.io"]
+			emails = ["abc.baviskar@harness.io"]
 			user_groups = ["_project_all_users"]
 			role_bindings {
 				resource_group_identifier = "_all_project_level_resources"

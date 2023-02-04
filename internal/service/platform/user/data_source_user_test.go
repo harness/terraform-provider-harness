@@ -45,7 +45,7 @@ func testAccDataSourceUser(id string, name string) string {
 	resource "harness_platform_user" "test" {
 		org_id = harness_platform_project.test.org_id
 		project_id = harness_platform_project.test.id
-		emails = ["rajendra.baviskar@harness.io"]
+		emails = ["abc.baviskar@harness.io"]
 		user_groups = ["_project_all_users"]
 		role_bindings {
 			resource_group_identifier = "_all_project_level_resources"
@@ -64,7 +64,7 @@ func testAccDataSourceUser(id string, name string) string {
 	data "harness_platform_user" "test" {
 		org_id = harness_platform_project.test.org_id
 		project_id = harness_platform_project.test.id
-		email = "rajendra.baviskar@harness.io"
+		emails = ["abc.baviskar@harness.io"]
 	}
 	`, id, name)
 }
