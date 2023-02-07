@@ -102,8 +102,7 @@ func getUserGroupAppPermissionsSchema() *schema.Schema {
 							"filters": {
 								Description: fmt.Sprintf("The filters to apply to the action. Valid options are: %s.", strings.Join(graphql.DeploymentPermissionFiltersSlice, ", ")),
 								Type:        schema.TypeSet,
-								Required:    true,
-								MinItems:    1,
+								Optional:    true,
 								Elem:        &schema.Schema{Type: schema.TypeString},
 							},
 							"actions": {

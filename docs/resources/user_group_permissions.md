@@ -60,12 +60,12 @@ Optional:
 Required:
 
 - `actions` (Set of String) The actions allowed to be performed. Valid options are READ, EXECUTE_WORKFLOW, EXECUTE_PIPELINE, ROLLBACK_WORKFLOW, ABORT_WORKFLOW
-- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
 
 Optional:
 
 - `app_ids` (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
 - `env_ids` (Set of String) The environment IDs to which the permission applies. Leave empty to apply to all environments.
+- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
 
 
 <a id="nestedblock--app_permissions--environment"></a>
