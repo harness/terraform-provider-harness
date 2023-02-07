@@ -26,7 +26,7 @@ func TestAccResourceEnvironmentClustersMapping(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccEnvironmentClustersMappingDestroy(resourceName),
+		CheckDestroy:      testAccEnvironmentClustersMappingDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceEnvironmentClustersMapping(id, name, accountId, agentId, clusterName, clusterServer, clusterToken),
@@ -46,7 +46,7 @@ func TestAccResourceEnvironmentClustersMapping(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -141,7 +141,7 @@ func testAccResourceEnvironmentClustersMapping(id string, name string, accoundId
 			env_id = harness_platform_environment.test.id
 			clusters {
 				identifier = harness_platform_gitops_cluster.test.id
-				scope = "ACCOUNT"
+				scope = "PROJECT"
 			}
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
