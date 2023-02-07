@@ -1,3 +1,13 @@
+# 0.14.2 (February 07,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_user_group: Update filters field in deployment object in user group to be optional. ([#418](https://github.com/harness/terraform-provider-harness/issues/418))
+
+BUG FIXES:
+
+* resource/harness_platform_user: Fix user schema. ([#413](https://github.com/harness/terraform-provider-harness/issues/413))
+
 # 0.14.1 (January 31,2023) 
 
 ENHANCEMENTS:
