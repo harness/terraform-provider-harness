@@ -155,7 +155,7 @@ func testAccResourceUserGroupPermissionsAppPermissions(name string) string {
 		resource "harness_user_group_permissions" "test" {
 			user_group_id = data.harness_user_group.test.id
 			
-			account_permissions = ["VIEW_CE"]
+			account_permissions = ["ADMINISTER_OTHER_ACCOUNT_FUNCTIONS"]
 			
 			app_permissions {
 
