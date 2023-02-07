@@ -33,7 +33,7 @@ func TestAccResourceService(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceService(id, updatedName),
+				Config: testAccResourceServiceWithoutServiceDefinition(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -174,6 +174,33 @@ func testAccResourceService(id string, name string) string {
       name = "%[2]s"
       org_id = harness_platform_project.test.org_id
       project_id = harness_platform_project.test.id
+    }
+`, id, name)
+}
+func testAccResourceServiceWithoutServiceDefinition(id string, name string) string {
+	return fmt.Sprintf(`
+    resource "harness_platform_organization" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+    }
+
+    resource "harness_platform_project" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_organization.test.id
+      color = "#472848"
+  }
+
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_project.test.org_id
+      project_id = harness_platform_project.test.id
+      yaml = <<-EOT
+        service:
+          name: %[2]s
+          identifier: %[1]s
+      EOT
     }
 `, id, name)
 }
