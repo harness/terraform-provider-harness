@@ -14,7 +14,7 @@ import (
 )
 
 func TestAccResourceUser(t *testing.T) {
-
+	// t.Skip()
 	name := "Rajendra Baviskar"
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
