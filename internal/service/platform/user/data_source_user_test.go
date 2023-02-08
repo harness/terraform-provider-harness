@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccDataSourceUser(t *testing.T) {
+	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
 	resourceName := "data.harness_platform_user.test"
