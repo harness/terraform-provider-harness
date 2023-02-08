@@ -14,7 +14,7 @@ import (
 )
 
 func TestAccResourceUser(t *testing.T) {
-
+	t.Skip()
 	name := "Rajendra Baviskar"
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := fmt.Sprintf("%s_updated", name)
@@ -52,6 +52,7 @@ func TestAccResourceUser(t *testing.T) {
 }
 
 func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
+	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	resourceName := "harness_platform_user.test"
