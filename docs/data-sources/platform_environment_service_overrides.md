@@ -27,11 +27,11 @@ data "harness_platform_environment_service_overrides" "test" {
 ### Required
 
 - `env_id` (String) The env ID to which the overrides associated.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `service_id` (String) The service ID to which the overrides applies.
 
 ### Read-Only

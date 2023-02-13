@@ -28,11 +28,11 @@ data "harness_platform_infrastructure" "example" {
 ### Required
 
 - `env_id` (String) environment identifier.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
