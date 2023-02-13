@@ -190,12 +190,12 @@ Optional:
 Required:
 
 - `actions` (Set of String) The actions allowed to be performed. Valid options are CREATE, READ, UPDATE, DELETE
-- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
 
 Optional:
 
 - `app_ids` (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
 - `env_ids` (Set of String) The environment IDs to which the permission applies. Leave empty to apply to all environments.
+- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_ENVIRONMENTS, PRODUCTION_ENVIRONMENTS.
 
 
 <a id="nestedblock--permissions--app_permissions--pipeline"></a>
@@ -204,12 +204,12 @@ Optional:
 Required:
 
 - `actions` (Set of String) The actions allowed to be performed. Valid options are [CREATE READ UPDATE DELETE]
-- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_PIPELINES, PRODUCTION_PIPELINES.
 
 Optional:
 
 - `app_ids` (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
 - `env_ids` (Set of String) The environment IDs to which the permission applies. Leave empty to apply to all environments.
+- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_PIPELINES, PRODUCTION_PIPELINES.
 
 
 <a id="nestedblock--permissions--app_permissions--provisioner"></a>
@@ -257,11 +257,11 @@ Optional:
 Required:
 
 - `actions` (Set of String) The actions allowed to be performed. Valid options are CREATE, READ, UPDATE, DELETE
-- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_WORKFLOWS, PRODUCTION_WORKFLOWS, WORKFLOW_TEMPLATES.
 
 Optional:
 
 - `app_ids` (Set of String) The application IDs to which the permission applies. Leave empty to apply to all applications.
+- `filters` (Set of String) The filters to apply to the action. Valid options are: NON_PRODUCTION_WORKFLOWS, PRODUCTION_WORKFLOWS, WORKFLOW_TEMPLATES.
 
 
 
