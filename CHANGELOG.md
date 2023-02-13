@@ -1,3 +1,9 @@
+# 0.14.3 (February 13,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_user_group: Update filters field in workflo, enviroments ,pipeline object in user group to be optional. ([#422](https://github.com/harness/terraform-provider-harness/issues/422))
+
 # 0.14.2 (February 07,2023) 
 
 ENHANCEMENTS:
