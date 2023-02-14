@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -15,8 +16,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+func TestAccResourceGitopsCluster(t *testing.T) {
+
+	// Account Level
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -27,7 +31,7 @@ func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsClusterAccountLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
@@ -44,28 +48,25 @@ func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
-}
 
-func TestAccResourceGitopsCluster_ProjectLevel(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
-	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
-	clusterName := id
-	resourceName := "harness_platform_gitops_cluster.test"
+	// Project Level
+	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name = id
+	clusterName = id
+	resourceName = "harness_platform_gitops_cluster.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
@@ -82,10 +83,11 @@ func TestAccResourceGitopsCluster_ProjectLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -145,7 +147,7 @@ func testAccResourceGitopsClusterAccountLevel(id string, accountId string, name 
 			}
 			lifecycle {
 				ignore_changes = [
-					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
 				]
 			}
 		}
@@ -185,7 +187,7 @@ func testAccResourceGitopsClusterProjectLevel(id string, accountId string, name 
 			}
 			lifecycle {
 				ignore_changes = [
-					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
 				]
 			}
 		}

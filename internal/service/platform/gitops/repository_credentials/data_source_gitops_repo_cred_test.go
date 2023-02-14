@@ -67,6 +67,7 @@ func testAccDataSourceRepoCred(id string, accountId string, name string, agentId
 		}
 
 		data "harness_platform_gitops_repo_cred" "test" {
+			depends_on = [harness_platform_gitops_repo_cred.test]
 			identifier = harness_platform_gitops_repo_cred.test.id
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
