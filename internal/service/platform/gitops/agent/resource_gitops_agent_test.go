@@ -15,7 +15,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceGitopsAgent_AccountLevel(t *testing.T) {
+func TestAccResourceGitopsAgent(t *testing.T) {
+	// Account Level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_agent.test"
@@ -58,15 +59,12 @@ func TestAccResourceGitopsAgent_AccountLevel(t *testing.T) {
 		},
 	})
 
-}
-
-func TestAccResourceGitopsAgent_ProjectLevel(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	resourceName := "harness_platform_gitops_agent.test"
-	agentName := id
-	namespace := "terraform-test"
-	updatedNamespace := namespace + "-updated"
+	//Project level
+	id = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	resourceName = "harness_platform_gitops_agent.test"
+	agentName = id
+	namespace = "terraform-test"
+	updatedNamespace = namespace + "-updated"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -93,7 +91,6 @@ func TestAccResourceGitopsAgent_ProjectLevel(t *testing.T) {
 			},
 		},
 	})
-
 }
 
 func testAccGetAgent(resourceName string, state *terraform.State) (*nextgen.V1Agent, error) {

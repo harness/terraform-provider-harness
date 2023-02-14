@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -12,7 +13,8 @@ import (
 
 func TestAccDataSourceGitopsCluster(t *testing.T) {
 
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -70,11 +72,12 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 			}
 			lifecycle {
 				ignore_changes = [
-					request.0.upsert,
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
 				]
 			}
 		}
 		data "harness_platform_gitops_cluster" "test" {
+			depends_on = [harness_platform_gitops_cluster.test]
 			identifier = harness_platform_gitops_cluster.test.id
 			account_id = "%[2]s"
 			project_id = harness_platform_project.test.id

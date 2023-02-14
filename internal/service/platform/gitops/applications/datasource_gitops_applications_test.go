@@ -113,6 +113,7 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 				agent_id = "%[4]s"
 		}
 		data "harness_platform_gitops_applications" "test"{
+			depends_on = [harness_platform_gitops_applications.test]
 			identifier = harness_platform_gitops_applications.test.id
 			account_id = "%[2]s"
 			project_id = harness_platform_project.test.id

@@ -88,6 +88,8 @@ func testAccResourceGitopsRepoCerts(id string, accountId string, name string, ag
 		resource "harness_platform_gitops_repo_cert" "test" {
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
 
  			request {
 				upsert = true

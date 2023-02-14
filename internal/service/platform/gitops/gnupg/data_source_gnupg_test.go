@@ -34,9 +34,20 @@ func TestAccDataSourceGitopsGnupg(t *testing.T) {
 
 func testAccDataSourceGitopsGnupg(id string, accountId string, name string, agentId string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}	
 	resource "harness_platform_gitops_gnupg" "test" {
 		account_id = "%[2]s"
 		agent_id = "%[4]s"
+		project_id = harness_platform_project.test.id
+		org_id = harness_platform_organization.test.id
 
 		 request {
 			upsert = true
@@ -53,6 +64,7 @@ func testAccDataSourceGitopsGnupg(id string, accountId string, name string, agen
 	
 
 	data "harness_platform_gitops_gnupg" "test" {
+		depends_on = [harness_platform_gitops_gnupg.test]
 		account_id = "%[2]s"
 		agent_id = "%[4]s"
 		identifier = harness_platform_gitops_gnupg.test.identifier

@@ -34,10 +34,11 @@ func TestAccResourceGitopsGnupg(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"org_id", "project_id"},
+				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -80,9 +81,20 @@ func testAccResourceGitopsGnupgDestroy(resourceName string) resource.TestCheckFu
 
 func testAccResourceGitopsGnupg(id string, accountId string, name string, agentId string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
 		resource "harness_platform_gitops_gnupg" "test" {
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
 
  			request {
 				upsert = true

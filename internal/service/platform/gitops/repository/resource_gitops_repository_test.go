@@ -13,7 +13,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceGitopsRepository_ProjectLevel(t *testing.T) {
+func TestAccResourceGitopsRepository(t *testing.T) {
+	// Project level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	repo := "https://github.com/willycoll/argocd-example-apps.git"
@@ -51,17 +52,14 @@ func TestAccResourceGitopsRepository_ProjectLevel(t *testing.T) {
 			},
 		},
 	})
-}
 
-func TestAccResourceGitopsRepository_AccountLevel(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	repo := "https://github.com/willycoll/argocd-example-apps.git"
-	repoName := id
-	repoNameUpdated := id + "_updated"
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	resourceName := "harness_platform_gitops_repository.test"
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	// Account level
+	id = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name = id
+	repo = "https://github.com/willycoll/argocd-example-apps.git"
+	repoName = id
+	repoNameUpdated = id + "_updated"
+	resourceName = "harness_platform_gitops_repository.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
