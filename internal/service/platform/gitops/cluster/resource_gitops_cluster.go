@@ -2,8 +2,6 @@ package cluster
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
