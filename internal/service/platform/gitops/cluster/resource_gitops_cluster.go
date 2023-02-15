@@ -567,13 +567,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 	d.Set("project_id", cl.ProjectIdentifier)
 	d.Set("agent_id", cl.AgentIdentifier)
 	d.Set("identifier", cl.Identifier)
-	tags := []string{}
-	for _, tag := range cl.Tags {
-		tags = append(tags, fmt.Sprintf("%s:%s", tag.Name, tag.Value))
-	}
-	if len(tags) > 0 {
-		d.Set("tags", tags)
-	}
+	d.Set("tags", cl.Tags))
 	// d.Set("created_at", cl.CreatedAt)
 	// d.Set("last_modified_at", cl.LastModifiedAt)
 	if cl.Cluster != nil {
