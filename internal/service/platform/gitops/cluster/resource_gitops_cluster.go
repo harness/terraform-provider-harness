@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -565,7 +566,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 	d.Set("project_id", cl.ProjectIdentifier)
 	d.Set("agent_id", cl.AgentIdentifier)
 	d.Set("identifier", cl.Identifier)
-	d.Set("tags", cl.Tags))
+	d.Set("tags", cl.Tags)
 	// d.Set("created_at", cl.CreatedAt)
 	// d.Set("last_modified_at", cl.LastModifiedAt)
 	if cl.Cluster != nil {
