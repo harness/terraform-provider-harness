@@ -21,10 +21,11 @@ type Servicev1Cluster struct {
 	// Project Identifier for the Entity.
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 	// Agent identifier for entity.
-	AgentIdentifier string           `json:"agentIdentifier,omitempty"`
-	Identifier      string           `json:"identifier,omitempty"`
-	Cluster         *ClustersCluster `json:"cluster,omitempty"`
-	CreatedAt       time.Time        `json:"createdAt,omitempty"`
-	LastModifiedAt  time.Time        `json:"lastModifiedAt,omitempty"`
-	Stale           bool             `json:"stale,omitempty"`
+	AgentIdentifier string            `json:"agentIdentifier,omitempty"`
+	Identifier      string            `json:"identifier,omitempty"`
+	Cluster         *ClustersCluster  `json:"cluster,omitempty"`
+	CreatedAt       time.Time         `json:"createdAt,omitempty"`
+	LastModifiedAt  time.Time         `json:"lastModifiedAt,omitempty"`
+	Stale           bool              `json:"stale,omitempty"`
+	Tags            map[string]string `json:"tags,omitempty"`
 }
