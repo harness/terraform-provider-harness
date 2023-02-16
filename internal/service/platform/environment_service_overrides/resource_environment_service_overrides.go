@@ -23,6 +23,11 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 		Importer:      helpers.ServiceOverrideResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the service overrides.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
@@ -133,6 +138,7 @@ func readEnvironmentServiceOverridesList(d *schema.ResourceData, env *nextgen.Pa
 func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.ServiceOverrideResponse) {
 	serviceOverrideID := so.ServiceRef + "-" + so.EnvironmentRef
 	d.SetId(serviceOverrideID)
+	d.Set("identifier", serviceOverrideID)
 	d.Set("org_id", so.OrgIdentifier)
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
