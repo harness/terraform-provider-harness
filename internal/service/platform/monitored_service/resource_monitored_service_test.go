@@ -3,6 +3,8 @@ package monitored_service_test
 import (
 	"fmt"
 	"github.com/antihax/optional"
+	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -21,6 +23,9 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
@@ -39,6 +44,41 @@ func TestAccResourceMonitoredService(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredService(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccProvider.Meta().(*internal.Session).GetPlatformClient()
+					resp, _, err := c.MonitoredServiceApi.DeleteMonitoredService(ctx, c.AccountId, id, id, id)
+					require.NoError(t, err)
+					require.NotNil(t, resp)
+					require.Equal(t, resp.Resource, true)
+				},
+				Config:             testAccResourceMonitoredService(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
