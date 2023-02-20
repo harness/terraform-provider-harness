@@ -44,6 +44,38 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	})
 }
 
+/*func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredService(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccProvider.Meta().(*internal.Session).GetPlatformClient()
+					resp, _, err := c.MonitoredServiceApi.DeleteMonitoredService(ctx, c.AccountId, id, id, id)
+					require.NoError(t, err)
+					require.NotNil(t, resp)
+					require.Equal(t, resp.Resource, true)
+				},
+				Config:             testAccResourceMonitoredService(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}*/
+
 func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredServiceDto, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
