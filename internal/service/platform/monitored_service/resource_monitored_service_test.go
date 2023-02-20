@@ -176,8 +176,6 @@ func testAccResourceMonitoredService(id string, name string) string {
 					notification_rule_ref = "notification_rule_ref1"
 					enabled = false
 				}
-				template_ref = "template_ref"
-				version_label = "version_label"
 				enabled = true
 			}
 		}

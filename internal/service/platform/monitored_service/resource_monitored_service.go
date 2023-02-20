@@ -203,12 +203,12 @@ func ResourceMonitoredService() *schema.Resource {
 						"template_ref": {
 							Description: "Template reference for the monitored service.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 						"version_label": {
 							Description: "Template version label for the monitored service.",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 						"enabled": {
 							Description: "Enable or disable the monitored service.",
