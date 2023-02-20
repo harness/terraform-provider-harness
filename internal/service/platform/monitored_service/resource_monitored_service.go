@@ -258,11 +258,6 @@ func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, m
 	resp, httpResp, err := c.MonitoredServiceApi.GetMonitoredService(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
-		if err.Error() == "400 Bad Request" {
-			d.SetId("")
-			d.MarkNewResource()
-			return nil
-		}
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 

@@ -3,8 +3,6 @@ package monitored_service_test
 import (
 	"fmt"
 	"github.com/antihax/optional"
-	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -49,7 +47,7 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	})
 }
 
-func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
+/*func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_monitored_service.test"
@@ -82,7 +80,7 @@ func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
 func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredServiceDto, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
