@@ -71,8 +71,6 @@ resource "harness_platform_monitored_service" "example" {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
     enabled       = true
   }
 }
@@ -105,9 +103,7 @@ Required:
 - `health_sources` (Block Set, Min: 1, Max: 16) Set of health sources for the monitored service. (see [below for nested schema](#nestedblock--request--health_sources))
 - `name` (String) Name for the monitored service.
 - `service_ref` (String) Service reference for the monitored service.
-- `template_ref` (String) Template reference for the monitored service.
 - `type` (String) Type of the monitored service.
-- `version_label` (String) Template version label for the monitored service.
 
 Optional:
 
@@ -117,6 +113,8 @@ Optional:
 - `environment_ref_list` (List of String) Environment reference list for the monitored service.
 - `notification_rule_refs` (Block List) Notification rule references for the monitored service. (see [below for nested schema](#nestedblock--request--notification_rule_refs))
 - `tags` (Set of String) Tags for the monitored service. comma-separated key value string pairs.
+- `template_ref` (String) Template reference for the monitored service.
+- `version_label` (String) Template version label for the monitored service.
 
 <a id="nestedblock--request--change_sources"></a>
 ### Nested Schema for `request.change_sources`
