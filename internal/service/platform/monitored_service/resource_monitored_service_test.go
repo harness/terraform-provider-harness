@@ -21,9 +21,6 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
 		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
@@ -55,9 +52,6 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceMonitoredService(id, name),
