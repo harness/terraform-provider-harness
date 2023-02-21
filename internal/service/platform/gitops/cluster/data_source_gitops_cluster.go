@@ -116,6 +116,14 @@ func DataSourceGitopsCluster() *schema.Resource {
 								},
 							},
 						},
+						"tags": {
+							Description: "Tags associated with the clusters",
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 						"id": {
 							Description: "Cluster server URL or the cluster name.",
 							Type:        schema.TypeList,

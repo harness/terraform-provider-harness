@@ -671,19 +671,24 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 
 func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterCreateRequest {
 	var upsert bool
+	var tags map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 		upsert = request["upsert"].(bool)
 	}
+	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
+		tags = helpers.ExpandTags(attr)
+	}
 	return &nextgen.ClustersClusterCreateRequest{
 		Upsert:  upsert,
-		Tags:    helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
+		Tags:    tags,
 		Cluster: buildClusterDetails(d),
 	}
 }
 
 func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterUpdateRequest {
 	var request map[string]interface{}
+	var tags map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
 	}
@@ -706,13 +711,17 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 		}
 	}
 
+	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
+		tags = helpers.ExpandTags(attr)
+	}
+
 	return &nextgen.ClustersClusterUpdateRequest{
 		Cluster:       buildClusterDetails(d),
 		UpdatedFields: updatedFields,
+		Tags:          tags,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
 		},
-		Tags: helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 	}
 }
 
