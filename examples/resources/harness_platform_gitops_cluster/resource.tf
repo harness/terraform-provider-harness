@@ -7,6 +7,7 @@ resource "harness_platform_gitops_cluster" "example" {
 
   request {
     upsert = false
+    tags: {}
     cluster {
       server = "https://kubernetes.default.svc"
       name   = "name"
