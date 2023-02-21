@@ -20,7 +20,7 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 			"identifier": {
 				Description: "identifier of the service overrides.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Optional:    true,
 			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
