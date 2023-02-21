@@ -1,6 +1,6 @@
 
-<a name="0.3.15"></a>
-## 0.3.15 (2023-02-15)
+<a name="0.3.16"></a>
+## 0.3.16 (2023-02-21)
 
 ### Add
 
@@ -25,13 +25,11 @@
 
 ### Adding
 
-* Adding dto files
+* adding input variables
 
 ### Adding
 
-* adding input variables
-* adding test
-* adding better name
+* Adding dto files
 
 ### Azure
 
@@ -57,14 +55,12 @@
 
 ### Fix
 
-* Fix main
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 
 ### Fix
 
 * fix environment variable overrides with secrets
-* fix cac error handling
 
 ### Fixing
 
@@ -98,6 +94,8 @@
 
 ### Release
 
+* Release version 0.3.15 02-15-2023
+* Release v0.3.15
 * Release version 0.3.14 01-19-2023
 * Release v0.3.14
 * Release version 0.3.13 12-28-2022
@@ -170,8 +168,6 @@
 * Release v0.2.11
 * Release version 0.2.10 10-19-2022
 * Release v0.2.10
-* Release version 0.2.9 10-19-2022
-* Release v0.2.9
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -209,8 +205,6 @@
 * Release v0.1.25
 * Release version 0.1.24 05-11-2022
 * Release v0.1.24
-* Release version 0.1.23 05-11-2022
-* Release v0.1.23
 
 ### Removing
 
@@ -263,6 +257,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
 * Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
 * Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
