@@ -13,5 +13,6 @@ type ClustersClusterUpdateRequest struct {
 	Cluster       *ClustersCluster   `json:"cluster,omitempty"`
 	UpdatedFields []string           `json:"updatedFields,omitempty"`
 	UpdateMask    *ProtobufFieldMask `json:"updateMask,omitempty"`
+	Tags          map[string]string  `json:"tags,omitempty"`
 	Id            *ClustersClusterId `json:"id,omitempty"`
 }
