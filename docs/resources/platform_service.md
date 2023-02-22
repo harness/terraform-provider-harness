@@ -75,12 +75,12 @@ resource "harness_platform_service" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
 - `description` (String) Description of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Service YAML
 

@@ -23,7 +23,7 @@ func ResourceEnvironment() *schema.Resource {
 		UpdateContext: resourceEnvironmentCreateOrUpdate,
 		DeleteContext: resourceEnvironmentDelete,
 		CreateContext: resourceEnvironmentCreateOrUpdate,
-		Importer:      helpers.ProjectResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"color": {
@@ -46,7 +46,7 @@ func ResourceEnvironment() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelResourceSchema(resource.Schema)
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -55,8 +55,8 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	resp, httpResp, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
@@ -100,8 +100,8 @@ func resourceEnvironmentDelete(ctx context.Context, d *schema.ResourceData, meta
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, httpResp, err := c.EnvironmentsApi.DeleteEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiDeleteEnvironmentV2Opts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
