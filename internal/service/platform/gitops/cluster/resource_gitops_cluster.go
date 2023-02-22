@@ -675,9 +675,9 @@ func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterC
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 		upsert = request["upsert"].(bool)
-	}
-	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
-		tags = helpers.ExpandTags(attr)
+		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+			tags = helpers.ExpandTags(tag)
+		}
 	}
 	return &nextgen.ClustersClusterCreateRequest{
 		Upsert:  upsert,
@@ -697,6 +697,9 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 		for _, v := range request["updated_fields"].([]interface{}) {
 			updatedFields = append(updatedFields, v.(string))
 		}
+		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+			tags = helpers.ExpandTags(tag)
+		}
 	}
 
 	var updateMask map[string]interface{}
@@ -709,10 +712,6 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 		for _, v := range updateMask["paths"].([]interface{}) {
 			updateMaskPath = append(updateMaskPath, v.(string))
 		}
-	}
-
-	if attr := d.Get("tags").(*schema.Set).List(); len(attr) > 0 {
-		tags = helpers.ExpandTags(attr)
 	}
 
 	return &nextgen.ClustersClusterUpdateRequest{
