@@ -574,7 +574,6 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 	d.Set("project_id", cl.ProjectIdentifier)
 	d.Set("agent_id", cl.AgentIdentifier)
 	d.Set("identifier", cl.Identifier)
-	d.Set("tags", helpers.FlattenTags(cl.Tags))
 	// d.Set("created_at", cl.CreatedAt)
 	// d.Set("last_modified_at", cl.LastModifiedAt)
 	if cl.Cluster != nil {
@@ -664,6 +663,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 		}
 		clusterList = append(clusterList, cluster)
 		request["cluster"] = clusterList
+		request["tags"] = helpers.FlattenTags(cl.Tags)
 		requestList = append(requestList, request)
 		d.Set("request", requestList)
 	}

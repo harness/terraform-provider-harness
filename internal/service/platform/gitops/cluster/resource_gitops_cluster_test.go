@@ -58,6 +58,11 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 	})
 
 	// Account level with Optional Tags
+	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name = id
+	clusterName = id
+	resourceName = "harness_platform_gitops_cluster.test2"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -186,7 +191,7 @@ func testAccResourceGitopsClusterAccountLevel(id string, accountId string, name 
 
 func testAccResourceGitopsClusterAccountLevelTags(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_gitops_cluster" "test" {
+		resource "harness_platform_gitops_cluster" "test2" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
