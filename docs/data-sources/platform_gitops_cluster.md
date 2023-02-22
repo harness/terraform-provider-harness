@@ -68,6 +68,7 @@ Read-Only:
 
 - `cluster` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster))
 - `id` (List of Object) (see [below for nested schema](#nestedobjatt--request--id))
+- `tags` (Set of String)
 - `update_mask` (List of Object) (see [below for nested schema](#nestedobjatt--request--update_mask))
 - `updated_fields` (List of String)
 - `upsert` (Boolean)
