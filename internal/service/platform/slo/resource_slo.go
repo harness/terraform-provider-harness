@@ -178,6 +178,11 @@ func resourceSloRead(ctx context.Context, d *schema.ResourceData, meta interface
 	resp, httpResp, err := c.SloApi.GetServiceLevelObjectiveNg(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier)
 
 	if err != nil {
+		if err.Error() == "404 Not Found" {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 

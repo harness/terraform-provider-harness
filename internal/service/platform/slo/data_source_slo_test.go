@@ -18,6 +18,9 @@ func TestAccDataSourceSlo(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceSlo(id, name),
@@ -62,6 +65,9 @@ func testAccDataSourceSlo(id string, name string) string {
 		}
 
 		resource "harness_platform_monitored_service" "test" {
+			depends_on = [
+				time_sleep.wait_4_seconds
+			]
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			identifier = "%[1]s"
@@ -179,6 +185,11 @@ func testAccDataSourceSlo(id string, name string) string {
 			identifier = harness_platform_slo.test.identifier
 			org_id = harness_platform_slo.test.org_id
 			project_id = harness_platform_slo.test.project_id
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_environment.test, harness_platform_service.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
