@@ -63,10 +63,17 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	var resp nextgen.ResponseDtoServiceResponse
 	var httpResp *http.Response
 	svc := buildService(d)
+	id := d.Id()
 
-	resp, httpResp, err = c.ServicesApi.UpsertServiceV2(ctx, c.AccountId, &nextgen.ServicesApiUpsertServiceV2Opts{
-		Body: optional.NewInterface(svc),
-	})
+	if id == "" {
+		resp, httpResp, err = c.ServicesApi.CreateServiceV2(ctx, c.AccountId, &nextgen.ServicesApiCreateServiceV2Opts{
+			Body: optional.NewInterface(svc),
+		})
+	} else {
+		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &nextgen.ServicesApiUpdateServiceV2Opts{
+			Body: optional.NewInterface(svc),
+		})
+	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
