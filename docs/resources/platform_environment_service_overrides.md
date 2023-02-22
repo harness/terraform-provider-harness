@@ -65,6 +65,10 @@ resource "harness_platform_environment_service_overrides" "example" {
 - `service_id` (String) The service ID to which the overrides applies.
 - `yaml` (String) Environment Service Overrides YAML
 
+### Optional
+
+- `identifier` (String) identifier of the service overrides.
+
 ### Read-Only
 
 - `id` (String) The ID of this resource.

@@ -1,3 +1,10 @@
+# 0.14.4 (February 22,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_environment_service_overrides: Fix import flow ([#423](https://github.com/harness/terraform-provider-harness/issues/423))
+* resource/harness_platform_monitored_service: Fields template_ref and version_label shouldn't be required for harness_platform_monitored_service. ([#430](https://github.com/harness/terraform-provider-harness/issues/430))
+
 # 0.14.3 (February 13,2023) 
 
 ENHANCEMENTS:

@@ -32,6 +32,7 @@ data "harness_platform_environment_service_overrides" "test" {
 
 ### Optional
 
+- `identifier` (String) identifier of the service overrides.
 - `service_id` (String) The service ID to which the overrides applies.
 
 ### Read-Only
