@@ -1,3 +1,3 @@
-```release-note:bug
-resource/harness_platform_environment_service_overrides: Fix import flow
+```release-note:enhancement
+resource/harness_platform_gitops_cluster: Added support for Optional Tags in cluster
 ```
