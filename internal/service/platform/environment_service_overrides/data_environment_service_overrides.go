@@ -17,6 +17,11 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 		ReadContext: dataSourceEnvironmentServiceOverridesRead,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the service overrides.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
