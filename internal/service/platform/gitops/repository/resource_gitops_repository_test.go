@@ -148,12 +148,7 @@ func testAccResourceGitopsRepositoryProjectLevel(id string, name string, repo st
 			update_mask {
 				paths = ["name"]
 			}
-			
-			lifecycle {
-				ignore_changes = [
-					repo.0.connection_type
-				]
-			}
+
 		}
 	`, id, name, repo, repoName, agentId, accountId)
 }
@@ -174,12 +169,7 @@ func testAccResourceGitopsRepositoryAccountLevel(id string, name string, repo st
 			update_mask {
 				paths = ["name"]
 			}
-			
-			lifecycle {
-				ignore_changes = [
-					repo.0.connection_type
-				]
-			}
+
 		}
 	`, id, name, repo, repoName, agentId, accountId)
 }

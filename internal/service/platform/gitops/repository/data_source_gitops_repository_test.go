@@ -61,11 +61,6 @@ func testAccDataSourceGitopsRepository(id string, name string, repo string, repo
 				paths = ["name"]
 			}
 
-			lifecycle {
-				ignore_changes = [
-					repo.0.connection_type
-				]
-			}
 		}
 		
 		data "harness_platform_gitops_repository" "test" {
