@@ -26,8 +26,8 @@ func TestAccDataSourceGitOpsRepoCert(t *testing.T) {
 			{
 				Config: testAccDataSourceRepoCert(id, accountId, name, agentId, clusterName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 		},
@@ -36,21 +36,8 @@ func TestAccDataSourceGitOpsRepoCert(t *testing.T) {
 
 func testAccDataSourceRepoCert(id string, accountId string, name string, agentId string, clusterName string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-			org_id = harness_platform_organization.test.id
-		}
-
 		resource "harness_platform_gitops_repo_cert" "test" {
 			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
 
  			request {
@@ -71,8 +58,6 @@ func testAccDataSourceRepoCert(id string, accountId string, name string, agentId
 		data "harness_platform_gitops_repo_cert" "test" {
 			depends_on = [harness_platform_gitops_repo_cert.test]
 			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
 		}
 `, id, accountId, name, agentId, clusterName)
