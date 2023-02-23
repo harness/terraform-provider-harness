@@ -55,6 +55,48 @@ func TestAccDataSourceEnvironmentByName(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceEnvironmentAtAccountLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_environment.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceEnvironmentAccountLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceEnvironmentAtOrgLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_environment.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceEnvironmentOrgLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+		},
+	})
+}
+
 func testAccDataSourceEnvironment(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
@@ -82,6 +124,43 @@ func testAccDataSourceEnvironment(id string, name string) string {
 			identifier = harness_platform_environment.test.id
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_environment.test.project_id
+		}
+`, id, name)
+}
+
+func testAccDataSourceEnvironmentAccountLevel(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			color = "#0063F7"
+			type = "PreProduction"
+		}
+
+		data "harness_platform_environment" "test" {
+			identifier = harness_platform_environment.test.id
+		}
+`, id, name)
+}
+
+func testAccDataSourceEnvironmentOrgLevel(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			color = "#0063F7"
+			type = "PreProduction"
+		}
+
+		data "harness_platform_environment" "test" {
+			identifier = harness_platform_environment.test.id
+			org_id = harness_platform_environment.test.org_id
 		}
 `, id, name)
 }

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -38,7 +37,7 @@ func DataSourceEnvironment() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }
@@ -56,14 +55,14 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 	if id != "" {
 		var resp nextgen.ResponseDtoEnvironmentResponse
 		resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 		env = resp.Data.Environment
 	} else if name != "" {
 		env, httpResp, err = c.EnvironmentsApi.GetEnvironmentByName(ctx, c.AccountId, name, nextgen.GetEnvironmentByNameOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
 		return diag.FromErr(errors.New("either identifier or name must be specified"))
