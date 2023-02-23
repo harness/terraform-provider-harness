@@ -1,3 +1,14 @@
+# 0.14.5 (February 23,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_service: added support for account and org level.
+resource/harness_platform_environment: added support for account and org level. ([#432](https://github.com/harness/terraform-provider-harness/issues/432))
+
+BUG FIXES:
+
+* resource/harness_platform_secret_file: Fix secret file resource. ([#437](https://github.com/harness/terraform-provider-harness/issues/437))
+
 # 0.14.4 (February 22,2023) 
 
 BUG FIXES:
