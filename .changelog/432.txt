@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_service: added support for account and org level.
+resource/harness_platform_environment: added support for account and org level.
+```
