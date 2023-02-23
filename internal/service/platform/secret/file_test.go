@@ -201,6 +201,12 @@ func testAccResourceSecret_fileOrgLevel(id string, name string) string {
 		tags = ["foo:bar"]
 		file_path = "%[3]s"
 		secret_manager_identifier = "harnessSecretManager"
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_organization.test]
+		destroy_duration = "4s"
 	}
 		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
