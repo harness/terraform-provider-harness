@@ -189,6 +189,7 @@ func testAccDataSourceEnvironmentByName(id string, name string) string {
 		}
 
 		data "harness_platform_environment" "test" {
+			identifier = harness_platform_environment.test.id
 			name = harness_platform_environment.test.name
 			org_id = harness_platform_environment.test.org_id
 			project_id = harness_platform_environment.test.project_id

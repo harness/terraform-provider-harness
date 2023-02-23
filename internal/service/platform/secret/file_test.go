@@ -66,7 +66,10 @@ func TestAccSecretFileOrgLevel(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccSecretDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccSecretDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceSecret_fileOrgLevel(id, name),
@@ -181,7 +184,7 @@ func testAccResourceSecret_fileProjectLevel(id string, name string) string {
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_project.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
@@ -206,7 +209,7 @@ func testAccResourceSecret_fileOrgLevel(id string, name string) string {
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_organization.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
