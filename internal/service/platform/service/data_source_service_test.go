@@ -32,6 +32,49 @@ func TestAccDataSourceService(t *testing.T) {
 	})
 }
 
+func TestAccDataSourceServiceAccountLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceServiceAccountLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceServiceOrgLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceServiceOrgLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+		},
+	})
+}
+
 func TestAccDataSourceServiceByName(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
@@ -109,6 +152,39 @@ func testAccDataSourceServiceByName(id string, name string) string {
 			name = harness_platform_service.test.name
 			org_id = harness_platform_service.test.org_id
 			project_id = harness_platform_service.test.project_id
+		}
+`, id, name)
+}
+
+func testAccDataSourceServiceAccountLevel(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_service" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		data "harness_platform_service" "test" {
+			identifier = harness_platform_service.test.identifier
+		}
+`, id, name)
+}
+
+func testAccDataSourceServiceOrgLevel(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_service" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+		}
+
+		data "harness_platform_service" "test" {
+			identifier = harness_platform_service.test.identifier
+			org_id = harness_platform_service.test.org_id
 		}
 `, id, name)
 }

@@ -75,12 +75,12 @@ resource "harness_platform_service" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
 - `description` (String) Description of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Service YAML
 
@@ -93,6 +93,12 @@ resource "harness_platform_service" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import service 
+# Import account level service 
+terraform import harness_platform_service.example <service_id>
+
+# Import org level service 
+terraform import harness_platform_service.example <org_id>/<service_id>
+
+# Import project level service 
 terraform import harness_platform_service.example <org_id>/<project_id>/<service_id>
 ```

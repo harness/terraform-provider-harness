@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -28,7 +27,7 @@ func DataSourceService() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }
@@ -46,14 +45,14 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 	if id != "" {
 		var resp nextgen.ResponseDtoServiceResponse
 		resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 		svc = resp.Data.Service
 	} else if name != "" {
 		svc, httpResp, err = c.ServicesApi.GetServiceByName(ctx, c.AccountId, name, nextgen.GetServiceByNameOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
 		return diag.FromErr(errors.New("either identifier or name must be specified"))
