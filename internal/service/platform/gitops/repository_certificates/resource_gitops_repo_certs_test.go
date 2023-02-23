@@ -75,21 +75,9 @@ func testAccResourceGitopsRepoCertsDestroy(resourceName string) resource.TestChe
 
 func testAccResourceGitopsRepoCerts(id string, accountId string, name string, agentId string, clusterName string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-			org_id = harness_platform_organization.test.id
-		}
 		resource "harness_platform_gitops_repo_cert" "test" {
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 
  			request {
 				upsert = true
