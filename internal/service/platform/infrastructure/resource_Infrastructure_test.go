@@ -31,6 +31,8 @@ func TestAccResourceInfrastructure(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
@@ -39,6 +41,8 @@ func TestAccResourceInfrastructure(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
@@ -75,6 +79,8 @@ func TestAccResourceMultipleInfrastructure(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName2, "id", id2),
 					resource.TestCheckResourceAttr(resourceName2, "name", name2),
 					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
@@ -85,6 +91,86 @@ func TestAccResourceMultipleInfrastructure(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName2, "id", id2),
 					resource.TestCheckResourceAttr(resourceName2, "name", updatedName2),
 					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceInfrastructureAccountLevel(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInfrastructureAccountLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+				),
+			},
+			{
+				Config: testAccResourceInfrastructureAccountLevel(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceInfrastructureOrgLevel(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInfrastructureOrgLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+				),
+			},
+			{
+				Config: testAccResourceInfrastructureOrgLevel(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 				),
 			},
 			{
@@ -300,4 +386,82 @@ func testAccResourceMultipleInfrastructure(id string, name string, id2 string, n
 		}
 
 `, id, name, id2, name2)
+}
+
+func testAccResourceInfrastructureAccountLevel(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+  	}
+
+		resource "harness_platform_infrastructure" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			env_id = harness_platform_environment.test.id
+			type = "KubernetesDirect"
+			yaml = <<-EOT
+			   infrastructureDefinition:
+         name: "%[2]s"
+         identifier: "%[1]s"
+         description: ""
+         tags:
+           asda: ""
+         environmentRef: ${harness_platform_environment.test.id}
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+		}
+
+`, id, name)
+}
+
+func testAccResourceInfrastructureOrgLevel(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+  	}
+
+		resource "harness_platform_infrastructure" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			env_id = harness_platform_environment.test.id
+			type = "KubernetesDirect"
+			yaml = <<-EOT
+			   infrastructureDefinition:
+         name: "%[2]s"
+         identifier: "%[1]s"
+         description: ""
+         tags:
+           asda: ""
+         orgIdentifier: ${harness_platform_organization.test.id}
+         environmentRef: ${harness_platform_environment.test.id}
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+		}
+
+`, id, name)
 }
