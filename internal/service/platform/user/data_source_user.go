@@ -7,7 +7,6 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
-	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -37,7 +36,7 @@ func DataSourceUser() *schema.Resource {
 			"name": {
 				Description: "Name of the user.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"email": {
 				Description: "The email of the user.",
@@ -66,11 +65,9 @@ func DataSourceUser() *schema.Resource {
 func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	emails := []string{}
-	var email = ""
-	if attr, ok := d.GetOk("emails"); ok {
-		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
-		email = emails[0]
+	var email string
+	if attr, ok := d.GetOk("email"); ok {
+		email = attr.(string)
 	}
 
 	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{

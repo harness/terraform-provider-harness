@@ -2,6 +2,7 @@ package user_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -14,10 +15,9 @@ import (
 )
 
 func TestAccResourceUser(t *testing.T) {
-	t.Skip()
-	name := "Rajendra Baviskar"
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	updatedName := fmt.Sprintf("%s_updated", name)
+	name := id
+	email := strings.ToLower(id) + "@harness.io"
 	resourceName := "harness_platform_user.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -26,35 +26,33 @@ func TestAccResourceUser(t *testing.T) {
 		CheckDestroy:      testAccUserDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceUser(id, name),
+				Config: testAccResourceUser(id, name, email),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					// resource.TestCheckResourceAttr(resourceName, "externally_managed", "false"),
 				),
 			},
-			{
-				Config: testAccResourceUser(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-				),
-			},
+			// TODO: Test for update throwing error
+			// {
+			// 	Config: testAccResourceUser(id, name, email),
+			// 	Check: require.NoError(t, err),
+			// },
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"emails", "role_bindings", "user_groups"},
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"role_bindings", "user_groups"},
+				ImportStateIdFunc:       acctest.UserResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
 func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
+	email := strings.ToLower(id) + "@harness.io"
 	resourceName := "harness_platform_user.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -62,7 +60,7 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceUser(id, name),
+				Config: testAccResourceUser(id, name, email),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "org_id", name),
 				),
@@ -77,7 +75,7 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 					})
 					require.NoError(t, err)
 				},
-				Config:   testAccResourceUser(id, name),
+				Config:   testAccResourceUser(id, name, email),
 				PlanOnly: true,
 			},
 		},
@@ -95,12 +93,12 @@ func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextg
 
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
-	emails := r.Primary.Attributes["emails"]
+	email := r.Primary.Attributes["email"]
 
 	resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
 		OrgIdentifier:     buildField(r, "org_id"),
 		ProjectIdentifier: buildField(r, "project_id"),
-		SearchTerm:        optional.NewString(emails),
+		SearchTerm:        optional.NewString(email),
 	})
 
 	if err != nil || resp.Data.Empty {
@@ -121,7 +119,7 @@ func testAccUserDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourceUser(id string, name string) string {
+func testAccResourceUser(id string, name string, email string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -138,8 +136,7 @@ func testAccResourceUser(id string, name string) string {
 		resource "harness_platform_user" "test" {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			name = "%[2]s"
-			emails = ["rajendra.baviskar@harness.io"]
+			email = "%[3]s"
 			user_groups = ["_project_all_users"]
 			role_bindings {
 				resource_group_identifier = "_all_project_level_resources"
@@ -156,5 +153,5 @@ func testAccResourceUser(id string, name string) string {
 			}
 			
 		}
-`, id, name)
+`, id, name, email)
 }

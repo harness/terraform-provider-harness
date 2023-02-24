@@ -205,7 +205,8 @@ var UserResourceImporter = &schema.ResourceImporter{
 		parts := strings.Split(d.Id(), "/")
 		d.Set("org_id", parts[0])
 		d.Set("project_id", parts[1])
-		d.SetId(parts[2])
+		d.Set("email", parts[2])
+		d.SetId(parts[3])
 
 		return []*schema.ResourceData{d}, nil
 	},

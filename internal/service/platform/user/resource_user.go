@@ -47,7 +47,7 @@ func ResourceUser() *schema.Resource {
 			"email": {
 				Description: "The email of the user.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"disabled": {
 				Description: "Whether or not the user account is disabled.",
@@ -63,14 +63,7 @@ func ResourceUser() *schema.Resource {
 				Description: "Whether or not the user account is externally managed.",
 				Type:        schema.TypeBool,
 				Computed:    true,
-			},
-			"emails": {
-				Description: "The email of the user.",
-				Type:        schema.TypeSet,
-				Required:    true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
+				Optional:    true,
 			},
 			"user_groups": {
 				Description: "The user group of the user.",
@@ -122,11 +115,9 @@ func ResourceUser() *schema.Resource {
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	emails := []string{}
 	var email = ""
-	if attr, ok := d.GetOk("emails"); ok {
-		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
-		email = emails[0]
+	if attr, ok := d.GetOk("email"); ok {
+		email = attr.(string)
 	}
 
 	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
@@ -159,39 +150,43 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	var httpResp *http.Response
 
 	if id == "" {
+		// if _, ok := d.GetOk("disabled"); ok {
+		// 	diag.Errorf("The field disabled can only be provided during update operation.")
+		// }
+		// if _, ok := d.GetOk("locked"); ok {
+		// 	diag.Errorf("The field locked can only be provided during update operation.")
+		// }
+		// if _, ok := d.GetOk("externally_managed"); ok {
+		// 	diag.Errorf("The field externallyManaged can only be provided during update operation.")
+		// }
 		addUserBody := createAddUserBody(d)
 		_, httpResp, err = c.UserApi.AddUsers(ctx, *addUserBody, c.AccountId, &nextgen.UserApiAddUsersOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		updateUSerBody := updateAddUserBody(d)
-		_, httpResp, err = c.UserApi.UpdateUserInfo(ctx, c.AccountId, &nextgen.UserApiUpdateUserInfoOpts{
-			Body: optional.NewInterface(updateUSerBody),
-		})
+		//TODO: Write test for this.
+		diag.Errorf("Update operation is not allowed for User resource.")
+		// updateUserBody := updateAddUserBody(d)
+		// _, httpResp, err = c.UserApi.UpdateUserInfo(ctx, c.AccountId, &nextgen.UserApiUpdateUserInfoOpts{
+		// 	Body: optional.NewInterface(updateUserBody),
+		// })
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	emails := []string{}
-	if attr, ok := d.GetOk("emails"); ok {
-		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	var email = ""
+	if attr, ok := d.GetOk("email"); ok {
+		email = attr.(string)
 	}
 
-	var email = emails[0]
 	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		SearchTerm:        optional.NewString(email),
 	})
-
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -220,8 +215,8 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interf
 func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 
 	var addUsersDto nextgen.AddUsersDto
-	if attr, ok := d.GetOk("emails"); ok {
-		addUsersDto.Emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	if attr, ok := d.GetOk("email"); ok {
+		addUsersDto.Emails = []string{attr.(string)}
 	}
 
 	if attr, ok := d.GetOk("user_groups"); ok {
@@ -261,12 +256,15 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	return &addUsersDto
 }
 
-func updateAddUserBody(d *schema.ResourceData) *nextgen.UserInfo {
-	return &nextgen.UserInfo{
-		Uuid: d.Get("identifier").(string),
-		Name: d.Get("name").(string),
-	}
-}
+// func updateAddUserBody(d *schema.ResourceData) *nextgen.UserInfo {
+// 	return &nextgen.UserInfo{
+// 		Uuid:              d.Get("identifier").(string),
+// 		Name:              d.Get("name").(string),
+// 		Email:             d.Get("email").(string),
+// 		ExternallyManaged: d.Get("externally_managed").(bool),
+// 	}
+// 	//TODO: Add locked, disabled here
+// }
 
 func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggregate) {
 	userInfoList := userInfo.Content
@@ -276,8 +274,7 @@ func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggr
 }
 
 func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {
-	d.SetId(UserAggregate.User.Uuid)
-	d.Set("identifier", UserAggregate.User.Uuid)
+	d.SetId(UserAggregate.User.Email)
 	d.Set("name", UserAggregate.User.Name)
 	d.Set("email", UserAggregate.User.Email)
 	d.Set("locked", UserAggregate.User.Locked)
