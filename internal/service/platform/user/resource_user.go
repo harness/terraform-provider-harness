@@ -42,7 +42,7 @@ func ResourceUser() *schema.Resource {
 			"name": {
 				Description: "Name of the user.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"email": {
 				Description: "The email of the user.",
@@ -63,10 +63,9 @@ func ResourceUser() *schema.Resource {
 				Description: "Whether or not the user account is externally managed.",
 				Type:        schema.TypeBool,
 				Computed:    true,
-				Optional:    true,
 			},
 			"user_groups": {
-				Description: "The user group of the user.",
+				Description: "The user group of the user. Cannot be updated.",
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem: &schema.Schema{
@@ -74,7 +73,7 @@ func ResourceUser() *schema.Resource {
 				},
 			},
 			"role_bindings": {
-				Description: "Role Bindings of the user.",
+				Description: "Role Bindings of the user. Cannot be updated.",
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem: &schema.Resource{
@@ -150,27 +149,13 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	var httpResp *http.Response
 
 	if id == "" {
-		// if _, ok := d.GetOk("disabled"); ok {
-		// 	diag.Errorf("The field disabled can only be provided during update operation.")
-		// }
-		// if _, ok := d.GetOk("locked"); ok {
-		// 	diag.Errorf("The field locked can only be provided during update operation.")
-		// }
-		// if _, ok := d.GetOk("externally_managed"); ok {
-		// 	diag.Errorf("The field externallyManaged can only be provided during update operation.")
-		// }
 		addUserBody := createAddUserBody(d)
 		_, httpResp, err = c.UserApi.AddUsers(ctx, *addUserBody, c.AccountId, &nextgen.UserApiAddUsersOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		//TODO: Write test for this.
 		diag.Errorf("Update operation is not allowed for User resource.")
-		// updateUserBody := updateAddUserBody(d)
-		// _, httpResp, err = c.UserApi.UpdateUserInfo(ctx, c.AccountId, &nextgen.UserApiUpdateUserInfoOpts{
-		// 	Body: optional.NewInterface(updateUserBody),
-		// })
 	}
 
 	if err != nil {
@@ -200,7 +185,9 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, httpResp, err := c.UserApi.RemoveUser(ctx, d.Id(), c.AccountId, &nextgen.UserApiRemoveUserOpts{
+	uuid := d.Get("identifier").(string)
+
+	_, httpResp, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, &nextgen.UserApiRemoveUserOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
@@ -256,16 +243,6 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	return &addUsersDto
 }
 
-// func updateAddUserBody(d *schema.ResourceData) *nextgen.UserInfo {
-// 	return &nextgen.UserInfo{
-// 		Uuid:              d.Get("identifier").(string),
-// 		Name:              d.Get("name").(string),
-// 		Email:             d.Get("email").(string),
-// 		ExternallyManaged: d.Get("externally_managed").(bool),
-// 	}
-// 	//TODO: Add locked, disabled here
-// }
-
 func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggregate) {
 	userInfoList := userInfo.Content
 	for _, value := range userInfoList {
@@ -275,6 +252,7 @@ func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggr
 
 func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {
 	d.SetId(UserAggregate.User.Email)
+	d.Set("identifier", UserAggregate.User.Uuid)
 	d.Set("name", UserAggregate.User.Name)
 	d.Set("email", UserAggregate.User.Email)
 	d.Set("locked", UserAggregate.User.Locked)

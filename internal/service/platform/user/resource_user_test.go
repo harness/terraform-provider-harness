@@ -30,14 +30,8 @@ func TestAccResourceUser(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
-					// resource.TestCheckResourceAttr(resourceName, "externally_managed", "false"),
 				),
 			},
-			// TODO: Test for update throwing error
-			// {
-			// 	Config: testAccResourceUser(id, name, email),
-			// 	Check: require.NoError(t, err),
-			// },
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -69,7 +63,7 @@ func TestAccResourceUser_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.UserApi.RemoveUser(ctx, "rajendra.baviskar@harness.io", c.AccountId, &nextgen.UserApiRemoveUserOpts{
+					_, _, err := c.UserApi.RemoveUser(ctx, email, c.AccountId, &nextgen.UserApiRemoveUserOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
@@ -145,13 +139,6 @@ func testAccResourceUser(id string, name string, email string) string {
 				resource_group_name = "All Project Level Resources"
 				managed_role = true
 			}
-
-			lifecycle {
-				ignore_changes = [
-					name,
-				]
-			}
-			
 		}
 `, id, name, email)
 }
