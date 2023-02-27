@@ -33,24 +33,23 @@ resource "harness_platform_user" "example" {
 
 ### Required
 
-- `emails` (Set of String) The email of the user.
-- `role_bindings` (Block List, Min: 1) Role Bindings of the user. (see [below for nested schema](#nestedblock--role_bindings))
-- `user_groups` (Set of String) The user group of the user.
+- `email` (String) The email of the user.
+- `role_bindings` (Block List, Min: 1) Role Bindings of the user. Cannot be updated. (see [below for nested schema](#nestedblock--role_bindings))
+- `user_groups` (Set of String) The user group of the user. Cannot be updated.
 
 ### Optional
 
-- `name` (String) Name of the user.
 - `org_id` (String) Organization identifier of the user.
 - `project_id` (String) Project identifier of the user.
 
 ### Read-Only
 
 - `disabled` (Boolean) Whether or not the user account is disabled.
-- `email` (String) The email of the user.
 - `externally_managed` (Boolean) Whether or not the user account is externally managed.
 - `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the user.
 - `locked` (Boolean) Whether or not the user account is locked.
+- `name` (String) Name of the user.
 
 <a id="nestedblock--role_bindings"></a>
 ### Nested Schema for `role_bindings`
