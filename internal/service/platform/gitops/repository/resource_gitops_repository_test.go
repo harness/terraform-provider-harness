@@ -148,6 +148,7 @@ func testAccResourceGitopsRepositoryProjectLevel(id string, name string, repo st
 			update_mask {
 				paths = ["name"]
 			}
+
 		}
 	`, id, name, repo, repoName, agentId, accountId)
 }
@@ -168,6 +169,7 @@ func testAccResourceGitopsRepositoryAccountLevel(id string, name string, repo st
 			update_mask {
 				paths = ["name"]
 			}
+
 		}
 	`, id, name, repo, repoName, agentId, accountId)
 }

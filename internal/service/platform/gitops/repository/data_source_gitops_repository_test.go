@@ -60,6 +60,7 @@ func testAccDataSourceGitopsRepository(id string, name string, repo string, repo
 			update_mask {
 				paths = ["name"]
 			}
+
 		}
 		
 		data "harness_platform_gitops_repository" "test" {

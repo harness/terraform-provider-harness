@@ -26,8 +26,8 @@ func TestAccDataSourceGitOpsRepoCred(t *testing.T) {
 			{
 				Config: testAccDataSourceRepoCred(id, accountId, name, agentId, clusterName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 		},
@@ -36,23 +36,10 @@ func TestAccDataSourceGitOpsRepoCred(t *testing.T) {
 
 func testAccDataSourceRepoCred(id string, accountId string, name string, agentId string, clusterName string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-			org_id = harness_platform_organization.test.id
-		}
-
 		resource "harness_platform_gitops_repo_cred" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			creds {
 				type = "git"
 				url = "github.com"
@@ -69,8 +56,6 @@ func testAccDataSourceRepoCred(id string, accountId string, name string, agentId
 		data "harness_platform_gitops_repo_cred" "test" {
 			depends_on = [harness_platform_gitops_repo_cred.test]
 			identifier = harness_platform_gitops_repo_cred.test.id
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			account_id = "%[2]s"
 			agent_id = "%[4]s"
 		}
