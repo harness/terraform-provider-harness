@@ -78,7 +78,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	env := buildEnvironment(d)
 
 	if id == "" {
-		resp, httpResp, err = c.EnvironmentsApi.UpsertEnvironmentV2(ctx, c.AccountId, &nextgen.EnvironmentsApiUpsertEnvironmentV2Opts{
+		resp, httpResp, err = c.EnvironmentsApi.CreateEnvironmentV2(ctx, c.AccountId, &nextgen.EnvironmentsApiCreateEnvironmentV2Opts{
 			Body: optional.NewInterface(env),
 		})
 	} else {
