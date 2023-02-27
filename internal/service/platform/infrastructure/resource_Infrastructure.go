@@ -53,7 +53,7 @@ func ResourceInfrastructure() *schema.Resource {
 			},
 		},
 	}
-	helpers.SetProjectLevelResourceSchema(resource.Schema)
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
