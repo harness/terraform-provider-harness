@@ -98,7 +98,7 @@ func buildConnectorGcpSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 }
 
 func readConnectorGcpSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
-	d.Set("is_default", connector.GcpSecretManager.IsDefault)
+	d.Set("is_default", connector.GcpSecretManager.Default_)
 	d.Set("credentials_ref", connector.GcpSecretManager.CredentialsRef)
 	d.Set("delegate_selectors", connector.GcpSecretManager.DelegateSelectors)
 	return nil
