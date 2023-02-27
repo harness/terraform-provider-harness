@@ -80,14 +80,14 @@ resource "harness_platform_environment" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 - `type` (String) The type of environment. Valid values are PreProduction, Production
 
 ### Optional
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Environment YAML
 
@@ -100,6 +100,12 @@ resource "harness_platform_environment" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using environment id
+# Import account level environment id
+terraform import harness_platform_environment.example <environment_id>
+
+# Import org level environment id
+terraform import harness_platform_environment.example <org_id>/<environment_id>
+
+# Import project level environment id
 terraform import harness_platform_environment.example <org_id>/<project_id>/<environment_id>
 ```

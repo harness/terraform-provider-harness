@@ -61,23 +61,20 @@ func resourceSecretFileCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 
 	var err error
 	var resp nextgen.ResponseDtoSecretResponse
-
-	tags := d.Get("tags").(*schema.Set)
-	no_of_tags := tags.Len()
-	var tags_string = buildTag(no_of_tags, tags)
+	spec := buildSpec(d)
 
 	if id == "" {
 		resp, _, err = c.SecretsApi.PostSecretFileV2(ctx, c.AccountId, &nextgen.SecretsApiPostSecretFileV2Opts{
 			OrgIdentifier:     buildField(d, "org_id"),
 			ProjectIdentifier: buildField(d, "project_id"),
-			Spec:              optional.NewString(fmt.Sprintf(`{"secret":{"type":"SecretFile","name":"%[1]s","identifier":"%[2]s","description":"%[3]s","tags":%[4]s,"spec":{"secretManagerIdentifier":"%[5]s"}}}`, d.Get("name"), d.Get("identifier"), d.Get("description"), strings.Join(tags_string, ","), d.Get("secret_manager_identifier"))),
+			Spec:              optional.NewString(spec),
 			File:              optional.NewInterface(d.Get("file_path").(string)),
 		})
 	} else {
 		resp, _, err = c.SecretsApi.PutSecretFileV2(ctx, c.AccountId, id, &nextgen.SecretsApiPutSecretFileV2Opts{
 			OrgIdentifier:     buildField(d, "org_id"),
 			ProjectIdentifier: buildField(d, "project_id"),
-			Spec:              optional.NewString(fmt.Sprintf(`{"secret":{"type":"SecretFile","name":"%[1]s","identifier":"%[2]s","description":"%[3]s","tags":%[4]s,"spec":{"secretManagerIdentifier":"%[5]s"}}}`, d.Get("name"), d.Get("identifier"), d.Get("description"), strings.Join(tags_string, ","), d.Get("secret_manager_identifier"))),
+			Spec:              optional.NewString(spec),
 			File:              optional.NewInterface(d.Get("file_path").(string)),
 		})
 	}
@@ -93,16 +90,50 @@ func resourceSecretFileCreateOrUpdate(ctx context.Context, d *schema.ResourceDat
 	return nil
 }
 
-func buildTag(no_of_tags int, tags *schema.Set) []string {
-	var tags_string = make([]string, no_of_tags)
+func buildSpec(d *schema.ResourceData) string {
+	spec := fmt.Sprintf(`{"secret":{"type":"SecretFile"`)
+	if attr, ok := d.GetOk("name"); ok {
+		spec = spec + fmt.Sprintf(`,"name":"%[1]s"`, attr.(string))
+	}
+	if attr, ok := d.GetOk("identifier"); ok {
+		spec = spec + fmt.Sprintf(`,"identifier":"%[1]s"`, attr.(string))
+	}
+	if attr, ok := d.GetOk("description"); ok {
+		spec = spec + fmt.Sprintf(`,"description":"%[1]s"`, attr.(string))
+	}
+	if attr, ok := d.GetOk("org_id"); ok {
+		spec = spec + fmt.Sprintf(`,"orgIdentifier":"%[1]s"`, attr.(string))
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		spec = spec + fmt.Sprintf(`,"projectIdentifier":"%[1]s"`, attr.(string))
+	}
+	if attr, ok := d.GetOk("tags"); ok {
+		tags := attr.(*schema.Set)
+		no_of_tags := tags.Len()
+		var tags_string = buildTag(no_of_tags, tags)
+		spec = spec + fmt.Sprintf(`,"tags":%[1]s`, tags_string)
+	}
+	if attr, ok := d.GetOk("secret_manager_identifier"); ok {
+		spec = spec + fmt.Sprintf(`,"spec":{"secretManagerIdentifier":"%[1]s"}`, attr.(string))
+	}
+	return spec + "}}"
+}
+
+func buildTag(no_of_tags int, tags *schema.Set) string {
+	result := "{"
 	for i := 0; i < tags.Len(); i++ {
 		tag := fmt.Sprintf("%v", tags.List()[i])
 		split_tag := strings.Split(tag, ":")
 		key := split_tag[0]
 		value := split_tag[1]
-		tags_string[i] = fmt.Sprintf(`{"%[1]s":"%[2]s"}`, key, value)
+		if i == tags.Len()-1 {
+			result = result + fmt.Sprintf(`"%[1]s":"%[2]s"`, key, value)
+		} else {
+			result = result + fmt.Sprintf(`"%[1]s":"%[2]s,",`, key, value)
+		}
 	}
-	return tags_string
+	result = result + "}"
+	return result
 }
 
 func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {

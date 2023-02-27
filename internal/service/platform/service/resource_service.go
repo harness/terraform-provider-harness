@@ -20,7 +20,7 @@ func ResourceService() *schema.Resource {
 		UpdateContext: resourceServiceCreateOrUpdate,
 		DeleteContext: resourceServiceDelete,
 		CreateContext: resourceServiceCreateOrUpdate,
-		Importer:      helpers.ProjectResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
@@ -32,7 +32,7 @@ func ResourceService() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelResourceSchema(resource.Schema)
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -43,8 +43,8 @@ func resourceServiceRead(ctx context.Context, d *schema.ResourceData, meta inter
 	id := d.Id()
 
 	resp, httpResp, err := c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
@@ -63,10 +63,17 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	var resp nextgen.ResponseDtoServiceResponse
 	var httpResp *http.Response
 	svc := buildService(d)
+	id := d.Id()
 
-	resp, httpResp, err = c.ServicesApi.UpsertServiceV2(ctx, c.AccountId, &nextgen.ServicesApiUpsertServiceV2Opts{
-		Body: optional.NewInterface(svc),
-	})
+	if id == "" {
+		resp, httpResp, err = c.ServicesApi.CreateServiceV2(ctx, c.AccountId, &nextgen.ServicesApiCreateServiceV2Opts{
+			Body: optional.NewInterface(svc),
+		})
+	} else {
+		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &nextgen.ServicesApiUpdateServiceV2Opts{
+			Body: optional.NewInterface(svc),
+		})
+	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -81,8 +88,8 @@ func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, httpResp, err := c.ServicesApi.DeleteServiceV2(ctx, d.Id(), c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

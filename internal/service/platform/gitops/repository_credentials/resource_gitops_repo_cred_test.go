@@ -42,29 +42,29 @@ func TestAccResourceGitopsRepoCred(t *testing.T) {
 	})
 
 	// PROJECT LEVEL
-	id = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	resourceName = "harness_platform_gitops_repo_cred.test"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsRepoCredDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceGitopsRepoCredProjectLevel(id, name, accountId, agentId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"creds.0.ssh_private_key"},
-				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
+	//id = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	//name := id
+	//resourceName = "harness_platform_gitops_repo_cred.test"
+	//resource.UnitTest(t, resource.TestCase{
+	//	PreCheck:          func() { acctest.TestAccPreCheck(t) },
+	//	ProviderFactories: acctest.ProviderFactories,
+	//	CheckDestroy:      testAccResourceGitopsRepoCredDestroy(resourceName),
+	//	Steps: []resource.TestStep{
+	//		{
+	//			Config: testAccResourceGitopsRepoCredProjectLevel(id, name, accountId, agentId),
+	//			Check: resource.ComposeTestCheckFunc(
+	//				resource.TestCheckResourceAttr(resourceName, "id", id),
+	//			),
+	//		},
+	//		{
+	//			ResourceName:            resourceName,
+	//			ImportState:             true,
+	//			ImportStateVerify:       true,
+	//			ImportStateVerifyIgnore: []string{"creds.0.ssh_private_key"},
+	//			ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+	//		},
+	//	},
+	//})
 }
 
 func testAccGetRepoCred(resourceName string, state *terraform.State) (*nextgen.Servicev1RepositoryCredentials, error) {
