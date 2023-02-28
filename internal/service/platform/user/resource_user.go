@@ -35,9 +35,10 @@ func ResourceUser() *schema.Resource {
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the user.",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:  "Project identifier of the user.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				RequiredWith: []string{"org_id"},
 			},
 			"name": {
 				Description: "Name of the user.",
@@ -186,11 +187,22 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interf
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	uuid := d.Get("identifier").(string)
+	orgIdentifier := optional.NewString(d.Get("org_id").(string))
+	projectIdentifier := optional.NewString(d.Get("project_id").(string))
+	var removeUserOpts = &nextgen.UserApiRemoveUserOpts{}
 
-	_, httpResp, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, &nextgen.UserApiRemoveUserOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-	})
+	if orgIdentifier.IsSet() && len(orgIdentifier.Value()) > 0 && projectIdentifier.IsSet() && len(projectIdentifier.Value()) > 0 {
+		removeUserOpts = &nextgen.UserApiRemoveUserOpts{
+			OrgIdentifier:     orgIdentifier,
+			ProjectIdentifier: projectIdentifier,
+		}
+	} else if orgIdentifier.IsSet() && len(orgIdentifier.Value()) > 0 {
+		removeUserOpts = &nextgen.UserApiRemoveUserOpts{
+			OrgIdentifier: orgIdentifier,
+		}
+	}
+
+	_, httpResp, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, removeUserOpts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

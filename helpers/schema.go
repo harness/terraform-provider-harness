@@ -217,11 +217,13 @@ var ServiceOverrideResourceImporter = &schema.ResourceImporter{
 var UserResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
-		d.Set("org_id", parts[0])
-		d.Set("project_id", parts[1])
-		d.Set("email", parts[2])
-		d.SetId(parts[3])
-
+		d.Set("email", parts[0])
+		if len(parts) > 1 {
+			d.Set("org_id", parts[1])
+		}
+		if len(parts) > 2 {
+			d.Set("project_id", parts[2])
+		}
 		return []*schema.ResourceData{d}, nil
 	},
 }
