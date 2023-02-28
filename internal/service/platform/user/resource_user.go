@@ -35,19 +35,20 @@ func ResourceUser() *schema.Resource {
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the user.",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:  "Project identifier of the user.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				RequiredWith: []string{"org_id"},
 			},
 			"name": {
 				Description: "Name of the user.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"email": {
 				Description: "The email of the user.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"disabled": {
 				Description: "Whether or not the user account is disabled.",
@@ -64,16 +65,8 @@ func ResourceUser() *schema.Resource {
 				Type:        schema.TypeBool,
 				Computed:    true,
 			},
-			"emails": {
-				Description: "The email of the user.",
-				Type:        schema.TypeSet,
-				Required:    true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
 			"user_groups": {
-				Description: "The user group of the user.",
+				Description: "The user group of the user. Cannot be updated.",
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem: &schema.Schema{
@@ -81,7 +74,7 @@ func ResourceUser() *schema.Resource {
 				},
 			},
 			"role_bindings": {
-				Description: "Role Bindings of the user.",
+				Description: "Role Bindings of the user. Cannot be updated.",
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem: &schema.Resource{
@@ -122,11 +115,9 @@ func ResourceUser() *schema.Resource {
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	emails := []string{}
 	var email = ""
-	if attr, ok := d.GetOk("emails"); ok {
-		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
-		email = emails[0]
+	if attr, ok := d.GetOk("email"); ok {
+		email = attr.(string)
 	}
 
 	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
@@ -165,33 +156,23 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		updateUSerBody := updateAddUserBody(d)
-		_, httpResp, err = c.UserApi.UpdateUserInfo(ctx, c.AccountId, &nextgen.UserApiUpdateUserInfoOpts{
-			Body: optional.NewInterface(updateUSerBody),
-		})
+		diag.Errorf("Update operation is not allowed for User resource.")
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	emails := []string{}
-	if attr, ok := d.GetOk("emails"); ok {
-		emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	var email = ""
+	if attr, ok := d.GetOk("email"); ok {
+		email = attr.(string)
 	}
 
-	var email = emails[0]
 	resp, httpResp, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		SearchTerm:        optional.NewString(email),
 	})
-
-	if &resp == nil || resp.Data == nil || resp.Data.Empty {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -205,10 +186,23 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, httpResp, err := c.UserApi.RemoveUser(ctx, d.Id(), c.AccountId, &nextgen.UserApiRemoveUserOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-	})
+	uuid := d.Get("identifier").(string)
+	orgIdentifier := optional.NewString(d.Get("org_id").(string))
+	projectIdentifier := optional.NewString(d.Get("project_id").(string))
+	var removeUserOpts = &nextgen.UserApiRemoveUserOpts{}
+
+	if orgIdentifier.IsSet() && len(orgIdentifier.Value()) > 0 && projectIdentifier.IsSet() && len(projectIdentifier.Value()) > 0 {
+		removeUserOpts = &nextgen.UserApiRemoveUserOpts{
+			OrgIdentifier:     orgIdentifier,
+			ProjectIdentifier: projectIdentifier,
+		}
+	} else if orgIdentifier.IsSet() && len(orgIdentifier.Value()) > 0 {
+		removeUserOpts = &nextgen.UserApiRemoveUserOpts{
+			OrgIdentifier: orgIdentifier,
+		}
+	}
+
+	_, httpResp, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, removeUserOpts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -220,8 +214,8 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interf
 func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 
 	var addUsersDto nextgen.AddUsersDto
-	if attr, ok := d.GetOk("emails"); ok {
-		addUsersDto.Emails = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
+	if attr, ok := d.GetOk("email"); ok {
+		addUsersDto.Emails = []string{attr.(string)}
 	}
 
 	if attr, ok := d.GetOk("user_groups"); ok {
@@ -261,13 +255,6 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 	return &addUsersDto
 }
 
-func updateAddUserBody(d *schema.ResourceData) *nextgen.UserInfo {
-	return &nextgen.UserInfo{
-		Uuid: d.Get("identifier").(string),
-		Name: d.Get("name").(string),
-	}
-}
-
 func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggregate) {
 	userInfoList := userInfo.Content
 	for _, value := range userInfoList {
@@ -276,7 +263,7 @@ func readUserList(d *schema.ResourceData, userInfo *nextgen.PageResponseUserAggr
 }
 
 func readUser(d *schema.ResourceData, UserAggregate *nextgen.UserAggregate) {
-	d.SetId(UserAggregate.User.Uuid)
+	d.SetId(UserAggregate.User.Email)
 	d.Set("identifier", UserAggregate.User.Uuid)
 	d.Set("name", UserAggregate.User.Name)
 	d.Set("email", UserAggregate.User.Email)
