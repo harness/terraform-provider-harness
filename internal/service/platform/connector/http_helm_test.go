@@ -14,7 +14,7 @@ func TestAccResourceConnector_httphelm_Anonymous(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_helm.test"
+	resourceName := "harness_platform_connector_http_helm.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -58,7 +58,7 @@ func TestAccResourceConnector_httphelm_UsernamePassword(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_connector_helm.test"
+	resourceName := "harness_platform_connector_http_helm.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -103,7 +103,7 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_helm" "test" {
+		resource "harness_platform_connector_http_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -127,7 +127,7 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 
 func testAccResourceConnector_httphelm_anonymous(id string, name string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_connector_helm" "test" {
+		resource "harness_platform_connector_http_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"

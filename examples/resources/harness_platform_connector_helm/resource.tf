@@ -1,5 +1,5 @@
 # Credential username_password
-resource "harness_platform_connector_helm" "test" {
+resource "harness_platform_connector_http_helm" "test" {
   identifier  = "identifier"
   name        = "name"
   description = "test"
@@ -14,7 +14,7 @@ resource "harness_platform_connector_helm" "test" {
 }
 
 # Credential anonymous
-resource "harness_platform_connector_helm" "test" {
+resource "harness_platform_connector_http_helm" "test" {
   identifier  = "identifier"
   name        = "name"
   description = "test"
