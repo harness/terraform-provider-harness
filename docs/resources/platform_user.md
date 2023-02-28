@@ -3,19 +3,47 @@
 page_title: "harness_platform_user Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness User. To use this resource, your authentication mechanism needs to set to SAML, LDAP, or OAuth, and the feature flag AUTOACCEPTSAMLACCOUNTINVITES needs to be enabled.
+  Resource for creating a Harness User.
 ---
 
 # harness_platform_user (Resource)
 
-Resource for creating a Harness User. To use this resource, your authentication mechanism needs to set to SAML, LDAP, or OAuth, and the feature flag AUTO_ACCEPT_SAML_ACCOUNT_INVITES needs to be enabled.
+Resource for creating a Harness User.
 
 ## Example Usage
 
 ```terraform
+# Create user at project level
 resource "harness_platform_user" "example" {
   org_id      = "org_id"
   project_id  = "project_id"
+  emails      = ["john.doe@harness.io"]
+  user_groups = ["_project_all_users"]
+  role_bindings {
+    resource_group_identifier = "_all_project_level_resources"
+    role_identifier           = "_project_viewer"
+    role_name                 = "Project Viewer"
+    resource_group_name       = "All Project Level Resources"
+    managed_role              = true
+  }
+}
+
+# Create user at org level
+resource "harness_platform_user" "example" {
+  org_id      = "org_id"
+  emails      = ["john.doe@harness.io"]
+  user_groups = ["_project_all_users"]
+  role_bindings {
+    resource_group_identifier = "_all_project_level_resources"
+    role_identifier           = "_project_viewer"
+    role_name                 = "Project Viewer"
+    resource_group_name       = "All Project Level Resources"
+    managed_role              = true
+  }
+}
+
+# Create user at account level
+resource "harness_platform_user" "example" {
   emails      = ["john.doe@harness.io"]
   user_groups = ["_project_all_users"]
   role_bindings {
@@ -71,8 +99,8 @@ Import is supported using the following syntax:
 terraform import harness_platform_user.john_doe <email_id>
 
 # Import org level 
-terraform import harness_platform_user.john_doe <ord_id>/<email_id>
+terraform import harness_platform_user.john_doe <email_id>/<org_id>/
 
 # Import project level
-terraform import harness_platform_user.john_doe <org_id>/<project_id>/<email_id>
+terraform import harness_platform_user.john_doe <email_id>/<org_id>/<project_id>
 ```
