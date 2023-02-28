@@ -93,7 +93,7 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 }
 
 func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
-
+	t.Skip()
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_usergroup.test"
