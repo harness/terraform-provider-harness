@@ -13,9 +13,37 @@ Resource for creating a Harness User.
 ## Example Usage
 
 ```terraform
+# Create user at project level
 resource "harness_platform_user" "example" {
   org_id      = "org_id"
   project_id  = "project_id"
+  emails      = ["john.doe@harness.io"]
+  user_groups = ["_project_all_users"]
+  role_bindings {
+    resource_group_identifier = "_all_project_level_resources"
+    role_identifier           = "_project_viewer"
+    role_name                 = "Project Viewer"
+    resource_group_name       = "All Project Level Resources"
+    managed_role              = true
+  }
+}
+
+# Create user at org level
+resource "harness_platform_user" "example" {
+  org_id      = "org_id"
+  emails      = ["john.doe@harness.io"]
+  user_groups = ["_project_all_users"]
+  role_bindings {
+    resource_group_identifier = "_all_project_level_resources"
+    role_identifier           = "_project_viewer"
+    role_name                 = "Project Viewer"
+    resource_group_name       = "All Project Level Resources"
+    managed_role              = true
+  }
+}
+
+# Create user at account level
+resource "harness_platform_user" "example" {
   emails      = ["john.doe@harness.io"]
   user_groups = ["_project_all_users"]
   role_bindings {
@@ -33,24 +61,23 @@ resource "harness_platform_user" "example" {
 
 ### Required
 
-- `emails` (Set of String) The email of the user.
-- `role_bindings` (Block List, Min: 1) Role Bindings of the user. (see [below for nested schema](#nestedblock--role_bindings))
-- `user_groups` (Set of String) The user group of the user.
+- `email` (String) The email of the user.
+- `role_bindings` (Block List, Min: 1) Role Bindings of the user. Cannot be updated. (see [below for nested schema](#nestedblock--role_bindings))
+- `user_groups` (Set of String) The user group of the user. Cannot be updated.
 
 ### Optional
 
-- `name` (String) Name of the user.
 - `org_id` (String) Organization identifier of the user.
 - `project_id` (String) Project identifier of the user.
 
 ### Read-Only
 
 - `disabled` (Boolean) Whether or not the user account is disabled.
-- `email` (String) The email of the user.
 - `externally_managed` (Boolean) Whether or not the user account is externally managed.
 - `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the user.
 - `locked` (Boolean) Whether or not the user account is locked.
+- `name` (String) Name of the user.
 
 <a id="nestedblock--role_bindings"></a>
 ### Nested Schema for `role_bindings`
@@ -72,8 +99,8 @@ Import is supported using the following syntax:
 terraform import harness_platform_user.john_doe <email_id>
 
 # Import org level 
-terraform import harness_platform_user.john_doe <ord_id>/<email_id>
+terraform import harness_platform_user.john_doe <email_id>/<org_id>
 
 # Import project level
-terraform import harness_platform_user.john_doe <org_id>/<project_id>/<email_id>
+terraform import harness_platform_user.john_doe <email_id>/<org_id>/<project_id>
 ```

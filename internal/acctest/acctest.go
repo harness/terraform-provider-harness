@@ -120,6 +120,33 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 	}
 }
 
+func UserResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		email := primary.Attributes["email"]
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		return fmt.Sprintf("%s/%s/%s", email, orgId, projId), nil
+	}
+}
+
+func UserResourceImportStateIdFuncAccountLevel(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		email := primary.Attributes["email"]
+		return fmt.Sprintf("%s", email), nil
+	}
+}
+
+func UserResourceImportStateIdFuncOrgLevel(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		email := primary.Attributes["email"]
+		orgId := primary.Attributes["org_id"]
+		return fmt.Sprintf("%s/%s", email, orgId), nil
+	}
+}
+
 func AccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
