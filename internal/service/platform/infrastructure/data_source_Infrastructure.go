@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -47,7 +46,7 @@ func DataSourceInfrastructure() *schema.Resource {
 			},
 		},
 	}
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }
@@ -58,8 +57,8 @@ func dataSourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, m
 	env_id := d.Get("env_id").(string)
 
 	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructure(ctx, d.Get("identifier").(string), c.AccountId, env_id, &nextgen.InfrastructuresApiGetInfrastructureOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {

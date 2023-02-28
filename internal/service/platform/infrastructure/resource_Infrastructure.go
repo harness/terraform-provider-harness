@@ -53,7 +53,7 @@ func ResourceInfrastructure() *schema.Resource {
 			},
 		},
 	}
-	helpers.SetProjectLevelResourceSchema(resource.Schema)
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -64,8 +64,8 @@ func resourceInfrastructureRead(ctx context.Context, d *schema.ResourceData, met
 	env_id := d.Get("env_id").(string)
 
 	resp, httpResp, err := c.InfrastructuresApi.GetInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiGetInfrastructureOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
@@ -111,8 +111,8 @@ func resourceInfrastructureDelete(ctx context.Context, d *schema.ResourceData, m
 	env_id := d.Get("env_id").(string)
 
 	_, httpResp, err := c.InfrastructuresApi.DeleteInfrastructure(ctx, d.Id(), c.AccountId, env_id, &nextgen.InfrastructuresApiDeleteInfrastructureOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
