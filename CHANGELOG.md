@@ -1,5 +1,7 @@
 # 0.14.6 (February 28,2023) 
 
+# 0.14.6 (February 28,2023) 
+
 BUG FIXES:
 
 * resource/harness_platform_connector_gcp_secret_manager: Fixed GCP Secret Manager resource. ([#442](https://github.com/harness/terraform-provider-harness/issues/442))
