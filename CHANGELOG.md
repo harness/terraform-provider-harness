@@ -1,14 +1,8 @@
 # 0.14.9 (March 01,2023) 
 
-# 0.14.8 (March 01,2023) 
-
 ENHANCEMENTS:
 
 * resource/harness_platform_infrastructure: added support for account and org level. ([#438](https://github.com/harness/terraform-provider-harness/issues/438))
-
-# 0.14.7 (February 28,2023) 
-
-# 0.14.6 (February 28,2023) 
 
 BUG FIXES:
 
