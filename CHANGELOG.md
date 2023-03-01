@@ -1,3 +1,9 @@
+# 0.14.10 (March 01,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_user: Fixed Bug with user resource. ([#451](https://github.com/harness/terraform-provider-harness/issues/451))
+
 # 0.14.9 (March 01,2023) 
 
 ENHANCEMENTS:
