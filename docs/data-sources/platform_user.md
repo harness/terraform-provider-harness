@@ -29,7 +29,6 @@ data "harness_platform_user" "example" {
 
 ### Optional
 
-- `name` (String) Name of the user.
 - `org_id` (String) Organization identifier of the user.
 - `project_id` (String) Project identifier of the user.
 
@@ -40,5 +39,6 @@ data "harness_platform_user" "example" {
 - `id` (String) The ID of this resource.
 - `identifier` (String) Unique identifier of the user.
 - `locked` (Boolean) Whether or not the user account is locked.
+- `name` (String) Name of the user.
 
 

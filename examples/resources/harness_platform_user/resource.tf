@@ -2,7 +2,7 @@
 resource "harness_platform_user" "example" {
   org_id      = "org_id"
   project_id  = "project_id"
-  emails      = ["john.doe@harness.io"]
+  email       = "john.doe@harness.io"
   user_groups = ["_project_all_users"]
   role_bindings {
     resource_group_identifier = "_all_project_level_resources"
@@ -16,7 +16,7 @@ resource "harness_platform_user" "example" {
 # Create user at org level
 resource "harness_platform_user" "example" {
   org_id      = "org_id"
-  emails      = ["john.doe@harness.io"]
+  email       = "john.doe@harness.io"
   user_groups = ["_project_all_users"]
   role_bindings {
     resource_group_identifier = "_all_project_level_resources"
@@ -29,7 +29,7 @@ resource "harness_platform_user" "example" {
 
 # Create user at account level
 resource "harness_platform_user" "example" {
-  emails      = ["john.doe@harness.io"]
+  email       = "john.doe@harness.io"
   user_groups = ["_project_all_users"]
   role_bindings {
     resource_group_identifier = "_all_project_level_resources"

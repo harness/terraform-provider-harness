@@ -156,7 +156,7 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		diag.Errorf("Update operation is not allowed for User resource.")
+		return diag.Errorf("Update operation is not allowed for User resource.")
 	}
 
 	if err != nil {
