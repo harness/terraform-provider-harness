@@ -13,7 +13,7 @@ import (
 
 func ResourceConnectorHelm() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating a Helm connector.",
+		Description:   "Resource for creating a HTTP Helm connector.",
 		ReadContext:   resourceConnectorHelmRead,
 		CreateContext: resourceConnectorHelmCreateOrUpdate,
 		UpdateContext: resourceConnectorHelmCreateOrUpdate,
