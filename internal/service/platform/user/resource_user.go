@@ -15,7 +15,7 @@ import (
 
 func ResourceUser() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness User.",
+		Description: "Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTO_ACCEPT_SAML_ACCOUNT_INVITES to be enabled.",
 
 		ReadContext:   resourceUserRead,
 		UpdateContext: resourceUserCreateOrUpdate,
