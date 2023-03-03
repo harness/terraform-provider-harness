@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_helm Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for looking up a Helm connector.
+  Datasource for looking up a HTTP Helm connector.
 ---
 
 # harness_platform_connector_helm (Data Source)
 
-Datasource for looking up a Helm connector.
+Datasource for looking up a HTTP Helm connector.
 
 ## Example Usage
 
