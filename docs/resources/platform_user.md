@@ -3,12 +3,12 @@
 page_title: "harness_platform_user Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness User.
+  Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTOACCEPTSAMLACCOUNTINVITES to be enabled.
 ---
 
 # harness_platform_user (Resource)
 
-Resource for creating a Harness User.
+Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTO_ACCEPT_SAML_ACCOUNT_INVITES to be enabled.
 
 ## Example Usage
 
