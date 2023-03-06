@@ -1,3 +1,10 @@
+# 0.14.11 (March 06,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_helm: Fixed documentation. ([#452](https://github.com/harness/terraform-provider-harness/issues/452))
+* resource/harness_platform_organization: Fixed the plugin crash issue during terraform refresh when the api key was invalid. ([#454](https://github.com/harness/terraform-provider-harness/issues/454))
+
 # 0.14.10 (March 01,2023) 
 
 BUG FIXES:
