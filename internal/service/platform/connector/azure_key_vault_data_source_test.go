@@ -48,7 +48,7 @@ func testAccDataSourceConnector_azureKeyVault(name string) string {
 		tags = ["foo:bar"]
 
 		client_id = "38fca8d7-4dda-41d5-b106-e5d8712b733a"
-		secret_key = "account.azuretest"
+		secret_key = "account.Azure_Secret_Key_Do_Not_Delete"
 		tenant_id = "b229b2bb-5f33-4d22-bce0-730f6474e906"
 		vault_name = "Aman-test"
 		subscription = "20d6a917-99fa-4b1b-9b2e-a3d624e9dcf0"
