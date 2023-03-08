@@ -1,3 +1,10 @@
+# 0.14.13 (March 08,2023) 
+
+BUG FIXES:
+
+* harness_platform_template: Fixed import.
+harness_platform_pipeline: Fixed import. ([#457](https://github.com/harness/terraform-provider-harness/issues/457))
+
 # 0.14.12 (March 08,2023) 
 
 BUG FIXES:
