@@ -1,3 +1,9 @@
+# 0.14.12 (March 08,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_jira: Fixed jira connector resource to support newer UsernamePassword authentication beans. ([#456](https://github.com/harness/terraform-provider-harness/issues/456))
+
 # 0.14.11 (March 06,2023) 
 
 BUG FIXES:
