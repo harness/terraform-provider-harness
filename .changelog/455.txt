@@ -1,3 +1,0 @@
-```release-note:new-resource
-platform_connector_jira - Fixed jira connector resource in Harness terraform provider to add UsernamePassword authentication
-```
