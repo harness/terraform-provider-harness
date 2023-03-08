@@ -127,6 +127,12 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 		&nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: branch_name},
 	)
 
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
