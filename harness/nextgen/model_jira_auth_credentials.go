@@ -9,13 +9,6 @@
  */
 package nextgen
 
-// JIRA Connector details.
-type JiraConnector struct {
-	ConnectorType string `json:"connectorType"`
-	JiraUrl string `json:"jiraUrl"`
-	Username string `json:"username,omitempty"`
-	UsernameRef string `json:"usernameRef,omitempty"`
-	PasswordRef string `json:"passwordRef,omitempty"`
-	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
-	Auth *JiraAuthentication `json:"auth"`
+// This contains details of credentials for Jira Authentication
+type JiraAuthCredentials struct {
 }
