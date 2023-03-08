@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_connector_jira: Fixed jira connector resource to support newer UsernamePassword authentication beans.
+```
