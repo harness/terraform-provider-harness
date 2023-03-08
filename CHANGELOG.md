@@ -1,6 +1,6 @@
 
-<a name="0.3.16"></a>
-## 0.3.16 (2023-02-21)
+<a name="0.3.17"></a>
+## 0.3.17 (2023-03-08)
 
 ### Add
 
@@ -58,10 +58,6 @@
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 * Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 
-### Fix
-
-* fix environment variable overrides with secrets
-
 ### Fixing
 
 * fixing json tag for AwsCloudProvider type
@@ -94,6 +90,8 @@
 
 ### Release
 
+* Release version 0.3.16 02-21-2023
+* Release v0.3.16
 * Release version 0.3.15 02-15-2023
 * Release v0.3.15
 * Release version 0.3.14 01-19-2023
@@ -164,10 +162,6 @@
 * Release v0.2.13
 * Release version v0.2.12 10-19-2022
 * Release vv0.2.12
-* Release version 0.2.11 10-19-2022
-* Release v0.2.11
-* Release version 0.2.10 10-19-2022
-* Release v0.2.10
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -203,8 +197,6 @@
 * Release v0.1.26
 * Release version 0.1.25 05-20-2022
 * Release v0.1.25
-* Release version 0.1.24 05-11-2022
-* Release v0.1.24
 
 ### Removing
 
@@ -257,6 +249,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#289](https://github.com/harness/harness-go-sdk/issues/289) from harness/CDS-54803
 * Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
 * Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
@@ -305,8 +298,6 @@
 * Merge pull request [#189](https://github.com/harness/harness-go-sdk/issues/189) from harness/CDS-43547-gitops-agent-cluster-sdk
 * Merge pull request [#190](https://github.com/harness/harness-go-sdk/issues/190) from harness/SPG-522-add-infra-TF-resource
 * Merge pull request [#180](https://github.com/harness/harness-go-sdk/issues/180) from harness/SPG-522-add-infra-TF-resource
-* Merge pull request [#187](https://github.com/harness/harness-go-sdk/issues/187) from harness/generate_variable_sdk
-* Merge pull request [#185](https://github.com/harness/harness-go-sdk/issues/185) from harness/cds-43281
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
