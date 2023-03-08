@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceConnectorJira(t *testing.T) {
+func TestAccResourceConnectorJira_UsernamePassword(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -25,28 +25,28 @@ func TestAccResourceConnectorJira(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorJira(id, name),
+				Config: testAccResourceConnectorJira_UsernamePassword(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://jira.com"),
-					resource.TestCheckResourceAttr(resourceName, "username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://test.atlassian.com"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.username_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
 			{
-				Config: testAccResourceConnectorJira(id, updatedName),
+				Config: testAccResourceConnectorJira_UsernamePassword(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "url", "https://jira.com"),
-					resource.TestCheckResourceAttr(resourceName, "username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://test.atlassian.com"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.username_password.0.username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -59,7 +59,7 @@ func TestAccResourceConnectorJira(t *testing.T) {
 	})
 }
 
-func testAccResourceConnectorJira(id string, name string) string {
+func testAccResourceConnectorJira_UsernamePassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -78,11 +78,15 @@ func testAccResourceConnectorJira(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 
-			url = "https://jira.com"
+			url = "https://test.atlassian.com"
 			delegate_selectors = ["harness-delegate"]
-			username = "admin"
-			password_ref = "account.${harness_platform_secret_text.test.id}"
-
+			auth {
+				auth_type = "UsernamePassword"
+				username_password {
+					username = "admin"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 
