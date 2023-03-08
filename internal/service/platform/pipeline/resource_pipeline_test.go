@@ -6,10 +6,12 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-openapi-go-client/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourcePipeline(t *testing.T) {
@@ -80,6 +82,39 @@ func TestAccResourcePipelineInline(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourcePipeline_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	project_id := id
+	org_id := id
+	resourceName := "harness_platform_pipeline.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineInline(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetClientWithContext()
+					_, err := c.PipelinesApi.DeletePipeline(ctx, org_id, project_id, id, &nextgen.PipelinesApiDeletePipelineOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourcePipelineInline(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
