@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_secret_text: Mark new resource when secret deleted from ui .
+```
