@@ -49,6 +49,7 @@ type ConnectorInfo struct {
 	Github              *GithubConnector              `json:"-"`
 	Gitlab              *GitlabConnector              `json:"-"`
 	HttpHelm            *HttpHelmConnector            `json:"-"`
+	OciHelm             *OciHelmConnector             `json:"-"`
 	Jira                *JiraConnector                `json:"-"`
 	Jenkins             *JenkinsConnector             `json:"-"`
 	K8sCluster          *KubernetesClusterConfig      `json:"-"`
