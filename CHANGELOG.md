@@ -1,5 +1,9 @@
 # 0.14.14 (March 09,2023) 
 
+BUG FIXES:
+
+* harness_platform_secret_text: Mark new resource when secret deleted from ui . ([#461](https://github.com/harness/terraform-provider-harness/issues/461))
+
 # 0.14.13 (March 08,2023) 
 
 BUG FIXES:
