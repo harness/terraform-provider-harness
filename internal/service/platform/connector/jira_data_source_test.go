@@ -33,6 +33,7 @@ func TestAccDataSourceConnectorJira(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://jira.com"),
 					resource.TestCheckResourceAttr(resourceName, "username", "admin"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.username_password.0.username", "admin"),					
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -63,6 +64,13 @@ func testAccDataSourceConnectorJira(name string) string {
 			delegate_selectors = ["harness-delegate"]
 			username = "admin"
 			password_ref = "account.${harness_platform_secret_text.test.id}"
+			auth {
+				auth_type = "UsernamePassword"
+				username_password {
+					username = "admin"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
+				}
+			}			
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 

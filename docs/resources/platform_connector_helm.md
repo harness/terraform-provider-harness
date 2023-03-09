@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_helm Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Helm connector.
+  Resource for creating a HTTP Helm connector.
 ---
 
 # harness_platform_connector_helm (Resource)
 
-Resource for creating a Helm connector.
+Resource for creating a HTTP Helm connector.
 
 ## Example Usage
 

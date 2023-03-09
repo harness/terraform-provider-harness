@@ -173,6 +173,12 @@ func resourceTemplateRead(ctx context.Context, d *schema.ResourceData, meta inte
 		}
 	}
 
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}

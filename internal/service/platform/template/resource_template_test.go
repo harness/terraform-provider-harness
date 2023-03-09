@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceTemplateProjectScope(t *testing.T) {
@@ -258,6 +259,39 @@ func TestAccResourceTemplate_AccountScopeInline(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	project_id := id
+	org_id := id
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateProjectScopeInline(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetClientWithContext()
+					_, err := c.ProjectTemplateApi.DeleteTemplateProject(ctx, project_id, id, org_id, "ab", &openapi_client_nextgen.ProjectTemplateApiDeleteTemplateProjectOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceTemplateProjectScopeInline(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

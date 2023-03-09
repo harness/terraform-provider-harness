@@ -1,3 +1,23 @@
+# 0.14.13 (March 08,2023) 
+
+BUG FIXES:
+
+* harness_platform_template: Fixed import.
+harness_platform_pipeline: Fixed import. ([#457](https://github.com/harness/terraform-provider-harness/issues/457))
+
+# 0.14.12 (March 08,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_jira: Fixed Jira Connector Resource to support newer UsernamePassword authentication beans. Users of Jira Connector need to update their Harness Terraform Provider to this version since it is a breaking change in the API. ([#456](https://github.com/harness/terraform-provider-harness/issues/456))
+
+# 0.14.11 (March 06,2023) 
+
+BUG FIXES:
+
+* resource/harness_platform_connector_helm: Fixed documentation. ([#452](https://github.com/harness/terraform-provider-harness/issues/452))
+* resource/harness_platform_organization: Fixed the plugin crash issue during terraform refresh when the api key was invalid. ([#454](https://github.com/harness/terraform-provider-harness/issues/454))
+
 # 0.14.10 (March 01,2023) 
 
 BUG FIXES:

@@ -30,6 +30,7 @@ data "harness_platform_connector_jira" "example" {
 
 ### Read-Only
 
+- `auth` (List of Object) The credentials to use for the jira authentication. (see [below for nested schema](#nestedatt--auth))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
@@ -38,5 +39,22 @@ data "harness_platform_connector_jira" "example" {
 - `url` (String) URL of the Jira server.
 - `username` (String) Username to use for authentication.
 - `username_ref` (String) Reference to a secret containing the username to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+<a id="nestedatt--auth"></a>
+### Nested Schema for `auth`
+
+Read-Only:
+
+- `auth_type` (String)
+- `username_password` (List of Object) (see [below for nested schema](#nestedobjatt--auth--username_password))
+
+<a id="nestedobjatt--auth--username_password"></a>
+### Nested Schema for `auth.username_password`
+
+Read-Only:
+
+- `password_ref` (String)
+- `username` (String)
+- `username_ref` (String)
 
 
