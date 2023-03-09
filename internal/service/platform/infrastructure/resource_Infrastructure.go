@@ -1,4 +1,4 @@
-package infrastructure
+xpackage infrastructure
 
 import (
 	"context"
@@ -26,17 +26,17 @@ func ResourceInfrastructure() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Identifier of the Infrastructure",
+				Description: "Identifier of the Infrastructure.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"env_id": {
-				Description: "Environment Identifier",
+				Description: "Environment Identifier.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"type": {
-				Description: fmt.Sprintf("Type of Infrastructure, valid values are %s", strings.Join(nextgen.InfrastructureTypeValues, ", ")),
+				Description: fmt.Sprintf("Type of Infrastructure. Valid values are %s.", strings.Join(nextgen.InfrastructureTypeValues, ", ")),
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -46,7 +46,7 @@ func ResourceInfrastructure() *schema.Resource {
 				Required:    true,
 			},
 			"deployment_type": {
-				Description: fmt.Sprintf("Infrastructure deployment type, valid values are %s", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
+				Description: fmt.Sprintf("Infrastructure deployment type. Valid values are %s.", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
