@@ -25,7 +25,7 @@ func resourceSecretReadBase(ctx context.Context, d *schema.ResourceData, meta in
 
 	resp, httpResp, err := c.SecretsApi.GetSecretV2(ctx, id, c.AccountId, getReadSecretOpts(d))
 	if err != nil {
-		return nil, helpers.HandleApiError(err, d, httpResp)
+		return nil, helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if resp.Data == nil {
