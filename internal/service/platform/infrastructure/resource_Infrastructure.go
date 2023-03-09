@@ -16,7 +16,7 @@ import (
 
 func ResourceInfrastructure() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Infrastructure.",
+		Description: "Resource for retrieving a Harness Infrastructure.",
 
 		ReadContext:   resourceInfrastructureRead,
 		UpdateContext: resourceInfrastructureCreateOrUpdate,
@@ -26,12 +26,12 @@ func ResourceInfrastructure() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "identifier of the Infrastructure.",
+				Description: "Identifier of the Infrastructure.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"env_id": {
-				Description: "environment identifier.",
+				Description: "Environment Identifier.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

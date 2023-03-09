@@ -3,12 +3,12 @@
 page_title: "harness_platform_infrastructure Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness Infrastructure.
+  Resource for retrieving a Harness Infrastructure.
 ---
 
 # harness_platform_infrastructure (Resource)
 
-Data source for retrieving a Harness Infrastructure.
+Resource for retrieving a Harness Infrastructure.
 
 ## Example Usage
 
@@ -47,7 +47,7 @@ resource "harness_platform_infrastructure" "example" {
 
 ### Required
 
-- `env_id` (String) environment identifier.
+- `env_id` (String) Environment Identifier.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment.
