@@ -1,3 +1,10 @@
+# 0.14.15 (March 09,2023) 
+
+BUG FIXES:
+
+* harness_platform_secret_text: Mark new resource when secret deleted from ui . ([#461](https://github.com/harness/terraform-provider-harness/issues/461))
+* harness_platform_usergroup: Mark new resource when usergroup deleted from ui. ([#462](https://github.com/harness/terraform-provider-harness/issues/462))
+
 # 0.14.14 (March 09,2023) 
 
 BUG FIXES:
