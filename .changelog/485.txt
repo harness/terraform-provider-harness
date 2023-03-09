@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_policyset: Adding the policyset management provider
+```
