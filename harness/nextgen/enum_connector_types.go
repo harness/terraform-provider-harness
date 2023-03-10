@@ -32,6 +32,7 @@ var ConnectorTypes = struct {
 	GcpCloudCost     ConnectorType
 	CEK8sCluster     ConnectorType
 	HttpHelmRepo     ConnectorType
+	OciHelmRepo      ConnectorType
 	NewRelic         ConnectorType
 	Datadog          ConnectorType
 	SumoLogic        ConnectorType
@@ -67,6 +68,7 @@ var ConnectorTypes = struct {
 	GcpCloudCost:     "GcpCloudCost",
 	CEK8sCluster:     "CEK8sCluster",
 	HttpHelmRepo:     "HttpHelmRepo",
+	OciHelmRepo:      "OciHelmRepo",
 	NewRelic:         "NewRelic",
 	Datadog:          "Datadog",
 	SumoLogic:        "SumoLogic",
@@ -105,6 +107,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.GcpCloudCost.String(),
 	ConnectorTypes.CEK8sCluster.String(),
 	ConnectorTypes.HttpHelmRepo.String(),
+	ConnectorTypes.OciHelmRepo.String(),
 	ConnectorTypes.NewRelic.String(),
 	ConnectorTypes.Datadog.String(),
 	ConnectorTypes.SumoLogic.String(),
