@@ -9,8 +9,11 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains oci helm authentication details
 type OciHelmAuthentication struct {
-	Type_ string `json:"type"`
-	Spec *OciHelmAuthCredentials `json:"spec,omitempty"`
+	Type_            OciHelmAuthType          `json:"type"`
+	UsernamePassword *OciHelmUsernamePassword `json:"-"`
+	Spec             json.RawMessage          `json:"spec,omitempty"`
 }
