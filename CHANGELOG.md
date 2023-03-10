@@ -1,3 +1,9 @@
+# 0.15.0 (March 10,2023) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_platform_connector_service_now: Added Service Now connector resource.` ([#465](https://github.com/harness/terraform-provider-harness/issues/465))
+
 # 0.14.15 (March 09,2023) 
 
 BUG FIXES:
