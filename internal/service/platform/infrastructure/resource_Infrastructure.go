@@ -16,7 +16,7 @@ import (
 
 func ResourceInfrastructure() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for retrieving a Harness Infrastructure.",
+		Description: "Resource for creating a Harness Infrastructure.",
 
 		ReadContext:   resourceInfrastructureRead,
 		UpdateContext: resourceInfrastructureCreateOrUpdate,
