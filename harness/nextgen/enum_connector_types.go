@@ -38,6 +38,7 @@ var ConnectorTypes = struct {
 	PagerDuty        ConnectorType
 	GcpSecretManager ConnectorType
 	Spot             ConnectorType
+	ServiceNow       ConnectorType
 }{
 	K8sCluster:       "K8sCluster",
 	Git:              "Git",
@@ -74,6 +75,7 @@ var ConnectorTypes = struct {
 	GcpSecretManager: "GcpSecretManager",
 	Azure:            "Azure",
 	Spot:             "Spot",
+	ServiceNow:       "ServiceNow",
 }
 
 var ConnectorTypesSlice = []string{
@@ -112,6 +114,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.GcpSecretManager.String(),
 	ConnectorTypes.Azure.String(),
 	ConnectorTypes.Spot.String(),
+	ConnectorTypes.ServiceNow.String(),
 }
 
 func (c ConnectorType) String() string {

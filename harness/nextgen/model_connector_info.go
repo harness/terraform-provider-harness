@@ -62,5 +62,6 @@ type ConnectorInfo struct {
 	Spot                *SpotConnector                `json:"-"`
 	Vault               *VaultConnector               `json:"-"`
 	GcpSecretManager    *GcpSecretManager             `json:"-"`
+	ServiceNow          *ServiceNowConnector          `json:"-"`
 	Spec                json.RawMessage               `json:"spec"`
 }
