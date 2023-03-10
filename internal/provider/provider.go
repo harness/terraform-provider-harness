@@ -206,6 +206,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 				"harness_platform_policy":                          policy.DataSourcePolicy(),
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
+				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -306,6 +307,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_azure_cloud_provider":  connector.ResourceConnectorAzureCloudProvider(),
 				"harness_platform_policy":                          policy.ResourcePolicy(),
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
+				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 			},
 		}
 
