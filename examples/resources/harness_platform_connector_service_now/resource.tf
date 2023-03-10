@@ -16,6 +16,7 @@ resource "harness_platform_connector_service_now" "test" {
   }
 }
 
+# Credential type AdfsClientCredentialsWithCertificate
 resource "harness_platform_connector_service_now" "test" {
   identifier  = "identifier"
   name        = "name"

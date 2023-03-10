@@ -64,10 +64,15 @@ func ResourceConnectorServiceNow() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"UsernamePassword", "AdfsClientCredentialsWithCertificate"}, false),
 						},
 						"username_password": {
-							Description: "Authenticate using username password.",
-							Type:        schema.TypeList,
-							MaxItems:    1,
-							Optional:    true,
+							Description:   "Authenticate using username password.",
+							Type:          schema.TypeList,
+							MaxItems:      1,
+							Optional:      true,
+							ConflictsWith: []string{"auth.0.adfs"},
+							AtLeastOneOf: []string{
+								"auth.0.username_password",
+								"auth.0.adfs",
+							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"username": {
@@ -99,10 +104,15 @@ func ResourceConnectorServiceNow() *schema.Resource {
 							},
 						},
 						"adfs": {
-							Description: "Authenticate using adfs client credentials with certificate.",
-							Type:        schema.TypeList,
-							MaxItems:    1,
-							Optional:    true,
+							Description:   "Authenticate using adfs client credentials with certificate.",
+							Type:          schema.TypeList,
+							MaxItems:      1,
+							Optional:      true,
+							ConflictsWith: []string{"auth.0.username_password"},
+							AtLeastOneOf: []string{
+								"auth.0.username_password",
+								"auth.0.adfs",
+							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"certificate_ref": {
