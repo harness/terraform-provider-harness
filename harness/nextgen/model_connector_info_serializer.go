@@ -63,6 +63,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Vault)
 	case ConnectorTypes.HttpHelmRepo:
 		err = json.Unmarshal(aux.Spec, &a.HttpHelm)
+	case ConnectorTypes.OciHelmRepo:
+		err = json.Unmarshal(aux.Spec, &a.OciHelm)
 	case ConnectorTypes.Jira:
 		err = json.Unmarshal(aux.Spec, &a.Jira)
 	case ConnectorTypes.Jenkins:
@@ -133,6 +135,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Vault)
 	case ConnectorTypes.HttpHelmRepo:
 		spec, err = json.Marshal(a.HttpHelm)
+	case ConnectorTypes.OciHelmRepo:
+		spec, err = json.Marshal(a.OciHelm)
 	case ConnectorTypes.Jira:
 		spec, err = json.Marshal(a.Jira)
 	case ConnectorTypes.Jenkins:
