@@ -1,6 +1,6 @@
 
-<a name="0.3.17"></a>
-## 0.3.17 (2023-03-08)
+<a name="0.3.18"></a>
+## 0.3.18 (2023-03-10)
 
 ### Add
 
@@ -78,18 +78,15 @@
 * Merge branch 'main' into CDS-44314-gnupg-tf-resource
 * Merge branch 'main' into abhinav/SPG-567
 * Merge branch 'main' into CDS-44308-gitops-applications-api
-* Merge branch 'main' into CDS-44311-gitops-repositories-api
 
 ### Modify
 
 * Modify secret file post and put methods
 
-### Regenerated
-
-* regenerated NG API's ([#121](https://github.com/harness/harness-go-sdk/issues/121))
-
 ### Release
 
+* Release version 0.3.17 03-08-2023
+* Release v0.3.17
 * Release version 0.3.16 02-21-2023
 * Release v0.3.16
 * Release version 0.3.15 02-15-2023
@@ -195,8 +192,6 @@
 * Release v0.1.27
 * Release version 0.1.26 05-20-2022
 * Release v0.1.26
-* Release version 0.1.25 05-20-2022
-* Release v0.1.25
 
 ### Removing
 
@@ -224,6 +219,7 @@
 
 ### Update
 
+* Update service now models to include new changes
 * Update jenkins auth serializer
 * Update jenkins auth serializer
 * Update jenkin authentication serializer
@@ -249,6 +245,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#292](https://github.com/harness/harness-go-sdk/issues/292) from harness/CDS-52185
 * Merge pull request [#289](https://github.com/harness/harness-go-sdk/issues/289) from harness/CDS-54803
 * Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
 * Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
@@ -296,8 +293,6 @@
 * Merge pull request [#194](https://github.com/harness/harness-go-sdk/issues/194) from harness/CDS-44311-gitops-repositories-api
 * Merge pull request [#178](https://github.com/harness/harness-go-sdk/issues/178) from harness/SPG-508-adding-service-overrides
 * Merge pull request [#189](https://github.com/harness/harness-go-sdk/issues/189) from harness/CDS-43547-gitops-agent-cluster-sdk
-* Merge pull request [#190](https://github.com/harness/harness-go-sdk/issues/190) from harness/SPG-522-add-infra-TF-resource
-* Merge pull request [#180](https://github.com/harness/harness-go-sdk/issues/180) from harness/SPG-522-add-infra-TF-resource
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
