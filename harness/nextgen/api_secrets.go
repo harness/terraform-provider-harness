@@ -831,7 +831,6 @@ func (a *SecretsApiService) PostSecretFileV2(ctx context.Context, accountIdentif
 		return localVarReturnValue, nil, err
 	}
 	if localVarOptionals != nil && localVarOptionals.File.IsSet() {
-		localVarFormParams.Add("file", parameterToString(localVarOptionals.File.Value(), ""))
 		localVarFileName = parameterToString(localVarOptionals.File.Value(), "")
 		localVarFileBytes = file_content
 	}
