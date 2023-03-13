@@ -164,16 +164,9 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if resp.Data == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
-	}
 
 	if attr, ok := d.GetOk("user_emails"); ok {
 		d.Set("user_emails", attr)

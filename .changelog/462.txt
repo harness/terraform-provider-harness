@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_usergroup: Mark new resource when usergroup deleted from ui.
+```
