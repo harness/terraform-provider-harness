@@ -6,10 +6,12 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 
 )
 
@@ -100,7 +102,6 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy: testAccUserGroupDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceUserGroup(id, name),
@@ -109,6 +110,21 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccProvider.Meta().(*internal.Session).GetPlatformClient()
+					_, _, err := c.UserGroupApi.DeleteUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiDeleteUserGroupOpts{
+						OrgIdentifier:     optional.NewString(id),
+						ProjectIdentifier: optional.NewString(id),
+					})
+					require.NoError(t, err)
+				
+				},
+				Config:             testAccResourceUserGroup(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
