@@ -13,7 +13,7 @@ func TestAccDataSourceConnectorOciHelm(t *testing.T) {
 
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		resourceName = "data.harness_platform_connector_helm.test"
+		resourceName = "data.harness_platform_connector_oci_helm.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -24,7 +24,7 @@ func TestAccDataSourceConnectorOciHelm(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorHelm(name),
+				Config: testAccDataSourceConnectorOciHelm(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -52,7 +52,7 @@ func testAccDataSourceConnectorOciHelm(name string) string {
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_helm" "test" {
+		resource "harness_platform_connector_oci_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			description = "test"
@@ -72,8 +72,8 @@ func testAccDataSourceConnectorOciHelm(name string) string {
 			destroy_duration = "4s"
 		}
 
-		data "harness_platform_connector_helm" "test" {
-			identifier = harness_platform_connector_helm.test.identifier
+		data "harness_platform_connector_oci_helm" "test" {
+			identifier = harness_platform_connector_oci_helm.test.identifier
 		}
 	`, name)
 }

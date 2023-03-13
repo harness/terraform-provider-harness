@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceConnector_ocihelm_Anonymous(t *testing.T) {
+func TestAccResourceConnector_oci_helm_Anonymous(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_helm.test"
+	resourceName := "harness_platform_connector_oci_helm.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -22,7 +22,7 @@ func TestAccResourceConnector_ocihelm_Anonymous(t *testing.T) {
 		CheckDestroy:      testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnector_ocihelm_anonymous(id, name),
+				Config: testAccResourceConnector_oci_helm_anonymous(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -34,7 +34,7 @@ func TestAccResourceConnector_ocihelm_Anonymous(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnector_ocihelm_anonymous(id, updatedName),
+				Config: testAccResourceConnector_oci_helm_anonymous(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -54,11 +54,11 @@ func TestAccResourceConnector_ocihelm_Anonymous(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnector_ocihelm_UsernamePassword(t *testing.T) {
+func TestAccResourceConnector_oci_helm_UsernamePassword(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_connector_helm.test"
+	resourceName := "harness_platform_connector_oci_helm.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -69,7 +69,7 @@ func TestAccResourceConnector_ocihelm_UsernamePassword(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnector_ocihelm_usernamepassword(id, name),
+				Config: testAccResourceConnector_oci_helm_usernamepassword(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -90,7 +90,7 @@ func TestAccResourceConnector_ocihelm_UsernamePassword(t *testing.T) {
 	})
 }
 
-func testAccResourceConnector_ocihelm_usernamepassword(id string, name string) string {
+func testAccResourceConnector_oci_helm_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -103,7 +103,7 @@ func testAccResourceConnector_ocihelm_usernamepassword(id string, name string) s
 		value = "secret"
 	}
 
-		resource "harness_platform_connector_helm" "test" {
+		resource "harness_platform_connector_oci_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -125,9 +125,9 @@ func testAccResourceConnector_ocihelm_usernamepassword(id string, name string) s
 `, id, name)
 }
 
-func testAccResourceConnector_ocihelm_anonymous(id string, name string) string {
+func testAccResourceConnector_oci_helm_anonymous(id string, name string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_connector_helm" "test" {
+		resource "harness_platform_connector_oci_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"

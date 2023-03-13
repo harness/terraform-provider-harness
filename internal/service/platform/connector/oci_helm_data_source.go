@@ -8,7 +8,7 @@ import (
 func DatasourceConnectorOciHelm() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Datasource for looking up a OCI Helm connector.",
-		ReadContext: resourceConnectorHelmRead,
+		ReadContext: resourceConnectorOciHelmRead,
 
 		Schema: map[string]*schema.Schema{
 			"url": {

@@ -14,9 +14,9 @@ import (
 func ResourceConnectorOciHelm() *schema.Resource {
 	resource := &schema.Resource{
 		Description:   "Resource for creating a OCI Helm connector.",
-		ReadContext:   resourceConnectorHelmRead,
-		CreateContext: resourceConnectorHelmCreateOrUpdate,
-		UpdateContext: resourceConnectorHelmCreateOrUpdate,
+		ReadContext:   resourceConnectorOciHelmRead,
+		CreateContext: resourceConnectorOciHelmCreateOrUpdate,
+		UpdateContext: resourceConnectorOciHelmCreateOrUpdate,
 		DeleteContext: resourceConnectorDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 
@@ -79,7 +79,7 @@ func resourceConnectorOciHelmRead(ctx context.Context, d *schema.ResourceData, m
 		return nil
 	}
 
-	if err := readConnectorHelm(d, conn); err != nil {
+	if err := readConnectorOciHelm(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -87,14 +87,14 @@ func resourceConnectorOciHelmRead(ctx context.Context, d *schema.ResourceData, m
 }
 
 func resourceConnectorOciHelmCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	conn := buildConnectorHelm(d)
+	conn := buildConnectorOciHelm(d)
 
 	newConn, err := resourceConnectorCreateOrUpdateBase(ctx, d, meta, conn)
 	if err != nil {
 		return err
 	}
 
-	if err := readConnectorHelm(d, newConn); err != nil {
+	if err := readConnectorOciHelm(d, newConn); err != nil {
 		return diag.FromErr(err)
 	}
 
