@@ -1,4 +1,4 @@
-# Credential username_password
+# Credential type username_password
 resource "harness_platform_connector_oci_helm" "test" {
   identifier  = "identifier"
   name        = "name"
@@ -13,7 +13,7 @@ resource "harness_platform_connector_oci_helm" "test" {
   }
 }
 
-# Credential anonymous
+# Credential type anonymous
 resource "harness_platform_connector_oci_helm" "test" {
   identifier  = "identifier"
   name        = "name"

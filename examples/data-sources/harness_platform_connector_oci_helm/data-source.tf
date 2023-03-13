@@ -1,3 +1,3 @@
-data "harness_platform_connector_oic_helm" "example" {
+data "harness_platform_connector_oci_helm" "example" {
   identifier = "identifier"
 }

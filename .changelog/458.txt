@@ -1,6 +1,0 @@
-```release-note:new-resource
-platform_connector_oci_helm
-```
-```release-note:new-data-source
-platform_connector_helm
-```
