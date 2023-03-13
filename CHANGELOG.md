@@ -1,6 +1,6 @@
 
-<a name="0.3.19"></a>
-## 0.3.19 (2023-03-11)
+<a name="0.3.20"></a>
+## 0.3.20 (2023-03-13)
 
 ### Add
 
@@ -56,7 +56,6 @@
 ### Fix
 
 * Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
-* Fix serialization of secret entities ([#123](https://github.com/harness/harness-go-sdk/issues/123))
 
 ### Fixing
 
@@ -78,14 +77,11 @@
 * Merge branch 'main' into CDS-44314-gnupg-tf-resource
 * Merge branch 'main' into abhinav/SPG-567
 * Merge branch 'main' into CDS-44308-gitops-applications-api
-* Merge branch 'main' into CDS-44311-gitops-repositories-api
-
-### Modify
-
-* Modify secret file post and put methods
 
 ### Release
 
+* Release version 0.3.19 03-11-2023
+* Release v0.3.19
 * Release version 0.3.18 03-10-2023
 * Release v0.3.18
 * Release version 0.3.17 03-08-2023
@@ -161,7 +157,6 @@
 * Release version 0.2.13 10-19-2022
 * Release v0.2.13
 * Release version v0.2.12 10-19-2022
-* Release vv0.2.12
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -194,8 +189,6 @@
 * Release version 0.1.27 05-23-2022
 * Release v0.1.27
 * Release version 0.1.26 05-20-2022
-* Release v0.1.26
-* Release version 0.1.25 05-20-2022
 
 ### Removing
 
@@ -249,6 +242,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 * Merge pull request [#294](https://github.com/harness/harness-go-sdk/issues/294) from harness/pl-31762
 * Merge pull request [#292](https://github.com/harness/harness-go-sdk/issues/292) from harness/CDS-52185
 * Merge pull request [#289](https://github.com/harness/harness-go-sdk/issues/289) from harness/CDS-54803
@@ -297,8 +291,6 @@
 * Merge pull request [#198](https://github.com/harness/harness-go-sdk/issues/198) from harness/SPG-561_1
 * Merge pull request [#194](https://github.com/harness/harness-go-sdk/issues/194) from harness/CDS-44311-gitops-repositories-api
 * Merge pull request [#178](https://github.com/harness/harness-go-sdk/issues/178) from harness/SPG-508-adding-service-overrides
-* Merge pull request [#189](https://github.com/harness/harness-go-sdk/issues/189) from harness/CDS-43547-gitops-agent-cluster-sdk
-* Merge pull request [#190](https://github.com/harness/harness-go-sdk/issues/190) from harness/SPG-522-add-infra-TF-resource
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
