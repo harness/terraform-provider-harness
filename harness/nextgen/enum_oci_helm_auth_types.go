@@ -10,6 +10,11 @@ var OciHelmAuthTypes = struct {
 	UsernamePassword: "UsernamePassword",
 }
 
+var OciHelmAuthTypeValues = []string{
+	OciHelmAuthTypes.UsernamePassword.String(),
+	OciHelmAuthTypes.Anonymous.String(),
+}
+
 func (e OciHelmAuthType) String() string {
 	return string(e)
 }

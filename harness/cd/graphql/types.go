@@ -604,10 +604,6 @@ type HTTPHelmRepoConnector struct {
 	Connector
 }
 
-type OCIHelmRepoConnector struct {
-	Connector
-}
-
 type DockerConnector struct {
 	Connector
 	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
