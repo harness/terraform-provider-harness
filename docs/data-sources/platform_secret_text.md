@@ -34,6 +34,7 @@ data "harness_platform_secret_text" "test" {
 - `id` (String) The ID of this resource.
 - `secret_manager_identifier` (String) Identifier of the Secret Manager used to manage the secret.
 - `tags` (Set of String) Tags to associate with the resource.
+- `value` (String, Sensitive) Value of the Secret
 - `value_type` (String) This has details to specify if the secret value is Inline or Reference.
 
 
