@@ -12,6 +12,8 @@ import (
 func TestAccDataSourceSecretText(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		secretValue = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	
 		resourceName = "data.harness_platform_secret_text.test"
 	)
 
@@ -20,7 +22,7 @@ func TestAccDataSourceSecretText(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_text(name),
+				Config: testAccDataSourceSecret_text(name,secretValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -35,7 +37,7 @@ func TestAccDataSourceSecretText(t *testing.T) {
 	})
 }
 
-func testAccDataSourceSecret_text(name string) string {
+func testAccDataSourceSecret_text(name string,secretValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
@@ -45,11 +47,12 @@ func testAccDataSourceSecret_text(name string) string {
 
 			secret_manager_identifier = "harnessSecretManager"
 			value_type = "Inline"
-			value = "secret"
+			value = "%[2]s"
 		}
 
 		data "harness_platform_secret_text" "test"{
 			identifier = harness_platform_secret_text.test.identifier
+			value = harness_platform_secret_text.test.value
 		}
-`, name)
+`, name,secretValue)
 }
