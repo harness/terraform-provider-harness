@@ -98,6 +98,8 @@ github.com/harness/harness-go-sdk v0.3.17 h1:CRt7kb9KhTB3fA+bmnj73MtwV2D0R7OpSjH
 github.com/harness/harness-go-sdk v0.3.17/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
 github.com/harness/harness-go-sdk v0.3.18 h1:OypROTUnqRbpJDfr8TkkHIAIX79jBMCUL+4DQbcrghU=
 github.com/harness/harness-go-sdk v0.3.18/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
+github.com/harness/harness-go-sdk v0.3.20 h1:WVsY8lbuxDAD9C6jlUYq6baQi69wvfkBIa1PeMeiCHk=
+github.com/harness/harness-go-sdk v0.3.20/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
 github.com/harness/harness-openapi-go-client v0.0.14 h1:D+yYm2KGUScZYg5/W0IZHSvHCt949h5Um9dYX0b4QcU=
 github.com/harness/harness-openapi-go-client v0.0.14/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/harness/harness-openapi-go-client v0.0.15 h1:xdb8NJcLhTrUA/8JW8p1cbzMLuKc6tosSvmtYOU807k=
