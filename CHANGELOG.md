@@ -1,3 +1,9 @@
+# 0.16.0 (March 14,2023) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_platform_connector_oci_helm: Added Oci Helm connector resource.` ([#466](https://github.com/harness/terraform-provider-harness/issues/466))
+
 # 0.15.0 (March 10,2023) 
 
 FEATURES:

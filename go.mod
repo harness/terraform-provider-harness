@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/antihax/optional v1.0.0
 	github.com/docker/docker v20.10.22+incompatible
-	github.com/harness/harness-go-sdk v0.3.18
+	github.com/harness/harness-go-sdk v0.3.20
 	github.com/harness/harness-openapi-go-client v0.0.16
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.25.0
 	github.com/pkg/errors v0.9.1
@@ -32,7 +32,7 @@ require (
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
-	github.com/fatih/color v1.14.1 // indirect
+	github.com/fatih/color v1.15.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
