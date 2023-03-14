@@ -59,7 +59,6 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
 
 - `delegate_selectors` (Set of String) Connect only using delegates with these tags.
 - `description` (String) Description of the resource.
-- `execute_on_delegate` (Boolean) Execute validation on delegate or not.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
