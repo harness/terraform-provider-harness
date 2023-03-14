@@ -25,7 +25,7 @@ func DataSourceSecretText() *schema.Resource {
 				Description: "Value of the Secret",
 				Type:        schema.TypeString,
 				Sensitive:   true,
-				Computed:    true,	
+				Computed:    true,
 			},
 		},
 	}
