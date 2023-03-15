@@ -4,10 +4,6 @@ FEATURES:
 
 * **New Resource:** `resource/harness_platform_connector_oci_helm: Added Oci Helm connector resource.` ([#466](https://github.com/harness/terraform-provider-harness/issues/466))
 
-BUG FIXES:
-
-* harness_platform_secret_text: The value for secret was set to optional which was incorrect Updated the same 
-
 # 0.15.0 (March 10,2023) 
 
 FEATURES:
