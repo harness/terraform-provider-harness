@@ -22,7 +22,7 @@ func TestAccDataSourceSecretText(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_text(name,secretValue),
+				Config: testAccDataSourceSecret_text(name, secretValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -37,7 +37,7 @@ func TestAccDataSourceSecretText(t *testing.T) {
 	})
 }
 
-func testAccDataSourceSecret_text(name string,secretValue string) string {
+func testAccDataSourceSecret_text(name string, secretValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
@@ -52,7 +52,6 @@ func testAccDataSourceSecret_text(name string,secretValue string) string {
 
 		data "harness_platform_secret_text" "test"{
 			identifier = harness_platform_secret_text.test.identifier
-			value = harness_platform_secret_text.test.value
 		}
-`, name,secretValue)
+`, name, secretValue)
 }
