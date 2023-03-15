@@ -63,7 +63,7 @@ func ResourceInputSet() *schema.Resource {
 							Computed:    true,
 						},
 						"connector_ref": {
-							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity.",
+							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
