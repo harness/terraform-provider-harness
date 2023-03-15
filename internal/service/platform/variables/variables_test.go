@@ -75,7 +75,7 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 		CheckDestroy:      testAccVariablesOrgLevelDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVariablesOrgLevel(id, name,variableValue),
+				Config: testAccResourceVariablesOrgLevel(id, name, variableValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -83,7 +83,7 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceVariablesOrgLevel(id, updatedName,updatedValue),
+				Config: testAccResourceVariablesOrgLevel(id, updatedName, updatedValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -215,7 +215,7 @@ func testAccResourceVariables(id string, name string, variableValue string) stri
 `, id, name, variableValue)
 }
 
-func testAccResourceVariablesOrgLevel(id string, name string,variableValue string) string {
+func testAccResourceVariablesOrgLevel(id string, name string, variableValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -232,5 +232,5 @@ func testAccResourceVariablesOrgLevel(id string, name string,variableValue strin
 				fixed_value = "%[3]s"
 			}
 		}
-`, id, name,variableValue)
+`, id, name, variableValue)
 }
