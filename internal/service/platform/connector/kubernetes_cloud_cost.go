@@ -21,7 +21,7 @@ func ResourceConnectorKubernetesCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"connector_ref": {
-				Description: "Reference of the Connector.",
+				Description: "Reference of the Connector." + helpers.Descriptions.ConnectorRefText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},
