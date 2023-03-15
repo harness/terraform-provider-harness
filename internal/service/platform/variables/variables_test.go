@@ -18,6 +18,10 @@ func TestAccResourceVariables(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
+
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedValue := variableValue + "updated"
+
 	resourceName := "harness_platform_variables.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -26,17 +30,19 @@ func TestAccResourceVariables(t *testing.T) {
 		CheckDestroy:      testAccVariablesDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVariables(id, name),
+				Config: testAccResourceVariables(id, name, variableValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
 				),
 			},
 			{
-				Config: testAccResourceVariables(id, updatedName),
+				Config: testAccResourceVariables(id, updatedName, updatedValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", updatedValue),
 				),
 			},
 			{
@@ -54,6 +60,10 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
+
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedValue := variableValue + "updated"
+
 	resourceName := "harness_platform_variables.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -62,17 +72,19 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 		CheckDestroy:      testAccVariablesOrgLevelDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVariablesOrgLevel(id, name),
+				Config: testAccResourceVariablesOrgLevel(id, name, variableValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
 				),
 			},
 			{
-				Config: testAccResourceVariablesOrgLevel(id, updatedName),
+				Config: testAccResourceVariablesOrgLevel(id, updatedName, updatedValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", updatedValue),
 				),
 			},
 			{
@@ -89,16 +101,18 @@ func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	resourceName := "harness_platform_variables.test"
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVariables(id, name),
+				Config: testAccResourceVariables(id, name, variableValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
 				),
 			},
 			{
@@ -111,7 +125,7 @@ func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
 					})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceVariables(id, name),
+				Config:             testAccResourceVariables(id, name, variableValue),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -169,7 +183,7 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 	return optional.EmptyString()
 }
 
-func testAccResourceVariables(id string, name string) string {
+func testAccResourceVariables(id string, name string, variableValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -191,13 +205,13 @@ func testAccResourceVariables(id string, name string) string {
 			type = "String"
 			spec {
 				value_type = "FIXED"
-				fixed_value = "%[2]s"
+				fixed_value = "%[3]s"
 			}
 		}
-`, id, name)
+`, id, name, variableValue)
 }
 
-func testAccResourceVariablesOrgLevel(id string, name string) string {
+func testAccResourceVariablesOrgLevel(id string, name string, variableValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -211,8 +225,8 @@ func testAccResourceVariablesOrgLevel(id string, name string) string {
 			type = "String"
 			spec {
 				value_type = "FIXED"
-				fixed_value = "%[2]s"
+				fixed_value = "%[3]s"
 			}
 		}
-`, id, name)
+`, id, name, variableValue)
 }
