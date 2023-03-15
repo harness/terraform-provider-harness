@@ -57,7 +57,7 @@ func TestAccRoleAssignments(t *testing.T) {
 	})
 }
 
-func TestAccRoleAssignments_1(t *testing.T) {
+func TestAccRoleAssignments_withoutSendingIdentifier(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	resourceName := "harness_platform_role_assignments.test"
@@ -69,21 +69,10 @@ func TestAccRoleAssignments_1(t *testing.T) {
 		CheckDestroy:      testAccRoleAssignmentsDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRoleAssignments(id, name, "false", accountId),
+				Config: testAccResourceRoleAssignments_withoutIdentifier(id, name, "false", accountId),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "resource_group_identifier", "_all_project_level_resources"),
-					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "managed", "false"),
-					resource.TestCheckResourceAttr(resourceName, "principal.0.type", "SERVICE_ACCOUNT"),
-				),
-			},
-			{
-				Config: testAccResourceRoleAssignments_1(id, name, "false", accountId),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(resourceName, "identifier"),
 					resource.TestCheckResourceAttr(resourceName, "resource_group_identifier", "_all_project_level_resources"),
 					resource.TestCheckResourceAttr(resourceName, "disabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "managed", "false"),
@@ -224,7 +213,7 @@ func testAccResourceRoleAssignments(id string, name string, disabled string, acc
 	`, id, name, disabled, accountId)
 }
 
-func testAccResourceRoleAssignments_1(id string, name string, disabled string, accountId string) string {
+func testAccResourceRoleAssignments_withoutIdentifier(id string, name string, disabled string, accountId string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
