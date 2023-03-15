@@ -35,7 +35,6 @@ func TestAccResourceVariables(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
-					
 				),
 			},
 			{
@@ -44,8 +43,6 @@ func TestAccResourceVariables(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", updatedValue),
-				
-
 				),
 			},
 			{
@@ -125,7 +122,6 @@ func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
 					_, _, err := c.VariablesApi.DeleteVariable(ctx, c.AccountId, id, &nextgen.VariablesApiDeleteVariableOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
-						
 					})
 					require.NoError(t, err)
 				},
