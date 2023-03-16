@@ -29,7 +29,7 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 
 ### Required
 
-- `connector_ref` (String) Reference of the Connector.
+- `connector_ref` (String) Reference of the Connector. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
