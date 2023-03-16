@@ -47,7 +47,7 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 func MaskAPIKey(stringToMask string) string {
-	reg := regexp.MustCompile(`X-Api-Key: ([a-zA-Z0-9.+-=]+)`)
+	reg := regexp.MustCompile(`X-Api-Key: ([a-zA-Z0-9.+-=_]+)`)
 	stringToMask = reg.ReplaceAllString(stringToMask, "X-Api-Key: ****")
 	return stringToMask
 }
