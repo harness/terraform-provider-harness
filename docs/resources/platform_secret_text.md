@@ -44,6 +44,7 @@ resource "harness_platform_secret_text" "reference" {
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `secret_manager_identifier` (String) Identifier of the Secret Manager used to manage the secret.
+- `value` (String, Sensitive) Value of the Secret
 - `value_type` (String) This has details to specify if the secret value is Inline or Reference.
 
 ### Optional
@@ -52,7 +53,6 @@ resource "harness_platform_secret_text" "reference" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
-- `value` (String, Sensitive) Value of the Secret
 
 ### Read-Only
 

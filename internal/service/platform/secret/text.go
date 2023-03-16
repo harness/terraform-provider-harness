@@ -36,7 +36,7 @@ func ResourceSecretText() *schema.Resource {
 				Description: "Value of the Secret",
 				Sensitive:   true,
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 		},
 	}
