@@ -1,3 +1,9 @@
+# 0.16.2 (March 16,2023)
+
+BUG FIXES:
+
+* harness_platform_role_assignments: Allow creation of role_assignments without Identifier and set that identifier coming from upStream when doing a get call . ([#472](https://github.com/harness/terraform-provider-harness/pull/472))
+
 # 0.16.1 (March 15,2023) 
 
 ENHANCEMENTS:
