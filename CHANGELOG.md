@@ -1,3 +1,12 @@
+# 0.16.1 (March 15,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_template: Updated connector ref field's description.
+resource/harness_platform_pipeline: Updated connector ref field's description.
+resource/harness_platform_connector_kubernetes_cloud_cost: Updated connector ref field's description.
+resource/harness_platform_input_set: Updated connector ref field's description. ([#471](https://github.com/harness/terraform-provider-harness/issues/471))
+
 # 0.16.0 (March 14,2023) 
 
 FEATURES:
