@@ -27,6 +27,7 @@ func ResourceRoleAssignments() *schema.Resource {
 				Description: "Identifier for role assignment.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"resource_group_identifier": {
 				Description: "Resource group identifier.",

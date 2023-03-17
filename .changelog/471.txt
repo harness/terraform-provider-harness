@@ -1,0 +1,6 @@
+```release-note:enhancement
+resource/harness_platform_template: Updated connector ref field's description.
+resource/harness_platform_pipeline: Updated connector ref field's description.
+resource/harness_platform_connector_kubernetes_cloud_cost: Updated connector ref field's description.
+resource/harness_platform_input_set: Updated connector ref field's description.
+```
