@@ -30,12 +30,50 @@ func TestAccResourceService(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					
+				),
+			},
+			{
+				Config: testAccResourceServiceWithoutServiceDefinition(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				// ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestProjectResourceService(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceService(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
-				Config: testAccResourceServiceWithoutServiceDefinition(id, updatedName),
+				Config: testProjectResourceServiceWithoutServiceDefinition(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -48,6 +86,46 @@ func TestAccResourceService(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestOrgResourceService(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceService(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					
+				),
+			},
+			{
+				Config: testOrgResourceServiceWithoutServiceDefinition(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -243,6 +321,30 @@ func testAccServiceDestroy(resourceName string) resource.TestCheckFunc {
 
 func testAccResourceService(id string, name string) string {
 	return fmt.Sprintf(`
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      
+    }
+`, id, name)
+}
+func testAccResourceServiceWithoutServiceDefinition(id string, name string) string {
+	return fmt.Sprintf(`
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      yaml = <<-EOT
+        service:
+          name: %[2]s
+          identifier: %[1]s
+      EOT
+    }
+`, id, name)
+}
+
+
+func testProjectResourceService(id string, name string) string {
+	return fmt.Sprintf(`
     resource "harness_platform_organization" "test" {
       identifier = "%[1]s"
       name = "%[2]s"
@@ -263,7 +365,7 @@ func testAccResourceService(id string, name string) string {
     }
 `, id, name)
 }
-func testAccResourceServiceWithoutServiceDefinition(id string, name string) string {
+func testProjectResourceServiceWithoutServiceDefinition(id string, name string) string {
 	return fmt.Sprintf(`
     resource "harness_platform_organization" "test" {
       identifier = "%[1]s"
@@ -291,6 +393,41 @@ func testAccResourceServiceWithoutServiceDefinition(id string, name string) stri
 `, id, name)
 }
 
+
+func testOrgResourceService(id string, name string) string {
+	return fmt.Sprintf(`
+    resource "harness_platform_organization" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+    }
+
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_organization.test.id
+      
+    }
+`, id, name)
+}
+func testOrgResourceServiceWithoutServiceDefinition(id string, name string) string {
+	return fmt.Sprintf(`
+    resource "harness_platform_organization" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+    }
+
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_organization.test.id
+      yaml = <<-EOT
+        service:
+          name: %[2]s
+          identifier: %[1]s
+      EOT
+    }
+`, id, name)
+}
 func testAccResourceServiceWithYaml(id string, name string, varValue string) string {
 	return fmt.Sprintf(`
     resource "harness_platform_organization" "test" {
