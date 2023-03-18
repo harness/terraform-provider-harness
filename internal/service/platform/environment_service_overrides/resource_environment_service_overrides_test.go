@@ -49,9 +49,11 @@ func testAccGetPlatformEnvServiceOverrides(resourceName string, state *terraform
 	envId := r.Primary.Attributes["env_id"]
 	serviceId := r.Primary.Attributes["service_id"]
 
-	resp, _, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, orgId, projId, envId,
+	resp, _, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, envId,
 		&nextgen.EnvironmentsApiGetServiceOverridesListOpts{
 			ServiceIdentifier: optional.NewString(serviceId),
+			OrgIdentifier:     optional.NewString(orgId),
+			ProjectIdentifier: optional.NewString(projId),
 		})
 
 	if err != nil {
