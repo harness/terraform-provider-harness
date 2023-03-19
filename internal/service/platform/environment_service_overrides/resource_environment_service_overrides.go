@@ -105,10 +105,12 @@ func resourceEnvironmentServiceOverridesDelete(ctx context.Context, d *schema.Re
 
 	orgId := d.Get("org_id").(string)
 	projId := d.Get("project_id").(string)
+	serviceRef := d.Get("service_id").(string)
+	envId := d.Get("env_id").(string)
 
 	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, orgId, projId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
-		EnvironmentIdentifier: optional.NewString(d.Get("env_id").(string)),
-		ServiceIdentifier:     optional.NewString(d.Get("service_id").(string)),
+		EnvironmentIdentifier: optional.NewString(envId),
+		ServiceIdentifier:     optional.NewString(serviceRef),
 	})
 
 	if err != nil {
@@ -147,6 +149,6 @@ func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.Service
 }
 
 func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
-	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Required)
-	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Required)
+	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional)
+	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional)
 }
