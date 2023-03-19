@@ -103,14 +103,14 @@ func resourceEnvironmentServiceOverridesCreateOrUpdate(ctx context.Context, d *s
 func resourceEnvironmentServiceOverridesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
 	serviceRef := d.Get("service_id").(string)
 	envId := d.Get("env_id").(string)
 
-	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, orgId, projId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
+	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
 		EnvironmentIdentifier: optional.NewString(envId),
 		ServiceIdentifier:     optional.NewString(serviceRef),
+		OrgIdentifier:         helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
