@@ -167,7 +167,7 @@ EnvironmentsApiService Delete an Environment by identifier
      * @param "IfMatch" (optional.String) -
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "ForceDelete" (optional.Bool) - If true, the Entity will be forced delete, without checking any references/usages
+     * @param "ForceDelete" (optional.Bool) -  If true, the Entity will be forced delete, without checking any references/usages
 @return ResponseDtoBoolean
 */
 
@@ -203,8 +203,8 @@ func (a *EnvironmentsApiService) DeleteEnvironmentV2(ctx context.Context, enviro
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
-    		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
-    }
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -307,20 +307,22 @@ func (a *EnvironmentsApiService) DeleteEnvironmentV2(ctx context.Context, enviro
 EnvironmentsApiService Delete a ServiceOverride entity
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *EnvironmentsApiDeleteServiceOverrideOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "EnvironmentIdentifier" (optional.String) -  Environment Identifier for the Entity.
      * @param "ServiceIdentifier" (optional.String) -  Service Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
 type EnvironmentsApiDeleteServiceOverrideOpts struct {
+	OrgIdentifier         optional.String
+	ProjectIdentifier     optional.String
 	EnvironmentIdentifier optional.String
 	ServiceIdentifier     optional.String
 }
 
-func (a *EnvironmentsApiService) DeleteServiceOverride(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *EnvironmentsApiDeleteServiceOverrideOpts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *EnvironmentsApiService) DeleteServiceOverride(ctx context.Context, accountIdentifier string, localVarOptionals *EnvironmentsApiDeleteServiceOverrideOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -337,8 +339,12 @@ func (a *EnvironmentsApiService) DeleteServiceOverride(ctx context.Context, acco
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.EnvironmentIdentifier.IsSet() {
 		localVarQueryParams.Add("environmentIdentifier", parameterToString(localVarOptionals.EnvironmentIdentifier.Value(), ""))
 	}
@@ -451,18 +457,20 @@ EnvironmentsApiService Gets Environment Access list
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "SearchTerm" (optional.String) -  The word to be searched and included in the list response
      * @param "EnvIdentifiers" (optional.Interface of []string) -  List of EnvironmentIds
+     * @param "EnvGroupIdentifier" (optional.String) -  Environment group identifier
      * @param "Sort" (optional.Interface of []string) -  Specifies sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order
 @return ResponseDtoListEnvironmentResponse
 */
 
 type EnvironmentsApiGetEnvironmentAccessListOpts struct {
-	Page              optional.Int32
-	Size              optional.Int32
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-	SearchTerm        optional.String
-	EnvIdentifiers    optional.Interface
-	Sort              optional.Interface
+	Page               optional.Int32
+	Size               optional.Int32
+	OrgIdentifier      optional.String
+	ProjectIdentifier  optional.String
+	SearchTerm         optional.String
+	EnvIdentifiers     optional.Interface
+	EnvGroupIdentifier optional.String
+	Sort               optional.Interface
 }
 
 func (a *EnvironmentsApiService) GetEnvironmentAccessList(ctx context.Context, accountIdentifier string, localVarOptionals *EnvironmentsApiGetEnvironmentAccessListOpts) (ResponseDtoListEnvironmentResponse, *http.Response, error) {
@@ -499,6 +507,9 @@ func (a *EnvironmentsApiService) GetEnvironmentAccessList(ctx context.Context, a
 	}
 	if localVarOptionals != nil && localVarOptionals.EnvIdentifiers.IsSet() {
 		localVarQueryParams.Add("envIdentifiers", parameterToString(localVarOptionals.EnvIdentifiers.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.EnvGroupIdentifier.IsSet() {
+		localVarQueryParams.Add("envGroupIdentifier", parameterToString(localVarOptionals.EnvGroupIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.Sort.IsSet() {
 		localVarQueryParams.Add("sort", parameterToString(localVarOptionals.Sort.Value(), "multi"))
@@ -900,12 +911,12 @@ func (a *EnvironmentsApiService) GetEnvironmentV2(ctx context.Context, environme
 EnvironmentsApiService Gets Service Overrides list
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
  * @param environmentIdentifier Environment Identifier for the Entity.
  * @param optional nil or *EnvironmentsApiGetServiceOverridesListOpts - Optional Parameters:
      * @param "Page" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
      * @param "Size" (optional.Int32) -  Results per page
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "ServiceIdentifier" (optional.String) -  Service Identifier for the Entity.
      * @param "Sort" (optional.Interface of []string) -  Specifies the sorting criteria of the list. Like sorting based on the last updated entity, alphabetical sorting in an ascending or descending order
 @return ResponseDtoPageResponseServiceOverrideResponse
@@ -914,11 +925,13 @@ EnvironmentsApiService Gets Service Overrides list
 type EnvironmentsApiGetServiceOverridesListOpts struct {
 	Page              optional.Int32
 	Size              optional.Int32
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
 	ServiceIdentifier optional.String
 	Sort              optional.Interface
 }
 
-func (a *EnvironmentsApiService) GetServiceOverridesList(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, environmentIdentifier string, localVarOptionals *EnvironmentsApiGetServiceOverridesListOpts) (ResponseDtoPageResponseServiceOverrideResponse, *http.Response, error) {
+func (a *EnvironmentsApiService) GetServiceOverridesList(ctx context.Context, accountIdentifier string, environmentIdentifier string, localVarOptionals *EnvironmentsApiGetServiceOverridesListOpts) (ResponseDtoPageResponseServiceOverrideResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -941,8 +954,12 @@ func (a *EnvironmentsApiService) GetServiceOverridesList(ctx context.Context, ac
 		localVarQueryParams.Add("size", parameterToString(localVarOptionals.Size.Value(), ""))
 	}
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.ServiceIdentifier.IsSet() {
 		localVarQueryParams.Add("serviceIdentifier", parameterToString(localVarOptionals.ServiceIdentifier.Value(), ""))
@@ -1318,7 +1335,7 @@ func (a *EnvironmentsApiService) UpsertEnvironmentV2(ctx context.Context, accoun
 }
 
 /*
-EnvironmentsApiService Upsert
+EnvironmentsApiService upsert a Service Override for an Environment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *EnvironmentsApiUpsertServiceOverrideOpts - Optional Parameters:
