@@ -903,7 +903,7 @@ func testAccResourceConnectorVault_aws_auth(id string, name string, vault_secret
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1005,7 +1005,7 @@ func testOrgResourceConnectorVault_aws_auth(id string, name string, vault_secret
 
 	resource "time_sleep" "wait_3_seconds" {
 		depends_on = [harness_platform_secret_organization.test]
-		destroy_duration = "3s"
+		create_duration = "3s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1086,7 +1086,7 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1184,7 +1184,7 @@ func testOrgResourceConnectorVault_app_role(id string, name string, vault_secret
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_organization.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	
 
@@ -1264,7 +1264,7 @@ func testAccResourceConnectorVault_k8s_auth(id string, name string) string {
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	`, id, name)
 }
@@ -1473,7 +1473,7 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	`, id, name)
 }
@@ -1556,7 +1556,7 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string) strin
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	`, id, name)
 }
@@ -1675,7 +1675,7 @@ func testAccResourceConnectorVault_token(id string, name string) string {
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 	`, id, name, helpers.TestEnvVars.VaultRootToken.Get())
 }
@@ -1708,7 +1708,7 @@ func testProjectResourceConnectorVault_token(id string, name string) string {
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_project.test]
-		destroy_duration = "4s"
+		create_duration = "4s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {

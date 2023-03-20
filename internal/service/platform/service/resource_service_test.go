@@ -30,7 +30,6 @@ func TestAccResourceService(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					
 				),
 			},
 			{
@@ -38,7 +37,6 @@ func TestAccResourceService(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					
 				),
 			},
 			{
@@ -109,7 +107,6 @@ func TestOrgResourceService(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					
 				),
 			},
 			{
@@ -118,7 +115,6 @@ func TestOrgResourceService(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					
 				),
 			},
 			{
@@ -261,7 +257,7 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceService(id, name),
+				Config: testProjectResourceService(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -277,7 +273,7 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 					})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceService(id, name),
+				Config:             testProjectResourceService(id, name),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -342,7 +338,6 @@ func testAccResourceServiceWithoutServiceDefinition(id string, name string) stri
 `, id, name)
 }
 
-
 func testProjectResourceService(id string, name string) string {
 	return fmt.Sprintf(`
     resource "harness_platform_organization" "test" {
@@ -392,7 +387,6 @@ func testProjectResourceServiceWithoutServiceDefinition(id string, name string) 
     }
 `, id, name)
 }
-
 
 func testOrgResourceService(id string, name string) string {
 	return fmt.Sprintf(`
