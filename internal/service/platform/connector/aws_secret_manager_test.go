@@ -224,7 +224,7 @@ func TestProjectResourceConnectorAwsSM_manual(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorAwsSM_manual(id, name),
+				Config: testProjectResourceConnectorAwsSM_manual(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
