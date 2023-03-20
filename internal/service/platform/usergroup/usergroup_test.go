@@ -259,7 +259,7 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceUserGroup(id, name),
+				Config: testProjectResourceUserGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
