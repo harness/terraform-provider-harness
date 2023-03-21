@@ -56,6 +56,92 @@ func TestAccResourceResourceGroup(t *testing.T) {
 
 }
 
+func TestProjectResourceResourceGroup(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_resource_group.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceResourceGroup(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testProjectResourceResourceGroup(id, updatedName, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+
+func TestOrgResourceResourceGroup(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_resource_group.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceResourceGroup(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testOrgResourceResourceGroup(id, updatedName, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+
 func TestAccResourceResourceGroup_emptyAttributeFilter(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
@@ -92,7 +178,92 @@ func TestAccResourceResourceGroup_emptyAttributeFilter(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				
+			},
+		},
+	})
+
+}
+
+func TestProjectResourceResourceGroup_emptyAttributeFilter(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_resource_group.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceResourceGroupEmptyAttributeFilter(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testProjectResourceResourceGroupEmptyAttributeFilter(id, updatedName, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+func TestOrgResourceResourceGroup_emptyAttributeFilter(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_resource_group.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceResourceGroupEmptyAttributeFilter(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testOrgResourceResourceGroupEmptyAttributeFilter(id, updatedName, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -139,6 +310,34 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 
 func testAccResourceResourceGroup(id string, name string, accountId string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_resource_group" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			account_id = "%[3]s"
+			allowed_scope_levels =["account"]
+			included_scopes {
+				filter = "EXCLUDING_CHILD_SCOPES"
+				account_id = "%[3]s"
+				
+			}
+			resource_filter {
+				include_all_resources = false
+				resources {
+					resource_type = "CONNECTOR"
+					attribute_filter {
+						attribute_name = "category"
+						attribute_values = ["value"]
+					}
+				}
+			}
+		}
+	`, id, name, accountId)
+}
+func testProjectResourceResourceGroup(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -181,7 +380,66 @@ func testAccResourceResourceGroup(id string, name string, accountId string) stri
 	`, id, name, accountId)
 }
 
+func testOrgResourceResourceGroup(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+		resource "harness_platform_resource_group" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			account_id = "%[3]s"
+			org_id = harness_platform_organization.test.id
+			
+			allowed_scope_levels =["organization"]
+			included_scopes {
+				filter = "EXCLUDING_CHILD_SCOPES"
+				account_id = "%[3]s"
+				org_id = harness_platform_organization.test.id
+				
+			}
+			resource_filter {
+				include_all_resources = false
+				resources {
+					resource_type = "CONNECTOR"
+					attribute_filter {
+						attribute_name = "category"
+						attribute_values = ["value"]
+					}
+				}
+			}
+		}
+	`, id, name, accountId)
+}
+
 func testAccResourceResourceGroupEmptyAttributeFilter(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_resource_group" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			account_id = "%[3]s"
+			allowed_scope_levels =["account"]
+			included_scopes {
+				filter = "EXCLUDING_CHILD_SCOPES"
+				account_id = "%[3]s"
+			}
+			resource_filter {
+				include_all_resources = false
+				resources {
+					resource_type = "CONNECTOR"
+				}
+			}
+		}
+	`, id, name, accountId)
+}
+func testProjectResourceResourceGroupEmptyAttributeFilter(id string, name string, accountId string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -210,6 +468,37 @@ func testAccResourceResourceGroupEmptyAttributeFilter(id string, name string, ac
 				account_id = "%[3]s"
 				org_id = harness_platform_project.test.org_id
 				project_id = harness_platform_project.test.id
+			}
+			resource_filter {
+				include_all_resources = false
+				resources {
+					resource_type = "CONNECTOR"
+				}
+			}
+		}
+	`, id, name, accountId)
+}
+
+func testOrgResourceResourceGroupEmptyAttributeFilter(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+	
+		resource "harness_platform_resource_group" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			account_id = "%[3]s"
+			org_id = harness_platform_organization.test.identifier
+			allowed_scope_levels =["organization"]
+			included_scopes {
+				filter = "EXCLUDING_CHILD_SCOPES"
+				account_id = "%[3]s"
+				org_id = harness_platform_organization.test.identifier
 			}
 			resource_filter {
 				include_all_resources = false
