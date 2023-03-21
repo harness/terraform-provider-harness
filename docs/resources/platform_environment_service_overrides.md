@@ -60,14 +60,14 @@ resource "harness_platform_environment_service_overrides" "example" {
 ### Required
 
 - `env_id` (String) The env ID to which the overrides associated.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 - `service_id` (String) The service ID to which the overrides applies.
 - `yaml` (String) Environment Service Overrides YAML
 
 ### Optional
 
 - `identifier` (String) identifier of the service overrides.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 

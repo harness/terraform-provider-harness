@@ -3,12 +3,12 @@
 page_title: "harness_platform_environment_service_overrides Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for creating a Harness environment service overrides.
+  Data source for Harness environment service overrides.
 ---
 
 # harness_platform_environment_service_overrides (Data Source)
 
-Data source for creating a Harness environment service overrides.
+Data source for Harness environment service overrides.
 
 ## Example Usage
 
@@ -27,12 +27,12 @@ data "harness_platform_environment_service_overrides" "test" {
 ### Required
 
 - `env_id` (String) The env ID to which the overrides associated.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
 - `identifier` (String) identifier of the service overrides.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `service_id` (String) The service ID to which the overrides applies.
 
 ### Read-Only
