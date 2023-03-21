@@ -12,7 +12,7 @@ import (
 
 func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for creating a Harness environment service overrides.",
+		Description: "Data source for Harness environment service overrides.",
 
 		ReadContext: dataSourceEnvironmentServiceOverridesRead,
 
