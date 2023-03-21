@@ -233,6 +233,7 @@ func TestAccResourceConnectorVault_VaultAgent(t *testing.T) {
 func TestProjectResourceConnectorVault_VaultAgent(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	connectorName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(10))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
@@ -246,7 +247,7 @@ func TestProjectResourceConnectorVault_VaultAgent(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorVault_vault_agent(id, name),
+				Config: testProjectResourceConnectorVault_vault_agent(id, name,connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -263,7 +264,7 @@ func TestProjectResourceConnectorVault_VaultAgent(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorVault_vault_agent(id, updatedName),
+				Config: testProjectResourceConnectorVault_vault_agent(id, updatedName,connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -291,6 +292,7 @@ func TestProjectResourceConnectorVault_VaultAgent(t *testing.T) {
 func TestOrgResourceConnectorVault_VaultAgent(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	connectorName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(10))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
@@ -304,7 +306,7 @@ func TestOrgResourceConnectorVault_VaultAgent(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorVault_vault_agent(id, name),
+				Config: testOrgResourceConnectorVault_vault_agent(id, name,connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -321,7 +323,7 @@ func TestOrgResourceConnectorVault_VaultAgent(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorVault_vault_agent(id, updatedName),
+				Config: testOrgResourceConnectorVault_vault_agent(id, updatedName,connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -1478,7 +1480,7 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 	`, id, name)
 }
 
-func testProjectResourceConnectorVault_vault_agent(id string, name string) string {
+func testProjectResourceConnectorVault_vault_agent(id string, name string,connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1493,7 +1495,7 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string) strin
 	}
 
 	resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
+		identifier = "%[3]s"
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
@@ -1522,9 +1524,15 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string) strin
 		tags = ["foo:bar"]
 		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
-		secret_manager_identifier = "%[1]s"
+		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
+		depends_on = [time_sleep.wait_5_seconds]
+	}
+
+	resource "time_sleep" "wait_5_seconds" {
+		depends_on = [harness_platform_connector_azure_key_vault.test]
+		create_duration = "5s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1558,16 +1566,16 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string) strin
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name)
+	`, id, name,connectorName)
 }
-func testOrgResourceConnectorVault_vault_agent(id string, name string) string {
+func testOrgResourceConnectorVault_vault_agent(id string, name string,connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
 	resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
+		identifier = "%[3]s"
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
@@ -1594,7 +1602,7 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 		org_id = harness_platform_organization.test.id
-		secret_manager_identifier = "%[1]s"
+		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
 		depends_on = [time_sleep.wait_2_seconds]
@@ -1635,7 +1643,7 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string) string {
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name)
+	`, id, name,connectorName)
 }
 
 func testAccResourceConnectorVault_token(id string, name string) string {
