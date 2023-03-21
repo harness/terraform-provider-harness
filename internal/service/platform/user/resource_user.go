@@ -76,7 +76,7 @@ func ResourceUser() *schema.Resource {
 			"role_bindings": {
 				Description: "Role Bindings of the user. Cannot be updated.",
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_group_identifier": {
@@ -250,6 +250,8 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 
 		roleBindings = append(roleBindings, roleBindingObj)
 		addUsersDto.RoleBindings = roleBindings
+	} else {
+		addUsersDto.RoleBindings = []nextgen.RoleBinding{}
 	}
 
 	return &addUsersDto
