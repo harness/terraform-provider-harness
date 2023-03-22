@@ -247,7 +247,7 @@ func TestProjectResourceConnectorVault_VaultAgent(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorVault_vault_agent(id, name,connectorName),
+				Config: testProjectResourceConnectorVault_vault_agent(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -264,7 +264,7 @@ func TestProjectResourceConnectorVault_VaultAgent(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorVault_vault_agent(id, updatedName,connectorName),
+				Config: testProjectResourceConnectorVault_vault_agent(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -306,7 +306,7 @@ func TestOrgResourceConnectorVault_VaultAgent(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorVault_vault_agent(id, name,connectorName),
+				Config: testOrgResourceConnectorVault_vault_agent(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -323,7 +323,7 @@ func TestOrgResourceConnectorVault_VaultAgent(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorVault_vault_agent(id, updatedName,connectorName),
+				Config: testOrgResourceConnectorVault_vault_agent(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -1330,7 +1330,8 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string) string {
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
-
+		org_id= harness_platform_organization.test.id
+		project_id=harness_platform_project.test.id
 		auth_token = "${harness_platform_secret_text.test.id}"
 		base_path = "base_path"
 		access_type = "K8s_AUTH"
@@ -1480,7 +1481,7 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 	`, id, name)
 }
 
-func testProjectResourceConnectorVault_vault_agent(id string, name string,connectorName string) string {
+func testProjectResourceConnectorVault_vault_agent(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1566,9 +1567,9 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string,connec
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name,connectorName)
+	`, id, name, connectorName)
 }
-func testOrgResourceConnectorVault_vault_agent(id string, name string,connectorName string) string {
+func testOrgResourceConnectorVault_vault_agent(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1643,7 +1644,7 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string,connectorN
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name,connectorName)
+	`, id, name, connectorName)
 }
 
 func testAccResourceConnectorVault_token(id string, name string) string {
