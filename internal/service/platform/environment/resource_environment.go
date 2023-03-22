@@ -39,7 +39,7 @@ func ResourceEnvironment() *schema.Resource {
 				ValidateFunc: validation.StringInSlice(nextgen.EnvironmentTypeValues, false),
 			},
 			"yaml": {
-				Description: "Environment YAML",
+				Description: "Environment YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

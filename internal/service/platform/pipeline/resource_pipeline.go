@@ -25,7 +25,7 @@ func ResourcePipeline() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
-				Description: "YAML of the pipeline.",
+				Description: "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},
