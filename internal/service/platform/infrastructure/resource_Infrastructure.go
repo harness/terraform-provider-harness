@@ -41,7 +41,7 @@ func ResourceInfrastructure() *schema.Resource {
 				Required:    true,
 			},
 			"yaml": {
-				Description: "Infrastructure YAML",
+				Description: "Infrastructure YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},
