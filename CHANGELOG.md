@@ -1,3 +1,9 @@
+# 0.16.3 (March 22,2023) 
+
+ENHANCEMENTS:
+
+* resources: Update yaml fields description. ([#484](https://github.com/harness/terraform-provider-harness/issues/484))
+
 # 0.16.2 (March 21,2023) 
 
 BUG FIXES:
