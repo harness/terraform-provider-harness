@@ -46,7 +46,7 @@ func ResourceEnvironmentGroup() *schema.Resource {
 				Computed:    true,
 			},
 			"yaml": {
-				Description: "Env group YAML",
+				Description: "Env group YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},

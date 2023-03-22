@@ -85,7 +85,7 @@ EOT
 - `org_id` (String) Unique identifier of the organization.
 - `pipeline_id` (String) Identifier of the pipeline
 - `project_id` (String) Unique identifier of the project.
-- `yaml` (String) Input Set YAML
+- `yaml` (String) Input Set YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
 
@@ -109,7 +109,7 @@ Optional:
 - `file_path` (String) File path of the Entity in the repository.
 - `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.
 - `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Pipeline.
-- `parent_entity_connector_ref` (String) Connector reference for Parent Entity (Pipeline).
+- `parent_entity_connector_ref` (String) Connector reference for Parent Entity (Pipeline). To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `parent_entity_repo_name` (String) Repository name for Parent Entity (Pipeline).
 - `repo_name` (String) Name of the repository.
 - `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.

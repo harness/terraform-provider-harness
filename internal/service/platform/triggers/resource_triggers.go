@@ -33,7 +33,7 @@ func ResourceTriggers() *schema.Resource {
 				Optional:    true,
 			},
 			"yaml": {
-				Description: "trigger yaml",
+				Description: "trigger yaml." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},

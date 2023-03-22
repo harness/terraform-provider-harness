@@ -25,7 +25,7 @@ func ResourceTemplate() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"template_yaml": {
-				Description: "Yaml for creating new Template.",
+				Description: "Yaml for creating new Template." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},

@@ -61,7 +61,7 @@ resource "harness_platform_environment_service_overrides" "example" {
 
 - `env_id` (String) The env ID to which the overrides associated.
 - `service_id` (String) The service ID to which the overrides applies.
-- `yaml` (String) Environment Service Overrides YAML
+- `yaml` (String) Environment Service Overrides YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
 

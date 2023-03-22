@@ -63,7 +63,7 @@ resource "harness_platform_triggers" "example" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `target_id` (String) Identifier of the target pipeline
-- `yaml` (String) trigger yaml
+- `yaml` (String) trigger yaml. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
 

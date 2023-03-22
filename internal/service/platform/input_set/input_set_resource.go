@@ -30,7 +30,7 @@ func ResourceInputSet() *schema.Resource {
 				Required:    true,
 			},
 			"yaml": {
-				Description: "Input Set YAML",
+				Description: "Input Set YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -91,7 +91,7 @@ func ResourceInputSet() *schema.Resource {
 							Computed:    true,
 						},
 						"parent_entity_connector_ref": {
-							Description: "Connector reference for Parent Entity (Pipeline).",
+							Description: "Connector reference for Parent Entity (Pipeline)." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
