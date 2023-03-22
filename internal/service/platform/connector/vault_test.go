@@ -1330,8 +1330,8 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string) string {
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
-		org_id= harness_platform_organization.test.id
 		project_id=harness_platform_project.test.id
+		org_id= harness_platform_organization.test.id
 		auth_token = "${harness_platform_secret_text.test.id}"
 		base_path = "base_path"
 		access_type = "K8s_AUTH"
