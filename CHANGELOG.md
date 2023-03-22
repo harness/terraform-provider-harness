@@ -1,3 +1,9 @@
+# 0.16.4 (March 22,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_environment_service_overrides: Support for organisation and account scoped service overrides ([#479](https://github.com/harness/terraform-provider-harness/issues/479))
+
 # 0.16.3 (March 22,2023) 
 
 ENHANCEMENTS:
