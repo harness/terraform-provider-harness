@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_environment_service_overrides: Support for organisation and account scoped service overrides
+```

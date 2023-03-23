@@ -12,7 +12,7 @@ import (
 
 func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for creating a Harness environment service overrides.",
+		Description: "Data source for Harness environment service overrides.",
 
 		ReadContext: dataSourceEnvironmentServiceOverridesRead,
 
@@ -40,7 +40,7 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 		},
 	}
 
-	SetProjectLevelDataResourceSchemaForServiceOverride(resource.Schema)
+	SetScopeDataResourceSchemaForServiceOverride(resource.Schema)
 
 	return resource
 }
@@ -48,13 +48,13 @@ func DataSourceEnvironmentServiceOverrides() *schema.Resource {
 func dataSourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
 	envId := d.Get("env_id").(string)
 
-	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, orgId, projId, envId,
+	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, envId,
 		&nextgen.EnvironmentsApiGetServiceOverridesListOpts{
 			ServiceIdentifier: helpers.BuildField(d, "service_id"),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -73,7 +73,7 @@ func dataSourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Re
 	return nil
 }
 
-func SetProjectLevelDataResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
-	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Required)
-	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Required)
+func SetScopeDataResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
+	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional)
+	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional)
 }

@@ -46,7 +46,7 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 		},
 	}
 
-	SetProjectLevelResourceSchemaForServiceOverride(resource.Schema)
+	SetScopedResourceSchemaForServiceOverride(resource.Schema)
 
 	return resource
 }
@@ -54,13 +54,13 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 func resourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
 	envId := d.Get("env_id").(string)
 
-	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, orgId, projId, envId,
+	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, envId,
 		&nextgen.EnvironmentsApiGetServiceOverridesListOpts{
 			ServiceIdentifier: helpers.BuildField(d, "service_id"),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
@@ -103,12 +103,14 @@ func resourceEnvironmentServiceOverridesCreateOrUpdate(ctx context.Context, d *s
 func resourceEnvironmentServiceOverridesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
+	serviceRef := d.Get("service_id").(string)
+	envId := d.Get("env_id").(string)
 
-	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, orgId, projId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
-		EnvironmentIdentifier: optional.NewString(d.Get("env_id").(string)),
-		ServiceIdentifier:     optional.NewString(d.Get("service_id").(string)),
+	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
+		EnvironmentIdentifier: optional.NewString(envId),
+		ServiceIdentifier:     optional.NewString(serviceRef),
+		OrgIdentifier:         helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
@@ -146,7 +148,7 @@ func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.Service
 	d.Set("yaml", so.Yaml)
 }
 
-func SetProjectLevelResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
-	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Required)
-	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Required)
+func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
+	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional)
+	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional)
 }
