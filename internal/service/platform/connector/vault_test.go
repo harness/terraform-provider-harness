@@ -478,7 +478,7 @@ func TestOrgResourceConnectorVault_K8sAuth(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorVault_k8s_auth(id, name,connectorName),
+				Config: testOrgResourceConnectorVault_k8s_auth(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -494,7 +494,7 @@ func TestOrgResourceConnectorVault_K8sAuth(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorVault_k8s_auth(id, updatedName,connectorName),
+				Config: testOrgResourceConnectorVault_k8s_auth(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -1363,7 +1363,7 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string, connecto
 	}
 	`, id, name, connectorName)
 }
-func testOrgResourceConnectorVault_k8s_auth(id string, name string,connectorName string) string {
+func testOrgResourceConnectorVault_k8s_auth(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1440,7 +1440,7 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string,connectorName
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "5s"
 	}
-	`, id, name,connectorName)
+	`, id, name, connectorName)
 }
 
 func testAccResourceConnectorVault_vault_agent(id string, name string) string {
