@@ -16,8 +16,10 @@ func TestAccDataSourceCluster(t *testing.T) {
 	name := id
 
 	// GitOps Utilities
-	agentId := "terraformagent"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
 	clusterName := id
 	// clusterId := id
 
@@ -28,7 +30,7 @@ func TestAccDataSourceCluster(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceCluster(id, name, accountId, agentId, clusterName),
+				Config: testAccDataSourceCluster(id, name, accountId, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -40,7 +42,7 @@ func TestAccDataSourceCluster(t *testing.T) {
 	})
 }
 
-func testAccDataSourceCluster(id string, name string, accoundId string, agentId string, clusterName string) string {
+func testAccDataSourceCluster(id string, name string, accoundId string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -70,17 +72,17 @@ func testAccDataSourceCluster(id string, name string, accoundId string, agentId 
 		agent_id = "%[4]s"
 
 		 request {
-			upsert = false
+			upsert = true
 			cluster {
-				server = "https://kubernetes.default.svc"
+				server = "%[6]s"
 				name = "%[5]s"
 				config {
+					bearer_token = "%[7]s"
 					tls_client_config {
 						insecure = true
 					}
-					cluster_connection_type = "IN_CLUSTER"
+					cluster_connection_type = "SERVICE_ACCOUNT"
 				}
-
 			}
 		}
 	}
@@ -102,5 +104,5 @@ func testAccDataSourceCluster(id string, name string, accoundId string, agentId 
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		}
-`, id, name, accoundId, agentId, clusterName)
+`, id, name, accoundId, agentId, clusterName, clusterServer, clusterToken)
 }
