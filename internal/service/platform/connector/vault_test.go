@@ -421,7 +421,7 @@ func TestProjectResourceConnectorVault_K8sAuth(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorVault_k8s_auth(id, name,connectorName),
+				Config: testProjectResourceConnectorVault_k8s_auth(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -437,7 +437,7 @@ func TestProjectResourceConnectorVault_K8sAuth(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorVault_k8s_auth(id, updatedName,connectorName),
+				Config: testProjectResourceConnectorVault_k8s_auth(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -464,6 +464,7 @@ func TestProjectResourceConnectorVault_K8sAuth(t *testing.T) {
 func TestOrgResourceConnectorVault_K8sAuth(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	connectorName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(10))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
@@ -477,7 +478,7 @@ func TestOrgResourceConnectorVault_K8sAuth(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorVault_k8s_auth(id, name),
+				Config: testOrgResourceConnectorVault_k8s_auth(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -493,7 +494,7 @@ func TestOrgResourceConnectorVault_K8sAuth(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorVault_k8s_auth(id, updatedName),
+				Config: testOrgResourceConnectorVault_k8s_auth(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -1272,7 +1273,7 @@ func testAccResourceConnectorVault_k8s_auth(id string, name string) string {
 	`, id, name)
 }
 
-func testProjectResourceConnectorVault_k8s_auth(id string, name string,connectorName string) string {
+func testProjectResourceConnectorVault_k8s_auth(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1360,16 +1361,16 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string,connector
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name,connectorName)
+	`, id, name, connectorName)
 }
-func testOrgResourceConnectorVault_k8s_auth(id string, name string) string {
+func testOrgResourceConnectorVault_k8s_auth(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
 	resource "harness_platform_connector_azure_key_vault" "test" {
-		identifier = "%[1]s"
+		identifier = "%[3]s"
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
@@ -1395,9 +1396,15 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string) string {
 		description = "test"
 		tags = ["foo:bar"]
 		org_id= harness_platform_organization.test.id
-		secret_manager_identifier = "%[1]s"
+		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_connector_azure_key_vault.test]
+		create_duration = "4s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1426,14 +1433,14 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string) string {
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_5_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_5_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "5s"
 	}
-	`, id, name)
+	`, id, name, connectorName)
 }
 
 func testAccResourceConnectorVault_vault_agent(id string, name string) string {
