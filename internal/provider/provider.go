@@ -8,6 +8,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -206,6 +207,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_azure_cloud_provider":  connector.DataSourceConnectorAzureCloudProvider(),
 				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 				"harness_platform_policy":                          policy.DataSourcePolicy(),
+				"harness_platform_policyset":                       policyset.DataSourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 			},
@@ -308,6 +310,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_yaml_config":                              yamlconfig.ResourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.ResourceConnectorAzureCloudProvider(),
 				"harness_platform_policy":                          policy.ResourcePolicy(),
+				"harness_platform_policyset":                       policyset.ResourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 			},
