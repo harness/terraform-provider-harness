@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -17,6 +18,7 @@ import (
 
 func TestAccResourceGitopsRepoCerts(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")

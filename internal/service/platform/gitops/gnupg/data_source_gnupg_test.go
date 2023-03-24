@@ -3,6 +3,7 @@ package gnupg_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -13,6 +14,7 @@ import (
 func TestAccDataSourceGitopsGnupg(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	resourceName := "data.harness_platform_gitops_gnupg.test"
 	agentId := "account.terraformagent1"

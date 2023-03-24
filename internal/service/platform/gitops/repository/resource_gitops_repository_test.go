@@ -3,6 +3,7 @@ package repository_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -16,6 +17,7 @@ import (
 func TestAccResourceGitopsRepository(t *testing.T) {
 	// Project level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	repoName := id
@@ -55,6 +57,7 @@ func TestAccResourceGitopsRepository(t *testing.T) {
 
 	// Account level
 	id = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name = id
 	repo = "https://github.com/willycoll/argocd-example-apps.git"
 	repoName = id

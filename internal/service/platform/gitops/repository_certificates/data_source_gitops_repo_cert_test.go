@@ -3,6 +3,7 @@ package repository_certificates_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -13,6 +14,7 @@ import (
 func TestAccDataSourceGitOpsRepoCert(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
