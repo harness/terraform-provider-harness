@@ -2,10 +2,10 @@ package connector_test
 
 import (
 	"fmt"
+	"github.com/harness/harness-go-sdk/harness/helpers"
 	"os"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -1008,7 +1008,7 @@ func testOrgResourceConnectorVault_aws_auth(id string, name string, vault_secret
 	}
 
 	resource "time_sleep" "wait_3_seconds" {
-		depends_on = [harness_platform_secret_organization.test]
+		depends_on = [harness_platform_organization.test]
 		create_duration = "3s"
 	}
 
@@ -1141,7 +1141,7 @@ func testProjectResourceConnectorVault_app_role(id string, name string, vault_se
 		base_path = "vikas-test/"
 		access_type = "APP_ROLE"
 		default = false
-		secret_id = "account.${harness_platform_secret_text.test.id}"
+		secret_id = "${harness_platform_secret_text.test.id}"
 		read_only = true
 		renewal_interval_minutes = 60
 		secret_engine_manually_configured = true
@@ -1202,7 +1202,7 @@ func testOrgResourceConnectorVault_app_role(id string, name string, vault_secret
 		base_path = "vikas-test/"
 		access_type = "APP_ROLE"
 		default = false
-		secret_id = "account.${harness_platform_secret_text.test.id}"
+		secret_id = "org.${harness_platform_secret_text.test.id}"
 		read_only = true
 		renewal_interval_minutes = 60
 		secret_engine_manually_configured = true
