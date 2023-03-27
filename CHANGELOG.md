@@ -1,3 +1,9 @@
+# 0.17.0 (March 24,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_policyset: Adding the policyset management provider ([#485](https://github.com/harness/terraform-provider-harness/issues/485))
+
 # 0.16.4 (March 22,2023) 
 
 ENHANCEMENTS:
