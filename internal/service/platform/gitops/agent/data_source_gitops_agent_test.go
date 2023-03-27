@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -12,6 +13,7 @@ import (
 
 func TestAccDataSourceGitopsAgent(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := id
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")

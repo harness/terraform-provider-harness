@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
@@ -17,6 +18,7 @@ import (
 func TestAccResourceGitopsRepoCred(t *testing.T) {
 	// ACCOUNT LEVEL
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_repo_cred.test"

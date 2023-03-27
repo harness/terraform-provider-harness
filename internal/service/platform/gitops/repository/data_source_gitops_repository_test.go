@@ -6,11 +6,13 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"os"
+	"strings"
 	"testing"
 )
 
 func TestAccDataSourceGitopsRepository(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	repoName := id

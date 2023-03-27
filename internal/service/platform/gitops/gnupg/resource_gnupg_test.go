@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -18,6 +19,7 @@ import (
 
 func TestAccResourceGitopsGnupg(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := "account.terraformagent1"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -18,6 +19,7 @@ import (
 func TestAccResourceGitopsAgent(t *testing.T) {
 	// Account Level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_agent.test"
 	agentName := id
@@ -61,6 +63,7 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 
 	//Project level
 	id = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	resourceName = "harness_platform_gitops_agent.test"
 	agentName = id
 	namespace = "terraform-test"

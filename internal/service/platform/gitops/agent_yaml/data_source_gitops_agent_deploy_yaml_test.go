@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -12,6 +13,7 @@ import (
 
 func TestAccDataSourceGitopsAgentDeployYaml(t *testing.T) {
 	agentId := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	agentId = strings.ReplaceAll(agentId, "_", "")
 	namespace := "ns-" + agentId
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "data.harness_platform_gitops_agent_deploy_yaml.test"
