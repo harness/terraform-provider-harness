@@ -30,7 +30,7 @@ func ResourceService() *schema.Resource {
 				Computed:    true,
 			},
 			"forcedelete": {
-				Description: "Service YAML." + helpers.Descriptions.YamlText.String(),
+				Description: "Enable this flag for force deletion of services",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
