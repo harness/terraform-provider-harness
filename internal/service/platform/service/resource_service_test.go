@@ -280,6 +280,37 @@ func TestAccResourceService_DeleteUnderlyingResource(t *testing.T) {
 		},
 	})
 }
+func TestForceDeleteService(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	varValue := t.Name()
+	resourceName := "harness_platform_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceServiceForForceDeletion(id, name, varValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
 
 func testAccGetService(resourceName string, state *terraform.State) (*nextgen.ServiceResponseDetails, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
@@ -484,6 +515,133 @@ func testAccResourceServiceWithYaml(id string, name string, varValue string) str
     }
 `, id, name, varValue)
 }
+func testAccResourceServiceForForceDeletion(id string, name string, varValue string) string {
+	return fmt.Sprintf(`
+    resource "harness_platform_organization" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+    }
+
+    resource "harness_platform_project" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_organization.test.id
+      color = "#472848"
+    }
+
+    resource "harness_platform_service" "test" {
+      identifier = "%[1]s"
+      name = "%[2]s"
+      org_id = harness_platform_project.test.org_id
+      project_id = harness_platform_project.test.id
+      force_delete = true
+      yaml = <<-EOT
+        service:
+          name: %[2]s
+          identifier: %[1]s
+          serviceDefinition:
+            spec:
+              manifests:
+                - manifest:
+                    identifier: manifest1
+                    type: K8sManifest
+                    spec:
+                      store:
+                        type: Github
+                        spec:
+                          connectorRef: <+input>
+                          gitFetchType: Branch
+                          paths:
+                            - files1
+                          repoName: <+input>
+                          branch: master
+                      skipResourceVersioning: false
+              configFiles:
+                - configFile:
+                    identifier: configFile1
+                    spec:
+                      store:
+                        type: Harness
+                        spec:
+                          files:
+                            - <+org.description>
+              variables:
+                - name: var1
+                  type: String
+                  value: %[3]s
+                - name: var2
+                  type: String
+                  value: val2
+            type: Kubernetes
+          gitOpsEnabled: false
+      EOT
+    }
+
+        resource "harness_platform_pipeline" "test" {
+        identifier = "%[1]s"
+        org_id = harness_platform_project.test.org_id
+        project_id = harness_platform_project.test.id
+        name = "%[2]s"
+        yaml = <<-EOT
+        pipeline:
+          name: "%[2]s"
+          identifier: "%[1]s"
+          projectIdentifier: ${harness_platform_project.test.id}
+          orgIdentifier: ${harness_platform_project.test.org_id}
+          tags: {}
+          stages:
+            - stage:
+                name: p3
+                identifier: p3
+                description: ""
+                type: Deployment
+                spec:
+                  deploymentType: Kubernetes
+                  service:
+                    serviceRef: "%[1]s"
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: <+input>
+                              sources: <+input>
+                  environment:
+                    environmentRef: <+input>
+                    deployToAll: false
+                    environmentInputs: <+input>
+                    serviceOverrideInputs: <+input>
+                    infrastructureDefinitions: <+input>
+                  execution:
+                    steps:
+                      - step:
+                          name: Rollout Deployment
+                          identifier: rolloutDeployment
+                          type: K8sRollingDeploy
+                          timeout: 10m
+                          spec:
+                            skipDryRun: false
+                            pruningEnabled: false
+                    rollbackSteps:
+                      - step:
+                          name: Rollback Rollout Deployment
+                          identifier: rollbackRolloutDeployment
+                          type: K8sRollingRollback
+                          timeout: 10m
+                          spec:
+                            pruningEnabled: false
+                tags: {}
+                failureStrategies:
+                  - onFailure:
+                      errors:
+                        - AllErrors
+                      action:
+                        type: StageRollback
+        EOT
+}
+`, id, name, varValue)
+}
 
 func testAccResourceServiceWithYamlOrgLevel(id string, name string, varValue string) string {
 	return fmt.Sprintf(`
@@ -496,6 +654,7 @@ func testAccResourceServiceWithYamlOrgLevel(id string, name string, varValue str
       identifier = "%[1]s"
       name = "%[2]s"
       org_id = harness_platform_organization.test.id
+			
       yaml = <<-EOT
         service:
           name: %[2]s

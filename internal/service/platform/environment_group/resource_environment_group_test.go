@@ -89,6 +89,37 @@ func testAccEnvironmentGroupDestroy(resourceName string) resource.TestCheckFunc 
 		return nil
 	}
 }
+func TestAccResourceEnvironmentGroupForceDelete(t *testing.T) {
+
+	name := t.Name()
+	color := "#0063F7"
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_environment_group.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironmentGroupForceDelete(id, name, color),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml", "force_delete"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
 
 func testAccResourceEnvironmentGroup(id string, name string, color string) string {
 	return fmt.Sprintf(`
@@ -119,5 +150,93 @@ func testAccResourceEnvironmentGroup(id string, name string, color string) strin
 			                 envIdentifiers: []
 		  EOT
 		}
+`, id, name, color)
+}
+func testAccResourceEnvironmentGroupForceDelete(id string, name string, color string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#0063F7"
+		}
+
+		resource "harness_platform_environment_group" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			color = "%[3]s"
+			force_delete = true
+			yaml = <<-EOT
+			   environmentGroup:
+			                 name: "%[1]s"
+			                 identifier: "%[1]s"
+			                 description: "temp"
+			                 orgIdentifier: ${harness_platform_project.test.org_id}
+			                 projectIdentifier: ${harness_platform_project.test.id}
+			                 envIdentifiers: []
+		  EOT
+		}
+  	        resource "harness_platform_pipeline" "test" {
+            identifier = "%[1]s"
+            org_id = harness_platform_project.test.org_id
+            project_id = harness_platform_project.test.id
+            name = "%[2]s"
+            yaml = <<-EOT
+                pipeline:
+                  name: "%[2]s"
+                  identifier: "%[1]s"
+                  projectIdentifier: ${harness_platform_project.test.id}
+                  orgIdentifier: ${harness_platform_project.test.org_id}
+                  tags: {}
+                  stages:
+                    - stage:
+                        name: p2
+                        identifier: p2
+                        description: ""
+                        type: Deployment
+                        spec:
+                          deploymentType: Kubernetes
+                          service:
+                            serviceRef: <+input>
+                          execution:
+                            steps:
+                              - step:
+                                  name: Rollout Deployment
+                                  identifier: rolloutDeployment
+                                  type: K8sRollingDeploy
+                                  timeout: 10m
+                                  spec:
+                                    skipDryRun: false
+                                    pruningEnabled: false
+                            rollbackSteps:
+                              - step:
+                                  name: Rollback Rollout Deployment
+                                  identifier: rollbackRolloutDeployment
+                                  type: K8sRollingRollback
+                                  timeout: 10m
+                                  spec:
+                                    pruningEnabled: false
+                          environmentGroup:
+                            envGroupRef: "%[1]s"
+                            metadata:
+                              parallel: true
+                            deployToAll: <+input>
+                            environments: <+input>
+                        tags: {}
+                        failureStrategies:
+                          - onFailure:
+                              errors:
+                                - AllErrors
+                              action:
+                                type: StageRollback
+
+                            EOT
+    }
 `, id, name, color)
 }
