@@ -654,7 +654,6 @@ func testAccResourceServiceWithYamlOrgLevel(id string, name string, varValue str
       identifier = "%[1]s"
       name = "%[2]s"
       org_id = harness_platform_organization.test.id
-			
       yaml = <<-EOT
         service:
           name: %[2]s

@@ -165,8 +165,7 @@ func BuildField(d *schema.ResourceData, field string) optional.String {
 func BuildFieldForBoolean(d *schema.ResourceData, field string) optional.Bool {
 	if arr, ok := d.GetOk(field); ok {
 
-		var var1 string = "true"
-		return optional.NewBool(arr.(string) == var1)
+		return optional.NewBool(arr.(string) == "true")
 	}
 	return optional.EmptyBool()
 }

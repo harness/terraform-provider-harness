@@ -30,7 +30,7 @@ func ResourceService() *schema.Resource {
 				Computed:    true,
 			},
 			"force_delete": {
-				Description: "Enable this flag for force deletion of services",
+				Description: "Enable this flag for force deletion of service",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
