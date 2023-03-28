@@ -1,3 +1,5 @@
 ```release-note:enhancement
-resource/harness_platform_policyset: Have added support force deletion of services/env/envgroups
+resource/harness_platform_service: Have added force deletion support of service
+resource/harness_platform_environment: Have added  force deletion support of environment
+resource/harness_platform_environment_group: Have added support force deletion support for environment group
 ```
