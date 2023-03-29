@@ -94,6 +94,36 @@ func TestAccResourceEnvironment_withYaml(t *testing.T) {
 		},
 	})
 }
+func TestAccResourceEnvironmentForceDelete(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_environment.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironmentForceDelete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml", "force_delete"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
 
 func TestAccResourceEnvironment_withYamlAccountLevel(t *testing.T) {
 
@@ -423,6 +453,132 @@ func testAccResourceEnvironmentWithYaml(id string, name string) string {
                        secretFiles: []
       EOT
   	}
+`, id, name)
+}
+
+func testAccResourceEnvironmentForceDelete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+			force_delete = true
+			yaml = <<-EOT
+			   environment:
+         name: %[2]s
+         identifier: %[1]s
+         orgIdentifier: ${harness_platform_project.test.org_id}
+         projectIdentifier: ${harness_platform_project.test.id}
+         type: PreProduction
+         tags:
+           foo: bar
+           baz: ""
+         variables:
+           - name: envVar1
+             type: String
+             value: v1
+             description: ""
+           - name: envVar2
+             type: String
+             value: v2
+             description: ""
+         overrides:
+           manifests:
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
+           configFiles:
+             - configFile:
+                 identifier: configFileEnv
+                 spec:
+                   store:
+                     type: Harness
+                     spec:
+                       files:
+                         - account:/Add-ons/svcOverrideTest
+                       secretFiles: []
+      EOT
+  	}
+  	        resource "harness_platform_pipeline" "test" {
+            identifier = "%[1]s"
+            org_id = harness_platform_project.test.org_id
+            project_id = harness_platform_project.test.id
+            name = "%[2]s"
+            yaml = <<-EOT
+            pipeline:
+              name: "%[2]s"
+              identifier: "%[1]s"
+              projectIdentifier: ${harness_platform_project.test.id}
+              orgIdentifier: ${harness_platform_project.test.org_id}
+              tags: {}
+              stages:
+                - stage:
+                    name: p3
+                    identifier: p3
+                    description: ""
+                    type: Deployment
+                    spec:
+                      deploymentType: Kubernetes
+                      service:
+                        serviceRef: <+input>
+                      environment:
+                        environmentRef: "%[1]s"
+                        deployToAll: false
+                        environmentInputs: <+input>
+                        serviceOverrideInputs: <+input>
+                        infrastructureDefinitions: <+input>
+                      execution:
+                        steps:
+                          - step:
+                              name: Rollout Deployment
+                              identifier: rolloutDeployment
+                              type: K8sRollingDeploy
+                              timeout: 10m
+                              spec:
+                                skipDryRun: false
+                                pruningEnabled: false
+                        rollbackSteps:
+                          - step:
+                              name: Rollback Rollout Deployment
+                              identifier: rollbackRolloutDeployment
+                              type: K8sRollingRollback
+                              timeout: 10m
+                              spec:
+                                pruningEnabled: false
+                    tags: {}
+                    failureStrategies:
+                      - onFailure:
+                          errors:
+                            - AllErrors
+                          action:
+                            type: StageRollback
+            EOT
+    }
 `, id, name)
 }
 
