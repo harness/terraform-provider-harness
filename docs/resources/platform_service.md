@@ -79,6 +79,7 @@ resource "harness_platform_service" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
+- `force_delete` (String) Enable this flag for force deletion of service
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.

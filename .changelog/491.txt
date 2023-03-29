@@ -1,0 +1,5 @@
+```release-note:enhancement
+resource/harness_platform_service: added force deletion support for services
+resource/harness_platform_environment: added force deletion support for environments
+resource/harness_platform_environment_group: added force deletion support for environment groups
+```

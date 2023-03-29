@@ -86,6 +86,7 @@ resource "harness_platform_environment" "example" {
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
+- `force_delete` (String) Enable this flag for force deletion of environment
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
