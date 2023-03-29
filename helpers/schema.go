@@ -157,6 +157,7 @@ func SetMultiLevelDatasourceSchema(s map[string]*schema.Schema) {
 
 func SetMultiLevelDatasourceSchemaWRequired(s map[string]*schema.Schema) {
 	SetCommonDataSourceSchemaWRequired(s)
+
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
 	s["project_id"].RequiredWith = []string{"org_id"}
