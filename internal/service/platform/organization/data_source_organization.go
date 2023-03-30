@@ -21,7 +21,7 @@ func DataSourceOrganization() *schema.Resource {
 		Schema: map[string]*schema.Schema{},
 	}
 
-	helpers.SetCommonDataSourceSchema(resource.Schema)
+	helpers.SetCommonDataSourceSchemaWRequired(resource.Schema)
 
 	return resource
 }

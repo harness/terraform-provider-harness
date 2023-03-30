@@ -105,6 +105,13 @@ func SetCommonDataSourceSchema(s map[string]*schema.Schema) {
 	s["tags"] = GetTagsSchema(SchemaFlagTypes.Computed)
 }
 
+func SetCommonDataSourceSchemaWRequired(s map[string]*schema.Schema) {
+	s["identifier"] = GetIdentifierSchema(SchemaFlagTypes.Required)
+	s["description"] = GetDescriptionSchema(SchemaFlagTypes.Computed)
+	s["name"] = GetNameSchema(SchemaFlagTypes.Required)
+	s["tags"] = GetTagsSchema(SchemaFlagTypes.Computed)
+}
+
 func SetCommonDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
 	s["identifier"] = GetIdentifierSchema(SchemaFlagTypes.Required)
 	s["description"] = GetDescriptionSchema(SchemaFlagTypes.Computed)
@@ -114,6 +121,11 @@ func SetCommonDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
 
 func SetOrgLevelDataSourceSchema(s map[string]*schema.Schema) {
 	SetCommonDataSourceSchema(s)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
+}
+
+func SetOrgLevelDataSourceSchemaWRequired(s map[string]*schema.Schema) {
+	SetCommonDataSourceSchemaWRequired(s)
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
 }
 
@@ -143,6 +155,14 @@ func SetMultiLevelResourceSchema(s map[string]*schema.Schema) {
 
 func SetMultiLevelDatasourceSchema(s map[string]*schema.Schema) {
 	SetCommonDataSourceSchema(s)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"].RequiredWith = []string{"org_id"}
+}
+
+func SetMultiLevelDatasourceSchemaWRequired(s map[string]*schema.Schema) {
+	SetCommonDataSourceSchemaWRequired(s)
+
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
 	s["project_id"].RequiredWith = []string{"org_id"}
