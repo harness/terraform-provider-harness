@@ -15,4 +15,5 @@ type V1AgentMetadata struct {
 	DeployedApplicationCount int32                       `json:"deployedApplicationCount,omitempty"`
 	ExistingInstallation     bool                        `json:"existingInstallation,omitempty"`
 	MappedProjects           *Servicev1AppProjectMapping `json:"mappedProjects,omitempty"`
+	InfraType                *V1ClusterInfraType         `json:"infraType,omitempty"`
 }

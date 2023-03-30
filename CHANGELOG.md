@@ -1,6 +1,6 @@
 
-<a name="0.3.21"></a>
-## 0.3.21 (2023-03-20)
+<a name="0.3.14"></a>
+## 0.3.14 (2023-03-30)
 
 ### Add
 
@@ -8,7 +8,6 @@
 * Add jenkins authentication serializer
 * Add models for jenkins connector
 * Add azure key vault connector type
-* Add approvals for CG to SDK ([#142](https://github.com/harness/harness-go-sdk/issues/142))
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
 * Add models and enum for win rm secret type
@@ -17,38 +16,17 @@
 
 * added version and changed variable type for custom deployment
 
-### Added
+### Adding
 
-* Added method for fetching trigger webhookurl ([#129](https://github.com/harness/harness-go-sdk/issues/129))
+* adding input variables
 
 ### Adding
 
 * Adding dto files
 
-### Adding
-
-* adding input variables
-
-### Azure
-
-* Azure cloud provider model changes
-* Azure cloud provider model changes
-
-### Catch
-
-* Catch service not found issue
-
 ### Change
 
 * change in package name
-
-### Changes
-
-* Changes to add azure cloud cost connector
-
-### Fix
-
-* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 
 ### Fixed
 
@@ -72,6 +50,8 @@
 
 ### Release
 
+* Release version 0.3.21 03-20-2023
+* Release v0.3.21
 * Release version 0.3.20 03-13-2023
 * Release v0.3.20
 * Release version 0.3.19 03-11-2023
@@ -118,11 +98,6 @@
 * Release v0.2.30
 * Release version v0.2.29 11-23-2022
 * Release vv0.2.29
-* Release version 0.2.28 11-23-2022
-* Release v0.2.28
-* Release version 0.2.27 11-23-2022
-* Release v0.2.27
-* Release version 0.2.26 11-21-2022
 * Release version 0.2.24 11-17-2022
 * Release v0.2.24
 * Release version 0.2.23 11-14-2022
@@ -131,16 +106,8 @@
 * Release v0.2.22
 * Release version 0.2.21 11-04-2022
 * Release v0.2.21
-* Release version 0.2.20 11-04-2022
-* Release v0.2.20
-* Release version 0.2.19 10-29-2022
-* Release v0.2.19
 * Release version 0.2.17 10-27-2022
 * Release v0.2.17
-* Release version 0.2.16 10-26-2022
-* Release v0.2.16
-* Release version 0.2.15 10-26-2022
-* Release v0.2.15
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -161,21 +128,12 @@
 * Release v0.1.34
 * Release version 0.1.33 08-13-2022
 * Release v0.1.33
-* Release version 0.1.32 07-20-2022
-* Release v0.1.32
 * Release version 0.1.30 06-09-2022
 * Release v0.1.30
-* Release version 0.1.29 06-02-2022
-* Release v0.1.29
-* Release version 0.1.28 05-27-2022
 
 ### Removing
 
 * removing redundant api and doc
-
-### Resource
-
-* Resource selector model change
 
 ### Restoring
 
@@ -235,22 +193,14 @@
 * Merge pull request [#237](https://github.com/harness/harness-go-sdk/issues/237) from harness/SPG-823-TF-resource-for-template
 * Merge pull request [#238](https://github.com/harness/harness-go-sdk/issues/238) from harness/SPG-435
 * Merge pull request [#202](https://github.com/harness/harness-go-sdk/issues/202) from tphoney/policy-mgmt
-* Merge pull request [#233](https://github.com/harness/harness-go-sdk/issues/233) from harness/CDS-45294-spot-connector-go-sdk
-* Merge pull request [#231](https://github.com/harness/harness-go-sdk/issues/231) from harness/CDS-45294-spot-connector-go-sdk
-* Merge pull request [#226](https://github.com/harness/harness-go-sdk/issues/226) from harness/SPG-823-pipeline-filter-TF-resource
-* Merge pull request [#214](https://github.com/harness/harness-go-sdk/issues/214) from harness/CDS-43019
 * Merge pull request [#197](https://github.com/harness/harness-go-sdk/issues/197) from harness/CDS-44314-gnupg-tf-resource
 * Merge pull request [#223](https://github.com/harness/harness-go-sdk/issues/223) from harness/azure-key-vault
 * Merge pull request [#137](https://github.com/harness/harness-go-sdk/issues/137) from harness/PL-26059
 * Merge pull request [#221](https://github.com/harness/harness-go-sdk/issues/221) from harness/CDS-44317-Add-gitops-repo-cred-TF
 * Merge pull request [#219](https://github.com/harness/harness-go-sdk/issues/219) from harness/gcp-cloud-cost
 * Merge pull request [#217](https://github.com/harness/harness-go-sdk/issues/217) from harness/azure-cloud-cost
-* Merge pull request [#215](https://github.com/harness/harness-go-sdk/issues/215) from harness/SPG-731-updating-infra-doc
-* Merge pull request [#211](https://github.com/harness/harness-go-sdk/issues/211) from harness/azure-conn
 * Merge pull request [#193](https://github.com/harness/harness-go-sdk/issues/193) from harness/CDS-44872-GitOps-Repositories-Certificates-API
 * Merge pull request [#208](https://github.com/harness/harness-go-sdk/issues/208) from harness/azure-connector
-* Merge pull request [#205](https://github.com/harness/harness-go-sdk/issues/205) from harness/CDS-45566-add-gitops-agent-deploy-api
-* Merge pull request [#196](https://github.com/harness/harness-go-sdk/issues/196) from harness/CDS-44308-gitops-applications-api
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
@@ -263,5 +213,4 @@
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
 * Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
 * Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
-* Merge pull request [#143](https://github.com/harness/harness-go-sdk/issues/143) from harness/PL-26314
 
