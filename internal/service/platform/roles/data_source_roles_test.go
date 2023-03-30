@@ -61,6 +61,7 @@ func testAccDataSourceRoles(id string, name string) string {
 
 	data "harness_platform_roles" "test" {
 		identifier = "%[1]s"
+		name = "%[2]s"
 		org_id = harness_platform_roles.test.org_id
 		project_id = harness_platform_roles.test.project_id
 	}

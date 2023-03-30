@@ -74,6 +74,7 @@ func testAccDataSourceConnectorAwsKms(name string) string {
 
 		data "harness_platform_connector_awskms" "test" {
 			identifier = harness_platform_connector_awskms.test.identifier
+			name = harness_platform_connector_awskms.test.name
 		}
 	`, name)
 }

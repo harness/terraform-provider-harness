@@ -93,6 +93,7 @@ func testAccDataSourceConnectorGcpSM(id string, name string) string {
 		}
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			name = harness_platform_connector_gcp_secret_manager.test.name
 		}
 `, id, name)
 }
@@ -126,6 +127,7 @@ func testAccDataSourceConnectorGcpSMDefault(id string, name string) string {
 		}
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
+			name = harness_platform_connector_gcp_secret_manager.test.name
 		}
 `, id, name)
 }
