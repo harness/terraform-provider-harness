@@ -57,6 +57,41 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 		},
 	})
 
+	// Account level with Optional Tags
+	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name = id
+	clusterName = id
+	resourceName = "harness_platform_gitops_cluster.test2"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsClusterAccountLevelTags(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceGitopsClusterAccountLevelTags(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
 	// Project Level
 	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
 	id = strings.ReplaceAll(id, "_", "")
@@ -133,6 +168,39 @@ func testAccResourceGitopsClusterAccountLevel(id string, accountId string, name 
 
  			request {
 				upsert = true
+				cluster {
+					server = "%[6]s"
+					name = "%[5]s"
+					config {
+						bearer_token = "%[7]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
+				]
+			}
+		}
+		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
+}
+
+func testAccResourceGitopsClusterAccountLevelTags(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_cluster" "test2" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[4]s"
+
+ 			request {
+				upsert = true
+				tags = [
+        	"foo:bar",
+    		]
 				cluster {
 					server = "%[6]s"
 					name = "%[5]s"

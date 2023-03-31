@@ -13,6 +13,7 @@ Resource for creating a Harness Gitops Cluster.
 ## Example Usage
 
 ```terraform
+# Clusters without Optional tags
 resource "harness_platform_gitops_cluster" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -22,6 +23,38 @@ resource "harness_platform_gitops_cluster" "example" {
 
   request {
     upsert = false
+    cluster {
+      server = "https://kubernetes.default.svc"
+      name   = "name"
+      config {
+        tls_client_config {
+          insecure = true
+        }
+        cluster_connection_type = "IN_CLUSTER"
+      }
+
+    }
+  }
+  lifecycle {
+    ignore_changes = [
+      request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+    ]
+  }
+}
+
+# Clusters with Optional tags
+resource "harness_platform_gitops_cluster" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+
+  request {
+    upsert = false
+    tags = [
+      "foo:bar",
+    ]
     cluster {
       server = "https://kubernetes.default.svc"
       name   = "name"
@@ -88,6 +121,7 @@ Optional:
 
 - `cluster` (Block List) GitOps cluster details. (see [below for nested schema](#nestedblock--request--cluster))
 - `id` (Block List) Cluster server URL or the cluster name. (see [below for nested schema](#nestedblock--request--id))
+- `tags` (Set of String) Tags associated with the clusters
 - `update_mask` (Block List) Update mask of the GitOps cluster. (see [below for nested schema](#nestedblock--request--update_mask))
 - `updated_fields` (List of String) Fields which are updated.
 - `upsert` (Boolean) Indicates if the GitOps cluster should be updated if existing and inserted if not.
