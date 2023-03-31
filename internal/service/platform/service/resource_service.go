@@ -29,6 +29,12 @@ func ResourceService() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of service",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -90,6 +96,7 @@ func resourceServiceDelete(ctx context.Context, d *schema.ResourceData, meta int
 	_, httpResp, err := c.ServicesApi.DeleteServiceV2(ctx, d.Id(), c.AccountId, &nextgen.ServicesApiDeleteServiceV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

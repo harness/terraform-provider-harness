@@ -41,6 +41,7 @@ resource "harness_platform_environment_group" "example" {
 ### Optional
 
 - `color` (String) Color of the environment group.
+- `force_delete` (String) Enable this flag for force deletion of environment group
 - `org_id` (String) org_id of the environment group.
 - `project_id` (String) project_id of the environment group.
 
