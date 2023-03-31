@@ -95,7 +95,7 @@ func testAccDataSourceProjectByName(id string) string {
 
 		data "harness_platform_project" "test" {
 			name = harness_platform_project.test.name
-			identifier = harness_platform_project.test.identifier
+			identifier = "%[1]sik"
 			org_id = harness_platform_organization.test.id
 		}
 	`, id)
