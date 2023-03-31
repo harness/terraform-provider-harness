@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -119,6 +120,14 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 								},
+							},
+						},
+						"tags": {
+							Description: "Tags associated with the clusters",
+							Type:        schema.TypeSet,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
 							},
 						},
 						"id": {
@@ -654,6 +663,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 		}
 		clusterList = append(clusterList, cluster)
 		request["cluster"] = clusterList
+		request["tags"] = helpers.FlattenTags(cl.Tags)
 		requestList = append(requestList, request)
 		d.Set("request", requestList)
 	}
@@ -661,18 +671,24 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 
 func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterCreateRequest {
 	var upsert bool
+	var tags map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 		upsert = request["upsert"].(bool)
+		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+			tags = helpers.ExpandTags(tag)
+		}
 	}
 	return &nextgen.ClustersClusterCreateRequest{
 		Upsert:  upsert,
+		Tags:    tags,
 		Cluster: buildClusterDetails(d),
 	}
 }
 
 func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterUpdateRequest {
 	var request map[string]interface{}
+	var tags map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
 	}
@@ -680,6 +696,9 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	if request["updated_fields"] != nil && len(request["updated_fields"].([]interface{})) > 0 {
 		for _, v := range request["updated_fields"].([]interface{}) {
 			updatedFields = append(updatedFields, v.(string))
+		}
+		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+			tags = helpers.ExpandTags(tag)
 		}
 	}
 
@@ -698,6 +717,7 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 	return &nextgen.ClustersClusterUpdateRequest{
 		Cluster:       buildClusterDetails(d),
 		UpdatedFields: updatedFields,
+		Tags:          tags,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
 		},
