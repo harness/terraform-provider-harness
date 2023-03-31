@@ -74,7 +74,7 @@ func TestProjectResourceConnectorGcpSM(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorGcpSM(id, name,connectorName),
+				Config: testProjectResourceConnectorGcpSM(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -86,7 +86,7 @@ func TestProjectResourceConnectorGcpSM(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorGcpSM(id, updatedName,connectorName),
+				Config: testProjectResourceConnectorGcpSM(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -124,7 +124,7 @@ func TestOrgResourceConnectorGcpSM(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorGcpSM(id, name,connectorName),
+				Config: testOrgResourceConnectorGcpSM(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -136,7 +136,7 @@ func TestOrgResourceConnectorGcpSM(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorGcpSM(id, updatedName,connectorName),
+				Config: testOrgResourceConnectorGcpSM(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -221,7 +221,7 @@ func TestProjectResourceConnectorGcpSMDefault(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorGcpSMDefault(id, name,connectorName),
+				Config: testProjectResourceConnectorGcpSMDefault(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -233,7 +233,7 @@ func TestProjectResourceConnectorGcpSMDefault(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorGcpSMDefault(id, updatedName,connectorName),
+				Config: testProjectResourceConnectorGcpSMDefault(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -270,7 +270,7 @@ func TestOrgResourceConnectorGcpSMDefault(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorGcpSMDefault(id, name,connectorName),
+				Config: testOrgResourceConnectorGcpSMDefault(id, name, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -282,7 +282,7 @@ func TestOrgResourceConnectorGcpSMDefault(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorGcpSMDefault(id, updatedName,connectorName),
+				Config: testOrgResourceConnectorGcpSMDefault(id, updatedName, connectorName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -333,7 +333,7 @@ func testAccResourceConnectorGcpSM(id string, name string) string {
 `, id, name)
 }
 
-func testProjectResourceConnectorGcpSM(id string, name string,connectorName string) string {
+func testProjectResourceConnectorGcpSM(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -403,10 +403,10 @@ func testProjectResourceConnectorGcpSM(id string, name string,connectorName stri
 			depends_on = [harness_platform_secret_text.test]
 			create_duration = "4s"
 		}
-`, id, name,connectorName)
+`, id, name, connectorName)
 }
 
-func testOrgResourceConnectorGcpSM(id string, name string,connectorName string) string {
+func testOrgResourceConnectorGcpSM(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -466,7 +466,7 @@ func testOrgResourceConnectorGcpSM(id string, name string,connectorName string) 
 			depends_on = [harness_platform_secret_text.test]
 			create_duration = "4s"
 		}
-`, id, name,connectorName)
+`, id, name, connectorName)
 }
 
 func testAccResourceConnectorGcpSMDefault(id string, name string) string {
@@ -500,7 +500,7 @@ func testAccResourceConnectorGcpSMDefault(id string, name string) string {
 `, id, name)
 }
 
-func testProjectResourceConnectorGcpSMDefault(id string, name string,connectorName string) string {
+func testProjectResourceConnectorGcpSMDefault(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -570,10 +570,10 @@ func testProjectResourceConnectorGcpSMDefault(id string, name string,connectorNa
 			depends_on = [harness_platform_secret_text.test]
 			create_duration = "4s"
 		}
-`, id, name,connectorName)
+`, id, name, connectorName)
 }
 
-func testOrgResourceConnectorGcpSMDefault(id string, name string,connectorName string) string {
+func testOrgResourceConnectorGcpSMDefault(id string, name string, connectorName string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -632,5 +632,5 @@ func testOrgResourceConnectorGcpSMDefault(id string, name string,connectorName s
 			depends_on = [harness_platform_secret_text.test]
 			create_duration = "4s"
 		}
-`, id, name,connectorName)
+`, id, name, connectorName)
 }

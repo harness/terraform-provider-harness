@@ -62,6 +62,7 @@ func testAccDataSourceOrganization(id string) string {
 
 		data "harness_platform_organization" "test" {
 			identifier = harness_platform_organization.test.identifier
+			name = harness_platform_organization.test.name
 		}
 	`, id)
 }
@@ -77,6 +78,7 @@ func testAccDataSourceOrganizationByName(id string) string {
 
 		data "harness_platform_organization" "test" {
 			name = harness_platform_organization.test.name
+			identifier = harness_platform_organization.test.identifier
 		}
 	`, id)
 }

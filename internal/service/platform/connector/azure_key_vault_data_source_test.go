@@ -59,6 +59,7 @@ func testAccDataSourceConnector_azureKeyVault(name string) string {
 
 	data "harness_platform_connector_azure_key_vault" "test" {
 		identifier = harness_platform_connector_azure_key_vault.test.id
+		name = harness_platform_connector_azure_key_vault.test.name
 	}
 `, name)
 }

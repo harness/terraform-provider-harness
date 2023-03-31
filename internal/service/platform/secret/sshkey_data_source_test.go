@@ -54,6 +54,7 @@ func testAccDataSourceSecret_sshkey(name string) string {
 	}
 	data "harness_platform_secret_sshkey" "test"{
 		identifier = harness_platform_secret_sshkey.test.identifier
+		name = harness_platform_secret_sshkey.test.name
 	}
 	`, name)
 }
