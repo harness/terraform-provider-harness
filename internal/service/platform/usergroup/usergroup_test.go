@@ -447,7 +447,7 @@ func testAccResourceUserGroup_emails(id string, name string) string {
 			name = "%[2]s"
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			user_emails = ["aditya.kashyap@harness.io","rathod.meetsatish@harness.io","test@test.com"]
+			user_emails = ["rathod.meetsatish@harness.io"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
