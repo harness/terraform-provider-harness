@@ -2,9 +2,9 @@ package connector_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
-	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -14,6 +14,7 @@ func TestAccDataSourceConnectorVault(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		resourceName = "data.harness_platform_connector_vault.test"
+		vaultToken   = os.Getenv("HARNESS_TEST_VAULT_SECRET")
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -24,7 +25,7 @@ func TestAccDataSourceConnectorVault(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorVault(name),
+				Config: testAccDataSourceConnectorVault(name, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -41,7 +42,7 @@ func TestAccDataSourceConnectorVault(t *testing.T) {
 	})
 }
 
-func testAccDataSourceConnectorVault(name string) string {
+func testAccDataSourceConnectorVault(name string, vaultToken string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -83,6 +84,7 @@ func testAccDataSourceConnectorVault(name string) string {
 
 	data "harness_platform_connector_vault" "test" {
 		identifier = harness_platform_connector_vault.test.id
+		name = harness_platform_connector_vault.test.name
 	}
-`, name, helpers.TestEnvVars.VaultRootToken.Get())
+`, name, vaultToken)
 }
