@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceTriggers(t *testing.T) {
@@ -84,6 +85,40 @@ func testAccTriggersDestroy(resourceName string) resource.TestCheckFunc {
 
 		return nil
 	}
+}
+
+func TestAccResourceTriggers_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	project_id := id
+	org_id := id
+	target_id := id
+	resourceName := "harness_platform_triggers.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTriggers(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.TriggersApi.DeleteTrigger(ctx, c.AccountId, org_id, project_id, target_id, id, &nextgen.TriggersApiDeleteTriggerOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceTriggers(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
 }
 
 func testAccResourceTriggers(id string, name string) string {

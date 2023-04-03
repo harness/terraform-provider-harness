@@ -1,0 +1,4 @@
+```release-note:bug
+harness_platform_input_set: Fixed import.
+harness_platform_triggers: Fixed import.
+```

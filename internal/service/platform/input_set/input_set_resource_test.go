@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceInputSet(t *testing.T) {
@@ -190,6 +191,43 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 		return optional.NewString(attr)
 	}
 	return optional.EmptyString()
+}
+
+func TestAccResourceInputSet_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	project_id := id
+	org_id := id
+	pipeline_id := id
+	resourceName := "harness_platform_input_set.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInputSet(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetClientWithContext()
+					_, err := c.InputSetsApi.DeleteInputSet(ctx, org_id, project_id, id, pipeline_id, &nextgen.InputSetsApiDeleteInputSetOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceInputSet(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
 }
 
 func testAccResourceInputSetInline(id string, name string) string {
