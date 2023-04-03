@@ -3,7 +3,7 @@
 page_title: "harness_platform_connector_pagerduty Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-Datasource for looking up a PagerDuty connector.
+ Datasource for looking up a PagerDuty connector.
 ---
 
 # harness_platform_connector_pagerduty (Data Source)
