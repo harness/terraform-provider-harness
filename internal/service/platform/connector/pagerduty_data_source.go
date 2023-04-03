@@ -25,7 +25,7 @@ func DatasourceConnectorPagerDuty() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchemaWRequired(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
 
 	return resource
 }
