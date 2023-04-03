@@ -2,7 +2,6 @@ package connector_test
 
 import (
 	"fmt"
-	"github.com/harness/harness-go-sdk/harness/helpers"
 	"os"
 	"testing"
 
@@ -17,6 +16,7 @@ func TestAccResourceConnectorVault_Token(t *testing.T) {
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
+	vaultToken := os.Getenv("HARNESS_TEST_VAULT_SECRET")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -27,7 +27,7 @@ func TestAccResourceConnectorVault_Token(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceConnectorVault_token(id, name),
+				Config: testAccResourceConnectorVault_token(id, name, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -42,7 +42,7 @@ func TestAccResourceConnectorVault_Token(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceConnectorVault_token(id, updatedName),
+				Config: testAccResourceConnectorVault_token(id, updatedName, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -70,6 +70,7 @@ func TestProjectResourceConnectorVault_Token(t *testing.T) {
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
+	vaultToken := os.Getenv("HARNESS_TEST_VAULT_SECRET")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -80,7 +81,7 @@ func TestProjectResourceConnectorVault_Token(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjectResourceConnectorVault_token(id, name),
+				Config: testProjectResourceConnectorVault_token(id, name, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -95,7 +96,7 @@ func TestProjectResourceConnectorVault_Token(t *testing.T) {
 				),
 			},
 			{
-				Config: testProjectResourceConnectorVault_token(id, updatedName),
+				Config: testProjectResourceConnectorVault_token(id, updatedName, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -124,6 +125,7 @@ func TestOrgResourceConnectorVault_Token(t *testing.T) {
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_vault.test"
+	vaultToken := os.Getenv("HARNESS_TEST_VAULT_SECRET")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -134,7 +136,7 @@ func TestOrgResourceConnectorVault_Token(t *testing.T) {
 		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testOrgResourceConnectorVault_token(id, name),
+				Config: testOrgResourceConnectorVault_token(id, name, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -149,7 +151,7 @@ func TestOrgResourceConnectorVault_Token(t *testing.T) {
 				),
 			},
 			{
-				Config: testOrgResourceConnectorVault_token(id, updatedName),
+				Config: testOrgResourceConnectorVault_token(id, updatedName, vaultToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -1655,7 +1657,7 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string, connector
 	`, id, name, connectorName)
 }
 
-func testAccResourceConnectorVault_token(id string, name string) string {
+func testAccResourceConnectorVault_token(id string, name string, vaultToken string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -1694,9 +1696,9 @@ func testAccResourceConnectorVault_token(id string, name string) string {
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name, helpers.TestEnvVars.VaultRootToken.Get())
+	`, id, name, vaultToken)
 }
-func testProjectResourceConnectorVault_token(id string, name string) string {
+func testProjectResourceConnectorVault_token(id string, name string, vaultToken string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1755,9 +1757,9 @@ func testProjectResourceConnectorVault_token(id string, name string) string {
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "3s"
 	}
-	`, id, name, helpers.TestEnvVars.VaultRootToken.Get())
+	`, id, name, vaultToken)
 }
-func testOrgResourceConnectorVault_token(id string, name string) string {
+func testOrgResourceConnectorVault_token(id string, name string, vaultToken string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -1806,5 +1808,5 @@ func testOrgResourceConnectorVault_token(id string, name string) string {
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "4s"
 	}
-	`, id, name, helpers.TestEnvVars.VaultRootToken.Get())
+	`, id, name, vaultToken)
 }
