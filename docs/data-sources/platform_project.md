@@ -29,9 +29,12 @@ data "harness_platform_project" "example_by_name" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
+
+### Optional
+
+- `name` (String) Name of the resource.
+- `identifier` (String) Unique identifier of the resource.
 
 ### Read-Only
 

@@ -64,7 +64,7 @@ func testAccDataSourceResourceGroup(name string, accountId string) string {
 
 		data "harness_platform_resource_group" "test" {
 			identifier = harness_platform_resource_group.test.identifier
-			name = harness_platform_resource_group.test.name
+			
 		}
 	`, name, accountId)
 }

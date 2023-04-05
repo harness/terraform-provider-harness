@@ -115,7 +115,7 @@ func testAccDataSourceSecret_sshkey(name string) string {
 	}
 	data "harness_platform_secret_sshkey" "test"{
 		identifier = harness_platform_secret_sshkey.test.identifier
-		name = harness_platform_secret_sshkey.test.name
+		
 	}
 	`, name)
 }
@@ -159,7 +159,7 @@ func testAccDataSourceSecret_sshkeyProjectLevel(name string) string {
 	}
 	data "harness_platform_secret_sshkey" "test"{
 		identifier = harness_platform_secret_sshkey.test.identifier
-		name = harness_platform_secret_sshkey.test.name
+		
 		org_id= "%[1]s"
  		project_id= "%[1]s"
 	}
@@ -196,7 +196,7 @@ func testAccDataSourceSecret_sshkeyOrgLevel(name string) string {
 	}
 	data "harness_platform_secret_sshkey" "test"{
 		identifier = harness_platform_secret_sshkey.test.identifier
-		name = harness_platform_secret_sshkey.test.name
+		
 		org_id = "%[1]s"
 	}
 	`, name)

@@ -70,7 +70,7 @@ func testAccDataSourceConnectorPagerDuty(name string) string {
 
 		data "harness_platform_connector_pagerduty" "test" {
 			identifier = harness_platform_connector_pagerduty.test.identifier
-			name=harness_platform_connector_pagerduty.test.name
+			
 		}
 	`, name)
 }
