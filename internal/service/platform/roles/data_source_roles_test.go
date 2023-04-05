@@ -86,18 +86,18 @@ func TestAccDataSourceRolesOrgLevel(t *testing.T) {
 
 func testAccDataSourceRoles(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_roles" "test" {
+	resource "harness_platform_roles" "createRole" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
-		permissions = ["core_pipeline_edit"]
-		allowed_scope_levels = ["project"]
+		permissions = ["core_resourcegroup_view"]
+		allowed_scope_levels = ["account"]
 	}
 
 	data "harness_platform_roles" "test" {
 		identifier = "%[1]s"
-		
+		depends_on = [harness_platform_roles.createRole]
 	}
 	`, id, name)
 }
