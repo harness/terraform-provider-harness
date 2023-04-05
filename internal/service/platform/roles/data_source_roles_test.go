@@ -1,88 +1,88 @@
 package roles_test
 
 import (
-  "fmt"
-  "testing"
+	"fmt"
+	"testing"
 
-  "github.com/harness/harness-go-sdk/harness/utils"
-  "github.com/harness/terraform-provider-harness/internal/acctest"
-  "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceRoles(t *testing.T) {
 
-  id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-  name := id
-  resourceName := "data.harness_platform_roles.test"
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_roles.test"
 
-  resource.UnitTest(t, resource.TestCase{
-    PreCheck:          func() { acctest.TestAccPreCheck(t) },
-    ProviderFactories: acctest.ProviderFactories,
-    Steps: []resource.TestStep{
-      {
-        Config: testAccDataSourceRoles(id, name),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "identifier", id),
-          resource.TestCheckResourceAttr(resourceName, "name", name),
-          resource.TestCheckResourceAttr(resourceName, "description", "test"),
-          resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-        ),
-      },
-    },
-  })
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceRoles(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+		},
+	})
 
 }
 
 func TestAccDataSourceRolesProjectLevel(t *testing.T) {
 
-  id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-  name := id
-  resourceName := "data.harness_platform_roles.test"
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_roles.test"
 
-  resource.UnitTest(t, resource.TestCase{
-    PreCheck:          func() { acctest.TestAccPreCheck(t) },
-    ProviderFactories: acctest.ProviderFactories,
-    Steps: []resource.TestStep{
-      {
-        Config: testAccDataSourceRolesProjectLevel(id, name),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "identifier", id),
-          resource.TestCheckResourceAttr(resourceName, "name", name),
-          resource.TestCheckResourceAttr(resourceName, "description", "test"),
-          resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-        ),
-      },
-    },
-  })
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceRolesProjectLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+		},
+	})
 
 }
 
 func TestAccDataSourceRolesOrgLevel(t *testing.T) {
 
-  id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-  name := id
-  resourceName := "data.harness_platform_roles.test"
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_roles.test"
 
-  resource.UnitTest(t, resource.TestCase{
-    PreCheck:          func() { acctest.TestAccPreCheck(t) },
-    ProviderFactories: acctest.ProviderFactories,
-    Steps: []resource.TestStep{
-      {
-        Config: testAccDataSourceRolesOrgLevel(id, name),
-        Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "identifier", id),
-          resource.TestCheckResourceAttr(resourceName, "name", name),
-          resource.TestCheckResourceAttr(resourceName, "description", "test"),
-          resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-        ),
-      },
-    },
-  })
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceRolesOrgLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+		},
+	})
 
 }
 
 func testAccDataSourceRoles(id string, name string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
   resource "harness_platform_roles" "roleCreate" {
     identifier = "%[1]s"
     name = "%[2]s"
@@ -95,13 +95,13 @@ func testAccDataSourceRoles(id string, name string) string {
 
   data "harness_platform_roles" "test" {
     identifier = "%[1]s"
-		depends_on = [harness_platform_roles.roleCreate]
+	depends_on = [harness_platform_roles.roleCreate]
     
   }
   `, id, name)
 }
 func testAccDataSourceRolesProjectLevel(id string, name string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
   resource "harness_platform_organization" "test" {
     identifier = "%[1]s"
     name = "%[2]s"
@@ -133,7 +133,7 @@ func testAccDataSourceRolesProjectLevel(id string, name string) string {
   `, id, name)
 }
 func testAccDataSourceRolesOrgLevel(id string, name string) string {
-  return fmt.Sprintf(`
+	return fmt.Sprintf(`
   resource "harness_platform_organization" "test" {
     identifier = "%[1]s"
     name = "%[2]s"
@@ -155,4 +155,3 @@ func testAccDataSourceRolesOrgLevel(id string, name string) string {
   }
   `, id, name)
 }
-
