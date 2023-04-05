@@ -3,6 +3,6 @@ resource "harness_platform_roles" "example" {
   name                 = "name"
   description          = "test"
   tags                 = ["foo:bar"]
-  permissions          = ["core_pipeline_edit"]
-  allowed_scope_levels = ["project"]
+  permissions          = ["core_resourcegroup_view"]
+  allowed_scope_levels = ["account"]
 }

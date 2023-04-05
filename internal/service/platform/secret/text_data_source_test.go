@@ -110,7 +110,7 @@ func testAccDataSourceSecret_text(name string, secretValue string) string {
 
 		data "harness_platform_secret_text" "test"{
 			identifier = harness_platform_secret_text.test.identifier
-			name = harness_platform_secret_text.test.name
+			
 		}
 `, name, secretValue)
 }
@@ -149,7 +149,7 @@ func testAccDataSourceSecret_textProjectLevel(name string, secretValue string) s
 
 		data "harness_platform_secret_text" "test"{
 			identifier = harness_platform_secret_text.test.identifier
-			name = harness_platform_secret_text.test.name
+			
 			org_id = "%[1]s"
 			project_id = "%[1]s"
 		}
@@ -181,7 +181,7 @@ func testAccDataSourceSecret_textOrgLevel(name string, secretValue string) strin
 
 		data "harness_platform_secret_text" "test"{
 			identifier = harness_platform_secret_text.test.identifier
-			name = harness_platform_secret_text.test.name
+			
 			org_id = "%[1]s"
 		}
 `, name, secretValue)

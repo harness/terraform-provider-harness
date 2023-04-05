@@ -99,7 +99,7 @@ func testAccDataSourceSecret_file(name string) string {
 	}
 	data "harness_platform_secret_file" "test"{
 		identifier = harness_platform_secret_file.test.identifier
-		name = harness_platform_secret_file.test.name
+		
 	}
 	`, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
@@ -136,7 +136,7 @@ func testAccDataSourceSecret_fileProjectLevel(name string) string {
 
 	data "harness_platform_secret_file" "test"{
 		identifier = harness_platform_secret_file.test.identifier
-		name = harness_platform_secret_file.test.name
+		
 		org_id = harness_platform_organization.test.id
 		project_id = harness_platform_project.test.id
 	}
@@ -168,7 +168,7 @@ func testAccDataSourceSecret_fileOrgLevel(name string) string {
 
 	data "harness_platform_secret_file" "test"{
 		identifier = harness_platform_secret_file.test.identifier
-		name = harness_platform_secret_file.test.name
+		
 		org_id = harness_platform_organization.test.id
 	}
 	`, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))

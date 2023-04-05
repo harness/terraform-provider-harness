@@ -24,10 +24,10 @@ data "harness_platform_secret_file" "example" {
 ### Required
 
 - `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
 
 ### Optional
 
+- `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 

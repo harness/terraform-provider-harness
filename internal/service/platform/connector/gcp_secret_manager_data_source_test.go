@@ -11,7 +11,8 @@ import (
 
 func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 	var (
-		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
@@ -93,7 +94,7 @@ func testAccDataSourceConnectorGcpSM(id string, name string) string {
 		}
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			name = harness_platform_connector_gcp_secret_manager.test.name
+			
 		}
 `, id, name)
 }
@@ -127,7 +128,7 @@ func testAccDataSourceConnectorGcpSMDefault(id string, name string) string {
 		}
 		data "harness_platform_connector_gcp_secret_manager" "test" {
 			identifier = harness_platform_connector_gcp_secret_manager.test.identifier
-			name = harness_platform_connector_gcp_secret_manager.test.name
+			
 		}
 `, id, name)
 }
