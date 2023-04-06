@@ -84,7 +84,7 @@ func testAccDataSourceConnectorVault(name string, vaultToken string) string {
 
 	data "harness_platform_connector_vault" "test" {
 		identifier = harness_platform_connector_vault.test.id
-		name = harness_platform_connector_vault.test.name
+
 	}
 `, name, vaultToken)
 }

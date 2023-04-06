@@ -1,3 +1,18 @@
+# 0.17.1 (April 05,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_cluster: Added support for Optional Tags in cluster ([#486](https://github.com/harness/terraform-provider-harness/issues/486))
+* resource/harness_platform_service: added force deletion support for services
+resource/harness_platform_environment: added force deletion support for environments
+resource/harness_platform_environment_group: added force deletion support for environment groups ([#491](https://github.com/harness/terraform-provider-harness/issues/491))
+
+BUG FIXES:
+
+* harness_platform_input_set: Fixed import.
+harness_platform_triggers: Fixed import. ([#478](https://github.com/harness/terraform-provider-harness/issues/478))
+* resource/harness_platform_connector_aws_secret_manager: Fixed the plugin crash issue when api key doent have enough permissions. ([#502](https://github.com/harness/terraform-provider-harness/issues/502))
+
 # 0.17.0 (March 24,2023) 
 
 ENHANCEMENTS:
