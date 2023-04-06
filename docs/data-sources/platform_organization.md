@@ -24,6 +24,9 @@ data "harness_platform_organization" "this" {
 ### Required
 
 - `identifier` (String) Unique identifier of the resource.
+
+### Optional
+
 - `name` (String) Name of the resource.
 
 ### Read-Only
