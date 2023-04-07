@@ -147,7 +147,6 @@ func testAccDataSourceUserGroupAccountLevel(id string, name string) string {
 
 		data "harness_platform_usergroup" "test" {
 			identifier = harness_platform_usergroup.test.identifier
-			name = harness_platform_usergroup.test.name
 		}
 `, id, name)
 }
@@ -176,7 +175,6 @@ func testAccDataSourceUserGroupProjectLevel(id string, name string) string {
 
 		data "harness_platform_usergroup" "test" {
 			identifier = harness_platform_usergroup.test.identifier
-			name = harness_platform_usergroup.test.name
 			org_id = harness_platform_usergroup.test.org_id
 			project_id = harness_platform_usergroup.test.project_id
 		}
@@ -199,7 +197,6 @@ func testAccDataSourceUserGroupOrgLevel(id string, name string) string {
 
 		data "harness_platform_usergroup" "test" {
 			identifier = harness_platform_usergroup.test.identifier
-			
 			org_id = harness_platform_usergroup.test.org_id
 		}
 `, id, name)
@@ -238,8 +235,7 @@ func testAccDataSourceUserGroupByNameAccountLevel(id string, name string) string
 		}
 
 		data "harness_platform_usergroup" "test" {
-			
-			identifier = harness_platform_usergroup.test.identifier
+			name = harness_platform_usergroup.test.name
 		}
 `, id, name)
 }
@@ -291,10 +287,9 @@ func testAccDataSourceUserGroupByNameProjectLevel(id string, name string) string
 		}
 
 		data "harness_platform_usergroup" "test" {
-			
 			org_id = harness_platform_usergroup.test.org_id
 			project_id = harness_platform_usergroup.test.project_id
-			identifier = harness_platform_usergroup.test.identifier
+			name = harness_platform_usergroup.test.name
 		}
 `, id, name)
 }
@@ -337,9 +332,8 @@ func testAccDataSourceUserGroupByNameOrgLevel(id string, name string) string {
 		}
 
 		data "harness_platform_usergroup" "test" {
-			
+			name = harness_platform_usergroup.test.name
 			org_id = harness_platform_usergroup.test.org_id
-			identifier = harness_platform_usergroup.test.identifier
 		}
 `, id, name)
 }

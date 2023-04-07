@@ -15,13 +15,11 @@ import (
 func DataSourceOrganization() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness organization",
-
 		ReadContext: dataSourceOrganizationRead,
-
 		Schema: map[string]*schema.Schema{},
 	}
 
-	helpers.SetCommonDataSourceSchemaIdentifierRequired(resource.Schema)
+	helpers.SetCommonDataSourceSchema(resource.Schema)
 
 	return resource
 }
