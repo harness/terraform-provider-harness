@@ -1,0 +1,4 @@
+```release-note:bug
+data-source/harness_platform_organization: Fixed the data source to use either name or identifier.
+data-source/harness_platform_usergroup: Fixed the data source to use either name or identifier.
+```
