@@ -1,3 +1,10 @@
+# 0.17.3 (April 10,2023) 
+
+BUG FIXES:
+
+* data-source/harness_platform_organization: Fixed the data source to use either name or identifier.
+data-source/harness_platform_usergroup: Fixed the data source to use either name or identifier. ([#507](https://github.com/harness/terraform-provider-harness/issues/507))
+
 # 0.17.2 (April 06,2023) 
 
 # 0.17.1 (April 05,2023) 
