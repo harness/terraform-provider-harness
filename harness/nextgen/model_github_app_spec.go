@@ -11,7 +11,9 @@ package nextgen
 
 // This contains details of the Github API access credentials Specs such as references of private key
 type GithubAppSpec struct {
-	InstallationId string `json:"installationId"`
-	ApplicationId  string `json:"applicationId"`
-	PrivateKeyRef  string `json:"privateKeyRef"`
+	InstallationId    string `json:"installationId"`
+	ApplicationId     string `json:"applicationId"`
+	InstallationIdRef string `json:"installationIdRef"`
+	ApplicationIdRef  string `json:"applicationIdRef"`
+	PrivateKeyRef     string `json:"privateKeyRef"`
 }
