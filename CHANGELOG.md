@@ -1,6 +1,6 @@
 
-<a name="0.3.14"></a>
-## 0.3.14 (2023-03-30)
+<a name="0.3.15"></a>
+## 0.3.15 (2023-04-18)
 
 ### Add
 
@@ -18,15 +18,31 @@
 
 ### Adding
 
-* adding input variables
+* Adding dto files
 
 ### Adding
 
-* Adding dto files
+* adding input variables
+
+### Azure
+
+* Azure cloud provider model changes
+
+### Catch
+
+* Catch service not found issue
 
 ### Change
 
 * change in package name
+
+### Changes
+
+* Changes to add azure cloud cost connector
+
+### Fix
+
+* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 
 ### Fixed
 
@@ -50,6 +66,8 @@
 
 ### Release
 
+* Release version 0.3.14 03-30-2023
+* Release v0.3.14
 * Release version 0.3.21 03-20-2023
 * Release v0.3.21
 * Release version 0.3.20 03-13-2023
@@ -98,6 +116,7 @@
 * Release v0.2.30
 * Release version v0.2.29 11-23-2022
 * Release vv0.2.29
+* Release version 0.2.28 11-23-2022
 * Release version 0.2.24 11-17-2022
 * Release v0.2.24
 * Release version 0.2.23 11-14-2022
@@ -106,8 +125,10 @@
 * Release v0.2.22
 * Release version 0.2.21 11-04-2022
 * Release v0.2.21
+* Release version 0.2.20 11-04-2022
 * Release version 0.2.17 10-27-2022
 * Release v0.2.17
+* Release version 0.2.16 10-26-2022
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -134,6 +155,10 @@
 ### Removing
 
 * removing redundant api and doc
+
+### Resource
+
+* Resource selector model change
 
 ### Restoring
 
@@ -164,6 +189,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 * Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
