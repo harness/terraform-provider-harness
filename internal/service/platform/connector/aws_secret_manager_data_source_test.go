@@ -143,7 +143,7 @@ func testAccDataSourceConnectorAwsSmProjectLevel(name string) string {
 		}
 
 		data "harness_platform_connector_aws_secret_manager" "test" {
-			identifer = harness_platform_connector_aws_secret_manager.test.identifier
+			identifier = harness_platform_connector_aws_secret_manager.test.identifier
 			org_id = harness_platform_connector_aws_secret_manager.test.org_id
 			project_id = harness_platform_connector_aws_secret_manager.test.project_id
 			
