@@ -1,6 +1,6 @@
 
-<a name="0.3.15"></a>
-## 0.3.15 (2023-04-18)
+<a name="0.3.22"></a>
+## 0.3.22 (2023-04-18)
 
 ### Add
 
@@ -18,31 +18,15 @@
 
 ### Adding
 
-* Adding dto files
+* adding input variables
 
 ### Adding
 
-* adding input variables
-
-### Azure
-
-* Azure cloud provider model changes
-
-### Catch
-
-* Catch service not found issue
+* Adding dto files
 
 ### Change
 
 * change in package name
-
-### Changes
-
-* Changes to add azure cloud cost connector
-
-### Fix
-
-* Fix approveOrRejectApprovals output ([#145](https://github.com/harness/harness-go-sdk/issues/145))
 
 ### Fixed
 
@@ -66,6 +50,8 @@
 
 ### Release
 
+* Release version 0.3.15 04-18-2023
+* Release v0.3.15
 * Release version 0.3.14 03-30-2023
 * Release v0.3.14
 * Release version 0.3.21 03-20-2023
@@ -116,7 +102,6 @@
 * Release v0.2.30
 * Release version v0.2.29 11-23-2022
 * Release vv0.2.29
-* Release version 0.2.28 11-23-2022
 * Release version 0.2.24 11-17-2022
 * Release v0.2.24
 * Release version 0.2.23 11-14-2022
@@ -125,10 +110,8 @@
 * Release v0.2.22
 * Release version 0.2.21 11-04-2022
 * Release v0.2.21
-* Release version 0.2.20 11-04-2022
 * Release version 0.2.17 10-27-2022
 * Release v0.2.17
-* Release version 0.2.16 10-26-2022
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -155,10 +138,6 @@
 ### Removing
 
 * removing redundant api and doc
-
-### Resource
-
-* Resource selector model change
 
 ### Restoring
 
