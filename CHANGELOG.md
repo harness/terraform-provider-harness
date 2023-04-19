@@ -1,6 +1,6 @@
 
-<a name="0.3.22"></a>
-## 0.3.22 (2023-04-18)
+<a name="0.3.23"></a>
+## 0.3.23 (2023-04-19)
 
 ### Add
 
@@ -18,15 +18,20 @@
 
 ### Adding
 
-* adding input variables
+* Adding dto files
 
 ### Adding
 
-* Adding dto files
+* adding input variables
 
 ### Change
 
 * change in package name
+
+### Delete
+
+* Delete GithubAppSpec.md
+* Delete model_github_api_access_spec.go
 
 ### Fixed
 
@@ -36,7 +41,6 @@
 ### Fixing
 
 * fixing json tag for AwsCloudProvider type
-* fixing package name
 
 ### Handling
 
@@ -50,6 +54,8 @@
 
 ### Release
 
+* Release version 0.3.22 04-18-2023
+* Release v0.3.22
 * Release version 0.3.15 04-18-2023
 * Release v0.3.15
 * Release version 0.3.14 03-30-2023
@@ -99,19 +105,12 @@
 * Release version 0.3.0 11-25-2022
 * Release v0.3.0
 * Release version 0.2.30 11-23-2022
-* Release v0.2.30
-* Release version v0.2.29 11-23-2022
-* Release vv0.2.29
 * Release version 0.2.24 11-17-2022
 * Release v0.2.24
 * Release version 0.2.23 11-14-2022
 * Release v0.2.23
 * Release version 0.2.22 11-05-2022
 * Release v0.2.22
-* Release version 0.2.21 11-04-2022
-* Release v0.2.21
-* Release version 0.2.17 10-27-2022
-* Release v0.2.17
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -130,10 +129,6 @@
 * Release v0.1.35
 * Release version 0.1.34 09-13-2022
 * Release v0.1.34
-* Release version 0.1.33 08-13-2022
-* Release v0.1.33
-* Release version 0.1.30 06-09-2022
-* Release v0.1.30
 
 ### Removing
 
@@ -145,6 +140,7 @@
 
 ### Update
 
+* Update model_github_app_spec.go
 * Update service now models to include new changes
 * Update jenkins auth serializer
 * Update jenkins auth serializer
@@ -152,15 +148,9 @@
 * Update connector info serializer
 * Update connector types enum to include jenkins type
 * Update package
-* Update connector info
 * Update role assignments api and models
 * Update prometheus connector dto model
 * Update user group model
-* Update user group model
-
-### Updated
-
-* updated dependencies
 
 ### Upsate
 
@@ -168,6 +158,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
@@ -197,15 +188,12 @@
 * Merge pull request [#240](https://github.com/harness/harness-go-sdk/issues/240) from harness/CDS-46959
 * Merge pull request [#237](https://github.com/harness/harness-go-sdk/issues/237) from harness/SPG-823-TF-resource-for-template
 * Merge pull request [#238](https://github.com/harness/harness-go-sdk/issues/238) from harness/SPG-435
-* Merge pull request [#202](https://github.com/harness/harness-go-sdk/issues/202) from tphoney/policy-mgmt
 * Merge pull request [#197](https://github.com/harness/harness-go-sdk/issues/197) from harness/CDS-44314-gnupg-tf-resource
 * Merge pull request [#223](https://github.com/harness/harness-go-sdk/issues/223) from harness/azure-key-vault
 * Merge pull request [#137](https://github.com/harness/harness-go-sdk/issues/137) from harness/PL-26059
 * Merge pull request [#221](https://github.com/harness/harness-go-sdk/issues/221) from harness/CDS-44317-Add-gitops-repo-cred-TF
 * Merge pull request [#219](https://github.com/harness/harness-go-sdk/issues/219) from harness/gcp-cloud-cost
-* Merge pull request [#217](https://github.com/harness/harness-go-sdk/issues/217) from harness/azure-cloud-cost
 * Merge pull request [#193](https://github.com/harness/harness-go-sdk/issues/193) from harness/CDS-44872-GitOps-Repositories-Certificates-API
-* Merge pull request [#208](https://github.com/harness/harness-go-sdk/issues/208) from harness/azure-connector
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
@@ -217,5 +205,4 @@
 * Merge pull request [#152](https://github.com/harness/harness-go-sdk/issues/152) from harness/PL-27862-401-status-code
 * Merge pull request [#153](https://github.com/harness/harness-go-sdk/issues/153) from harness/fixUserGroup
 * Merge pull request [#148](https://github.com/harness/harness-go-sdk/issues/148) from harness/SPG-203-Adding-environment-group
-* Merge pull request [#146](https://github.com/harness/harness-go-sdk/issues/146) from harness/PL-27406
 
