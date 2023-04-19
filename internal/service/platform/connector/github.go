@@ -291,6 +291,14 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				connector.Github.ApiAccess.GithubApp.PrivateKeyRef = attr.(string)
 			}
 
+			if attr, ok := config["installation_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.InstallationIdRef = attr.(string)
+			}
+
+			if attr, ok := config["application_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.ApplicationIdRef = attr.(string)
+			}
+
 		}
 	}
 
@@ -346,9 +354,11 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 				{
 					"github_app": []map[string]interface{}{
 						{
-							"installation_id": connector.Github.ApiAccess.GithubApp.InstallationId,
-							"application_id":  connector.Github.ApiAccess.GithubApp.ApplicationId,
-							"private_key_ref": connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id":     connector.Github.ApiAccess.GithubApp.InstallationId,
+							"application_id":      connector.Github.ApiAccess.GithubApp.ApplicationId,
+							"private_key_ref":     connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id_ref": connector.Github.ApiAccess.GithubApp.InstallationIdRef,
+							"application_id_ref":  connector.Github.ApiAccess.GithubApp.ApplicationIdRef,
 						},
 					},
 				},
