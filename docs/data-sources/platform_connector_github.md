@@ -54,7 +54,9 @@ Read-Only:
 Read-Only:
 
 - `application_id` (String)
+- `application_id_ref` (String)
 - `installation_id` (String)
+- `installation_id_ref` (String)
 - `private_key_ref` (String)
 
 

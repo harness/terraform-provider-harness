@@ -62,14 +62,32 @@ func ResourceConnectorGithub() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"installation_id": {
-										Description: "Enter the Installation ID located in the URL of the installed GitHub App.",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:   "Enter the Installation ID located in the URL of the installed GitHub App.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"github_app.0.installation_id_ref"},
+										ExactlyOneOf:  []string{"github_app.0.installation_id", "github_app.0.installation_id_ref"},
 									},
 									"application_id": {
-										Description: "Enter the GitHub App ID from the GitHub App General tab.",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:   "Enter the GitHub App ID from the GitHub App General tab.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"github_app.0.application_id_ref"},
+										ExactlyOneOf:  []string{"github_app.0.application_id", "github_app.0.application_id_ref"},
+									},
+									"application_id_ref": {
+										Description:   "Reference to the secret containing application id" + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"github_app.0.application_id"},
+										ExactlyOneOf:  []string{"github_app.0.application_id", "github_app.0.application_id_ref"},
+									},
+									"installation_id_ref": {
+										Description:   "Reference to the secret containing installation id." + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"github_app.0.installation_id"},
+										ExactlyOneOf:  []string{"github_app.0.installation_id", "github_app.0.installation_id_ref"},
 									},
 									"private_key_ref": {
 										Description: "Reference to the secret containing the private key." + secret_ref_text,
@@ -273,6 +291,14 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				connector.Github.ApiAccess.GithubApp.PrivateKeyRef = attr.(string)
 			}
 
+			if attr, ok := config["installation_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.InstallationIdRef = attr.(string)
+			}
+
+			if attr, ok := config["application_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.ApplicationIdRef = attr.(string)
+			}
+
 		}
 	}
 
@@ -328,9 +354,11 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 				{
 					"github_app": []map[string]interface{}{
 						{
-							"installation_id": connector.Github.ApiAccess.GithubApp.InstallationId,
-							"application_id":  connector.Github.ApiAccess.GithubApp.ApplicationId,
-							"private_key_ref": connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id":     connector.Github.ApiAccess.GithubApp.InstallationId,
+							"application_id":      connector.Github.ApiAccess.GithubApp.ApplicationId,
+							"private_key_ref":     connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id_ref": connector.Github.ApiAccess.GithubApp.InstallationIdRef,
+							"application_id_ref":  connector.Github.ApiAccess.GithubApp.ApplicationIdRef,
 						},
 					},
 				},

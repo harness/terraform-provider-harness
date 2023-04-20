@@ -146,9 +146,14 @@ Optional:
 
 Required:
 
-- `application_id` (String) Enter the GitHub App ID from the GitHub App General tab.
-- `installation_id` (String) Enter the Installation ID located in the URL of the installed GitHub App.
 - `private_key_ref` (String) Reference to the secret containing the private key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+Optional:
+
+- `application_id` (String) Enter the GitHub App ID from the GitHub App General tab.
+- `application_id_ref` (String) Reference to the secret containing application id To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `installation_id` (String) Enter the Installation ID located in the URL of the installed GitHub App.
+- `installation_id_ref` (String) Reference to the secret containing installation id. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 
