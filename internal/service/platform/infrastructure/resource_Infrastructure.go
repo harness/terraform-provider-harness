@@ -55,6 +55,9 @@ func ResourceInfrastructure() *schema.Resource {
 	}
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
+	// overwrite schema for tags since these are read from the yaml
+	resource.Schema["tags"].Computed = true
+
 	return resource
 }
 
