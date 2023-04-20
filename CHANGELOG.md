@@ -1,3 +1,9 @@
+# 0.17.5 (April 20,2023) 
+
+BUG FIXES:
+
+* data-source/harness_platform_infrastructure: Fix bug wrt usages of tags in infrastructure yaml. ([#515](https://github.com/harness/terraform-provider-harness/issues/515))
+
 # 0.17.4 (April 20,2023) 
 
 ENHANCEMENTS:
