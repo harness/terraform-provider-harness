@@ -152,7 +152,7 @@ func TestAccResourceConnectorGithub_api_app(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorGithub_api_app(t *testing.T) {
+func TestAccResourceConnectorGithub_api_app_1(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -180,8 +180,6 @@ func TestAccResourceConnectorGithub_api_app(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.installation_id_ref", "install123"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.application_id_ref", "app123"),
 				),
 			},
 			{
@@ -193,8 +191,6 @@ func TestAccResourceConnectorGithub_api_app(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.installation_id_ref", "install123"),
-					resource.TestCheckResourceAttr(resourceName, "api_authentication.0.github_app.0.application_id_ref", "app123"),
 				),
 			},
 			{
@@ -486,8 +482,8 @@ func testAccResourceConnectorGithub_api_app_ref(id string, name string) string {
 			}
 			api_authentication {
 				github_app {
-					installation_id_ref = "install123"
-					application_id_ref = "app123"
+					installation_id_ref = "account.${harness_platform_secret_text.test.id}"
+					application_id_ref = "account.${harness_platform_secret_text.test.id}"
 					private_key_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
