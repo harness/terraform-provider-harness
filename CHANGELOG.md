@@ -1,3 +1,9 @@
+# 0.17.4 (April 20,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_github: Added support for secret ref in application and installtion in github app authentication method. ([#508](https://github.com/harness/terraform-provider-harness/issues/508))
+
 # 0.17.3 (April 10,2023) 
 
 BUG FIXES:
