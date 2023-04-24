@@ -297,7 +297,7 @@ func testAccResourceSecret_sshkey_kerberos_password(id string, name string) stri
 			port = 22
 			kerberos {
 				tgt_password_spec {
-					password = harness_platform_secret_file.test.id
+					password = "account.${harness_platform_secret_file.test.id}"
 				}
 				principal = "principal"
 				realm = "realm"
