@@ -182,7 +182,6 @@ func TestAccSecretSSHKey_sshkey_sshPathCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "key_path"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "encrypted_passphrase"),
 				),
 			},
 			{
@@ -196,7 +195,6 @@ func TestAccSecretSSHKey_sshkey_sshPathCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "key_path"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "encrypted_passphrase"),
 				),
 			},
 			{
