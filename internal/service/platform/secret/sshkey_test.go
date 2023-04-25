@@ -348,7 +348,6 @@ func testAccResourceSecret_sshkey_sshPathCredential(id string, name string) stri
 			sshkey_path_credential {
 				user_name = "user_name"
 				key_path = "key_path"
-				encrypted_passphrase = "encrypted_passphrase"
 			}
 			credential_type = "KeyPath"
 		}
