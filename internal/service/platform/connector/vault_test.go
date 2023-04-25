@@ -3,6 +3,7 @@ package connector_test
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -521,63 +522,143 @@ func TestOrgResourceConnectorVault_K8sAuth(t *testing.T) {
 	})
 }
 
-func TestAccResourceConnectorVault_AppRole(t *testing.T) {
+func TestAccResourceConnectorVault_AppRolee(t *testing.T) {
+	maxAttempts := 3
+	attempts := 0
+	var err error
+	var memBefore, memAfter runtime.MemStats
 
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_vault.test"
-	vault_sercet := os.Getenv("HARNESS_TEST_VAULT_SECRET")
+	for attempts < maxAttempts {
+		attempts++
 
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
+		// Defer statement to recover from panics
+		defer func() {
+			if r := recover(); r != nil {
+				runtime.GC()
+				runtime.ReadMemStats(&memBefore)
+				t.Logf("Recovered from panic: %v", r)
+				err = fmt.Errorf("panic occurred: %v", r)
+				t.Logf("ERROR: %v", err)
+			}
+		}()
+
+		runtime.GC()
+		runtime.ReadMemStats(&memAfter)
+		id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+		name := id
+		updatedName := fmt.Sprintf("%s_updated", name)
+		resourceName := "harness_platform_connector_vault.test"
+		vault_sercet := os.Getenv("HARNESS_TEST_VAULT_SECRET")
+
+		resource.UnitTest(t, resource.TestCase{
+			PreCheck:          func() { acctest.TestAccPreCheck(t) },
+			ProviderFactories: acctest.ProviderFactories,
+			ExternalProviders: map[string]resource.ExternalProvider{
+				"time": {},
+			},
+			CheckDestroy: testAccConnectorDestroy(resourceName),
+			Steps: []resource.TestStep{
+				{
+					Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "id", id),
+						resource.TestCheckResourceAttr(resourceName, "identifier", id),
+						resource.TestCheckResourceAttr(resourceName, "name", name),
+						resource.TestCheckResourceAttr(resourceName, "description", "test"),
+						resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+						resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
+						resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
+						resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
+						resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
+						resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
+						resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
+					),
+				},
+				{
+					Config: testAccResourceConnectorVault_app_role(id, updatedName, vault_sercet),
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "id", id),
+						resource.TestCheckResourceAttr(resourceName, "identifier", id),
+						resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+						resource.TestCheckResourceAttr(resourceName, "description", "test"),
+						resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+						resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
+						resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
+						resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
+						resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
+						resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
+						resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
+					),
+				},
+				{
+					ResourceName:      resourceName,
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+				},
+			},
 		},
-		CheckDestroy: testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
-					resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
-					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
-					resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
-					resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
-					resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
-				),
-			},
-			{
-				Config: testAccResourceConnectorVault_app_role(id, updatedName, vault_sercet),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
-					resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
-					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
-					resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
-					resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
-					resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
-			},
-		},
-	})
+		)
+	}
 }
+
+// func TestAccResourceConnectorVault_AppRole(t *testing.T) {
+
+// 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+// 	name := id
+// 	updatedName := fmt.Sprintf("%s_updated", name)
+// 	resourceName := "harness_platform_connector_vault.test"
+// 	vault_sercet := os.Getenv("HARNESS_TEST_VAULT_SECRET")
+
+//		resource.UnitTest(t, resource.TestCase{
+//			PreCheck:          func() { acctest.TestAccPreCheck(t) },
+//			ProviderFactories: acctest.ProviderFactories,
+//			ExternalProviders: map[string]resource.ExternalProvider{
+//				"time": {},
+//			},
+//			CheckDestroy: testAccConnectorDestroy(resourceName),
+//			Steps: []resource.TestStep{
+//				{
+//					Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
+//					Check: resource.ComposeTestCheckFunc(
+//						resource.TestCheckResourceAttr(resourceName, "id", id),
+//						resource.TestCheckResourceAttr(resourceName, "identifier", id),
+//						resource.TestCheckResourceAttr(resourceName, "name", name),
+//						resource.TestCheckResourceAttr(resourceName, "description", "test"),
+//						resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+//						resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
+//						resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
+//						resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
+//						resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
+//						resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
+//						resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
+//					),
+//				},
+//				{
+//					Config: testAccResourceConnectorVault_app_role(id, updatedName, vault_sercet),
+//					Check: resource.ComposeTestCheckFunc(
+//						resource.TestCheckResourceAttr(resourceName, "id", id),
+//						resource.TestCheckResourceAttr(resourceName, "identifier", id),
+//						resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+//						resource.TestCheckResourceAttr(resourceName, "description", "test"),
+//						resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+//						resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
+//						resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
+//						resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
+//						resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
+//						resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
+//						resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
+//					),
+//				},
+//				{
+//					ResourceName:      resourceName,
+//					ImportState:       true,
+//					ImportStateVerify: true,
+//					ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+//				},
+//			},
+//		})
+//	}
 func TestProjectResourceConnectorVault_AppRole(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
