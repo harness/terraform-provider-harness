@@ -327,8 +327,8 @@ func testAccResourceSecret_sshkey_sshReferenceCredential(id string, name string)
 			ssh {
 				sshkey_reference_credential {
 					user_name = "user_name"
-					key = "account.{harness_platform_secret_file.test.id}"
-					encrypted_passphrase = "account.{harness_platform_secret_file.test.id}"
+					key = "account.${harness_platform_secret_file.test.id}"
+					encrypted_passphrase = "account.${harness_platform_secret_file.test.id}"
 				}
 				credential_type = "KeyReference"
 			}
@@ -375,7 +375,7 @@ func testAccResourceSecret_sshkey_sshPassword(id string, name string) string {
 		ssh {
 			ssh_password_credential {
 				user_name = "user_name"
-				password = "account.{harness_platform_secret_file.test.id}"
+				password = "account.${harness_platform_secret_file.test.id}"
 			}
 			credential_type = "Password"
 		}
