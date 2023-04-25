@@ -374,7 +374,7 @@ func testAccResourceSecret_sshkey_sshPassword(id string, name string) string {
 		port = 22
 		ssh {
 			ssh_password_credential {
-				user_name = "user_name"
+				user_name = "user_name1"
 				password = "account.${harness_platform_secret_file.test.id}"
 			}
 			credential_type = "Password"
