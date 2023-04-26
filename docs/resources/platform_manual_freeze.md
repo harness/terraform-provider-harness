@@ -107,6 +107,7 @@ Read-Only:
 Read-Only:
 
 - `until` (String)
+- `value` (Number)
 
 ## Import
 
