@@ -61,6 +61,7 @@ type ConnectorInfo struct {
 	Splunk              *SplunkConnector              `json:"-"`
 	SumoLogic           *SumoLogicConnectorDto        `json:"-"`
 	Spot                *SpotConnector                `json:"-"`
+	Tas                 *TasConnector                 `json:"-"`
 	TerraformCloud      *TerraformCloudConnector      `json:"-"`
 	Vault               *VaultConnector               `json:"-"`
 	GcpSecretManager    *GcpSecretManager             `json:"-"`
