@@ -13,7 +13,7 @@ import (
 
 func ResourceConnectorTerraformCloud() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating a TerraformCloud connector.",
+		Description:   "Resource for creating a Terraform Cloud connector.",
 		ReadContext:   resourceConnectorTerraformCloudRead,
 		CreateContext: resourceConnectorTerraformCloudCreateOrUpdate,
 		UpdateContext: resourceConnectorTerraformCloudCreateOrUpdate,
@@ -21,12 +21,12 @@ func ResourceConnectorTerraformCloud() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Description: "URL of Terraform Cloud platform.",
+				Description: "URL of the Terraform Cloud platform.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"credentials": {
-				Description: "Credentials to connect to Terraform Cloud platform.",
+				Description: "Credentials to connect to the Terraform Cloud platform.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Required:    true,
@@ -40,7 +40,7 @@ func ResourceConnectorTerraformCloud() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"api_token_ref": {
-										Description: "Reference to a secret containing the api token to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the API token to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
 										Required:    true,
 									},

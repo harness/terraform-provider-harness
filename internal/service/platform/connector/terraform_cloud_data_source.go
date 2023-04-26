@@ -23,7 +23,7 @@ func DatasourceConnectorTerraformCloud() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"credentials": {
-				Description: "Credentials to connect to Terraform Cloud platform.",
+				Description: "Credentials to connect to the Terraform Cloud platform.",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
@@ -35,7 +35,7 @@ func DatasourceConnectorTerraformCloud() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"api_token_ref": {
-										Description: "Reference to a secret containing the api token to use for authentication." + secret_ref_text,
+										Description: "Reference to a secret containing the API token to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
 										Computed:    true,
 									},

@@ -30,7 +30,7 @@ data "harness_platform_connector_terraform_cloud" "example" {
 
 ### Read-Only
 
-- `credentials` (List of Object) Credentials to connect to Terraform Cloud platform. (see [below for nested schema](#nestedatt--credentials))
+- `credentials` (List of Object) Credentials to connect to the Terraform Cloud platform. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.

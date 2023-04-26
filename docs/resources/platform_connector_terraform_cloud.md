@@ -3,17 +3,17 @@
 page_title: "harness_platform_connector_terraform_cloud Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a TerraformCloud connector.
+  Resource for creating a Terraform Cloud connector.
 ---
 
 # harness_platform_connector_terraform_cloud (Resource)
 
-Resource for creating a TerraformCloud connector.
+Resource for creating a Terraform Cloud connector.
 
 ## Example Usage
 
 ```terraform
-# Create Terraform Cloud connector using API token as secret
+# Create a Terraform Cloud connector by using an API token as a secret.
 
 resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   identifier         = "example_terraform_cloud_connector"
@@ -28,7 +28,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   }
 }
 
-# Add connectivity mode by providing execute_on_delegate value. Default is to execute on Delegate
+# Specify the connectivity mode by setting execute_on_delegate to true or false. The default mode executes on the delegate.
 
 resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   identifier          = "example_terraform_cloud_connector"
@@ -50,10 +50,10 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
 
 ### Required
 
-- `credentials` (Block List, Min: 1, Max: 1) Credentials to connect to Terraform Cloud platform. (see [below for nested schema](#nestedblock--credentials))
+- `credentials` (Block List, Min: 1, Max: 1) Credentials to connect to the Terraform Cloud platform. (see [below for nested schema](#nestedblock--credentials))
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `url` (String) URL of Terraform Cloud platform.
+- `url` (String) URL of the Terraform Cloud platform.
 
 ### Optional
 
@@ -79,13 +79,13 @@ Required:
 
 Required:
 
-- `api_token_ref` (String) Reference to a secret containing the api token to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `api_token_ref` (String) Reference to a secret containing the API token to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using terrafrm cloud provider connector id
+# Import using the Terraform Cloud provider connector ID.
 terraform import harness_platform_connector_terraform_cloud.example <connector_id>
 ```

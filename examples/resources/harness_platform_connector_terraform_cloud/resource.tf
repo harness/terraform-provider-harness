@@ -1,4 +1,4 @@
-# Create Terraform Cloud connector using API token as secret
+# Create a Terraform Cloud connector by using an API token as a secret.
 
 resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   identifier         = "example_terraform_cloud_connector"
@@ -13,7 +13,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   }
 }
 
-# Add connectivity mode by providing execute_on_delegate value. Default is to execute on Delegate
+# Specify the connectivity mode by setting execute_on_delegate to true or false. The default mode executes on the delegate.
 
 resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   identifier          = "example_terraform_cloud_connector"
