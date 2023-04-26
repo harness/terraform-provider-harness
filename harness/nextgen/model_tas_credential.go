@@ -9,8 +9,13 @@
  */
 package nextgen
 
+import (
+	"encoding/json"
+)
+
 // This contains Tas connector credentials
 type TasCredential struct {
-	Type_ string `json:"type"`
-	Spec *TasCredentialSpec `json:"spec,omitempty"`
+	Type_            TasCredentialType `json:"type"`
+	TasManualDetails *TasManualDetails `json:"-"`
+	Spec             json.RawMessage   `json:"spec,omitempty"`
 }
