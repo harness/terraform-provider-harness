@@ -1,3 +1,9 @@
+# 0.19.0 (April 26,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_template: added force deletion support for templates ([#518](https://github.com/harness/terraform-provider-harness/issues/518))
+
 # 0.18.0 (April 25,2023) 
 
 FEATURES:
