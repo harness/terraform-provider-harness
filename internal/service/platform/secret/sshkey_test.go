@@ -317,6 +317,7 @@ func testAccResourceSecret_sshkey_sshReferenceCredential(id string, name string)
 		file_path = "%[3]s"
 		secret_manager_identifier = "harnessSecretManager"
 	}
+	
 		resource "harness_platform_secret_sshkey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
