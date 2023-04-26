@@ -620,7 +620,7 @@ template:
 
 - `comments` (String) Specify comment with respect to changes.
 - `description` (String) Description of the resource.
-- `force_delete` (String) Enable this flag for force deletion of service
+- `force_delete` (String) Enable this flag for force deletion of template
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `is_stable` (Boolean) True if given version for template to be set as stable.
 - `org_id` (String) Unique identifier of the organization.
