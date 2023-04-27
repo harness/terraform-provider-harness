@@ -1,0 +1,4 @@
+```release-note:new-resource
+platform_feature_flag - Added feature flag resources to the Harness Terraform Provider.
+platform_ff_api_key - Added FF SDK API key resources to the Harness Terraform provider.
+```

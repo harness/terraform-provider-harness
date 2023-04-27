@@ -58,6 +58,16 @@ func DatasourceConnectorGithub() *schema.Resource {
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
+									"application_id_ref": {
+										Description: "Reference to the secret containing application id" + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"installation_id_ref": {
+										Description: "Reference to the secret containing installation id." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
 									"private_key_ref": {
 										Description: "Reference to the secret containing the private key." + secret_ref_text,
 										Type:        schema.TypeString,

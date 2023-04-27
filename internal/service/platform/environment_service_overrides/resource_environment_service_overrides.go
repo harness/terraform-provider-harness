@@ -27,6 +27,7 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 				Description: "identifier of the service overrides.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",

@@ -110,6 +110,12 @@ func ResourceTemplate() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of template",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -348,15 +354,22 @@ func resourceTemplateDelete(ctx context.Context, d *schema.ResourceData, meta in
 	if project_id != "" {
 		httpResp, err = c.ProjectTemplateApi.DeleteTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiDeleteTemplateProjectOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
-			Comments:       helpers.BuildField(d, "comments")})
+			Comments:       helpers.BuildField(d, "comments"),
+			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+		})
 	} else if org_id != "" && project_id == "" {
 		httpResp, err = c.OrgTemplateApi.DeleteTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiDeleteTemplateOrgOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
-			Comments:       helpers.BuildField(d, "comments")})
+			Comments:       helpers.BuildField(d, "comments"),
+			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+		})
 	} else {
 		httpResp, err = c.AccountTemplateApi.DeleteTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiDeleteTemplateAccOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
-			Comments:       helpers.BuildField(d, "comments")})
+			Comments:       helpers.BuildField(d, "comments"),
+			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+		})
+
 	}
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
