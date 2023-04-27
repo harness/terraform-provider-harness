@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceConnectorAwsCC(t *testing.T) {
-	t.Skip("Skipping until account id issue is fixed https://harness.atlassian.net/browse/PL-20793")
+	//t.Skip("Skipping until account id issue is fixed https://harness.atlassian.net/browse/PL-20793")
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -64,13 +64,12 @@ func testAccResourceConnectorAwsCC(id string, name string) string {
 			description = "test"
 			tags = ["foo:bar"]
 
-			account_id = "000000000001"
+			account_id = "123456789012"
 			report_name = "test_report"
 			s3_bucket = "s3bucket"
 			features_enabled = [
 				"OPTIMIZATION",
-				"VISIBILITY",
-				"BILLING",
+				"VISIBILITY"
 			]
 			cross_account_access {
 				role_arn = "arn:aws:iam::123456789012:role/S3Access"
