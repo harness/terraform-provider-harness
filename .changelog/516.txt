@@ -1,0 +1,3 @@
+```release-note:fix
+resource/harness_platform_environment_service_overrides: Fix bug wrt terraform apply indicating change in service override identifier with same request.
+```
