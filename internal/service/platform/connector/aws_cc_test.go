@@ -69,7 +69,8 @@ func testAccResourceConnectorAwsCC(id string, name string) string {
 			s3_bucket = "s3bucket"
 			features_enabled = [
 				"OPTIMIZATION",
-				"VISIBILITY"
+				"VISIBILITY",
+				"BILLING"
 			]
 			cross_account_access {
 				role_arn = "arn:aws:iam::123456789012:role/S3Access"
