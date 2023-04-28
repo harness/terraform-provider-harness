@@ -167,12 +167,14 @@ InfrastructuresApiService Delete an Infrastructure by identifier
  * @param optional nil or *InfrastructuresApiDeleteInfrastructureOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+      * @param "ForceDelete" (optional.Bool) - Enable this for Force Deletion of infrastructure
 @return ResponseDtoBoolean
 */
 
 type InfrastructuresApiDeleteInfrastructureOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
+	ForceDelete optional.Bool
 }
 
 func (a *InfrastructuresApiService) DeleteInfrastructure(ctx context.Context, infraIdentifier string, accountIdentifier string, environmentIdentifier string, localVarOptionals *InfrastructuresApiDeleteInfrastructureOpts) (ResponseDtoBoolean, *http.Response, error) {
@@ -199,6 +201,9 @@ func (a *InfrastructuresApiService) DeleteInfrastructure(ctx context.Context, in
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+    		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+    }
 	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
