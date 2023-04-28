@@ -162,8 +162,10 @@ func buildConnectorAwsCC(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 func readConnectorAwsCC(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 	d.Set("account_id", connector.AwsCC.AwsAccountId)
-	d.Set("report_name", connector.AwsCC.CurAttributes.ReportName)
-	d.Set("s3_bucket", connector.AwsCC.CurAttributes.S3BucketName)
+	if isFeatureEnabled("BILLING", connector.AwsCC.FeaturesEnabled) {
+		d.Set("report_name", connector.AwsCC.CurAttributes.ReportName)
+		d.Set("s3_bucket", connector.AwsCC.CurAttributes.S3BucketName)
+	}
 	// d.Set("s3_prefix", connector.AwsCC.CurAttributes.S3Prefix)
 	// d.Set("region", connector.AwsCC.CurAttributes.Region)
 	d.Set("features_enabled", connector.AwsCC.FeaturesEnabled)
@@ -175,4 +177,13 @@ func readConnectorAwsCC(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	})
 
 	return nil
+}
+
+func isFeatureEnabled(value string, list []string) bool {
+	for _, v := range list {
+		if strings.EqualFold(value, v) {
+			return true
+		}
+	}
+	return false
 }
