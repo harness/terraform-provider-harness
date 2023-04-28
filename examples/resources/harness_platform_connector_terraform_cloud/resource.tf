@@ -6,6 +6,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   description        = "description of terraform cloud connector"
   tags               = ["foo:bar"]
   delegate_selectors = ["harness-delegate"]
+  url                = "https://app.terraform.io/"
   credentials {
     api_token {
       api_token_ref = "account.TEST_terraform_cloud_api_token"
@@ -22,6 +23,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   delegate_selectors  = ["harness-delegate"]
   tags                = ["foo:bar"]
   execute_on_delegate = false
+  url                 = "https://app.terraform.io/"
   credentials {
     api_token {
       api_token_ref = "account.TEST_terraform_cloud_api_token"
