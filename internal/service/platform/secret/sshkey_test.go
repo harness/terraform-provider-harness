@@ -879,7 +879,7 @@ func testAccResourceSecret_sshkey_kerberos_keyFilePathOrg(id string, name string
 			depends_on = [time_sleep.wait_3_seconds]
 		}
 		resource "time_sleep" "wait_3_seconds" {
-			create_duration = "3s"
+			create_duration = "30s"
 			depends_on = [harness_platform_organization.test]
 			
 		}
