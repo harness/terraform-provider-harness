@@ -1,3 +1,16 @@
+# 0.19.0 (April 26,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_template: added force deletion support for templates ([#518](https://github.com/harness/terraform-provider-harness/issues/518))
+
+# 0.18.0 (April 25,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_feature_flag - Added feature flag resources to the Harness Terraform Provider.
+platform_ff_api_key - Added FF SDK API key resources to the Harness Terraform provider.` ([#517](https://github.com/harness/terraform-provider-harness/issues/517))
+
 # 0.17.5 (April 20,2023) 
 
 BUG FIXES:

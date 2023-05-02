@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
@@ -151,6 +153,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_prometheus":            connector.DatasourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":                connector.DatasourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
+				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
@@ -243,11 +246,14 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_prometheus":            connector.ResourceConnectorPrometheus(),
 				"harness_platform_connector_splunk":                connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.ResourceConnectorSpot(),
+				"harness_platform_connector_terraform_cloud":       connector.ResourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.ResourceConnectorSumologic(),
 				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
+				"harness_platform_feature_flag":                    feature_flag.ResourceFeatureFlag(),
+				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
