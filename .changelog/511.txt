@@ -1,0 +1,2 @@
+```release-note:new-resource
+platform_connector_terraform_cloud - Added a Terraform Cloud connector resource in the Harness Terraform provider.

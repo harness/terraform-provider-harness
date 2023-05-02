@@ -287,13 +287,12 @@ func testAccEnvServiceOverridesOrgScope(id string, name string) string {
 		}
 
 		resource "harness_platform_environment_service_overrides" "test" {
-			identifier = "org.%[1]s-%[1]s"
 			org_id = harness_platform_organization.test.id
-			env_id = harness_platform_environment.test.id
+			env_id = "org.${harness_platform_environment.test.id}"
 			service_id = "org.${harness_platform_service.test.id}"
 			yaml = <<-EOT
         serviceOverrides:
-          environmentRef: harness_platform_environment.test.id
+          environmentRef: "org.${harness_platform_environment.test.id}"
           serviceRef: "org.${harness_platform_service.test.id}"
           variables:
            - name: asda
@@ -376,12 +375,11 @@ func testAccEnvServiceOverridesAccountScope(id string, name string) string {
 		}
 
 		resource "harness_platform_environment_service_overrides" "test" {
-			identifier = "account.%[1]s-%[1]s"
-            env_id = harness_platform_environment.test.id
+            env_id = "account.${harness_platform_environment.test.id}"
 			service_id = "account.${harness_platform_service.test.id}"
 			yaml = <<-EOT
         serviceOverrides:
-          environmentRef: ${harness_platform_environment.test.id}
+          environmentRef: "account.${harness_platform_environment.test.id}"
           serviceRef: "account.${harness_platform_service.test.id}"
           variables:
            - name: asda

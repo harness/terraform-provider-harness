@@ -49,7 +49,7 @@ func DatasourceConnectorHelm() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }
