@@ -9,7 +9,7 @@ resource "harness_platform_connector_tas" "tas" {
     type = "ManualConfig"
     tas_manual_details {
       endpoint_url = "https://tas.example.com"
-      username = "admin"
+      username     = "admin"
       password_ref = "account.secret_id"
     }
   }
@@ -31,6 +31,6 @@ resource "harness_platform_connector_tas" "tas" {
       password_ref = "account.secret_id"
     }
   }
-  delegate_selectors = ["harness-delegate"]
+  delegate_selectors  = ["harness-delegate"]
   execute_on_delegate = true
 }
