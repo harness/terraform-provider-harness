@@ -9,7 +9,13 @@
  */
 package nextgen
 
-type RecurrenceSpec struct {
-	Until string `json:"until,omitempty"`
-	Value int32  `json:"value,omitempty"`
+import (
+	"encoding/json"
+)
+
+// This contains Tas connector credentials
+type TasCredential struct {
+	Type_            TasCredentialType `json:"type"`
+	TasManualDetails *TasManualDetails `json:"-"`
+	Spec             json.RawMessage   `json:"spec,omitempty"`
 }

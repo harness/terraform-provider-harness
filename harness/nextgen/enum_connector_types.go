@@ -40,6 +40,7 @@ var ConnectorTypes = struct {
 	GcpSecretManager ConnectorType
 	Spot             ConnectorType
 	ServiceNow       ConnectorType
+	Tas              ConnectorType
 	TerraformCloud   ConnectorType
 }{
 	K8sCluster:       "K8sCluster",
@@ -79,6 +80,7 @@ var ConnectorTypes = struct {
 	Azure:            "Azure",
 	Spot:             "Spot",
 	ServiceNow:       "ServiceNow",
+	Tas:              "Tas",
 	TerraformCloud:   "TerraformCloud",
 }
 
@@ -120,6 +122,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.Azure.String(),
 	ConnectorTypes.Spot.String(),
 	ConnectorTypes.ServiceNow.String(),
+	ConnectorTypes.Tas.String(),
 	ConnectorTypes.TerraformCloud.String(),
 }
 

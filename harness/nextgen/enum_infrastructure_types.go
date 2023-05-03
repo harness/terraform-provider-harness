@@ -14,6 +14,7 @@ var InfrastructureTypes = struct {
 	ECS                   InfrastructureType
 	GITOPS                InfrastructureType
 	CUSTOM_DEPLOYMENT     InfrastructureType
+	TAS                   InfrastructureType
 }{
 	KUBERNETES_DIRECT:     "KubernetesDirect",
 	KUBERNETES_GCP:        "KubernetesGcp",
@@ -26,6 +27,7 @@ var InfrastructureTypes = struct {
 	ECS:                   "ECS",
 	GITOPS:                "GitOps",
 	CUSTOM_DEPLOYMENT:     "CustomDeployment",
+	TAS:                   "TAS",
 }
 
 var InfrastructureTypeValues = []string{
@@ -40,6 +42,7 @@ var InfrastructureTypeValues = []string{
 	InfrastructureTypes.ECS.String(),
 	InfrastructureTypes.GITOPS.String(),
 	InfrastructureTypes.CUSTOM_DEPLOYMENT.String(),
+	InfrastructureTypes.TAS.String(),
 }
 
 func (e InfrastructureType) String() string {

@@ -9,7 +9,11 @@
  */
 package nextgen
 
-type RecurrenceSpec struct {
-	Until string `json:"until,omitempty"`
-	Value int32  `json:"value,omitempty"`
+// This contains Tas manual credentials connector details
+type TasManualDetails struct {
+	Username string `json:"username,omitempty"`
+	// Endpoint URL of the TAS Cluster.
+	EndpointUrl string `json:"endpointUrl"`
+	UsernameRef string `json:"usernameRef,omitempty"`
+	PasswordRef string `json:"passwordRef"`
 }

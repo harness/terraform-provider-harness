@@ -9,7 +9,10 @@
  */
 package nextgen
 
-type RecurrenceSpec struct {
-	Until string `json:"until,omitempty"`
-	Value int32  `json:"value,omitempty"`
+// This contains details of the Tas connector
+type TasConnector struct {
+	ConnectorType string `json:"connectorType"`
+	Credential *TasCredential `json:"credential"`
+	DelegateSelectors []string `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate bool `json:"executeOnDelegate,omitempty"`
 }

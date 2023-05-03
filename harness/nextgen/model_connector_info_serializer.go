@@ -89,6 +89,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Spot)
 	case ConnectorTypes.ServiceNow:
 		err = json.Unmarshal(aux.Spec, &a.ServiceNow)
+	case ConnectorTypes.Tas:
+		err = json.Unmarshal(aux.Spec, &a.Tas)
 	case ConnectorTypes.TerraformCloud:
 		err = json.Unmarshal(aux.Spec, &a.TerraformCloud)
 	default:
@@ -173,6 +175,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Spot)
 	case ConnectorTypes.ServiceNow:
 		spec, err = json.Marshal(a.ServiceNow)
+	case ConnectorTypes.Tas:
+		spec, err = json.Marshal(a.Tas)
 	case ConnectorTypes.TerraformCloud:
 		spec, err = json.Marshal(a.TerraformCloud)
 	default:
