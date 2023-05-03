@@ -301,8 +301,6 @@ func testAccResourceManualFreeze(id string, name string, accountId string) strin
           recurrence:
             type: Daily
         notificationRules: []
-        orgIdentifier: %[1]s
-        projectIdentifier: %[1]s
         tags: {}
       EOT
 		}
@@ -355,8 +353,6 @@ func testAccResourceManualFreezeQuarterly(id string, name string, accountId stri
               value: 3
               until: 2023-12-31 11:59 PM
         notificationRules: []
-        orgIdentifier: %[1]s
-        projectIdentifier: %[1]s
         tags: {}
       EOT
 		}
@@ -404,8 +400,6 @@ func testAccResourceManualFreezeWithoutRecurrence(id string, name string, accoun
           startTime: 2023-05-03 04:16 PM
           duration: 30m
         notificationRules: []
-        orgIdentifier: %[1]s
-        projectIdentifier: %[1]s
         tags: {}
       EOT
 		}
