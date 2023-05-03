@@ -21,6 +21,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   description        = "description of terraform cloud connector"
   tags               = ["foo:bar"]
   delegate_selectors = ["harness-delegate"]
+  url                = "https://app.terraform.io/"
   credentials {
     api_token {
       api_token_ref = "account.TEST_terraform_cloud_api_token"
@@ -37,6 +38,7 @@ resource "harness_platform_connector_terraform_cloud" "terraform_cloud" {
   delegate_selectors  = ["harness-delegate"]
   tags                = ["foo:bar"]
   execute_on_delegate = false
+  url                 = "https://app.terraform.io/"
   credentials {
     api_token {
       api_token_ref = "account.TEST_terraform_cloud_api_token"
@@ -86,6 +88,12 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-# Import using the Terraform Cloud provider connector ID.
+# Import account level Terraform Cloud provider connector 
 terraform import harness_platform_connector_terraform_cloud.example <connector_id>
+
+# Import org level Terraform Cloud provider connector 
+terraform import harness_platform_connector_terraform_cloud.example <ord_id>/<connector_id>
+
+# Import project level Terraform Cloud provider connector 
+terraform import harness_platform_connector_terraform_cloud.example <org_id>/<project_id>/<connector_id>
 ```

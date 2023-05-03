@@ -1,3 +1,14 @@
+# 0.19.1 (May 02,2023) 
+
+ENHANCEMENTS:
+
+* datasource: Make identifier required in connector data source. ([#526](https://github.com/harness/terraform-provider-harness/issues/526))
+* platform_connector_terraform_cloud - Improved Documentation ([#520](https://github.com/harness/terraform-provider-harness/issues/520))
+
+BUG FIXES:
+
+* resource/harness_platform_connector_awscc: Fix bug in aws cloud cost connector resource ([#524](https://github.com/harness/terraform-provider-harness/issues/524))
+
 # 0.19.0 (April 26,2023) 
 
 ENHANCEMENTS:
