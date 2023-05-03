@@ -34,7 +34,74 @@ func TestAccDataSourceRoles(t *testing.T) {
 
 }
 
+func TestAccDataSourceRolesProjectLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_roles.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceRolesProjectLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+		},
+	})
+
+}
+
+func TestAccDataSourceRolesOrgLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_roles.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceRolesOrgLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", name),
+					resource.TestCheckResourceAttr(resourceName, "identifier", name),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+		},
+	})
+
+}
+
 func testAccDataSourceRoles(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_roles" "createRole" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+		permissions = ["core_resourcegroup_view"]
+		allowed_scope_levels = ["account"]
+	}
+
+	data "harness_platform_roles" "test" {
+		identifier = "%[1]s"
+		depends_on = [harness_platform_roles.createRole]
+	}
+	`, id, name)
+}
+func testAccDataSourceRolesProjectLevel(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -61,9 +128,31 @@ func testAccDataSourceRoles(id string, name string) string {
 
 	data "harness_platform_roles" "test" {
 		identifier = "%[1]s"
-		name = "%[2]s"
 		org_id = harness_platform_roles.test.org_id
 		project_id = harness_platform_roles.test.project_id
+	}
+	`, id, name)
+}
+func testAccDataSourceRolesOrgLevel(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_roles" "test" {
+		org_id = harness_platform_organization.test.id
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+		permissions = ["core_pipeline_edit"]
+		allowed_scope_levels = ["organization"]
+	}
+
+	data "harness_platform_roles" "test" {
+		identifier = "%[1]s"
+		org_id = harness_platform_roles.test.org_id
 	}
 	`, id, name)
 }

@@ -1,3 +1,63 @@
+# 0.19.1 (May 02,2023) 
+
+ENHANCEMENTS:
+
+* datasource: Make identifier required in connector data source. ([#526](https://github.com/harness/terraform-provider-harness/issues/526))
+* platform_connector_terraform_cloud - Improved Documentation ([#520](https://github.com/harness/terraform-provider-harness/issues/520))
+
+BUG FIXES:
+
+* resource/harness_platform_connector_awscc: Fix bug in aws cloud cost connector resource ([#524](https://github.com/harness/terraform-provider-harness/issues/524))
+
+# 0.19.0 (April 26,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_template: added force deletion support for templates ([#518](https://github.com/harness/terraform-provider-harness/issues/518))
+
+# 0.18.0 (April 25,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_feature_flag - Added feature flag resources to the Harness Terraform Provider.
+platform_ff_api_key - Added FF SDK API key resources to the Harness Terraform provider.` ([#517](https://github.com/harness/terraform-provider-harness/issues/517))
+
+# 0.17.5 (April 20,2023) 
+
+BUG FIXES:
+
+* data-source/harness_platform_infrastructure: Fix bug wrt usages of tags in infrastructure yaml. ([#515](https://github.com/harness/terraform-provider-harness/issues/515))
+
+# 0.17.4 (April 20,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_github: Added support for secret ref in application and installtion in github app authentication method. ([#508](https://github.com/harness/terraform-provider-harness/issues/508))
+
+# 0.17.3 (April 10,2023) 
+
+BUG FIXES:
+
+* data-source/harness_platform_organization: Fixed the data source to use either name or identifier.
+data-source/harness_platform_usergroup: Fixed the data source to use either name or identifier. ([#507](https://github.com/harness/terraform-provider-harness/issues/507))
+
+# 0.17.2 (April 06,2023) 
+
+# 0.17.1 (April 05,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_cluster: Added support for Optional Tags in cluster ([#486](https://github.com/harness/terraform-provider-harness/issues/486))
+* resource/harness_platform_service: added force deletion support for services
+resource/harness_platform_environment: added force deletion support for environments
+resource/harness_platform_environment_group: added force deletion support for environment groups ([#491](https://github.com/harness/terraform-provider-harness/issues/491))
+
+BUG FIXES:
+
+* harness_platform_input_set: Fixed import.
+harness_platform_triggers: Fixed import. ([#478](https://github.com/harness/terraform-provider-harness/issues/478))
+* resource/harness_platform_connector_aws_secret_manager: Fixed the plugin crash issue when api key doent have enough permissions. ([#502](https://github.com/harness/terraform-provider-harness/issues/502))
+
 # 0.17.0 (March 24,2023) 
 
 ENHANCEMENTS:

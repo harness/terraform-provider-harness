@@ -26,11 +26,11 @@ data "harness_platform_roles" "example" {
 ### Required
 
 - `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
 
 ### Optional
 
 - `allowed_scope_levels` (Set of String) The scope levels at which this role can be used
+- `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `permissions` (Set of String) List of the permission identifiers
 - `project_id` (String) Unique identifier of the project.

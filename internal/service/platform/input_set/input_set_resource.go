@@ -141,6 +141,12 @@ func resourceInputSetRead(ctx context.Context, d *schema.ResourceData, meta inte
 		ParentEntityRepoName:     parent_entity_repo_name,
 	})
 
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}

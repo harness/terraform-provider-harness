@@ -109,6 +109,7 @@ func TestAccResourceUser_DeleteUnderlyingResourceProjectLevel(t *testing.T) {
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
+
 			{
 				Config: testAccResourceUserProjectLevel(id, name, email),
 				Check: resource.ComposeTestCheckFunc(
@@ -119,14 +120,16 @@ func TestAccResourceUser_DeleteUnderlyingResourceProjectLevel(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.UserApi.RemoveUser(ctx, email, c.AccountId, &nextgen.UserApiRemoveUserOpts{
+					uuid, _ := testGetUserUUID(email, id, id)
+					_, _, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, &nextgen.UserApiRemoveUserOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
 					require.NoError(t, err)
 				},
-				Config:   testAccResourceUserProjectLevel(id, name, email),
-				PlanOnly: true,
+				Config:             testAccResourceUserProjectLevel(id, name, email),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -152,11 +155,13 @@ func TestAccResourceUser_DeleteUnderlyingResourceAccountLevel(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.UserApi.RemoveUser(ctx, email, c.AccountId, &nextgen.UserApiRemoveUserOpts{})
+					uuid, _ := testGetUserUUID(email, "", "")
+					_, _, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, &nextgen.UserApiRemoveUserOpts{})
 					require.NoError(t, err)
 				},
-				Config:   testAccResourceUserAccountLevel(id, name, email),
-				PlanOnly: true,
+				Config:             testAccResourceUserAccountLevel(id, name, email),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -182,13 +187,15 @@ func TestAccResourceUser_DeleteUnderlyingResourceOrgLevel(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetPlatformClientWithContext()
-					_, _, err := c.UserApi.RemoveUser(ctx, email, c.AccountId, &nextgen.UserApiRemoveUserOpts{
+					uuid, _ := testGetUserUUID(email, "", id)
+					_, _, err := c.UserApi.RemoveUser(ctx, uuid, c.AccountId, &nextgen.UserApiRemoveUserOpts{
 						OrgIdentifier: optional.NewString(id),
 					})
 					require.NoError(t, err)
 				},
-				Config:   testAccResourceUserOrgLevel(id, name, email),
-				PlanOnly: true,
+				Config:             testAccResourceUserOrgLevel(id, name, email),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -218,6 +225,50 @@ func testAccGetPlatformUser(resourceName string, state *terraform.State) (*nextg
 	}
 
 	return &resp.Data.Content[0], nil
+}
+
+// Ref To -> https://harness.atlassian.net/browse/PL-32424
+
+func testGetUserUUID(email string, projectId, orgId string) (string, error) {
+	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+
+	if orgId != "" {
+		resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+			OrgIdentifier: optional.NewString(orgId),
+			SearchTerm:    optional.NewString(email),
+		})
+		if err != nil {
+			return "", err
+		}
+		if resp.Data.Empty || len(resp.Data.Content) == 0 {
+			return "", fmt.Errorf("no user found with email %s", email)
+		}
+		return resp.Data.Content[0].User.Uuid, nil
+	} else if orgId != "" && projectId != "" {
+		resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+			ProjectIdentifier: optional.NewString(projectId),
+			OrgIdentifier:     optional.NewString(orgId),
+			SearchTerm:        optional.NewString(email),
+		})
+		if err != nil {
+			return "", err
+		}
+		if resp.Data.Empty || len(resp.Data.Content) == 0 {
+			return "", fmt.Errorf("no user found with email %s", email)
+		}
+		return resp.Data.Content[0].User.Uuid, nil
+	} else {
+		resp, _, err := c.UserApi.GetAggregatedUsers(ctx, c.AccountId, &nextgen.UserApiGetAggregatedUsersOpts{
+			SearchTerm: optional.NewString(email),
+		})
+		if err != nil {
+			return "", err
+		}
+		if resp.Data.Empty || len(resp.Data.Content) == 0 {
+			return "", fmt.Errorf("no user found with email %s", email)
+		}
+		return resp.Data.Content[0].User.Uuid, nil
+	}
 }
 
 func testAccUserDestroy(resourceName string) resource.TestCheckFunc {
