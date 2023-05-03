@@ -80,7 +80,7 @@ Read-Only:
 
 Read-Only:
 
-- `until` (String)
-- `value` (Number)
+- `until` (String) Recurrence until timestamp
+- `value` (Number) Value of n, for n months recurrence
 
 

@@ -1,0 +1,3 @@
+```release-note:enhancement
+data-source/platform_manual_freeze - Added quarterly recurrence support for manual deployment freeze resource in Harness terraform provider
+```
