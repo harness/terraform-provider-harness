@@ -3,7 +3,7 @@
 page_title: "harness_platform_infrastructure Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Infrastructure.
+Resource for creating a Harness Infrastructure.
 ---
 
 # harness_platform_infrastructure (Resource)
@@ -57,6 +57,7 @@ resource "harness_platform_infrastructure" "example" {
 
 - `deployment_type` (String) Infrastructure deployment type. Valid values are Kubernetes, NativeHelm, Ssh, WinRm, ServerlessAwsLambda, AzureWebApp, Custom, ECS.
 - `description` (String) Description of the resource.
+- `force_delete` (String) Enable this flag for force deletion of infrastructure
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
