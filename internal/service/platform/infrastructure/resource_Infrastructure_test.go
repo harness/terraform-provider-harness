@@ -587,6 +587,7 @@ func testAccResourceInfrastructureForceDelete(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
 			type = "KubernetesDirect"
+			force_delete = true
 			yaml = <<-EOT
 			   infrastructureDefinition:
          name: "%[2]s"
