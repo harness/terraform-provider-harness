@@ -1161,6 +1161,12 @@ func testAccDataSourceConnectorVault_AppRole(name string, vaultToken string) str
 
 	data "harness_platform_connector_vault" "test" {
 		identifier = harness_platform_connector_vault.test.id
+		depends_on = [time_sleep.wait_3_seconds]
+	}
+
+	resource "time_sleep" "wait_3_seconds" {
+		depends_on = [harness_platform_connector_vault.test]
+		create_duration = "3s"
 	}
 `, name, vaultToken)
 }
@@ -1176,6 +1182,12 @@ func testAccDataSourceConnectorVault_AppRoleProjectLevel(name string, vaultToken
 		name = "%[1]s"
 		org_id = harness_platform_organization.test.id
 		color = "#472848"
+		depends_on = [time_sleep.wait_1_seconds]
+	}
+
+	resource "time_sleep" "wait_1_seconds" {
+		depends_on = [harness_platform_organization.test]
+		create_duration = "3s"
 	}
 
 	resource "harness_platform_secret_text" "test" {
@@ -1223,13 +1235,19 @@ func testAccDataSourceConnectorVault_AppRoleProjectLevel(name string, vaultToken
 
 	resource "time_sleep" "wait_3_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "8s"
+		create_duration = "15s"
 	}
 
 	data "harness_platform_connector_vault" "test" {
 		identifier = harness_platform_connector_vault.test.id
 		org_id = harness_platform_connector_vault.test.org_id
 		project_id = harness_platform_connector_vault.test.project_id
+		depends_on = [time_sleep.wait_10_seconds]
+	}
+
+	resource "time_sleep" "wait_10_seconds" {
+		depends_on = [harness_platform_connector_vault.test]
+		create_duration = "3s"
 	}
 `, name, vaultToken)
 }
@@ -1285,12 +1303,18 @@ func testAccDataSourceConnectorVault_AppRoleOrgLevel(name string, vaultToken str
 
 	resource "time_sleep" "wait_3_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "10s"
+		create_duration = "15s"
 	}
 
 	data "harness_platform_connector_vault" "test" {
 		identifier = harness_platform_connector_vault.test.id
 		org_id = harness_platform_connector_vault.test.org_id
+		depends_on = [time_sleep.wait_6_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_project.test]
+		create_duration = "6s"
 	}
 `, name, vaultToken)
 }
