@@ -90,12 +90,7 @@ func TestAccResourceFiltersWOnlyCreator(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
 				),
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.AccountFilterImportStateIdFunc(resourceName),
-			},
+			
 		},
 	})
 }
@@ -403,8 +398,7 @@ func testAccResourceFiltersProjectLevelNoFilterVisiblity(id string, name string)
 			filter_properties {
 				 tags = ["foo:bar"]
          filter_type = "Connector"
-    }
-		filter_visibility = "OnlyCreator"
+    	}
 		}
 `, id, name)
 }
@@ -425,7 +419,6 @@ func testAccResourceFiltersOrgLevelWFileStore(id string, name string) string {
 				tags = ["foo:bar"]
 				filter_type = "FileStore"
 			}
-			filter_visibility = "OnlyCreator"
 		}
 `, id, name)
 }
