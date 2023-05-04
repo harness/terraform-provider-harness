@@ -50,6 +50,50 @@ func TestAccResourceFilters(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.AccountFilterImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceFiltersProjectLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_filters.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccFiltersDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceFiltersProjectLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
+				),
+			},
+			{
+				Config: testAccResourceFiltersProjectLevel(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.ProjectFilterImportStateIdFunc(resourceName),
 			},
 		},
@@ -152,6 +196,22 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 }
 
 func testAccResourceFilters(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_filters" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			type = "Connector"
+			filter_properties {
+				 tags = ["foo:bar"]
+         filter_type = "Connector"
+    }
+    filter_visibility = "EveryOne"
+		}
+`, id, name)
+}
+
+
+func testAccResourceFiltersProjectLevel(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
