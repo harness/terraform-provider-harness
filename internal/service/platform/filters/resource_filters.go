@@ -74,7 +74,7 @@ func ResourceFilters() *schema.Resource {
 				},
 			},
 			"filter_visibility": {
-				Description:  "This indicates visibility of filter. By default, everyone can view this filter.",
+				Description:  "This indicates visibility of filter. By default, everyone can view this filter. Can Either be EveryOne or OnlyCreator",
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EveryOne", "OnlyCreator"}, false),
