@@ -1038,10 +1038,10 @@ func testOrgResourceConnectorVault_aws_auth(id string, name string, vault_secret
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_10_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_10_seconds" {
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "10s"
 	}
