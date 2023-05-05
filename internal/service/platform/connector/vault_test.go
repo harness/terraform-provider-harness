@@ -1043,7 +1043,7 @@ func testOrgResourceConnectorVault_aws_auth(id string, name string, vault_secret
 
 	resource "time_sleep" "wait_4_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "10s"
 	}
 	`, id, name, vault_secret)
 }

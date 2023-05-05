@@ -1313,7 +1313,7 @@ func testAccDataSourceConnectorVault_AppRoleOrgLevel(name string, vaultToken str
 	}
 
 	resource "time_sleep" "wait_6_seconds" {
-		depends_on = [harness_platform_project.test]
+		depends_on = [harness_platform_connector_vault.test]
 		create_duration = "6s"
 	}
 `, name, vaultToken)
