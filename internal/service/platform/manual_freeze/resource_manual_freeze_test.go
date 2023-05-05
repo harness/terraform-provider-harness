@@ -397,7 +397,7 @@ func testAccResourceManualFreezeWithoutRecurrence(id string, name string, accoun
         description: hi
         windows:
         - timeZone: Asia/Calcutta
-          startTime: 2023-05-03 04:16 PM
+          startTime: 2025-05-07 04:16 PM
           duration: 30m
         notificationRules: []
         tags: {}

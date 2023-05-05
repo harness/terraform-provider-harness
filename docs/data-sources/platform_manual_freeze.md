@@ -52,8 +52,8 @@ data "harness_platform_manual_freeze" "example" {
 
 Read-Only:
 
-- `end_time` (Number)
-- `start_time` (Number)
+- `end_time` (Number) End time of the freeze
+- `start_time` (Number) Start time of the freeze
 
 
 <a id="nestedatt--freeze_windows"></a>
@@ -61,11 +61,11 @@ Read-Only:
 
 Read-Only:
 
-- `duration` (String)
-- `end_time` (String)
+- `duration` (String) Duration of the freeze
+- `end_time` (String) End time of the freeze
 - `recurrence` (List of Object) (see [below for nested schema](#nestedobjatt--freeze_windows--recurrence))
-- `start_time` (String)
-- `time_zone` (String)
+- `start_time` (String) Start time of the freeze
+- `time_zone` (String) Timezone
 
 <a id="nestedobjatt--freeze_windows--recurrence"></a>
 ### Nested Schema for `freeze_windows.recurrence`
@@ -73,7 +73,7 @@ Read-Only:
 Read-Only:
 
 - `recurrence_spec` (List of Object) (see [below for nested schema](#nestedobjatt--freeze_windows--recurrence--recurrence_spec))
-- `type` (String)
+- `type` (String) Recurrence type(Daily, Weekly, Monthly, Yearly)
 
 <a id="nestedobjatt--freeze_windows--recurrence--recurrence_spec"></a>
 ### Nested Schema for `freeze_windows.recurrence.recurrence_spec`
