@@ -9,7 +9,9 @@
  */
 package nextgen
 
-type CustomHealthSourceLogSpec struct {
-	ConnectorRef string `json:"connectorRef"`
-	LogDefinitions []CustomHealthLogDefinition `json:"logDefinitions,omitempty"`
+type StackdriverLogHealthSourceQueryDto struct {
+	Name string `json:"name"`
+	Query string `json:"query"`
+	MessageIdentifier string `json:"messageIdentifier"`
+	ServiceInstanceIdentifier string `json:"serviceInstanceIdentifier"`
 }

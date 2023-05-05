@@ -10,9 +10,9 @@
 package nextgen
 
 type CloudWatchMetricsHealthSourceSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 	MetricPacks []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
 	Region string `json:"region"`
 	Feature string `json:"feature"`
-	MetricDefinitions []CloudWatchMetricDefinition `json:"metricDefinitions,omitempty"`
+	MetricDefinitions []CloudWatchMetricDefinition `json:"metricDefinitions"`
 }

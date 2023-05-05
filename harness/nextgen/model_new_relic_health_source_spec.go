@@ -10,7 +10,7 @@
 package nextgen
 
 type NewRelicHealthSourceSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 	MetricPacks []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
 	ApplicationName string `json:"applicationName,omitempty"`
 	ApplicationId string `json:"applicationId,omitempty"`

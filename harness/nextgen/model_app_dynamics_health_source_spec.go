@@ -10,10 +10,10 @@
 package nextgen
 
 type AppDynamicsHealthSourceSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 	MetricPacks []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
 	Feature string `json:"feature"`
-	ApplicationName string `json:"applicationName,omitempty"`
-	TierName string `json:"tierName,omitempty"`
+	ApplicationName string `json:"applicationName"`
+	TierName string `json:"tierName"`
 	MetricDefinitions []AppDMetricDefinitions `json:"metricDefinitions,omitempty"`
 }

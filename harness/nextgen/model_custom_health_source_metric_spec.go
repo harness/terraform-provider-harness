@@ -10,7 +10,7 @@
 package nextgen
 
 type CustomHealthSourceMetricSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 	MetricPacks []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
 	MetricDefinitions []CustomHealthMetricDefinition `json:"metricDefinitions,omitempty"`
 }

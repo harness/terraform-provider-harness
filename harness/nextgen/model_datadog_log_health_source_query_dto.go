@@ -9,7 +9,9 @@
  */
 package nextgen
 
-type CustomHealthSourceLogSpec struct {
-	ConnectorRef string `json:"connectorRef"`
-	LogDefinitions []CustomHealthLogDefinition `json:"logDefinitions,omitempty"`
+type DatadogLogHealthSourceQueryDto struct {
+	Name string `json:"name"`
+	Query string `json:"query"`
+	Indexes []string `json:"indexes"`
+	ServiceInstanceIdentifier string `json:"serviceInstanceIdentifier"`
 }
