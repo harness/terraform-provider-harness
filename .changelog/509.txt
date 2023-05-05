@@ -1,3 +1,4 @@
 ```release-note:enhancement
 resources/platform_role_assignments: Make resource_group_identifier , role_identifier and type under principle schema required.
+resources/platform_secret_sshkey: Updated the Behaviour of referening the secrets at account,project and org Level . Made Key Field Required in SSH credential of type keyReference
 ```
