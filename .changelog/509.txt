@@ -1,0 +1,3 @@
+```release-note:enhancement
+resources/platform_role_assignments: Make resource_group_identifier , role_identifier and type under principle schema required.
+```
