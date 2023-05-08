@@ -9,7 +9,12 @@
  */
 package nextgen
 
-type CustomHealthSourceLogSpec struct {
-	ConnectorRef string `json:"connectorRef"`
-	LogDefinitions []CustomHealthLogDefinition `json:"logDefinitions,omitempty"`
+type ElkHealthSourceQueryDto struct {
+	Name string `json:"name"`
+	Query string `json:"query"`
+	Index string `json:"index"`
+	ServiceInstanceIdentifier string `json:"serviceInstanceIdentifier"`
+	TimeStampIdentifier string `json:"timeStampIdentifier"`
+	TimeStampFormat string `json:"timeStampFormat"`
+	MessageIdentifier string `json:"messageIdentifier"`
 }

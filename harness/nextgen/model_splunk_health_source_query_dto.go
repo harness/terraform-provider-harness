@@ -9,7 +9,8 @@
  */
 package nextgen
 
-type CustomHealthSourceLogSpec struct {
-	ConnectorRef string `json:"connectorRef"`
-	LogDefinitions []CustomHealthLogDefinition `json:"logDefinitions,omitempty"`
+type SplunkHealthSourceQueryDto struct {
+	Name string `json:"name"`
+	Query string `json:"query"`
+	ServiceInstanceIdentifier string `json:"serviceInstanceIdentifier"`
 }

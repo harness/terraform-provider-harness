@@ -10,7 +10,7 @@
 package nextgen
 
 type DatadogMetricHealthSourceSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 	MetricPacks []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
 	Feature string `json:"feature"`
 	MetricDefinitions []DatadogMetricHealthDefinition `json:"metricDefinitions,omitempty"`

@@ -10,6 +10,6 @@
 package nextgen
 
 type ErrorTrackingHealthSourceSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 	Feature string `json:"feature"`
 }
