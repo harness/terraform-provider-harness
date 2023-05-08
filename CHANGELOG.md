@@ -1,13 +1,12 @@
 
-<a name="0.3.25"></a>
-## 0.3.25 (2023-05-03)
+<a name="0.3.26"></a>
+## 0.3.26 (2023-05-08)
 
 ### Add
 
 * Add vault root token secret enum
 * Add jenkins authentication serializer
 * Add models for jenkins connector
-* Add azure key vault connector type
 
 ### Adding
 
@@ -35,10 +34,11 @@
 
 * Merge branch 'main' into SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
 * Merge branch 'main' into SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
-* Merge branch 'main' into CDS-44314-gnupg-tf-resource
 
 ### Release
 
+* Release version 0.3.25 05-03-2023
+* Release v0.3.25
 * Release version 0.3.24 05-02-2023
 * Release v0.3.24
 * Release version 0.3.23 04-19-2023
@@ -88,11 +88,7 @@
 * Release version 0.3.3 12-07-2022
 * Release v0.3.3
 * Release version 0.3.2 12-05-2022
-* Release v0.3.2
-* Release version 0.3.1 12-02-2022
 * Release version 0.2.24 11-17-2022
-* Release v0.2.24
-* Release version 0.2.23 11-14-2022
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -105,8 +101,6 @@
 * Release v0.2.2
 * Release version 0.2.1 09-21-2022
 * Release v0.2.1
-* Release version 0.2.0 09-15-2022
-* Release v0.2.0
 
 ### Removing
 
@@ -131,6 +125,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#319](https://github.com/harness/harness-go-sdk/issues/319) from harness/SRM-14684
 * Merge pull request [#313](https://github.com/harness/harness-go-sdk/issues/313) from harness/CDS-56975
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
@@ -159,9 +154,7 @@
 * Merge pull request [#248](https://github.com/harness/harness-go-sdk/issues/248) from harness/jenkin
 * Merge pull request [#225](https://github.com/harness/harness-go-sdk/issues/225) from harness/cds-44991
 * Merge pull request [#244](https://github.com/harness/harness-go-sdk/issues/244) from harness/SPG-822-updating-triggers-API
-* Merge pull request [#242](https://github.com/harness/harness-go-sdk/issues/242) from harness/SPG-435-fix
 * Merge pull request [#197](https://github.com/harness/harness-go-sdk/issues/197) from harness/CDS-44314-gnupg-tf-resource
-* Merge pull request [#223](https://github.com/harness/harness-go-sdk/issues/223) from harness/azure-key-vault
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
@@ -169,5 +162,4 @@
 * Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
 * Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 * Merge pull request [#155](https://github.com/harness/harness-go-sdk/issues/155) from harness/SPG-203-adding-cluster-api
-* Merge pull request [#156](https://github.com/harness/harness-go-sdk/issues/156) from harness/SPG-203-Adding-environment-group
 
