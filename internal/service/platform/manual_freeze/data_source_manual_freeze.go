@@ -141,6 +141,11 @@ func DataSourceManualFreeze() *schema.Resource {
 													Type:        schema.TypeString,
 													Computed:    true,
 												},
+												"value": {
+													Description: "Every n months recurrence",
+													Type:        schema.TypeInt,
+													Computed:    true,
+												},
 											},
 										},
 									},

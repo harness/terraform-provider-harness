@@ -155,6 +155,14 @@ func AccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportS
 	}
 }
 
+func AccountFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s", id, type_), nil
+	}
+}
 func ProjectFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary

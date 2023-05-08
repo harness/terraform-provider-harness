@@ -54,7 +54,37 @@ func TestAccResourceInfrastructure(t *testing.T) {
 		},
 	})
 }
+func TestAccResourceInfrastructureForceDelete(t *testing.T) {
 
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInfrastructureForceDelete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
 func TestAccResourceMultipleInfrastructure(t *testing.T) {
 
 	name := t.Name()
@@ -142,6 +172,35 @@ func TestAccResourceInfrastructureAccountLevel(t *testing.T) {
 		},
 	})
 }
+func TestAccResourceInfrastructureAccountLevelForceDelete(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInfrastructureAccountLevelForceDelete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
 
 func TestAccResourceInfrastructureOrgLevel(t *testing.T) {
 
@@ -178,6 +237,37 @@ func TestAccResourceInfrastructureOrgLevel(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceInfrastructureOrgLevelForceDelete(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInfrastructureOrgLevelForceDelete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "deployment_type", "Kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -462,6 +552,347 @@ func testAccResourceInfrastructureOrgLevel(id string, name string) string {
           allowSimultaneousDeployments: false
       EOT
 		}
+
+`, id, name)
+}
+
+func testAccResourceInfrastructureForceDelete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			force_delete = true
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+  	}
+
+		resource "harness_platform_infrastructure" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			env_id = harness_platform_environment.test.id
+			type = "KubernetesDirect"
+			force_delete = true
+			yaml = <<-EOT
+			   infrastructureDefinition:
+         name: "%[2]s"
+         identifier: "%[1]s"
+         description: ""
+         tags:
+           asda: ""
+         orgIdentifier: ${harness_platform_organization.test.id}
+         projectIdentifier: ${harness_platform_project.test.id}
+         environmentRef: ${harness_platform_environment.test.id}
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+		}
+        resource "harness_platform_pipeline" "test" {
+        identifier = "%[1]s"
+        org_id = harness_platform_project.test.org_id
+        project_id = harness_platform_project.test.id
+        name = "%[2]s"
+        yaml = <<-EOT
+        pipeline:
+          name: "%[2]s"
+          identifier: "%[1]s"
+          projectIdentifier: ${harness_platform_project.test.id}
+          orgIdentifier: ${harness_platform_project.test.org_id}
+          tags: {}
+          stages:
+            - stage:
+                name: p3
+                identifier: p3
+                description: ""
+                type: Deployment
+                spec:
+                  deploymentType: Kubernetes
+                  service:
+                    serviceRef: "%[1]s"
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: <+input>
+                              sources: <+input>
+                  environment:
+                    environmentRef: "%[1]s"
+                    deployToAll: false
+                    environmentInputs: <+input>
+                    serviceOverrideInputs: <+input>
+                    infrastructureDefinitions:
+                     - identifier: "%[1]s"
+                  execution:
+                    steps:
+                      - step:
+                          name: Rollout Deployment
+                          identifier: rolloutDeployment
+                          type: K8sRollingDeploy
+                          timeout: 10m
+                          spec:
+                            skipDryRun: false
+                            pruningEnabled: false
+                    rollbackSteps:
+                      - step:
+                          name: Rollback Rollout Deployment
+                          identifier: rollbackRolloutDeployment
+                          type: K8sRollingRollback
+                          timeout: 10m
+                          spec:
+                            pruningEnabled: false
+                tags: {}
+                failureStrategies:
+                  - onFailure:
+                      errors:
+                        - AllErrors
+                      action:
+                        type: StageRollback
+        EOT
+}
+
+
+`, id, name)
+}
+func testAccResourceInfrastructureAccountLevelForceDelete(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		color = "#472848"
+	}
+
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+			force_delete = true
+  	}
+
+		resource "harness_platform_infrastructure" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			env_id = harness_platform_environment.test.id
+			type = "KubernetesDirect"
+			force_delete = true
+			yaml = <<-EOT
+			   infrastructureDefinition:
+         name: "%[2]s"
+         identifier: "%[1]s"
+         description: ""
+         tags:
+           asda: ""
+         environmentRef: ${harness_platform_environment.test.id}
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+		}
+        resource "harness_platform_pipeline" "test" {
+        identifier = "%[1]s"
+        org_id = harness_platform_project.test.org_id
+        project_id = harness_platform_project.test.id
+        name = "%[2]s"
+        yaml = <<-EOT
+        pipeline:
+          name: "%[2]s"
+          identifier: "%[1]s"
+          projectIdentifier: ${harness_platform_project.test.id}
+          orgIdentifier: ${harness_platform_project.test.org_id}
+          tags: {}
+          stages:
+            - stage:
+                name: p3
+                identifier: p3
+                description: ""
+                type: Deployment
+                spec:
+                  deploymentType: Kubernetes
+                  service:
+                    serviceRef: "%[1]s"
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: <+input>
+                              sources: <+input>
+                  environment:
+                    environmentRef: "account.%[1]s"
+                    deployToAll: false
+                    infrastructureDefinitions:
+                     - identifier: "%[1]s"
+                  execution:
+                    steps:
+                      - step:
+                          name: Rollout Deployment
+                          identifier: rolloutDeployment
+                          type: K8sRollingDeploy
+                          timeout: 10m
+                          spec:
+                            skipDryRun: false
+                            pruningEnabled: false
+                    rollbackSteps:
+                      - step:
+                          name: Rollback Rollout Deployment
+                          identifier: rollbackRolloutDeployment
+                          type: K8sRollingRollback
+                          timeout: 10m
+                          spec:
+                            pruningEnabled: false
+                tags: {}
+                failureStrategies:
+                  - onFailure:
+                      errors:
+                        - AllErrors
+                      action:
+                        type: StageRollback
+        EOT
+}
+`, id, name)
+}
+func testAccResourceInfrastructureOrgLevelForceDelete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+        resource "harness_platform_project" "test" {
+            identifier = "%[1]s"
+            name = "%[2]s"
+            org_id = harness_platform_organization.test.id
+            color = "#472848"
+        }
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+			force_delete = true
+  	}
+
+		resource "harness_platform_infrastructure" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			env_id = harness_platform_environment.test.id
+			type = "KubernetesDirect"
+			force_delete = true
+			yaml = <<-EOT
+			   infrastructureDefinition:
+         name: "%[2]s"
+         identifier: "%[1]s"
+         description: ""
+         tags:
+           asda: ""
+         orgIdentifier: ${harness_platform_organization.test.id}
+         environmentRef: ${harness_platform_environment.test.id}
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+		}
+        resource "harness_platform_pipeline" "test" {
+        identifier = "%[1]s"
+        org_id = harness_platform_project.test.org_id
+        project_id = harness_platform_project.test.id
+        name = "%[2]s"
+        yaml = <<-EOT
+        pipeline:
+          name: "%[2]s"
+          identifier: "%[1]s"
+          projectIdentifier: ${harness_platform_project.test.id}
+          orgIdentifier: ${harness_platform_project.test.org_id}
+          tags: {}
+          stages:
+            - stage:
+                name: p3
+                identifier: p3
+                description: ""
+                type: Deployment
+                spec:
+                  deploymentType: Kubernetes
+                  service:
+                    serviceRef: "%[1]s"
+                    serviceInputs:
+                      serviceDefinition:
+                        type: Kubernetes
+                        spec:
+                          artifacts:
+                            primary:
+                              primaryArtifactRef: <+input>
+                              sources: <+input>
+                  environment:
+                    environmentRef: "org.%[1]s"
+                    deployToAll: false
+                    infrastructureDefinitions:
+                     - identifier: "%[1]s"
+                  execution:
+                    steps:
+                      - step:
+                          name: Rollout Deployment
+                          identifier: rolloutDeployment
+                          type: K8sRollingDeploy
+                          timeout: 10m
+                          spec:
+                            skipDryRun: false
+                            pruningEnabled: false
+                    rollbackSteps:
+                      - step:
+                          name: Rollback Rollout Deployment
+                          identifier: rollbackRolloutDeployment
+                          type: K8sRollingRollback
+                          timeout: 10m
+                          spec:
+                            pruningEnabled: false
+                tags: {}
+                failureStrategies:
+                  - onFailure:
+                      errors:
+                        - AllErrors
+                      action:
+                        type: StageRollback
+        EOT
+}
+
 
 `, id, name)
 }
