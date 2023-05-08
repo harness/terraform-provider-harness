@@ -1184,7 +1184,7 @@ func testOrgResourceConnectorVault_app_role(id string, name string, vault_secret
 		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_organization.test]
 		create_duration = "8s"
 	}
@@ -1797,10 +1797,10 @@ func testOrgResourceConnectorVault_token(id string, name string, vaultToken stri
 		use_k8s_auth = false
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_8_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_8_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
 		create_duration = "8s"
 	}
