@@ -1,7 +1,8 @@
-package apiKey_test
+package apikey_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -15,8 +16,8 @@ import (
 func TestAccResourceApiKey(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	account_id := "SNM_3IzhRa6SFPz6DIV7aA"
-	parent_id := "4PuRra9dTOCbT7RnG3-PRw"
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := apiKeyName + "updated"
@@ -50,8 +51,8 @@ func TestAccResourceApiKey(t *testing.T) {
 func TestAccResourceApiKeyOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	account_id := "SNM_3IzhRa6SFPz6DIV7aA"
-	parent_id := "4PuRra9dTOCbT7RnG3-PRw"
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := apiKeyName + "updated"
@@ -85,8 +86,8 @@ func TestAccResourceApiKeyOrgLevel(t *testing.T) {
 func TestAccResourceApiKeyProjectLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	account_id := "SNM_3IzhRa6SFPz6DIV7aA"
-	parent_id := "4PuRra9dTOCbT7RnG3-PRw"
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := apiKeyName + "updated"
@@ -211,7 +212,7 @@ func testAccApiKeyDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		apiKey, _ := testAccGetResourceApiKey(resourceName, state)
 		if apiKey != nil {
-			return fmt.Errorf("Found apiKey: %s", apiKey.Identifier)
+			return fmt.Errorf("Found apikey: %s", apiKey.Identifier)
 		}
 
 		return nil

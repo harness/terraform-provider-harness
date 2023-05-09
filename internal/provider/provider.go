@@ -32,7 +32,7 @@ import (
 	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
-	pl_apiKey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
@@ -215,7 +215,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_policyset":                       policyset.DataSourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
-				"harness_platform_apiKey":                          pl_apiKey.DataSourceApiKey(),
+				"harness_platform_apiKey":                          pl_apikey.DataSourceApiKey(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -323,7 +323,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_policyset":                       policyset.ResourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
-				"harness_platform_apiKey":                          pl_apiKey.ResourceApiKey(),
+				"harness_platform_apiKey":                          pl_apikey.ResourceApiKey(),
 			},
 		}
 

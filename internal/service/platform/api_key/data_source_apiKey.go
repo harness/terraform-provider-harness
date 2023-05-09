@@ -1,4 +1,4 @@
-package apiKey
+package apikey
 
 import (
 	"context"

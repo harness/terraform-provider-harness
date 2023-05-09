@@ -1,4 +1,4 @@
-package apiKey
+package apikey
 
 import (
 	"context"
@@ -25,17 +25,17 @@ func ResourceApiKey() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Unique identifier of the resource",
+				Description: "Identifier of the API Key",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"name": {
-				Description: "Name of the ApiKey",
+				Description: "Name of the API Key",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"description": {
-				Description: "Description of the entity",
+				Description: "Description of the API Key",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -52,12 +52,12 @@ func ResourceApiKey() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{"USER", "SERVICE_ACCOUNT"}, false),
 			},
 			"parent_id": {
-				Description: "Parent Identifier for the Entity",
+				Description: "Parent Entity Identifier of the API Key",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"default_time_to_expire_token": {
-				Description: "Expiry time of the apiKey",
+				Description: "Default expiration time of the Token within API Key",
 				Type:        schema.TypeInt,
 				Optional:    true,
 			},

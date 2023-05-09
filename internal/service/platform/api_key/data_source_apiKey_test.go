@@ -1,7 +1,8 @@
-package apiKey_test
+package apikey_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -11,8 +12,8 @@ import (
 
 func TestAccDataSourceApiKey(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	account_id := "SNM_3IzhRa6SFPz6DIV7aA"
-	parent_id := "4PuRra9dTOCbT7RnG3-PRw"
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
@@ -35,8 +36,8 @@ func TestAccDataSourceApiKey(t *testing.T) {
 
 func TestAccDataSourceApiKeyOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	account_id := "SNM_3IzhRa6SFPz6DIV7aA"
-	parent_id := "4PuRra9dTOCbT7RnG3-PRw"
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
@@ -60,8 +61,8 @@ func TestAccDataSourceApiKeyOrgLevel(t *testing.T) {
 
 func TestAccDataSourceApiKeyProjectLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	account_id := "SNM_3IzhRa6SFPz6DIV7aA"
-	parent_id := "4PuRra9dTOCbT7RnG3-PRw"
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
