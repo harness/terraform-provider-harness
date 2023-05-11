@@ -1,3 +1,15 @@
+# 0.19.2 (May 11,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_tas - Added tas connector resource in Harness terraform provider` ([#523](https://github.com/harness/terraform-provider-harness/issues/523))
+
+ENHANCEMENTS:
+
+* data-source/platform_manual_freeze - Added quarterly recurrence support for manual deployment freeze resource in Harness terraform provider ([#522](https://github.com/harness/terraform-provider-harness/issues/522))
+* resource/harness_platform_infrastructure: added force deletion support for infrastructures ([#527](https://github.com/harness/terraform-provider-harness/issues/527))
+* resource/harness_platform_triggers: added documentation links ([#501](https://github.com/harness/terraform-provider-harness/issues/501))
+
 # 0.19.1 (May 02,2023) 
 
 ENHANCEMENTS:
