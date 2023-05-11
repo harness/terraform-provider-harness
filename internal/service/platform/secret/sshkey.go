@@ -73,7 +73,7 @@ func ResourceSecretSSHKey() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"password": {
-										Description: "password",
+										Description: "password. To reference a password at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a password at the account scope, prefix 'account` to the expression: account.{identifier}",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -116,7 +116,7 @@ func ResourceSecretSSHKey() *schema.Resource {
 										Required:    true,
 									},
 									"encrypted_passphrase": {
-										Description: "Encrypted Passphrase",
+										Description: "Encrypted Passphrase . To reference a encryptedPassphrase at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a encryptedPassPhrase at the account scope, prefix 'account` to the expression: account.{identifier}",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -137,12 +137,12 @@ func ResourceSecretSSHKey() *schema.Resource {
 										Required:    true,
 									},
 									"key": {
-										Description: "SSH key.",
+										Description: "SSH key. To reference a key at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a key at the account scope, prefix 'account` to the expression: account.{identifier}",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 									},
 									"encrypted_passphrase": {
-										Description: "Encrypted Passphrase",
+										Description: "Encrypted Passphrase. To reference a encryptedPassphrase at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a encryptedPassPhrase at the account scope, prefix 'account` to the expression: account.{identifier}",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -163,7 +163,7 @@ func ResourceSecretSSHKey() *schema.Resource {
 										Required:    true,
 									},
 									"password": {
-										Description: "SSH Password.",
+										Description: "SSH Password. To reference a password at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a password at the account scope, prefix 'account` to the expression: account.{identifier}",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
