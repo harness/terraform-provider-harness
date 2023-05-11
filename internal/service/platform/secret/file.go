@@ -124,13 +124,13 @@ func buildTag(no_of_tags int, tags *schema.Set) string {
 	tagMap := make(map[string]string)
 	for i := 0; i < tags.Len(); i++ {
 		tag := fmt.Sprintf("%v", tags.List()[i])
-		splitTag := strings.Split(tag, ",")
-		key := splitTag[0]
-		if len(splitTag) > 1 {
+		if strings.Contains(tag, ":") {
+			splitTag := strings.Split(tag, ":")
+			key := splitTag[0]
 			value := splitTag[1]
 			tagMap[key] = value
 		} else {
-			tagMap[key] = ""
+			tagMap[tag] = ""
 		}
 	}
 
@@ -141,12 +141,13 @@ func buildTag(no_of_tags int, tags *schema.Set) string {
 		} else {
 			first = false
 		}
-		result += fmt.Sprintf(`"%[1]s":"%[2]s"`, key, value)
+		result += fmt.Sprintf(`"%s":"%s"`, key, value)
 	}
 
 	result += "}"
 	return result
 }
+
 
 func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
 	d.Set("secret_manager_identifier", secret.File.SecretManagerIdentifier)
