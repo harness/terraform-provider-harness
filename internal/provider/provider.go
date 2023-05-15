@@ -215,7 +215,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_policyset":                       policyset.DataSourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
-				"harness_platform_apiKey":                          pl_apikey.DataSourceApiKey(),
+				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -323,7 +323,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_policyset":                       policyset.ResourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
-				"harness_platform_apiKey":                          pl_apikey.ResourceApiKey(),
+				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 			},
 		}
 

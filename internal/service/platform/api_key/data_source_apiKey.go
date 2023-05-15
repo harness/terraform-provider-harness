@@ -105,7 +105,7 @@ func dataSourceApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 			return nil
 		}
 	} else {
-		return diag.FromErr(errors.New("identifier  must be specified"))
+		return diag.FromErr(errors.New("Identifier must be specified"))
 	}
 
 	readApiKey(d, apiKey)
