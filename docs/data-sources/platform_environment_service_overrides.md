@@ -26,14 +26,14 @@ data "harness_platform_environment_service_overrides" "test" {
 
 ### Required
 
-- `env_id` (String) The env ID to which the overrides associated.
+- `env_id` (String) The env ID to which the overrides associated (to reference an environment at the organization scope, prefix 'org' to the expression: org.{env_id} & to reference an environment at the account scope, prefix 'account' to the expression: account.{env_id}).
 
 ### Optional
 
 - `identifier` (String) identifier of the service overrides.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `service_id` (String) The service ID to which the overrides applies.
+- `service_id` (String) The service ID to which the overrides applies (to reference a service at the organization scope, prefix 'org' to the expression: org.{service_id} & to reference a service at the account scope, prefix 'account' to the expression: account.{service_id}).
 
 ### Read-Only
 
