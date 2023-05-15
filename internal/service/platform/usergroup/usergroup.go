@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -167,7 +168,6 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-
 	if attr, ok := d.GetOk("user_emails"); ok {
 		d.Set("user_emails", attr)
 	}
@@ -184,7 +184,10 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 	if _, ok := d.GetOk("user_emails"); !ok {
 		var err error
+		var errSSO error
+		var errorDelinkSSO error
 		var resp nextgen.ResponseDtoUserGroup
+		var respSSO nextgen.RestResponseUserGroup
 		var httpResp *http.Response
 
 		id := d.Id()
@@ -196,18 +199,66 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 				OrgIdentifier:     helpers.BuildField(d, "org_id"),
 				ProjectIdentifier: helpers.BuildField(d, "project_id"),
 			})
+			// now we need to check if the userGroup is sso-linked
+			if resp.Data.IsSsoLinked && (err == nil) {
+				if resp.Data.LinkedSsoType == "SAML" {
+					respSSO, httpResp, errSSO = c.UserGroupApi.LinkUserGroupToSAML(ctx, nextgen.SamlLinkGroupRequest{resp.Data.SsoGroupName}, c.AccountId, resp.Data.Identifier, resp.Data.LinkedSsoId, &nextgen.UserGroupApiLinkUserGroupToSAMLOpts{
+						OrgIdentifier:     helpers.BuildField(d, "org_id"),
+						ProjectIdentifier: helpers.BuildField(d, "project_id"),
+					})
+				} else if resp.Data.LinkedSsoType == "LDAP" {
+					respSSO, httpResp, errSSO = c.UserGroupApi.LinkUserGroupToLDAP(ctx, nextgen.LdapLinkGroupRequest{resp.Data.SsoGroupId, resp.Data.SsoGroupName}, c.AccountId, resp.Data.Identifier, resp.Data.LinkedSsoId, &nextgen.UserGroupApiLinkUserGroupToLDAPOpts{
+						OrgIdentifier:     helpers.BuildField(d, "org_id"),
+						ProjectIdentifier: helpers.BuildField(d, "project_id"),
+					})
+				}
+			}
 		} else {
 			resp, httpResp, err = c.UserGroupApi.PutUserGroup(ctx, ug, c.AccountId, &nextgen.UserGroupApiPutUserGroupOpts{
 				OrgIdentifier:     helpers.BuildField(d, "org_id"),
 				ProjectIdentifier: helpers.BuildField(d, "project_id"),
 			})
+			if resp.Data.IsSsoLinked && (err != nil) {
+				// first de-link the group and then re-link it
+				_, httpResp, errorDelinkSSO = c.UserGroupApi.UnlinkUserGroupfromSSO(ctx, id, c.AccountId, &nextgen.UserGroupApiUnlinkUserGroupfromSSOOpts{
+					RetainMembers:     optional.NewBool(false),
+					OrgIdentifier:     helpers.BuildField(d, "org_id"),
+					ProjectIdentifier: helpers.BuildField(d, "project_id"),
+				})
+				// re-link the user group
+				if resp.Data.IsSsoLinked && (errorDelinkSSO == nil) {
+					if resp.Data.LinkedSsoType == "SAML" {
+						respSSO, httpResp, err = c.UserGroupApi.LinkUserGroupToSAML(ctx, nextgen.SamlLinkGroupRequest{resp.Data.SsoGroupName}, c.AccountId, resp.Data.Identifier, resp.Data.LinkedSsoId, &nextgen.UserGroupApiLinkUserGroupToSAMLOpts{
+							OrgIdentifier:     helpers.BuildField(d, "org_id"),
+							ProjectIdentifier: helpers.BuildField(d, "project_id"),
+						})
+					} else if resp.Data.LinkedSsoType == "LDAP" {
+						respSSO, httpResp, err = c.UserGroupApi.LinkUserGroupToLDAP(ctx, nextgen.LdapLinkGroupRequest{resp.Data.SsoGroupId, resp.Data.SsoGroupName}, c.AccountId, resp.Data.Identifier, resp.Data.LinkedSsoId, &nextgen.UserGroupApiLinkUserGroupToLDAPOpts{
+							OrgIdentifier:     helpers.BuildField(d, "org_id"),
+							ProjectIdentifier: helpers.BuildField(d, "project_id"),
+						})
+					}
+				}
+			}
 		}
 
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
-		readUserGroup(d, resp.Data)
+		if errSSO != nil {
+			return helpers.HandleApiError(errSSO, d, httpResp)
+		}
+
+		if errorDelinkSSO != nil {
+			return helpers.HandleApiError(errorDelinkSSO, d, httpResp)
+		}
+
+		if resp.Data.IsSsoLinked {
+			readUserGroup(d, respSSO.Resource)
+		} else {
+			readUserGroup(d, resp.Data)
+		}
 
 		return nil
 	}
