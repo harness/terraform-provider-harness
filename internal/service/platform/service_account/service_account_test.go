@@ -33,8 +33,6 @@ func TestAccResourceServiceAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 				),
@@ -44,9 +42,101 @@ func TestAccResourceServiceAccount(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),		
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceServiceAccountProjectLevel(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resourceName := "harness_platform_service_account.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceAccountDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceServiceAccountProjectLevel(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testAccResourceServiceAccountProjectLevel(id, updatedName, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceServiceAccountOrgLevel(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+
+	resourceName := "harness_platform_service_account.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceAccountDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceServiceAccountOrgLevel(id, name, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+				),
+			},
+			{
+				Config: testAccResourceServiceAccountOrgLevel(id, updatedName, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 				),
@@ -97,6 +187,19 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 
 func testAccResourceServiceAccount(id string, name string, accountId string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_service_account" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		email = "email@service.harness.io"
+		description = "test"
+		tags = ["foo:bar"]
+		account_id = "%[3]s"
+	}
+	`, id, name, accountId)
+}
+
+func testAccResourceServiceAccountProjectLevel(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -118,6 +221,25 @@ func testAccResourceServiceAccount(id string, name string, accountId string) str
 		account_id = "%[3]s"
 		org_id = harness_platform_project.test.org_id
 		project_id = harness_platform_project.test.id
+	}
+	`, id, name, accountId)
+}
+
+func testAccResourceServiceAccountOrgLevel(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_service_account" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		email = "email@service.harness.io"
+		description = "test"
+		tags = ["foo:bar"]
+		account_id = "%[3]s"
+		org_id = harness_platform_organization.test.identifier
 	}
 	`, id, name, accountId)
 }

@@ -32,12 +32,12 @@ func ResourceRoleAssignments() *schema.Resource {
 			"resource_group_identifier": {
 				Description: "Resource group identifier.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"role_identifier": {
 				Description: "Role identifier.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"principal": {
 				Description: "Principal.",
@@ -59,7 +59,7 @@ func ResourceRoleAssignments() *schema.Resource {
 						"type": {
 							Description:  "Type.",
 							Type:         schema.TypeString,
-							Optional:     true,
+							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"USER", "USER_GROUP", "SERVICE", "API_KEY", "SERVICE_ACCOUNT"}, false),
 						},
 					},

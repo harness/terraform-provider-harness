@@ -56,6 +56,52 @@ func TestAccSecretFile(t *testing.T) {
 	})
 }
 
+func TestAccSecretFileWMultipleTags(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_secret_file.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccSecretDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceSecret_fileMultipleTags(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
+				),
+			},
+			{
+				Config: testAccResourceSecret_fileMultipleTags(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"file_path",
+				},
+			},
+		},
+	})
+}
+
 func TestAccSecretFileOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -221,6 +267,19 @@ func testAccResourceSecret_file(id string, name string) string {
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
+		file_path = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
+	}
+		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
+}
+
+func testAccResourceSecret_fileMultipleTags(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_file" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar","connector","gcp:sm","tf"]
 		file_path = "%[3]s"
 		secret_manager_identifier = "harnessSecretManager"
 	}

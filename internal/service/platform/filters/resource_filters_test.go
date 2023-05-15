@@ -76,7 +76,7 @@ func TestAccResourceFiltersWOnlyCreator(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
-					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "OnlyCreator"),
 				),
 			},
 			{
@@ -87,7 +87,7 @@ func TestAccResourceFiltersWOnlyCreator(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "OnlyCreator"),
 				),
 			},
 			
