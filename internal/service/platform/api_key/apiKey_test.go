@@ -22,7 +22,7 @@ func TestAccResourceApiKey(t *testing.T) {
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := apiKeyName + "updated"
 
-	resourceName := "harness_platform_apiKey.test"
+	resourceName := "harness_platform_apikey.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -57,7 +57,7 @@ func TestAccResourceApiKeyOrgLevel(t *testing.T) {
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := apiKeyName + "updated"
 
-	resourceName := "harness_platform_apiKey.test"
+	resourceName := "harness_platform_apikey.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -92,7 +92,7 @@ func TestAccResourceApiKeyProjectLevel(t *testing.T) {
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	updatedName := apiKeyName + "updated"
 
-	resourceName := "harness_platform_apiKey.test"
+	resourceName := "harness_platform_apikey.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -141,7 +141,7 @@ func testAccGetResourceApiKey(resourceName string, state *terraform.State) (*nex
 
 func testAccResourceApiKey(id string, name string, parentId string, accountId string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_apiKey" "test" {
+		resource "harness_platform_apikey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description="Test Description"
@@ -160,7 +160,7 @@ func testOrgResourceApiKey(id string, name string, parentId string, accountId st
 			name = "%[2]s"
 		}
 
-		resource "harness_platform_apiKey" "test" {
+		resource "harness_platform_apikey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description="Test Description"
@@ -187,7 +187,7 @@ func testProjectResourceApiKey(id string, name string, parentId string, accountI
 			color = "#472848"
 		}
 
-		resource "harness_platform_apiKey" "test" {
+		resource "harness_platform_apikey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description="Test Description"
