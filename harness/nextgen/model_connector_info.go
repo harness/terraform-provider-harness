@@ -67,4 +67,5 @@ type ConnectorInfo struct {
 	GcpSecretManager    *GcpSecretManager             `json:"-"`
 	ServiceNow          *ServiceNowConnector          `json:"-"`
 	Spec                json.RawMessage               `json:"spec"`
+	ElasticSearch       *ElkConnectorDto              `json:"-"`
 }
