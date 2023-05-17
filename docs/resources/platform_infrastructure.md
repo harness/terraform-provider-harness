@@ -3,7 +3,7 @@
 page_title: "harness_platform_infrastructure Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-Resource for creating a Harness Infrastructure.
+ Resource for creating a Harness Infrastructure.
 ---
 
 # harness_platform_infrastructure (Resource)
