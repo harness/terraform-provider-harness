@@ -1,3 +1,14 @@
+# 0.20.0 (May 16,2023) 
+
+FEATURES:
+
+* **New Resource:** `resource/harness_platform_apikey: Added ApiKey resource.` ([#532](https://github.com/harness/terraform-provider-harness/issues/532))
+
+ENHANCEMENTS:
+
+* resources/platform_role_assignments: Made resource_group_identifier, role_identifier and type under principal schema required.
+resources/platform_secret_sshkey: Updated the Behaviour of referencing the secrets at account, project and org Level. Made Key Field Required in SSH credential of type keyReference ([#509](https://github.com/harness/terraform-provider-harness/issues/509))
+
 # 0.19.2 (May 11,2023) 
 
 FEATURES:
