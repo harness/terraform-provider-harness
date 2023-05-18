@@ -87,7 +87,7 @@ func DatasourceConnectorAwsSM() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
 
 	return resource
 }
