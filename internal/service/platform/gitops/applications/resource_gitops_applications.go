@@ -1122,7 +1122,7 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 					metaData.Namespace = meta["namespace"].(string)
 				}
 				if meta["generation"] != nil && len(meta["generation"].(string)) > 0 {
-					metaData.Namespace = meta["generation"].(string)
+					metaData.Generation = meta["generation"].(string)
 				}
 				if meta["cluster_name"] != nil && len(meta["cluster_name"].(string)) > 0 {
 					metaData.ClusterName = meta["cluster_name"].(string)
