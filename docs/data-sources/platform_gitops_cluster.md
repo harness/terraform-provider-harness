@@ -100,6 +100,7 @@ Read-Only:
 - `cluster_connection_type` (String)
 - `exec_provider_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--exec_provider_config))
 - `password` (String)
+- `role_a_r_n` (String)
 - `tls_client_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--tls_client_config))
 - `username` (String)
 

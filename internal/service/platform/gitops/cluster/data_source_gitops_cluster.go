@@ -214,7 +214,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 													},
 												},
 												"aws_auth_config": {
-													Description: "IAM authentication configuration for AWS.",
+													Description: "IAM authentication configuration for AWS. (deprecated)",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
@@ -231,6 +231,11 @@ func DataSourceGitopsCluster() *schema.Resource {
 															},
 														},
 													},
+												},
+												"role_a_r_n": {
+													Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 												"exec_provider_config": {
 													Description: "Configuration for an exec provider.",

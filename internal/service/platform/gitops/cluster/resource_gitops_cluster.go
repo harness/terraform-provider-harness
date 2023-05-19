@@ -220,7 +220,7 @@ func ResourceGitopsCluster() *schema.Resource {
 													},
 												},
 												"aws_auth_config": {
-													Description: "IAM authentication configuration for AWS.",
+													Description: "IAM authentication configuration for AWS. (deprecated)",
 													Type:        schema.TypeList,
 													Optional:    true,
 													Elem: &schema.Resource{
@@ -237,6 +237,11 @@ func ResourceGitopsCluster() *schema.Resource {
 															},
 														},
 													},
+												},
+												"role_a_r_n": {
+													Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 												"exec_provider_config": {
 													Description: "Configuration for an exec provider.",
@@ -608,6 +613,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				awsAuthConfigList = append(awsAuthConfigList, awsAuthConfig)
 				config["aws_auth_config"] = awsAuthConfigList
 			}
+			config["role_a_r_n"] = cl.Cluster.Config.RoleARN
 			if cl.Cluster.Config.ExecProviderConfig != nil {
 				execProviderConfigList := []interface{}{}
 				execProviderConfig := map[string]interface{}{}
@@ -781,6 +787,10 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					if configAwsAuthConfig["role_a_r_n"] != nil {
 						clusterDetails.Config.AwsAuthConfig.RoleARN = configAwsAuthConfig["role_a_r_n"].(string)
 					}
+				}
+
+				if clusterConfig["role_a_r_n"] != nil {
+					clusterDetails.Config.RoleARN = clusterConfig["role_a_r_n"].(string)
 				}
 
 				if clusterConfig["exec_provider_config"] != nil && len(clusterConfig["exec_provider_config"].([]interface{})) > 0 {
