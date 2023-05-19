@@ -147,7 +147,7 @@ func testAccDataSourceGitopsClusterIAM(id string, accountId string, name string,
 							insecure = true
 						}
 						cluster_connection_type = "IRSA"
-						roleARN = "%[7]s"
+						role_a_r_n = "%[7]s"
 					}
 
 				}
