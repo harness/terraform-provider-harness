@@ -30,6 +30,7 @@ func TestAccDataSourceConnectorElasticSearch(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "http://elk6.dev.harness.io:9200/"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
 				),
 			},
 		},
@@ -56,6 +57,10 @@ func testAccDataSourceConnector_elasticsearch(name string) string {
 
 			url = "http://elk6.dev.harness.io:9200/"
 			delegate_selectors = ["harness-delegate"]
+			username_password {
+				username = "admin"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
+			}
 		}
 
 		data "harness_platform_connector_elasticsearch" "test" {

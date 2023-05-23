@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccConnectorElasticSearch_usernamepassword(t *testing.T) {
+
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
@@ -113,7 +114,7 @@ func TestAccResourceConnectorElasticSearch_no_authentication(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_connector_elasticsearch.test"
+	resourceName := "harness_platform_connector_elasticsearch.no_authentication"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -249,7 +250,6 @@ func testAccResourceConnector_elasticsearch_no_authentication(id string, name st
 
 			url = "http://elk6.dev.harness.io:9200/"
 			delegate_selectors = ["harness-delegate"]
-
 			depends_on = [time_sleep.wait_4_seconds]
 		}
 

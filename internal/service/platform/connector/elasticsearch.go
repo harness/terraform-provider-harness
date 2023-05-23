@@ -27,12 +27,11 @@ func ResourceConnectorElasticSearch() *schema.Resource {
 				Required:    true,
 			},
 			"username_password": {
-				Description:   "Authenticate to ElasticSearch using username and password.",
-				Type:          schema.TypeList,
-				MaxItems:      1,
-				Optional:      true,
-				ConflictsWith: []string{"api_token"},
-				AtLeastOneOf:  []string{"username_password", "api_token"},
+				Description:  "Authenticate to ElasticSearch using username and password.",
+				Type:         schema.TypeList,
+				MaxItems:     1,
+				Optional:     true,
+				InputDefault: "username_password",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"username": {
@@ -49,12 +48,11 @@ func ResourceConnectorElasticSearch() *schema.Resource {
 				},
 			},
 			"api_token": {
-				Description:   "Authenticate to ElasticSearch using api token.",
-				Type:          schema.TypeList,
-				MaxItems:      1,
-				Optional:      true,
-				ConflictsWith: []string{"username_password"},
-				AtLeastOneOf:  []string{"username_password", "api_token"},
+				Description:  "Authenticate to ElasticSearch using api token.",
+				Type:         schema.TypeList,
+				MaxItems:     1,
+				Optional:     true,
+				InputDefault: "api_token",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"client_secret_ref": {
@@ -69,6 +67,14 @@ func ResourceConnectorElasticSearch() *schema.Resource {
 						},
 					},
 				},
+			},
+			"no_authentication": {
+				Description:  "No Authentication to ElasticSearch",
+				Type:         schema.TypeList,
+				MaxItems:     1,
+				Optional:     true,
+				InputDefault: "no_authentication",
+				Elem:         &schema.Resource{},
 			},
 			"delegate_selectors": {
 				Description: "Tags to filter delegates for connection.",
@@ -139,9 +145,7 @@ func buildConnectorElasticSearch(d *schema.ResourceData) *nextgen.ConnectorInfo 
 			connector.ElasticSearch.PasswordRef = attr.(string)
 		}
 
-	}
-
-	if attr, ok := d.GetOk("api_token"); ok {
+	} else if attr, ok := d.GetOk("api_token"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 
 		connector.ElasticSearch.AuthType = nextgen.ElkAuthTypes.ApiClientToken
@@ -153,6 +157,10 @@ func buildConnectorElasticSearch(d *schema.ResourceData) *nextgen.ConnectorInfo 
 		if attr, ok := config["client_id"]; ok {
 			connector.ElasticSearch.ApiKeyId = attr.(string)
 		}
+
+	} else {
+
+		connector.ElasticSearch.AuthType = nextgen.ElkAuthTypes.None
 
 	}
 
@@ -182,6 +190,8 @@ func readConnectorElasticSearch(d *schema.ResourceData, connector *nextgen.Conne
 				"client_secret_ref": connector.ElasticSearch.ApiKeyRef,
 			},
 		})
+	case nextgen.ElkAuthTypes.None:
+		// no-op
 	default:
 		return fmt.Errorf("Unknown ElasticSearch auth type: %s", connector.ElasticSearch.AuthType)
 	}
