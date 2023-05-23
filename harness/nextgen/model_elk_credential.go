@@ -13,7 +13,7 @@ import "encoding/json"
 
 // This contains details of the EleasticSearch connector credential
 type ElkCredential struct {
-	Type_            ElkAuthType                  `json:"authType,omitempty"`
+	Type_            ElkAuthType                  `json:"authType"`
 	UserNamePassword *ElkAuthTypeUserNamePassword `json:"-"`
 	ApiClientToken   *ElkAuthTypeAPIClient        `json:"-"`
 	Spec             json.RawMessage              `json:"spec,omitempty"`
