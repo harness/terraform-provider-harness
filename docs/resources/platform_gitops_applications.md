@@ -68,13 +68,14 @@ resource "harness_platform_gitops_applications" "example" {
 - `agent_id` (String) Agent identifier of the GitOps application.
 - `application` (Block List, Min: 1) Definition of the GitOps application resource. (see [below for nested schema](#nestedblock--application))
 - `cluster_id` (String) Cluster identifier of the GitOps application.
-- `identifier` (String) Identifier of the GitOps application.
+- `name` (String) Name of the GitOps application.
 - `org_id` (String) Organization identifier of the GitOps application.
 - `project_id` (String) Project identifier of the GitOps application.
 - `repo_id` (String) Repository identifier of the GitOps application.
 
 ### Optional
 
+- `identifier` (String) Identifier of the GitOps application.
 - `kind` (String) Kind of the GitOps application.
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
 - `project` (String) Reference to the project corresponding to this GitOps application. An empty string means that the GitOps application belongs to the 'default' project.
@@ -92,7 +93,6 @@ resource "harness_platform_gitops_applications" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `name` (String) Name of the GitOps application.
 
 <a id="nestedblock--application"></a>
 ### Nested Schema for `application`

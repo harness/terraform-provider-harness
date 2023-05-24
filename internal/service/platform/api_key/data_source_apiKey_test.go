@@ -17,7 +17,7 @@ func TestAccDataSourceApiKey(t *testing.T) {
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
-	resourceName := "data.harness_platform_apiKey.test"
+	resourceName := "data.harness_platform_apikey.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -41,7 +41,7 @@ func TestAccDataSourceApiKeyOrgLevel(t *testing.T) {
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
-	resourceName := "data.harness_platform_apiKey.test"
+	resourceName := "data.harness_platform_apikey.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -66,7 +66,7 @@ func TestAccDataSourceApiKeyProjectLevel(t *testing.T) {
 
 	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 
-	resourceName := "data.harness_platform_apiKey.test"
+	resourceName := "data.harness_platform_apikey.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -87,7 +87,7 @@ func TestAccDataSourceApiKeyProjectLevel(t *testing.T) {
 
 func testAccDataSourceApiKey(id string, name string, parentId string, accountId string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_apiKey" "test" {
+		resource "harness_platform_apikey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description="Test Description"
@@ -97,12 +97,12 @@ func testAccDataSourceApiKey(id string, name string, parentId string, accountId 
 			default_time_to_expire_token = 1000
 		}
 
-		data "harness_platform_apiKey" "test" {
-			identifier = harness_platform_apiKey.test.identifier
-			parent_id = harness_platform_apiKey.test.parent_id
-			apikey_type = harness_platform_apiKey.test.apikey_type
-			account_id = harness_platform_apiKey.test.account_id
-			name = harness_platform_apiKey.test.name
+		data "harness_platform_apikey" "test" {
+			identifier = harness_platform_apikey.test.identifier
+			parent_id = harness_platform_apikey.test.parent_id
+			apikey_type = harness_platform_apikey.test.apikey_type
+			account_id = harness_platform_apikey.test.account_id
+			name = harness_platform_apikey.test.name
 		}
 	`, id, name, parentId, accountId)
 }
@@ -115,7 +115,7 @@ func testAccDataSourceApiKeyOrgLevel(id string, name string, parentId string, ac
 			name = "%[2]s"
 		}
 
-		resource "harness_platform_apiKey" "test" {
+		resource "harness_platform_apikey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description="Test Description"
@@ -126,13 +126,13 @@ func testAccDataSourceApiKeyOrgLevel(id string, name string, parentId string, ac
 			default_time_to_expire_token = 1000
 		}
 
-		data "harness_platform_apiKey" "test" {
-			identifier = harness_platform_apiKey.test.identifier
-			parent_id = harness_platform_apiKey.test.parent_id
-			apikey_type = harness_platform_apiKey.test.apikey_type
-			account_id = harness_platform_apiKey.test.account_id
-			org_id = harness_platform_apiKey.test.org_id
-			name = harness_platform_apiKey.test.name
+		data "harness_platform_apikey" "test" {
+			identifier = harness_platform_apikey.test.identifier
+			parent_id = harness_platform_apikey.test.parent_id
+			apikey_type = harness_platform_apikey.test.apikey_type
+			account_id = harness_platform_apikey.test.account_id
+			org_id = harness_platform_apikey.test.org_id
+			name = harness_platform_apikey.test.name
 		}
 	`, id, name, parentId, accountId)
 }
@@ -151,7 +151,7 @@ func testAccDataSourceApiKeyProjectLevel(id string, name string, parentId string
 			color = "#472848"
 		}
 
-		resource "harness_platform_apiKey" "test" {
+		resource "harness_platform_apikey" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description="Test Description"
@@ -163,14 +163,14 @@ func testAccDataSourceApiKeyProjectLevel(id string, name string, parentId string
 			default_time_to_expire_token = 1000
 		}
 
-		data "harness_platform_apiKey" "test" {
-			identifier = harness_platform_apiKey.test.identifier
-			parent_id = harness_platform_apiKey.test.parent_id
-			apikey_type = harness_platform_apiKey.test.apikey_type
-			account_id = harness_platform_apiKey.test.account_id
-			org_id = harness_platform_apiKey.test.org_id
-			project_id = harness_platform_apiKey.test.project_id
-			name = harness_platform_apiKey.test.name
+		data "harness_platform_apikey" "test" {
+			identifier = harness_platform_apikey.test.identifier
+			parent_id = harness_platform_apikey.test.parent_id
+			apikey_type = harness_platform_apikey.test.apikey_type
+			account_id = harness_platform_apikey.test.account_id
+			org_id = harness_platform_apikey.test.org_id
+			project_id = harness_platform_apikey.test.project_id
+			name = harness_platform_apikey.test.name
 		}
 	`, id, name, parentId, accountId)
 }
