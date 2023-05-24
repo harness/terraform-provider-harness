@@ -47,8 +47,8 @@ data "harness_platform_connector_elasticsearch" "example" {
 
 Read-Only:
 
-- `client_id` (String)
-- `client_secret_ref` (String)
+- `client_id` (String) The client id used for connecting to ElasticSearch.
+- `client_secret_ref` (String) Reference to the Harness secret containing the ElasticSearch client secret. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
 <a id="nestedatt--username_password"></a>
@@ -56,7 +56,7 @@ Read-Only:
 
 Read-Only:
 
-- `password_ref` (String)
-- `username` (String)
+- `password_ref` (String) Reference to a secret containing the password to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `username` (String) Username to use for authentication.
 
 
