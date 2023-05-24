@@ -23,6 +23,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 	switch a.Type_ {
 	case ConnectorTypes.AppDynamics:
 		err = json.Unmarshal(aux.Spec, &a.AppDynamics)
+	case ConnectorTypes.ElasticSearch:
+		err = json.Unmarshal(aux.Spec, &a.ElasticSearch)
 	case ConnectorTypes.Artifactory:
 		err = json.Unmarshal(aux.Spec, &a.Artifactory)
 	case ConnectorTypes.Aws:
@@ -109,6 +111,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 	switch a.Type_ {
 	case ConnectorTypes.AppDynamics:
 		spec, err = json.Marshal(a.AppDynamics)
+	case ConnectorTypes.ElasticSearch:
+		spec, err = json.Marshal(a.ElasticSearch)
 	case ConnectorTypes.Artifactory:
 		spec, err = json.Marshal(a.Artifactory)
 	case ConnectorTypes.Aws:

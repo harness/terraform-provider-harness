@@ -644,6 +644,7 @@ Class | Method | HTTP request | Description
  - [EcsRecommendationDto](docs/EcsRecommendationDto.md)
  - [EdgeLayoutList](docs/EdgeLayoutList.md)
  - [EditionAction](docs/EditionAction.md)
+ - [ElkConnectorDto](docs/ElkConnectorDto.md)
  - [ElkHealthSourceSpec](docs/ElkHealthSourceSpec.md)
  - [EmailConfigDto](docs/EmailConfigDto.md)
  - [EmbeddedUser](docs/EmbeddedUser.md)
