@@ -34,7 +34,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 			"identifier": {
 				Description: "Identifier of the GitOps application.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps application.",
@@ -119,7 +119,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 			"name": {
 				Description: "Name of the GitOps application.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"application": {
 				Description: "Definition of the GitOps application resource.",
