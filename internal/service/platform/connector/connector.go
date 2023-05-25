@@ -2,7 +2,6 @@ package connector
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -19,16 +18,11 @@ type ReadConnectorData func(*schema.ResourceData, *nextgen.ConnectorInfo) error
 func resourceConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	if id, ok := d.GetOk("identifier"); ok {
-		return readConnectorByID(ctx, c, d, id.(string), connType)
-	} else if name, ok := d.GetOk("name"); ok {
-		return readConnectorByName(ctx, c, d, name.(string), connType)
-	} else {
-		return nil, diag.FromErr(errors.New("Either Identifier or Name must be specified"))
+	id := d.Id()
+	if id == "" {
+		id = d.Get("identifier").(string)
 	}
-}
 
-func readConnectorByID(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData, id string, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
 	resp, httpResp, err := c.ConnectorsApi.GetConnector(ctx, c.AccountId, id, getReadConnectorOpts(d))
 	if err != nil {
 		return nil, helpers.HandleReadApiError(err, d, httpResp)
@@ -41,59 +35,6 @@ func readConnectorByID(ctx context.Context, c *nextgen.APIClient, d *schema.Reso
 	readCommonConnectorData(d, resp.Data.Connector)
 
 	return resp.Data.Connector, nil
-}
-
-func readConnectorByName(ctx context.Context, c *nextgen.APIClient, d *schema.ResourceData, name string, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
-	var orgIdentifier string
-	var projectIdentifier string
-
-	if attr, ok := d.GetOk("org_id"); ok {
-		orgIdentifier = attr.(string)
-	}
-
-	if attr, ok := d.GetOk("project_id"); ok {
-		projectIdentifier = attr.(string)
-	}
-
-	filters := &nextgen.ConnectorFilterProperties{
-		ConnectorNames: []string{name},
-		Types:          []string{string(connType)},
-		FilterType:     nextgen.ConnectorFilterTypes.Connector,
-	}
-
-	resp, httpResp, err := c.ConnectorsApi.GetConnectorListV2(ctx, *filters, c.AccountId, &nextgen.ConnectorsApiGetConnectorListV2Opts{
-		OrgIdentifier:     optional.NewString(orgIdentifier),
-		ProjectIdentifier: optional.NewString(projectIdentifier),
-	})
-
-	if err != nil {
-		return nil, helpers.HandleReadApiError(err, d, httpResp)
-	}
-	if len(resp.Data.Content) == 0 {
-		return nil, nil
-	}
-
-	var matchingConnector *nextgen.ConnectorInfo
-	matchCount := 0
-
-	for _, svc := range resp.Data.Content {
-		if svc.Connector.Name == name {
-			matchCount++
-			matchingConnector = svc.Connector
-		}
-	}
-
-	if matchCount == 0 {
-		return nil, diag.Errorf("No connector with name %s exists", name)
-	}
-
-	if matchCount > 1 {
-		return nil, diag.Errorf("Can't read from data source, more than one connector with name %s exists", name)
-	}
-
-	readCommonConnectorData(d, matchingConnector)
-	return matchingConnector, nil
-
 }
 
 func dataConnectorReadBase(ctx context.Context, d *schema.ResourceData, meta interface{}, connType nextgen.ConnectorType) (*nextgen.ConnectorInfo, diag.Diagnostics) {
@@ -133,20 +74,6 @@ func getReadConnectorOpts(d *schema.ResourceData) *nextgen.ConnectorsApiGetConne
 		opts := attr.([]interface{})[0].(map[string]interface{})
 		connOpts.Branch = optional.NewString(opts["branch"].(string))
 		connOpts.RepoIdentifier = optional.NewString(opts["repo_id"].(string))
-	}
-
-	return connOpts
-}
-
-func getReadConnectorOptsByOrgAndProject(d *schema.ResourceData) *nextgen.ConnectorsApiGetConnectorByNameOpts {
-	connOpts := &nextgen.ConnectorsApiGetConnectorByNameOpts{}
-
-	if attr, ok := d.GetOk("org_id"); ok {
-		connOpts.OrgIdentifier = optional.NewString(attr.(string))
-	}
-
-	if attr, ok := d.GetOk("project_id"); ok {
-		connOpts.ProjectIdentifier = optional.NewString(attr.(string))
 	}
 
 	return connOpts
