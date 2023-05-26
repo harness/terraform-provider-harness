@@ -16,6 +16,6 @@ type GithubConnector struct {
 	Authentication    *GithubAuthentication `json:"authentication"`
 	ApiAccess         *GithubApiAccess      `json:"apiAccess,omitempty"`
 	DelegateSelectors []string              `json:"delegateSelectors,omitempty"`
-	ExecuteOnDelegate bool                  `json:"executeOnDelegate,omitempty"`
+	ExecuteOnDelegate bool                  `json:"executeOnDelegate"`
 	Type_             GitConnectorType      `json:"type"`
 }
