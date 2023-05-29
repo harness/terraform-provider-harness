@@ -137,7 +137,8 @@ func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequ
 		InfraIdentifier:   d.Get("infra_id").(string),
 		ClusterIdentifier: d.Get("cluster_id").(string),
 		Type_:             d.Get("type").(string),
-		Spec:              d.Get("spec").(*nextgen.ServiceOverrideSpec),
+		Spec:              d.Get("spec").(string),
+		//Spec:              d.Get("spec").(*nextgen.ServiceOverrideSpec),
 	}
 }
 
