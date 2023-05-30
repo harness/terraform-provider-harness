@@ -1,3 +1,9 @@
+# 0.21.0 (May 25,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_connector_elasticsearch - Added elasticsearch connector resource in Harness terraform provider` ([#538](https://github.com/harness/terraform-provider-harness/issues/538))
+
 # 0.20.0 (May 16,2023) 
 
 FEATURES:
