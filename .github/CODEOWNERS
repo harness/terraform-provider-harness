@@ -1,1 +1,3 @@
 internal/service/platform/connector/connector.go rathod.meetsatish@harness.io
+internal/acctest/ rathod.meetsatish@harness.io
+helpers/ rathod.meetsatish@harness.io
