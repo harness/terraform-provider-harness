@@ -99,7 +99,7 @@ func testAccDataSourceToken(id string, name string, parentId string, accountId s
 			parent_id = "%[3]s"
 			account_id = "%[4]s"
 			apikey_type = "USER"
-			default_time_to_expire_token = 1000
+			default_time_to_expire_token = 1000000
 		}
 
 		resource "harness_platform_token" "test" {
@@ -137,7 +137,7 @@ func testAccDataSourceTokenOrgLevel(id string, name string, parentId string, acc
 			account_id = "%[4]s"
 			org_id = harness_platform_organization.test.id
 			apikey_type = "USER"
-			default_time_to_expire_token = 1000
+			default_time_to_expire_token = 1000000
 		}
 
 		resource "harness_platform_token" "test" {
@@ -185,7 +185,7 @@ func testAccDataSourceTokenProjectLevel(id string, name string, parentId string,
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			apikey_type = "USER"
-			default_time_to_expire_token = 1000
+			default_time_to_expire_token = 1000000
 		}
 
 		resource "harness_platform_apikey" "test" {

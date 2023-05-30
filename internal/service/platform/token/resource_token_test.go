@@ -43,6 +43,12 @@ func TestAccResourceToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: AccountResourceImportTokenIdFunc(resourceName),
+			},
 		},
 	})
 
@@ -78,6 +84,12 @@ func TestAccResourceTokenOrgLevel(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: OrgResourceImportTokenIdFunc(resourceName),
+			},
 		},
 	})
 
@@ -112,6 +124,12 @@ func TestAccResourceTokenProjectLevel(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: ProjectResourceImportTokenIdFunc(resourceName),
 			},
 		},
 	})
@@ -247,5 +265,41 @@ func testAccTokenDestroy(resourceName string) resource.TestCheckFunc {
 		}
 
 		return nil
+	}
+}
+
+func AccountResourceImportTokenIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		apikey_id := primary.Attributes["apikey_id"]
+		parent_id := primary.Attributes["parent_id"]
+		apikey_type := primary.Attributes["apikey_type"]
+		return fmt.Sprintf("%s/%s/%s/%s", parent_id, apikey_id, apikey_type, id), nil
+	}
+}
+
+func OrgResourceImportTokenIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		apikey_id := primary.Attributes["apikey_id"]
+		parent_id := primary.Attributes["parent_id"]
+		apikey_type := primary.Attributes["apikey_type"]
+		return fmt.Sprintf("%s/%s/%s/%s/%s", orgId, parent_id, apikey_id, apikey_type, id), nil
+	}
+}
+
+func ProjectResourceImportTokenIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		apikey_id := primary.Attributes["apikey_id"]
+		parent_id := primary.Attributes["parent_id"]
+		apikey_type := primary.Attributes["apikey_type"]
+		return fmt.Sprintf("%s/%s/%s/%s/%s/%s", orgId, projId, parent_id, apikey_id, apikey_type, id), nil
 	}
 }
