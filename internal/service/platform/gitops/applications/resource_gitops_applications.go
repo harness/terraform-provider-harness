@@ -39,7 +39,7 @@ func ResourceGitopsApplication() *schema.Resource {
 			"identifier": {
 				Description: "Identifier of the GitOps application.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps application.",
@@ -124,7 +124,7 @@ func ResourceGitopsApplication() *schema.Resource {
 			"name": {
 				Description: "Name of the GitOps application.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 			"application": {
 				Description: "Definition of the GitOps application resource.",
@@ -867,6 +867,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 
 func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 	d.SetId(app.Name)
+	d.Set("identifier", app.Name)
 	d.Set("org_id", app.OrgIdentifier)
 	d.Set("project_id", app.ProjectIdentifier)
 	d.Set("agent_id", app.AgentIdentifier)
@@ -1122,7 +1123,7 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 					metaData.Namespace = meta["namespace"].(string)
 				}
 				if meta["generation"] != nil && len(meta["generation"].(string)) > 0 {
-					metaData.Namespace = meta["generation"].(string)
+					metaData.Generation = meta["generation"].(string)
 				}
 				if meta["cluster_name"] != nil && len(meta["cluster_name"].(string)) > 0 {
 					metaData.ClusterName = meta["cluster_name"].(string)

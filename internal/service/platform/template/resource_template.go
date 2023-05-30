@@ -32,7 +32,7 @@ func ResourceTemplate() *schema.Resource {
 			"version": {
 				Description: "Version Label for Template.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"is_stable": {
 				Description: "True if given version for template to be set as stable.",
