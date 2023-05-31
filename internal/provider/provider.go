@@ -65,6 +65,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
 	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/template_filters"
+	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
@@ -217,6 +218,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
+				"harness_platform_token":                           pl_token.DataSourceToken(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -326,6 +328,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
+				"harness_platform_token":                           pl_token.ResourceToken(),
 			},
 		}
 
