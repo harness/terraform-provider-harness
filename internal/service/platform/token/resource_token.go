@@ -63,9 +63,10 @@ func ResourceToken() *schema.Resource {
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:  "Project Identifier for the Entity",
+				Type:         schema.TypeString,
+				Optional:     true,
+				RequiredWith: []string{"org_id"},
 			},
 			"valid_from": {
 				Description: "This is the time from which the Token is valid. The time is in milliseconds",
