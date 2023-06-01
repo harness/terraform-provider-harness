@@ -130,7 +130,7 @@ func ResourceTemplate() *schema.Resource {
 				Description: "Description of the entity. Description field in deprecated",
 				Type:        schema.TypeString,
 				Optional:    true,
-				Deprecated:  "Description no more will be supported",
+				Deprecated:  "description field is deprecated",
 			},
 			"org_id": {
 				Description: "Organization Identifier for the Entity",
@@ -521,7 +521,6 @@ func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsRes
 	d.Set("project_id", template.Template.Project)
 	d.Set("template_yaml", template.Template.Yaml)
 	d.Set("is_stable", template.Template.StableTemplate)
-	d.Set("description", template.Template.Description)
 	d.Set("version", template.Template.VersionLabel)
 	d.Set("comments", comments)
 	if template.Template.GitDetails != nil {

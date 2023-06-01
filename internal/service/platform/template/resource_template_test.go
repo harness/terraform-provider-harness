@@ -673,7 +673,7 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
 			name = "%[2]s"
 			comments = "comments"
 			version = "ab"
-			description = "test"
+			description = "description"
 			is_stable = true
 			git_details {
 				branch_name = "main"
