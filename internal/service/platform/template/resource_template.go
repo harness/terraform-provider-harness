@@ -15,7 +15,7 @@ import (
 
 func ResourceTemplate() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Template.",
+		Description: "Resource for creating a Template. Description field in deprecated",
 
 		ReadContext:   resourceTemplateRead,
 		UpdateContext: resourceTemplateCreateOrUpdate,
@@ -127,7 +127,7 @@ func ResourceTemplate() *schema.Resource {
 				Required:    true,
 			},
 			"description": {
-				Description: "Description of the entity",
+				Description: "Description of the entity. Description field in deprecated",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Deprecated:  "Description no more will be supported",
