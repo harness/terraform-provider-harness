@@ -116,10 +116,42 @@ func ResourceTemplate() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"name": {
+				Description: "Name of the Variable",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"description": {
+				Description: "Description of the entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "Description no more will be supported",
+			},
+			"org_id": {
+				Description: "Organization Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Project Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"tag": {
+				Description: "Tags to associate with the resource.",
+				Type:        schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional: true,
+			},
 		},
 	}
-
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }

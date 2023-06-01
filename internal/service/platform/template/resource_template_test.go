@@ -46,7 +46,7 @@ func TestAccResourceTemplateProjectScope(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "description"},
 			},
 		},
 	})
@@ -673,6 +673,7 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
 			name = "%[2]s"
 			comments = "comments"
 			version = "ab"
+			description = "test"
 			is_stable = true
 			git_details {
 				branch_name = "main"
