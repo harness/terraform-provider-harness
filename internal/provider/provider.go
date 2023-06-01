@@ -406,4 +406,5 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			Client:    getClient(d, version),
 		}, nil
 	}
+
 }

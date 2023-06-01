@@ -32,7 +32,7 @@ func ResourceTemplate() *schema.Resource {
 			"version": {
 				Description: "Version Label for Template.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"is_stable": {
 				Description: "True if given version for template to be set as stable.",
@@ -116,10 +116,34 @@ func ResourceTemplate() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"name": {
+				Description: "Name of the Variable",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"description": {
+				Description: "Description of the entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "Description no more will be supported",
+			},
+			"org_id": {
+				Description: "Organization Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Project Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
-
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -489,7 +513,6 @@ func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsRes
 	d.Set("project_id", template.Template.Project)
 	d.Set("template_yaml", template.Template.Yaml)
 	d.Set("is_stable", template.Template.StableTemplate)
-	d.Set("description", template.Template.Description)
 	d.Set("version", template.Template.VersionLabel)
 	d.Set("comments", comments)
 	if template.Template.GitDetails != nil {
