@@ -90,6 +90,73 @@ func DatasourceConnectorAws() *schema.Resource {
 					},
 				},
 			},
+			"equal_jitter_backoff_strategy": {
+				Description: "Equal Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"full_jitter_backoff_strategy": {
+				Description: "Full Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"fixed_delay_backoff_strategy": {
+				Description: "Fixed Delay BackOff Strategy.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"fixed_backoff": {
+							Description: "Fixed Backoff.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
