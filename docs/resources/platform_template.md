@@ -626,7 +626,7 @@ template:
 - `is_stable` (Boolean) True if given version for template to be set as stable.
 - `org_id` (String) Organization Identifier for the Entity
 - `project_id` (String) Project Identifier for the Entity
-- `tag` (Set of String) Tags to associate with the resource.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
