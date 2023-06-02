@@ -2,8 +2,11 @@ package role_assignments
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -20,7 +23,7 @@ func ResourceRoleAssignments() *schema.Resource {
 		UpdateContext: resourceRoleAssignmentsCreateorUpdate,
 		CreateContext: resourceRoleAssignmentsCreateorUpdate,
 		DeleteContext: resourceRoleAssignmentsDelete,
-		Importer:      helpers.MultiLevelResourceImporter,
+		Importer:      MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -223,4 +226,71 @@ func readRoleAssignments(d *schema.ResourceData, roleAssignments *nextgen.RoleAs
 			"type":        roleAssignments.Principal.Type_,
 		},
 	})
+}
+
+func resourceRoleAssignmentImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// Get the user-provided values
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	importedData, err := MultiLevelResourceImporter.State(d, meta)
+	if err != nil {
+		return nil, err
+	}
+
+	scopeLevel := importedData[0].Get("scope_level").(string)
+	identifier := importedData[0].Get("identifier").(string)
+	typ := importedData[0].Get("type").(string)
+
+	body := nextgen.RoleAssignmentFilter{
+		PrincipalFilter: []nextgen.AuthzPrincipal{
+			{
+				ScopeLevel: scopeLevel,
+				Identifier: identifier,
+				Type_:      typ,
+			},
+		},
+	}
+
+	resp, _, err := c.RoleAssignmentsApi.GetFilteredRoleAssignmentList(ctx, body, c.AccountId, &nextgen.RoleAssignmentsApiGetFilteredRoleAssignmentListOpts{
+		PageIndex:         optional.NewInt32(0),
+		PageSize:          optional.NewInt32(50),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("no role assignment found for the provided identifier" + err.Error())
+	}
+
+	if len(resp.Data.Content) == 0 {
+		return nil, fmt.Errorf("no role assignment found for the provided identifier")
+	}
+
+	roleAssignment := resp.Data.Content[0].RoleAssignment
+	identifier1 := roleAssignment.Identifier
+
+	fmt.Println("Identifier new" + identifier1)
+	// d.Set("identifier", identifier1)
+
+	return []*schema.ResourceData{d}, nil
+}
+
+var MultiLevelResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+
+		partCount := len(parts)
+		isAccountConnector := partCount == 3
+
+		if isAccountConnector {
+
+			d.Set("scope_level", parts[0])
+			d.Set("identifer", parts[1])
+			d.Set("type", parts[2])
+
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
 }

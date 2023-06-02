@@ -40,3 +40,5 @@ website/vendor
 terraform-provider-harness
 
 .terraform.lock.hcl
+
+dist/

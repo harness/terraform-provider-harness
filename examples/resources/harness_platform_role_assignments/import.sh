@@ -1,5 +1,5 @@
 # Import account level role assignments
-terraform import harness_platform_role_assignments.example <role_assignments_id>
+terraform import harness_platform_role_assignments.example <scope>/<identifer>/<type>
 
 # Import org level role assignments
 terraform import harness_platform_role_assignments.example <ord_id>/<role_assignments_id>

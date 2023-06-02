@@ -379,3 +379,48 @@ var MultiLevelFilterImporter = &schema.ResourceImporter{
 		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
 	},
 }
+
+
+// MultiLevelResourceImporter defines the importer configuration for all multi level resources.
+// The format used for the id is as follows:
+//   - Account Level: <identifier>/<type>
+//   - Org Level: <org_id>/<identifier>/<type>
+//   - Project Level: <org_id>/<project_id>/<identifier>/<type>
+
+
+var MultiLevelResourceImporterFilters = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+
+		partCount := len(parts)
+		isAccountConnector := partCount == 2
+		isOrgConnector := partCount == 3
+		isProjectConnector := partCount == 4
+
+		if isAccountConnector {
+			d.SetId(parts[0])
+			d.Set("identifier", parts[0]) // This is roleIdentifier
+			d.Set("type",parts[1])
+
+
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if isOrgConnector {
+			d.SetId(parts[1])
+			d.Set("identifier", parts[1])
+			d.Set("org_id", parts[0])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if isProjectConnector {
+			d.SetId(parts[2])
+			d.Set("identifier", parts[2])
+			d.Set("project_id", parts[1])
+			d.Set("org_id", parts[0])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
