@@ -2,6 +2,8 @@ package service_overrides_v2
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -26,35 +28,33 @@ func ResourceServiceOverrides() *schema.Resource {
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"env_id": {
 				Description: "The env ID to which the overrides are associated.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Required:    true,
 			},
 			"infra_id": {
 				Description: "The infrastructure ID to which the overrides are associated",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
+				Computed:    true,
 			},
 			"cluster_id": {
 				Description: "The cluster ID to which the overrides are associated",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
+				Computed:    true,
 			},
 			"type": {
 				Description: "The type of the overrides",
 				Type:        schema.TypeString,
-				Required:    false,
+				Required:    true,
 			},
-			"newly_created": {
-				Description: "Boolean value to check if the override is newly created",
-				Type:        schema.TypeString,
-				Required:    false,
-			},
-			"yaml": {
-				Description: "Environment Service Overrides YAML." + helpers.Descriptions.YamlText.String(),
+			"spec": {
+				Description: "spec of the override values",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -128,6 +128,17 @@ func resourceServiceOverridesV2Delete(ctx context.Context, d *schema.ResourceDat
 }
 
 func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequestDtov2 {
+	// Create a variable of the struct type
+	var serviceOverrides *nextgen.ServiceOverridesSpec
+	str := d.Get("spec").(string)
+
+	// Unmarshal the string into the struct
+	err := json.Unmarshal([]byte(str), &serviceOverrides)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+
 	return &nextgen.ServiceOverrideRequestDtov2{
 		Identifier:        d.Get("identifier").(string),
 		OrgIdentifier:     d.Get("org_id").(string),
@@ -137,8 +148,7 @@ func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequ
 		InfraIdentifier:   d.Get("infra_id").(string),
 		ClusterIdentifier: d.Get("cluster_id").(string),
 		Type_:             d.Get("type").(string),
-		Spec:              d.Get("spec").(string),
-		//Spec:              d.Get("spec").(*nextgen.ServiceOverrideSpec),
+		Spec:              serviceOverrides,
 	}
 }
 
@@ -150,6 +160,17 @@ func readServiceOverridesV2List(d *schema.ResourceData, ps *nextgen.PageServiceO
 }
 
 func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverridesResponseDtov2) {
+
+	serviceOverrides := *so.Spec
+
+	str, err := serviceOverridesSpecToString(serviceOverrides)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println(str)
+
 	d.SetId(so.Identifier)
 	d.Set("identifier", so.Identifier)
 	d.Set("org_id", so.OrgIdentifier)
@@ -160,8 +181,16 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	d.Set("infra_id", so.InfraIdentifier)
 	d.Set("cluster_id", so.ClusterIdentifier)
 	d.Set("type", so.Type_)
-	d.Set("spec", so.Spec)
+	d.Set("spec", str)
 	d.Set("newly_created", so.NewlyCreated)
+}
+
+func serviceOverridesSpecToString(serviceOverrides nextgen.ServiceOverridesSpec) (string, error) {
+	bytes, err := json.Marshal(serviceOverrides)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
 func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {

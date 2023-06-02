@@ -1,12 +1,12 @@
-package service_overrides_v2
+package service_overrides_v2_test
 
 import (
 	"fmt"
 	"testing"
 
-	"../harness-go-sdk/harness/nextgen"
-	"../harness-go-sdk/harness/utils"
 	"github.com/antihax/optional"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -193,15 +193,17 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
 			env_id = harness_platform_environment.test.id
 			service_id = harness_platform_service.test.id
             type = "ENV_SERVICE_OVERRIDE"
-       		spec = "{
-        	"variables": [
-        	{
-          		"name": "v1",
-          		"type": "String",
-          		"value": "val1"
-        	}
-      		]
-      	}"
+            spec = <<-EOT
+              {
+                "variables": [
+                  {
+                    "name": "v1",
+                    "type": "String",
+                    "value": "val1"
+                  }
+                ]
+              }
+              EOT
 		}
 `, id, name)
 }
@@ -261,19 +263,22 @@ func testAccServiceOverridesOrgScope(id string, name string) string {
 		}
 
 		resource "harness_platform_service_overrides_v2" "test" {
+			identifier = "%[1]s-%[1]s"
 			org_id = harness_platform_organization.test.id
 			env_id = "org.${harness_platform_environment.test.id}"
 			service_id = "org.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
-       		spec = "{
-        	"variables": [
-        	{
-          		"name": "v1",
-          		"type": "String",
-          		"value": "val1"
-        	}
-      		]
-      	}"
+            spec = <<-EOT
+              {
+                "variables": [
+                  {
+                    "name": "v1",
+                    "type": "String",
+                    "value": "val1"
+                  }
+                ]
+              }
+              EOT
 		}
 `, id, name)
 }
@@ -326,20 +331,21 @@ func testAccServiceOverridesAccountScope(id string, name string) string {
 		}
 
 		resource "harness_platform_service_overrides_v2" "test" {
+			identifier = "%[1]s-%[1]s"
             env_id = "account.${harness_platform_environment.test.id}"
 			service_id = "account.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
-			spec = <<EOF
-			{
-			  "variables": [
-				{
-				  "name": "v1",
-				  "type": "String",
-				  "value": "val1"
-				}
-			  ]
-			}
-			EOF
+            spec = <<-EOT
+              {
+                "variables": [
+                  {
+                    "name": "v1",
+                    "type": "String",
+                    "value": "val1"
+                  }
+                ]
+              }
+              EOT	
 		}
 `, id, name)
 }

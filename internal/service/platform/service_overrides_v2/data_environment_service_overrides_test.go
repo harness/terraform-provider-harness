@@ -1,4 +1,4 @@
-package service_overrides_v2
+package service_overrides_v2_test
 
 import (
 	"fmt"
@@ -99,16 +99,18 @@ func testAccDataSourceServiceOverrides(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			env_id = harness_platform_environment.test.id
 			service_id = harness_platform_service.test.id
-            type = "ENV_SERVICE_OVERRIDE",
-       		"spec":{
-        	"variables": [
-        	{
-          		"name": "v1",
-          		"type": "String",
-          		"value": "val1"
-        	}
-      		]
-      	}
+            type = "ENV_SERVICE_OVERRIDE"
+            spec = <<-EOT
+              {
+                "variables": [
+                  {
+                    "name": "v1",
+                    "type": "String",
+                    "value": "val1"
+                  }
+                ]
+              }
+              EOT
 		}
 
 		data "harness_platform_service_overrides_v2" "test" {
