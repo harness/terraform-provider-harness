@@ -11,6 +11,7 @@ package nextgen
 
 // This contains details of the AWS connector
 type AwsConnector struct {
-	Credential        *AwsCredential `json:"credential"`
-	DelegateSelectors []string       `json:"delegateSelectors,omitempty"`
+	Credential                          *AwsCredential               `json:"credential"`
+	DelegateSelectors                   []string                     `json:"delegateSelectors,omitempty"`
+	AwsSdkClientBackOffStrategyOverride *AwsSdkClientBackoffStrategy `json:"awsSdkClientBackOffStrategyOverride,omitempty"`
 }
