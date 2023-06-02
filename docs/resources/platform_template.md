@@ -3,12 +3,12 @@
 page_title: "harness_platform_template Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Template.
+  Resource for creating a Template. Description field is deprecated
 ---
 
 # harness_platform_template (Resource)
 
-Resource for creating a Template.
+Resource for creating a Template. Description field is deprecated
 
 ## Example Usage
 
@@ -612,20 +612,20 @@ template:
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
+- `identifier` (String) Unique identifier of the resource
+- `name` (String) Name of the Variable
 - `template_yaml` (String) Yaml for creating new Template. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 - `version` (String) Version Label for Template.
 
 ### Optional
 
 - `comments` (String) Specify comment with respect to changes.
-- `description` (String) Description of the resource.
+- `description` (String, Deprecated) Description of the entity. Description field is deprecated
 - `force_delete` (String) Enable this flag for force deletion of template
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `is_stable` (Boolean) True if given version for template to be set as stable.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Organization Identifier for the Entity
+- `project_id` (String) Project Identifier for the Entity
 - `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
