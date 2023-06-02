@@ -1,0 +1,3 @@
+```release-note:deprecated
+resource/harness_platform_template - deprecated the field description from resource
+```
