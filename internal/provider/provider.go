@@ -2,8 +2,10 @@ package provider
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
@@ -345,6 +347,10 @@ func getHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
 	httpClient.HTTPClient.Transport = logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	httpClient.HTTPClient.Transport = tr
 	return httpClient
 }
 
@@ -352,6 +358,10 @@ func getOpenApiHttpClient(logger *logrus.Logger) *retryablehttp.Client {
 	httpClient := retryablehttp.NewClient()
 	httpClient.HTTPClient.Transport = openapi_client_logging.NewTransport(harness.SDKName, logger, cleanhttp.DefaultPooledClient().Transport)
 	httpClient.RetryMax = 10
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	httpClient.HTTPClient.Transport = tr
 	return httpClient
 }
 

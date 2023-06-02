@@ -20,35 +20,33 @@ func DataSourceServiceOverrides() *schema.Resource {
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"env_id": {
 				Description: "The env ID to which the overrides are associated.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Required:    true,
 			},
 			"infra_id": {
 				Description: "The infrastructure ID to which the overrides are associated",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
+				Computed:    true,
 			},
 			"cluster_id": {
 				Description: "The cluster ID to which the overrides are associated",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
+				Computed:    true,
 			},
 			"type": {
 				Description: "The type of the overrides",
 				Type:        schema.TypeString,
-				Required:    false,
+				Required:    true,
 			},
-			"newly_created": {
-				Description: "Boolean value to check if the override is newly created",
-				Type:        schema.TypeString,
-				Required:    false,
-			},
-			"yaml": {
-				Description: "Environment Service Overrides YAML." + helpers.Descriptions.YamlText.String(),
+			"spec": {
+				Description: "spec of the override values",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
