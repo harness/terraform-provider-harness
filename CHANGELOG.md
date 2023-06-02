@@ -1,16 +1,11 @@
 
-<a name="0.3.27"></a>
-## 0.3.27 (2023-05-24)
+<a name="0.3.28"></a>
+## 0.3.28 (2023-06-02)
 
 ### Add
 
 * Add vault root token secret enum
 * Add jenkins authentication serializer
-* Add models for jenkins connector
-
-### Adding
-
-* adding input variables
 
 ### Delete
 
@@ -30,13 +25,10 @@
 
 * Handling different kinds of errors
 
-### Merge
-
-* Merge branch 'main' into SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
-* Merge branch 'main' into SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
-
 ### Release
 
+* Release version 0.3.27 05-24-2023
+* Release v0.3.27
 * Release version 0.3.26 05-08-2023
 * Release v0.3.26
 * Release version 0.3.25 05-03-2023
@@ -85,9 +77,6 @@
 * Release v0.3.6
 * Release version 0.3.5 12-12-2022
 * Release v0.3.5
-* Release version 0.3.4 12-08-2022
-* Release v0.3.4
-* Release version 0.3.3 12-07-2022
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
@@ -95,9 +84,6 @@
 * Release version 0.2.4 10-03-2022
 * Release v0.2.4
 * Release version 0.2.3 09-29-2022
-* Release v0.2.3
-* Release version 0.2.2 09-23-2022
-* Release v0.2.2
 
 ### Update
 
@@ -108,9 +94,6 @@
 * Update jenkin authentication serializer
 * Update connector info serializer
 * Update connector types enum to include jenkins type
-* Update package
-* Update role assignments api and models
-* Update prometheus connector dto model
 
 ### Upsate
 
@@ -118,6 +101,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#333](https://github.com/harness/harness-go-sdk/issues/333) from harness/CDS-59495
+* Merge pull request [#330](https://github.com/harness/harness-go-sdk/issues/330) from harness/CI-8165-fix-sdk-
 * Merge pull request [#323](https://github.com/harness/harness-go-sdk/issues/323) from harness/go-sdk-support-for-elasticsearch-connector
 * Merge pull request [#319](https://github.com/harness/harness-go-sdk/issues/319) from harness/SRM-14684
 * Merge pull request [#313](https://github.com/harness/harness-go-sdk/issues/313) from harness/CDS-56975
@@ -146,11 +131,8 @@
 * Merge pull request [#250](https://github.com/harness/harness-go-sdk/issues/250) from harness/SPG-1287
 * Merge pull request [#245](https://github.com/harness/harness-go-sdk/issues/245) from harness/SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
 * Merge pull request [#248](https://github.com/harness/harness-go-sdk/issues/248) from harness/jenkin
-* Merge pull request [#225](https://github.com/harness/harness-go-sdk/issues/225) from harness/cds-44991
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 * Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
 * Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
-* Merge pull request [#163](https://github.com/harness/harness-go-sdk/issues/163) from harness/PL-28209
-* Merge pull request [#160](https://github.com/harness/harness-go-sdk/issues/160) from harness/PL-28209
 
