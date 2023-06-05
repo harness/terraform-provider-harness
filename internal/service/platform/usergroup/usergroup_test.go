@@ -142,7 +142,7 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
 				),
 			},
@@ -151,7 +151,7 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
 				),
 			},
@@ -447,7 +447,7 @@ func testAccResourceUserGroup_emails(id string, name string) string {
 			name = "%[2]s"
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			user_emails = ["rathod.meetsatish@harness.io"]
+			user_emails = ["rathod.meetsatish@harness.io", "vikas.maddukuri@harness.io", "arkajyoti.mukherjee@harness.io", "mankrit.singh@harness.io"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"

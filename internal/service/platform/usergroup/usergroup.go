@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"reflect"
+	"sort"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -167,7 +169,6 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-
 	if attr, ok := d.GetOk("user_emails"); ok {
 		d.Set("user_emails", attr)
 	}
@@ -236,7 +237,7 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUserGroupV2(d, resp.Data)
+	readUserGroupV2(d, resp.Data, ug.Users)
 
 	return nil
 }
@@ -396,7 +397,7 @@ func buildUserGroupV2(d *schema.ResourceData) nextgen.UserGroupRequestV2 {
 	return *userGroup
 }
 
-func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2) {
+func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, user_emails []string) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
@@ -405,6 +406,16 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2) {
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("user_emails", flattenUserInfo(env.Users))
+	received_user_emails := flattenUserInfo(env.Users)
+	sorted_user_emails := make([]string, len(user_emails))
+	copy(sorted_user_emails, user_emails[:])
+	sort.Strings(sorted_user_emails)
+	sort.Strings(received_user_emails)
+	if reflect.DeepEqual(sorted_user_emails, received_user_emails) {
+		d.Set("user_emails", user_emails)
+	} else {
+		d.Set("user_emails", flattenUserInfo(env.Users))
+	}
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
