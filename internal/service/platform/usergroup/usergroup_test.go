@@ -178,7 +178,6 @@ func TestAccResourceUserGroup_userIds(t *testing.T) {
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_usergroup.test"
-	// users = ["FZ-_NefESDmVvjrhu53MWQ", "TRqwkV-jSvyPdW-4C1c3eg", "0qBvYLghQqCnY9RrmuLJdg", "4PuRra9dTOCbT7RnG3-PRw"]
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
