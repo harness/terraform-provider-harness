@@ -48,6 +48,8 @@ func TestAccDataSourceGitopsClusterIAM(t *testing.T) {
 	clusterName := id
 	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_IAM")
 	roleARN := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ROLE_ARN")
+	awsClusterName := os.Getenv("HARNESS_TEST_AWS_CLUSTER_NAME")
+	caData := os.Getenv("HARNESS_TEST_CLUSTER_CA_DATA")
 	resourceName := "data.harness_platform_gitops_cluster.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -55,7 +57,7 @@ func TestAccDataSourceGitopsClusterIAM(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceGitopsClusterIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN),
+				Config: testAccDataSourceGitopsClusterIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -118,7 +120,7 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 
 }
 
-func testAccDataSourceGitopsClusterIAM(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, roleARN string) string {
+func testAccDataSourceGitopsClusterIAM(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, roleARN string, awsClusterName string, caData string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -145,9 +147,11 @@ func testAccDataSourceGitopsClusterIAM(id string, accountId string, name string,
 					config {
 						tls_client_config {
 							insecure = true
+							caData = "%[9]s"
 						}
 						cluster_connection_type = "IRSA"
 						role_a_r_n = "%[7]s"
+						aws_cluster_name = "%[8]s"
 					}
 
 				}
@@ -167,6 +171,6 @@ func testAccDataSourceGitopsClusterIAM(id string, accountId string, name string,
 			agent_id = "%[4]s"
 
 		}
-		`, id, accountId, name, agentId, clusterName, clusterServer, roleARN)
+		`, id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData)
 
 }

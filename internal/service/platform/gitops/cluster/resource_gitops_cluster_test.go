@@ -135,20 +135,22 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 	resourceName = "harness_platform_gitops_cluster.test"
 	clusterServer = os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_IAM")
 	roleARN := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ROLE_ARN")
+	awsClusterName := os.Getenv("HARNESS_TEST_AWS_CLUSTER_NAME")
+	caData := os.Getenv("HARNESS_TEST_CLUSTER_CA_DATA")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsClusterProjectLevelIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN),
+				Config: testAccResourceGitopsClusterProjectLevelIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsClusterProjectLevelIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN),
+				Config: testAccResourceGitopsClusterProjectLevelIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -299,7 +301,7 @@ func testAccResourceGitopsClusterProjectLevel(id string, accountId string, name 
 		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
 }
 
-func testAccResourceGitopsClusterProjectLevelIAM(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, roleARN string) string {
+func testAccResourceGitopsClusterProjectLevelIAM(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, roleARN string, awsClusterName string, caData string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -323,8 +325,10 @@ func testAccResourceGitopsClusterProjectLevelIAM(id string, accountId string, na
 					name = "%[5]s"
 					config {
 						role_a_r_n = "%[7]s"
+						aws_cluster_name = "%[8]s"
 						tls_client_config {
 							insecure = true
+							caData = "%[9]s"
 						}
 						cluster_connection_type = "IRSA"
 					}
@@ -336,5 +340,5 @@ func testAccResourceGitopsClusterProjectLevelIAM(id string, accountId string, na
 				]
 			}
 		}
-		`, id, accountId, name, agentId, clusterName, clusterServer, roleARN)
+		`, id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData)
 }

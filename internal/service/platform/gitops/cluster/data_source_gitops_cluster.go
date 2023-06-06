@@ -237,6 +237,11 @@ func DataSourceGitopsCluster() *schema.Resource {
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
+												"aws_cluster_name": {
+													Description: "AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
 												"exec_provider_config": {
 													Description: "Configuration for an exec provider.",
 													Type:        schema.TypeList,

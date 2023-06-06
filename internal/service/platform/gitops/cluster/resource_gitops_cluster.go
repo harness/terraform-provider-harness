@@ -243,6 +243,11 @@ func ResourceGitopsCluster() *schema.Resource {
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
+												"aws_cluster_name": {
+													Description: "AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
 												"exec_provider_config": {
 													Description: "Configuration for an exec provider.",
 													Type:        schema.TypeList,
@@ -614,6 +619,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				config["aws_auth_config"] = awsAuthConfigList
 			}
 			config["role_a_r_n"] = cl.Cluster.Config.RoleARN
+			config["aws_cluster_name"] = cl.Cluster.Config.AwsClusterName
 			if cl.Cluster.Config.ExecProviderConfig != nil {
 				execProviderConfigList := []interface{}{}
 				execProviderConfig := map[string]interface{}{}
@@ -791,6 +797,10 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 
 				if clusterConfig["role_a_r_n"] != nil {
 					clusterDetails.Config.RoleARN = clusterConfig["role_a_r_n"].(string)
+				}
+
+				if clusterConfig["aws_cluster_name"] != nil {
+					clusterDetails.Config.AwsClusterName = clusterConfig["aws_cluster_name"].(string)
 				}
 
 				if clusterConfig["exec_provider_config"] != nil && len(clusterConfig["exec_provider_config"].([]interface{})) > 0 {
