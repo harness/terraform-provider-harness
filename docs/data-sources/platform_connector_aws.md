@@ -49,8 +49,8 @@ data "harness_platform_connector_aws" "example" {
 
 Read-Only:
 
-- `external_id` (String)
-- `role_arn` (String)
+- `external_id` (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
+- `role_arn` (String) The Amazon Resource Name (ARN) of the role that you want to assume. This is an IAM role in the target AWS account.
 
 
 <a id="nestedatt--equal_jitter_backoff_strategy"></a>
@@ -58,9 +58,9 @@ Read-Only:
 
 Read-Only:
 
-- `base_delay` (Number)
-- `max_backoff_time` (Number)
-- `retry_count` (Number)
+- `base_delay` (Number) Base delay.
+- `max_backoff_time` (Number) Max BackOff Time.
+- `retry_count` (Number) Retry Count.
 
 
 <a id="nestedatt--fixed_delay_backoff_strategy"></a>
@@ -68,8 +68,8 @@ Read-Only:
 
 Read-Only:
 
-- `fixed_backoff` (Number)
-- `retry_count` (Number)
+- `fixed_backoff` (Number) Fixed Backoff.
+- `retry_count` (Number) Retry Count.
 
 
 <a id="nestedatt--full_jitter_backoff_strategy"></a>
@@ -77,9 +77,9 @@ Read-Only:
 
 Read-Only:
 
-- `base_delay` (Number)
-- `max_backoff_time` (Number)
-- `retry_count` (Number)
+- `base_delay` (Number) Base delay.
+- `max_backoff_time` (Number) Max BackOff Time.
+- `retry_count` (Number) Retry Count.
 
 
 <a id="nestedatt--inherit_from_delegate"></a>
@@ -87,7 +87,7 @@ Read-Only:
 
 Read-Only:
 
-- `delegate_selectors` (Set of String)
+- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
 
 
 <a id="nestedatt--irsa"></a>
@@ -95,7 +95,7 @@ Read-Only:
 
 Read-Only:
 
-- `delegate_selectors` (Set of String)
+- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
 
 
 <a id="nestedatt--manual"></a>
@@ -103,9 +103,9 @@ Read-Only:
 
 Read-Only:
 
-- `access_key` (String)
-- `access_key_ref` (String)
-- `delegate_selectors` (Set of String)
-- `secret_key_ref` (String)
+- `access_key` (String) AWS access key.
+- `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `delegate_selectors` (Set of String) Connect only use delegates with these tags.
+- `secret_key_ref` (String) Reference to the Harness secret containing the aws secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 
