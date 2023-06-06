@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"reflect"
+	"sort"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -167,12 +169,11 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-
 	if attr, ok := d.GetOk("user_emails"); ok {
 		d.Set("user_emails", attr)
 	}
-	if _, ok := d.GetOk("users"); ok {
-		d.Set("users", resp.Data.Users)
+	if attr, ok := d.GetOk("users"); ok {
+		d.Set("users", attr)
 	}
 	readUserGroup(d, resp.Data)
 
@@ -209,6 +210,10 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 
 		readUserGroup(d, resp.Data)
 
+		if resp.Data.Users != nil {
+			d.Set("users", ignoreOrderIfAllElementsMatch(ug.Users, resp.Data.Users))
+		}
+
 		return nil
 	}
 
@@ -236,7 +241,7 @@ func resourceUserGroupCreateOrUpdate(ctx context.Context, d *schema.ResourceData
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readUserGroupV2(d, resp.Data)
+	readUserGroupV2(d, resp.Data, ug.Users)
 
 	return nil
 }
@@ -396,7 +401,22 @@ func buildUserGroupV2(d *schema.ResourceData) nextgen.UserGroupRequestV2 {
 	return *userGroup
 }
 
-func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2) {
+func ignoreOrderIfAllElementsMatch(input []string, output []string) []string {
+	sorted_input := make([]string, len(input))
+	copy(sorted_input, input[:])
+	sort.Strings(sorted_input)
+
+	sorted_output := make([]string, len(output))
+	copy(sorted_output, output[:])
+	sort.Strings(sorted_output)
+
+	if reflect.DeepEqual(sorted_input, sorted_output) {
+		return input
+	}
+	return output
+}
+
+func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, user_emails []string) {
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
@@ -404,7 +424,7 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2) {
 	d.Set("name", env.Name)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	d.Set("user_emails", flattenUserInfo(env.Users))
+	d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
