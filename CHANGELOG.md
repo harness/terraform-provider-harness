@@ -1,3 +1,17 @@
+# 0.22.0 (June 05,2023) 
+
+FEATURES:
+
+* **New Resource:** `platform_token - Added apikey token in Harness terraform provider` ([#556](https://github.com/harness/terraform-provider-harness/issues/556))
+
+ENHANCEMENTS:
+
+* examples/resources/harness_platform_template/ - updated the remote template example ([#566](https://github.com/harness/terraform-provider-harness/issues/566))
+
+BUG FIXES:
+
+* resource/harness_platform_template - deprecated the field description from resource ([#561](https://github.com/harness/terraform-provider-harness/issues/561))
+
 # 0.21.0 (May 25,2023) 
 
 FEATURES:
