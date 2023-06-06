@@ -17,6 +17,7 @@ type ClustersClusterConfig struct {
 	BearerToken           string                      `json:"bearerToken,omitempty"`
 	TlsClientConfig       *ClustersTlsClientConfig    `json:"tlsClientConfig,omitempty"`
 	AwsAuthConfig         *ClustersAwsAuthConfig      `json:"awsAuthConfig,omitempty"`
+	AwsClusterName        string                      `json:"awsClusterName,omitempty"`
 	RoleARN               string                      `json:"roleARN,omitempty"`
 	ExecProviderConfig    *ClustersExecProviderConfig `json:"execProviderConfig,omitempty"`
 	ClusterConnectionType string                      `json:"clusterConnectionType,omitempty"`

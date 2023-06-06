@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **TlsClientConfig** | [***ClustersTlsClientConfig**](clustersTLSClientConfig.md) |  | [optional] [default to null]
 **AwsAuthConfig** | [***ClustersAwsAuthConfig**] | (deprecated) | [optional] [default to null]
 **RoleARN** | **string** | RoleARN contains optional role ARN. If set then AWS IAM Authenticator assume a role to perform cluster operations instead of the default AWS credential provider chain. | [optional] [default to null]
+**AwsClusterName** | **string** | AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster. | [optional] [default to null]
 **ExecProviderConfig** | [***ClustersExecProviderConfig**](clustersExecProviderConfig.md) |  | [optional] [default to null]
 **ClusterConnectionType** | **string** |  | [optional] [default to null]
 
