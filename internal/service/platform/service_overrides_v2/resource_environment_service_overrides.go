@@ -1,6 +1,7 @@
 package service_overrides_v2
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -54,7 +55,7 @@ func ResourceServiceOverrides() *schema.Resource {
 				Required:    true,
 			},
 			"spec": {
-				Description: "spec of the override values",
+				Description: "The overrides specification for the service.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -128,8 +129,8 @@ func resourceServiceOverridesV2Delete(ctx context.Context, d *schema.ResourceDat
 }
 
 func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequestDtov2 {
-	// Create a variable of the struct type
-	var serviceOverrides *nextgen.ServiceOverridesSpec
+
+	var serviceOverrides nextgen.ServiceOverridesSpec
 	str := d.Get("spec").(string)
 
 	// Unmarshal the string into the struct
@@ -138,6 +139,8 @@ func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequ
 		fmt.Println("Error:", err)
 		return nil
 	}
+
+	//str1, err := serviceOverridesSpecToString(&serviceOverrides)
 
 	return &nextgen.ServiceOverrideRequestDtov2{
 		Identifier:        d.Get("identifier").(string),
@@ -149,6 +152,7 @@ func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequ
 		ClusterIdentifier: d.Get("cluster_id").(string),
 		Type_:             d.Get("type").(string),
 		Spec:              serviceOverrides,
+		//Spec: d.Get("spec").(interface{}),
 	}
 }
 
@@ -161,9 +165,10 @@ func readServiceOverridesV2List(d *schema.ResourceData, ps *nextgen.PageServiceO
 
 func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverridesResponseDtov2) {
 
-	serviceOverrides := *so.Spec
+	serviceOverrides := so.Spec
 
-	str, err := serviceOverridesSpecToString(serviceOverrides)
+	str, err := serviceOverridesSpecToString(&serviceOverrides)
+	str = str + "\n"
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -177,20 +182,24 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
 	d.Set("service_id", so.ServiceRef)
-	d.Set("account_id", so.AccountId)
 	d.Set("infra_id", so.InfraIdentifier)
 	d.Set("cluster_id", so.ClusterIdentifier)
 	d.Set("type", so.Type_)
 	d.Set("spec", str)
-	d.Set("newly_created", so.NewlyCreated)
+	//d.Set("spec", so.Spec)
 }
 
-func serviceOverridesSpecToString(serviceOverrides nextgen.ServiceOverridesSpec) (string, error) {
-	bytes, err := json.Marshal(serviceOverrides)
+func serviceOverridesSpecToString(serviceOverrides *nextgen.ServiceOverridesSpec) (string, error) {
+	bytes2, err := json.Marshal(serviceOverrides)
+	var indentedJSON bytes.Buffer
+	if err := json.Indent(&indentedJSON, bytes2, "", "  "); err != nil {
+		return "", err
+	}
 	if err != nil {
 		return "", err
 	}
-	return string(bytes), nil
+
+	return indentedJSON.String(), nil
 }
 
 func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {

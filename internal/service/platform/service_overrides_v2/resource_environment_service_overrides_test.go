@@ -92,15 +92,16 @@ func TestAccServiceOverrides_AccountScope(t *testing.T) {
 	})
 }
 
-func testAccGetPlatformServiceOverrides(resourceName string, state *terraform.State) (*nextgen.PageServiceOverridesResponseDtov2, error) {
+func testAccGetPlatformServiceOverrides(resourceName string, state *terraform.State) (*nextgen.ServiceOverridesResponseDtov2, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
+	identifier := r.Primary.ID
 
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.ServiceOverridesApi.GetServiceOverrideListV2(ctx, c.AccountId,
-		&nextgen.ServiceOverridesApiGetServiceOverrideListV2Opts{
+	resp, _, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId,
+		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
 			OrgIdentifier:     optional.NewString(orgId),
 			ProjectIdentifier: optional.NewString(projId),
 		})
@@ -189,9 +190,8 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
 		resource "harness_platform_service_overrides_v2" "test" {
 			identifier = "%[1]s-%[1]s"
 			org_id = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
-			env_id = harness_platform_environment.test.id
-			service_id = harness_platform_service.test.id
+			env_id = "org.${harness_platform_environment.test.id}"
+			service_id = "org.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
             spec = <<-EOT
               {

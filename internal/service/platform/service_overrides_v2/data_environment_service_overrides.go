@@ -46,7 +46,7 @@ func DataSourceServiceOverrides() *schema.Resource {
 				Required:    true,
 			},
 			"spec": {
-				Description: "spec of the override values",
+				Description: "The overrides specification for the service.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
