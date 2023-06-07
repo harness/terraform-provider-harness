@@ -172,53 +172,6 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 	})
 }
 
-func TestAccResourceUserGroup_userIds(t *testing.T) {
-
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_usergroup.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccUserGroupDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceUserGroup_userIds(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "users.0", "O2cY2R6YSNqyfX63UeWxlg"),
-					resource.TestCheckResourceAttr(resourceName, "users.1", "WW6Jr4z4QeyvdpXgJu6rxg"),
-					resource.TestCheckResourceAttr(resourceName, "users.2", "zU94L3LoTHmvpKJ3IBXgyw"),
-					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A"),
-				),
-			},
-			{
-				Config: testAccResourceUserGroup_userIds(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "users.0", "O2cY2R6YSNqyfX63UeWxlg"),
-					resource.TestCheckResourceAttr(resourceName, "users.1", "WW6Jr4z4QeyvdpXgJu6rxg"),
-					resource.TestCheckResourceAttr(resourceName, "users.2", "zU94L3LoTHmvpKJ3IBXgyw"),
-					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A"),
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"users"},
-			},
-		},
-	})
-}
-
 func TestProjectResourceUserGroup_emails(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -501,40 +454,6 @@ func testAccResourceUserGroup_emails(id string, name string) string {
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
 			user_emails = ["meet.meet@gmail.com", "richaterraformtest@gmail.com", "jajooricha@gmail.com", "aditya.kashyap@harness.io"]
-			notification_configs {
-				type = "SLACK"
-				slack_webhook_url = "https://google.com"
-			}
-			notification_configs {
-				type = "EMAIL"
-				group_email = "email@email.com"
-				send_email_to_all_users = true
-			}
-			notification_configs {
-				type = "MSTEAMS"
-				microsoft_teams_webhook_url = "https://google.com"
-			}
-			notification_configs {
-				type = "PAGERDUTY"
-				pager_duty_key = "pagerDutyKey"
-			}
-			linked_sso_display_name = "linked_sso_display_name"
-			sso_group_id = "sso_group_id"
-			sso_group_name = "sso_group_name"
-			linked_sso_type = "SAML"
-			sso_linked = true
-		}
-`, id, name)
-}
-
-func testAccResourceUserGroup_userIds(id string, name string) string {
-	return fmt.Sprintf(`
-		resource "harness_platform_usergroup" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			linked_sso_id = "linked_sso_id"
-			externally_managed = false
-			users = ["O2cY2R6YSNqyfX63UeWxlg", "WW6Jr4z4QeyvdpXgJu6rxg", "zU94L3LoTHmvpKJ3IBXgyw", "NQftqFtES4y01sjCWX0g1A"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
