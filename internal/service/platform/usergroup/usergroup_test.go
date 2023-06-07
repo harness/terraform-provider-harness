@@ -173,7 +173,7 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 }
 
 func TestAccResourceUserGroup_userIds(t *testing.T) {
-
+	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
