@@ -88,9 +88,7 @@ func ResourceMonitoredService() *schema.Resource {
 						"health_sources": {
 							Description: "Set of health sources for the monitored service.",
 							Type:        schema.TypeSet,
-							MinItems:    1,
-							MaxItems:    16,
-							Required:    true,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -119,9 +117,7 @@ func ResourceMonitoredService() *schema.Resource {
 						"change_sources": {
 							Description: "Set of change sources for the monitored service.",
 							Type:        schema.TypeSet,
-							MinItems:    1,
-							MaxItems:    4,
-							Required:    true,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
