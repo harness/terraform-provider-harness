@@ -49,6 +49,7 @@ func ResourceConnectorGithub() *schema.Resource {
 				Description: "Execute on delegate or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     true,
 			},
 			"api_authentication": {
 				Description: "Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",

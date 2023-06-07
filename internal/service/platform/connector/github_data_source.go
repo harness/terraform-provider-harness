@@ -36,6 +36,11 @@ func DatasourceConnectorGithub() *schema.Resource {
 				Computed:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the github api. API Access is Computed for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
