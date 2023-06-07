@@ -143,10 +143,10 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "meet.meet@gmail.com"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "richaterraformtest@gmail.com"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "jajooricha@gmail.com"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "aditya.kashyap@harness.io"),
 				),
 			},
 			{
@@ -155,10 +155,10 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "meet.meet@gmail.com"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "richaterraformtest@gmail.com"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "jajooricha@gmail.com"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "aditya.kashyap@harness.io"),
 				),
 			},
 			{
@@ -190,10 +190,10 @@ func TestAccResourceUserGroup_userIds(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "users.0", "FZ-_NefESDmVvjrhu53MWQ"),
-					resource.TestCheckResourceAttr(resourceName, "users.1", "TRqwkV-jSvyPdW-4C1c3eg"),
-					resource.TestCheckResourceAttr(resourceName, "users.2", "0qBvYLghQqCnY9RrmuLJdg"),
-					resource.TestCheckResourceAttr(resourceName, "users.3", "4PuRra9dTOCbT7RnG3-PRw"),
+					resource.TestCheckResourceAttr(resourceName, "users.0", "O2cY2R6YSNqyfX63UeWxlg"),
+					resource.TestCheckResourceAttr(resourceName, "users.1", "WW6Jr4z4QeyvdpXgJu6rxg"),
+					resource.TestCheckResourceAttr(resourceName, "users.2", "zU94L3LoTHmvpKJ3IBXgyw"),
+					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A "),
 				),
 			},
 			{
@@ -202,10 +202,10 @@ func TestAccResourceUserGroup_userIds(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "users.0", "FZ-_NefESDmVvjrhu53MWQ"),
-					resource.TestCheckResourceAttr(resourceName, "users.1", "TRqwkV-jSvyPdW-4C1c3eg"),
-					resource.TestCheckResourceAttr(resourceName, "users.2", "0qBvYLghQqCnY9RrmuLJdg"),
-					resource.TestCheckResourceAttr(resourceName, "users.3", "4PuRra9dTOCbT7RnG3-PRw"),
+					resource.TestCheckResourceAttr(resourceName, "users.0", "O2cY2R6YSNqyfX63UeWxlg"),
+					resource.TestCheckResourceAttr(resourceName, "users.1", "WW6Jr4z4QeyvdpXgJu6rxg"),
+					resource.TestCheckResourceAttr(resourceName, "users.2", "zU94L3LoTHmvpKJ3IBXgyw"),
+					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A "),
 				),
 			},
 			{
@@ -500,7 +500,7 @@ func testAccResourceUserGroup_emails(id string, name string) string {
 			name = "%[2]s"
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			user_emails = ["rathod.meetsatish@harness.io", "vikas.maddukuri@harness.io", "arkajyoti.mukherjee@harness.io", "mankrit.singh@harness.io"]
+			user_emails = ["meet.meet@gmail.com", "richaterraformtest@gmail.com", "jajooricha@gmail.com", "aditya.kashyap@harness.io"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
@@ -534,7 +534,7 @@ func testAccResourceUserGroup_userIds(id string, name string) string {
 			name = "%[2]s"
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			users = ["FZ-_NefESDmVvjrhu53MWQ", "TRqwkV-jSvyPdW-4C1c3eg", "0qBvYLghQqCnY9RrmuLJdg", "4PuRra9dTOCbT7RnG3-PRw"]
+			users = ["O2cY2R6YSNqyfX63UeWxlg", "WW6Jr4z4QeyvdpXgJu6rxg", "zU94L3LoTHmvpKJ3IBXgyw", "NQftqFtES4y01sjCWX0g1A"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
