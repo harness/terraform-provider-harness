@@ -45,6 +45,12 @@ func ResourceConnectorGithub() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
@@ -215,6 +221,10 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.Github.Url = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Github.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
 		connector.Github.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
@@ -310,6 +320,7 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("url", connector.Github.Url)
 	d.Set("connection_type", connector.Github.Type_.String())
 	d.Set("delegate_selectors", connector.Github.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Github.ExecuteOnDelegate)
 	d.Set("validation_repo", connector.Github.ValidationRepo)
 
 	if connector.Github.Authentication != nil {
