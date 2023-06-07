@@ -1,0 +1,3 @@
+```release-note:bug
+resource/harness_platform_usergroup - ignore the order of users and user_emails when doing CRUD.
+```
