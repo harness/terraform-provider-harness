@@ -193,7 +193,7 @@ func TestAccResourceUserGroup_userIds(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "users.0", "O2cY2R6YSNqyfX63UeWxlg"),
 					resource.TestCheckResourceAttr(resourceName, "users.1", "WW6Jr4z4QeyvdpXgJu6rxg"),
 					resource.TestCheckResourceAttr(resourceName, "users.2", "zU94L3LoTHmvpKJ3IBXgyw"),
-					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A "),
+					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A"),
 				),
 			},
 			{
@@ -205,7 +205,7 @@ func TestAccResourceUserGroup_userIds(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "users.0", "O2cY2R6YSNqyfX63UeWxlg"),
 					resource.TestCheckResourceAttr(resourceName, "users.1", "WW6Jr4z4QeyvdpXgJu6rxg"),
 					resource.TestCheckResourceAttr(resourceName, "users.2", "zU94L3LoTHmvpKJ3IBXgyw"),
-					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A "),
+					resource.TestCheckResourceAttr(resourceName, "users.3", "NQftqFtES4y01sjCWX0g1A"),
 				),
 			},
 			{
