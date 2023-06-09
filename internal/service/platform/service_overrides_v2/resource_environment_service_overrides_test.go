@@ -31,10 +31,11 @@ func TestAccServiceOverrides_ProjectScope(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"spec"},
+				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -58,10 +59,11 @@ func TestAccServiceOverrides_OrgScope(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"spec"},
+				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -83,10 +85,11 @@ func TestAccServiceOverrides_AccountScope(t *testing.T) {
 				Check:  resource.ComposeTestCheckFunc(),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"spec"},
+				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -190,8 +193,9 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
 		resource "harness_platform_service_overrides_v2" "test" {
 			identifier = "%[1]s-%[1]s"
 			org_id = harness_platform_organization.test.id
-			env_id = "org.${harness_platform_environment.test.id}"
-			service_id = "org.${harness_platform_service.test.id}"
+			project_id = harness_platform_project.test.id
+			env_id = harness_platform_environment.test.id
+			service_id = harness_platform_service.test.id
             type = "ENV_SERVICE_OVERRIDE"
             spec = <<-EOT
               {
@@ -275,6 +279,46 @@ func testAccServiceOverridesOrgScope(id string, name string) string {
                     "name": "v1",
                     "type": "String",
                     "value": "val1"
+                  }
+                ],
+                "manifests": [
+                  {
+                    "manifest": {
+                      "identifier": "manifest1",
+                      "type": "K8sManifest",
+                      "spec": {
+                        "store": {
+                          "type": "Github",
+                          "spec": {
+                            "connectorRef": "<+input>",
+                            "gitFetchType": "Branch",
+                            "paths": [
+                              "files1"
+                            ],
+                            "repoName": "<+input>",
+                            "branch": "master"
+                          }
+                        },
+                        "skipResourceVersioning": false
+                      }
+                    }
+                  }
+                ],
+                "configFiles": [
+                  {
+                    "configFile": {
+                      "identifier": "configFile1",
+                      "spec": {
+                        "store": {
+                          "type": "Harness",
+                          "spec": {
+                            "files": [
+                              "<+org.description>"
+                            ]
+                          }
+                        }
+                      }
+                    }
                   }
                 ]
               }

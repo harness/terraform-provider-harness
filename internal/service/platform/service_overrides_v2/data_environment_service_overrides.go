@@ -60,9 +60,10 @@ func DataSourceServiceOverrides() *schema.Resource {
 
 func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	identifier := d.State().ID
 
-	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverrideListV2(ctx, c.AccountId,
-		&nextgen.ServiceOverridesApiGetServiceOverrideListV2Opts{
+	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId,
+		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
@@ -78,7 +79,7 @@ func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData,
 		return nil
 	}
 
-	readServiceOverridesV2List(d, resp.Data)
+	readServiceOverridesV2(d, resp.Data)
 
 	return nil
 }
