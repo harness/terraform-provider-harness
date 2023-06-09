@@ -1,6 +1,6 @@
 # nextgen{{classname}}
 
-All URIs are relative to *https://localhost/*
+All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
