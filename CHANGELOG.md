@@ -1,11 +1,6 @@
 
-<a name="0.3.28"></a>
-## 0.3.28 (2023-06-02)
-
-### Add
-
-* Add vault root token secret enum
-* Add jenkins authentication serializer
+<a name="0.3.29"></a>
+## 0.3.29 (2023-06-12)
 
 ### Delete
 
@@ -21,12 +16,10 @@
 
 * fixing json tag for AwsCloudProvider type
 
-### Handling
-
-* Handling different kinds of errors
-
 ### Release
 
+* Release version 0.3.28 06-02-2023
+* Release v0.3.28
 * Release version 0.3.27 05-24-2023
 * Release v0.3.27
 * Release version 0.3.26 05-08-2023
@@ -71,19 +64,11 @@
 * Release v0.3.9
 * Release version 0.3.8 12-19-2022
 * Release v0.3.8
-* Release version 0.3.7 12-19-2022
-* Release v0.3.7
 * Release version 0.3.6 12-13-2022
-* Release v0.3.6
-* Release version 0.3.5 12-12-2022
-* Release v0.3.5
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
 * Release version 0.2.5 10-05-2022
 * Release v0.2.5
-* Release version 0.2.4 10-03-2022
-* Release v0.2.4
-* Release version 0.2.3 09-29-2022
 
 ### Update
 
@@ -93,14 +78,20 @@
 * Update jenkins auth serializer
 * Update jenkin authentication serializer
 * Update connector info serializer
-* Update connector types enum to include jenkins type
 
 ### Upsate
 
 * Upsate user group
 
+### Reverts
+
+* fix:[PL-39286]: fixed URL Encoding for characters with space
+
 ### Pull Requests
 
+* Merge pull request [#338](https://github.com/harness/harness-go-sdk/issues/338) from harness/cds-68868-overrides-v2
+* Merge pull request [#339](https://github.com/harness/harness-go-sdk/issues/339) from harness/revert-336-PL-39286
+* Merge pull request [#336](https://github.com/harness/harness-go-sdk/issues/336) from harness/PL-39286
 * Merge pull request [#333](https://github.com/harness/harness-go-sdk/issues/333) from harness/CDS-59495
 * Merge pull request [#330](https://github.com/harness/harness-go-sdk/issues/330) from harness/CI-8165-fix-sdk-
 * Merge pull request [#323](https://github.com/harness/harness-go-sdk/issues/323) from harness/go-sdk-support-for-elasticsearch-connector
@@ -127,12 +118,6 @@
 * Merge pull request [#259](https://github.com/harness/harness-go-sdk/issues/259) from harness/SPG-1287-2
 * Merge pull request [#252](https://github.com/harness/harness-go-sdk/issues/252) from harness/SPG-443-Add-User-resource-in-harness-terraform-provider
 * Merge pull request [#256](https://github.com/harness/harness-go-sdk/issues/256) from harness/SPG-1287-1
-* Merge pull request [#254](https://github.com/harness/harness-go-sdk/issues/254) from harness/fix-vault
-* Merge pull request [#250](https://github.com/harness/harness-go-sdk/issues/250) from harness/SPG-1287
-* Merge pull request [#245](https://github.com/harness/harness-go-sdk/issues/245) from harness/SRM-13159-add-teraform-support-for-the-slo-curd-ap-is
-* Merge pull request [#248](https://github.com/harness/harness-go-sdk/issues/248) from harness/jenkin
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 * Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
-* Merge pull request [#166](https://github.com/harness/harness-go-sdk/issues/166) from harness/CDS-43546-Adding-cluster-API
-* Merge pull request [#165](https://github.com/harness/harness-go-sdk/issues/165) from harness/SPG-219-adding-service-API-files
 
