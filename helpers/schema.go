@@ -208,23 +208,23 @@ var EnvRelatedResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
 		partCount := len(parts)
-		isAccountConnector := partCount == 2
-		isOrgConnector := partCount == 3
-		isProjectConnector := partCount == 4
-		if isAccountConnector {
+		isAccountEntity := partCount == 2
+		isOrgEntity := partCount == 3
+		isProjectEntity := partCount == 4
+		if isAccountEntity {
 			d.Set("env_id", parts[0])
 			d.Set("identifier", parts[1])
 			d.SetId(parts[1])
 			return []*schema.ResourceData{d}, nil
 		}
-		if isOrgConnector {
+		if isOrgEntity {
 			d.Set("org_id", parts[0])
 			d.Set("env_id", parts[1])
 			d.Set("identifier", parts[2])
 			d.SetId(parts[2])
 			return []*schema.ResourceData{d}, nil
 		}
-		if isProjectConnector {
+		if isProjectEntity {
 			d.Set("org_id", parts[0])
 			d.Set("project_id", parts[1])
 			d.Set("env_id", parts[2])
@@ -334,24 +334,24 @@ var MultiLevelResourceImporter = &schema.ResourceImporter{
 		parts := strings.Split(d.Id(), "/")
 
 		partCount := len(parts)
-		isAccountEntity := partCount == 1
-		isOrgEntity := partCount == 2
-		isProjectEntity := partCount == 3
+		isAccountConnector := partCount == 1
+		isOrgConnector := partCount == 2
+		isProjectConnector := partCount == 3
 
-		if isAccountEntity {
+		if isAccountConnector {
 			d.SetId(parts[0])
 			d.Set("identifier", parts[0])
 			return []*schema.ResourceData{d}, nil
 		}
 
-		if isOrgEntity {
+		if isOrgConnector {
 			d.SetId(parts[1])
 			d.Set("identifier", parts[1])
 			d.Set("org_id", parts[0])
 			return []*schema.ResourceData{d}, nil
 		}
 
-		if isProjectEntity {
+		if isProjectConnector {
 			d.SetId(parts[2])
 			d.Set("identifier", parts[2])
 			d.Set("project_id", parts[1])
