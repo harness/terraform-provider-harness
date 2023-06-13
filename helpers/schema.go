@@ -334,24 +334,24 @@ var MultiLevelResourceImporter = &schema.ResourceImporter{
 		parts := strings.Split(d.Id(), "/")
 
 		partCount := len(parts)
-		isAccountConnector := partCount == 1
-		isOrgConnector := partCount == 2
-		isProjectConnector := partCount == 3
+		isAccountEntity := partCount == 1
+		isOrgEntity := partCount == 2
+		isProjectEntity := partCount == 3
 
-		if isAccountConnector {
+		if isAccountEntity {
 			d.SetId(parts[0])
 			d.Set("identifier", parts[0])
 			return []*schema.ResourceData{d}, nil
 		}
 
-		if isOrgConnector {
+		if isOrgEntity {
 			d.SetId(parts[1])
 			d.Set("identifier", parts[1])
 			d.Set("org_id", parts[0])
 			return []*schema.ResourceData{d}, nil
 		}
 
-		if isProjectConnector {
+		if isProjectEntity {
 			d.SetId(parts[2])
 			d.Set("identifier", parts[2])
 			d.Set("project_id", parts[1])
