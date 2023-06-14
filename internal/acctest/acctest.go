@@ -106,6 +106,13 @@ func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportSta
 		if len(primary.Attributes["env_id"]) != 0 {
 			envId = primary.Attributes["env_id"]
 		}
+		if orgId == "" {
+			return fmt.Sprintf("%s/%s", envId, id), nil
+		}
+		if projId == "" {
+			return fmt.Sprintf("%s/%s/%s", orgId, envId, id), nil
+		}
+
 		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, envId, id), nil
 	}
 }

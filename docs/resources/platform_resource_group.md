@@ -31,7 +31,7 @@ resource "harness_platform_resource_group" "test" {
       resource_type = "CONNECTOR"
       attribute_filter {
         attribute_name   = "category"
-        attribute_values = ["value"]
+        attribute_values = ["CLOUD_COST"]
       }
     }
   }
@@ -101,8 +101,8 @@ Optional:
 
 Optional:
 
-- `attribute_name` (String) Name of the attribute
-- `attribute_values` (Set of String) Value of the attributes
+- `attribute_name` (String) Name of the attribute. Valid values are `category` or `type`.
+- `attribute_values` (Set of String) Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING] and for `type` are [Production,PreProduction]
 
 ## Import
 
