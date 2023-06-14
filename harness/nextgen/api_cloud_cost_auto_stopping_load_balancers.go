@@ -30,10 +30,11 @@ type CloudCostAutoStoppingLoadBalancersApiService service
 /*
 CloudCostAutoStoppingLoadBalancersApiService Return all the AutoStopping Rules in a load balancer
 Returns all the AutoStopping Rules for the given load balancer identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId Account Identifier for the Entity
- * @param lbId ID of the load balancer for which you want to fetch the list of AutoStopping Rules
- * @param accountIdentifier Account Identifier for the Entity
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId Account Identifier for the Entity
+  - @param lbId ID of the load balancer for which you want to fetch the list of AutoStopping Rules
+  - @param accountIdentifier Account Identifier for the Entity
+
 @return ServicesResponse
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) AccessPointRules(ctx context.Context, accountId string, lbId string, accountIdentifier string) (ServicesResponse, *http.Response, error) {
@@ -133,10 +134,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) AccessPointRules(ctx cont
 /*
 CloudCostAutoStoppingLoadBalancersApiService Create a load balancer
 Creates a load balancer.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param accountIdentifier Account Identifier for the Entity
- * @param accountId Account Identifier for the Entity
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+  - @param accountIdentifier Account Identifier for the Entity
+  - @param accountId Account Identifier for the Entity
+
 @return CreateAccessPointResponse
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) CreateLoadBalancer(ctx context.Context, body AccessPoint, accountIdentifier string, accountId string) (CreateAccessPointResponse, *http.Response, error) {
@@ -158,7 +160,7 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) CreateLoadBalancer(ctx co
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -237,11 +239,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) CreateLoadBalancer(ctx co
 /*
 CloudCostAutoStoppingLoadBalancersApiService Delete load balancers and the associated resources
 Deletes load balancers and the associated resources for the given identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param accountIdentifier Account Identifier for the Entity
- * @param accountId Account Identifier for the Entity
-
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+  - @param accountIdentifier Account Identifier for the Entity
+  - @param accountId Account Identifier for the Entity
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) DeleteLoadBalancer(ctx context.Context, body DeleteAccessPointPayload, accountIdentifier string, accountId string) (*http.Response, error) {
 	var (
@@ -261,7 +262,7 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DeleteLoadBalancer(ctx co
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -322,10 +323,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DeleteLoadBalancer(ctx co
 /*
 CloudCostAutoStoppingLoadBalancersApiService Return details of a load balancer
 Retuns details of a load balancer for the given identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId Account Identifier for the Entity
- * @param lbId ID of the load balancer for which you want to fetch the details
- * @param accountIdentifier Account Identifier for the Entity
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId Account Identifier for the Entity
+  - @param lbId ID of the load balancer for which you want to fetch the details
+  - @param accountIdentifier Account Identifier for the Entity
+
 @return GetAccessPointResponse
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) DescribeLoadBalancer(ctx context.Context, accountId string, lbId string, accountIdentifier string) (GetAccessPointResponse, *http.Response, error) {
@@ -425,10 +427,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DescribeLoadBalancer(ctx 
 /*
 CloudCostAutoStoppingLoadBalancersApiService Update a load balancer
 Updates a load balancer for the given identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
- * @param accountIdentifier Account Identifier for the Entity
- * @param accountId Account Identifier for the Entity
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+  - @param accountIdentifier Account Identifier for the Entity
+  - @param accountId Account Identifier for the Entity
+
 @return CreateAccessPointResponse
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) EditLoadBalancer(ctx context.Context, body AccessPoint, accountIdentifier string, accountId string) (CreateAccessPointResponse, *http.Response, error) {
@@ -450,7 +453,7 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) EditLoadBalancer(ctx cont
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -647,10 +650,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) ListLoadBalancers(ctx con
 /*
 CloudCostAutoStoppingLoadBalancersApiService Return last activity details of a load balancer
 Returns the last activity details for the given load balancer identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId Account Identifier for the Entity
- * @param lbId ID of the load balancer for which you want to fetch the most recent activity details
- * @param accountIdentifier Account Identifier for the Entity
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId Account Identifier for the Entity
+  - @param lbId ID of the load balancer for which you want to fetch the most recent activity details
+  - @param accountIdentifier Account Identifier for the Entity
+
 @return AccessPointActivityResponse
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) LoadBalancerActivity(ctx context.Context, accountId string, lbId string, accountIdentifier string) (AccessPointActivityResponse, *http.Response, error) {
