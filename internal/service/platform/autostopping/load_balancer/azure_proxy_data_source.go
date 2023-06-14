@@ -77,7 +77,7 @@ func DataSourceAzureProxy() *schema.Resource {
 			"keypair": {
 				Description: "",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"certificate_id": {
 				Description: "",
