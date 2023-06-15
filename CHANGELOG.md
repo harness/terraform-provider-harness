@@ -1,6 +1,6 @@
 
-<a name="0.3.29"></a>
-## 0.3.29 (2023-06-12)
+<a name="0.3.30"></a>
+## 0.3.30 (2023-06-15)
 
 ### Delete
 
@@ -16,8 +16,14 @@
 
 * fixing json tag for AwsCloudProvider type
 
+### IAM
+
+* IAM role changes in contract
+
 ### Release
 
+* Release version 0.3.29 06-12-2023
+* Release v0.3.29
 * Release version 0.3.28 06-02-2023
 * Release v0.3.28
 * Release version 0.3.27 05-24-2023
@@ -62,22 +68,22 @@
 * Release v0.3.10
 * Release version 0.3.9 12-20-2022
 * Release v0.3.9
-* Release version 0.3.8 12-19-2022
-* Release v0.3.8
-* Release version 0.3.6 12-13-2022
 * Release version 0.2.6 10-06-2022
 * Release v0.2.6
-* Release version 0.2.5 10-05-2022
-* Release v0.2.5
 
 ### Update
 
+* Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
 * Update service now models to include new changes
 * Update jenkins auth serializer
 * Update jenkins auth serializer
 * Update jenkin authentication serializer
 * Update connector info serializer
+
+### Update
+
+* update contract
 
 ### Upsate
 
@@ -89,6 +95,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#325](https://github.com/harness/harness-go-sdk/issues/325) from harness/iam-role
 * Merge pull request [#338](https://github.com/harness/harness-go-sdk/issues/338) from harness/cds-68868-overrides-v2
 * Merge pull request [#339](https://github.com/harness/harness-go-sdk/issues/339) from harness/revert-336-PL-39286
 * Merge pull request [#336](https://github.com/harness/harness-go-sdk/issues/336) from harness/PL-39286
@@ -117,7 +124,5 @@
 * Merge pull request [#261](https://github.com/harness/harness-go-sdk/issues/261) from harness/SPG-1287-3
 * Merge pull request [#259](https://github.com/harness/harness-go-sdk/issues/259) from harness/SPG-1287-2
 * Merge pull request [#252](https://github.com/harness/harness-go-sdk/issues/252) from harness/SPG-443-Add-User-resource-in-harness-terraform-provider
-* Merge pull request [#256](https://github.com/harness/harness-go-sdk/issues/256) from harness/SPG-1287-1
 * Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
-* Merge pull request [#171](https://github.com/harness/harness-go-sdk/issues/171) from harness/PL-28661
 
