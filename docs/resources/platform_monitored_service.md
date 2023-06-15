@@ -98,9 +98,7 @@ resource "harness_platform_monitored_service" "example" {
 
 Required:
 
-- `change_sources` (Block Set, Min: 1, Max: 4) Set of change sources for the monitored service. (see [below for nested schema](#nestedblock--request--change_sources))
 - `environment_ref` (String) Environment in which the service is deployed.
-- `health_sources` (Block Set, Min: 1, Max: 16) Set of health sources for the monitored service. (see [below for nested schema](#nestedblock--request--health_sources))
 - `name` (String) Name for the monitored service.
 - `service_ref` (String) Service reference for the monitored service.
 - `type` (String) Type of the monitored service.
@@ -115,6 +113,8 @@ Optional:
 - `tags` (Set of String) Tags for the monitored service. comma-separated key value string pairs.
 - `template_ref` (String) Template reference for the monitored service.
 - `version_label` (String) Template version label for the monitored service.
+- `change_sources` (Block Set) Set of change sources for the monitored service. (see [below for nested schema](#nestedblock--request--change_sources))
+- `health_sources` (Block Set) Set of health sources for the monitored service. (see [below for nested schema](#nestedblock--request--health_sources))
 
 <a id="nestedblock--request--change_sources"></a>
 ### Nested Schema for `request.change_sources`

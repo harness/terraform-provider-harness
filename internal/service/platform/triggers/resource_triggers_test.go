@@ -181,37 +181,37 @@ EOT
 		name = "%[2]s"
 		target_id = harness_platform_pipeline.pipeline.id
 		yaml = <<-EOT
-    ---
     trigger:
-      name: "%[2]s"
-      identifier: "%[1]s"
+      name: %[2]s
+      identifier: %[1]s
       enabled: true
       description: ""
       tags: {}
-      projectIdentifier: "${harness_platform_project.test.id}"
-      orgIdentifier: "${harness_platform_project.test.org_id}"
-      pipelineIdentifier: "${harness_platform_pipeline.pipeline.id}"
+      projectIdentifier: ${harness_platform_project.test.id}
+      orgIdentifier: ${harness_platform_project.test.org_id}
+      pipelineIdentifier: ${harness_platform_pipeline.pipeline.id}
       source:
-        type: "Webhook"
-        pollInterval: "0"
+        type: Webhook
+        pollInterval: 0
         spec:
-          type: "Github"
+          type: Github
           spec:
-            type: "Push"
+            type: Push
             spec:
-              connectorRef: "account.Jajoo"
+              connectorRef: account.Jajoo
               autoAbortPreviousExecutions: false
               payloadConditions:
-              - key: "changedFiles"
-                operator: "Equals"
-                value: "fjjfjfjf"
-              - key: "targetBranch"
-                operator: "Equals"
-                value: "fhfhfh"
+                - key: changedFiles
+                  operator: Equals
+                  value: fjjfjfjf
+                - key: targetBranch
+                  operator: Equals
+                  value: fhfhfh
               headerConditions: []
-              repoName: "gfgfgf"
+              repoName: gfgfgf
               actions: []
-      inputYaml: "pipeline: {}\n"
+      inputYaml: |
+        pipeline: {}\n
       EOT
 	}
 	`, id, name)

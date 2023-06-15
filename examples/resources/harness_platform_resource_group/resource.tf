@@ -16,7 +16,7 @@ resource "harness_platform_resource_group" "test" {
       resource_type = "CONNECTOR"
       attribute_filter {
         attribute_name   = "category"
-        attribute_values = ["value"]
+        attribute_values = ["CLOUD_COST"]
       }
     }
   }

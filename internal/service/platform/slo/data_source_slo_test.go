@@ -116,14 +116,6 @@ func testAccDataSourceSlo(id string, name string) string {
 					})
 					category = "Deployment"
 				}
-				notification_rule_refs {
-					notification_rule_ref = "notification_rule_ref"
-					enabled = true
-				}
-				notification_rule_refs {
-					notification_rule_ref = "notification_rule_ref1"
-					enabled = false
-				}
 				template_ref = "template_ref"
 				version_label = "version_label"
 				enabled = true
@@ -174,10 +166,6 @@ func testAccDataSourceSlo(id string, name string) string {
 							}
 						]
 				  })
-				  notification_rule_refs {
-						notification_rule_ref = "notification_rule_ref"
-						enabled = true
-				  }
 			}
 		}
 
