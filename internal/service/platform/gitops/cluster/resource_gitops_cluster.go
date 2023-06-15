@@ -219,25 +219,6 @@ func ResourceGitopsCluster() *schema.Resource {
 														},
 													},
 												},
-												"aws_auth_config": {
-													Description: "IAM authentication configuration for AWS. (deprecated)",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"cluster_name": {
-																Description: "AWS cluster name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"role_a_r_n": {
-																Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-														},
-													},
-												},
 												"role_a_r_n": {
 													Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
 													Type:        schema.TypeString,
@@ -616,7 +597,6 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				awsAuthConfig["cluster_name"] = cl.Cluster.Config.AwsAuthConfig.ClusterName
 				awsAuthConfig["role_a_r_n"] = cl.Cluster.Config.AwsAuthConfig.RoleARN
 				awsAuthConfigList = append(awsAuthConfigList, awsAuthConfig)
-				config["aws_auth_config"] = awsAuthConfigList
 			}
 			config["role_a_r_n"] = cl.Cluster.Config.RoleARN
 			config["aws_cluster_name"] = cl.Cluster.Config.AwsClusterName
@@ -781,17 +761,6 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					}
 					if configTlsClientConfig["ca_data"] != nil {
 						clusterDetails.Config.TlsClientConfig.CaData = configTlsClientConfig["ca_data"].(string)
-					}
-				}
-
-				if clusterConfig["aws_auth_config"] != nil && len(clusterConfig["aws_auth_config"].([]interface{})) > 0 {
-					clusterDetails.Config.AwsAuthConfig = &nextgen.ClustersAwsAuthConfig{}
-					configAwsAuthConfig := clusterConfig["aws_auth_config"].([]interface{})[0].(map[string]interface{})
-					if configAwsAuthConfig["cluster_name"] != nil {
-						clusterDetails.Config.AwsAuthConfig.ClusterName = configAwsAuthConfig["cluster_name"].(string)
-					}
-					if configAwsAuthConfig["role_a_r_n"] != nil {
-						clusterDetails.Config.AwsAuthConfig.RoleARN = configAwsAuthConfig["role_a_r_n"].(string)
 					}
 				}
 
