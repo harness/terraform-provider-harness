@@ -133,10 +133,11 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 	name = id
 	clusterName = id
 	resourceName = "harness_platform_gitops_cluster.test"
-	clusterServer = os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_IAM")
-	roleARN := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ROLE_ARN")
+	clusterServer = os.Getenv("HARNESS_TEST_AWS_CLUSTER_SERVER")
+	roleARN := os.Getenv("HARNESS_TEST_AWS_CLUSTER_ROLE_ARN")
 	awsClusterName := os.Getenv("HARNESS_TEST_AWS_CLUSTER_NAME")
-	caData := os.Getenv("HARNESS_TEST_CLUSTER_CA_DATA")
+	caData := os.Getenv("HARNESS_TEST_AWS_CLUSTER_CA_DATA")
+	agentId = os.Getenv("HARNESS_TEST_AWS_GITOPS_AGENT")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -327,8 +328,8 @@ func testAccResourceGitopsClusterProjectLevelIAM(id string, accountId string, na
 						role_a_r_n = "%[7]s"
 						aws_cluster_name = "%[8]s"
 						tls_client_config {
-							insecure = true
-							caData = "%[9]s"
+							insecure = false
+							ca_data = "%[9]s"
 						}
 						cluster_connection_type = "IRSA"
 					}
