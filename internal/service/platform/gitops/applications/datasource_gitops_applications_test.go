@@ -108,7 +108,7 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
     			org_id = harness_platform_organization.test.id
     			account_id = "%[2]s"
 				identifier = "%[1]s"
-				name =  "hello"
+				name = "%[3]s"
 				cluster_id = "%[8]s"
 				repo_id = "%[10]s"
 				agent_id = "%[4]s"
