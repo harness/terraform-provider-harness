@@ -1,3 +1,17 @@
+# 0.22.1 (June 15,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_aws - Added Aws BackOff Strategy Override Support ([#560](https://github.com/harness/terraform-provider-harness/issues/560))
+* resource/harness_platform_policyset: correct description for 'severity' for policy.
+resource/harness_platform_policy: Enhance example to showcase how to add policy with Rego spanning over multiple lines. ([#569](https://github.com/harness/terraform-provider-harness/issues/569))
+
+BUG FIXES:
+
+* - Removed empty change source and health source restriction from monitored service resource. ([#576](https://github.com/harness/terraform-provider-harness/issues/576))
+* Fix for supporting import for account/org infrastructure. ([#577](https://github.com/harness/terraform-provider-harness/issues/577))
+* resource/harness_platform_usergroup - ignore the order of users and user_emails when doing CRUD. ([#567](https://github.com/harness/terraform-provider-harness/issues/567))
+
 # 0.22.0 (June 05,2023) 
 
 FEATURES:
