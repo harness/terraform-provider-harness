@@ -10,7 +10,6 @@ resource "harness_platform_gitops_repository" "example" {
     name            = "repo_name"
     insecure        = true
     connection_type = "HTTPS_ANONYMOUS"
-    type            = "git"
   }
   upsert = true
 }
@@ -27,7 +26,7 @@ resource "harness_platform_gitops_repository" "example" {
     name            = "repo_name"
     insecure        = true
     connection_type = "HTTPS_ANONYMOUS"
-    type            = "helm"
+    type_           = "helm"
   }
   upsert = true
 }
@@ -42,11 +41,12 @@ resource "harness_platform_gitops_repository" "example" {
   repo {
     repo            = "ghcr.io/wings-software"
     name            = "repo_name"
-    insecure        = true
-    username        = "username",
-    password        = "ghp_xxxxxxxx",
-    type            = "helm"
-    enableOCI       = true
+    insecure        = false
+    username        = "username"
+    password        = "ghp_xxxxxxxx"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
   }
   upsert = true
 }
