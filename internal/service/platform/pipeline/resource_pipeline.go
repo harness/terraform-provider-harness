@@ -98,6 +98,11 @@ func ResourcePipeline() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"import_from_git": {
+				Description: "Flag to set if importing from Git",
+				Type:        schema.TypeBool,
+				Required:    false,
+			},
 		},
 	}
 
@@ -160,18 +165,29 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	template_applied := d.Get("template_applied").(bool)
 
 	if id == "" {
-		pipeline := buildCreatePipeline(d)
-		if pipeline.GitDetails != nil {
-			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
-			store_type = optional.NewString(pipeline.GitDetails.StoreType)
-			commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
-			connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
-			branch_name = pipeline.GitDetails.BranchName
-		}
+		if d.Get("import_from_git").(bool) {
+			pipeline_id = d.Get("pipeline_id").(string)
 
-		pipeline_id = pipeline.Identifier
-		_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
-			&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+			pipeline_import_request_body := createImportFromGitRequest(d)
+
+			_, httpResp, err = c.PipelinesApi.ImportPipelineFromGit(ctx, org_id, project_id, pipeline_id,
+				&nextgen.PipelinesApiImportPipelineFromGitOpts{
+					Body:           optional.NewInterface(pipeline_import_request_body),
+					HarnessAccount: optional.NewString(c.AccountId)})
+		} else {
+			pipeline := buildCreatePipeline(d)
+			if pipeline.GitDetails != nil {
+				base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
+				store_type = optional.NewString(pipeline.GitDetails.StoreType)
+				commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+				connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
+				branch_name = pipeline.GitDetails.BranchName
+			}
+
+			pipeline_id = pipeline.Identifier
+			_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
+				&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+		}
 	} else {
 		pipeline := buildUpdatePipeline(d)
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
@@ -200,6 +216,37 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	readPipeline(d, resp, org_id, project_id, template_applied, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
+}
+
+func createImportFromGitRequest(d *schema.ResourceData) *nextgen.PipelineImportRequestBody {
+	pipeline_git_import_info := &nextgen.GitImportInfo{}
+
+	if attr, ok := d.GetOk("git_details"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["branch_name"]; ok {
+			pipeline_git_import_info.BranchName = attr.(string)
+		}
+		if attr, ok := config["file_path"]; ok {
+			pipeline_git_import_info.FilePath = attr.(string)
+		}
+
+		if attr, ok := config["connector_ref"]; ok {
+			pipeline_git_import_info.ConnectorRef = attr.(string)
+		}
+		if attr, ok := config["repo_name"]; ok {
+			pipeline_git_import_info.RepoName = attr.(string)
+		}
+	}
+
+	pipeline_import_request := &nextgen.PipelineImportRequestDto{}
+	pipeline_import_request.PipelineName = d.Get("pipeline_name").(string)
+	pipeline_import_request.PipelineDescription = d.Get("pipeline_description").(string)
+
+	pipeline_import_request_body := &nextgen.PipelineImportRequestBody{}
+	pipeline_import_request_body.GitImportInfo = pipeline_git_import_info
+	pipeline_import_request_body.PipelineImportRequest = pipeline_import_request
+
+	return pipeline_import_request_body
 }
 
 func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
