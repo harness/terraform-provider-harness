@@ -103,6 +103,56 @@ func ResourcePipeline() *schema.Resource {
 				Type:        schema.TypeBool,
 				Required:    false,
 			},
+			"git_import_info": {
+				Description: "Contains Git Information for importing entities from Git",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch_name": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"file_path": {
+							Description: "File path of the Entity in the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"connector_ref": {
+							Description: "Identifier of the Harness Connector used for importing entity from Git" + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"repo_name": {
+							Description: "Name of the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"pipeline_import_request": {
+				Description: "Contains parameters for importing a pipeline",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pipeline_name": {
+							Description: "Name of the pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"pipeline_description": {
+							Description: "Description of the pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -219,9 +269,9 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 }
 
 func createImportFromGitRequest(d *schema.ResourceData) *nextgen.PipelineImportRequestBody {
-	pipeline_git_import_info := &nextgen.GitImportInfo{}
 
-	if attr, ok := d.GetOk("git_details"); ok {
+	pipeline_git_import_info := &nextgen.GitImportInfo{}
+	if attr, ok := d.GetOk("git_import_info"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		if attr, ok := config["branch_name"]; ok {
 			pipeline_git_import_info.BranchName = attr.(string)
@@ -229,7 +279,6 @@ func createImportFromGitRequest(d *schema.ResourceData) *nextgen.PipelineImportR
 		if attr, ok := config["file_path"]; ok {
 			pipeline_git_import_info.FilePath = attr.(string)
 		}
-
 		if attr, ok := config["connector_ref"]; ok {
 			pipeline_git_import_info.ConnectorRef = attr.(string)
 		}
@@ -239,8 +288,15 @@ func createImportFromGitRequest(d *schema.ResourceData) *nextgen.PipelineImportR
 	}
 
 	pipeline_import_request := &nextgen.PipelineImportRequestDto{}
-	pipeline_import_request.PipelineName = d.Get("pipeline_name").(string)
-	pipeline_import_request.PipelineDescription = d.Get("pipeline_description").(string)
+	if attr, ok := d.GetOk("pipeline_import_request"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["pipeline_name"]; ok {
+			pipeline_import_request.PipelineName = attr.(string)
+		}
+		if attr, ok := config["pipeline_description"]; ok {
+			pipeline_import_request.PipelineDescription = attr.(string)
+		}
+	}
 
 	pipeline_import_request_body := &nextgen.PipelineImportRequestBody{}
 	pipeline_import_request_body.GitImportInfo = pipeline_git_import_info
