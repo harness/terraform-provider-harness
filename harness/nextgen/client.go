@@ -478,8 +478,9 @@ func (c *APIClient) prepareRequest(
 		}
 	}
 
+	
 	// Encode the parameters.
-	url.RawQuery = query.Encode()
+	url.RawQuery = strings.ReplaceAll(query.Encode(), "+", "%20")
 
 	// Generate a new request
 	if body != nil {
