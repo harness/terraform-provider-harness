@@ -1,6 +1,10 @@
 
-<a name="0.3.30"></a>
-## 0.3.30 (2023-06-15)
+<a name="0.3.31"></a>
+## 0.3.31 (2023-06-21)
+
+### Added
+
+* Added Handling for encoding of space
 
 ### Delete
 
@@ -22,6 +26,8 @@
 
 ### Release
 
+* Release version 0.3.30 06-15-2023
+* Release v0.3.30
 * Release version 0.3.29 06-12-2023
 * Release v0.3.29
 * Release version 0.3.28 06-02-2023
@@ -67,9 +73,10 @@
 * Release version 0.3.10 12-21-2022
 * Release v0.3.10
 * Release version 0.3.9 12-20-2022
-* Release v0.3.9
-* Release version 0.2.6 10-06-2022
-* Release v0.2.6
+
+### Update
+
+* update contract
 
 ### Update
 
@@ -79,11 +86,6 @@
 * Update jenkins auth serializer
 * Update jenkins auth serializer
 * Update jenkin authentication serializer
-* Update connector info serializer
-
-### Update
-
-* update contract
 
 ### Upsate
 
@@ -95,6 +97,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#343](https://github.com/harness/harness-go-sdk/issues/343) from harness/queryEncode
 * Merge pull request [#325](https://github.com/harness/harness-go-sdk/issues/325) from harness/iam-role
 * Merge pull request [#338](https://github.com/harness/harness-go-sdk/issues/338) from harness/cds-68868-overrides-v2
 * Merge pull request [#339](https://github.com/harness/harness-go-sdk/issues/339) from harness/revert-336-PL-39286
@@ -122,7 +125,4 @@
 * Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
 * Merge pull request [#174](https://github.com/harness/harness-go-sdk/issues/174) from jennynilsen/fix-awscloudprovider-json-tag
 * Merge pull request [#261](https://github.com/harness/harness-go-sdk/issues/261) from harness/SPG-1287-3
-* Merge pull request [#259](https://github.com/harness/harness-go-sdk/issues/259) from harness/SPG-1287-2
-* Merge pull request [#252](https://github.com/harness/harness-go-sdk/issues/252) from harness/SPG-443-Add-User-resource-in-harness-terraform-provider
-* Merge pull request [#170](https://github.com/harness/harness-go-sdk/issues/170) from harness/add-env-yaml
 
