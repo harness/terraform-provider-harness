@@ -1,6 +1,6 @@
 
-<a name="0.3.31"></a>
-## 0.3.31 (2023-06-21)
+<a name="0.3.32"></a>
+## 0.3.32 (2023-06-23)
 
 ### Added
 
@@ -16,16 +16,14 @@
 * Fixed Masking of API Key In Debug Console
 * Fixed AddUserDto Struct
 
-### Fixing
-
-* fixing json tag for AwsCloudProvider type
-
 ### IAM
 
 * IAM role changes in contract
 
 ### Release
 
+* Release version 0.3.31 06-21-2023
+* Release v0.3.31
 * Release version 0.3.30 06-15-2023
 * Release v0.3.30
 * Release version 0.3.29 06-12-2023
@@ -72,11 +70,6 @@
 * Release v0.3.11
 * Release version 0.3.10 12-21-2022
 * Release v0.3.10
-* Release version 0.3.9 12-20-2022
-
-### Update
-
-* update contract
 
 ### Update
 
@@ -85,7 +78,10 @@
 * Update service now models to include new changes
 * Update jenkins auth serializer
 * Update jenkins auth serializer
-* Update jenkin authentication serializer
+
+### Update
+
+* update contract
 
 ### Upsate
 
@@ -97,6 +93,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#345](https://github.com/harness/harness-go-sdk/issues/345) from harness/CDS-57089
 * Merge pull request [#343](https://github.com/harness/harness-go-sdk/issues/343) from harness/queryEncode
 * Merge pull request [#325](https://github.com/harness/harness-go-sdk/issues/325) from harness/iam-role
 * Merge pull request [#338](https://github.com/harness/harness-go-sdk/issues/338) from harness/cds-68868-overrides-v2
@@ -123,6 +120,4 @@
 * Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
 * Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
 * Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
-* Merge pull request [#174](https://github.com/harness/harness-go-sdk/issues/174) from jennynilsen/fix-awscloudprovider-json-tag
-* Merge pull request [#261](https://github.com/harness/harness-go-sdk/issues/261) from harness/SPG-1287-3
 
