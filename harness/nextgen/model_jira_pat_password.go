@@ -9,12 +9,7 @@
  */
 package nextgen
 
-import "encoding/json"
-
-// This entity contains the details for Jira Authentication
-type JiraAuthentication struct {
-	Type_                   JiraAuthType              `json:"type"`
-	UsernamePassword        *JiraUserNamePassword     `json:"-"`
-	PersonalAccessToken     *JiraPatPassword          `json:"-"` 
-	Spec                    json.RawMessage           `json:"spec,omitempty"`
+// This entity contains the details of the Jira PAT
+type JiraPatPassword struct {
+	PatRef string `json:"patRef"`
 }
