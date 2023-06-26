@@ -33,6 +33,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_perspective"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
@@ -196,6 +197,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_filters":                         filters.DataSourceFilters(),
 				"harness_platform_pipeline_filters":                pipeline_filters.DataSourcePipelineFilters(),
 				"harness_platform_ccm_filters":                     ccm_filters.DataSourceCCMFilters(),
+				"harness_platform_ccm_perspective":                 ccm_perspective.DataSourceCCMPerspective(),
 				"harness_platform_template_filters":                template_filters.DataSourceTemplateFilters(),
 				"harness_application":                              application.DataSourceApplication(),
 				"harness_current_account":                          account.DataSourceCurrentAccountConnector(),
@@ -294,6 +296,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_filters":                         filters.ResourceFilters(),
 				"harness_platform_pipeline_filters":                pipeline_filters.ResourcePipelineFilters(),
 				"harness_platform_ccm_filters":                     ccm_filters.ResourceCCMFilters(),
+				"harness_platform_ccm_perspective":                 ccm_perspective.ResourceCCMPerspective(),
 				"harness_platform_template_filters":                template_filters.ResourceTemplateFilters(),
 				"harness_add_user_to_group":                        user.ResourceAddUserToGroup(),
 				"harness_application_gitsync":                      application.ResourceApplicationGitSync(),

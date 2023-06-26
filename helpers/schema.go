@@ -349,7 +349,12 @@ var OrgResourceImporter = &schema.ResourceImporter{
 //   - Project Level: <org_id>/<project_id>/<identifier>
 var MultiLevelResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-		parts := strings.Split(d.Id(), "/")
+
+		f := func(c rune) bool {
+			return c == '/'
+		}
+
+		parts := strings.FieldsFunc(d.Id(), f)
 
 		partCount := len(parts)
 		isAccountConnector := partCount == 1
