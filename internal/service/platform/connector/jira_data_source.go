@@ -72,6 +72,20 @@ func DatasourceConnectorJira() *schema.Resource {
 								},
 							},
 						},
+						"personal_access_token": {
+							Description:   "Authenticate using personal access token.",
+							Type:          schema.TypeList,
+							Computed:      true,	
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"pat_ref": {
+										Description: "Reference to a secret containing the personal access token to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+								},
+							},
+						},					
 					},
 				},
 			},

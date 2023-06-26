@@ -62,13 +62,18 @@ func ResourceConnectorJira() *schema.Resource {
 							Description: "Authentication types for Jira connector",
 							Type:        schema.TypeString,
 							Required:      true,	
-							ValidateFunc: validation.StringInSlice([]string{"UsernamePassword"}, false),						
+							ValidateFunc: validation.StringInSlice([]string{"UsernamePassword","PersonalAccessToken"}, false),						
 						},
 						"username_password": {
 							Description:   "Authenticate using username password.",
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
+							ConflictsWith: []string{"auth.0.personal_access_token"},
+							AtLeastOneOf: []string{
+								"auth.0.username_password",
+								"auth.0.personal_access_token",
+							},							
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"username": {
@@ -98,7 +103,27 @@ func ResourceConnectorJira() *schema.Resource {
 									},
 								},
 							},
-						},						
+						},	
+						"personal_access_token": {
+							Description:   "Authenticate using personal access token.",
+							Type:          schema.TypeList,
+							MaxItems:      1,
+							Optional:      true,
+							ConflictsWith: []string{"auth.0.username_password"},
+							AtLeastOneOf: []string{
+								"auth.0.username_password",
+								"auth.0.personal_access_token",
+							},	
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"pat_ref": {
+										Description: "Reference to a secret containing the personal access token to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Required:    true,
+									},
+								},
+							},
+						},											
 					},
 				},
 			},			
@@ -171,24 +196,43 @@ func buildConnectorJira(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	if attr, ok := d.GetOk("auth"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.Jira.Auth = &nextgen.JiraAuthentication{}
-		if _, ok := config["auth_type"]; ok {
-			connector.Jira.Auth.Type_ = nextgen.JiraAuthTypes.UsernamePassword
-			connector.Jira.Auth.UsernamePassword = &nextgen.JiraUserNamePassword{}
-		}
-		if attr, ok := config["username_password"]; ok {
-			configUsernamePassword := attr.([]interface{})[0].(map[string]interface{})
-			if attr, ok := configUsernamePassword["username"]; ok {
-				connector.Jira.Auth.UsernamePassword.Username = attr.(string)
+		if attrAuthType, ok := config["auth_type"]; ok {
+			if attrAuthType.(string) == "UsernamePassword" {
+				connector.Jira.Auth.Type_ = nextgen.JiraAuthTypes.UsernamePassword
 			}
-	
-			if attr, ok := configUsernamePassword["username_ref"]; ok {
-				connector.Jira.Auth.UsernamePassword.UsernameRef = attr.(string)
-			}
-	
-			if attr, ok := configUsernamePassword["password_ref"]; ok {
-				connector.Jira.Auth.UsernamePassword.PasswordRef = attr.(string)
+			if attrAuthType.(string) == "PersonalAccessToken" {
+				connector.Jira.Auth.Type_ = nextgen.JiraAuthTypes.PersonalAccessToken
 			}
 		}
+		if config["auth_type"] == "UsernamePassword" {
+			if attrUsernamePassword, ok := config["username_password"]; ok {
+				configUsernamePassword := attrUsernamePassword.([]interface{})[0].(map[string]interface{})
+				connector.Jira.Auth.UsernamePassword = &nextgen.JiraUserNamePassword{}
+
+				if attr, ok := configUsernamePassword["username"]; ok {
+					connector.Jira.Auth.UsernamePassword.Username = attr.(string)
+				}
+
+				if attr, ok := configUsernamePassword["username_ref"]; ok {
+					connector.Jira.Auth.UsernamePassword.UsernameRef = attr.(string)
+				}
+
+				if attr, ok := configUsernamePassword["password_ref"]; ok {
+					connector.Jira.Auth.UsernamePassword.PasswordRef = attr.(string)
+				}
+			}
+		}
+
+		if config["auth_type"] == "PersonalAccessToken" {
+			if attrPatPassword, ok := config["personal_access_token"]; ok {
+				configPatPassword := attrPatPassword.([]interface{})[0].(map[string]interface{})
+				connector.Jira.Auth.PersonalAccessToken = &nextgen.JiraPatPassword{}
+
+				if attr, ok := configPatPassword["pat_ref"]; ok {
+					connector.Jira.Auth.PersonalAccessToken.PatRef = attr.(string)
+				}
+			}
+		}		
 
 	}
 
@@ -217,6 +261,17 @@ func readConnectorJira(d *schema.ResourceData, connector *nextgen.ConnectorInfo)
 			},
 		},
 		})
+	case nextgen.JiraAuthTypes.PersonalAccessToken:
+		d.Set("auth", []map[string]interface{}{
+			{
+			"auth_type" : "PersonalAccessToken",
+			"personal_access_token" : []map[string]interface{}{
+				{
+					"pat_ref": connector.Jira.Auth.PersonalAccessToken.PatRef,
+				},
+			},
+		},
+		})		
 	default:
 		return fmt.Errorf("unsupported jira auth type: %s", connector.Jira.Auth.Type_)
 	}
