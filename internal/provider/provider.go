@@ -33,6 +33,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
@@ -49,6 +50,7 @@ import (
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -221,6 +223,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.DataSourceVMRule(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -332,6 +335,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.ResourceVMRule(),
 			},
 		}
 
