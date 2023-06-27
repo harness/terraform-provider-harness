@@ -95,6 +95,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Tas)
 	case ConnectorTypes.TerraformCloud:
 		err = json.Unmarshal(aux.Spec, &a.TerraformCloud)
+	case ConnectorTypes.Rancher:
+		err = json.Unmarshal(aux.Spec, &a.Rancher)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}
@@ -183,6 +185,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Tas)
 	case ConnectorTypes.TerraformCloud:
 		spec, err = json.Marshal(a.TerraformCloud)
+	case ConnectorTypes.Rancher:
+		spec, err = json.Marshal(a.Rancher)
 	default:
 		panic(fmt.Sprintf("unknown connector type %s", a.Type_))
 	}

@@ -43,6 +43,7 @@ var ConnectorTypes = struct {
 	Tas              ConnectorType
 	TerraformCloud   ConnectorType
 	ElasticSearch    ConnectorType
+	Rancher          ConnectorType
 }{
 	K8sCluster:       "K8sCluster",
 	Git:              "Git",
@@ -84,6 +85,7 @@ var ConnectorTypes = struct {
 	Tas:              "Tas",
 	TerraformCloud:   "TerraformCloud",
 	ElasticSearch:    "ElasticSearch",
+	Rancher:          "Rancher",
 }
 
 var ConnectorTypesSlice = []string{
@@ -127,6 +129,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.Tas.String(),
 	ConnectorTypes.TerraformCloud.String(),
 	ConnectorTypes.ElasticSearch.String(),
+	ConnectorTypes.Rancher.String(),
 }
 
 func (c ConnectorType) String() string {
