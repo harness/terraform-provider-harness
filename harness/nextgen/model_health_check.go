@@ -9,8 +9,12 @@
  */
 package nextgen
 
-type ServiceDep struct {
-	ServiceId int64 `json:"service_id,omitempty"`
-	DepId     int64 `json:"dep_id,omitempty"`
-	DelaySecs int32 `json:"delay_secs,omitempty"`
+type HealthCheck struct {
+	Protocol       string `json:"protocol,omitempty"`
+	Path           string `json:"path,omitempty"`
+	Port           int    `json:"port,omitempty"`
+	Interval       int    `json:"interval,omitempty"`
+	Timeout        int    `json:"timeout,omitempty"`
+	StatusCodeFrom int    `json:"status_code_from,omitempty"`
+	StatusCodeTo   int    `json:"status_code_to,omitempty"`
 }

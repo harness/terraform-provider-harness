@@ -12,8 +12,8 @@ package nextgen
 type PortConfig struct {
 	Protocol       string        `json:"protocol,omitempty"`
 	TargetProtocol string        `json:"target_protocol,omitempty"`
-	Port           int32         `json:"port,omitempty"`
-	TargetPort     int32         `json:"target_port,omitempty"`
+	Port           int           `json:"port,omitempty"`
+	TargetPort     int           `json:"target_port,omitempty"`
 	ServerName     string        `json:"server_name,omitempty"`
 	Action         string        `json:"action,omitempty"`
 	RedirectUrl    string        `json:"redirect_url,omitempty"`

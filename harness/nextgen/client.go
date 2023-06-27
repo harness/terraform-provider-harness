@@ -80,6 +80,8 @@ type APIClient struct {
 
 	CloudCostAutoStoppingRulesApi *CloudCostAutoStoppingRulesApiService
 
+	CloudCostAutoStoppingRulesV2Api *CloudCostAutoStoppingRulesV2ApiService
+
 	CloudCostBudgetsApi *CloudCostBudgetsApiService
 
 	CloudCostDetailsApi *CloudCostDetailsApiService
@@ -237,6 +239,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.CloudCostAutoStoppingFixedSchedulesApi = (*CloudCostAutoStoppingFixedSchedulesApiService)(&c.common)
 	c.CloudCostAutoStoppingLoadBalancersApi = (*CloudCostAutoStoppingLoadBalancersApiService)(&c.common)
 	c.CloudCostAutoStoppingRulesApi = (*CloudCostAutoStoppingRulesApiService)(&c.common)
+	c.CloudCostAutoStoppingRulesV2Api = (*CloudCostAutoStoppingRulesV2ApiService)(&c.common)
 	c.CloudCostBudgetsApi = (*CloudCostBudgetsApiService)(&c.common)
 	c.CloudCostDetailsApi = (*CloudCostDetailsApiService)(&c.common)
 	c.CloudCostPerspectiveReportsApi = (*CloudCostPerspectiveReportsApiService)(&c.common)

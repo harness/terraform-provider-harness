@@ -9,8 +9,12 @@
  */
 package nextgen
 
-type ServiceDep struct {
-	ServiceId int64 `json:"service_id,omitempty"`
-	DepId     int64 `json:"dep_id,omitempty"`
-	DelaySecs int32 `json:"delay_secs,omitempty"`
+type FilterObject struct {
+	Name           string            `json:"name,omitempty"`
+	Ids            []string          `json:"ids,omitempty"`
+	Regions        []string          `json:"regions,omitempty"`
+	ResourceGroups []string          `json:"resource_groups,omitempty"`
+	VpcId          string            `json:"vpc_id,omitempty"`
+	Zones          []string          `json:"zones,omitempty"`
+	Tags           map[string]string `json:"tags,omitempty"`
 }
