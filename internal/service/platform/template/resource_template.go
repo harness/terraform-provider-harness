@@ -368,6 +368,10 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
 	readTemplate(d, respGet, comments, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
