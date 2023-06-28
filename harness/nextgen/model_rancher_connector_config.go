@@ -11,6 +11,6 @@ package nextgen
 
 // This contains rancher connector config details
 type RancherConnectorConfig struct {
-	Type_ string                      `json:"type"`
+	Type_ RancherConfigType           `json:"type"`
 	Spec  *RancherConnectorConfigAuth `json:"spec,omitempty"`
 }
