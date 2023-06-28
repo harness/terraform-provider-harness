@@ -1,34 +1,36 @@
 package service_overrides_v2_test
 
 import (
+	"fmt"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"testing"
 )
 
 func TestAccDataSourceServiceOverrides(t *testing.T) {
-	//TODO
-	/*
-			id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-			name := id
-			resourceName := "data.harness_platform_service_overrides_v2.test"
 
-			resource.UnitTest(t, resource.TestCase{
-				PreCheck:          func() { acctest.TestAccPreCheck(t) },
-				ProviderFactories: acctest.ProviderFactories,
-				Steps: []resource.TestStep{
-					{
-						Config: testAccDataSourceServiceOverrides(id, name),
-						Check: resource.ComposeTestCheckFunc(
-							resource.TestCheckResourceAttr(resourceName, "org_id", id),
-							resource.TestCheckResourceAttr(resourceName, "project_id", id),
-						),
-					},
-				},
-			})
-		}
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_service_overrides_v2.test"
 
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceServiceOverrides(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+		},
+	})
+}
 
-		func testAccDataSourceServiceOverrides(id string, name string) string {
-			return fmt.Sprintf(`
+func testAccDataSourceServiceOverrides(id string, name string) string {
+	return fmt.Sprintf(`
 				resource "harness_platform_organization" "test" {
 					identifier = "%[1]s"
 					name = "%[2]s"
@@ -91,45 +93,29 @@ func TestAccDataSourceServiceOverrides(t *testing.T) {
 				}
 
 				resource "harness_platform_service_overrides_v2" "test" {
-					identifier = "%[1]s-%[1]s"
 					org_id = harness_platform_organization.test.id
 					project_id = harness_platform_project.test.id
 					env_id = harness_platform_environment.test.id
 					service_id = harness_platform_service.test.id
 		            type = "ENV_SERVICE_OVERRIDE"
-		            spec = <<-EOT
-		              {
-		                "variables": [
-		                  {
-		                    "name": "v1",
-		                    "type": "String",
-		                    "value": "val1"
-		                  }
-		                ]
-		              }
-		              EOT
+            yaml = <<-EOT
+              {
+                "variables": [
+                  {
+                    "name": "v1",
+                    "type": "String",
+                    "value": "val1"
+                  }
+                ]
+              }
+              EOT	
 				}
 
 				data "harness_platform_service_overrides_v2" "test" {
-		            identifier = "%[1]s-%[1]s"
-					org_id = harness_platform_organization.test.id
-					project_id = harness_platform_project.test.id
-					env_id = harness_platform_environment.test.id
-					service_id = harness_platform_service_overrides_v2.test.service_id
-		            type = "ENV_SERVICE_OVERRIDE"
-		            spec = <<-EOT
-		              {
-		                "variables": [
-		                  {
-		                    "name": "v1",
-		                    "type": "String",
-		                    "value": "val1"
-		                  }
-		                ]
-		              }
-		              EOT
+identifier = harness_platform_service_overrides_v2.test.id
+org_id = harness_platform_service_overrides_v2.test.org_id
+project_id = harness_platform_service_overrides_v2.test.project_id
 				}
 		`, id, name)
 
-	*/
 }
