@@ -9,8 +9,11 @@
  */
 package nextgen
 
+import "encoding/json"
+
 // This contains rancher authentication details
 type RancherAuthentication struct {
-	Type_ string                                `json:"type"`
-	Spec  *RancherConnectorConfigAuthentication `json:"spec,omitempty"`
+	Type_             RancherAuthType                            `json:"type"`
+	BearerTokenConfig *RancherConnectorBearerTokenAuthentication `json:"-"`
+	Spec              json.RawMessage                            `json:"spec,omitempty"`
 }
