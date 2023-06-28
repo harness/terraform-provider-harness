@@ -31,11 +31,10 @@ func TestAccServiceOverrides_ProjectScope(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"spec"},
-				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -59,11 +58,10 @@ func TestAccServiceOverrides_OrgScope(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"spec"},
-				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -85,11 +83,10 @@ func TestAccServiceOverrides_AccountScope(t *testing.T) {
 				Check:  resource.ComposeTestCheckFunc(),
 			},
 			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"spec"},
-				ImportStateIdFunc:       acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -190,14 +187,13 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
 		  EOT
 		}
 
-		resource "harness_platform_service_overrides_v2" "test" {
-			identifier = "%[1]s-%[1]s"
-			org_id = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
-			env_id = harness_platform_environment.test.id
-			service_id = harness_platform_service.test.id
-            type = "ENV_SERVICE_OVERRIDE"
-            spec = <<-EOT
+        resource "harness_platform_service_overrides_v2" "test" {
+          org_id     = harness_platform_organization.test.id
+          project_id = harness_platform_project.test.id
+          env_id     = harness_platform_environment.test.id
+          service_id = harness_platform_service.test.id
+          type       = "ENV_SERVICE_OVERRIDE"
+          yaml = <<-EOT
               {
                 "variables": [
                   {
@@ -207,8 +203,8 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
                   }
                 ]
               }
-              EOT
-		}
+              EOT	
+}
 `, id, name)
 }
 
@@ -267,12 +263,11 @@ func testAccServiceOverridesOrgScope(id string, name string) string {
 		}
 
 		resource "harness_platform_service_overrides_v2" "test" {
-			identifier = "%[1]s-%[1]s"
 			org_id = harness_platform_organization.test.id
 			env_id = "org.${harness_platform_environment.test.id}"
 			service_id = "org.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
-            spec = <<-EOT
+            yaml = <<-EOT
               {
                 "variables": [
                   {
@@ -375,11 +370,10 @@ func testAccServiceOverridesAccountScope(id string, name string) string {
 		}
 
 		resource "harness_platform_service_overrides_v2" "test" {
-			identifier = "%[1]s-%[1]s"
             env_id = "account.${harness_platform_environment.test.id}"
 			service_id = "account.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
-            spec = <<-EOT
+            yaml = <<-EOT
               {
                 "variables": [
                   {
