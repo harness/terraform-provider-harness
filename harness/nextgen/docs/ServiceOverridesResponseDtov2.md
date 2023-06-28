@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 **InfraIdentifier** | **string** |  | [optional] [default to null]
 **ClusterIdentifier** | **string** |  | [optional] [default to null]
 **Type_** | **string** |  | [optional] [default to null]
-**Spec** | [***ServiceOverridesSpec**](ServiceOverridesSpec.md) |  | [optional] [default to null]
+**YamlInternal** | **string** |  | [default to null]
 **NewlyCreated** | **bool** |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
