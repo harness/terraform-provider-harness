@@ -1,13 +1,19 @@
 package load_balancer
 
 import (
+	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceAzureProxy() *schema.Resource {
+func ResourceAWSProxy() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Variable.",
-		ReadContext: resourceLoadBalancerRead,
+		Description:   "Resource for creating an App Dynamics connector.",
+		ReadContext:   resourceLoadBalancerRead,
+		CreateContext: resourceLoadBalancerCreateOrUpdate,
+		UpdateContext: resourceLoadBalancerCreateOrUpdate,
+		DeleteContext: resourceLoadBalancerDelete,
+		Importer:      helpers.MultiLevelResourceImporter,
+
 		Schema: map[string]*schema.Schema{
 			"identifier": {
 				Description: "Unique identifier of the resource",
@@ -31,16 +37,6 @@ func DataSourceAzureProxy() *schema.Resource {
 			},
 			"region": {
 				Description: "Region in which cloud resources are hosted",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"resource_group": {
-				Description: "Region in which cloud resources are hosted",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"subnet_id": {
-				Description: "VPC in which cloud resources are hosted",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -74,15 +70,15 @@ func DataSourceAzureProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"route53_hosted_zone_id": {
+				Description: "Route 53 hosted zone id",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"keypair": {
 				Description: "",
 				Type:        schema.TypeString,
 				Required:    true,
-			},
-			"certificate_id": {
-				Description: "",
-				Type:        schema.TypeString,
-				Optional:    true,
 			},
 			"certificates": {
 				Type:     schema.TypeList,
