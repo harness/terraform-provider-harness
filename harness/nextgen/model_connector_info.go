@@ -68,5 +68,5 @@ type ConnectorInfo struct {
 	ServiceNow          *ServiceNowConnector          `json:"-"`
 	Spec                json.RawMessage               `json:"spec"`
 	ElasticSearch       *ElkConnectorDto              `json:"-"`
-	Rancher             *RancherConnectorConfig       `json:"-"`
+	Rancher             *RancherConnector             `json:"-"`
 }
