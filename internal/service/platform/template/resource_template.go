@@ -111,7 +111,7 @@ func ResourceTemplate() *schema.Resource {
 				},
 			},
 			"force_delete": {
-				Description: "Enable this flag for force deletion of template",
+				Description: "Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
