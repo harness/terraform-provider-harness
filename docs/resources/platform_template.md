@@ -852,7 +852,7 @@ template:
 
 - `comments` (String) Specify comment with respect to changes.
 - `description` (String, Deprecated) Description of the entity. Description field is deprecated
-- `force_delete` (String) Enable this flag for force deletion of template
+- `force_delete` (String) Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `is_stable` (Boolean) True if given version for template to be set as stable.
 - `org_id` (String) Organization Identifier for the Entity
