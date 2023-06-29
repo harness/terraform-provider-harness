@@ -329,10 +329,8 @@ Class | Method | HTTP request | Description
 *ServicesApi* | [**UpsertServiceV2**](docs/ServicesApi.md#upsertservicev2) | **Put** /ng/api/servicesV2/upsert | Upsert a Service by identifier
 *ServiceOverridesApi* | [**CreateServiceOverrideV2**](docs/ServiceOverridesApi.md#createserviceoverridev2) | **Post** /serviceOverrides | Create an ServiceOverride Entity
 *ServiceOverridesApi* | [**DeleteServiceOverrideV2**](docs/ServiceOverridesApi.md#deleteserviceoverridev2) | **Delete** /serviceOverrides/{identifier} | Delete a Service Override entity
-*ServiceOverridesApi* | [**GetServiceOverrideListV2**](docs/ServiceOverridesApi.md#getserviceoverridelistv2) | **Get** /serviceOverrides/list | Gets Service Override List
 *ServiceOverridesApi* | [**GetServiceOverridesV2**](docs/ServiceOverridesApi.md#getserviceoverridesv2) | **Get** /serviceOverrides/{identifier} | Gets Service Overrides by Identifier
 *ServiceOverridesApi* | [**UpdateServiceOverrideV2**](docs/ServiceOverridesApi.md#updateserviceoverridev2) | **Put** /serviceOverrides | Update an ServiceOverride Entity
-*ServiceOverridesApi* | [**UpsertServiceOverrideV2**](docs/ServiceOverridesApi.md#upsertserviceoverridev2) | **Post** /serviceOverrides/upsert | Upsert an ServiceOverride Entity
 *SloApi* | [**DeleteSLODataNg**](docs/SloApi.md#deleteslodatang) | **Delete** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | delete slo data
 *SloApi* | [**GetServiceLevelObjectiveNg**](docs/SloApi.md#getservicelevelobjectiveng) | **Get** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | get service level objective data
 *SloApi* | [**SaveSLODataNg**](docs/SloApi.md#saveslodatang) | **Post** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2 | saves slo data
@@ -907,7 +905,6 @@ Class | Method | HTTP request | Description
  - [PagerDutyChangeSourceSpec](docs/PagerDutyChangeSourceSpec.md)
  - [PagePipelineExecutionSummary](docs/PagePipelineExecutionSummary.md)
  - [PagePmsPipelineSummaryResponse](docs/PagePmsPipelineSummaryResponse.md)
- - [PageServiceOverridesResponseDtov2](docs/PageServiceOverridesResponseDtov2.md)
  - [PageResponseApiKeyAggregate](docs/PageResponseApiKeyAggregate.md)
  - [PageResponseAuditEventDto](docs/PageResponseAuditEventDto.md)
  - [PageResponseConnectorResponse](docs/PageResponseConnectorResponse.md)
@@ -1246,7 +1243,6 @@ Class | Method | HTTP request | Description
  - [ResponseMessageExceptionStackTrace](docs/ResponseMessageExceptionStackTrace.md)
  - [ResponseMessageExceptionSuppressed](docs/ResponseMessageExceptionSuppressed.md)
  - [ResponseMonitoredServiceResponse](docs/ResponseMonitoredServiceResponse.md)
- - [ResponsePageServiceOverridesResponseDtov2](docs/ResponsePageServiceOverridesResponseDtov2.md)
  - [ResponseServiceOverridesResponseDtov2](docs/ResponseServiceOverridesResponseDtov2.md)
  - [RestResponse](docs/RestResponse.md)
  - [RestResponseAuthenticationSettingsResponse](docs/RestResponseAuthenticationSettingsResponse.md)
@@ -1335,7 +1331,6 @@ Class | Method | HTTP request | Description
  - [ServiceOptionsOrBuilder](docs/ServiceOptionsOrBuilder.md)
  - [ServiceOverrideRequestDtov2](docs/ServiceOverrideRequestDtov2.md)
  - [ServiceOverridesResponseDtov2](docs/ServiceOverridesResponseDtov2.md)
- - [ServiceOverridesSpec](docs/ServiceOverridesSpec.md)
  - [ServiceRequest](docs/ServiceRequest.md)
  - [ServiceResponse](docs/ServiceResponse.md)
  - [ServiceResponseDetails](docs/ServiceResponseDetails.md)

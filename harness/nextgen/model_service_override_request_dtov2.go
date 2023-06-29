@@ -14,13 +14,12 @@ the breaking change with respect to the generated code stub  # Authentication  <
 package nextgen
 
 type ServiceOverrideRequestDtov2 struct {
-	Identifier        string               `json:"identifier,omitempty"`
-	OrgIdentifier     string               `json:"orgIdentifier,omitempty"`
-	ProjectIdentifier string               `json:"projectIdentifier,omitempty"`
-	EnvironmentRef    string               `json:"environmentRef"`
-	ServiceRef        string               `json:"serviceRef,omitempty"`
-	InfraIdentifier   string               `json:"infraIdentifier,omitempty"`
-	ClusterIdentifier string               `json:"clusterIdentifier,omitempty"`
-	Type_             string               `json:"type,omitempty"`
-	Spec              ServiceOverridesSpec `json:"spec, omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	EnvironmentRef    string `json:"environmentRef"`
+	ServiceRef        string `json:"serviceRef,omitempty"`
+	InfraIdentifier   string `json:"infraIdentifier,omitempty"`
+	ClusterIdentifier string `json:"clusterIdentifier,omitempty"`
+	Type_             string `json:"type,omitempty"`
+	YamlInternal      string `json:"yamlInternal,omitempty"`
 }
