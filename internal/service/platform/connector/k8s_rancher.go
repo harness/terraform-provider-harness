@@ -28,19 +28,21 @@ func ResourceConnectorK8sRancher() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 
+			"rancher_url": {
+				Description: "The URL of the Rancher cluster.",
+				Type:        schema.TypeString,
+				Required:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
+
 			"bearer_token": {
-				Description: "URL and bearer token for the rancher cluster.",
+				Description: "Bearer token information for the rancher cluster.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"rancher_url": {
-							Description: "The URL of the Rancher cluster.",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-						"password_ref": {
+						"bearer_token_ref": {
 							Description: "Reference to the secret containing the bearer token for the rancher cluster." + secret_ref_text,
 							Type:        schema.TypeString,
 							Required:    true,
@@ -111,14 +113,13 @@ func buildConnectorRancher(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		},
 	}
 
+	if attr, ok := d.GetOk("rancher_url"); ok {
+		connector.Rancher.Credential.Spec.RancherUrl = attr.(string)
+	}
+
 	if attr, ok := d.GetOk("bearer_token"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-
-		if attr := config["rancher_url"].(string); attr != "" {
-			connector.Rancher.Credential.Spec.RancherUrl = attr
-		}
-
-		if attr := config["password_ref"].(string); attr != "" {
+		if attr := config["bearer_token_ref"].(string); attr != "" {
 			connector.Rancher.Credential.Spec.Auth.BearerTokenConfig.PasswordRef = attr
 		}
 	}
@@ -134,11 +135,11 @@ func readConnectorRancher(d *schema.ResourceData, connector *nextgen.ConnectorIn
 		case nextgen.RancherAuthTypes.BearerToken:
 			d.Set("bearer_token", []map[string]interface{}{
 				{
-					"rancher_url":  connector.Rancher.Credential.Spec.RancherUrl,
-					"password_ref": connector.Rancher.Credential.Spec.Auth.BearerTokenConfig.PasswordRef,
+					"bearer_token_ref": connector.Rancher.Credential.Spec.Auth.BearerTokenConfig.PasswordRef,
 				},
 			})
 			d.Set("delegate_selectors", connector.Rancher.DelegateSelectors)
+			d.Set("rancher_url", connector.Rancher.Credential.Spec.RancherUrl)
 		default:
 			return fmt.Errorf("unsupported auth method: %s", auth.Type_)
 		}

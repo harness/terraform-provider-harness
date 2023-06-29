@@ -31,8 +31,8 @@ func TestAccResourceConnectorRancher_BearerToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.rancher_url", "https://rancher.cluster.example"),
-					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.password_ref", fmt.Sprintf("account.%s", id)),
+					resource.TestCheckResourceAttr(resourceName, "rancher_url", "https://rancher.cluster.example"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", fmt.Sprintf("account.%s", id)),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -44,8 +44,8 @@ func TestAccResourceConnectorRancher_BearerToken(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.rancher_url", "https://rancher.cluster.example"),
-					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.password_ref", fmt.Sprintf("account.%s", id)),
+					resource.TestCheckResourceAttr(resourceName, "rancher_url", "https://rancher.cluster.example"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", fmt.Sprintf("account.%s", id)),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -78,10 +78,10 @@ func testAccResourceConnectorRancher_BearerToken(id string, name string) string 
 			tags = ["foo:bar"]
 
 			delegate_selectors = ["harness-delegate"]
+			rancher_url = "https://rancher.cluster.example"
 
 			bearer_token {
-				rancher_url = "https://rancher.cluster.example"
-				password_ref = "account.${harness_platform_secret_text.test.id}"
+				bearer_token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 
 			depends_on = [time_sleep.wait_4_seconds]
