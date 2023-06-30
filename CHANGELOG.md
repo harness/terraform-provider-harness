@@ -1,6 +1,6 @@
 
-<a name="0.3.33"></a>
-## 0.3.33 (2023-06-29)
+<a name="0.3.34"></a>
+## 0.3.34 (2023-06-29)
 
 ### Added
 
@@ -26,6 +26,8 @@
 
 ### Release
 
+* Release version 0.3.33 06-29-2023
+* Release v0.3.33
 * Release version 0.3.32 06-23-2023
 * Release v0.3.32
 * Release version 0.3.31 06-21-2023
@@ -73,7 +75,6 @@
 * Release version 0.3.12 12-27-2022
 * Release v0.3.12
 * Release version 0.3.11 12-21-2022
-* Release v0.3.11
 
 ### Update
 
@@ -85,16 +86,13 @@
 
 * update contract
 
-### Upsate
-
-* Upsate user group
-
 ### Reverts
 
 * fix:[PL-39286]: fixed URL Encoding for characters with space
 
 ### Pull Requests
 
+* Merge pull request [#348](https://github.com/harness/harness-go-sdk/issues/348) from harness/cds-72877
 * Merge pull request [#347](https://github.com/harness/harness-go-sdk/issues/347) from harness/CDS-56689-rancher-connector
 * Merge pull request [#345](https://github.com/harness/harness-go-sdk/issues/345) from harness/CDS-57089
 * Merge pull request [#343](https://github.com/harness/harness-go-sdk/issues/343) from harness/queryEncode
@@ -121,5 +119,4 @@
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
 * Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
 * Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
-* Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
 
