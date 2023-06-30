@@ -56,6 +56,16 @@ func ResourceServiceOverrides() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"newly_created": {
+				Description: "Boolean field to check if the override entity is newly created.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"identifier": {
+				Description: "The identifier of the override entity.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -157,6 +167,8 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	d.Set("cluster_id", so.ClusterIdentifier)
 	d.Set("type", so.Type_)
 	d.Set("yaml", so.YamlInternal)
+	d.Set("newly_created", so.NewlyCreated)
+	d.Set("identifier", so.Identifier)
 }
 
 func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {

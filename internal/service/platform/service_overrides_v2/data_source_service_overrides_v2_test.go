@@ -98,23 +98,23 @@ func testAccDataSourceServiceOverrides(id string, name string) string {
 					env_id = harness_platform_environment.test.id
 					service_id = harness_platform_service.test.id
 		            type = "ENV_SERVICE_OVERRIDE"
-            yaml = <<-EOT
-              {
-                "variables": [
-                  {
-                    "name": "v1",
-                    "type": "String",
-                    "value": "val1"
-                  }
-                ]
-              }
-              EOT	
-				}
+                    yaml = <<-EOT
+                    {
+                        "variables": [
+                        {
+                            "name": "v1",
+                            "type": "String",
+                            "value": "val1"
+                        }
+                        ]
+                    }
+                    EOT	
+                }
 
 				data "harness_platform_service_overrides_v2" "test" {
-identifier = harness_platform_service_overrides_v2.test.id
-org_id = harness_platform_service_overrides_v2.test.org_id
-project_id = harness_platform_service_overrides_v2.test.project_id
+                    identifier = harness_platform_service_overrides_v2.test.id
+                    org_id = harness_platform_service_overrides_v2.test.org_id
+                    project_id = harness_platform_service_overrides_v2.test.project_id
 				}
 		`, id, name)
 
