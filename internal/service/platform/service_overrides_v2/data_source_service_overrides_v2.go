@@ -16,13 +16,7 @@ func DataSourceServiceOverrides() *schema.Resource {
 
 		ReadContext: dataSourceServiceOverridesRead,
 
-		Schema: map[string]*schema.Schema{
-			"newly_created": {
-				Description: "Boolean field to check if the override entity is newly created.",
-				Type:        schema.TypeString,
-				Computed:    true,
-			},
-		},
+		Schema: map[string]*schema.Schema{},
 	}
 
 	SetScopeDataResourceSchemaForServiceOverride(resource.Schema)

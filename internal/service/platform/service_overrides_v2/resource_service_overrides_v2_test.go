@@ -201,9 +201,49 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
                     "type": "String",
                     "value": "val1"
                   }
+                ],
+                "manifests": [
+                  {
+                    "manifest": {
+                      "identifier": "manifest1",
+                      "type": "K8sManifest",
+                      "spec": {
+                        "store": {
+                          "type": "Github",
+                          "spec": {
+                            "connectorRef": "<+input>",
+                            "gitFetchType": "Branch",
+                            "paths": [
+                              "files1"
+                            ],
+                            "repoName": "<+input>",
+                            "branch": "master"
+                          }
+                        },
+                        "skipResourceVersioning": false
+                      }
+                    }
+                  }
+                ],
+                "configFiles": [
+                  {
+                    "configFile": {
+                      "identifier": "configFile1",
+                      "spec": {
+                        "store": {
+                          "type": "Harness",
+                          "spec": {
+                            "files": [
+                              "<+org.description>"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 ]
               }
-              EOT	
+              EOT
 }
 `, id, name)
 }
@@ -381,9 +421,49 @@ func testAccServiceOverridesAccountScope(id string, name string) string {
                     "type": "String",
                     "value": "val1"
                   }
+                ],
+                "manifests": [
+                  {
+                    "manifest": {
+                      "identifier": "manifest1",
+                      "type": "K8sManifest",
+                      "spec": {
+                        "store": {
+                          "type": "Github",
+                          "spec": {
+                            "connectorRef": "<+input>",
+                            "gitFetchType": "Branch",
+                            "paths": [
+                              "files1"
+                            ],
+                            "repoName": "<+input>",
+                            "branch": "master"
+                          }
+                        },
+                        "skipResourceVersioning": false
+                      }
+                    }
+                  }
+                ],
+                "configFiles": [
+                  {
+                    "configFile": {
+                      "identifier": "configFile1",
+                      "spec": {
+                        "store": {
+                          "type": "Harness",
+                          "spec": {
+                            "files": [
+                              "<+org.description>"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 ]
               }
-              EOT	
+              EOT
 		}
 `, id, name)
 }

@@ -90,7 +90,6 @@ resource "harness_platform_service_overrides_v2" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `newly_created` (Boolean) Boolean field to check if the override entity is newly created.
 - `identifier` (String) The identifier of the override entity.
 
 ## Import
