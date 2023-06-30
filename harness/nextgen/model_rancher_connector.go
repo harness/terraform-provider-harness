@@ -11,7 +11,6 @@ package nextgen
 
 // This contains Rancher connector details
 type RancherConnector struct {
-	ConnectorType     string                  `json:"connectorType"`
 	DelegateSelectors []string                `json:"delegateSelectors,omitempty"`
 	Credential        *RancherConnectorConfig `json:"credential,omitempty"`
 }
