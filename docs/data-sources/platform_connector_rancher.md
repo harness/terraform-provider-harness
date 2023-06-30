@@ -3,12 +3,12 @@
 page_title: "harness_platform_connector_rancher Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for looking up a Rancher connector.
+  Data source for looking up a Rancher connector.
 ---
 
 # harness_platform_connector_rancher (Data Source)
 
-Datasource for looking up a Rancher connector.
+Data source for looking up a Rancher connector.
 
 ## Example Usage
 

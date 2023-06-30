@@ -7,7 +7,7 @@ import (
 
 func DatasourceConnectorRancher() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up a Rancher connector.",
+		Description: "Data source for looking up a Rancher connector.",
 		ReadContext: resourceConnectorRancherRead,
 
 		Schema: map[string]*schema.Schema{
