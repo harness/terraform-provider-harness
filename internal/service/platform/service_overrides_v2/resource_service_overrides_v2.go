@@ -2,8 +2,6 @@ package service_overrides_v2
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -32,31 +30,36 @@ func ResourceServiceOverrides() *schema.Resource {
 				Computed:    true,
 			},
 			"env_id": {
-				Description: "The env ID to which the overrides are associated.",
+				Description: "The environment ID to which the overrides are associated.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"infra_id": {
-				Description: "The infrastructure ID to which the overrides are associated",
+				Description: "The infrastructure ID to which the overrides are associated.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
 			"cluster_id": {
-				Description: "The cluster ID to which the overrides are associated",
+				Description: "The cluster ID to which the overrides are associated.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
 			"type": {
-				Description: "The type of the overrides",
+				Description: "The type of the overrides.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"spec": {
-				Description: "The overrides specification for the service.",
+			"yaml": {
+				Description: "The yaml of the overrides spec object.",
 				Type:        schema.TypeString,
 				Required:    true,
+			},
+			"identifier": {
+				Description: "The identifier of the override entity.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}
@@ -92,9 +95,17 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	var httpResp *http.Response
 	env := buildServiceOverrideV2(d)
 
-	resp, httpResp, err = c.ServiceOverridesApi.UpsertServiceOverrideV2(ctx, c.AccountId, &nextgen.ServiceOverridesApiUpsertServiceOverrideV2Opts{
-		Body: optional.NewInterface(env),
-	})
+	id := d.Id()
+
+	if id == "" {
+		resp, httpResp, err = c.ServiceOverridesApi.CreateServiceOverrideV2(ctx, c.AccountId, &nextgen.ServiceOverridesApiCreateServiceOverrideV2Opts{
+			Body: optional.NewInterface(env),
+		})
+	} else {
+		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, &nextgen.ServiceOverridesApiUpdateServiceOverrideV2Opts{
+			Body: optional.NewInterface(env),
+		})
+	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -116,7 +127,7 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 func resourceServiceOverridesV2Delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	_, httpResp, err := c.ServiceOverridesApi.DeleteServiceOverrideV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServiceOverridesApiDeleteServiceOverrideV2Opts{
+	_, httpResp, err := c.ServiceOverridesApi.DeleteServiceOverrideV2(ctx, d.Id(), c.AccountId, &nextgen.ServiceOverridesApiDeleteServiceOverrideV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -129,18 +140,7 @@ func resourceServiceOverridesV2Delete(ctx context.Context, d *schema.ResourceDat
 }
 
 func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequestDtov2 {
-
-	var serviceOverrides nextgen.ServiceOverridesSpec
-	str := d.Get("spec").(string)
-
-	err := json.Unmarshal([]byte(str), &serviceOverrides)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return nil
-	}
-
 	return &nextgen.ServiceOverrideRequestDtov2{
-		Identifier:        d.Get("identifier").(string),
 		OrgIdentifier:     d.Get("org_id").(string),
 		ProjectIdentifier: d.Get("project_id").(string),
 		EnvironmentRef:    d.Get("env_id").(string),
@@ -148,14 +148,12 @@ func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequ
 		InfraIdentifier:   d.Get("infra_id").(string),
 		ClusterIdentifier: d.Get("cluster_id").(string),
 		Type_:             d.Get("type").(string),
-		Spec:              serviceOverrides,
+		YamlInternal:      d.Get("yaml").(string),
 	}
 }
 
 func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverridesResponseDtov2) {
-
 	d.SetId(so.Identifier)
-	d.Set("identifier", so.Identifier)
 	d.Set("org_id", so.OrgIdentifier)
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
@@ -163,12 +161,11 @@ func readServiceOverridesV2(d *schema.ResourceData, so *nextgen.ServiceOverrides
 	d.Set("infra_id", so.InfraIdentifier)
 	d.Set("cluster_id", so.ClusterIdentifier)
 	d.Set("type", so.Type_)
-	d.Set("spec", so.Spec)
-
+	d.Set("yaml", so.YamlInternal)
+	d.Set("identifier", so.Identifier)
 }
 
 func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
 	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional)
 	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional)
-	s["identifier"] = helpers.GetIdentifierSchema(helpers.SchemaFlagTypes.Required)
 }
