@@ -3,7 +3,6 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ConnectorType** | **string** |  | [default to null]
 **DelegateSelectors** | **[]string** |  | [optional] [default to null]
 **Credential** | [***RancherConnectorConfig**](RancherConnectorConfig.md) |  | [optional] [default to null]
 
