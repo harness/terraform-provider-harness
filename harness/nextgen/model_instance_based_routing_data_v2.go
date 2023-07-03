@@ -9,8 +9,7 @@
  */
 package nextgen
 
-type ServiceDep struct {
-	ServiceId int64 `json:"service_id,omitempty"`
-	DepId     int64 `json:"dep_id,omitempty"`
-	DelaySecs int32 `json:"delay_secs,omitempty"`
+type InstanceBasedRoutingDataV2 struct {
+	Filter     *FilterObject `json:"filter,omitempty"`
+	ScaleGroup *AsgMinimal   `json:"scale_group,omitempty"`
 }

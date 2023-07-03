@@ -9,8 +9,9 @@
  */
 package nextgen
 
-type ServiceDep struct {
-	ServiceId int64 `json:"service_id,omitempty"`
-	DepId     int64 `json:"dep_id,omitempty"`
-	DelaySecs int32 `json:"delay_secs,omitempty"`
+type RoutingDataV2K8s struct {
+	RuleJson     string `json:"RuleJson,omitempty"`
+	ConnectorID  string `json:"ConnectorID,omitempty"`
+	Namespace    string `json:"Namespace,omitempty"`
+	CustomDomain string `json:"CustomDomain,omitempty"`
 }

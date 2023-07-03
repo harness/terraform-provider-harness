@@ -9,8 +9,8 @@
  */
 package nextgen
 
-type ServiceDep struct {
-	ServiceId int64 `json:"service_id,omitempty"`
-	DepId     int64 `json:"dep_id,omitempty"`
-	DelaySecs int32 `json:"delay_secs,omitempty"`
+type SaveServiceRequestV2 struct {
+	Deps     []ServiceDep `json:"deps,omitempty"`
+	Service  *ServiceV2   `json:"service,omitempty"`
+	ApplyNow bool         `json:"apply_now,omitempty"`
 }
