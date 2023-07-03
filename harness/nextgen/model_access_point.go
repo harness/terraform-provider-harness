@@ -20,6 +20,7 @@ type AccessPoint struct {
 	Type_          string           `json:"type,omitempty"`
 	Name           string           `json:"name,omitempty"`
 	Vpc            string           `json:"vpc,omitempty"`
+	Kind           string           `json:"kind,omitempty"`
 	Status         string           `json:"status,omitempty"`
 	Metadata       *AccessPointMeta `json:"metadata,omitempty"`
 	Subnets        []string         `json:"subnets,omitempty"`
