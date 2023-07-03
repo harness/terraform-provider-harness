@@ -58,10 +58,9 @@ func testAccDataSourceConnectorRancherBearerToken(name string) string {
 			tags = ["foo:bar"]
 
 			delegate_selectors = ["harness-delegate"]
-
+			rancher_url = "https://rancher.cluster.example"
 			bearer_token {
-				rancher_url = "https://rancher.cluster.example"
-				password_ref = "account.${harness_platform_secret_text.test.id}"
+				bearer_token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 
 			depends_on = [time_sleep.wait_4_seconds]
