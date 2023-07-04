@@ -118,6 +118,12 @@ func ResourceToken() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"value": {
+				Description: "Value of the Token",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Sensitive:   true,
+			},
 		},
 	}
 
@@ -156,13 +162,15 @@ func resourceTokenCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 	var err error
 	var resp nextgen.ResponseDtoToken
 	var httpResp *http.Response
+	var createResponse nextgen.ResponseDtoString
 
 	id := d.Id()
 	token := buildToken(d)
 
 	if id == "" {
-		_, httpResp, err = c.TokenApi.CreateToken(ctx, c.AccountId, &nextgen.TokenApiCreateTokenOpts{Body: optional.NewInterface(token)})
+		createResponse, httpResp, err = c.TokenApi.CreateToken(ctx, c.AccountId, &nextgen.TokenApiCreateTokenOpts{Body: optional.NewInterface(token)})
 		if err == nil {
+			d.Set("value", createResponse.Data)
 			return resourceTokenRead(ctx, d, meta)
 		}
 	} else {
