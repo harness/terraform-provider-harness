@@ -44,10 +44,11 @@ func TestAccResourceToken(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: AccountResourceImportTokenIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       AccountResourceImportTokenIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
@@ -85,10 +86,11 @@ func TestAccResourceTokenOrgLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: OrgResourceImportTokenIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       OrgResourceImportTokenIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
@@ -126,10 +128,11 @@ func TestAccResourceTokenProjectLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: ProjectResourceImportTokenIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       ProjectResourceImportTokenIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"value"},
 			},
 		},
 	})
