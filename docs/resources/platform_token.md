@@ -76,6 +76,7 @@ resource "harness_platform_token" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `value` (String, Sensitive) Value of the Token
 
 ## Import
 
