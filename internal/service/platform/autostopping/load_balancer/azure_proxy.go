@@ -13,10 +13,10 @@ import (
 
 func ResourceAzureProxy() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an App Dynamics connector.",
+		Description:   "Resource for creating an Azure autostopping proxy",
 		ReadContext:   resourceLoadBalancerRead,
-		CreateContext: resourceLoadBalancerCreateOrUpdate,
-		UpdateContext: resourceLoadBalancerCreateOrUpdate,
+		CreateContext: resourceAzureProxyCreateOrUpdate,
+		UpdateContext: resourceAzureProxyCreateOrUpdate,
 		DeleteContext: resourceLoadBalancerDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 
@@ -73,7 +73,7 @@ func ResourceAzureProxy() *schema.Resource {
 				Description: "Boolean value to indicate if proxy vm needs to have static IP",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     true,
+				Default:     false,
 			},
 			"machine_type": {
 				Description: "Machine instance type",
@@ -135,7 +135,13 @@ func resourceLoadBalancerRead(ctx context.Context, d *schema.ResourceData, meta 
 	return nil
 }
 
-func resourceLoadBalancerCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceAzureProxyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	lb := buildLoadBalancer(d, c.AccountId, "azure", "autostopping_proxy")
+	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
+}
+
+func resourceLoadBalancerCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}, lb nextgen.AccessPoint) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
@@ -143,7 +149,6 @@ func resourceLoadBalancerCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 	var httpResp *http.Response
 
 	id := d.Id()
-	lb := buildLoadBalancer(d, c.AccountId)
 
 	if id == "" {
 		resp, httpResp, err = c.CloudCostAutoStoppingLoadBalancersApi.CreateLoadBalancer(ctx, lb, c.AccountId, c.AccountId)
@@ -170,16 +175,20 @@ func resourceLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, met
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
-
 	return nil
 }
 
 func readLoadBalancer(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) {
 	d.SetId(accessPoint.Id)
 	d.Set("identifier", accessPoint.Id)
+	d.Set("name", accessPoint.Name)
+	d.Set("host_name", accessPoint.HostName)
+	d.Set("cloud_connector_id", accessPoint.CloudAccountId)
+	d.Set("region", accessPoint.Region)
+	d.Set("vpc", accessPoint.Vpc)
 }
 
-func buildLoadBalancer(d *schema.ResourceData, accountId string) nextgen.AccessPoint {
+func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) nextgen.AccessPoint {
 	lb := &nextgen.AccessPoint{
 		Metadata: &nextgen.AccessPointMeta{},
 	}
@@ -201,8 +210,10 @@ func buildLoadBalancer(d *schema.ResourceData, accountId string) nextgen.AccessP
 		lb.CloudAccountId = attr.(string)
 	}
 
-	lb.Type_ = "azure"
-	lb.Kind = "autostopping_proxy"
+	lb.Type_ = type_
+	if kind != "" {
+		lb.Kind = kind
+	}
 
 	if attr, ok := d.GetOk("region"); ok {
 		lb.Region = attr.(string)
@@ -225,7 +236,15 @@ func buildLoadBalancer(d *schema.ResourceData, accountId string) nextgen.AccessP
 	}
 
 	if attr, ok := d.GetOk("subnet_id"); ok {
-		lb.Metadata.SubnetId = attr.(string)
+		if type_ == "gcp" {
+			lb.Metadata.SubnetName = attr.(string)
+		} else {
+			lb.Metadata.SubnetId = attr.(string)
+		}
+	}
+
+	if attr, ok := d.GetOk("zone"); ok {
+		lb.Metadata.Zone = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("certificate_id"); ok {
@@ -244,30 +263,35 @@ func buildLoadBalancer(d *schema.ResourceData, accountId string) nextgen.AccessP
 		lb.Metadata.Keypair = attr.(string)
 	}
 
+	lb.Metadata.AllocateStaticIp = false
 	if attr, ok := d.GetOk("allocate_static_ip"); ok {
 		lb.Metadata.AllocateStaticIp = attr.(bool)
 	}
 	if attr, ok := d.GetOk("certificates"); ok {
-		lb.Metadata.Certificates = &nextgen.CertificatesData{}
+		certificates := make([]nextgen.CertificatesData, 0)
+		certificateDetails := &nextgen.CertificatesData{}
 		config := attr.([]interface{})[0].(map[string]interface{})
 		if attr, ok := config["cert_secret_id"]; ok {
-			lb.Metadata.Certificates.CertSecretId = attr.(string)
+			certificateDetails.CertSecretId = attr.(string)
 		}
 
 		if attr, ok := config["key_secret_id"]; ok {
-			lb.Metadata.Certificates.KeySecretId = attr.(string)
+			certificateDetails.KeySecretId = attr.(string)
 		}
+		lb.Metadata.Certificates = append(certificates, *certificateDetails)
 	}
-	if attr, ok := d.GetOk("route53_hosted_zone_id"); ok {
-		route53 := &nextgen.AccessPointMetaDnsRoute53{
-			HostedZoneId: attr.(string),
-		}
-		lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-			Route53: route53,
-		}
-	} else {
-		lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
-			Others: lb.HostName,
+	if type_ == "aws" {
+		if attr, ok := d.GetOk("route53_hosted_zone_id"); ok {
+			route53 := &nextgen.AccessPointMetaDnsRoute53{
+				HostedZoneId: attr.(string),
+			}
+			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
+				Route53: route53,
+			}
+		} else {
+			lb.Metadata.Dns = &nextgen.AccessPointMetaDns{
+				Others: lb.HostName,
+			}
 		}
 	}
 	return *lb

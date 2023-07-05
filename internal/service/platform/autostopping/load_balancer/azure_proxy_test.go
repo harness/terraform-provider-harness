@@ -47,7 +47,7 @@ func TestResourceAzureProxy(t *testing.T) {
 
 func testAzureProxyDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		proxy, _ := testGetAzureProxy(resourceName, state)
+		proxy, _ := testGetLoadBalancer(resourceName, state)
 		if proxy != nil {
 			return fmt.Errorf("Found azure proxy: %s", proxy.Id)
 		}
@@ -55,7 +55,7 @@ func testAzureProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGetAzureProxy(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
+func testGetLoadBalancer(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
@@ -87,7 +87,7 @@ func testAzureProxy(name string, hostName string) string {
 			allocate_static_ip = true
             machine_type = "Standard_D2s_v3"
 			keypair = "tkouhsari-autostop-1_key"
-            api_key = "pat.PL7d6h0LQP-O91d5j7Xgsg.645b976a9a97612476a2c987.n5z8la6q0Ji2FD37iaPY"
+            api_key = ""
 		}
 `, name, hostName)
 }
@@ -106,7 +106,7 @@ func testAzureProxyUpdate(name string, hostName string) string {
 			allocate_static_ip = true
             machine_type = "Standard_D2s_v3"
 			keypair = "tkouhsari-autostop-1_key"
-            api_key = "pat.PL7d6h0LQP-O91d5j7Xgsg.645b976a9a97612476a2c987.n5z8la6q0Ji2FD37iaPY"
+            api_key = ""
 		}
 `, name, hostName)
 }

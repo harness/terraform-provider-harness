@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceAWSProxy() *schema.Resource {
+func DataSourceAwsALB() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for AWS Autostopping proxy",
 		ReadContext: resourceLoadBalancerRead,
@@ -47,54 +47,17 @@ func DataSourceAWSProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"allocate_static_ip": {
-				Description: "Boolean value to indicate if proxy vm needs to have static IP",
-				Type:        schema.TypeBool,
+			"certificate_id": {
+				Description: "",
+				Type:        schema.TypeString,
 				Optional:    true,
-				Default:     false,
-			},
-			"machine_type": {
-				Description: "Machine instance type",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"api_key": {
-				Description: "Harness NG API key",
-				Sensitive:   true,
-				Type:        schema.TypeString,
-				Required:    true,
 			},
 			"route53_hosted_zone_id": {
 				Description: "Route 53 hosted zone id",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"keypair": {
-				Description: "",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"certificates": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"cert_secret_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Certificate secret ID",
-						},
-						"key_secret_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Private key secret ID",
-						},
-					},
-				},
-			},
 		},
 	}
-
 	return resource
 }
