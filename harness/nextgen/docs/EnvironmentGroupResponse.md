@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 **EnvIdentifiers** | **[]string** | Environment Identifiers linked with Environment Group Identity | [optional] [default to null]
 **EnvResponse** | [**[]EnvironmentResponse**](EnvironmentResponse.md) | Info of Environments linked with Entity | [optional] [default to null]
 **GitDetails** | [***EntityGitDetails**](EntityGitDetails.md) |  | [optional] [default to null]
-**Color** | **string** | Yaml of the Entity | [optional] [default to null]
+*Yaml** | **string** | Yaml of the Entity | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
