@@ -40,6 +40,6 @@ data "harness_platform_environment" "example" {
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) The type of environment.
-- `yaml` (String) Input Set YAML
+- `yaml` (String) Environment YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 

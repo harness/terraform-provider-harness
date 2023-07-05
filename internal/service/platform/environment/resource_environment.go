@@ -42,6 +42,7 @@ func ResourceEnvironment() *schema.Resource {
 				Description: "Environment YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of environments",
@@ -141,7 +142,5 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("type", env.Type_.String())
-	if d.Get("yaml").(string) != "" {
-		d.Set("yaml", env.Yaml)
-	}
+	d.Set("yaml", env.Yaml)
 }
