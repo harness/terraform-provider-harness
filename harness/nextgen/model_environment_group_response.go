@@ -33,5 +33,7 @@ type EnvironmentGroupResponse struct {
 	EnvIdentifiers []string `json:"envIdentifiers,omitempty"`
 	// Info of Environments linked with Entity
 	EnvResponse []EnvironmentResponse `json:"envResponse,omitempty"`
-	GitDetails *EntityGitDetails `json:"gitDetails,omitempty"`
+	GitDetails  *EntityGitDetails     `json:"gitDetails,omitempty"`
+	// Yaml of the Entity
+	Yaml string `json:"yaml,omitempty"`
 }
