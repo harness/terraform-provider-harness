@@ -1,6 +1,6 @@
 
-<a name="0.3.34"></a>
-## 0.3.34 (2023-06-29)
+<a name="0.3.35"></a>
+## 0.3.35 (2023-07-06)
 
 ### Added
 
@@ -24,8 +24,14 @@
 
 * IAM role changes in contract
 
+### Model
+
+* Model changes for Load balancer
+
 ### Release
 
+* Release version 0.3.34 06-30-2023
+* Release v0.3.34
 * Release version 0.3.33 06-29-2023
 * Release v0.3.33
 * Release version 0.3.32 06-23-2023
@@ -75,16 +81,34 @@
 * Release version 0.3.12 12-27-2022
 * Release v0.3.12
 * Release version 0.3.11 12-21-2022
+* Release v0.3.11
+* Release version 0.3.10 12-21-2022
+* Release v0.3.10
+
+### Remove
+
+* remove unused field
 
 ### Update
 
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
 * Update service now models to include new changes
+* Update jenkins auth serializer
+* Update jenkins auth serializer
+* Update jenkin authentication serializer
 
 ### Update
 
 * update contract
+
+### Updating
+
+* Updating the model used for rule creation
+
+### Upsate
+
+* Upsate user group
 
 ### Reverts
 
@@ -92,6 +116,10 @@
 
 ### Pull Requests
 
+* Merge pull request [#355](https://github.com/harness/harness-go-sdk/issues/355) from harness/cds-69600
+* Merge pull request [#350](https://github.com/harness/harness-go-sdk/issues/350) from harness/CCM-12840
+* Merge pull request [#349](https://github.com/harness/harness-go-sdk/issues/349) from harness/CCM-12839
+* Merge pull request [#353](https://github.com/harness/harness-go-sdk/issues/353) from harness/CDS-56689-remove-unused-field
 * Merge pull request [#348](https://github.com/harness/harness-go-sdk/issues/348) from harness/cds-72877
 * Merge pull request [#347](https://github.com/harness/harness-go-sdk/issues/347) from harness/CDS-56689-rancher-connector
 * Merge pull request [#345](https://github.com/harness/harness-go-sdk/issues/345) from harness/CDS-57089
@@ -119,4 +147,7 @@
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
 * Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
 * Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
+* Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
+* Merge pull request [#262](https://github.com/harness/harness-go-sdk/issues/262) from harness/SPG-1287-3
+* Merge pull request [#174](https://github.com/harness/harness-go-sdk/issues/174) from jennynilsen/fix-awscloudprovider-json-tag
 
