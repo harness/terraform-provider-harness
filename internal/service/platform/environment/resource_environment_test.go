@@ -35,7 +35,7 @@ func TestAccResourceEnvironment(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceEnvironmentWithUpdatedYaml(id, updatedName),
+				Config: testAccResourceEnvironment(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
@@ -84,10 +84,11 @@ func TestAccResourceEnvironment_withYaml(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -150,10 +151,11 @@ func TestAccResourceEnvironment_withYamlAccountLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.AccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -188,10 +190,11 @@ func TestAccResourceEnvironment_withYamlOrgLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})

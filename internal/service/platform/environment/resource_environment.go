@@ -143,5 +143,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
 	d.Set("type", env.Type_.String())
-	d.Set("yaml", env.Yaml)
+	if d.Get("yaml").(string) != "" {
+		d.Set("yaml", env.Yaml)
+	}
 }
