@@ -42,7 +42,6 @@ func ResourceEnvironment() *schema.Resource {
 				Description: "Environment YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed:    true,
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of environments",

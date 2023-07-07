@@ -44,10 +44,11 @@ func TestAccResourceEnvironment(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -603,42 +604,5 @@ func testAccResourceEnvironment(id string, name string) string {
 			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
   	}
-`, id, name)
-}
-
-func testAccResourceEnvironmentWithUpdatedYaml(id string, name string) string {
-	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			color = "#472848"
-		}
-
-		resource "harness_platform_environment" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
-			tags = ["foo:bar", "baz"]
-			type = "PreProduction"
-yaml = <<-EOT
-environment:
-  identifier: "%[1]s"
-  orgIdentifier: ${harness_platform_project.test.org_id}
-  projectIdentifier: ${harness_platform_project.test.id}
-  name: "%[2]s"
-  type: PreProduction
-identifier: "%[1]s"
-tags:
-  foo: bar
-  baz: ""
-EOT
-}
 `, id, name)
 }
