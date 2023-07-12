@@ -16,6 +16,7 @@ var InfrastructureTypes = struct {
 	CUSTOM_DEPLOYMENT     InfrastructureType
 	TAS                   InfrastructureType
 	KUBERNETES_RANCHER    InfrastructureType
+	AWS_SAM               InfrastructureType
 }{
 	KUBERNETES_DIRECT:     "KubernetesDirect",
 	KUBERNETES_GCP:        "KubernetesGcp",
@@ -30,6 +31,7 @@ var InfrastructureTypes = struct {
 	CUSTOM_DEPLOYMENT:     "CustomDeployment",
 	TAS:                   "TAS",
 	KUBERNETES_RANCHER:    "KubernetesRancher",
+	AWS_SAM:               "AWS_SAM",
 }
 
 var InfrastructureTypeValues = []string{
@@ -46,6 +48,7 @@ var InfrastructureTypeValues = []string{
 	InfrastructureTypes.CUSTOM_DEPLOYMENT.String(),
 	InfrastructureTypes.TAS.String(),
 	InfrastructureTypes.KUBERNETES_RANCHER.String(),
+	InfrastructureTypes.AWS_SAM.String(),
 }
 
 func (e InfrastructureType) String() string {
