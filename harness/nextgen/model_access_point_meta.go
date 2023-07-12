@@ -29,5 +29,5 @@ type AccessPointMeta struct {
 	ApiKey           string              `json:"api-key,omitempty"`
 	AllocateStaticIp bool                `json:"allocate_static_ip,omitempty"`
 	Keypair          string              `json:"keypair,omitempty"`
-	Certificates     *CertificatesData   `json:"certificates,omitempty"`
+	Certificates     []CertificatesData  `json:"certificates,omitempty"`
 }
