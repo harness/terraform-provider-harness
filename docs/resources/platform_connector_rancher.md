@@ -20,10 +20,9 @@ resource "harness_platform_connector_kubernetes" "bearer_token" {
   tags        = ["foo:bar"]
 
   delegate_selectors = ["harness-delegate"]
-
+  rancher_url        = "https://rancher.cluster.example"
   bearer_token {
-    rancher_url  = "https://rancher.cluster.example"
-    password_ref = "account.test_rancher_bearer_token"
+    bearer_token_ref = "account.test_rancher_bearer_token"
   }
 }
 ```
@@ -35,10 +34,11 @@ resource "harness_platform_connector_kubernetes" "bearer_token" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
+- `rancher_url` (String) The URL of the Rancher cluster.
 
 ### Optional
 
-- `bearer_token` (Block List, Max: 1) URL and bearer token for the rancher cluster. (see [below for nested schema](#nestedblock--bearer_token))
+- `bearer_token` (Block List, Max: 1) Bearer token information for the rancher cluster. (see [below for nested schema](#nestedblock--bearer_token))
 - `delegate_selectors` (Set of String) Selectors to use for the delegate.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
@@ -54,8 +54,7 @@ resource "harness_platform_connector_kubernetes" "bearer_token" {
 
 Required:
 
-- `password_ref` (String) Reference to the secret containing the bearer token for the rancher cluster. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `rancher_url` (String) The URL of the Rancher cluster.
+- `bearer_token_ref` (String) Reference to the secret containing the bearer token for the rancher cluster. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 
