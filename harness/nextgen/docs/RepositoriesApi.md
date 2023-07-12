@@ -1,21 +1,104 @@
-# {{classname}}
+# nextgen{{classname}}
 
-All URIs are relative to *https://app.harness.io/gateway*
+All URIs are relative to */*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentRepositoryServiceCreateRepository**](RepositoriesApi.md#AgentRepositoryServiceCreateRepository) | **Post** /gitops/api/v1/agents/{agentIdentifier}/repositories | CreateRepository creates a new repository configuration
-[**AgentRepositoryServiceDeleteRepository**](RepositoriesApi.md#AgentRepositoryServiceDeleteRepository) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier} | DeleteRepository deletes a repository from the configuration
-[**AgentRepositoryServiceGet**](RepositoriesApi.md#AgentRepositoryServiceGet) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier} | Get returns a repository or its credentials
-[**AgentRepositoryServiceGetAppDetails**](RepositoriesApi.md#AgentRepositoryServiceGetAppDetails) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/appdetails | GetAppDetails returns application details by given path
-[**AgentRepositoryServiceGetHelmCharts**](RepositoriesApi.md#AgentRepositoryServiceGetHelmCharts) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/helmcharts | GetHelmCharts returns list of helm charts in the specified repository
-[**AgentRepositoryServiceListApps**](RepositoriesApi.md#AgentRepositoryServiceListApps) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/apps | ListApps returns list of apps in the repo
-[**AgentRepositoryServiceListRefs**](RepositoriesApi.md#AgentRepositoryServiceListRefs) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier}/refs | Returns a list of refs (e.g. branches and tags) in the repo
-[**AgentRepositoryServiceListRepositories**](RepositoriesApi.md#AgentRepositoryServiceListRepositories) | **Get** /gitops/api/v1/agents/{agentIdentifier}/repositories | ListRepositories gets a list of all configured repositories
-[**AgentRepositoryServiceUpdateRepository**](RepositoriesApi.md#AgentRepositoryServiceUpdateRepository) | **Put** /gitops/api/v1/agents/{agentIdentifier}/repositories/{identifier} | UpdateRepository updates a repository configuration
-[**AgentRepositoryServiceValidateAccess**](RepositoriesApi.md#AgentRepositoryServiceValidateAccess) | **Post** /gitops/api/v1/agents/{agentIdentifier}/repositories/validate | ValidateAccess gets connection state for a repository
-[**RepositoryServiceExists**](RepositoriesApi.md#RepositoryServiceExists) | **Get** /gitops/api/v1/repositories/exists | Checks whether a repository with the given name exists
-[**RepositoryServiceListRepositories**](RepositoriesApi.md#RepositoryServiceListRepositories) | **Post** /gitops/api/v1/repositories | List returns list of Repositories
+[**AgentRepositoryServiceCheckExternalSecretsOperator**](RepositoriesApi.md#AgentRepositoryServiceCheckExternalSecretsOperator) | **Get** /api/v1/agents/{agentIdentifier}/repositories/eso/check | Checks whether External Secrets Operator is installed
+[**AgentRepositoryServiceCheckOCIRepoType**](RepositoriesApi.md#AgentRepositoryServiceCheckOCIRepoType) | **Post** /api/v1/agents/{agentIdentifier}/repositories/oci/type | Returns the Repository type of OCI repo
+[**AgentRepositoryServiceCreateRepository**](RepositoriesApi.md#AgentRepositoryServiceCreateRepository) | **Post** /api/v1/agents/{agentIdentifier}/repositories | CreateRepository creates a new repository configuration
+[**AgentRepositoryServiceDeleteRepository**](RepositoriesApi.md#AgentRepositoryServiceDeleteRepository) | **Delete** /api/v1/agents/{agentIdentifier}/repositories/{identifier} | DeleteRepository deletes a repository from the configuration
+[**AgentRepositoryServiceGet**](RepositoriesApi.md#AgentRepositoryServiceGet) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier} | Get returns a repository or its credentials
+[**AgentRepositoryServiceGetAppDetails**](RepositoriesApi.md#AgentRepositoryServiceGetAppDetails) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/appdetails | GetAppDetails returns application details by given path
+[**AgentRepositoryServiceGetESOGenerartorTmpl**](RepositoriesApi.md#AgentRepositoryServiceGetESOGenerartorTmpl) | **Get** /api/v1/agents/{agentIdentifier}/repositories/eso/tmpl | Returns fields to configure for a specific ESO token generator.
+[**AgentRepositoryServiceGetHelmCharts**](RepositoriesApi.md#AgentRepositoryServiceGetHelmCharts) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/helmcharts | GetHelmCharts returns list of helm charts in the specified repository
+[**AgentRepositoryServiceListApps**](RepositoriesApi.md#AgentRepositoryServiceListApps) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/apps | ListApps returns list of apps in the repo
+[**AgentRepositoryServiceListESOGenerators**](RepositoriesApi.md#AgentRepositoryServiceListESOGenerators) | **Get** /api/v1/agents/{agentIdentifier}/repositories/eso/generators | Returns a list of ESO generators installed in agent namespace.
+[**AgentRepositoryServiceListRefs**](RepositoriesApi.md#AgentRepositoryServiceListRefs) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/refs | Returns a list of refs (e.g. branches and tags) in the repo
+[**AgentRepositoryServiceListRepositories**](RepositoriesApi.md#AgentRepositoryServiceListRepositories) | **Get** /api/v1/agents/{agentIdentifier}/repositories | ListRepositories gets a list of all configured repositories
+[**AgentRepositoryServiceUpdateRepository**](RepositoriesApi.md#AgentRepositoryServiceUpdateRepository) | **Put** /api/v1/agents/{agentIdentifier}/repositories/{identifier} | UpdateRepository updates a repository configuration
+[**AgentRepositoryServiceValidateAccess**](RepositoriesApi.md#AgentRepositoryServiceValidateAccess) | **Post** /api/v1/agents/{agentIdentifier}/repositories/validate | ValidateAccess gets connection state for a repository
+[**RepositoryServiceExists**](RepositoriesApi.md#RepositoryServiceExists) | **Get** /api/v1/repositories/exists | Checks whether a repository with the given name exists
+[**RepositoryServiceListRepositories**](RepositoriesApi.md#RepositoryServiceListRepositories) | **Post** /api/v1/repositories | List returns list of Repositories
+[**RepositoryServiceListRepositoriesByRepositoryCredentialTemplate**](RepositoriesApi.md#RepositoryServiceListRepositoriesByRepositoryCredentialTemplate) | **Get** /api/v1/repositories | List returns list of Repositories by repository credential template
+
+# **AgentRepositoryServiceCheckExternalSecretsOperator**
+> RepositoriesCheckEsoResponse AgentRepositoryServiceCheckExternalSecretsOperator(ctx, agentIdentifier, optional)
+Checks whether External Secrets Operator is installed
+
+Checks whether External Secrets Operator is installed or not
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **agentIdentifier** | **string**| Agent identifier for entity. | 
+ **optional** | ***RepositoriesApiAgentRepositoryServiceCheckExternalSecretsOperatorOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoriesApiAgentRepositoryServiceCheckExternalSecretsOperatorOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+
+### Return type
+
+[**RepositoriesCheckEsoResponse**](repositoriesCheckESOResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **AgentRepositoryServiceCheckOCIRepoType**
+> V1OciRepoTypeResponse AgentRepositoryServiceCheckOCIRepoType(ctx, body, agentIdentifier, optional)
+Returns the Repository type of OCI repo
+
+Returns the Repository type of OCI repo
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **body** | [**V1OciRepoType**](V1OciRepoType.md)|  | 
+  **agentIdentifier** | **string**| Agent identifier for entity. | 
+ **optional** | ***RepositoriesApiAgentRepositoryServiceCheckOCIRepoTypeOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoriesApiAgentRepositoryServiceCheckOCIRepoTypeOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **accountIdentifier** | **optional.**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
+
+### Return type
+
+[**V1OciRepoTypeResponse**](v1OCIRepoTypeResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceCreateRepository**
 > Servicev1Repository AgentRepositoryServiceCreateRepository(ctx, body, agentIdentifier, optional)
@@ -50,7 +133,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -93,7 +176,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -103,7 +186,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceGet**
-> Servicev1Repository AgentRepositoryServiceGet(ctx, agentIdentifier, identifier, accountIdentifier, optional)
+> Servicev1Repository AgentRepositoryServiceGet(ctx, agentIdentifier, identifier, optional)
 Get returns a repository or its credentials
 
 Get returns a repository or its credentials.
@@ -115,7 +198,6 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **identifier** | **string**|  | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceGetOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -124,7 +206,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **queryRepo** | **optional.String**| Repo URL for query. | 
@@ -137,7 +219,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -147,7 +229,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceGetAppDetails**
-> RepositoriesRepoAppDetailsResponse AgentRepositoryServiceGetAppDetails(ctx, agentIdentifier, identifier, accountIdentifier, optional)
+> RepositoriesRepoAppDetailsResponse AgentRepositoryServiceGetAppDetails(ctx, agentIdentifier, identifier, optional)
 GetAppDetails returns application details by given path
 
 GetAppDetails returns application details by given path.
@@ -159,7 +241,6 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **identifier** | **string**|  | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceGetAppDetailsOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -168,7 +249,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **querySourceRepoURL** | **optional.String**| RepoURL is the URL to the repository (Git or Helm) that contains the application manifests. | 
@@ -201,7 +282,48 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **AgentRepositoryServiceGetESOGenerartorTmpl**
+> RepositoriesEsoGeneratorResponse AgentRepositoryServiceGetESOGenerartorTmpl(ctx, agentIdentifier, optional)
+Returns fields to configure for a specific ESO token generator.
+
+Returns fields to configure for a specific ESO token generator.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **agentIdentifier** | **string**| Agent identifier for entity. | 
+ **optional** | ***RepositoriesApiAgentRepositoryServiceGetESOGenerartorTmplOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoriesApiAgentRepositoryServiceGetESOGenerartorTmplOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **esoGeneratorType** | **optional.String**|  | [default to UNSET]
+ **esoGeneratorName** | **optional.String**|  | 
+ **esoGeneratorUrl** | **optional.String**|  | 
+
+### Return type
+
+[**RepositoriesEsoGeneratorResponse**](repositoriesESOGeneratorResponse.md)
+
+### Authorization
+
+No authorization required
 
 ### HTTP request headers
 
@@ -211,7 +333,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceGetHelmCharts**
-> RepositoriesHelmChartsResponse AgentRepositoryServiceGetHelmCharts(ctx, agentIdentifier, identifier, accountIdentifier, optional)
+> RepositoriesHelmChartsResponse AgentRepositoryServiceGetHelmCharts(ctx, agentIdentifier, identifier, optional)
 GetHelmCharts returns list of helm charts in the specified repository
 
 GetHelmCharts returns list of helm charts in the specified repository.
@@ -223,7 +345,6 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **identifier** | **string**|  | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceGetHelmChartsOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -232,7 +353,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **queryRepo** | **optional.String**| Repo URL for query. | 
@@ -245,7 +366,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -255,7 +376,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceListApps**
-> RepositoriesRepoAppsResponse AgentRepositoryServiceListApps(ctx, agentIdentifier, identifier, accountIdentifier, optional)
+> RepositoriesRepoAppsResponse AgentRepositoryServiceListApps(ctx, agentIdentifier, identifier, optional)
 ListApps returns list of apps in the repo
 
 ListApps returns list of apps in the repo.
@@ -267,7 +388,6 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **identifier** | **string**|  | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceListAppsOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -276,7 +396,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **queryRepo** | **optional.String**|  | 
@@ -290,7 +410,48 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **AgentRepositoryServiceListESOGenerators**
+> RepositoriesEsoGeneratorResponse AgentRepositoryServiceListESOGenerators(ctx, agentIdentifier, optional)
+Returns a list of ESO generators installed in agent namespace.
+
+Returns a list of ESO generators installed in agent namespace.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **agentIdentifier** | **string**| Agent identifier for entity. | 
+ **optional** | ***RepositoriesApiAgentRepositoryServiceListESOGeneratorsOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoriesApiAgentRepositoryServiceListESOGeneratorsOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **esoGeneratorType** | **optional.String**|  | [default to UNSET]
+ **esoGeneratorName** | **optional.String**|  | 
+ **esoGeneratorUrl** | **optional.String**|  | 
+
+### Return type
+
+[**RepositoriesEsoGeneratorResponse**](repositoriesESOGeneratorResponse.md)
+
+### Authorization
+
+No authorization required
 
 ### HTTP request headers
 
@@ -300,7 +461,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceListRefs**
-> RepositoriesRefs AgentRepositoryServiceListRefs(ctx, agentIdentifier, identifier, accountIdentifier, optional)
+> RepositoriesRefs AgentRepositoryServiceListRefs(ctx, agentIdentifier, identifier, optional)
 Returns a list of refs (e.g. branches and tags) in the repo
 
 Returns a list of refs (e.g. branches and tags) in the repo.
@@ -312,7 +473,6 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **identifier** | **string**|  | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceListRefsOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -321,7 +481,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **queryRepo** | **optional.String**| Repo URL for query. | 
@@ -334,7 +494,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -344,7 +504,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceListRepositories**
-> RepositoriesRepositoryList AgentRepositoryServiceListRepositories(ctx, agentIdentifier, accountIdentifier, optional)
+> RepositoriesRepositoryList AgentRepositoryServiceListRepositories(ctx, agentIdentifier, optional)
 ListRepositories gets a list of all configured repositories
 
 ListRepositories gets a list of all configured repositories.
@@ -355,7 +515,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceListRepositoriesOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -363,7 +522,7 @@ Optional parameters are passed through a pointer to a RepositoriesApiAgentReposi
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **identifier** | **optional.String**|  | 
@@ -377,7 +536,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -419,7 +578,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -429,7 +588,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentRepositoryServiceValidateAccess**
-> CommonsConnectionState AgentRepositoryServiceValidateAccess(ctx, body, agentIdentifier, accountIdentifier, optional)
+> CommonsConnectionState AgentRepositoryServiceValidateAccess(ctx, body, agentIdentifier, optional)
 ValidateAccess gets connection state for a repository
 
 ValidateAccess gets connection state for a repository.
@@ -441,7 +600,6 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **body** | [**RepositoriesRepoAccessQuery**](RepositoriesRepoAccessQuery.md)|  | 
   **agentIdentifier** | **string**| Agent identifier for entity. | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiAgentRepositoryServiceValidateAccessOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -450,7 +608,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
-
+ **accountIdentifier** | **optional.**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
  **identifier** | **optional.**|  | 
@@ -461,7 +619,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -471,7 +629,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **RepositoryServiceExists**
-> bool RepositoryServiceExists(ctx, accountIdentifier, optional)
+> bool RepositoryServiceExists(ctx, optional)
 Checks whether a repository with the given name exists
 
 Checks whether a repository with the given name exists.
@@ -481,14 +639,13 @@ Checks whether a repository with the given name exists.
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***RepositoriesApiRepositoryServiceExistsOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
 Optional parameters are passed through a pointer to a RepositoriesApiRepositoryServiceExistsOpts struct
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **agentIdentifier** | **optional.String**| Agent identifier for entity. | 
@@ -500,7 +657,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
@@ -520,7 +677,7 @@ List returns list of Repositories
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **body** | [**V1RepositoryQuery**](V1RepositoryQuery.md)|  | 
+  **body** | [**V1RepoListReq**](V1RepoListReq.md)|  | 
 
 ### Return type
 
@@ -528,11 +685,51 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[ApiKey](../README.md#ApiKey)
+No authorization required
 
 ### HTTP request headers
 
  - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **RepositoryServiceListRepositoriesByRepositoryCredentialTemplate**
+> V1Repositorylist RepositoryServiceListRepositoriesByRepositoryCredentialTemplate(ctx, optional)
+List returns list of Repositories by repository credential template
+
+List returns list of Repositories by repositories credential template
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+ **optional** | ***RepositoriesApiRepositoryServiceListRepositoriesByRepositoryCredentialTemplateOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoriesApiRepositoryServiceListRepositoriesByRepositoryCredentialTemplateOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **repositoryCredentialURL** | **optional.String**|  | 
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **agentIdentifier** | **optional.String**| Agent identifier for entity. | 
+ **pageSize** | **optional.Int32**|  | 
+ **pageIndex** | **optional.Int32**|  | 
+
+### Return type
+
+[**V1Repositorylist**](v1Repositorylist.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
