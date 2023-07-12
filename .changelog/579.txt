@@ -1,3 +1,0 @@
-```release-note:enhancement
-resource/harness_platform_service_overrides_v2: Added Support For Service Overrides V2
-```
