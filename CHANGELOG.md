@@ -1,6 +1,6 @@
 
-<a name="0.3.36"></a>
-## 0.3.36 (2023-07-12)
+<a name="0.3.37"></a>
+## 0.3.37 (2023-07-13)
 
 ### Added
 
@@ -30,6 +30,8 @@
 
 ### Release
 
+* Release version 0.3.36 07-12-2023
+* Release v0.3.36
 * Release version 0.3.35 07-06-2023
 * Release v0.3.35
 * Release version 0.3.34 06-30-2023
@@ -84,7 +86,6 @@
 * Release v0.3.12
 * Release version 0.3.11 12-21-2022
 * Release v0.3.11
-* Release version 0.3.10 12-21-2022
 
 ### Remove
 
@@ -100,7 +101,6 @@
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
 * Update service now models to include new changes
-* Update jenkins auth serializer
 
 ### Updating
 
@@ -116,6 +116,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#360](https://github.com/harness/harness-go-sdk/issues/360) from harness/CDS-69871
 * Merge pull request [#363](https://github.com/harness/harness-go-sdk/issues/363) from harness/CDS-57635
 * Merge pull request [#362](https://github.com/harness/harness-go-sdk/issues/362) from harness/CCM-12839
 * Merge pull request [#355](https://github.com/harness/harness-go-sdk/issues/355) from harness/cds-69600
