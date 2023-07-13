@@ -94,10 +94,10 @@ func dataSourceApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
-		apiKey = resp.Data.ApiKey
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
+		apiKey := resp.Data.ApiKey
 
 		if apiKey == nil {
 			d.SetId("")
