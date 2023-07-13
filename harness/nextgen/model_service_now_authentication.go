@@ -16,5 +16,6 @@ type ServiceNowAuthentication struct {
 	Type_                      ServiceNowAuthType          `json:"type"`
 	ServiceNowUserNamePassword *ServiceNowUserNamePassword `json:"-"`
 	ServiceNowAdfs             *ServiceNowAdfs             `json:"-"`
+	ServiceNowRefreshToken     *ServiceNowRefreshToken     `json:"-"`
 	Spec                       json.RawMessage             `json:"spec"`
 }

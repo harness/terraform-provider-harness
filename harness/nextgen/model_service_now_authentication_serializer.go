@@ -25,6 +25,8 @@ func (a *ServiceNowAuthentication) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.ServiceNowUserNamePassword)
 	case ServiceNowAuthTypes.ServiceNowAdfs:
 		err = json.Unmarshal(aux.Spec, &a.ServiceNowAdfs)
+	case ServiceNowAuthTypes.ServiceNowRefreshToken:
+		err = json.Unmarshal(aux.Spec, &a.ServiceNowRefreshToken)		
 	default:
 		panic(fmt.Sprintf("unknown service now auth method type %s", a.Type_))
 	}
@@ -43,6 +45,8 @@ func (a *ServiceNowAuthentication) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.ServiceNowUserNamePassword)
 	case ServiceNowAuthTypes.ServiceNowAdfs:
 		spec, err = json.Marshal(a.ServiceNowAdfs)
+	case ServiceNowAuthTypes.ServiceNowRefreshToken:
+		spec, err = json.Marshal(a.ServiceNowRefreshToken)		
 	default:
 		panic(fmt.Sprintf("unknown service now auth method type %s", a.Type_))
 	}
