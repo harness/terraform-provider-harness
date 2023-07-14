@@ -6,7 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CreateServiceOverrideV2**](ServiceOverridesApi.md#CreateServiceOverrideV2) | **Post** /serviceOverrides | Create an ServiceOverride Entity
 [**DeleteServiceOverrideV2**](ServiceOverridesApi.md#DeleteServiceOverrideV2) | **Delete** /serviceOverrides/{identifier} | Delete a Service Override entity
-[**GetServiceOverridesV2**](ServiceOverridesApi.md#GetServiceOverridesV2) | **Get** /serviceOverrides/{identifier} | Gets Service Overrides by Identifier
+[**GetServiceOverridesV2**](ServiceOverridesApi.md#GetServiceOverridesV2) | **Get** /serviceOverrides/tfProvider/{identifier} | Gets Service Overrides by Identifier
 [**UpdateServiceOverrideV2**](ServiceOverridesApi.md#UpdateServiceOverrideV2) | **Put** /serviceOverrides | Update an ServiceOverride Entity
 # **CreateServiceOverrideV2**
 > ResponseServiceOverridesResponseDtov2 CreateServiceOverrideV2(ctx, accountIdentifier, optional)
