@@ -164,4 +164,8 @@ func readEnvironmentGroup(d *schema.ResourceData, env *nextgen.EnvironmentGroupR
 	d.Set("project_id", env.ProjectIdentifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("color", env.Color)
+	yaml := env.Yaml
+	if yaml != "" {
+		d.Set("yaml", yaml)
+	}
 }
