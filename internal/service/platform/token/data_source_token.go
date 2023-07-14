@@ -21,16 +21,6 @@ func DataSourceToken() *schema.Resource {
 		ReadContext: dataSourceTokenRead,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Identifier of the Token",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"name": {
-				Description: "Name of the Token",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"apikey_id": {
 				Description: "Identifier of the API Key",
 				Type:        schema.TypeString,
@@ -52,16 +42,6 @@ func DataSourceToken() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_id": {
-				Description: "Organization Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description: "Project Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"valid_from": {
 				Description: "This is the time from which the Token is valid. The time is in milliseconds",
 				Type:        schema.TypeInt,
@@ -82,11 +62,6 @@ func DataSourceToken() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
-			"description": {
-				Description: "Description of the Token",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"email": {
 				Description: "Email Id of the user who created the Token",
 				Type:        schema.TypeString,
@@ -102,14 +77,9 @@ func DataSourceToken() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"tags": {
-				Description: "Tags for the Token",
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
 		},
 	}
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

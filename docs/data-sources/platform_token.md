@@ -31,19 +31,17 @@ data "harness_platform_token" "test" {
 - `account_id` (String) Account Identifier for the Entity
 - `apikey_id` (String) Identifier of the API Key
 - `apikey_type` (String) Type of the API Key
-- `identifier` (String) Identifier of the Token
-- `name` (String) Name of the Token
+- `identifier` (String) Unique identifier of the resource.
 - `parent_id` (String) Parent Entity Identifier of the API Key
 
 ### Optional
 
-- `description` (String) Description of the Token
 - `email` (String) Email Id of the user who created the Token
 - `encoded_password` (String) Encoded password of the Token
-- `org_id` (String) Organization Identifier for the Entity
-- `project_id` (String) Project Identifier for the Entity
+- `name` (String) Name of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `scheduled_expire_time` (Number) Scheduled expiry time in milliseconds
-- `tags` (Map of String) Tags for the Token
 - `username` (String) Name of the user who created the Token
 - `valid` (Boolean) Boolean value to indicate if Token is valid or not.
 - `valid_from` (Number) This is the time from which the Token is valid. The time is in milliseconds
@@ -51,6 +49,6 @@ data "harness_platform_token" "test" {
 
 ### Read-Only
 
+- `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-
-
+- `tags` (Set of String) Tags to associate with the resource.
