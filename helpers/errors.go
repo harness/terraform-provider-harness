@@ -18,6 +18,10 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 				"1) Please check if token has expired or is wrong.\n" +
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
+		if httpResp != nil && httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint: " +
+				"Please check if the token has required permission for this operation.\n")
+		}
 		return diag.Errorf(erro.Error())
 	}
 
@@ -29,6 +33,10 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
 
+		if httpResp != nil && httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint: " +
+				"Please check if the token has required permission for this operation.\n")
+		}
 		var jsonMap map[string]interface{}
 		err := json.Unmarshal(err_openapi_client.Body(), &jsonMap)
 		if err == nil {
@@ -48,6 +56,10 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 				"1) Please check if token has expired or is wrong.\n" +
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
+		if httpResp != nil && httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint: " +
+				"Please check if the token has required permission for this operation.\n")
+		}
 		if erro.Model() != nil {
 			if erro.Code() == nextgen.ErrorCodes.ResourceNotFound {
 				d.SetId("")
@@ -64,6 +76,10 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
 				"1) Please check if token has expired or is wrong.\n" +
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+		}
+		if httpResp != nil && httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint: " +
+				"Please check if the token has required permission for this operation.\n")
 		}
 
 		var jsonMap map[string]interface{}
