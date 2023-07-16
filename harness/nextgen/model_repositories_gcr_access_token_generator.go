@@ -10,7 +10,7 @@
 package nextgen
 
 type RepositoriesGcrAccessTokenGenerator struct {
-	ProjectID        string                           `json:"projectID,omitempty"`
-	AccessKey        *RepositoriesSecretKeySelector   `json:"accessKey,omitempty"`
+	ProjectID string `json:"projectID,omitempty"`
+	AccessKey string `json:"accessKey,omitempty"`
 	WorkloadIdentity *RepositoriesGcrWorkloadIdentity `json:"workloadIdentity,omitempty"`
 }

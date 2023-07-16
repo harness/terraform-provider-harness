@@ -10,8 +10,8 @@
 package nextgen
 
 type RepositoriesGcrWorkloadIdentity struct {
-	GCPServiceAccountRef *RepositoriesServiceAccountSelector `json:"GCPServiceAccountRef,omitempty"`
-	GCPClusterLocation   string                              `json:"GCPClusterLocation,omitempty"`
-	GCPClusterName       string                              `json:"GCPClusterName,omitempty"`
-	GCPClusterProjectID  string                              `json:"GCPClusterProjectID,omitempty"`
+	ServiceAccountRef *RepositoriesServiceAccountSelector `json:"serviceAccountRef,omitempty"`
+	ClusterLocation string `json:"clusterLocation,omitempty"`
+	ClusterName string `json:"clusterName,omitempty"`
+	ClusterProjectID string `json:"clusterProjectID,omitempty"`
 }

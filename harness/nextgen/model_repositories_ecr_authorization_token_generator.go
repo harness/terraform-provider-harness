@@ -11,8 +11,8 @@ package nextgen
 
 // ECRAuthorizationTokenSpec represents externalSecret for ECR External Secret Operator generator.
 type RepositoriesEcrAuthorizationTokenGenerator struct {
-	Region    string                              `json:"region,omitempty"`
-	SecretRef *RepositoriesAwsSecretRef           `json:"secretRef,omitempty"`
-	JwtAuth   *RepositoriesServiceAccountSelector `json:"jwtAuth,omitempty"`
-	Role      string                              `json:"role,omitempty"`
+	Region string `json:"region,omitempty"`
+	SecretRef *RepositoriesAwsSecretRef `json:"secretRef,omitempty"`
+	JwtAuth *RepositoriesServiceAccountSelector `json:"jwtAuth,omitempty"`
+	Role string `json:"role,omitempty"`
 }

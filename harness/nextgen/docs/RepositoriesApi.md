@@ -10,7 +10,6 @@ Method | HTTP request | Description
 [**AgentRepositoryServiceDeleteRepository**](RepositoriesApi.md#AgentRepositoryServiceDeleteRepository) | **Delete** /api/v1/agents/{agentIdentifier}/repositories/{identifier} | DeleteRepository deletes a repository from the configuration
 [**AgentRepositoryServiceGet**](RepositoriesApi.md#AgentRepositoryServiceGet) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier} | Get returns a repository or its credentials
 [**AgentRepositoryServiceGetAppDetails**](RepositoriesApi.md#AgentRepositoryServiceGetAppDetails) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/appdetails | GetAppDetails returns application details by given path
-[**AgentRepositoryServiceGetESOGenerartorTmpl**](RepositoriesApi.md#AgentRepositoryServiceGetESOGenerartorTmpl) | **Get** /api/v1/agents/{agentIdentifier}/repositories/eso/tmpl | Returns fields to configure for a specific ESO token generator.
 [**AgentRepositoryServiceGetHelmCharts**](RepositoriesApi.md#AgentRepositoryServiceGetHelmCharts) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/helmcharts | GetHelmCharts returns list of helm charts in the specified repository
 [**AgentRepositoryServiceListApps**](RepositoriesApi.md#AgentRepositoryServiceListApps) | **Get** /api/v1/agents/{agentIdentifier}/repositories/{identifier}/apps | ListApps returns list of apps in the repo
 [**AgentRepositoryServiceListESOGenerators**](RepositoriesApi.md#AgentRepositoryServiceListESOGenerators) | **Get** /api/v1/agents/{agentIdentifier}/repositories/eso/generators | Returns a list of ESO generators installed in agent namespace.
@@ -291,47 +290,6 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **AgentRepositoryServiceGetESOGenerartorTmpl**
-> RepositoriesEsoGeneratorResponse AgentRepositoryServiceGetESOGenerartorTmpl(ctx, agentIdentifier, optional)
-Returns fields to configure for a specific ESO token generator.
-
-Returns fields to configure for a specific ESO token generator.
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **agentIdentifier** | **string**| Agent identifier for entity. | 
- **optional** | ***RepositoriesApiAgentRepositoryServiceGetESOGenerartorTmplOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-Optional parameters are passed through a pointer to a RepositoriesApiAgentRepositoryServiceGetESOGenerartorTmplOpts struct
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
- **esoGeneratorType** | **optional.String**|  | [default to UNSET]
- **esoGeneratorName** | **optional.String**|  | 
- **esoGeneratorUrl** | **optional.String**|  | 
-
-### Return type
-
-[**RepositoriesEsoGeneratorResponse**](repositoriesESOGeneratorResponse.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
 # **AgentRepositoryServiceGetHelmCharts**
 > RepositoriesHelmChartsResponse AgentRepositoryServiceGetHelmCharts(ctx, agentIdentifier, identifier, optional)
 GetHelmCharts returns list of helm charts in the specified repository
@@ -441,9 +399,9 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
- **esoGeneratorType** | **optional.String**|  | [default to UNSET]
- **esoGeneratorName** | **optional.String**|  | 
- **esoGeneratorUrl** | **optional.String**|  | 
+ **type_** | **optional.String**|  | [default to UNSET]
+ **name** | **optional.String**|  | 
+ **url** | **optional.String**|  | 
 
 ### Return type
 
