@@ -102,10 +102,10 @@ func dataSourceTokenRead(ctx context.Context, d *schema.ResourceData, meta inter
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 			Identifiers:       optional.NewInterface(id),
 		})
-		tokenList := resp.Data.Content
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
+		tokenList := resp.Data.Content
 
 		if tokenList == nil || len(tokenList) == 0 {
 			d.SetId("")

@@ -20,27 +20,6 @@ func DataSourceApiKey() *schema.Resource {
 		ReadContext: dataSourceApiKeyRead,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Unique identifier of the resource",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"name": {
-				Description: "Name of the ApiKey",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"description": {
-				Description: "Description of the entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"tags": {
-				Description: "Tags for the API Key",
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
 			"apikey_type": {
 				Description:  "Type of the API Key",
 				Type:         schema.TypeString,
@@ -62,18 +41,9 @@ func DataSourceApiKey() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_id": {
-				Description: "Organization Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description: "Project Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 		},
 	}
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }
@@ -94,10 +64,10 @@ func dataSourceApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
-		apiKey = resp.Data.ApiKey
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
+		apiKey = resp.Data.ApiKey
 
 		if apiKey == nil {
 			d.SetId("")

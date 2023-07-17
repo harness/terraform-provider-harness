@@ -106,6 +106,40 @@ func DataSourceConnectorSerivceNow() *schema.Resource {
 								},
 							},
 						},
+						"refresh_token": {
+							Description: "Authenticate using refresh token grant type. Currently, this feature is behind the feature flag CDS_SERVICENOW_REFRESH_TOKEN_AUTH. Contact Harness Support to enable the feature.",
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"token_url": {
+										Description: "Token url to use for authentication.",
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"refresh_token_ref": {
+										Description: "Reference to a secret containing the refresh token to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"client_id_ref": {
+										Description: "Reference to a secret containing the client id to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"client_secret_ref": {
+										Description: "Reference to a secret containing the client secret to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+									"scope": {
+										Description: "Scope string to use for authentication." + secret_ref_text,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+								},
+							},
+						},						
 					},
 				},
 			},
