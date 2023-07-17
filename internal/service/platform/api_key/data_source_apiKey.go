@@ -67,7 +67,7 @@ func dataSourceApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
-		apiKey := resp.Data.ApiKey
+		apiKey = resp.Data.ApiKey
 
 		if apiKey == nil {
 			d.SetId("")
