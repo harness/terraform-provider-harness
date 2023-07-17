@@ -10,6 +10,10 @@ description: |-
 
 Data source for retrieving a Harness User Group.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand more about User Group, please see [Documentation](https://developer.harness.io/docs/platform/User-Management/add-user-groups)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/User-Group)
 ## Example Usage
 
 ```terraform
