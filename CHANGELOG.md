@@ -1,6 +1,6 @@
 
-<a name="0.3.37"></a>
-## 0.3.37 (2023-07-13)
+<a name="0.3.38"></a>
+## 0.3.38 (2023-07-17)
 
 ### Added
 
@@ -30,6 +30,8 @@
 
 ### Release
 
+* Release version 0.3.37 07-13-2023
+* Release v0.3.37
 * Release version 0.3.36 07-12-2023
 * Release v0.3.36
 * Release version 0.3.35 07-06-2023
@@ -84,8 +86,6 @@
 * Release v0.3.13
 * Release version 0.3.12 12-27-2022
 * Release v0.3.12
-* Release version 0.3.11 12-21-2022
-* Release v0.3.11
 
 ### Remove
 
@@ -106,16 +106,13 @@
 
 * Updating the model used for rule creation
 
-### Upsate
-
-* Upsate user group
-
 ### Reverts
 
 * fix:[PL-39286]: fixed URL Encoding for characters with space
 
 ### Pull Requests
 
+* Merge pull request [#367](https://github.com/harness/harness-go-sdk/issues/367) from harness/cds-72208
 * Merge pull request [#360](https://github.com/harness/harness-go-sdk/issues/360) from harness/CDS-69871
 * Merge pull request [#363](https://github.com/harness/harness-go-sdk/issues/363) from harness/CDS-57635
 * Merge pull request [#362](https://github.com/harness/harness-go-sdk/issues/362) from harness/CCM-12839
@@ -150,5 +147,4 @@
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
 * Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
 * Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
-* Merge pull request [#264](https://github.com/harness/harness-go-sdk/issues/264) from harness/SPG-1287-3
 
