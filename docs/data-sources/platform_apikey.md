@@ -31,17 +31,17 @@ data "harness_platform_apikey" "test" {
 
 - `account_id` (String) Account Identifier for the Entity
 - `apikey_type` (String) Type of the API Key
-- `identifier` (String) Identifier of the API Key
-- `name` (String) Name of the API Key
+- `identifier` (String) Unique identifier of the resource.
+- `name` (String) Name of the resource.
 - `parent_id` (String) Parent Entity Identifier of the API Key
 
 ### Optional
 
-- `description` (String) Description of the API Key
-- `tags` (String) Tags for the API Key
+- `description` (String) Description of the resource.
+- `tags` (Set of String) Tags to associate with the resource.
 - `default_time_to_expire_token` (Number) Default expiration time of the Token within API Key
-- `org_id` (String) Organization Identifier for the Entity
-- `project_id` (String) Project Identifier for the Entity
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
