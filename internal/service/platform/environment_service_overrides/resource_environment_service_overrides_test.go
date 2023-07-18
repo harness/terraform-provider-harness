@@ -34,7 +34,7 @@ func TestAccEnvServiceOverrides_ProjectScope(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OverridesV1ResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -61,7 +61,7 @@ func TestAccEnvServiceOverrides_OrgScope(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OverridesV1ResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -86,7 +86,7 @@ func TestAccEnvServiceOverrides_AccountScope(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.OverridesV1ResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
