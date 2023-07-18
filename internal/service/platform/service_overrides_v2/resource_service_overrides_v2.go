@@ -20,7 +20,7 @@ func ResourceServiceOverrides() *schema.Resource {
 		UpdateContext: resourceServiceOverridesV2CreateOrUpdate,
 		DeleteContext: resourceServiceOverridesV2Delete,
 		CreateContext: resourceServiceOverridesV2CreateOrUpdate,
-		Importer:      helpers.ServiceOverrideResourceImporter,
+		Importer:      helpers.ServiceOverrideV2ResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"service_id": {
@@ -71,7 +71,7 @@ func ResourceServiceOverrides() *schema.Resource {
 
 func resourceServiceOverridesV2Read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	identifier := d.State().ID
+	identifier := d.Id()
 
 	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId,
 		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
