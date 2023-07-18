@@ -67,7 +67,7 @@ func ResourcePolicy() *schema.Resource {
 			},
 			"git_import": {
 				Description: "A flag to determine if the api should try and import and existing policy from git.",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Required:    false,
 				Computed:    false,
 			},
@@ -79,7 +79,7 @@ func ResourcePolicy() *schema.Resource {
 			},
 			"git_is_new_branch": {
 				Description: "A flag to determine if the api should try and commit to a new branch.",
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Required:    false,
 				Computed:    false,
 			},
@@ -167,19 +167,19 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		}
 		//check for git details
 	    if d.Get("git_commit_msg").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_commit_msg")
+		    localVarOptionals.GitCommitMsg = helpers.BuildField(d, "git_commit_msg")
 	    }
-	    if d.Get("git_import").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_import")
+	    if d.Get("git_import").(bool) != "" {
+		    localVarOptionals.GitImport = helpers.BuildField(d, "git_import")
 	    }
 	    if d.Get("git_branch").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_branch")
+		    localVarOptionals.GitBranch = helpers.BuildField(d, "git_branch")
 	    }
-	    if d.Get("git_is_new_branch").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_is_new_branch")
+	    if d.Get("git_is_new_branch").(bool) != "" {
+		    localVarOptionals.GitIsNewBranch = helpers.BuildField(d, "git_is_new_branch")
 	    }
 	    if d.Get("git_base_branch").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_base_branch")
+		    localVarOptionals.GitBaseBranch = helpers.BuildField(d, "git_base_branch")
 	    }
 
 		responsePolicy, httpResp, err = c.PoliciesApi.PoliciesCreate(ctx, body, &localVarOptionals)
@@ -200,22 +200,22 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		}
 		//check for git details
 	    if d.Get("git_commit_msg").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_commit_msg")
+		    localVarOptionals.GitCommitMsg = helpers.BuildField(d, "git_commit_msg")
 	    }
 	    if d.Get("git_commit_sha").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_commit_sha")
+		    localVarOptionals.GitCommitSha = helpers.BuildField(d, "git_commit_sha")
 	    }
 	    if d.Get("git_branch").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_branch")
+		    localVarOptionals.GitBranch = helpers.BuildField(d, "git_branch")
 	    }
-	    if d.Get("git_is_new_branch").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_is_new_branch")
+	    if d.Get("git_is_new_branch").(bool) != "" {
+		    localVarOptionals.GitIsNewBranch = helpers.BuildField(d, "git_is_new_branch")
 	    }
 	    if d.Get("git_base_branch").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_base_branch")
+		    localVarOptionals.GitBaseBranch = helpers.BuildField(d, "git_base_branch")
 	    }
 		if d.Get("git_file_id").(string) != "" {
-		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_file_id")
+		    localVarOptionals.GitFileId = helpers.BuildField(d, "git_file_id")
 	    }
 
 		httpResp, err = c.PoliciesApi.PoliciesUpdate(ctx, body, id, &localVarOptionals)
