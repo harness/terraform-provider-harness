@@ -41,6 +41,66 @@ func ResourcePolicy() *schema.Resource {
 				Required:    true,
 				Computed:    false,
 			},
+			"git_connector_ref": {
+				Description: "The harness connector used for authenticating on the git provider.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_path": {
+				Description: "The path to the file in the git repo.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_repo": {
+				Description: "The git repo the policy resides in.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_commit_msg": {
+				Description: "The commit message used in git when creating the policy.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_import": {
+				Description: "A flag to determine if the api should try and import and existing policy from git.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_branch": {
+				Description: "The git branch the policy will be created in.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_is_new_branch": {
+				Description: "A flag to determine if the api should try and commit to a new branch.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_base_branch": {
+				Description: "If committing to a new branch, git_base_branch tells the api which branch to base the new branch from.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_commit_sha": {
+				Description: "The existing commit sha of the file being updated.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
+			"git_file_id": {
+				Description: "The existing file id of the file being updated, not required for bitbucket files.",
+				Type:        schema.TypeString,
+				Required:    false,
+				Computed:    false,
+			},
 		},
 	}
 
@@ -89,6 +149,9 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 			Name:       d.Get("name").(string),
 			Rego:       d.Get("rego").(string),
 			Identifier: d.Get("identifier").(string),
+			GitConnectorRef: d.Get("git_connector_ref").(string),
+			GitPath: d.Get("git_path").(string),
+			GitRepo: d.Get("git_repo").(string),
 		}
 		localVarOptionals := policymgmt.PoliciesApiPoliciesCreateOpts{
 			AccountIdentifier: optional.NewString(meta.(*internal.Session).AccountId),
@@ -102,6 +165,23 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
+		//check for git details
+	    if d.Get("git_commit_msg").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_commit_msg")
+	    }
+	    if d.Get("git_import").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_import")
+	    }
+	    if d.Get("git_branch").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_branch")
+	    }
+	    if d.Get("git_is_new_branch").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_is_new_branch")
+	    }
+	    if d.Get("git_base_branch").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_base_branch")
+	    }
+
 		responsePolicy, httpResp, err = c.PoliciesApi.PoliciesCreate(ctx, body, &localVarOptionals)
 	} else {
 		body := policymgmt.UpdateRequestBody{
@@ -118,6 +198,26 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		if d.Get("org_id").(string) != "" {
 			localVarOptionals.OrgIdentifier = helpers.BuildField(d, "org_id")
 		}
+		//check for git details
+	    if d.Get("git_commit_msg").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_commit_msg")
+	    }
+	    if d.Get("git_commit_sha").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_commit_sha")
+	    }
+	    if d.Get("git_branch").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_branch")
+	    }
+	    if d.Get("git_is_new_branch").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_is_new_branch")
+	    }
+	    if d.Get("git_base_branch").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_base_branch")
+	    }
+		if d.Get("git_file_id").(string) != "" {
+		    localVarOptionals.OrgIdentifier = helpers.BuildField(d, "git_file_id")
+	    }
+
 		httpResp, err = c.PoliciesApi.PoliciesUpdate(ctx, body, id, &localVarOptionals)
 		if err == nil && httpResp.StatusCode == http.StatusNoContent {
 			// if we get a 204, we need to get the policy again to get the updated values
