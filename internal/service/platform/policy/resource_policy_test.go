@@ -35,6 +35,9 @@ func TestAccResourcePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "rego", rego),
+					resource.TestCheckResourceAttr(resourceName, "git_connector_ref", "gitconnector"),
+					resource.TestCheckResourceAttr(resourceName, "git_path", "path"),
+					resource.TestCheckResourceAttr(resourceName, "git_repo", "harness-core"),
 				),
 			},
 			{
@@ -43,6 +46,9 @@ func TestAccResourcePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "rego", updatedRego),
+					resource.TestCheckResourceAttr(resourceName, "git_connector_ref", "gitconnector"),
+					resource.TestCheckResourceAttr(resourceName, "git_path", "path"),
+					resource.TestCheckResourceAttr(resourceName, "git_repo", "harness-core"),
 				),
 			},
 			{
