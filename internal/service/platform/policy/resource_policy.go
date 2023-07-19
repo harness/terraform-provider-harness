@@ -44,61 +44,61 @@ func ResourcePolicy() *schema.Resource {
 			"git_connector_ref": {
 				Description: "The harness connector used for authenticating on the git provider.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_path": {
 				Description: "The path to the file in the git repo.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_repo": {
 				Description: "The git repo the policy resides in.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_commit_msg": {
 				Description: "The commit message used in git when creating the policy.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_import": {
 				Description: "A flag to determine if the api should try and import and existing policy from git.",
 				Type:        schema.TypeBool,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_branch": {
 				Description: "The git branch the policy will be created in.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_is_new_branch": {
 				Description: "A flag to determine if the api should try and commit to a new branch.",
 				Type:        schema.TypeBool,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_base_branch": {
 				Description: "If committing to a new branch, git_base_branch tells the api which branch to base the new branch from.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_commit_sha": {
 				Description: "The existing commit sha of the file being updated.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 			"git_file_id": {
 				Description: "The existing file id of the file being updated, not required for bitbucket files.",
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Computed:    false,
 			},
 		},
@@ -169,16 +169,16 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	    if d.Get("git_commit_msg").(string) != "" {
 		    localVarOptionals.GitCommitMsg = helpers.BuildField(d, "git_commit_msg")
 	    }
-	    if d.Get("git_import").(bool) != "" {
-		    localVarOptionals.GitImport = helpers.BuildField(d, "git_import")
-	    }
-	    if d.Get("git_branch").(string) != "" {
+		
+		localVarOptionals.GitImport = helpers.BuildFieldForBoolean(d, "git_import")
+	    
+		if d.Get("git_branch").(string) != "" {
 		    localVarOptionals.GitBranch = helpers.BuildField(d, "git_branch")
 	    }
-	    if d.Get("git_is_new_branch").(bool) != "" {
-		    localVarOptionals.GitIsNewBranch = helpers.BuildField(d, "git_is_new_branch")
-	    }
-	    if d.Get("git_base_branch").(string) != "" {
+	    
+		localVarOptionals.GitIsNewBranch = helpers.BuildFieldForBoolean(d, "git_is_new_branch")
+	    
+		if d.Get("git_base_branch").(string) != "" {
 		    localVarOptionals.GitBaseBranch = helpers.BuildField(d, "git_base_branch")
 	    }
 
@@ -208,10 +208,10 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 	    if d.Get("git_branch").(string) != "" {
 		    localVarOptionals.GitBranch = helpers.BuildField(d, "git_branch")
 	    }
-	    if d.Get("git_is_new_branch").(bool) != "" {
-		    localVarOptionals.GitIsNewBranch = helpers.BuildField(d, "git_is_new_branch")
-	    }
-	    if d.Get("git_base_branch").(string) != "" {
+	    
+		localVarOptionals.GitIsNewBranch = helpers.BuildFieldForBoolean(d, "git_is_new_branch")
+	    
+		if d.Get("git_base_branch").(string) != "" {
 		    localVarOptionals.GitBaseBranch = helpers.BuildField(d, "git_base_branch")
 	    }
 		if d.Get("git_file_id").(string) != "" {
@@ -274,4 +274,14 @@ func readPolicy(d *schema.ResourceData, policy policymgmt.Policy) {
 	_ = d.Set("project_id", policy.ProjectId)
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("rego", policy.Rego)
+	_ = d.Set("git_connector_ref", policy.OrgId)
+	_ = d.Set("git_path", policy.OrgId)
+	_ = d.Set("git_repo", policy.OrgId)
+	_ = d.Set("git_commit_msg", policy.OrgId)
+	_ = d.Set("git_import", policy.OrgId)
+	_ = d.Set("git_branch", policy.OrgId)
+	_ = d.Set("git_is_new_branch", policy.OrgId)
+	_ = d.Set("git_base_branch", policy.OrgId)
+	_ = d.Set("git_commit_sha", policy.OrgId)
+	_ = d.Set("git_file_id", policy.OrgId)
 }

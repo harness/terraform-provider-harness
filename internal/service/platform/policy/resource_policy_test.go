@@ -61,6 +61,14 @@ func testAccResourcePolicy(id, name, rego string) string {
 			identifier = "%[1]s"
 			name = "%[2]s"
       rego = "%[3]s"
+	  git_connector_ref = "gitconnector"
+	  git_path = "path"
+	  git_repo = "harness-core"
+	  git_commit_msg = "hello world"
+	  git_import = false
+	  git_branch = "develop"
+	  git_is_new_branch = false
+	  git_base_branch = "main"
 		}
 `, id, name, rego)
 }
