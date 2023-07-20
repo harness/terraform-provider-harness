@@ -1,3 +1,16 @@
+# 0.23.2 (July 20,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_service_now: Enhanced servicenow connector resource to support newer RefreshTokenGrantType authentication beans. ([#614](https://github.com/harness/terraform-provider-harness/issues/614))
+
+BUG FIXES:
+
+* Fix dataSourceTokenRead documentation. ([#618](https://github.com/harness/terraform-provider-harness/issues/618))
+* Fixed the example documentation for service overrides ([#623](https://github.com/harness/terraform-provider-harness/issues/623))
+* resource/harness_platform_apikey: made tags field as set of strings ([#625](https://github.com/harness/terraform-provider-harness/issues/625))
+* resource/harness_platform_token: made tags field as set of strings ([#624](https://github.com/harness/terraform-provider-harness/issues/624))
+
 # 0.23.1 (July 14,2023) 
 
 ENHANCEMENTS:
