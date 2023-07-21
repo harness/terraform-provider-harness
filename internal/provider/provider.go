@@ -70,6 +70,7 @@ import (
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
 
 	"github.com/harness/harness-go-sdk/logging"
 	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
@@ -221,6 +222,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
+				"harness_platform_file_store_node":                 file_store.DataSourceFileStoreNode(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -333,6 +335,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
+				"harness_platform_file_store_node":                 file_store.ResourceFileStoreNode(),
 			},
 		}
 
