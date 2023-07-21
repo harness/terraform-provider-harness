@@ -13,10 +13,17 @@ package nextgen
 type FolderNode struct {
 	// Identifier of the File Store Node
 	Identifier string `json:"identifier"`
+	// Parent identifier of the File Store Node
+	ParentIdentifier string `json:"parentIdentifier,omitempty"`
 	// Name of the File Store Node
 	Name string `json:"name"`
 	// Type of the File Store Node
 	Type_ string `json:"type"`
+	// Path of the file or folder
+	Path string `json:"path,omitempty"`
+	// Last modified time for the File Store Node
+	LastModifiedAt int64                   `json:"lastModifiedAt,omitempty"`
+	LastModifiedBy *EmbeddedUserDetailsDto `json:"lastModifiedBy,omitempty"`
 	// Node children
 	Children []FileStoreNode `json:"children,omitempty"`
 }

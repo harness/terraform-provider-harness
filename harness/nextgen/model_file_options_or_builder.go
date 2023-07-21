@@ -10,6 +10,14 @@
 package nextgen
 
 type FileOptionsOrBuilder struct {
+	JavaPackage                      string                         `json:"javaPackage,omitempty"`
+	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
+	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
+	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
+	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
+	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
+	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
+	OptimizeFor                      string                         `json:"optimizeFor,omitempty"`
 	GoPackage                        string                         `json:"goPackage,omitempty"`
 	GoPackageBytes                   *ByteString                    `json:"goPackageBytes,omitempty"`
 	CcGenericServices                bool                           `json:"ccGenericServices,omitempty"`
@@ -35,18 +43,10 @@ type FileOptionsOrBuilder struct {
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	JavaPackage                      string                         `json:"javaPackage,omitempty"`
-	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
-	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
-	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
-	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
-	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
-	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
-	OptimizeFor                      string                         `json:"optimizeFor,omitempty"`
 	DefaultInstanceForType           *Message                       `json:"defaultInstanceForType,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
-	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	Initialized                      bool                           `json:"initialized,omitempty"`
 }

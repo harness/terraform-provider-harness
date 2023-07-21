@@ -9,7 +9,7 @@
  */
 package nextgen
 
-// This is details of the file entity defined in Harness.
+// This is details of the File or Folder entity defined in Harness.
 type File struct {
 	// Account Identifier for the Entity.
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
@@ -17,20 +17,28 @@ type File struct {
 	OrgIdentifier string `json:"orgIdentifier,omitempty"`
 	// Project Identifier for the Entity.
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	// Identifier of the File
+	// Identifier of the File or Folder
 	Identifier string `json:"identifier,omitempty"`
-	// Name of the File
-	Name string `json:"name,omitempty"`
+	// Name of the File or Folder
+	Name string `json:"name"`
 	// This specifies the file usage
 	FileUsage string `json:"fileUsage,omitempty"`
 	// This specifies the type of the File
 	Type_ string `json:"type"`
-	// This specifies parent identifier
-	ParentIdentifier string `json:"parentIdentifier,omitempty"`
-	// Description of the File
+	// This specifies parent directory identifier. The value of Root directory identifier is Root.
+	ParentIdentifier string `json:"parentIdentifier"`
+	// Description of the File or Folder
 	Description string `json:"description,omitempty"`
 	// Tags
 	Tags []NgTag `json:"tags,omitempty"`
 	// Mime type of the File
 	MimeType string `json:"mimeType,omitempty"`
+	// The path of the File or Folder
+	Path string `json:"path,omitempty"`
+	// Whether File is draft or not
+	Draft bool `json:"draft,omitempty"`
+	CreatedBy *EmbeddedUserDetailsDto `json:"createdBy,omitempty"`
+	LastModifiedBy *EmbeddedUserDetailsDto `json:"lastModifiedBy,omitempty"`
+	// Last modified time for the File or Folder
+	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
 }
