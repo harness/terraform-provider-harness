@@ -6,10 +6,10 @@ resource "harness_platform_file_store_node" "file" {
   name                      = "name"
   description               = "description"
   tags                      = ["foo:bar", "baz:qux"]
-  parent_identifier          = "parentIdentifier"
-  content                   = "content"
-  mime_type                 = "text"
-  type                      = "File"
+  parent_identifier         = "parent_identifier"
+  file_content_path         = "file_content_path"
+  mime_type                 = "mime_type"
+  type                      = "FILE"
   file_usage                = "ManifestFile|Config|Script"
 }
 
@@ -21,7 +21,7 @@ resource "harness_platform_file_store_node" "folder" {
   name                      = "name"
   description               = "description"
   tags                      = ["foo:bar", "baz:qux"]
-  parent_identifier         = "parentIdentifier"
-  type                      = "Folder"
+  parent_identifier         = "parent_identifier"
+  type                      = "FOLDER"
 }
 

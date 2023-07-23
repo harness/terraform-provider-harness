@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -19,6 +20,7 @@ const (
 	orgId            = "org_id"
 	projectId        = "project_id"
 	identifier       = "identifier"
+	fileContentPath  = "file_content_path"
 	name             = "name"
 	parentIdentifier = "parent_identifier"
 	path             = "path"
@@ -50,8 +52,8 @@ func ResourceFileStoreNode() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"content": {
-				Description: "File or folder content",
+			"file_content_path": {
+				Description: "File content path",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
@@ -133,9 +135,19 @@ func resourceFileStoreNodeCreateOrUpdate(ctx context.Context, d *schema.Resource
 	var err error
 
 	if id == "" {
-		resp, httpResp, err = c.FileStoreApi.Create(ctx, c.AccountId, buildFileStoreApiCreateRequest(d))
+		createRequest, internalErr := buildFileStoreApiCreateRequest(d)
+		if internalErr != nil {
+			return helpers.HandleApiError(internalErr, d, httpResp)
+		}
+
+		resp, httpResp, err = c.FileStoreApi.Create(ctx, c.AccountId, createRequest)
 	} else {
-		resp, httpResp, err = c.FileStoreApi.Update(ctx, c.AccountId, id, buildFileStoreApiUpdateRequest(d))
+		updateRequest, internalErr := buildFileStoreApiUpdateRequest(d)
+		if internalErr != nil {
+			return helpers.HandleApiError(internalErr, d, httpResp)
+		}
+
+		resp, httpResp, err = c.FileStoreApi.Update(ctx, c.AccountId, id, updateRequest)
 	}
 
 	if err != nil {
@@ -162,51 +174,50 @@ func resourceFileStoreNodeDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func buildFileStoreApiCreateRequest(d *schema.ResourceData) *nextgen.FileStoreApiCreateOpts {
+func buildFileStoreApiCreateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiCreateOpts, error) {
+	fileContent, err := getFileContent(d.Get(fileContentPath))
+	if err != nil {
+		return nil, err
+	}
+
 	create := &nextgen.FileStoreApiCreateOpts{
 		OrgIdentifier:     getOptionalString(d.Get(orgId)),
 		ProjectIdentifier: getOptionalString(d.Get(projectId)),
 		Identifier:        getOptionalString(d.Get(identifier)),
-		//Content:           d.Get(content).(optional.Interface),
-		Name:             getOptionalString(d.Get(name)),
-		FileUsage:        getOptionalString(d.Get(fileUsage)),
-		Type_:            getOptionalString(d.Get(type_)),
-		ParentIdentifier: getOptionalString(d.Get(parentIdentifier)),
-		Description:      getOptionalString(d.Get(description)),
-		MimeType:         getOptionalString(d.Get(mimeType)),
-		Tags:             getOptionalString(d.Get(tags)),
+		Content:           fileContent,
+		Name:              getOptionalString(d.Get(name)),
+		FileUsage:         getOptionalString(d.Get(fileUsage)),
+		Type_:             getOptionalString(d.Get(type_)),
+		ParentIdentifier:  getOptionalString(d.Get(parentIdentifier)),
+		Description:       getOptionalString(d.Get(description)),
+		MimeType:          getOptionalString(d.Get(mimeType)),
+		Tags:              getOptionalString(d.Get(tags)),
 	}
 
-	return create
+	return create, nil
 }
 
-func getOptionalString(i interface{}) optional.String {
-	v, ok := i.(string)
-	if !ok {
-		return optional.String{}
+func buildFileStoreApiUpdateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiUpdateOpts, error) {
+	fileContent, err := getFileContent(d.Get(fileContentPath))
+	if err != nil {
+		return nil, err
 	}
 
-	if len(v) == 0 {
-		return optional.EmptyString()
-	}
-
-	return optional.NewString(v)
-}
-
-func buildFileStoreApiUpdateRequest(d *schema.ResourceData) *nextgen.FileStoreApiUpdateOpts {
-	return &nextgen.FileStoreApiUpdateOpts{
+	update := &nextgen.FileStoreApiUpdateOpts{
 		OrgIdentifier:     getOptionalString(d.Get(orgId)),
 		ProjectIdentifier: getOptionalString(d.Get(projectId)),
 		Identifier:        getOptionalString(d.Get(identifier)),
-		//Content:           d.Get(content).(optional.Interface),
-		Name:             getOptionalString(d.Get(name)),
-		FileUsage:        getOptionalString(d.Get(fileUsage)),
-		Type_:            getOptionalString(d.Get(type_)),
-		ParentIdentifier: getOptionalString(d.Get(parentIdentifier)),
-		Description:      getOptionalString(d.Get(description)),
-		MimeType:         getOptionalString(d.Get(mimeType)),
-		Tags:             getOptionalString(d.Get(tags)),
+		Content:           fileContent,
+		Name:              getOptionalString(d.Get(name)),
+		FileUsage:         getOptionalString(d.Get(fileUsage)),
+		Type_:             getOptionalString(d.Get(type_)),
+		ParentIdentifier:  getOptionalString(d.Get(parentIdentifier)),
+		Description:       getOptionalString(d.Get(description)),
+		MimeType:          getOptionalString(d.Get(mimeType)),
+		Tags:              getOptionalString(d.Get(tags)),
 	}
+
+	return update, nil
 }
 
 func readFileNode(d *schema.ResourceData, file *nextgen.File, content string) {
@@ -245,4 +256,36 @@ func FlattenTags(tags []nextgen.NgTag) []string {
 		result = append(result, tag.Key+":"+tag.Value)
 	}
 	return result
+}
+
+func getOptionalString(str interface{}) optional.String {
+	v, ok := str.(string)
+	if !ok {
+		return optional.String{}
+	}
+
+	if len(v) == 0 {
+		return optional.EmptyString()
+	}
+
+	return optional.NewString(v)
+}
+
+func getFileContent(filePath interface{}) (optional.Interface, error) {
+	filePathStr, ok := filePath.(string)
+	if !ok {
+		return optional.Interface{}, nil
+	}
+
+	if len(filePathStr) == 0 {
+		return optional.EmptyInterface(), nil
+	}
+
+	fileContent, err := ioutil.ReadFile(filePathStr)
+
+	if err != nil {
+		return optional.EmptyInterface(), err
+	}
+
+	return optional.NewInterface(fileContent), nil
 }

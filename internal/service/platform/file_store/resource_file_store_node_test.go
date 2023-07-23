@@ -339,11 +339,11 @@ func testAccResourceFileStore_FileProjectLevel(id string, name string) string {
 		name = "%[2]s"
 		description = "test file"
 		tags = ["foo:bar"]
-		parentIdentifier = "Root"
+		parent_identifier = "Root"
 		mime_type = "text"
-		type = "File"
-		fileUsage = "Script"
-		content = "echo 'testing'"
+		type = "FILE"
+		file_usage = "Script"
+		file_content_path = "%[3]s"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -351,7 +351,7 @@ func testAccResourceFileStore_FileProjectLevel(id string, name string) string {
 		depends_on = [harness_platform_project.test]
 		create_duration = "4s"
 	}
-		`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
 
 func testAccResourceFileStore_FolderProjectLevel(id string, name string) string {
@@ -373,8 +373,8 @@ func testAccResourceFileStore_FolderProjectLevel(id string, name string) string 
 		name = "%[2]s"
 		description = "test folder"
 		tags = ["foo:bar"]
-		parentIdentifier = "Root"
-		type = "Folder"
+		parent_identifier = "Root"
+		type = "FOLDER"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -397,11 +397,11 @@ func testAccResourceFileStore_FileOrgLevel(id string, name string) string {
 		name = "%[2]s"
 		description = "test file"
 		tags = ["foo:bar"]
-		parentIdentifier = "Root"
+		parent_dentifier = "Root"
 		mime_type = "text"
-		type = "File"
-		fileUsage = "Script"
-		content = "echo 'testing'"
+		type = "FILE"
+		file_usage = "Script"
+		file_content_path = "%[3]s"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -409,7 +409,7 @@ func testAccResourceFileStore_FileOrgLevel(id string, name string) string {
 		depends_on = [harness_platform_organization.test]
 		create_duration = "4s"
 	}
-		`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
 
 func testAccResourceFileStore_FolderOrgLevel(id string, name string) string {
@@ -424,8 +424,8 @@ func testAccResourceFileStore_FolderOrgLevel(id string, name string) string {
 		name = "%[2]s"
 		description = "test folder"
 		tags = ["foo:bar"]
-		parentIdentifier = "Root"
-		type = "Folder"
+		parent_identifier = "Root"
+		type = "FOLDER"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -447,9 +447,9 @@ func testAccResourceFileStore_File(id string, name string) string {
 		mime_type = "text"
 		type = "FILE"
 		file_usage = "Script"
-		content = "echo 'testing'"
+		file_content_path =  "%[3]s"
 	}
-		`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
 
 func testAccResourceFileStore_Folder(id string, name string) string {
@@ -459,8 +459,8 @@ func testAccResourceFileStore_Folder(id string, name string) string {
 		name = "%[2]s"
 		description = "test folder"
 		tags = ["foo:bar"]
-		parentIdentifier = "Root"
-		type = "Folder"
+		parent_identifier = "Root"
+		type = "FOLDER"
 	}
 		`, id, name)
 }

@@ -2,6 +2,7 @@ package file_store_test
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -192,9 +193,9 @@ func testAccDataSourceFileStore_FileProjectLevel(id string, name string) string 
 		tags = ["foo:bar"]
 		parentIdentifier = "Root"
 		mime_type = "text"
-		type = "File"
+		type = "FILE"
 		fileUsage = "Script"
-		content = "echo 'testing'"
+		file_content_path = "%[3]s"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -202,7 +203,7 @@ func testAccDataSourceFileStore_FileProjectLevel(id string, name string) string 
 		depends_on = [harness_platform_project.test]
 		create_duration = "4s"
 	}
-		`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
 
 func testAccDataSourceFileStore_FolderProjectLevel(id string, name string) string {
@@ -225,7 +226,7 @@ func testAccDataSourceFileStore_FolderProjectLevel(id string, name string) strin
 		description = "test folder"
 		tags = ["foo:bar"]
 		parentIdentifier = "Root"
-		type = "Folder"
+		type = "FOLDER"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -250,9 +251,9 @@ func testAccDataSourceFileStore_FileOrgLevel(id string, name string) string {
 		tags = ["foo:bar"]
 		parentIdentifier = "Root"
 		mime_type = "text"
-		type = "File"
+		type = "FILE"
 		fileUsage = "Script"
-		content = "echo 'testing'"
+		file_content_path = "%[3]s"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -260,7 +261,7 @@ func testAccDataSourceFileStore_FileOrgLevel(id string, name string) string {
 		depends_on = [harness_platform_organization.test]
 		create_duration = "4s"
 	}
-		`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
 
 func testAccDataSourceFileStore_FolderOrgLevel(id string, name string) string {
@@ -276,7 +277,7 @@ func testAccDataSourceFileStore_FolderOrgLevel(id string, name string) string {
 		description = "test folder"
 		tags = ["foo:bar"]
 		parentIdentifier = "Root"
-		type = "Folder"
+		type = "FOLDER"
 		depends_on = [time_sleep.wait_4_seconds]
 	}
 
@@ -296,11 +297,11 @@ func testAccDataSourceFileStore_File(id string, name string) string {
 		tags = ["foo:bar"]
 		parentIdentifier = "Root"
 		mime_type = "text"
-		type = "File"
+		type = "FILE"
 		fileUsage = "Script"
-		content = "echo 'testing'"
+		file_content_path = "%[3]s"
 	}
-		`, id, name)
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
 
 func testAccDataSourceFileStore_Folder(id string, name string) string {
@@ -311,7 +312,12 @@ func testAccDataSourceFileStore_Folder(id string, name string) string {
 		description = "test folder"
 		tags = ["foo:bar"]
 		parentIdentifier = "Root"
-		type = "Folder"
+		type = "FOLDER"
 	}
 		`, id, name)
+}
+
+func getAbsFilePath(file_path string) string {
+	absPath, _ := filepath.Abs(file_path)
+	return absPath
 }

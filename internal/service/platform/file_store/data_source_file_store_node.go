@@ -21,8 +21,8 @@ func DataSourceFileStoreNode() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"content": {
-				Description: "File or folder content",
+			"file_content_path": {
+				Description: "File content path",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
