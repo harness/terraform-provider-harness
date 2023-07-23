@@ -6,8 +6,8 @@ var NGFileTypes = struct {
 	File   NGFileType
 	Folder NGFileType
 }{
-	File:   "File",
-	Folder: "Folder",
+	File:   "FILE",
+	Folder: "FOLDER",
 }
 
 var NGFileTypeValues = []string{

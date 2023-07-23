@@ -77,7 +77,7 @@ func (a *FileStoreApiService) Create(ctx context.Context, accountIdentifier stri
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -111,7 +111,8 @@ func (a *FileStoreApiService) Create(ctx context.Context, accountIdentifier stri
 		localVarFormParams.Add("tags", parameterToString(localVarOptionals.Tags.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.Content.IsSet() {
-		localVarFormParams.Add("content", parameterToString(localVarOptionals.Content.Value(), ""))
+		localVarFileBytes = localVarOptionals.Content.Value().([]byte)
+		localVarFormParams.Add("content", string(localVarFileBytes))
 	}
 	if localVarOptionals != nil && localVarOptionals.Identifier.IsSet() {
 		localVarFormParams.Add("identifier", parameterToString(localVarOptionals.Identifier.Value(), ""))
@@ -145,6 +146,19 @@ func (a *FileStoreApiService) Create(ctx context.Context, accountIdentifier stri
 	}
 	if localVarOptionals != nil && localVarOptionals.LastModifiedAt.IsSet() {
 		localVarFormParams.Add("lastModifiedAt", parameterToString(localVarOptionals.LastModifiedAt.Value(), ""))
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -237,7 +251,7 @@ func (a *FileStoreApiService) CreateViaYAML(ctx context.Context, body FileStoreR
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/yaml"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/yaml"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -269,6 +283,19 @@ func (a *FileStoreApiService) CreateViaYAML(ctx context.Context, body FileStoreR
 	}
 	// body params
 	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -360,7 +387,7 @@ func (a *FileStoreApiService) DeleteFile(ctx context.Context, accountIdentifier 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -390,6 +417,19 @@ func (a *FileStoreApiService) DeleteFile(ctx context.Context, accountIdentifier 
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -481,7 +521,7 @@ func (a *FileStoreApiService) DownloadFile(ctx context.Context, identifier strin
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/files/{identifier}/download"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/files/{identifier}/download"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -511,6 +551,19 @@ func (a *FileStoreApiService) DownloadFile(ctx context.Context, identifier strin
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -585,7 +638,7 @@ func (a *FileStoreApiService) GetFile(ctx context.Context, identifier string, ac
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -615,6 +668,19 @@ func (a *FileStoreApiService) GetFile(ctx context.Context, identifier string, ac
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -709,7 +775,7 @@ func (a *FileStoreApiService) GetFolderNodes(ctx context.Context, body FolderNod
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/folder"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/folder"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -744,6 +810,19 @@ func (a *FileStoreApiService) GetFolderNodes(ctx context.Context, body FolderNod
 	}
 	// body params
 	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -846,7 +925,7 @@ func (a *FileStoreApiService) ListFilesAndFolders(ctx context.Context, accountId
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -893,6 +972,19 @@ func (a *FileStoreApiService) ListFilesAndFolders(ctx context.Context, accountId
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -999,7 +1091,7 @@ func (a *FileStoreApiService) ListFilesWithFilter(ctx context.Context, localVarO
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/files/filter"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/files/filter"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1054,6 +1146,19 @@ func (a *FileStoreApiService) ListFilesWithFilter(ctx context.Context, localVarO
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1176,7 +1281,7 @@ func (a *FileStoreApiService) Update(ctx context.Context, accountIdentifier stri
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1244,7 +1349,21 @@ func (a *FileStoreApiService) Update(ctx context.Context, accountIdentifier stri
 		localVarFormParams.Add("lastModifiedAt", parameterToString(localVarOptionals.LastModifiedAt.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.Content.IsSet() {
-		localVarFormParams.Add("content", parameterToString(localVarOptionals.Content.Value(), ""))
+		localVarFileBytes = localVarOptionals.Content.Value().([]byte)
+		localVarFormParams.Add("content", string(localVarFileBytes))
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1338,7 +1457,7 @@ func (a *FileStoreApiService) UpdateViaYAML(ctx context.Context, body FileStoreR
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/file-store/yaml/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/yaml/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1371,6 +1490,19 @@ func (a *FileStoreApiService) UpdateViaYAML(ctx context.Context, body FileStoreR
 	}
 	// body params
 	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
