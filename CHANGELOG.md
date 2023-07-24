@@ -1,6 +1,6 @@
 
-<a name="0.3.38"></a>
-## 0.3.38 (2023-07-17)
+<a name="0.3.39"></a>
+## 0.3.39 (2023-07-24)
 
 ### Added
 
@@ -30,6 +30,8 @@
 
 ### Release
 
+* Release version 0.3.38 07-17-2023
+* Release v0.3.38
 * Release version 0.3.37 07-13-2023
 * Release v0.3.37
 * Release version 0.3.36 07-12-2023
@@ -84,8 +86,6 @@
 * Release v0.3.14
 * Release version 0.3.13 12-28-2022
 * Release v0.3.13
-* Release version 0.3.12 12-27-2022
-* Release v0.3.12
 
 ### Remove
 
@@ -112,6 +112,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#370](https://github.com/harness/harness-go-sdk/issues/370) from harness/cds-72208-path-change
 * Merge pull request [#367](https://github.com/harness/harness-go-sdk/issues/367) from harness/cds-72208
 * Merge pull request [#360](https://github.com/harness/harness-go-sdk/issues/360) from harness/CDS-69871
 * Merge pull request [#363](https://github.com/harness/harness-go-sdk/issues/363) from harness/CDS-57635
@@ -146,5 +147,4 @@
 * Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
 * Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
-* Merge pull request [#266](https://github.com/harness/harness-go-sdk/issues/266) from harness/SPG-451
 
