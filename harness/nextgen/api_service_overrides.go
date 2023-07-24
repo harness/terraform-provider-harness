@@ -343,7 +343,7 @@ func (a *ServiceOverridesApiService) GetServiceOverridesV2(ctx context.Context, 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/serviceOverrides/tfProvider/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/ng/api/serviceOverrides/get-with-yaml/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v",
 		identifier), -1)
 

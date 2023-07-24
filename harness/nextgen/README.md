@@ -329,7 +329,7 @@ Class | Method | HTTP request | Description
 *ServicesApi* | [**UpsertServiceV2**](docs/ServicesApi.md#upsertservicev2) | **Put** /ng/api/servicesV2/upsert | Upsert a Service by identifier
 *ServiceOverridesApi* | [**CreateServiceOverrideV2**](docs/ServiceOverridesApi.md#createserviceoverridev2) | **Post** /serviceOverrides | Create an ServiceOverride Entity
 *ServiceOverridesApi* | [**DeleteServiceOverrideV2**](docs/ServiceOverridesApi.md#deleteserviceoverridev2) | **Delete** /serviceOverrides/{identifier} | Delete a Service Override entity
-*ServiceOverridesApi* | [**GetServiceOverridesV2**](docs/ServiceOverridesApi.md#getserviceoverridesv2) | **Get** /serviceOverrides/tfProvider/{identifier} | Gets Service Overrides by Identifier
+*ServiceOverridesApi* | [**GetServiceOverridesV2**](docs/ServiceOverridesApi.md#getserviceoverridesv2) | **Get** /serviceOverrides/get-with-yaml/{identifier} | Gets Service Overrides by Identifier
 *ServiceOverridesApi* | [**UpdateServiceOverrideV2**](docs/ServiceOverridesApi.md#updateserviceoverridev2) | **Put** /serviceOverrides | Update an ServiceOverride Entity
 *SloApi* | [**DeleteSLODataNg**](docs/SloApi.md#deleteslodatang) | **Delete** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | delete slo data
 *SloApi* | [**GetServiceLevelObjectiveNg**](docs/SloApi.md#getservicelevelobjectiveng) | **Get** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | get service level objective data
