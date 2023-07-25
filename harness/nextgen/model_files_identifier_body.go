@@ -10,6 +10,8 @@
 package nextgen
 
 type FilesIdentifierBody struct {
+	// This is the encrypted Secret File that needs to be uploaded.
 	File *interface{} `json:"file,omitempty"`
-	Spec string       `json:"spec,omitempty"`
+	// Specification of Secret file
+	Spec string `json:"spec,omitempty"`
 }

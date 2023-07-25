@@ -13,8 +13,27 @@ package nextgen
 type FileNode struct {
 	// Identifier of the File Store Node
 	Identifier string `json:"identifier"`
+	// Parent identifier of the File Store Node
+	ParentIdentifier string `json:"parentIdentifier,omitempty"`
 	// Name of the File Store Node
 	Name string `json:"name"`
 	// Type of the File Store Node
 	Type_ string `json:"type"`
+	// Path of the file or folder
+	Path string `json:"path,omitempty"`
+	// Last modified time for the File Store Node
+	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
+	LastModifiedBy *EmbeddedUserDetailsDto `json:"lastModifiedBy,omitempty"`
+	// File usage of the File Store Node
+	FileUsage string `json:"fileUsage"`
+	// Description of the File Store Node
+	Description string `json:"description,omitempty"`
+	// Tags of the File Store Node
+	Tags []NgTag `json:"tags,omitempty"`
+	// Mime type of the File Store Node
+	MimeType string `json:"mimeType,omitempty"`
+	// Content of the file
+	Content string `json:"content,omitempty"`
+	// The size of the file
+	Size int64 `json:"size,omitempty"`
 }

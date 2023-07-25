@@ -11,10 +11,17 @@ package nextgen
 
 type FileOptions struct {
 	UnknownFields                    *UnknownFieldSet               `json:"unknownFields,omitempty"`
-	Initialized                      bool                           `json:"initialized,omitempty"`
-	ParserForType                    *ParserFileOptions             `json:"parserForType,omitempty"`
 	SerializedSize                   int32                          `json:"serializedSize,omitempty"`
 	DefaultInstanceForType           *FileOptions                   `json:"defaultInstanceForType,omitempty"`
+	ParserForType                    *ParserFileOptions             `json:"parserForType,omitempty"`
+	JavaPackage                      string                         `json:"javaPackage,omitempty"`
+	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
+	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
+	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
+	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
+	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
+	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
+	OptimizeFor                      string                         `json:"optimizeFor,omitempty"`
 	GoPackage                        string                         `json:"goPackage,omitempty"`
 	GoPackageBytes                   *ByteString                    `json:"goPackageBytes,omitempty"`
 	CcGenericServices                bool                           `json:"ccGenericServices,omitempty"`
@@ -40,17 +47,10 @@ type FileOptions struct {
 	UninterpretedOptionList          []UninterpretedOption          `json:"uninterpretedOptionList,omitempty"`
 	UninterpretedOptionCount         int32                          `json:"uninterpretedOptionCount,omitempty"`
 	UninterpretedOptionOrBuilderList []UninterpretedOptionOrBuilder `json:"uninterpretedOptionOrBuilderList,omitempty"`
-	JavaPackage                      string                         `json:"javaPackage,omitempty"`
-	JavaPackageBytes                 *ByteString                    `json:"javaPackageBytes,omitempty"`
-	JavaOuterClassname               string                         `json:"javaOuterClassname,omitempty"`
-	JavaOuterClassnameBytes          *ByteString                    `json:"javaOuterClassnameBytes,omitempty"`
-	JavaMultipleFiles                bool                           `json:"javaMultipleFiles,omitempty"`
-	JavaGenerateEqualsAndHash        bool                           `json:"javaGenerateEqualsAndHash,omitempty"`
-	JavaStringCheckUtf8              bool                           `json:"javaStringCheckUtf8,omitempty"`
-	OptimizeFor                      string                         `json:"optimizeFor,omitempty"`
-	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
+	Initialized                      bool                           `json:"initialized,omitempty"`
 	DescriptorForType                *Descriptor                    `json:"descriptorForType,omitempty"`
 	InitializationErrorString        string                         `json:"initializationErrorString,omitempty"`
+	AllFields                        map[string]interface{}         `json:"allFields,omitempty"`
 	AllFieldsRaw                     map[string]interface{}         `json:"allFieldsRaw,omitempty"`
 	MemoizedSerializedSize           int32                          `json:"memoizedSerializedSize,omitempty"`
 }

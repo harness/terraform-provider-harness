@@ -12,12 +12,11 @@ package nextgen
 import (
 	"context"
 	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -28,8 +27,9 @@ var (
 type FileStoreApiService service
 
 /*
-FileStoreApiService Creates file or folder
+FileStoreApiService Create Folder or File including content
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *FileStoreApiCreateOpts - Optional Parameters:
      * @param "Tags" (optional.String) -
      * @param "Content" (optional.Interface of interface{}) -
@@ -40,7 +40,10 @@ FileStoreApiService Creates file or folder
      * @param "ParentIdentifier" (optional.String) -
      * @param "Description" (optional.String) -
      * @param "MimeType" (optional.String) -
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "Path" (optional.String) -
+     * @param "CreatedBy" (optional.Interface of EmbeddedUserDetailsDto) -
+     * @param "LastModifiedBy" (optional.Interface of EmbeddedUserDetailsDto) -
+     * @param "LastModifiedAt" (optional.Int64) -
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoFile
@@ -56,12 +59,15 @@ type FileStoreApiCreateOpts struct {
 	ParentIdentifier  optional.String
 	Description       optional.String
 	MimeType          optional.String
-	AccountIdentifier optional.String
+	Path              optional.String
+	CreatedBy         optional.Interface
+	LastModifiedBy    optional.Interface
+	LastModifiedAt    optional.Int64
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FileStoreApiService) Create(ctx context.Context, localVarOptionals *FileStoreApiCreateOpts) (ResponseDtoFile, *http.Response, error) {
+func (a *FileStoreApiService) Create(ctx context.Context, accountIdentifier string, localVarOptionals *FileStoreApiCreateOpts) (ResponseDtoFile, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -77,9 +83,7 @@ func (a *FileStoreApiService) Create(ctx context.Context, localVarOptionals *Fil
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -107,7 +111,8 @@ func (a *FileStoreApiService) Create(ctx context.Context, localVarOptionals *Fil
 		localVarFormParams.Add("tags", parameterToString(localVarOptionals.Tags.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.Content.IsSet() {
-		localVarFormParams.Add("content", parameterToString(localVarOptionals.Content.Value(), ""))
+		localVarFileBytes = localVarOptionals.Content.Value().([]byte)
+		localVarFormParams.Add("content", string(localVarFileBytes))
 	}
 	if localVarOptionals != nil && localVarOptionals.Identifier.IsSet() {
 		localVarFormParams.Add("identifier", parameterToString(localVarOptionals.Identifier.Value(), ""))
@@ -129,6 +134,18 @@ func (a *FileStoreApiService) Create(ctx context.Context, localVarOptionals *Fil
 	}
 	if localVarOptionals != nil && localVarOptionals.MimeType.IsSet() {
 		localVarFormParams.Add("mimeType", parameterToString(localVarOptionals.MimeType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Path.IsSet() {
+		localVarFormParams.Add("path", parameterToString(localVarOptionals.Path.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.CreatedBy.IsSet() {
+		localVarFormParams.Add("createdBy", parameterToString(localVarOptionals.CreatedBy.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastModifiedBy.IsSet() {
+		localVarFormParams.Add("lastModifiedBy", parameterToString(localVarOptionals.LastModifiedBy.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastModifiedAt.IsSet() {
+		localVarFormParams.Add("lastModifiedAt", parameterToString(localVarOptionals.LastModifiedAt.Value(), ""))
 	}
 	if ctx != nil {
 		// API Key Authentication
@@ -209,23 +226,158 @@ func (a *FileStoreApiService) Create(ctx context.Context, localVarOptionals *Fil
 }
 
 /*
-FileStoreApiService Delete file or folder by identifier
+FileStoreApiService Creates File or Folder metadata via YAML
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body YAML definition of File or Folder
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *FileStoreApiCreateViaYAMLOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+@return ResponseDtoFile
+*/
+
+type FileStoreApiCreateViaYAMLOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *FileStoreApiService) CreateViaYAML(ctx context.Context, body FileStoreRequest, accountIdentifier string, localVarOptionals *FileStoreApiCreateViaYAMLOpts) (ResponseDtoFile, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoFile
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/yaml"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/yaml"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoFile
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+FileStoreApiService Delete File or Folder by identifier
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier The file identifier
  * @param optional nil or *FileStoreApiDeleteFileOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 @return ResponseDtoBoolean
 */
 
 type FileStoreApiDeleteFileOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FileStoreApiService) DeleteFile(ctx context.Context, identifier string, localVarOptionals *FileStoreApiDeleteFileOpts) (ResponseDtoBoolean, *http.Response, error) {
+func (a *FileStoreApiService) DeleteFile(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *FileStoreApiDeleteFileOpts) (ResponseDtoBoolean, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
@@ -242,9 +394,7 @@ func (a *FileStoreApiService) DeleteFile(ctx context.Context, identifier string,
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -349,21 +499,20 @@ func (a *FileStoreApiService) DeleteFile(ctx context.Context, identifier string,
 /*
 FileStoreApiService Download File
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param fileIdentifier The file identifier
+ * @param identifier The file identifier
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *FileStoreApiDownloadFileOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
 
 */
 
 type FileStoreApiDownloadFileOpts struct {
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FileStoreApiService) DownloadFile(ctx context.Context, fileIdentifier string, localVarOptionals *FileStoreApiDownloadFileOpts) (*http.Response, error) {
+func (a *FileStoreApiService) DownloadFile(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *FileStoreApiDownloadFileOpts) (*http.Response, []byte, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
@@ -372,16 +521,14 @@ func (a *FileStoreApiService) DownloadFile(ctx context.Context, fileIdentifier s
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/file/{fileIdentifier}/download"
-	localVarPath = strings.Replace(localVarPath, "{"+"fileIdentifier"+"}", fmt.Sprintf("%v", fileIdentifier), -1)
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/files/{identifier}/download"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -420,18 +567,18 @@ func (a *FileStoreApiService) DownloadFile(ctx context.Context, fileIdentifier s
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
+		return localVarHttpResponse, nil, err
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
 	localVarHttpResponse.Body.Close()
 	if err != nil {
-		return localVarHttpResponse, err
+		return localVarHttpResponse, localVarBody, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -444,45 +591,181 @@ func (a *FileStoreApiService) DownloadFile(ctx context.Context, fileIdentifier s
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarHttpResponse, localVarBody, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarHttpResponse, localVarBody, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHttpResponse, newErr
+				return localVarHttpResponse, localVarBody, newErr
 			}
 			newErr.model = v
-			return localVarHttpResponse, newErr
+			return localVarHttpResponse, localVarBody, newErr
 		}
-		return localVarHttpResponse, newErr
+		return localVarHttpResponse, localVarBody, newErr
 	}
 
-	return localVarHttpResponse, nil
+	return localVarHttpResponse, localVarBody, nil
 }
 
 /*
-FileStoreApiService Get Folder nodes.
+FileStoreApiService Get the Folder or File metadata
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body Folder node for which to return the list of nodes
- * @param optional nil or *FileStoreApiGetFolderNodesOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+ * @param identifier The file identifier
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *FileStoreApiGetFileOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-@return ResponseDtoFolderNode
+@return ResponseDtoFile
 */
 
-type FileStoreApiGetFolderNodesOpts struct {
-	AccountIdentifier optional.String
+type FileStoreApiGetFileOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FileStoreApiService) GetFolderNodes(ctx context.Context, body FolderNode, localVarOptionals *FileStoreApiGetFolderNodesOpts) (ResponseDtoFolderNode, *http.Response, error) {
+func (a *FileStoreApiService) GetFile(ctx context.Context, identifier string, accountIdentifier string, localVarOptionals *FileStoreApiGetFileOpts) (ResponseDtoFile, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoFile
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoFile
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+FileStoreApiService Get folder nodes at first level, not including sub-nodes
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body Folder node for which to return the list of nodes
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *FileStoreApiGetFolderNodesOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "FileUsage" (optional.String) -  The file usage
+@return ResponseDtoFolderNode
+*/
+
+type FileStoreApiGetFolderNodesOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	FileUsage         optional.String
+}
+
+func (a *FileStoreApiService) GetFolderNodes(ctx context.Context, body FolderNode, accountIdentifier string, localVarOptionals *FileStoreApiGetFolderNodesOpts) (ResponseDtoFolderNode, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -498,14 +781,15 @@ func (a *FileStoreApiService) GetFolderNodes(ctx context.Context, body FolderNod
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FileUsage.IsSet() {
+		localVarQueryParams.Add("fileUsage", parameterToString(localVarOptionals.FileUsage.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -605,8 +889,346 @@ func (a *FileStoreApiService) GetFolderNodes(ctx context.Context, body FolderNod
 }
 
 /*
-FileStoreApiService Updates file or folder
+FileStoreApiService List Files and Folders metadata
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param optional nil or *FileStoreApiListFilesAndFoldersOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "Identifiers" (optional.Interface of []string) -  This is the list of File IDs. Details specific to these IDs would be fetched.
+     * @param "SearchTerm" (optional.String) -  This will be used to filter files or folders. Any file or folder having the specified search term in its Name or Identifier will be filtered
+     * @param "PageIndex" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
+     * @param "PageSize" (optional.Int32) -  Results per page(max 100)Default Value: 50
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+     * @param "PageToken" (optional.String) -  Page Token of the next results to fetch.Default Value: &#x27;&#x27;
+@return ResponseDtoPageFile
+*/
+
+type FileStoreApiListFilesAndFoldersOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Identifiers       optional.Interface
+	SearchTerm        optional.String
+	PageIndex         optional.Int32
+	PageSize          optional.Int32
+	SortOrders        optional.Interface
+	PageToken         optional.String
+}
+
+func (a *FileStoreApiService) ListFilesAndFolders(ctx context.Context, accountIdentifier string, localVarOptionals *FileStoreApiListFilesAndFoldersOpts) (ResponseDtoPageFile, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoPageFile
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Identifiers.IsSet() {
+		localVarQueryParams.Add("identifiers", parameterToString(localVarOptionals.Identifiers.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
+		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageIndex.IsSet() {
+		localVarQueryParams.Add("pageIndex", parameterToString(localVarOptionals.PageIndex.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageSize.IsSet() {
+		localVarQueryParams.Add("pageSize", parameterToString(localVarOptionals.PageSize.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SortOrders.IsSet() {
+		localVarQueryParams.Add("sortOrders", parameterToString(localVarOptionals.SortOrders.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageToken.IsSet() {
+		localVarQueryParams.Add("pageToken", parameterToString(localVarOptionals.PageToken.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoPageFile
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+FileStoreApiService Get filtered list of Files or Folders
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param optional nil or *FileStoreApiListFilesWithFilterOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of FilesFilterPropertiesDto) -  Details of the File filter properties to be applied
+     * @param "PageIndex" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
+     * @param "PageSize" (optional.Int32) -  Results per page(max 100)Default Value: 50
+     * @param "SortOrders" (optional.Interface of []SortOrder) -  Sort criteria for the elements.
+     * @param "PageToken" (optional.String) -  Page Token of the next results to fetch.Default Value: &#x27;&#x27;
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "FilterIdentifier" (optional.String) -  Filter identifier
+     * @param "SearchTerm" (optional.String) -  This will be used to filter files or folders. Any file or folder having the specified search term in its Name or Identifier will be filtered
+@return ResponseDtoPageFile
+*/
+
+type FileStoreApiListFilesWithFilterOpts struct {
+	Body              optional.Interface
+	PageIndex         optional.Int32
+	PageSize          optional.Int32
+	SortOrders        optional.Interface
+	PageToken         optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	FilterIdentifier  optional.String
+	SearchTerm        optional.String
+}
+
+func (a *FileStoreApiService) ListFilesWithFilter(ctx context.Context, localVarOptionals *FileStoreApiListFilesWithFilterOpts) (ResponseDtoPageFile, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoPageFile
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/files/filter"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if localVarOptionals != nil && localVarOptionals.PageIndex.IsSet() {
+		localVarQueryParams.Add("pageIndex", parameterToString(localVarOptionals.PageIndex.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageSize.IsSet() {
+		localVarQueryParams.Add("pageSize", parameterToString(localVarOptionals.PageSize.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SortOrders.IsSet() {
+		localVarQueryParams.Add("sortOrders", parameterToString(localVarOptionals.SortOrders.Value(), "multi"))
+	}
+	if localVarOptionals != nil && localVarOptionals.PageToken.IsSet() {
+		localVarQueryParams.Add("pageToken", parameterToString(localVarOptionals.PageToken.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
+		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FilterIdentifier.IsSet() {
+		localVarQueryParams.Add("filterIdentifier", parameterToString(localVarOptionals.FilterIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SearchTerm.IsSet() {
+		localVarQueryParams.Add("searchTerm", parameterToString(localVarOptionals.SearchTerm.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoPageFile
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+FileStoreApiService Update Folder or File including content
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
  * @param identifier The file identifier
  * @param optional nil or *FileStoreApiUpdateOpts - Optional Parameters:
      * @param "Tags" (optional.String) -
@@ -617,6 +1239,13 @@ FileStoreApiService Updates file or folder
      * @param "ParentIdentifier" (optional.String) -
      * @param "Description" (optional.String) -
      * @param "MimeType" (optional.String) -
+     * @param "Path" (optional.String) -
+     * @param "CreatedBy" (optional.Interface of EmbeddedUserDetailsDto) -
+     * @param "LastModifiedBy" (optional.Interface of EmbeddedUserDetailsDto) -
+     * @param "LastModifiedAt" (optional.Int64) -
+     * @param "Content" (optional.Interface of interface{}) -
+     * @param "Content" (optional.Interface of interface{}) -
+     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "Content" (optional.Interface of interface{}) -
      * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
@@ -633,13 +1262,16 @@ type FileStoreApiUpdateOpts struct {
 	ParentIdentifier  optional.String
 	Description       optional.String
 	MimeType          optional.String
+	Path              optional.String
+	CreatedBy         optional.Interface
+	LastModifiedBy    optional.Interface
+	LastModifiedAt    optional.Int64
 	Content           optional.Interface
-	AccountIdentifier optional.String
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 }
 
-func (a *FileStoreApiService) Update(ctx context.Context, identifier string, localVarOptionals *FileStoreApiUpdateOpts) (ResponseDtoFile, *http.Response, error) {
+func (a *FileStoreApiService) Update(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *FileStoreApiUpdateOpts) (ResponseDtoFile, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
@@ -656,9 +1288,7 @@ func (a *FileStoreApiService) Update(ctx context.Context, identifier string, loc
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if localVarOptionals != nil && localVarOptionals.AccountIdentifier.IsSet() {
-		localVarQueryParams.Add("accountIdentifier", parameterToString(localVarOptionals.AccountIdentifier.Value(), ""))
-	}
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
 		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
 	}
@@ -706,9 +1336,160 @@ func (a *FileStoreApiService) Update(ctx context.Context, identifier string, loc
 	if localVarOptionals != nil && localVarOptionals.MimeType.IsSet() {
 		localVarFormParams.Add("mimeType", parameterToString(localVarOptionals.MimeType.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.Content.IsSet() {
-		localVarFormParams.Add("content", parameterToString(localVarOptionals.Content.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.Path.IsSet() {
+		localVarFormParams.Add("path", parameterToString(localVarOptionals.Path.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.CreatedBy.IsSet() {
+		localVarFormParams.Add("createdBy", parameterToString(localVarOptionals.CreatedBy.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastModifiedBy.IsSet() {
+		localVarFormParams.Add("lastModifiedBy", parameterToString(localVarOptionals.LastModifiedBy.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastModifiedAt.IsSet() {
+		localVarFormParams.Add("lastModifiedAt", parameterToString(localVarOptionals.LastModifiedAt.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Content.IsSet() {
+		localVarFileBytes = localVarOptionals.Content.Value().([]byte)
+		localVarFormParams.Add("content", string(localVarFileBytes))
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoFile
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+FileStoreApiService Update File or Folder metadata via YAML
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param body YAML definition of File or Folder
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param identifier The file identifier
+ * @param optional nil or *FileStoreApiUpdateViaYAMLOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+@return ResponseDtoFile
+*/
+
+type FileStoreApiUpdateViaYAMLOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *FileStoreApiService) UpdateViaYAML(ctx context.Context, body FileStoreRequest, accountIdentifier string, identifier string, localVarOptionals *FileStoreApiUpdateViaYAMLOpts) (ResponseDtoFile, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoFile
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/file-store/yaml/{identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/yaml"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {

@@ -448,9 +448,9 @@ func (c *APIClient) prepareRequest(
 			if err != nil {
 				return nil, err
 			}
-			// Set the Boundary in the Content-Type
-			headerParams["Content-Type"] = w.FormDataContentType()
 		}
+		// Set the Boundary in the Content-Type
+		headerParams["Content-Type"] = w.FormDataContentType()
 
 		// Set Content-Length
 		headerParams["Content-Length"] = fmt.Sprintf("%d", body.Len())
@@ -481,7 +481,6 @@ func (c *APIClient) prepareRequest(
 		}
 	}
 
-	
 	// Encode the parameters.
 	url.RawQuery = strings.ReplaceAll(query.Encode(), "+", "%20")
 
