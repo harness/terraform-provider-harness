@@ -1,0 +1,4 @@
+```release-note:new-resource
+harness_platform_file_store_file - Added a File Store file resource.
+harness_platform_file_store_folder - Added a File Store folder resource.
+```
