@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
@@ -10,7 +12,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/sirupsen/logrus"
-	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -39,6 +40,7 @@ import (
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
+	file_store "github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
@@ -70,7 +72,6 @@ import (
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/variables"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
 
 	"github.com/harness/harness-go-sdk/logging"
 	openapi_client_logging "github.com/harness/harness-openapi-go-client/logging"
@@ -222,7 +223,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
-				"harness_platform_file_store_node":                 file_store.DataSourceFileStoreNode(),
+				"harness_platform_file_store_node_file":            file_store.DataSourceFileStoreNodeFile(),
+				"harness_platform_file_store_node_folder":          file_store.DataSourceFileStoreNodeFolder(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -335,7 +337,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
-				"harness_platform_file_store_node":                 file_store.ResourceFileStoreNode(),
+				"harness_platform_file_store_node_file":            file_store.ResourceFileStoreNodeFile(),
+				"harness_platform_file_store_node_folder":          file_store.ResourceFileStoreNodeFolder(),
 			},
 		}
 

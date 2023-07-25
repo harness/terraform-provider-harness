@@ -3,7 +3,6 @@ package file_store
 import (
 	"context"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -16,62 +15,97 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const (
-	orgId            = "org_id"
-	projectId        = "project_id"
-	identifier       = "identifier"
-	fileContentPath  = "file_content_path"
-	name             = "name"
-	parentIdentifier = "parent_identifier"
-	path             = "path"
-	content          = "content"
-	description      = "description"
-	mimeType         = "mime_type"
-	tags             = "tags"
-	type_            = "type"
-	fileUsage        = "file_usage"
-	createdBy        = "created_by"
-	lastModifiedBy   = "last_modified_by"
-	lastModifiedAt   = "last_modified_at"
-	draft            = "draft"
-)
-
-func ResourceFileStoreNode() *schema.Resource {
+func ResourceFileStoreNodeFile() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating files and folders in Harness.",
+		Description: "Resource for creating files in Harness.",
 
-		ReadContext:   resourceFileStoreNodeRead,
-		UpdateContext: resourceFileStoreNodeCreateOrUpdate,
-		CreateContext: resourceFileStoreNodeCreateOrUpdate,
-		DeleteContext: resourceFileStoreNodeDelete,
+		ReadContext:   resourceFileStoreNodeFileRead,
+		UpdateContext: resourceFileStoreNodeFileCreateOrUpdate,
+		CreateContext: resourceFileStoreNodeFileCreateOrUpdate,
+		DeleteContext: resourceFileStoreNodeFileDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"parent_identifier": {
-				Description: "File or folder parent idnetifier",
+				Description: "File parent identifier on Harness File Store",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"file_content_path": {
-				Description: "File content path",
+				Description: "File content path to be upladed on Harness File Store",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
 			"mime_type": {
-				Description: "File or folder mime type",
+				Description: "File mime type",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
-			"type": {
-				Description: fmt.Sprintf("The type of file. Valid options are %s", strings.Join(nextgen.NGFileTypeValues, ", ")),
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"file_usage": {
 				Description: fmt.Sprintf("File usage. Valid options are %s", strings.Join(nextgen.FileUsageValues, ", ")),
 				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"content": {
+				Description: "File content stored on Harness File Store",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"path": {
+				Description: "Harness File Store file path",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"created_by": {
+				Description: "Created by",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"email": {
+							Description: "User email",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"name": {
+							Description: "User name",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
+			"last_modified_by": {
+				Description: "Last modified by",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"email": {
+							Description: "User email",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"name": {
+							Description: "User name",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
+			"last_modified_at": {
+				Description: "Last modified at",
+				Type:        schema.TypeInt,
 				Optional:    true,
 				Computed:    true,
 			},
@@ -83,11 +117,10 @@ func ResourceFileStoreNode() *schema.Resource {
 	return resource
 }
 
-func resourceFileStoreNodeRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceFileStoreNodeFileRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	id := d.Get(identifier).(string)
-
-	var contentStr string
+	var contentStr optional.Interface
 
 	resp, httpResp, err := c.FileStoreApi.GetFile(ctx, id, c.AccountId, &nextgen.FileStoreApiGetFileOpts{
 		OrgIdentifier:     helpers.BuildField(d, orgId),
@@ -102,51 +135,43 @@ func resourceFileStoreNodeRead(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	if resp.Data.Type_ == nextgen.NGFileTypes.File.String() {
-		resp, err := c.FileStoreApi.DownloadFile(ctx, id, c.AccountId, &nextgen.FileStoreApiDownloadFileOpts{
-			OrgIdentifier:     helpers.BuildField(d, orgId),
-			ProjectIdentifier: helpers.BuildField(d, projectId),
-		})
-
-		if err != nil {
-			return helpers.HandleReadApiError(err, d, httpResp)
-		}
-
-		content, err := io.ReadAll(resp.Body)
-
-		if err != nil {
-			return helpers.HandleReadApiError(err, d, httpResp)
-		}
-
-		contentStr = string(content)
+	// download content
+	downloadResp, bodyContent, downloadErr := c.FileStoreApi.DownloadFile(ctx, id, c.AccountId, &nextgen.FileStoreApiDownloadFileOpts{
+		OrgIdentifier:     helpers.BuildField(d, orgId),
+		ProjectIdentifier: helpers.BuildField(d, projectId),
+	})
+	if downloadErr != nil {
+		return helpers.HandleReadApiError(downloadErr, d, downloadResp)
 	}
 
-	readFileNode(d, resp.Data, contentStr)
+	contentStr = optional.NewInterface(bodyContent)
 
+	readFileNode(d, resp.Data, contentStr)
 	return nil
 }
 
-func resourceFileStoreNodeCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceFileStoreNodeFileCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	id := d.Id()
 
 	var resp nextgen.ResponseDtoFile
 	var httpResp *http.Response
 	var err error
+	var fileContent optional.Interface
 
 	if id == "" {
-		createRequest, internalErr := buildFileStoreApiCreateRequest(d)
+		createRequest, internalErr := buildFileStoreApiFileCreateRequest(d)
 		if internalErr != nil {
 			return helpers.HandleApiError(internalErr, d, httpResp)
 		}
-
+		fileContent = createRequest.Content
 		resp, httpResp, err = c.FileStoreApi.Create(ctx, c.AccountId, createRequest)
 	} else {
-		updateRequest, internalErr := buildFileStoreApiUpdateRequest(d)
+		updateRequest, internalErr := buildFileStoreApiFileUpdateRequest(d)
 		if internalErr != nil {
 			return helpers.HandleApiError(internalErr, d, httpResp)
 		}
-
+		fileContent = updateRequest.Content
 		resp, httpResp, err = c.FileStoreApi.Update(ctx, c.AccountId, id, updateRequest)
 	}
 
@@ -154,12 +179,12 @@ func resourceFileStoreNodeCreateOrUpdate(ctx context.Context, d *schema.Resource
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readFileNode(d, resp.Data, d.Get(content).(string))
+	readFileNode(d, resp.Data, fileContent)
 
 	return nil
 }
 
-func resourceFileStoreNodeDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceFileStoreNodeFileDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	_, httpResp, err := c.FileStoreApi.DeleteFile(ctx, c.AccountId, d.Id(), &nextgen.FileStoreApiDeleteFileOpts{
@@ -174,10 +199,16 @@ func resourceFileStoreNodeDelete(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func buildFileStoreApiCreateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiCreateOpts, error) {
+func buildFileStoreApiFileCreateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiCreateOpts, error) {
 	fileContent, err := getFileContent(d.Get(fileContentPath))
 	if err != nil {
 		return nil, err
+	}
+
+	var tagsJson string
+	if attr, ok := d.GetOk(tags); ok {
+		tags := attr.(*schema.Set)
+		tagsJson = buildTagsJson(tags)
 	}
 
 	create := &nextgen.FileStoreApiCreateOpts{
@@ -187,20 +218,26 @@ func buildFileStoreApiCreateRequest(d *schema.ResourceData) (*nextgen.FileStoreA
 		Content:           fileContent,
 		Name:              getOptionalString(d.Get(name)),
 		FileUsage:         getOptionalString(d.Get(fileUsage)),
-		Type_:             getOptionalString(d.Get(type_)),
+		Type_:             getOptionalString(nextgen.NGFileTypes.File.String()),
 		ParentIdentifier:  getOptionalString(d.Get(parentIdentifier)),
 		Description:       getOptionalString(d.Get(description)),
 		MimeType:          getOptionalString(d.Get(mimeType)),
-		Tags:              getOptionalString(d.Get(tags)),
+		Tags:              getOptionalString(tagsJson),
 	}
 
 	return create, nil
 }
 
-func buildFileStoreApiUpdateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiUpdateOpts, error) {
+func buildFileStoreApiFileUpdateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiUpdateOpts, error) {
 	fileContent, err := getFileContent(d.Get(fileContentPath))
 	if err != nil {
 		return nil, err
+	}
+
+	var tagsJson string
+	if attr, ok := d.GetOk(tags); ok {
+		tags := attr.(*schema.Set)
+		tagsJson = buildTagsJson(tags)
 	}
 
 	update := &nextgen.FileStoreApiUpdateOpts{
@@ -210,29 +247,25 @@ func buildFileStoreApiUpdateRequest(d *schema.ResourceData) (*nextgen.FileStoreA
 		Content:           fileContent,
 		Name:              getOptionalString(d.Get(name)),
 		FileUsage:         getOptionalString(d.Get(fileUsage)),
-		Type_:             getOptionalString(d.Get(type_)),
+		Type_:             getOptionalString(nextgen.NGFileTypes.File.String()),
 		ParentIdentifier:  getOptionalString(d.Get(parentIdentifier)),
 		Description:       getOptionalString(d.Get(description)),
 		MimeType:          getOptionalString(d.Get(mimeType)),
-		Tags:              getOptionalString(d.Get(tags)),
+		Tags:              getOptionalString(tagsJson),
 	}
 
 	return update, nil
 }
 
-func readFileNode(d *schema.ResourceData, file *nextgen.File, content string) {
+func readFileNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt optional.Interface) {
 	d.SetId(file.Identifier)
 	d.Set(identifier, file.Identifier)
-	d.Set(description, file.Description)
 	d.Set(name, file.Name)
 	d.Set(orgId, file.OrgIdentifier)
 	d.Set(projectId, file.ProjectIdentifier)
-	d.Set(fileUsage, file.FileUsage)
-	d.Set(type_, file.Type_)
 	d.Set(parentIdentifier, file.ParentIdentifier)
-	d.Set(mimeType, file.MimeType)
 	d.Set(path, file.Path)
-	d.Set(draft, file.Draft)
+	d.Set(tags, FlattenTags(file.Tags))
 	d.Set(createdBy, []interface{}{
 		map[string]interface{}{
 			"email": file.CreatedBy.Email,
@@ -246,29 +279,17 @@ func readFileNode(d *schema.ResourceData, file *nextgen.File, content string) {
 		},
 	})
 	d.Set(lastModifiedAt, file.LastModifiedAt)
-	d.Set(tags, FlattenTags(file.Tags))
-	d.Set(content, content)
-}
-
-func FlattenTags(tags []nextgen.NgTag) []string {
-	var result []string
-	for _, tag := range tags {
-		result = append(result, tag.Key+":"+tag.Value)
+	d.Set(description, file.Description)
+	d.Set(fileUsage, file.FileUsage)
+	d.Set(mimeType, file.MimeType)
+	//content
+	var fileContent string
+	if fileContentOpt.IsSet() {
+		fileContent = string(fileContentOpt.Value().([]byte))
+	} else {
+		fileContent = ""
 	}
-	return result
-}
-
-func getOptionalString(str interface{}) optional.String {
-	v, ok := str.(string)
-	if !ok {
-		return optional.String{}
-	}
-
-	if len(v) == 0 {
-		return optional.EmptyString()
-	}
-
-	return optional.NewString(v)
+	d.Set(content, fileContent)
 }
 
 func getFileContent(filePath interface{}) (optional.Interface, error) {
