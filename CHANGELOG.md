@@ -1,3 +1,9 @@
+# 0.23.3 (July 25,2023) 
+
+ENHANCEMENTS:
+
+* Upgraded harnes-go-sdk@v0.3.39 ([#630](https://github.com/harness/terraform-provider-harness/issues/630))
+
 # 0.23.2 (July 20,2023) 
 
 ENHANCEMENTS:
