@@ -13,7 +13,7 @@ func TestAccDataSourceFileStoreFolder(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_file_store_node_folder.test"
+	resourceName := "harness_platform_file_store_folder.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -36,7 +36,7 @@ func TestAccDataSourceFileStoreFolderOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_file_store_node_folder.test"
+	resourceName := "harness_platform_file_store_folder.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -62,7 +62,7 @@ func TestAccDataSourceFileStoreFolderProjectLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_file_store_node_folder.test"
+	resourceName := "harness_platform_file_store_folder.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -98,7 +98,7 @@ func testAccDataSourceFileStore_FolderProjectLevel(id string, name string) strin
 		org_id = harness_platform_organization.test.identifier
 	}
 
-	resource "harness_platform_file_store_node_folder" "test" {
+	resource "harness_platform_file_store_folder" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = "%[1]s"
@@ -121,7 +121,7 @@ func testAccDataSourceFileStore_FolderOrgLevel(id string, name string) string {
 		name = "%[2]s"
 	}
 
-	resource "harness_platform_file_store_node_folder" "test" {
+	resource "harness_platform_file_store_folder" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = "%[1]s"
@@ -138,7 +138,7 @@ func testAccDataSourceFileStore_FolderOrgLevel(id string, name string) string {
 
 func testAccDataSourceFileStore_Folder(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_file_store_node_folder" "test" {
+	resource "harness_platform_file_store_folder" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		parent_identifier = "Root"

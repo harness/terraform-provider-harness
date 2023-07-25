@@ -31,26 +31,27 @@ func ResourceFileStoreNodeFolder() *schema.Resource {
 			"path": {
 				Description: "Harness File Store folder path",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 			"created_by": {
 				Description: "Created by",
 				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
 							Description: "User email",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 						"name": {
 							Description: "User name",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 					},
 				},
@@ -58,20 +59,21 @@ func ResourceFileStoreNodeFolder() *schema.Resource {
 			"last_modified_by": {
 				Description: "Last modified by",
 				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
 							Description: "User email",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 						"name": {
 							Description: "User name",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 					},
 				},
@@ -79,7 +81,7 @@ func ResourceFileStoreNodeFolder() *schema.Resource {
 			"last_modified_at": {
 				Description: "Last modified at",
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 		},

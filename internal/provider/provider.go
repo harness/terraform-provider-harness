@@ -223,8 +223,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
-				"harness_platform_file_store_node_file":            file_store.DataSourceFileStoreNodeFile(),
-				"harness_platform_file_store_node_folder":          file_store.DataSourceFileStoreNodeFolder(),
+				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -337,8 +337,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
-				"harness_platform_file_store_node_file":            file_store.ResourceFileStoreNodeFile(),
-				"harness_platform_file_store_node_folder":          file_store.ResourceFileStoreNodeFolder(),
+				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
 			},
 		}
 

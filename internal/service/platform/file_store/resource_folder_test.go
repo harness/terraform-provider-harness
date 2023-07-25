@@ -14,7 +14,7 @@ func TestAccResourceFileStoreFolder(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_file_store_node_folder.test"
+	resourceName := "harness_platform_file_store_folder.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -53,7 +53,7 @@ func TestAccResourceFileStoreFolderOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_file_store_node_folder.test"
+	resourceName := "harness_platform_file_store_folder.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -95,7 +95,7 @@ func TestAccResourceFileStoreFolderProjectLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_file_store_node_folder.test"
+	resourceName := "harness_platform_file_store_folder.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -146,7 +146,7 @@ func testAccResourceFileStore_FolderProjectLevel(id string, name string) string 
 		org_id = harness_platform_organization.test.identifier
 	}
 
-	resource "harness_platform_file_store_node_folder" "test" {
+	resource "harness_platform_file_store_folder" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = "%[1]s"
@@ -169,7 +169,7 @@ func testAccResourceFileStore_FolderOrgLevel(id string, name string) string {
 		name = "%[2]s"
 	}
 
-	resource "harness_platform_file_store_node_folder" "test" {
+	resource "harness_platform_file_store_folder" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = "%[1]s"
@@ -186,7 +186,7 @@ func testAccResourceFileStore_FolderOrgLevel(id string, name string) string {
 
 func testAccResourceFileStore_Folder(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_file_store_node_folder" "test" {
+	resource "harness_platform_file_store_folder" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		parent_identifier = "Root"

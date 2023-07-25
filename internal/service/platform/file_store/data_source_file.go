@@ -25,7 +25,6 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 				Description: "File content path to be upladed on Harness File Store",
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed:    true,
 			},
 			"mime_type": {
 				Description: "File mime type",
@@ -42,31 +41,33 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 			"content": {
 				Description: "File content stored on Harness File Store",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 			"path": {
 				Description: "Harness File Store file path",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 			"created_by": {
 				Description: "Created by",
 				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
+				Optional:    false,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
 							Description: "User email",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 						"name": {
 							Description: "User name",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 					},
 				},
@@ -74,19 +75,21 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 			"last_modified_by": {
 				Description: "Last modified by",
 				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
+				Optional:    false,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"email": {
 							Description: "User email",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 						"name": {
 							Description: "User name",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    false,
+							Computed:    true,
 						},
 					},
 				},
@@ -94,7 +97,7 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 			"last_modified_at": {
 				Description: "Last modified at",
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 		},

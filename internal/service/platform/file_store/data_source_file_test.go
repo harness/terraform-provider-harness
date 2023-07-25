@@ -14,7 +14,7 @@ func TestAccDataSourceFileStoreFile(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_file_store_node_file.test"
+	resourceName := "harness_platform_file_store_file.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -40,7 +40,7 @@ func TestAccDataSourceFileStoreFileOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_file_store_node_file.test"
+	resourceName := "harness_platform_file_store_file.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -69,7 +69,7 @@ func TestAccDataSourceFileStoreFileProjectLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_file_store_node_file.test"
+	resourceName := "harness_platform_file_store_file.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -108,7 +108,7 @@ func testAccDataSourceFileStore_FileProjectLevel(id string, name string) string 
 		org_id = harness_platform_organization.test.identifier
 	}
 
-	resource "harness_platform_file_store_node_file" "test" {
+	resource "harness_platform_file_store_file" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = "%[1]s"
@@ -136,7 +136,7 @@ func testAccDataSourceFileStore_FileOrgLevel(id string, name string) string {
 		name = "%[2]s"
 	}
 
-	resource "harness_platform_file_store_node_file" "test" {
+	resource "harness_platform_file_store_file" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		org_id = "%[1]s"
@@ -158,7 +158,7 @@ func testAccDataSourceFileStore_FileOrgLevel(id string, name string) string {
 
 func testAccDataSourceFileStore_File(id string, name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_file_store_node_file" "test" {
+	resource "harness_platform_file_store_file" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test file"
