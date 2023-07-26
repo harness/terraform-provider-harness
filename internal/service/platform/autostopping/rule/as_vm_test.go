@@ -18,7 +18,7 @@ func TestResourceVMRule(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//		CheckDestroy:      testVMRuleDestroy(resourceName),
+		//		CheckDestroy:      testRuleDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testVMRule(name),
@@ -26,18 +26,13 @@ func TestResourceVMRule(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 				),
 			},
-			// {
-			// 	ResourceName:            resourceName,
-			// 	ImportState:             true,
-			// 	ImportStateVerify:       true,
-			// },
 		},
 	})
 }
 
-func testVMRuleDestroy(resourceName string) resource.TestCheckFunc {
+func testRuleDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		rule, _ := testGetVMRule(resourceName, state)
+		rule, _ := testGetRule(resourceName, state)
 		if rule != nil {
 			return fmt.Errorf("Found vm rule: %d", rule.Id)
 		}
@@ -45,7 +40,7 @@ func testVMRuleDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGetVMRule(resourceName string, state *terraform.State) (*nextgen.Service, error) {
+func testGetRule(resourceName string, state *terraform.State) (*nextgen.Service, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	ruleId, err := strconv.ParseFloat(r.Primary.ID, 64)
@@ -68,8 +63,8 @@ func testVMRule(name string) string {
 		cloud_connector_id = "Azure_SE" 
 		idle_time_mins = 10              
 		filter {
-			vm_ids = ["/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Compute/virtualMachines/tkouhsari-autostop-3"]
-		  regions = ["useast2"]
+			vm_ids = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Compute/virtualMachines/virtual_machine"]
+		  	regions = ["useast2"]
 		}
 		http {
 			proxy_id = "ap-chdpf8f83v0c1aj69oog"           

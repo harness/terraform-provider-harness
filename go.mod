@@ -85,5 +85,5 @@ require (
 	gotest.tools/v3 v3.3.0 // indirect
 )
 
-// replace github.com/harness/harness-go-sdk => ../harness-go-sdk
+ replace github.com/harness/harness-go-sdk => ../harness-go-sdk
 // replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client

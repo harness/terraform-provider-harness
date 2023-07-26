@@ -8,7 +8,7 @@ func DataSourceVMRule() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness Variable.",
 
-		ReadContext: resourceVMRuleRead,
+		ReadContext: resourceASRuleRead,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -17,28 +17,29 @@ func DataSourceVMRule() *schema.Resource {
 				Computed:    true,
 			},
 			"name": {
-				Description: "Name of the Variable",
+				Description: "Name of the rule",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"cloud_connector_id": {
-				Description: "Description of the entity",
+				Description: "Id of the cloud connector",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"idle_time_mins": {
-				Description: "Organization Identifier for the Entity",
+				Description: "Idle time in minutes. This is the time that the AutoStopping rule waits before stopping the idle instances.",
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
+				Default:     15,
 			},
 			"use_spot": {
-				Description: "Project Identifier for the Entity",
+				Description: "Boolean that indicates whether the selected instances should be converted to spot vm",
 				Type:        schema.TypeBool,
 				Default:     false,
 				Optional:    true,
 			},
 			"custom_domains": {
-				Description: "Type of Variable",
+				Description: "Custom URLs used to access the instances",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Schema{
@@ -52,15 +53,17 @@ func DataSourceVMRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"vm_ids": {
-							Type:     schema.TypeList,
-							Required: true,
+							Description: "Ids of instances that needs to be managed using the AutoStopping rules",
+							Type:        schema.TypeList,
+							Required:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},
 						"tags": {
-							Type:     schema.TypeList,
-							Optional: true,
+							Description: "Tags of instances that needs to be managed using the AutoStopping rules",
+							Type:        schema.TypeList,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"key": {
@@ -75,15 +78,17 @@ func DataSourceVMRule() *schema.Resource {
 							},
 						},
 						"regions": {
-							Type:     schema.TypeList,
-							Optional: true,
+							Description: "Regions of instances that needs to be managed using the AutoStopping rules",
+							Type:        schema.TypeList,
+							Optional:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},
 						"zones": {
-							Type:     schema.TypeList,
-							Optional: true,
+							Description: "Zones of instances that needs to be managed using the AutoStopping rules",
+							Type:        schema.TypeList,
+							Optional:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -92,40 +97,40 @@ func DataSourceVMRule() *schema.Resource {
 				},
 			},
 			"http": {
-				Description: "List of Spce Fields.",
+				Description: "Http routing configuration",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"proxy_id": {
-							Description: "Type of Value of the Variable. For now only FIXED is supported",
+							Description: "Id of the proxy",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"routing": {
-							Description: "FixedValue of the variable",
+							Description: "Routing configuration used to access the instances",
 							Type:        schema.TypeList,
 							MinItems:    1,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"source_protocol": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Source protocol of the proxy can be http or https",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
 									"target_protocol": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Target protocol of the instance can be http or https",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
 									"source_port": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Port on the proxy",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
 									"target_port": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Port on the VM",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
@@ -138,38 +143,38 @@ func DataSourceVMRule() *schema.Resource {
 							},
 						},
 						"health": {
-							Description: "FixedValue of the variable",
+							Description: "Health Check Details",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"protocol": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Protocol can be http or https",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
 									"port": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Health check port on the VM",
 										Type:        schema.TypeInt,
 										Required:    true,
 									},
 									"path": {
-										Description: "Organization Identifier for the Entity",
+										Description: "API path to use for health check",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 									"timeout": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Health check timeout",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
 									"status_code_from": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Lower limit for acceptable status code",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
 									"status_code_to": {
-										Description: "Organization Identifier for the Entity",
+										Description: "Upper limit for acceptable status code",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
@@ -180,29 +185,29 @@ func DataSourceVMRule() *schema.Resource {
 				},
 			},
 			"tcp": {
-				Description: "FixedValue of the variable",
+				Description: "TCP routing configuration",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"proxy_id": {
-							Description: "Type of Value of the Variable. For now only FIXED is supported",
+							Description: "Id of the Proxy",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"ssh": {
-							Description: "FixedValue of the variable",
+							Description: "SSH configuration",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"connect_on": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Port to listen on the proxy",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
 									"port": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Port to listen on the vm",
 										Type:        schema.TypeInt,
 										Optional:    true,
 										Default:     22,
@@ -211,18 +216,18 @@ func DataSourceVMRule() *schema.Resource {
 							},
 						},
 						"rdp": {
-							Description: "FixedValue of the variable",
+							Description: "RDP configuration",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"connect_on": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Port to listen on the proxy",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
 									"port": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Port to listen on the vm",
 										Type:        schema.TypeInt,
 										Optional:    true,
 										Default:     3389,
@@ -231,18 +236,18 @@ func DataSourceVMRule() *schema.Resource {
 							},
 						},
 						"forward_rule": {
-							Description: "FixedValue of the variable",
+							Description: "Additional tcp forwarding rules",
 							Type:        schema.TypeList,
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"connect_on": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Port to listen on the proxy",
 										Type:        schema.TypeInt,
 										Optional:    true,
 									},
 									"port": {
-										Description: "Type of Value of the Variable. For now only FIXED is supported",
+										Description: "Port to listen on the vm",
 										Type:        schema.TypeInt,
 										Required:    true,
 									},
@@ -253,18 +258,18 @@ func DataSourceVMRule() *schema.Resource {
 				},
 			},
 			"depends": {
-				Description: "FixedValue of the variable",
+				Description: "Dependent rules",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"rule_id": {
-							Description: "Type of Value of the Variable. For now only FIXED is supported",
+							Description: "Rule id of the dependent rule",
 							Type:        schema.TypeInt,
 							Required:    true,
 						},
 						"delay_in_sec": {
-							Description: "Organization Identifier for the Entity",
+							Description: "Number of seconds the rule should wait after warming up the dependent rule",
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Default:     5,
