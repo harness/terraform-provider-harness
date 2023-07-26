@@ -16,41 +16,7 @@ func DataSourceServiceOverrides() *schema.Resource {
 
 		ReadContext: dataSourceServiceOverridesRead,
 
-		Schema: map[string]*schema.Schema{
-			"service_id": {
-				Description: "The service ID to which the overrides applies.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-			},
-			"env_id": {
-				Description: "The env ID to which the overrides are associated.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"infra_id": {
-				Description: "The infrastructure ID to which the overrides are associated",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-			},
-			"cluster_id": {
-				Description: "The cluster ID to which the overrides are associated",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-			},
-			"type": {
-				Description: "The type of the overrides",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"spec": {
-				Description: "The overrides specification for the service.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-		},
+		Schema: map[string]*schema.Schema{},
 	}
 
 	SetScopeDataResourceSchemaForServiceOverride(resource.Schema)
@@ -60,7 +26,7 @@ func DataSourceServiceOverrides() *schema.Resource {
 
 func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	identifier := d.State().ID
+	identifier := d.Get("identifier").(string)
 
 	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId,
 		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{

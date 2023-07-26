@@ -3,8 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"log"
-
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
@@ -12,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/sirupsen/logrus"
+	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -157,6 +156,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_nexus":                 connector.DatasourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.DatasourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.DatasourceConnectorPrometheus(),
+				"harness_platform_connector_rancher":               connector.DatasourceConnectorRancher(),
 				"harness_platform_connector_splunk":                connector.DatasourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
@@ -256,6 +256,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_nexus":                 connector.ResourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.ResourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.ResourceConnectorPrometheus(),
+				"harness_platform_connector_rancher":               connector.ResourceConnectorK8sRancher(),
 				"harness_platform_connector_splunk":                connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.ResourceConnectorSpot(),
 				"harness_platform_connector_terraform_cloud":       connector.ResourceConnectorTerraformCloud(),

@@ -111,7 +111,7 @@ func ResourceTemplate() *schema.Resource {
 				},
 			},
 			"force_delete": {
-				Description: "Enable this flag for force deletion of template",
+				Description: "Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
@@ -366,6 +366,10 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 				BranchName:     optional.NewString(branch_name),
 			})
 		}
+	}
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readTemplate(d, respGet, comments, store_type, base_branch, commit_message, connector_ref)
