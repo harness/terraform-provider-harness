@@ -1,6 +1,6 @@
 
-<a name="0.3.39"></a>
-## 0.3.39 (2023-07-24)
+<a name="0.3.40"></a>
+## 0.3.40 (2023-07-25)
 
 ### Added
 
@@ -30,6 +30,8 @@
 
 ### Release
 
+* Release version 0.3.39 07-24-2023
+* Release v0.3.39
 * Release version 0.3.38 07-17-2023
 * Release v0.3.38
 * Release version 0.3.37 07-13-2023
@@ -85,7 +87,6 @@
 * Release version 0.3.14 01-19-2023
 * Release v0.3.14
 * Release version 0.3.13 12-28-2022
-* Release v0.3.13
 
 ### Remove
 
@@ -112,6 +113,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#369](https://github.com/harness/harness-go-sdk/issues/369) from harness/CDS-45765
 * Merge pull request [#370](https://github.com/harness/harness-go-sdk/issues/370) from harness/cds-72208-path-change
 * Merge pull request [#367](https://github.com/harness/harness-go-sdk/issues/367) from harness/cds-72208
 * Merge pull request [#360](https://github.com/harness/harness-go-sdk/issues/360) from harness/CDS-69871
