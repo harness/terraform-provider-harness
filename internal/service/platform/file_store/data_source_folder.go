@@ -15,7 +15,8 @@ func DataSourceFileStoreNodeFolder() *schema.Resource {
 			"parent_identifier": {
 				Description: "Folder parent identifier on Harness File Store",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    false,
+				Computed:    true,
 			},
 			"path": {
 				Description: "Harness File Store folder path",

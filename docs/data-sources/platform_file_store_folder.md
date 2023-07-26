@@ -24,23 +24,23 @@ data "harness_platform_file_store_folder" "example" {
 ### Required
 
 - `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
-- `parent_identifier` (String) Folder parent identifier on Harness File Store
 
 ### Optional
 
-- `description` (String) Description of the resource.
+- `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
 - `created_by` (List of Object) Created by (see [below for nested schema](#nestedatt--created_by))
+- `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `last_modified_at` (Number) Last modified at
 - `last_modified_by` (List of Object) Last modified by (see [below for nested schema](#nestedatt--last_modified_by))
+- `parent_identifier` (String) Folder parent identifier on Harness File Store
 - `path` (String) Harness File Store folder path
+- `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--created_by"></a>
 ### Nested Schema for `created_by`

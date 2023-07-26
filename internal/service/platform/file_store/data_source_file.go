@@ -19,23 +19,25 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 			"parent_identifier": {
 				Description: "File parent identifier on Harness File Store",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    false,
+				Computed:    true,
 			},
 			"file_content_path": {
 				Description: "File content path to be upladed on Harness File Store",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Optional:    false,
+				Computed:    true,
 			},
 			"mime_type": {
 				Description: "File mime type",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 			"file_usage": {
 				Description: fmt.Sprintf("File usage. Valid options are %s", strings.Join(nextgen.FileUsageValues, ", ")),
 				Type:        schema.TypeString,
-				Optional:    true,
+				Optional:    false,
 				Computed:    true,
 			},
 			"content": {

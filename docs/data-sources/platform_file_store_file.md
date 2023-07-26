@@ -24,27 +24,27 @@ data "harness_platform_file_store_file" "example" {
 ### Required
 
 - `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
-- `parent_identifier` (String) File parent identifier on Harness File Store
 
 ### Optional
 
-- `description` (String) Description of the resource.
-- `file_content_path` (String) File content path to be upladed on Harness File Store
-- `file_usage` (String) File usage. Valid options are ManifestFile, Config, Script
-- `mime_type` (String) File mime type
+- `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
 - `content` (String) File content stored on Harness File Store
 - `created_by` (List of Object) Created by (see [below for nested schema](#nestedatt--created_by))
+- `description` (String) Description of the resource.
+- `file_content_path` (String) File content path to be upladed on Harness File Store
+- `file_usage` (String) File usage. Valid options are ManifestFile, Config, Script
 - `id` (String) The ID of this resource.
 - `last_modified_at` (Number) Last modified at
 - `last_modified_by` (List of Object) Last modified by (see [below for nested schema](#nestedatt--last_modified_by))
+- `mime_type` (String) File mime type
+- `parent_identifier` (String) File parent identifier on Harness File Store
 - `path` (String) Harness File Store file path
+- `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--created_by"></a>
 ### Nested Schema for `created_by`
