@@ -103,7 +103,7 @@ func DataSourceFileStoreNodeFile() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

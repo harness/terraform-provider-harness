@@ -7,6 +7,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceFileStoreFolder(t *testing.T) {
@@ -127,6 +128,42 @@ func TestAccResourceFileStoreFolderProjectLevel(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{},
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceFileStoreFolder_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_file_store_folder.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy:      testAccFileStoreDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceFileStore_FolderProjectLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					resp, _, err := c.FileStoreApi.DeleteFile(ctx, id, c.AccountId, nil)
+					require.NoError(t, err)
+					require.True(t, resp.Data)
+				},
+				Config:             testAccResourceFileStore_FolderProjectLevel(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
