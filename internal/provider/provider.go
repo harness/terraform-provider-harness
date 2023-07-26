@@ -3,6 +3,8 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
@@ -10,7 +12,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
 	"github.com/sirupsen/logrus"
-	"log"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
@@ -224,6 +225,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
 				"harness_autostopping_rule_vm":                     as_rule.DataSourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.DataSourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.DataSourceECSRule(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -337,6 +340,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
 				"harness_autostopping_rule_vm":                     as_rule.ResourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.ResourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.ResourceECSRule(),
 			},
 		}
 
