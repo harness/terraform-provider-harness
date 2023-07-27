@@ -615,6 +615,8 @@ List agents.
      * @param "PageSize" (optional.Int32) -
      * @param "PageIndex" (optional.Int32) -
      * @param "Scope" (optional.String) -
+     * @param "MetadataOnly" (optional.Bool) -
+     * @param "IgnoreScope" (optional.Bool) -
 @return V1AgentList
 */
 
@@ -628,6 +630,8 @@ type AgentsApiAgentServiceForServerListOpts struct {
 	PageSize          optional.Int32
 	PageIndex         optional.Int32
 	Scope             optional.String
+	MetadataOnly      optional.Bool
+	IgnoreScope       optional.Bool
 }
 
 func (a *AgentsApiService) AgentServiceForServerList(ctx context.Context, accountIdentifier string, type_ string, localVarOptionals *AgentsApiAgentServiceForServerListOpts) (V1AgentList, *http.Response, error) {
@@ -675,6 +679,12 @@ func (a *AgentsApiService) AgentServiceForServerList(ctx context.Context, accoun
 	}
 	if localVarOptionals != nil && localVarOptionals.Scope.IsSet() {
 		localVarQueryParams.Add("scope", parameterToString(localVarOptionals.Scope.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.MetadataOnly.IsSet() {
+		localVarQueryParams.Add("metadataOnly", parameterToString(localVarOptionals.MetadataOnly.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IgnoreScope.IsSet() {
+		localVarQueryParams.Add("ignoreScope", parameterToString(localVarOptionals.IgnoreScope.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}

@@ -202,6 +202,8 @@ Name | Type | Description  | Notes
  **pageSize** | **optional.Int32**|  | 
  **pageIndex** | **optional.Int32**|  | 
  **scope** | **optional.String**|  | [default to AGENT_SCOPE_UNSET]
+ **metadataOnly** | **optional.Bool**|  |
+ **ignoreScope** | **optional.Bool**|  |
 
 ### Return type
 
