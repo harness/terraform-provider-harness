@@ -1,3 +1,33 @@
+# 0.23.3 (July 25,2023) 
+
+ENHANCEMENTS:
+
+* Upgraded harnes-go-sdk@v0.3.39 ([#630](https://github.com/harness/terraform-provider-harness/issues/630))
+
+# 0.23.2 (July 20,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_service_now: Enhanced servicenow connector resource to support newer RefreshTokenGrantType authentication beans. ([#614](https://github.com/harness/terraform-provider-harness/issues/614))
+
+BUG FIXES:
+
+* Fix dataSourceTokenRead documentation. ([#618](https://github.com/harness/terraform-provider-harness/issues/618))
+* Fixed the example documentation for service overrides ([#623](https://github.com/harness/terraform-provider-harness/issues/623))
+* resource/harness_platform_apikey: made tags field as set of strings ([#625](https://github.com/harness/terraform-provider-harness/issues/625))
+* resource/harness_platform_token: made tags field as set of strings ([#624](https://github.com/harness/terraform-provider-harness/issues/624))
+
+# 0.23.1 (July 14,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_infrastructure: added AWS SAM infrastructure type. ([#616](https://github.com/harness/terraform-provider-harness/issues/616))
+
+BUG FIXES:
+
+* - Formatting the sample example for harness_platform_environment resource ([#604](https://github.com/harness/terraform-provider-harness/issues/604))
+* Fix for supporting yaml for environment and environment group data source ([#610](https://github.com/harness/terraform-provider-harness/issues/610))
+
 # 0.23.0 (July 05,2023) 
 
 FEATURES:
