@@ -28,6 +28,7 @@ func ResourceTemplate() *schema.Resource {
 				Description: "Yaml for creating new Template." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"version": {
 				Description: "Version Label for Template.",
@@ -38,6 +39,7 @@ func ResourceTemplate() *schema.Resource {
 				Description: "True if given version for template to be set as stable.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Computed: true,
 			},
 			"comments": {
 				Description: "Specify comment with respect to changes.",
