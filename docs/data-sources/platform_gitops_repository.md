@@ -34,6 +34,7 @@ data "harness_platform_gitops_repository" "example" {
 ### Optional
 
 - `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
+- `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
 - `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
@@ -80,5 +81,3 @@ Read-Only:
 - `tls_client_cert_key` (String)
 - `type_` (String)
 - `username` (String)
-
-
