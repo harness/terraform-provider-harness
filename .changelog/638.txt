@@ -1,0 +1,5 @@
+```release-note:enhancement
+resource/harness_platform_gitops_repository: add support for token update for OCI helm repo with ESO
+```
+
+
