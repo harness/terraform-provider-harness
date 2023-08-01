@@ -23,4 +23,5 @@ type HrepocredsRepoCreds struct {
 	EnableOCI                  bool   `json:"enableOCI,omitempty"`
 	// Type specifies the type of the repoCreds. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.
 	Type_ string `json:"type,omitempty"`
+	Name string `json:"name,omitempty"`
 }

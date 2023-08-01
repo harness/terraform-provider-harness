@@ -10,7 +10,12 @@
 package nextgen
 
 type RepositoriesRepoCreateRequest struct {
-	Repo      *RepositoriesRepository `json:"repo,omitempty"`
-	Upsert    bool                    `json:"upsert,omitempty"`
-	CredsOnly bool                    `json:"credsOnly,omitempty"`
+	Repo      *RepositoriesRepository                     `json:"repo,omitempty"`
+	Upsert    bool                                        `json:"upsert,omitempty"`
+	CredsOnly bool                                        `json:"credsOnly,omitempty"`
+	GenType   *RepositoriesEsoGeneratorType               `json:"genType,omitempty"`
+	EcrGen    *RepositoriesEcrAuthorizationTokenGenerator `json:"ecrGen,omitempty"`
+	GcrGen    *RepositoriesGcrAccessTokenGenerator        `json:"gcrGen,omitempty"`
+	// refreshInterval in format 1s, 1m, 1h...
+	RefreshInterval string `json:"refreshInterval,omitempty"`
 }

@@ -10,6 +10,11 @@
 package nextgen
 
 type RepositoriesRepoUpdateRequest struct {
-	Repo       *RepositoriesRepository `json:"repo,omitempty"`
-	UpdateMask *ProtobufFieldMask      `json:"updateMask,omitempty"`
+	Repo       *RepositoriesRepository                     `json:"repo,omitempty"`
+	UpdateMask *ProtobufFieldMask                          `json:"updateMask,omitempty"`
+	GenType    *RepositoriesEsoGeneratorType               `json:"genType,omitempty"`
+	EcrGen     *RepositoriesEcrAuthorizationTokenGenerator `json:"ecrGen,omitempty"`
+	GcrGen     *RepositoriesGcrAccessTokenGenerator        `json:"gcrGen,omitempty"`
+	// refreshInterval in format 1s, 1m, 1h...
+	RefreshInterval string `json:"refreshInterval,omitempty"`
 }
