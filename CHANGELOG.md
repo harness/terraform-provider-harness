@@ -1,6 +1,6 @@
 
-<a name="0.3.40"></a>
-## 0.3.40 (2023-07-25)
+<a name="0.3.41"></a>
+## 0.3.41 (2023-08-01)
 
 ### Added
 
@@ -30,6 +30,8 @@
 
 ### Release
 
+* Release version 0.3.40 07-26-2023
+* Release v0.3.40
 * Release version 0.3.39 07-24-2023
 * Release v0.3.39
 * Release version 0.3.38 07-17-2023
@@ -84,9 +86,6 @@
 * Release v0.3.16
 * Release version 0.3.15 02-15-2023
 * Release v0.3.15
-* Release version 0.3.14 01-19-2023
-* Release v0.3.14
-* Release version 0.3.13 12-28-2022
 
 ### Remove
 
@@ -98,6 +97,12 @@
 
 ### Update
 
+* Update model_oci_repo_type_response_oci_repo_type_enum.go
+* Update model_repositories_aws_secret_ref.go
+* Update model_repositories_check_eso_response.go
+* Update model_v1_oci_repo_type_response.go
+* Update model_v1_oci_repo_type.go
+* Update RepositoriesApi.md
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
@@ -113,6 +118,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#365](https://github.com/harness/harness-go-sdk/issues/365) from harness/CDS-73704
+* Merge pull request [#374](https://github.com/harness/harness-go-sdk/issues/374) from harness/cds-70803
 * Merge pull request [#369](https://github.com/harness/harness-go-sdk/issues/369) from harness/CDS-45765
 * Merge pull request [#370](https://github.com/harness/harness-go-sdk/issues/370) from harness/cds-72208-path-change
 * Merge pull request [#367](https://github.com/harness/harness-go-sdk/issues/367) from harness/cds-72208
@@ -148,5 +155,4 @@
 * Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
 * Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
 * Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
-* Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
 
