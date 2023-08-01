@@ -1,3 +1,15 @@
+# 0.24.0 (August 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_file_store_file - Added a File Store file resource.
+harness_platform_file_store_folder - Added a File Store folder resource.` ([#629](https://github.com/harness/terraform-provider-harness/issues/629))
+
+ENHANCEMENTS:
+
+* Add more fields for overrides v2 data source ([#636](https://github.com/harness/terraform-provider-harness/issues/636))
+* resource/harness_platform_gitops_repository: add support for token update for OCI helm repo with ESO ([#638](https://github.com/harness/terraform-provider-harness/issues/638))
+
 # 0.23.3 (July 25,2023) 
 
 ENHANCEMENTS:
