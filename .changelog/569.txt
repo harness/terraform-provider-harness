@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_policyset: correct description for 'severity' for policy.
+resource/harness_platform_policy: Enhance example to showcase how to add policy with Rego spanning over multiple lines.
+```

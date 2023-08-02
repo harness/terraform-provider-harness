@@ -36,3 +36,24 @@ resource "harness_platform_connector_service_now" "test" {
     }
   }
 }
+
+# Credential type RefreshTokenGrantType
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://test.service-now.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "RefreshTokenGrantType"
+    adfs {
+      token_url         = "https://test.service-now.com/oauth_token.do"
+      refresh_token_ref = "account.refresh_token_ref"
+      client_id_ref     = "account.client_id_ref"
+      client_secret_ref = "account.client_secret_ref"
+      scope             = "email openid profile"
+    }
+  }
+}

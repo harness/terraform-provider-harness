@@ -40,6 +40,7 @@ import (
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
+	file_store "github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
@@ -62,9 +63,11 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	pl_service_overrides_v2 "github.com/harness/terraform-provider-harness/internal/service/platform/service_overrides_v2"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
 	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/template_filters"
+	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
@@ -153,6 +156,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_nexus":                 connector.DatasourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.DatasourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.DatasourceConnectorPrometheus(),
+				"harness_platform_connector_rancher":               connector.DatasourceConnectorRancher(),
 				"harness_platform_connector_splunk":                connector.DatasourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
@@ -163,6 +167,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
+				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.DataSourceServiceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
@@ -217,6 +222,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
+				"harness_platform_token":                           pl_token.DataSourceToken(),
+				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -249,6 +257,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_nexus":                 connector.ResourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.ResourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.ResourceConnectorPrometheus(),
+				"harness_platform_connector_rancher":               connector.ResourceConnectorK8sRancher(),
 				"harness_platform_connector_splunk":                connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.ResourceConnectorSpot(),
 				"harness_platform_connector_terraform_cloud":       connector.ResourceConnectorTerraformCloud(),
@@ -257,6 +266,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
+				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_feature_flag":                    feature_flag.ResourceFeatureFlag(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
@@ -326,6 +336,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
+				"harness_platform_token":                           pl_token.ResourceToken(),
+				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
 			},
 		}
 

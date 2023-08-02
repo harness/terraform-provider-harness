@@ -24,27 +24,6 @@ func ResourceApiKey() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Identifier of the API Key",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"name": {
-				Description: "Name of the API Key",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"description": {
-				Description: "Description of the API Key",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"tags": {
-				Description: "Tags for the API Key",
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-			},
 			"apikey_type": {
 				Description:  "Type of the API Key",
 				Type:         schema.TypeString,
@@ -66,18 +45,9 @@ func ResourceApiKey() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_id": {
-				Description: "Organization Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description: "Project Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 		},
 	}
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -162,7 +132,7 @@ func buildApiKey(d *schema.ResourceData) *nextgen.ApiKey {
 	}
 
 	if attr, ok := d.GetOk("tags"); ok {
-		apiKey.Tags = attr.(map[string]string)
+		apiKey.Tags = helpers.ExpandTags(attr.(*schema.Set).List())
 	}
 
 	if attr, ok := d.GetOk("apikey_type"); ok {
@@ -195,7 +165,7 @@ func readApiKey(d *schema.ResourceData, apiKey *nextgen.ApiKey) {
 	d.SetId(apiKey.Identifier)
 	d.Set("name", apiKey.Name)
 	d.Set("description", apiKey.Description)
-	d.Set("tags", apiKey.Tags)
+	d.Set("tags", helpers.FlattenTags(apiKey.Tags))
 	d.Set("apikey_type", apiKey.ApiKeyType)
 	d.Set("parent_id", apiKey.ParentIdentifier)
 	d.Set("default_time_to_expire_token", apiKey.DefaultTimeToExpireToken)

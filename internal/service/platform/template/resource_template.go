@@ -15,7 +15,7 @@ import (
 
 func ResourceTemplate() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Template.",
+		Description: "Resource for creating a Template. Description field is deprecated",
 
 		ReadContext:   resourceTemplateRead,
 		UpdateContext: resourceTemplateCreateOrUpdate,
@@ -111,15 +111,47 @@ func ResourceTemplate() *schema.Resource {
 				},
 			},
 			"force_delete": {
-				Description: "Enable this flag for force deletion of template",
+				Description: "Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it",
 				Type:        schema.TypeString,
 				Optional:    true,
 				Computed:    true,
 			},
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"name": {
+				Description: "Name of the Variable",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"description": {
+				Description: "Description of the entity. Description field is deprecated",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "description field is deprecated",
+			},
+			"org_id": {
+				Description: "Organization Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Project Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"tags": {
+				Description: "Tags to associate with the resource.",
+				Type:        schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional: true,
+			},
 		},
 	}
-
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -336,6 +368,10 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
 	readTemplate(d, respGet, comments, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
@@ -489,7 +525,6 @@ func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsRes
 	d.Set("project_id", template.Template.Project)
 	d.Set("template_yaml", template.Template.Yaml)
 	d.Set("is_stable", template.Template.StableTemplate)
-	d.Set("description", template.Template.Description)
 	d.Set("version", template.Template.VersionLabel)
 	d.Set("comments", comments)
 	if template.Template.GitDetails != nil {

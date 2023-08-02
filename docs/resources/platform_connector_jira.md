@@ -13,6 +13,7 @@ Resource for creating a Jira connector.
 ## Example Usage
 
 ```terraform
+# Auth type UsernamePassword
 resource "harness_platform_connector_jira" "test" {
   identifier  = "identifier"
   name        = "name"
@@ -26,6 +27,23 @@ resource "harness_platform_connector_jira" "test" {
     username_password {
       username     = "admin"
       password_ref = "account.secret_id"
+    }
+  }
+}
+
+# Auth Type PersonalAccessToken
+resource "harness_platform_connector_jira" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  url                = "https://jira.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "PersonalAccessToken"
+    personal_access_token {
+      pat_ref = "account.secret_id"
     }
   }
 }
@@ -65,7 +83,16 @@ Required:
 
 Optional:
 
+- `personal_access_token` (Block List, Max: 1) Authenticate using personal access token. (see [below for nested schema](#nestedblock--auth--personal_access_token))
 - `username_password` (Block List, Max: 1) Authenticate using username password. (see [below for nested schema](#nestedblock--auth--username_password))
+
+<a id="nestedblock--auth--personal_access_token"></a>
+### Nested Schema for `auth.personal_access_token`
+
+Required:
+
+- `pat_ref` (String) Reference to a secret containing the personal access token to use for authentication. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
 
 <a id="nestedblock--auth--username_password"></a>
 ### Nested Schema for `auth.username_password`

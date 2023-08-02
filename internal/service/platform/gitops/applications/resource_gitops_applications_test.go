@@ -2,12 +2,13 @@ package applications_test
 
 import (
 	"fmt"
-	"github.com/antihax/optional"
-	"github.com/harness/harness-go-sdk/harness/nextgen"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/antihax/optional"
+	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -281,6 +282,7 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
 				cluster_id =  "%[8]s"
 				repo_id = "%[10]s"
 				agent_id = "%[4]s"
+				name = "%[3]s"
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
 }

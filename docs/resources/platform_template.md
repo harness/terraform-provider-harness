@@ -3,12 +3,12 @@
 page_title: "harness_platform_template Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Template.
+  Resource for creating a Template. Description field is deprecated
 ---
 
 # harness_platform_template (Resource)
 
-Resource for creating a Template.
+Resource for creating a Template. Description field is deprecated
 
 ## Example Usage
 
@@ -29,6 +29,80 @@ resource "harness_platform_template" "pipeline_template_remote" {
     connector_ref  = "account.connector_ref"
     store_type     = "REMOTE"
     repo_name      = "repo_name"
+  }
+  template_yaml = <<-EOT
+template:
+  name: "name"
+  identifier: "identifier"
+  versionLabel: "ab"
+  type: Pipeline
+  projectIdentifier: ${harness_platform_project.test.id}
+  orgIdentifier: ${harness_platform_project.test.org_id}
+  tags: {}
+  spec:
+    stages:
+      - stage:
+          identifier: dvvdvd
+          name: dvvdvd
+          description: ""
+          type: Deployment
+          spec:
+            deploymentType: Kubernetes
+            service:
+              serviceRef: <+input>
+              serviceInputs: <+input>
+            environment:
+              environmentRef: <+input>
+              deployToAll: false
+              environmentInputs: <+input>
+              serviceOverrideInputs: <+input>
+              infrastructureDefinitions: <+input>
+            execution:
+              steps:
+                - step:
+                    name: Rollout Deployment
+                    identifier: rolloutDeployment
+                    type: K8sRollingDeploy
+                    timeout: 10m
+                    spec:
+                      skipDryRun: false
+                      pruningEnabled: false
+              rollbackSteps:
+                - step:
+                    name: Rollback Rollout Deployment
+                    identifier: rollbackRolloutDeployment
+                    type: K8sRollingRollback
+                    timeout: 10m
+                    spec:
+                      pruningEnabled: false
+          tags: {}
+          failureStrategies:
+            - onFailure:
+                errors:
+                  - AllErrors
+                action:
+                  type: StageRollback
+
+  EOT
+}
+
+## Remote Pipeline template to create new branch from existing base branch
+resource "harness_platform_template" "pipeline_template_remote" {
+  identifier = "identifier"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  name       = "name"
+  comments   = "comments"
+  version    = "ab"
+  is_stable  = true
+  git_details {
+    branch_name    = "new_branch"
+    commit_message = "Commit"
+    file_path      = "file_path"
+    connector_ref  = "account.connector_ref"
+    store_type     = "REMOTE"
+    repo_name      = "repo_name"
+    base_branch    = "main"
   }
   template_yaml = <<-EOT
 template:
@@ -227,6 +301,49 @@ template:
   EOT
 }
 
+## Remote Step template to create new branch from existing branch
+resource "harness_platform_template" "step_template_remote" {
+  identifier = "identifier"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  name       = "name"
+  comments   = "comments"
+  version    = "ab"
+  is_stable  = true
+  git_details {
+    branch_name    = "new_branch"
+    commit_message = "Commit"
+    file_path      = "file_path"
+    connector_ref  = "account.connector_ref"
+    store_type     = "REMOTE"
+    repo_name      = "repo_name"
+    base_branch    = "main"
+  }
+  template_yaml = <<-EOT
+template:
+  name: "name"
+  identifier: "identifier"
+  versionLabel: "ab"
+  type: Step
+  projectIdentifier: ${harness_platform_project.test.id}
+  orgIdentifier: ${harness_platform_project.test.org_id}
+  tags: {}
+  spec:
+    timeout: 10m
+    type: ShellScript
+    spec:
+      shell: Bash
+      onDelegate: true
+      source:
+        type: Inline
+        spec:
+          script: <+input>
+      environmentVariables: []
+      outputVariables: []
+
+  EOT
+}
+
 ## Inline Stage template
 resource "harness_platform_template" "stage_template_inline" {
   identifier    = "identifier"
@@ -349,6 +466,72 @@ template:
   EOT
 }
 
+## Remote Stage template to create new branch from existing branch
+resource "harness_platform_template" "stage_template_remote" {
+  identifier = "identifier"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  name       = "name"
+  comments   = "comments"
+  version    = "ab"
+  is_stable  = true
+  git_details {
+    branch_name    = "new_branch"
+    commit_message = "Commit"
+    file_path      = "file_path"
+    connector_ref  = "account.connector_ref"
+    store_type     = "REMOTE"
+    repo_name      = "repo_name"
+    base_branch    = "main"
+  }
+  template_yaml = <<-EOT
+template:
+  name: "name"
+  identifier: "identifier"
+  versionLabel: "ab"
+  type: Stage
+  projectIdentifier: ${harness_platform_project.test.id}
+  orgIdentifier: ${harness_platform_project.test.org_id}
+  tags: {}
+  spec:
+    type: Deployment
+    spec:
+      deploymentType: Kubernetes
+      service:
+        serviceRef: <+input>
+        serviceInputs: <+input>
+      environment:
+        environmentRef: <+input>
+        deployToAll: false
+        environmentInputs: <+input>
+        infrastructureDefinitions: <+input>
+      execution:
+        steps:
+          - step:
+              type: ShellScript
+              name: Shell Script_1
+              identifier: ShellScript_1
+              spec:
+                shell: Bash
+                onDelegate: true
+                source:
+                  type: Inline
+                  spec:
+                    script: <+input>
+                environmentVariables: []
+                outputVariables: []
+              timeout: <+input>
+        rollbackSteps: []
+    failureStrategies:
+      - onFailure:
+          errors:
+            - AllErrors
+          action:
+            type: StageRollback
+
+  EOT
+}
+
 ## Inline StepGroup template
 resource "harness_platform_template" "stepgroup_template_inline" {
   identifier    = "identifier"
@@ -404,6 +587,54 @@ resource "harness_platform_template" "stepgroup_template_remote" {
     connector_ref  = "account.connector_ref"
     store_type     = "REMOTE"
     repo_name      = "repo_name"
+  }
+  template_yaml = <<-EOT
+template:
+  name: "name"
+  identifier: "identifier"
+  versionLabel: "ab"
+  type: StepGroup
+  projectIdentifier: ${harness_platform_project.test.id}
+  orgIdentifier: ${harness_platform_project.test.org_id}
+  tags: {}
+  spec:
+    stageType: Deployment
+    steps:
+      - step:
+          type: ShellScript
+          name: Shell Script_1
+          identifier: ShellScript_1
+          spec:
+            shell: Bash
+            onDelegate: true
+            source:
+              type: Inline
+              spec:
+                script: <+input>
+            environmentVariables: []
+            outputVariables: []
+          timeout: 10m
+
+  EOT
+}
+
+## Remote StepGroup template to create new branch from existing branch
+resource "harness_platform_template" "stepgroup_template_remote" {
+  identifier = "identifier"
+  org_id     = harness_platform_project.test.org_id
+  project_id = harness_platform_project.test.id
+  name       = "name"
+  comments   = "comments"
+  version    = "ab"
+  is_stable  = true
+  git_details {
+    branch_name    = "new_branch"
+    commit_message = "Commit"
+    file_path      = "file_path"
+    connector_ref  = "account.connector_ref"
+    store_type     = "REMOTE"
+    repo_name      = "repo_name"
+    base_branch    = "main"
   }
   template_yaml = <<-EOT
 template:
@@ -612,20 +843,20 @@ template:
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
+- `identifier` (String) Unique identifier of the resource
+- `name` (String) Name of the Variable
 - `template_yaml` (String) Yaml for creating new Template. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 - `version` (String) Version Label for Template.
 
 ### Optional
 
 - `comments` (String) Specify comment with respect to changes.
-- `description` (String) Description of the resource.
-- `force_delete` (String) Enable this flag for force deletion of template
+- `description` (String, Deprecated) Description of the entity. Description field is deprecated
+- `force_delete` (String) Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it
 - `git_details` (Block List, Max: 1) Contains parameters related to creating an Entity for Git Experience. (see [below for nested schema](#nestedblock--git_details))
 - `is_stable` (Boolean) True if given version for template to be set as stable.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
+- `org_id` (String) Organization Identifier for the Entity
+- `project_id` (String) Project Identifier for the Entity
 - `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only

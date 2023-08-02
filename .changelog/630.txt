@@ -1,0 +1,3 @@
+```release-note:enhancement
+Upgraded harnes-go-sdk@v0.3.39
+```
