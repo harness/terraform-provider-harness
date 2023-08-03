@@ -24,5 +24,4 @@ type MonitoredServiceDto struct {
 	Dependencies []ServiceDependencyDto `json:"dependencies,omitempty"`
 	NotificationRuleRefs []NotificationRuleRefDto `json:"notificationRuleRefs,omitempty"`
 	Template *TemplateDto `json:"template,omitempty"`
-	Enabled bool `json:"enabled,omitempty"`
 }
