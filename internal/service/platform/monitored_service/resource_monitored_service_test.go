@@ -157,7 +157,6 @@ func testAccResourceMonitoredService(id string, name string) string {
 					category = "Deployment"
 				}
 
-				enabled = true
 			}
 		}
 `, id, name)
@@ -236,8 +235,6 @@ func testMonitoredServiceWithoutChangeSource(id string, name string) string {
 						}
 					]})
 				}
-
-				enabled = true
 			}
 		}
 `, id, name)
