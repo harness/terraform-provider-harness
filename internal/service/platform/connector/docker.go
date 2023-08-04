@@ -70,6 +70,12 @@ func ResourceConnectorDocker() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
+						"execute_on_delegate": {
+							Description: "Execute on delegate or not.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     true,
+						},
 					},
 				},
 			},
@@ -151,6 +157,10 @@ func buildConnectorDocker(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr, ok := config["password_ref"]; ok {
 			connector.DockerRegistry.Auth.UsernamePassword.PasswordRef = attr.(string)
 		}
+
+	}
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Github.ExecuteOnDelegate = attr.(bool)
 	}
 
 	return connector
@@ -160,6 +170,7 @@ func readConnectorDocker(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("type", connector.DockerRegistry.ProviderType)
 	d.Set("url", connector.DockerRegistry.DockerRegistryUrl)
 	d.Set("delegate_selectors", connector.DockerRegistry.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Github.ExecuteOnDelegate)
 
 	switch connector.DockerRegistry.Auth.Type_ {
 	case nextgen.DockerAuthTypes.UsernamePassword:
