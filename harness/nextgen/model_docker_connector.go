@@ -16,4 +16,5 @@ type DockerConnector struct {
 	ProviderType      string                `json:"providerType"`
 	Auth              *DockerAuthentication `json:"auth,omitempty"`
 	DelegateSelectors []string              `json:"delegateSelectors,omitempty"`
+	ExecuteOnDelegate bool `json:"executeOnDelegate,omitempty"`
 }
