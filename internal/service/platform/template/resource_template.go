@@ -27,7 +27,8 @@ func ResourceTemplate() *schema.Resource {
 			"template_yaml": {
 				Description: "Yaml for creating new Template." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional: true,
+				Computed: true,
 			},
 			"version": {
 				Description: "Version Label for Template.",
@@ -38,6 +39,7 @@ func ResourceTemplate() *schema.Resource {
 				Description: "True if given version for template to be set as stable.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Computed: true,
 			},
 			"comments": {
 				Description: "Specify comment with respect to changes.",
@@ -243,6 +245,7 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	project_id := d.Get("project_id").(string)
 	comments := d.Get("comments").(string)
 	version := d.Get("version").(string)
+	template_yaml := d.Get("template_yaml").(string)
 
 	if id == "" {
 		template := buildCreateTemplate(d)
@@ -293,36 +296,57 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			commit_message = optional.NewString(template.GitDetails.CommitMessage)
 			connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
 		}
-		if project_id != "" {
-			resp, httpResp, err = c.ProjectTemplateApi.UpdateTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateProjectOpts{
-				Body:           optional.NewInterface(template),
-				HarnessAccount: optional.NewString(c.AccountId),
-			})
-			if resp.Identifier != "" {
-				template_id = resp.Identifier
+
+		if template_yaml != "" {
+			if project_id != "" {
+				resp, httpResp, err = c.ProjectTemplateApi.UpdateTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateProjectOpts{
+					Body:           optional.NewInterface(template),
+					HarnessAccount: optional.NewString(c.AccountId),
+				})
+				if resp.Identifier != "" {
+					template_id = resp.Identifier
+				} else {
+					template_id = resp.Slug
+				}
+			} else if org_id != "" && project_id == "" {
+				resp, httpResp, err = c.OrgTemplateApi.UpdateTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateOrgOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
+				if resp.Identifier != "" {
+					template_id = resp.Identifier
+				} else {
+					template_id = resp.Slug
+				}
 			} else {
-				template_id = resp.Slug
-			}
-		} else if org_id != "" && project_id == "" {
-			resp, httpResp, err = c.OrgTemplateApi.UpdateTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateOrgOpts{
-				HarnessAccount: optional.NewString(c.AccountId),
-				Body:           optional.NewInterface(template),
-			})
-			if resp.Identifier != "" {
-				template_id = resp.Identifier
-			} else {
-				template_id = resp.Slug
+				resp, httpResp, err = c.AccountTemplateApi.UpdateTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateAccOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
+				if resp.Identifier != "" {
+					template_id = resp.Identifier
+				} else {
+					template_id = resp.Slug
+				}
 			}
 		} else {
-			resp, httpResp, err = c.AccountTemplateApi.UpdateTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateAccOpts{
-				HarnessAccount: optional.NewString(c.AccountId),
-				Body:           optional.NewInterface(template),
-			})
-			if resp.Identifier != "" {
-				template_id = resp.Identifier
+			if project_id != "" {
+				_ , httpResp, err = c.ProjectTemplateApi.UpdateTemplateStableProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateStableProjectOpts{
+					Body:           optional.NewInterface(template),
+					HarnessAccount: optional.NewString(c.AccountId),
+				})
+			} else if org_id != "" && project_id == "" {
+				_ , httpResp, err = c.OrgTemplateApi.UpdateTemplateStableOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateStableOrgOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
 			} else {
-				template_id = resp.Slug
+				_ , httpResp, err = c.AccountTemplateApi.UpdateTemplateStableAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateStableAccOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
 			}
+			template_id = id
 		}
 	}
 
