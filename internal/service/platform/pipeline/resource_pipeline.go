@@ -27,7 +27,7 @@ func ResourcePipeline() *schema.Resource {
 			"yaml": {
 				Description: "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
@@ -101,7 +101,7 @@ func ResourcePipeline() *schema.Resource {
 			"import_from_git": {
 				Description: "Flag to set if importing from Git",
 				Type:        schema.TypeBool,
-				Required:    false,
+				Optional:    true,
 			},
 			"git_import_info": {
 				Description: "Contains Git Information for importing entities from Git",

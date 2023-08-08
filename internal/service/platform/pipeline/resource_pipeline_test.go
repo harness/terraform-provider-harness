@@ -87,6 +87,34 @@ func TestAccResourcePipelineInline(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_pipeline.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPipelineDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourcePipeline_DeleteUnderlyingResource(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
@@ -367,5 +395,37 @@ func testAccResourcePipelineInline(id string, name string) string {
                                             type: StageRollback
             EOT
         }
+        `, id, name)
+}
+
+func testAccResourcePipelineImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+				resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+				resource "harness_platform_project" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+					org_id = harness_platform_organization.test.id
+					color = "#472848"
+				}
+        resource "harness_platform_pipeline" "test" {
+                        identifier = "%[1]s"
+                        org_id = harness_platform_project.test.org_id
+						project_id = harness_platform_project.test.id
+                        name = "%[2]s"
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
+                            connector_ref = "account.Jajoo"
+                            repo_name = "jajoo_git"
+                        }
+                        pipeline_import_request {
+                            pipeline_name = "pipelinename"
+                            pipeline_description = "pipelinedescription"
+                        }
+                }
         `, id, name)
 }
