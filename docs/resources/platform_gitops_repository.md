@@ -54,7 +54,7 @@ resource "harness_platform_gitops_repository" "example" {
   org_id     = "org_id"
   agent_id   = "agent_id"
   repo {
-    repo            = "ghcr.io/wings-software"
+    repo            = "ghcr.io/test-repo"
     name            = "repo_name"
     insecure        = false
     username        = "username"
@@ -72,7 +72,7 @@ resource "harness_platform_gitops_repository" "example" {
   org_id     = "org_id"
   agent_id   = "agent_id"
   repo {
-    repo            = "806630305776.dkr.ecr.us-west-1.amazonaws.com"
+    repo            = "111222333444.dkr.ecr.us-west-1.amazonaws.com"
     name            = "repo_name"
     insecure        = false
     username        = "AWS"
@@ -100,7 +100,7 @@ resource "harness_platform_gitops_repository" "example" {
   org_id     = "org_id"
   agent_id   = "agent_id"
   repo {
-    repo            = "806630305776.dkr.ecr.us-west-1.amazonaws.com"
+    repo            = "111222333444.dkr.ecr.us-west-1.amazonaws.com"
     name            = "repo_name"
     insecure        = false
     username        = "AWS"
