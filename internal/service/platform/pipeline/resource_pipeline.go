@@ -28,28 +28,33 @@ func ResourcePipeline() *schema.Resource {
 				Description: "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed: true,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
 							Description: "Name of the branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"file_path": {
 							Description: "File path of the Entity in the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"commit_message": {
 							Description: "Commit message used for the merge commit.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"base_branch": {
 							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
@@ -61,17 +66,20 @@ func ResourcePipeline() *schema.Resource {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"store_type": {
 							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
+							Computed: true,
 						},
 						"repo_name": {
 							Description: "Name of the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"last_object_id": {
 							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
@@ -216,7 +224,7 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
-			pipeline_id = d.Get("pipeline_id").(string)
+			pipeline_id = d.Get("pipeline_import_request.0.pipeline_name").(string)
 
 			pipeline_import_request_body := createImportFromGitRequest(d)
 

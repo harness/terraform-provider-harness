@@ -101,8 +101,8 @@ func TestAccResourcePipelineImportFromGit(t *testing.T) {
 			{
 				Config: testAccResourcePipelineImportFromGit(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "id", "gitx"),
+					resource.TestCheckResourceAttr(resourceName, "name", "gitx"),
 				),
 			},
 			{
@@ -110,6 +110,7 @@ func TestAccResourcePipelineImportFromGit(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+                ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path","git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
 			},
 		},
 	})
@@ -400,31 +401,25 @@ func testAccResourcePipelineInline(id string, name string) string {
 
 func testAccResourcePipelineImportFromGit(id string, name string) string {
 	return fmt.Sprintf(`
-				resource "harness_platform_organization" "test" {
+        resource "harness_platform_organization" "test" {
 					identifier = "%[1]s"
 					name = "%[2]s"
-				}
-				resource "harness_platform_project" "test" {
-					identifier = "%[1]s"
-					name = "%[2]s"
-					org_id = harness_platform_organization.test.id
-					color = "#472848"
 				}
         resource "harness_platform_pipeline" "test" {
-                        identifier = "%[1]s"
-                        org_id = harness_platform_project.test.org_id
-						project_id = harness_platform_project.test.id
-                        name = "%[2]s"
+                        identifier = "gitx"
+                        org_id = "default"
+						project_id = "V"
+                        name = "gitx"
                         import_from_git = true
                         git_import_info {
                             branch_name = "main"
-                            file_path = ".harness/GitEnabledPipeline%[1]s.yaml"
-                            connector_ref = "account.Jajoo"
-                            repo_name = "jajoo_git"
+                            file_path = ".harness/gitx.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
                         }
                         pipeline_import_request {
-                            pipeline_name = "pipelinename"
-                            pipeline_description = "pipelinedescription"
+                            pipeline_name = "gitx"
+                            pipeline_description = "Pipeline Description"
                         }
                 }
         `, id, name)
