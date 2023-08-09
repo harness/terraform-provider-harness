@@ -6,4 +6,5 @@
   <summary>PR Check triggers</summary>
   
 - Build: `trigger build`
+- Gitleaks: `trigger gitleaks`
 - Sub Category Field Check: `trigger subcategoryfieldcheck`
