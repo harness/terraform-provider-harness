@@ -8,7 +8,7 @@ pipeline:
     stages:
         - stage:
               name: generate-changelog
-              identifier: changelog_generate
+              identifier: changelog_generated
               type: CI
               spec:
                   cloneCodebase: false
