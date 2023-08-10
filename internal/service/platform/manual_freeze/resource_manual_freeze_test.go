@@ -202,7 +202,7 @@ func TestAccResourceManualFreeze_DeleteUnderlyingResource(t *testing.T) {
 					})
 					require.NoError(t, err)
 				},
-					Config:             testAccResourceManualFreeze(id, name, accountId),
+				Config:             testAccResourceManualFreeze(id, name, accountId),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
