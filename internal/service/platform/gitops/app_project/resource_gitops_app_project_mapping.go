@@ -2,6 +2,7 @@ package app_project
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -19,7 +20,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 		ReadContext:   resourceGitopsAppProjectMappingRead,
 		UpdateContext: resourceGitopsAppProjectMappingUpdate,
 		DeleteContext: resourceGitopsAppProjectMappingDelete,
-		Importer:      helpers.ProjectResourceImporter,
+		Importer:      helpers.GitopsAgentResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -47,7 +48,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"argo_project_identifier": {
+			"argo_project_name": {
 				Description: "ArgoCD Project Identifier which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
 				Required:    true,
@@ -158,8 +159,8 @@ func buildCreateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppP
 		appProjectMappingRequest.AgentIdentifier = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("argo_project_identifier"); ok {
-		appProjectMappingRequest.ArgoProjectIdentifier = attr.(string)
+	if attr, ok := d.GetOk("argo_project_name"); ok {
+		appProjectMappingRequest.ArgoProjectName = attr.(string)
 	}
 
 	return &appProjectMappingRequest
@@ -184,8 +185,8 @@ func buildUpdateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppP
 		appProjectMappingRequest.AgentIdentifier = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("argo_project_identifier"); ok {
-		appProjectMappingRequest.ArgoProjectIdentifier = attr.(string)
+	if attr, ok := d.GetOk("argo_project_name"); ok {
+		appProjectMappingRequest.ArgoProjectName = attr.(string)
 	}
 
 	return &appProjectMappingRequest
@@ -198,5 +199,5 @@ func readAppProjectMapping(d *schema.ResourceData, mapping *nextgen.V1AppProject
 	d.Set("org_id", mapping.OrgIdentifier)
 	d.Set("project_id", mapping.ProjectIdentifier)
 	d.Set("agent_id", mapping.AgentIdentifier)
-	d.Set("argo_project_identifier", mapping.ArgoProjectIdentifier)
+	d.Set("argo_project_name", mapping.ArgoProjectName)
 }

@@ -3,6 +3,10 @@ package app_project_test
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
+	"testing"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -10,42 +14,37 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"os"
-	"strings"
-	"testing"
 )
 
 func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
-	// Account Level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_app_project_mapping.test"
-	agentId := id
 	argoProject := "test123"
 	argoProjectUpdated := "test123Updated"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceGitopsAppProjectMappingDestroy(resourceName, agentId),
+		// CheckDestroy:      testAccResourceGitopsAppProjectMappingDestroy(resourceName, agentId), //commenting this since app project mapping cannot exist without an agent.
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProject),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "argo_project_identifier", argoProject),
+					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
 				),
 			},
 			{
 				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProjectUpdated),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "argo_project_identifier", argoProjectUpdated),
+					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProjectUpdated),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -93,6 +92,8 @@ func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, ar
 		resource "harness_platform_gitops_agent" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 			name = "%[1]s"
 			type = "MANAGED_ARGO_PROVIDER"
 			metadata {
@@ -101,11 +102,12 @@ func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, ar
     		}
 		}
 		resource "harness_platform_gitops_app_project_mapping" "test" {
+			depends_on = [harness_platform_gitops_agent.test]
 			account_id = "%[2]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			agent_id = "%[1]s"
-			argo_project_identifier = "%[3]s"
+			argo_project_name = "%[3]s"
 		}
 		`, agentId, accountId, argoProject)
 }
