@@ -4,7 +4,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Identifier** | **string** |  | [optional] [default to null]
-**ArgoProjectIdentifier** | **string** |  | [optional] [default to null]
+**ArgoProjectName** | **string** |  | [optional] [default to null]
 **ProjectIdentifier** | **string** |  | [optional] [default to null]
 **OrgIdentifier** | **string** |  | [optional] [default to null]
 **AccountIdentifier** | **string** |  | [optional] [default to null]

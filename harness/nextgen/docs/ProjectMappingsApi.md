@@ -262,7 +262,7 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
- **argoProjectIdentifier** | **optional.String**|  | 
+ **argoProjectName** | **optional.String**|  | 
 
 ### Return type
 
@@ -302,7 +302,7 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
- **argoProjectIdentifier** | **optional.String**|  | 
+ **argoProjectName** | **optional.String**|  | 
 
 ### Return type
 

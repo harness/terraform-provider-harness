@@ -822,15 +822,15 @@ Retrieves Harness-Argo project mapping for the given identifier.
      * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "ArgoProjectIdentifier" (optional.String) -
+     * @param "ArgoProjectName" (optional.String) -
 @return V1AppProjectMappingV2
 */
 
 type ProjectMappingsApiAppProjectMappingServiceGetAppProjectMappingV2Opts struct {
-	AccountIdentifier     optional.String
-	OrgIdentifier         optional.String
-	ProjectIdentifier     optional.String
-	ArgoProjectIdentifier optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	ArgoProjectName   optional.String
 }
 
 func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMappingV2(ctx context.Context, agentIdentifier string, identifier string, localVarOptionals *ProjectMappingsApiAppProjectMappingServiceGetAppProjectMappingV2Opts) (V1AppProjectMappingV2, *http.Response, error) {
@@ -861,8 +861,8 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.ArgoProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("argoProjectIdentifier", parameterToString(localVarOptionals.ArgoProjectIdentifier.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.ArgoProjectName.IsSet() {
+		localVarQueryParams.Add("argoProjectIdentifier", parameterToString(localVarOptionals.ArgoProjectName.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -961,16 +961,16 @@ Retrieves Harness-Argo project mappings list by agent.
      * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "ArgoProjectIdentifier" (optional.String) -
+     * @param "ArgoProjectName" (optional.String) -
 @return V1AppProjectMappingV2List
 */
 
 type ProjectMappingsApiAppProjectMappingServiceGetAppProjectMappingsListByAgentV2Opts struct {
-	Identifier            optional.String
-	AccountIdentifier     optional.String
-	OrgIdentifier         optional.String
-	ProjectIdentifier     optional.String
-	ArgoProjectIdentifier optional.String
+	Identifier        optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	ArgoProjectName   optional.String
 }
 
 func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMappingsListByAgentV2(ctx context.Context, agentIdentifier string, localVarOptionals *ProjectMappingsApiAppProjectMappingServiceGetAppProjectMappingsListByAgentV2Opts) (V1AppProjectMappingV2List, *http.Response, error) {
@@ -1003,8 +1003,8 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.ArgoProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("argoProjectIdentifier", parameterToString(localVarOptionals.ArgoProjectIdentifier.Value(), ""))
+	if localVarOptionals != nil && localVarOptionals.ArgoProjectName.IsSet() {
+		localVarQueryParams.Add("argoProjectIdentifier", parameterToString(localVarOptionals.ArgoProjectName.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}

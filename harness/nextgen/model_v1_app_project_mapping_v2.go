@@ -14,12 +14,12 @@ import (
 )
 
 type V1AppProjectMappingV2 struct {
-	Identifier            string    `json:"identifier,omitempty"`
-	ArgoProjectIdentifier string    `json:"argoProjectIdentifier,omitempty"`
-	ProjectIdentifier     string    `json:"projectIdentifier,omitempty"`
-	OrgIdentifier         string    `json:"orgIdentifier,omitempty"`
-	AccountIdentifier     string    `json:"accountIdentifier,omitempty"`
-	AgentIdentifier       string    `json:"agentIdentifier,omitempty"`
-	CreatedAt             time.Time `json:"createdAt,omitempty"`
-	LastModifiedAt        time.Time `json:"lastModifiedAt,omitempty"`
+	Identifier        string    `json:"identifier,omitempty"`
+	ArgoProjectName   string    `json:"argoProjectIdentifier,omitempty"`
+	ProjectIdentifier string    `json:"projectIdentifier,omitempty"`
+	OrgIdentifier     string    `json:"orgIdentifier,omitempty"`
+	AccountIdentifier string    `json:"accountIdentifier,omitempty"`
+	AgentIdentifier   string    `json:"agentIdentifier,omitempty"`
+	CreatedAt         time.Time `json:"createdAt,omitempty"`
+	LastModifiedAt    time.Time `json:"lastModifiedAt,omitempty"`
 }
