@@ -107,7 +107,6 @@ Optional:
 
 - `dependencies` (Block Set) Dependencies of the monitored service. (see [below for nested schema](#nestedblock--request--dependencies))
 - `description` (String) Description for the monitored service.
-- `enabled` (Boolean) Enable or disable the monitored service.
 - `environment_ref_list` (List of String) Environment reference list for the monitored service.
 - `notification_rule_refs` (Block List) Notification rule references for the monitored service. (see [below for nested schema](#nestedblock--request--notification_rule_refs))
 - `tags` (Set of String) Tags for the monitored service. comma-separated key value string pairs.
