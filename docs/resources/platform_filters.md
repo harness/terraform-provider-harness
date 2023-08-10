@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating a Harness Filter. This resource support filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Filter)
+
 ## Example Usage
 
 ```terraform
@@ -39,7 +43,7 @@ resource "harness_platform_filters" "test" {
 
 ### Optional
 
-- `filter_visibility` (String) This indicates visibility of filter. By default, everyone can view this filter.
+- `filter_visibility` (String) This indicates visibility of filter. By default, everyone can view this filter. Can either be EveryOne or OnlyCreator
 - `org_id` (String) organization Identifier for the Entity
 - `project_id` (String) project Identifier for the Entity
 

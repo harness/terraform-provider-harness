@@ -10,6 +10,10 @@ description: |-
 
 DataSource for looking up secret of type secret text.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use Secret Text, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/add-use-text-secrets)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Secrets)
 ## Example Usage
 
 ```terraform

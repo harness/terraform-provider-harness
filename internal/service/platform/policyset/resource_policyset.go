@@ -58,7 +58,7 @@ func ResourcePolicyset() *schema.Resource {
 							Required:    true,
 						},
 						"severity": {
-							Description: "Organization Identifier",
+							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
 							Type:        schema.TypeString,
 							Optional:    false,
 							Required:    true,

@@ -18,7 +18,7 @@ resource "harness_platform_environment" "example" {
   name       = "name"
   org_id     = "org_id"
   project_id = "project_id"
-  tags       = ["foo:bar", "baz"]
+  tags       = ["foo:bar", "bar:foo"]
   type       = "PreProduction"
 
   ## ENVIRONMENT V2 Update
@@ -26,7 +26,7 @@ resource "harness_platform_environment" "example" {
   ## Not Mandatory for Environment Creation nor Pipeline Usage
 
   yaml = <<-EOT
-			   environment:
+      environment:
          name: name
          identifier: identifier
          orgIdentifier: org_id
@@ -34,7 +34,7 @@ resource "harness_platform_environment" "example" {
          type: PreProduction
          tags:
            foo: bar
-           baz: ""
+           bar: foo
          variables:
            - name: envVar1
              type: String
@@ -69,7 +69,7 @@ resource "harness_platform_environment" "example" {
                        files:
                          - account:/Add-ons/svcOverrideTest
                        secretFiles: []
-      EOT
+  EOT
 }
 ```
 
@@ -86,7 +86,7 @@ resource "harness_platform_environment" "example" {
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `force_delete` (String) Enable this flag for force deletion of environment
+- `force_delete` (String) Enable this flag for force deletion of environments
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.

@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating role assignments in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use Role Assignments, please see [Documentation](https://developer.harness.io/docs/platform/Role-Based-Access-Control/rbac-in-harness#role-assignment)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Role-Assignments)
 ## Example Usage
 
 ```terraform
@@ -88,6 +92,8 @@ resource "harness_platform_role_assignments" "example2" {
 ### Required
 
 - `principal` (Block List, Min: 1) Principal. (see [below for nested schema](#nestedblock--principal))
+- `resource_group_identifier` (String) Resource group identifier.
+- `role_identifier` (String) Role identifier.
 
 ### Optional
 
@@ -96,8 +102,6 @@ resource "harness_platform_role_assignments" "example2" {
 - `managed` (Boolean) Managed or not.
 - `org_id` (String) Org identifier.
 - `project_id` (String) Project Identifier
-- `resource_group_identifier` (String) Resource group identifier.
-- `role_identifier` (String) Role identifier.
 
 ### Read-Only
 
@@ -106,11 +110,14 @@ resource "harness_platform_role_assignments" "example2" {
 <a id="nestedblock--principal"></a>
 ### Nested Schema for `principal`
 
+Required:
+
+- `type` (String) Type.
+
 Optional:
 
 - `identifier` (String) Identifier.
 - `scope_level` (String) Scope level.
-- `type` (String) Type.
 
 ## Import
 

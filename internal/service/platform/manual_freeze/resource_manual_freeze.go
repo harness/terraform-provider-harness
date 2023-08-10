@@ -146,6 +146,11 @@ func ResourceManualFreeze() *schema.Resource {
 													Type:        schema.TypeString,
 													Computed:    true,
 												},
+												"value": {
+													Description: "Every n months recurrence",
+													Type:        schema.TypeInt,
+													Computed:    true,
+												},
 											},
 										},
 									},
@@ -303,6 +308,7 @@ func expandRecurrenceSpec(recurrence nextgen.Recurrence) []interface{} {
 	var result []interface{}
 	if recurrence.Spec != nil {
 		result = append(result, map[string]interface{}{
+			"value": recurrence.Spec.Value,
 			"until": recurrence.Spec.Until,
 		})
 	}

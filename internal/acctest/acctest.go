@@ -106,7 +106,34 @@ func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportSta
 		if len(primary.Attributes["env_id"]) != 0 {
 			envId = primary.Attributes["env_id"]
 		}
+		if orgId == "" {
+			return fmt.Sprintf("%s/%s", envId, id), nil
+		}
+		if projId == "" {
+			return fmt.Sprintf("%s/%s/%s", orgId, envId, id), nil
+		}
+
 		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, envId, id), nil
+	}
+}
+
+func OverridesV1ResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		var envId string
+		if len(primary.Attributes["env_id"]) != 0 {
+			envId = primary.Attributes["env_id"]
+		}
+		if orgId == "" {
+			return fmt.Sprintf("%s", envId), nil
+		}
+		if projId == "" {
+			return fmt.Sprintf("%s/%s", orgId, envId), nil
+		}
+
+		return fmt.Sprintf("%s/%s/%s", orgId, projId, envId), nil
 	}
 }
 
@@ -155,6 +182,14 @@ func AccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportS
 	}
 }
 
+func AccountFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s", id, type_), nil
+	}
+}
 func ProjectFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary

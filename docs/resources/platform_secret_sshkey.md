@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating an ssh key type secret.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use SSH Key type secret, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/add-use-ssh-secrets)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Secrets)
 ## Example Usage
 
 ```terraform
@@ -37,7 +41,7 @@ resource "harness_platform_secret_sshkey" " tgt_password" {
   port        = 22
   kerberos {
     tgt_password_spec {
-      password = "password"
+      password = "account.${secret.id}"
     }
     principal             = "principal"
     realm                 = "realm"
@@ -54,8 +58,8 @@ resource "harness_platform_secret_sshkey" "sshkey_reference" {
   ssh {
     sshkey_reference_credential {
       user_name            = "user_name"
-      key                  = "key"
-      encrypted_passphrase = "encrypted_passphrase"
+      key                  = "account.${key.id}"
+      encrypted_passphrase = "account.${secret.id}"
     }
     credential_type = "KeyReference"
   }
@@ -86,7 +90,7 @@ resource "harness_platform_secret_sshkey" "ssh_password" {
   ssh {
     ssh_password_credential {
       user_name = "user_name"
-      password  = "password"
+      password  = "account.${secret.id}"
     }
     credential_type = "Password"
   }
@@ -142,7 +146,7 @@ Optional:
 
 Optional:
 
-- `password` (String) password
+- `password` (String) password. To reference a password at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a password at the account scope, prefix 'account` to the expression: account.{identifier}
 
 
 
@@ -164,7 +168,7 @@ Optional:
 
 Required:
 
-- `password` (String) SSH Password.
+- `password` (String) SSH Password. To reference a password at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a password at the account scope, prefix 'account` to the expression: account.{identifier}
 - `user_name` (String) SSH Username.
 
 
@@ -178,7 +182,7 @@ Required:
 
 Optional:
 
-- `encrypted_passphrase` (String) Encrypted Passphrase
+- `encrypted_passphrase` (String) Encrypted Passphrase . To reference a encryptedPassphrase at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a encryptedPassPhrase at the account scope, prefix 'account` to the expression: account.{identifier}
 
 
 <a id="nestedblock--ssh--sshkey_reference_credential"></a>
@@ -186,12 +190,12 @@ Optional:
 
 Required:
 
+- `key` (String) SSH key. To reference a key at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a key at the account scope, prefix 'account` to the expression: account.{identifier}
 - `user_name` (String) SSH Username.
 
 Optional:
 
-- `encrypted_passphrase` (String) Encrypted Passphrase
-- `key` (String) SSH key.
+- `encrypted_passphrase` (String) Encrypted Passphrase. To reference a encryptedPassphrase at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a encryptedPassPhrase at the account scope, prefix 'account` to the expression: account.{identifier}
 
 ## Import
 

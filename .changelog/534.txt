@@ -1,0 +1,3 @@
+```release-note:fix
+resource/harness_platform_secret_file: Fixed Bug while creating this resource with tags separated by comma led to crashing.
+```

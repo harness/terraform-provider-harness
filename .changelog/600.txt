@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_template: Update the description for filter_visibility.
+resource/harness_platform_template_filters: Update the description force_delete.
+```
