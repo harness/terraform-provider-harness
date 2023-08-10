@@ -55,7 +55,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceCreate(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/agents/{agentIdentifier}/appprojectsmapping"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/appprojectsmapping"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -180,7 +180,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceCreateV2(ctx context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v2/agents/{agentIdentifier}/appprojectsmapping"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v2/agents/{agentIdentifier}/appprojectsmapping"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -306,7 +306,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceDelete(ctx context.C
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/agents/{agentIdentifier}/appprojectsmapping/{name}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/appprojectsmapping/{name}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
 
@@ -440,7 +440,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceDeleteV2(ctx context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v2/agents/{agentIdentifier}/appprojectsmapping/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v2/agents/{agentIdentifier}/appprojectsmapping/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
@@ -574,7 +574,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/appprojectsmapping"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/appprojectsmapping"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -708,7 +708,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/agents/{agentIdentifier}/appprojectsmapping"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/appprojectsmapping"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -843,7 +843,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v2/agents/{agentIdentifier}/appprojectsmapping/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v2/agents/{agentIdentifier}/appprojectsmapping/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
@@ -983,7 +983,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v2/agents/{agentIdentifier}/appprojectsmappings"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v2/agents/{agentIdentifier}/appprojectsmappings"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1113,7 +1113,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceUpdateV2(ctx context
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v2/agents/{agentIdentifier}/appprojectsmapping/{identifier}"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v2/agents/{agentIdentifier}/appprojectsmapping/{identifier}"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"identifier"+"}", fmt.Sprintf("%v", identifier), -1)
 
