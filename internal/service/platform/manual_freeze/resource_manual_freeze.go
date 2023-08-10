@@ -265,12 +265,17 @@ func readFreezeResponse(d *schema.ResourceData, freezeResponse *nextgen.FreezeDe
 	d.Set("scope", freezeResponse.FreezeScope)
 	d.Set("yaml", freezeResponse.Yaml)
 	d.Set("description", freezeResponse.Description)
-	d.Set("current_or_upcoming_windows", []interface{}{
-		map[string]interface{}{
-			"start_time": freezeResponse.CurrentOrUpcomingWindow.StartTime,
-			"end_time":   freezeResponse.CurrentOrUpcomingWindow.EndTime,
-		},
-	})
+
+	if freezeResponse.CurrentOrUpcomingWindow != nil {
+		d.Set("current_or_upcoming_windows", []interface{}{
+			map[string]interface{}{
+				"start_time": freezeResponse.CurrentOrUpcomingWindow.StartTime,
+				"end_time":   freezeResponse.CurrentOrUpcomingWindow.EndTime,
+			},
+		})
+	} else {
+		d.Set("current_or_upcoming_windows", nil);
+	}
 	d.Set("freeze_windows", expandFreezeWindows(freezeResponse.Windows))
 }
 
