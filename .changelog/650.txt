@@ -1,0 +1,3 @@
+```release-note:bug
+resource_manual_freeze : fix for null check for deployemnt freeze
+```
