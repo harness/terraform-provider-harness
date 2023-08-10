@@ -48,6 +48,11 @@ func DataSourceInfrastructure() *schema.Resource {
 	}
 	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
+	// overwrite schema for tags
+	if s, ok := resource.Schema["tags"]; ok {
+		s.Computed = true
+	}
+
 	return resource
 }
 

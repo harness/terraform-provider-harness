@@ -10,6 +10,11 @@ description: |-
 
 Resource for creating triggers in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use the Triggers, please see [Documentation](https://developer.harness.io/docs/category/triggers)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Triggers)
+
 ## Example Usage
 
 ```terraform
@@ -21,34 +26,35 @@ resource "harness_platform_triggers" "example" {
   target_id  = "pipelineIdentifier"
   yaml       = <<-EOT
   trigger:
-    name: "name"
-    identifier: "identifier"
+    name: name
+    identifier: identifier
     enabled: true
     description: ""
     tags: {}
-    projectIdentifier: "projectIdentifier"
-    orgIdentifier: "orgIdentifer"
-    pipelineIdentifier: "pipelineIdentifier"
+    projectIdentifier: projectIdentifier
+    orgIdentifier: orgIdentifer
+    pipelineIdentifier: pipelineIdentifier
     source:
-      type: "Webhook"
+      type: Webhook
       spec:
-        type: "Github"
+        type: Github
         spec:
-          type: "Push"
+          type: Push
           spec:
-            connectorRef: "account.TestAccResourceConnectorGithub_Ssh_IZBeG"
+            connectorRef: account.TestAccResourceConnectorGithub_Ssh_IZBeG
             autoAbortPreviousExecutions: false
             payloadConditions:
-            - key: "changedFiles"
-              operator: "Equals"
-              value: "value"
-            - key: "targetBranch"
-              operator: "Equals"
-              value: "value"
+            - key: changedFiles
+              operator: Equals
+              value: value
+            - key: targetBranch
+              operator: Equals
+              value: value
             headerConditions: []
-            repoName: "repoName"
+            repoName: repoName
             actions: []
-    inputYaml: "pipeline: {}\n"
+    inputYaml: |
+      pipeline: {}\n
     EOT
 }
 ```

@@ -55,13 +55,13 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 
 		resource "harness_platform_service" "test" {
       		identifier = "%[1]s"
-      		name = "%[2]s"
+      		name = "%[3]s"
       		org_id = harness_platform_project.test.org_id
       		project_id = harness_platform_project.test.id
     	}
 		resource "harness_platform_environment" "test" {
 			identifier = "%[1]s"
-			name = "%[2]s"
+			name = "%[3]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			tags = ["foo:bar", "baz"]
@@ -108,6 +108,7 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
     			org_id = harness_platform_organization.test.id
     			account_id = "%[2]s"
 				identifier = "%[1]s"
+				name = "%[3]s"
 				cluster_id = "%[8]s"
 				repo_id = "%[10]s"
 				agent_id = "%[4]s"
@@ -120,6 +121,7 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
 			repo_id = "%[10]s"
+			name = "%[3]s"
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
 

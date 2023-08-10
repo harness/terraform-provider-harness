@@ -10,6 +10,10 @@ description: |-
 
 Datasource for looking up a PagerDuty connector.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use PagerDuty, please see [Documentation](https://developer.harness.io/docs/service-reliability-management/monitored-service/change-source/pagerduty-change-source)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 ## Example Usage
 
 ```terraform

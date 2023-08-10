@@ -45,6 +45,12 @@ func ResourceConnectorGithub() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
@@ -62,14 +68,32 @@ func ResourceConnectorGithub() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"installation_id": {
-										Description: "Enter the Installation ID located in the URL of the installed GitHub App.",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:   "Enter the Installation ID located in the URL of the installed GitHub App.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.installation_id_ref"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.installation_id", "api_authentication.0.github_app.0.installation_id_ref"},
 									},
 									"application_id": {
-										Description: "Enter the GitHub App ID from the GitHub App General tab.",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:   "Enter the GitHub App ID from the GitHub App General tab.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.application_id_ref"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.application_id", "api_authentication.0.github_app.0.application_id_ref"},
+									},
+									"application_id_ref": {
+										Description:   "Reference to the secret containing application id" + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.application_id"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.application_id", "api_authentication.0.github_app.0.application_id_ref"},
+									},
+									"installation_id_ref": {
+										Description:   "Reference to the secret containing installation id." + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.installation_id"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.installation_id", "api_authentication.0.github_app.0.installation_id_ref"},
 									},
 									"private_key_ref": {
 										Description: "Reference to the secret containing the private key." + secret_ref_text,
@@ -197,6 +221,10 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.Github.Url = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Github.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
 		connector.Github.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
@@ -273,6 +301,14 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				connector.Github.ApiAccess.GithubApp.PrivateKeyRef = attr.(string)
 			}
 
+			if attr, ok := config["installation_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.InstallationIdRef = attr.(string)
+			}
+
+			if attr, ok := config["application_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.ApplicationIdRef = attr.(string)
+			}
+
 		}
 	}
 
@@ -284,6 +320,7 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("url", connector.Github.Url)
 	d.Set("connection_type", connector.Github.Type_.String())
 	d.Set("delegate_selectors", connector.Github.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Github.ExecuteOnDelegate)
 	d.Set("validation_repo", connector.Github.ValidationRepo)
 
 	if connector.Github.Authentication != nil {
@@ -328,9 +365,11 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 				{
 					"github_app": []map[string]interface{}{
 						{
-							"installation_id": connector.Github.ApiAccess.GithubApp.InstallationId,
-							"application_id":  connector.Github.ApiAccess.GithubApp.ApplicationId,
-							"private_key_ref": connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id":     connector.Github.ApiAccess.GithubApp.InstallationId,
+							"application_id":      connector.Github.ApiAccess.GithubApp.ApplicationId,
+							"private_key_ref":     connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id_ref": connector.Github.ApiAccess.GithubApp.InstallationIdRef,
+							"application_id_ref":  connector.Github.ApiAccess.GithubApp.ApplicationIdRef,
 						},
 					},
 				},

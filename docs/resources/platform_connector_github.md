@@ -94,6 +94,7 @@ resource "harness_platform_connector_github" "test" {
 - `api_authentication` (Block List, Max: 1) Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses. (see [below for nested schema](#nestedblock--api_authentication))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
@@ -146,9 +147,14 @@ Optional:
 
 Required:
 
-- `application_id` (String) Enter the GitHub App ID from the GitHub App General tab.
-- `installation_id` (String) Enter the Installation ID located in the URL of the installed GitHub App.
 - `private_key_ref` (String) Reference to the secret containing the private key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+Optional:
+
+- `application_id` (String) Enter the GitHub App ID from the GitHub App General tab.
+- `application_id_ref` (String) Reference to the secret containing application id To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `installation_id` (String) Enter the Installation ID located in the URL of the installed GitHub App.
+- `installation_id_ref` (String) Reference to the secret containing installation id. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
 ## Import
 

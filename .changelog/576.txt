@@ -1,0 +1,3 @@
+```release-note:bug
+ - Removed empty change source and health source restriction from monitored service resource.
+```

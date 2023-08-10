@@ -15,7 +15,7 @@ import (
 
 func ResourceTemplate() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Template.",
+		Description: "Resource for creating a Template. Description field is deprecated",
 
 		ReadContext:   resourceTemplateRead,
 		UpdateContext: resourceTemplateCreateOrUpdate,
@@ -27,17 +27,19 @@ func ResourceTemplate() *schema.Resource {
 			"template_yaml": {
 				Description: "Yaml for creating new Template." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional: true,
+				Computed: true,
 			},
 			"version": {
 				Description: "Version Label for Template.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"is_stable": {
 				Description: "True if given version for template to be set as stable.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Computed: true,
 			},
 			"comments": {
 				Description: "Specify comment with respect to changes.",
@@ -110,10 +112,48 @@ func ResourceTemplate() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of template. It will delete the Harness entity even if your pipelines or other entities reference it",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"name": {
+				Description: "Name of the Variable",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"description": {
+				Description: "Description of the entity. Description field is deprecated",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Deprecated:  "description field is deprecated",
+			},
+			"org_id": {
+				Description: "Organization Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"project_id": {
+				Description: "Project Identifier for the Entity",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"tags": {
+				Description: "Tags to associate with the resource.",
+				Type:        schema.TypeSet,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional: true,
+			},
 		},
 	}
-
-	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -205,6 +245,7 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	project_id := d.Get("project_id").(string)
 	comments := d.Get("comments").(string)
 	version := d.Get("version").(string)
+	template_yaml := d.Get("template_yaml").(string)
 
 	if id == "" {
 		template := buildCreateTemplate(d)
@@ -255,36 +296,57 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			commit_message = optional.NewString(template.GitDetails.CommitMessage)
 			connector_ref = optional.NewString(template.GitDetails.ConnectorRef)
 		}
-		if project_id != "" {
-			resp, httpResp, err = c.ProjectTemplateApi.UpdateTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateProjectOpts{
-				Body:           optional.NewInterface(template),
-				HarnessAccount: optional.NewString(c.AccountId),
-			})
-			if resp.Identifier != "" {
-				template_id = resp.Identifier
+
+		if template_yaml != "" {
+			if project_id != "" {
+				resp, httpResp, err = c.ProjectTemplateApi.UpdateTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateProjectOpts{
+					Body:           optional.NewInterface(template),
+					HarnessAccount: optional.NewString(c.AccountId),
+				})
+				if resp.Identifier != "" {
+					template_id = resp.Identifier
+				} else {
+					template_id = resp.Slug
+				}
+			} else if org_id != "" && project_id == "" {
+				resp, httpResp, err = c.OrgTemplateApi.UpdateTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateOrgOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
+				if resp.Identifier != "" {
+					template_id = resp.Identifier
+				} else {
+					template_id = resp.Slug
+				}
 			} else {
-				template_id = resp.Slug
-			}
-		} else if org_id != "" && project_id == "" {
-			resp, httpResp, err = c.OrgTemplateApi.UpdateTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateOrgOpts{
-				HarnessAccount: optional.NewString(c.AccountId),
-				Body:           optional.NewInterface(template),
-			})
-			if resp.Identifier != "" {
-				template_id = resp.Identifier
-			} else {
-				template_id = resp.Slug
+				resp, httpResp, err = c.AccountTemplateApi.UpdateTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateAccOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
+				if resp.Identifier != "" {
+					template_id = resp.Identifier
+				} else {
+					template_id = resp.Slug
+				}
 			}
 		} else {
-			resp, httpResp, err = c.AccountTemplateApi.UpdateTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateAccOpts{
-				HarnessAccount: optional.NewString(c.AccountId),
-				Body:           optional.NewInterface(template),
-			})
-			if resp.Identifier != "" {
-				template_id = resp.Identifier
+			if project_id != "" {
+				_ , httpResp, err = c.ProjectTemplateApi.UpdateTemplateStableProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateStableProjectOpts{
+					Body:           optional.NewInterface(template),
+					HarnessAccount: optional.NewString(c.AccountId),
+				})
+			} else if org_id != "" && project_id == "" {
+				_ , httpResp, err = c.OrgTemplateApi.UpdateTemplateStableOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateStableOrgOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
 			} else {
-				template_id = resp.Slug
+				_ , httpResp, err = c.AccountTemplateApi.UpdateTemplateStableAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateStableAccOpts{
+					HarnessAccount: optional.NewString(c.AccountId),
+					Body:           optional.NewInterface(template),
+				})
 			}
+			template_id = id
 		}
 	}
 
@@ -330,6 +392,10 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
 	readTemplate(d, respGet, comments, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
@@ -348,15 +414,22 @@ func resourceTemplateDelete(ctx context.Context, d *schema.ResourceData, meta in
 	if project_id != "" {
 		httpResp, err = c.ProjectTemplateApi.DeleteTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiDeleteTemplateProjectOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
-			Comments:       helpers.BuildField(d, "comments")})
+			Comments:       helpers.BuildField(d, "comments"),
+			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+		})
 	} else if org_id != "" && project_id == "" {
 		httpResp, err = c.OrgTemplateApi.DeleteTemplateOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiDeleteTemplateOrgOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
-			Comments:       helpers.BuildField(d, "comments")})
+			Comments:       helpers.BuildField(d, "comments"),
+			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+		})
 	} else {
 		httpResp, err = c.AccountTemplateApi.DeleteTemplateAcc(ctx, id, version, &nextgen.AccountTemplateApiDeleteTemplateAccOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
-			Comments:       helpers.BuildField(d, "comments")})
+			Comments:       helpers.BuildField(d, "comments"),
+			ForceDelete:    helpers.BuildFieldForBoolean(d, "force_delete"),
+		})
+
 	}
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -476,7 +549,6 @@ func readTemplate(d *schema.ResourceData, template nextgen.TemplateWithInputsRes
 	d.Set("project_id", template.Template.Project)
 	d.Set("template_yaml", template.Template.Yaml)
 	d.Set("is_stable", template.Template.StableTemplate)
-	d.Set("description", template.Template.Description)
 	d.Set("version", template.Template.VersionLabel)
 	d.Set("comments", comments)
 	if template.Template.GitDetails != nil {

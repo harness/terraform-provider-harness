@@ -10,6 +10,11 @@ description: |-
 
 Resource for creating an Azure key vault in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use Azure Key Vault, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/Secrets-Management/azure-key-vault)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
+
 ## Example Usage
 
 ```terraform
