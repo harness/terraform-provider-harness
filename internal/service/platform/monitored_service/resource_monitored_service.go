@@ -206,12 +206,6 @@ func ResourceMonitoredService() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
-						"enabled": {
-							Description: "Enable or disable the monitored service.",
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Deprecated:  "enabled field is deprecated",
-						},
 					},
 				},
 			},
