@@ -204,7 +204,6 @@ func testAccResourceSlo(id string, name string) string {
 				}
 				template_ref = "template_ref"
 				version_label = "version_label"
-				enabled = true
 			}
 		}
 
