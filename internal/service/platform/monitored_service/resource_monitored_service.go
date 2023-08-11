@@ -206,6 +206,12 @@ func ResourceMonitoredService() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"enabled": {
+							Description: "Enable or disable the monitored service.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Deprecated:  "enabled field is deprecated",
+						},
 					},
 				},
 			},
@@ -391,6 +397,7 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			VersionLabel: request["version_label"].(string),
 		}
 
+		monitoredServiceDto.Enabled = request["enabled"].(bool)
 	}
 
 	return monitoredServiceDto
@@ -405,3 +412,4 @@ func readMonitoredService(d *schema.ResourceData, monitoredServiceResponse **nex
 	d.Set("project_id", (*monitoredServiceDto).ProjectIdentifier)
 	d.Set("identifier", (*monitoredServiceDto).Identifier)
 }
+
