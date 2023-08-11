@@ -36,6 +36,7 @@ data "harness_platform_connector_docker" "example" {
 - `credentials` (List of Object) The credentials to use for the docker registry. If not specified then the connection is made to the registry anonymously. (see [below for nested schema](#nestedatt--credentials))
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 - `id` (String) The ID of this resource.
 - `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) The type of the docker registry. Valid options are DockerHub, Harbor, Other, Quay
