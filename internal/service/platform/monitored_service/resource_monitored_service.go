@@ -391,7 +391,6 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			VersionLabel: request["version_label"].(string),
 		}
 
-		monitoredServiceDto.Enabled = request["enabled"].(bool)
 	}
 
 	return monitoredServiceDto
