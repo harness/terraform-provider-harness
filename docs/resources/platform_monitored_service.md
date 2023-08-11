@@ -71,7 +71,6 @@ resource "harness_platform_monitored_service" "example" {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
     }
-    enabled       = true
   }
 }
 ```
@@ -107,9 +106,9 @@ Optional:
 
 - `dependencies` (Block Set) Dependencies of the monitored service. (see [below for nested schema](#nestedblock--request--dependencies))
 - `description` (String) Description for the monitored service.
-- `enabled` (Boolean) Enable or disable the monitored service.
 - `environment_ref_list` (List of String) Environment reference list for the monitored service.
 - `notification_rule_refs` (Block List) Notification rule references for the monitored service. (see [below for nested schema](#nestedblock--request--notification_rule_refs))
+- `enabled` (Boolean) Enable or disable the monitored service. Enabled field is deprecated.
 - `tags` (Set of String) Tags for the monitored service. comma-separated key value string pairs.
 - `template_ref` (String) Template reference for the monitored service.
 - `version_label` (String) Template version label for the monitored service.
