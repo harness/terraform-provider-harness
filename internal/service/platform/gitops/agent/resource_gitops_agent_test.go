@@ -34,29 +34,22 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 				Config: testAccResourceGitopsAgentAccountLevel(id, accountId, agentName, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", agentName),
+					resource.TestCheckResourceAttrSet(resourceName, "agent_token"),
 				),
 			},
 			{
 				Config: testAccResourceGitopsAgentAccountLevel(id, accountId, agentName, updatedNamespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "metadata.0.namespace", updatedNamespace),
+					resource.TestCheckResourceAttrSet(resourceName, "agent_token"),
 				),
 			},
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"account_id", "type"},
+				ImportStateVerifyIgnore: []string{"account_id", "agent_token"},
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"account_id", "type"},
-				ImportStateIdFunc: func(s *terraform.State) (string, error) {
-					return s.RootModule().Resources[resourceName].Primary.ID, nil
-				},
 			},
 		},
 	})
@@ -77,19 +70,21 @@ func TestAccResourceGitopsAgent(t *testing.T) {
 				Config: testAccResourceGitopsAgentProjectLevel(id, accountId, agentName, namespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "name", agentName),
+					resource.TestCheckResourceAttrSet(resourceName, "agent_token"),
 				),
 			},
 			{
 				Config: testAccResourceGitopsAgentProjectLevel(id, accountId, agentName, updatedNamespace),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "metadata.0.namespace", updatedNamespace),
+					resource.TestCheckResourceAttrSet(resourceName, "agent_token"),
 				),
 			},
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"account_id", "type"},
+				ImportStateVerifyIgnore: []string{"account_id", "agent_token"},
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
@@ -131,16 +126,6 @@ func testAccResourceGitopsAgentDestroy(resourceName string) resource.TestCheckFu
 
 func testAccResourceGitopsAgentAccountLevel(agentId string, accountId string, agentName string, namespace string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-			org_id = harness_platform_organization.test.id
-		}
 		resource "harness_platform_gitops_agent" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
