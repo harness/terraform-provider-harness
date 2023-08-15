@@ -56,6 +56,5 @@ resource "harness_platform_monitored_service" "example" {
     }
     template_ref = "template_ref"
     version_label = "version_label"
-    enabled = true
   }
 }

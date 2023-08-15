@@ -1,3 +1,13 @@
+# 0.24.1 (August 10,2023) 
+
+ENHANCEMENTS:
+
+* harness_platform_template - Added support to update stable version of a template from terraform. ([#628](https://github.com/harness/terraform-provider-harness/issues/628))
+
+BUG FIXES:
+
+* resource_manual_freeze : bug fix for deployment freeze while saving expired freeze ([#650](https://github.com/harness/terraform-provider-harness/issues/650))
+
 # 0.24.0 (August 01,2023) 
 
 FEATURES:
