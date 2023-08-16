@@ -20,9 +20,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **envGroupIdentifier** | **string**| Environment Group Identifier for the entity | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
-  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
-  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. |
  **optional** | ***EnvironmentGroupApiDeleteEnvironmentGroupOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -39,7 +37,9 @@ Name | Type | Description  | Notes
  **rootFolder** | **optional.String**| Path to the root folder of the Entity. | 
  **filePath** | **optional.String**| File Path of the Entity. | 
  **commitMsg** | **optional.String**| Commit Message to use for the merge commit. | 
- **lastObjectId** | **optional.String**| Last Object Id | 
+ **lastObjectId** | **optional.String**| Last Object Id |
+ **orgIdentifier** | **string**| Organization Identifier for the Entity. |
+ **projectIdentifier** | **string**| Project Identifier for the Entity. |
 
 ### Return type
 
@@ -66,9 +66,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **envGroupIdentifier** | **string**| Environment Group Identifier for the entity | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
-  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
-  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. |
  **optional** | ***EnvironmentGroupApiGetEnvironmentGroupOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -82,7 +80,9 @@ Name | Type | Description  | Notes
  **deleted** | **optional.Bool**| Specify whether Environment is deleted or not | [default to false]
  **branch** | **optional.String**| Name of the branch. | 
  **repoIdentifier** | **optional.String**| Git Sync Config Id. | 
- **getDefaultFromOtherRepo** | **optional.Bool**| if true, return all the default entities | 
+ **getDefaultFromOtherRepo** | **optional.Bool**| if true, return all the default entities |
+ **orgIdentifier** | **string**| Organization Identifier for the Entity. |
+ **projectIdentifier** | **string**| Project Identifier for the Entity. |
 
 ### Return type
 
