@@ -1,6 +1,6 @@
 
-<a name="0.3.43"></a>
-## 0.3.43 (2023-08-11)
+<a name="0.3.44"></a>
+## 0.3.44 (2023-08-16)
 
 ### Added
 
@@ -38,6 +38,8 @@
 
 ### Release
 
+* Release version 0.3.43 08-11-2023
+* Release v0.3.43
 * Release version 0.3.42 08-08-2023
 * Release v0.3.42
 * Release version 0.3.41 08-01-2023
@@ -90,9 +92,6 @@
 * Release v0.3.20
 * Release version 0.3.19 03-11-2023
 * Release v0.3.19
-* Release version 0.3.18 03-10-2023
-* Release v0.3.18
-* Release version 0.3.16 02-21-2023
 
 ### Remove
 
@@ -101,10 +100,6 @@
 ### Revert
 
 * Revert "Create .gitleaksignore ([#380](https://github.com/harness/harness-go-sdk/issues/380))" ([#381](https://github.com/harness/harness-go-sdk/issues/381))
-
-### Update
-
-* update contract
 
 ### Update
 
@@ -117,6 +112,10 @@
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
+
+### Update
+
+* update contract
 
 ### Updating
 
@@ -133,6 +132,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#386](https://github.com/harness/harness-go-sdk/issues/386) from harness/cds-77080
 * Merge pull request [#384](https://github.com/harness/harness-go-sdk/issues/384) from harness/dockerexecuteondelegate
 * Merge pull request [#382](https://github.com/harness/harness-go-sdk/issues/382) from harness/dockerexecuteondelegate
 * Merge pull request [#383](https://github.com/harness/harness-go-sdk/issues/383) from harness/cds-76701-appproject-mapping
@@ -169,5 +169,4 @@
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 * Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 * Merge pull request [#294](https://github.com/harness/harness-go-sdk/issues/294) from harness/pl-31762
-* Merge pull request [#292](https://github.com/harness/harness-go-sdk/issues/292) from harness/CDS-52185
 
