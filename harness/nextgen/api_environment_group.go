@@ -1,4 +1,3 @@
-
 /*
  * Harness NextGen Software Delivery Platform API Reference
  *
@@ -12,12 +11,12 @@ package nextgen
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,15 +25,14 @@ var (
 )
 
 type EnvironmentGroupApiService service
+
 /*
 EnvironmentGroupApiService Delete en Environment Group by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param envGroupIdentifier Environment Group Identifier for the entity
  * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *EnvironmentGroupApiDeleteEnvironmentGroupOpts - Optional Parameters:
-     * @param "IfMatch" (optional.String) - 
+     * @param "IfMatch" (optional.String) -
      * @param "Branch" (optional.String) -  Name of the branch.
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "RootFolder" (optional.String) -  Path to the root folder of the Entity.
@@ -42,26 +40,30 @@ EnvironmentGroupApiService Delete en Environment Group by Identifier
      * @param "CommitMsg" (optional.String) -  Commit Message to use for the merge commit.
      * @param "LastObjectId" (optional.String) -  Last Object Id
      * @param "ForceDelete" (optional.Bool) - If true, the Entity will be forced delete, without checking any references/usages
+     * @param orgIdentifier Organization Identifier for the Entity.
+     * @param projectIdentifier Project Identifier for the Entity.
 @return ResponseDtoEnvironmentGroupDelete
 */
 
 type EnvironmentGroupApiDeleteEnvironmentGroupOpts struct {
-    IfMatch optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    RootFolder optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    LastObjectId optional.String
-    ForceDelete optional.Bool
+	IfMatch           optional.String
+	Branch            optional.String
+	RepoIdentifier    optional.String
+	RootFolder        optional.String
+	FilePath          optional.String
+	CommitMsg         optional.String
+	LastObjectId      optional.String
+	ForceDelete       optional.Bool
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
 }
 
-func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context, envGroupIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *EnvironmentGroupApiDeleteEnvironmentGroupOpts) (ResponseDtoEnvironmentGroupDelete, *http.Response, error) {
+func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context, envGroupIdentifier string, accountIdentifier string, localVarOptionals *EnvironmentGroupApiDeleteEnvironmentGroupOpts) (ResponseDtoEnvironmentGroupDelete, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoEnvironmentGroupDelete
 	)
 
@@ -74,8 +76,6 @@ func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context,
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
 		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
 	}
@@ -95,8 +95,14 @@ func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context,
 		localVarQueryParams.Add("lastObjectId", parameterToString(localVarOptionals.LastObjectId.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
-    		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
-    }
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -127,7 +133,7 @@ func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context,
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -148,80 +154,83 @@ func (a *EnvironmentGroupApiService) DeleteEnvironmentGroup(ctx context.Context,
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
 			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoEnvironmentGroupDelete
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 EnvironmentGroupApiService Gets an Environment Group by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param envGroupIdentifier Environment Group Identifier for the entity
  * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *EnvironmentGroupApiGetEnvironmentGroupOpts - Optional Parameters:
      * @param "Deleted" (optional.Bool) -  Specify whether Environment is deleted or not
      * @param "Branch" (optional.String) -  Name of the branch.
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
+     * @param orgIdentifier Organization Identifier for the Entity.
+     * @param projectIdentifier Project Identifier for the Entity.
 @return ResponseDtoEnvironmentGroup
 */
 
 type EnvironmentGroupApiGetEnvironmentGroupOpts struct {
-    Deleted optional.Bool
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	Deleted                 optional.Bool
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
 }
 
-func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, envGroupIdentifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *EnvironmentGroupApiGetEnvironmentGroupOpts) (ResponseDtoEnvironmentGroup, *http.Response, error) {
+func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, envGroupIdentifier string, accountIdentifier string, localVarOptionals *EnvironmentGroupApiGetEnvironmentGroupOpts) (ResponseDtoEnvironmentGroup, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoEnvironmentGroup
 	)
 
@@ -234,8 +243,6 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, en
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.Deleted.IsSet() {
 		localVarQueryParams.Add("deleted", parameterToString(localVarOptionals.Deleted.Value(), ""))
 	}
@@ -247,6 +254,12 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, en
 	}
 	if localVarOptionals != nil && localVarOptionals.GetDefaultFromOtherRepo.IsSet() {
 		localVarQueryParams.Add("getDefaultFromOtherRepo", parameterToString(localVarOptionals.GetDefaultFromOtherRepo.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -275,7 +288,7 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, en
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -296,61 +309,60 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, en
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
 			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoEnvironmentGroup
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 EnvironmentGroupApiService Gets Environment Group list for a Project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *EnvironmentGroupApiGetEnvironmentGroupListOpts - Optional Parameters:
      * @param "Body" (optional.Interface of FilterProperties) -  This is the body for the filter properties for listing Environment Groups
-     * @param "EnvGroupIdentifiers" (optional.Interface of []string) - 
+     * @param "EnvGroupIdentifiers" (optional.Interface of []string) -
      * @param "SearchTerm" (optional.String) -  The word to be searched and included in the list response
      * @param "Page" (optional.Int32) -  Page Index of the results to fetch.Default Value: 0
      * @param "Size" (optional.Int32) -  Results per page
@@ -359,28 +371,32 @@ EnvironmentGroupApiService Gets Environment Group list for a Project
      * @param "Branch" (optional.String) -  Name of the branch.
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
+     * @param orgIdentifier Organization Identifier for the Entity.
+     * @param projectIdentifier Project Identifier for the Entity.
 @return ResponseDtoPageResponseEnvironmentGroup
 */
 
 type EnvironmentGroupApiGetEnvironmentGroupListOpts struct {
-    Body optional.Interface
-    EnvGroupIdentifiers optional.Interface
-    SearchTerm optional.String
-    Page optional.Int32
-    Size optional.Int32
-    Sort optional.Interface
-    FilterIdentifier optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	Body                    optional.Interface
+	EnvGroupIdentifiers     optional.Interface
+	SearchTerm              optional.String
+	Page                    optional.Int32
+	Size                    optional.Int32
+	Sort                    optional.Interface
+	FilterIdentifier        optional.String
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
 }
 
 func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *EnvironmentGroupApiGetEnvironmentGroupListOpts) (ResponseDtoPageResponseEnvironmentGroup, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoPageResponseEnvironmentGroup
 	)
 
@@ -392,8 +408,6 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.EnvGroupIdentifiers.IsSet() {
 		localVarQueryParams.Add("envGroupIdentifiers", parameterToString(localVarOptionals.EnvGroupIdentifiers.Value(), "multi"))
 	}
@@ -421,6 +435,12 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 	if localVarOptionals != nil && localVarOptionals.GetDefaultFromOtherRepo.IsSet() {
 		localVarQueryParams.Add("getDefaultFromOtherRepo", parameterToString(localVarOptionals.GetDefaultFromOtherRepo.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -440,8 +460,8 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
@@ -454,7 +474,7 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -475,52 +495,53 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
 			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoPageResponseEnvironmentGroup
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 EnvironmentGroupApiService Create an Environment Group
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -534,18 +555,18 @@ EnvironmentGroupApiService Create an Environment Group
 */
 
 type EnvironmentGroupApiPostEnvironmentGroupOpts struct {
-    Body optional.Interface
-    Branch optional.String
-    RepoIdentifier optional.String
-    GetDefaultFromOtherRepo optional.Bool
+	Body                    optional.Interface
+	Branch                  optional.String
+	RepoIdentifier          optional.String
+	GetDefaultFromOtherRepo optional.Bool
 }
 
 func (a *EnvironmentGroupApiService) PostEnvironmentGroup(ctx context.Context, accountIdentifier string, localVarOptionals *EnvironmentGroupApiPostEnvironmentGroupOpts) (ResponseDtoEnvironmentGroup, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoEnvironmentGroup
 	)
 
@@ -585,8 +606,8 @@ func (a *EnvironmentGroupApiService) PostEnvironmentGroup(ctx context.Context, a
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
@@ -599,7 +620,7 @@ func (a *EnvironmentGroupApiService) PostEnvironmentGroup(ctx context.Context, a
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -620,52 +641,53 @@ func (a *EnvironmentGroupApiService) PostEnvironmentGroup(ctx context.Context, a
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
 			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoEnvironmentGroup
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 EnvironmentGroupApiService Update an Environment Group by Identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -673,7 +695,7 @@ EnvironmentGroupApiService Update an Environment Group by Identifier
  * @param envGroupIdentifier Environment Group Identifier for the entity
  * @param optional nil or *EnvironmentGroupApiUpdateEnvironmentGroupOpts - Optional Parameters:
      * @param "Body" (optional.Interface of EnvironmentGroupRequest) -  Details of the Environment Group to be updated
-     * @param "IfMatch" (optional.String) - 
+     * @param "IfMatch" (optional.String) -
      * @param "Branch" (optional.String) -  Name of the branch.
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "RootFolder" (optional.String) -  Path to the root folder of the Entity.
@@ -687,25 +709,25 @@ EnvironmentGroupApiService Update an Environment Group by Identifier
 */
 
 type EnvironmentGroupApiUpdateEnvironmentGroupOpts struct {
-    Body optional.Interface
-    IfMatch optional.String
-    Branch optional.String
-    RepoIdentifier optional.String
-    RootFolder optional.String
-    FilePath optional.String
-    CommitMsg optional.String
-    LastObjectId optional.String
-    ResolvedConflictCommitId optional.String
-    BaseBranch optional.String
-    ConnectorRef optional.String
+	Body                     optional.Interface
+	IfMatch                  optional.String
+	Branch                   optional.String
+	RepoIdentifier           optional.String
+	RootFolder               optional.String
+	FilePath                 optional.String
+	CommitMsg                optional.String
+	LastObjectId             optional.String
+	ResolvedConflictCommitId optional.String
+	BaseBranch               optional.String
+	ConnectorRef             optional.String
 }
 
 func (a *EnvironmentGroupApiService) UpdateEnvironmentGroup(ctx context.Context, accountIdentifier string, envGroupIdentifier string, localVarOptionals *EnvironmentGroupApiUpdateEnvironmentGroupOpts) (ResponseDtoEnvironmentGroup, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Put")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseDtoEnvironmentGroup
 	)
 
@@ -767,8 +789,8 @@ func (a *EnvironmentGroupApiService) UpdateEnvironmentGroup(ctx context.Context,
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
@@ -781,7 +803,7 @@ func (a *EnvironmentGroupApiService) UpdateEnvironmentGroup(ctx context.Context,
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -802,46 +824,46 @@ func (a *EnvironmentGroupApiService) UpdateEnvironmentGroup(ctx context.Context,
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 400 {
 			var v Failure
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 500 {
 			var v ModelError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v ResponseDtoEnvironmentGroup
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
