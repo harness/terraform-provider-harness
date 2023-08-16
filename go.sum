@@ -46,8 +46,8 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/harness/harness-go-sdk v0.3.43 h1:kzCAO06zjfecAwh9khggsNQ2L/8YsNEPPb6BYkUADYw=
-github.com/harness/harness-go-sdk v0.3.43/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
+github.com/harness/harness-go-sdk v0.3.44 h1:DMcLBqtRiuQGeBT/cqx6jax4oe0NrDJ9Fbjspz7NNdM=
+github.com/harness/harness-go-sdk v0.3.44/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
 github.com/harness/harness-openapi-go-client v0.0.17 h1:EZneIyi6sV+dlTgXbawxdVD0OoDmG3mnGHEJbwslRzc=
 github.com/harness/harness-openapi-go-client v0.0.17/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
