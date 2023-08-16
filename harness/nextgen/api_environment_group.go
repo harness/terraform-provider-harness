@@ -360,8 +360,6 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroup(ctx context.Context, en
 EnvironmentGroupApiService Gets Environment Group list for a Project
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
- * @param orgIdentifier Organization Identifier for the Entity.
- * @param projectIdentifier Project Identifier for the Entity.
  * @param optional nil or *EnvironmentGroupApiGetEnvironmentGroupListOpts - Optional Parameters:
      * @param "Body" (optional.Interface of FilterProperties) -  This is the body for the filter properties for listing Environment Groups
      * @param "EnvGroupIdentifiers" (optional.Interface of []string) -
@@ -373,6 +371,8 @@ EnvironmentGroupApiService Gets Environment Group list for a Project
      * @param "Branch" (optional.String) -  Name of the branch.
      * @param "RepoIdentifier" (optional.String) -  Git Sync Config Id.
      * @param "GetDefaultFromOtherRepo" (optional.Bool) -  if true, return all the default entities
+     * @param orgIdentifier Organization Identifier for the Entity.
+     * @param projectIdentifier Project Identifier for the Entity.
 @return ResponseDtoPageResponseEnvironmentGroup
 */
 
@@ -387,6 +387,8 @@ type EnvironmentGroupApiGetEnvironmentGroupListOpts struct {
 	Branch                  optional.String
 	RepoIdentifier          optional.String
 	GetDefaultFromOtherRepo optional.Bool
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
 }
 
 func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *EnvironmentGroupApiGetEnvironmentGroupListOpts) (ResponseDtoPageResponseEnvironmentGroup, *http.Response, error) {
@@ -406,8 +408,6 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
-	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.EnvGroupIdentifiers.IsSet() {
 		localVarQueryParams.Add("envGroupIdentifiers", parameterToString(localVarOptionals.EnvGroupIdentifiers.Value(), "multi"))
 	}
@@ -434,6 +434,12 @@ func (a *EnvironmentGroupApiService) GetEnvironmentGroupList(ctx context.Context
 	}
 	if localVarOptionals != nil && localVarOptionals.GetDefaultFromOtherRepo.IsSet() {
 		localVarQueryParams.Add("getDefaultFromOtherRepo", parameterToString(localVarOptionals.GetDefaultFromOtherRepo.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}

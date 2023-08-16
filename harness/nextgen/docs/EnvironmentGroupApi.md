@@ -108,9 +108,7 @@ Gets Environment Group list for a Project
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
-  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
-  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. |
  **optional** | ***EnvironmentGroupApiGetEnvironmentGroupListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -129,7 +127,9 @@ Name | Type | Description  | Notes
  **filterIdentifier** | **optional.**| Filter identifier | 
  **branch** | **optional.**| Name of the branch. | 
  **repoIdentifier** | **optional.**| Git Sync Config Id. | 
- **getDefaultFromOtherRepo** | **optional.**| if true, return all the default entities | 
+ **getDefaultFromOtherRepo** | **optional.**| if true, return all the default entities |
+ **orgIdentifier** | **string**| Organization Identifier for the Entity. |
+ **projectIdentifier** | **string**| Project Identifier for the Entity. |
 
 ### Return type
 
