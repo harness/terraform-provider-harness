@@ -20,7 +20,7 @@ func ResourcePolicyset() *schema.Resource {
 		UpdateContext: resourcePolicysetCreateOrUpdate,
 		DeleteContext: resourcePolicysetDelete,
 		CreateContext: resourcePolicysetCreateOrUpdate,
-		Importer:      helpers.OrgResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"type": {
@@ -220,7 +220,6 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet2) {
 	d.SetId(policy.Identifier)
 	_ = d.Set("identifier", policy.Identifier)
 	_ = d.Set("org_id", policy.OrgId)
-	_ = d.Set("account_id", policy.AccountId)
 	_ = d.Set("project_id", policy.ProjectId)
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("action", policy.Action)

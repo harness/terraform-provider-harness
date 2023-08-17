@@ -2,6 +2,7 @@ package policyset_test
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -39,6 +40,7 @@ func testAccDataSourcePolicyset(id, policyType, action string) string {
 			name = "%[1]s"
 			type = "%[2]s"
 			action = "%[3]s"
+			enabled = %[4]t
 		}
 
 		data "harness_platform_policyset" "test" {
@@ -46,6 +48,7 @@ func testAccDataSourcePolicyset(id, policyType, action string) string {
 			name = harness_platform_policyset.test.name
 			type = "pipeline"
 			action = "onrun"
+			enabled = true
 		}
 	`, id, policyType, action)
 }
