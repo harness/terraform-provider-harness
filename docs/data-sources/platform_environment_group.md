@@ -26,12 +26,12 @@ data "harness_platform_environment_group" "example" {
 ### Required
 
 - `identifier` (String) identifier of the environment group.
-- `org_id` (String) org_id of the environment group.
-- `project_id` (String) project_id of the environment group.
 
 ### Optional
 
 - `color` (String) Color of the environment group.
+- `org_id` (String) org_id of the environment group.
+- `project_id` (String) project_id of the environment group.
 
 ### Read-Only
 
