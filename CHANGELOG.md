@@ -2,7 +2,7 @@
 
 BUG FIXES:
 
-* UI update for service environment override is not reflected accurately if this resource was created using Terraform. ([#654](https://github.com/harness/terraform-provider-harness/pull/654))
+* UI update to service environment override resource is not reflected accurately if this resource is created using Terraform. ([#654](https://github.com/harness/terraform-provider-harness/pull/654))
 * PolicySets list must return sorted ordered list of policysets. ([#658](https://github.com/harness/terraform-provider-harness/pull/658))
 
 # 0.24.2 (August 17,2023) 
