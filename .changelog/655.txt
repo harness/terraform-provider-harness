@@ -1,0 +1,3 @@
+```release-note:bug
+ Fixed the environment group resource to support org and account level environment groups also.
+```

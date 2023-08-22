@@ -1,3 +1,24 @@
+# 0.24.2 (August 17,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_agent: add support for getting agent token while creation. ([#653](https://github.com/harness/terraform-provider-harness/issues/653))
+
+BUG FIXES:
+
+* - Deprecated enabled from the monitored service dto to not allow customer to set monitored service as enabled to start with via terraform ([#640](https://github.com/harness/terraform-provider-harness/issues/640))
+* Fixed the environment group resource to support org and account level environment groups also. ([#655](https://github.com/harness/terraform-provider-harness/issues/655))
+
+# 0.24.1 (August 10,2023) 
+
+ENHANCEMENTS:
+
+* harness_platform_template - Added support to update stable version of a template from terraform. ([#628](https://github.com/harness/terraform-provider-harness/issues/628))
+
+BUG FIXES:
+
+* resource_manual_freeze : bug fix for deployment freeze while saving expired freeze ([#650](https://github.com/harness/terraform-provider-harness/issues/650))
+
 # 0.24.0 (August 01,2023) 
 
 FEATURES:

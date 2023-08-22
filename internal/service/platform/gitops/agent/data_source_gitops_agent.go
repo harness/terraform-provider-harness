@@ -78,7 +78,13 @@ func DataSourceGitopsAgent() *schema.Resource {
 							Type:        schema.TypeBool,
 							Computed:    true,
 						},
-					}},
+					},
+				},
+			},
+			"agent_token": {
+				Description: "Agent token to be used for authentication of the agent with Harness.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}

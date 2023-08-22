@@ -2,10 +2,11 @@ package agent_test
 
 import (
 	"fmt"
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/harness/harness-go-sdk/harness/utils"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"

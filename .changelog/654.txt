@@ -1,0 +1,3 @@
+```release-note:bug
+UI update to service environment override resource is not reflected accurately if this resource is created using Terraform.
+```
