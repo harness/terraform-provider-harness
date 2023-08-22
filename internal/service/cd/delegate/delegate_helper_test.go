@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/delegate"
@@ -63,7 +64,7 @@ func deleteDelegate(t *testing.T, name string) {
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	require.NoError(t, err, "failed to create docker client: %s", err)
 
-	err = cli.ContainerStop(context.Background(), name, nil)
+	err = cli.ContainerStop(context.Background(), name, container.StopOptions{})
 	require.NoError(t, err, "failed to stop delegate container: %s", err)
 
 	err = cli.ContainerRemove(context.Background(), name, types.ContainerRemoveOptions{})
