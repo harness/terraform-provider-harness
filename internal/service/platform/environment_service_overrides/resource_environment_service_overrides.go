@@ -63,8 +63,15 @@ func resourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Reso
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
+
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	if resp.Data == nil || len(resp.Data.Content) == 0 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
 	readEnvironmentServiceOverridesList(d, resp.Data)
