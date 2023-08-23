@@ -29,4 +29,5 @@ type V1Agent struct {
 	Version          *V1SemanticVersion  `json:"version,omitempty"`
 	UpgradeAvailable bool                `json:"upgradeAvailable,omitempty"`
 	Scope            *V1AgentScope       `json:"scope,omitempty"`
+	Engine           *V1AgentEngine      `json:"engine,omitempty"`
 }
