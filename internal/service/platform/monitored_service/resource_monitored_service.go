@@ -164,11 +164,6 @@ func ResourceMonitoredService() *schema.Resource {
 										Type:        schema.TypeString,
 										Required:    true,
 									},
-									"type": {
-										Description: "Type of the service dependency.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
 									"dependency_metadata": {
 										Description: "Dependency metadata for the monitored service.",
 										Type:        schema.TypeString,
@@ -385,14 +380,14 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			test := notificationRuleRef.(map[string]interface{})
 			notificationRuleRefDto := &nextgen.NotificationRuleRefDto{
 				NotificationRuleRef: test["notification_rule_ref"].(string),
-				Enabled: test["enabled"].(bool),
+				Enabled:             test["enabled"].(bool),
 			}
 			notificationRuleRefs[i] = *notificationRuleRefDto
 		}
 		monitoredServiceDto.NotificationRuleRefs = notificationRuleRefs
 
 		monitoredServiceDto.Template = &nextgen.TemplateDto{
-			TemplateRef: request["template_ref"].(string),
+			TemplateRef:  request["template_ref"].(string),
 			VersionLabel: request["version_label"].(string),
 		}
 

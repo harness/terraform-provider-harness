@@ -71,6 +71,9 @@ resource "harness_platform_monitored_service" "example" {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     enabled       = true
   }
 }
@@ -149,7 +152,6 @@ Required:
 Required:
 
 - `monitored_service_identifier` (String) Monitored service identifier of the dependency.
-- `type` (String) Type of the service dependency.
 
 Optional:
 
