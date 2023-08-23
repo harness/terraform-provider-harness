@@ -13,7 +13,6 @@ type V1AgentEngine string
 
 // List of v1AgentEngine
 const (
-	AGENT_ENGINE_UNSET_V1AgentEngine V1AgentEngine = "AGENT_ENGINE_UNSET"
-	ARGO_V1AgentEngine               V1AgentEngine = "ARGO"
-	FLAMINGO_V1AgentEngine           V1AgentEngine = "FLAMINGO"
+	ARGO_V1AgentEngine     V1AgentEngine = "ARGO"
+	FLAMINGO_V1AgentEngine V1AgentEngine = "FLAMINGO"
 )
