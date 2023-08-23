@@ -90,6 +90,11 @@ func ResourceGitopsAgent() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"engine": {
+				Description: "Engine to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 	return resource
@@ -225,6 +230,10 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			v1Agent.Metadata = &v1MetaData
 		}
 	}
+	if attr, ok := d.GetOk("engine"); ok {
+		agentEngine := nextgen.V1AgentEngine(attr.(string))
+		v1Agent.Engine = &agentEngine
+	}
 	return &v1Agent
 }
 
@@ -237,6 +246,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("org_id", agent.OrgIdentifier)
 	d.Set("type", agent.Type_)
 	d.Set("project_id", agent.ProjectIdentifier)
+	d.Set("engine", agent.Engine)
 	metadata := []interface{}{}
 	metaDataMap := map[string]interface{}{}
 	metaDataMap["namespace"] = agent.Metadata.Namespace
