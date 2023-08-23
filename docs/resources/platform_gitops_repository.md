@@ -13,6 +13,7 @@ Resource for creating Harness Gitops Repositories.
 ## Example Usage
 
 ```terraform
+// Create a git repository at project level
 resource "harness_platform_gitops_repository" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -26,6 +27,156 @@ resource "harness_platform_gitops_repository" "example" {
     connection_type = "HTTPS_ANONYMOUS"
   }
   upsert = true
+}
+
+// Create a HELM repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "https://charts.helm.sh/stable"
+    name            = "repo_name"
+    insecure        = true
+    connection_type = "HTTPS_ANONYMOUS"
+    type_           = "helm"
+  }
+  upsert = true
+}
+
+// Create a OCI HELM repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "ghcr.io/test-repo"
+    name            = "repo_name"
+    insecure        = false
+    username        = "username"
+    password        = "ghp_xxxxxxxx"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  upsert = true
+}
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "111222333444.dkr.ecr.us-west-1.amazonaws.com"
+    name            = "repo_name"
+    insecure        = false
+    username        = "AWS"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "AWS_ECR"
+  ecr_gen {
+    region = "us-west-1"
+    secret_ref {
+      aws_access_key_id     = "AWS_ACCESS_KEY_ID"
+      aws_secret_access_key = "AWS_SECRET_ACCESS_KEY"
+    }
+  }
+  refreshInterval = "1m"
+  upsert          = false
+}
+
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "111222333444.dkr.ecr.us-west-1.amazonaws.com"
+    name            = "repo_name"
+    insecure        = false
+    username        = "AWS"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "AWS_ECR"
+  ecr_gen {
+    region = "us-west-1"
+    jwt_auth {
+      name      = "name"
+      namespace = "namespace"
+    }
+  }
+  refreshInterval = "1m"
+  upsert          = false
+}
+
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "us.gcr.io/projectID/repo_name"
+    name            = "repo_name"
+    insecure        = false
+    username        = "oauth2accesstoken"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "GOOGLE_GCR"
+  gcr_gen {
+    projectID = "projectID"
+    accessKey = "{  \"type\": \"service_account\",  \"project_id\": \"google-project-id\",  \"private_key_id\": \"5efxxxxx19dd12674be7be2312313caaab31231\",  \"private_key\": \"----.......-----\n\",  \"client_email\": \"xxxxxxxx-compute@developer.gserviceaccount.com\",  \"client_id\": \"xxxxxxxxxxx0161940\",  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",  \"token_uri\": \"https://oauth2.googleapis.com/token\",  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/5xxxxxxxx911-compute@developer.gserviceaccount.com\",  \"universe_domain\": \"googleapis.com\"}"
+  }
+  refreshInterval = "1m"
+  upsert          = false
+}
+
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "us.gcr.io/projectID/repo_name"
+    name            = "repo_name"
+    insecure        = false
+    username        = "oauth2accesstoken"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "GOOGLE_GCR"
+  gcr_gen {
+    project_id = "projectID"
+    workload_identity {
+      cluster_location   = "GCPClusterLocation"
+      cluster_name       = "GCPClusterName"
+      cluster_project_id = "GCPClusterProjectID"
+      service_account_ref {
+        name      = "name"
+        namespace = "namespace"
+      }
+    }
+  }
+  refreshInterval = "1m"
+  upsert          = false
 }
 ```
 
@@ -42,11 +193,16 @@ resource "harness_platform_gitops_repository" "example" {
 ### Optional
 
 - `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
+- `ecr_gen` (Block List, Max: 1) ECR access token generator specific configuration. (see [below for nested schema](#nestedblock--ecr_gen))
+- `gcr_gen` (Block List, Max: 1) GCR access token generator specific configuration. (see [below for nested schema](#nestedblock--gcr_gen))
+- `gen_type` (String) Default: "UNSET"
+Enum: "UNSET" "AWS_ECR" "GOOGLE_GCR"
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
 - `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
 - `query_project` (String) Project to query for the GitOps repo.
 - `query_repo` (String) GitOps repository to query.
+- `refresh_interval` (String) For OCI repos, this is the interval to refresh the token to access the registry.
 - `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
 - `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
@@ -82,6 +238,67 @@ Optional:
 - `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server.
 - `type_` (String) Type specifies the type of the repo. Can be either "git" or "helm. "git" is assumed if empty or absent.
 - `username` (String) Username used for authenticating at the remote repository.
+
+
+<a id="nestedblock--ecr_gen"></a>
+### Nested Schema for `ecr_gen`
+
+Optional:
+
+- `jwt_auth` (Block List, Max: 1) JWT authentication specific configuration. (see [below for nested schema](#nestedblock--ecr_gen--jwt_auth))
+- `region` (String) AWS region.
+- `secret_ref` (Block List, Max: 1) Secret reference to the AWS credentials. (see [below for nested schema](#nestedblock--ecr_gen--secret_ref))
+
+<a id="nestedblock--ecr_gen--jwt_auth"></a>
+### Nested Schema for `ecr_gen.jwt_auth`
+
+Optional:
+
+- `audiences` (List of String) Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list
+- `name` (String) The name of the ServiceAccount resource being referred to.
+- `namespace` (String) Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.
+
+
+<a id="nestedblock--ecr_gen--secret_ref"></a>
+### Nested Schema for `ecr_gen.secret_ref`
+
+Optional:
+
+- `aws_access_key_id` (String) AWS access key id.
+- `aws_secret_access_key` (String) AWS secret access key.
+- `aws_session_token` (String) AWS session token.
+
+
+
+<a id="nestedblock--gcr_gen"></a>
+### Nested Schema for `gcr_gen`
+
+Optional:
+
+- `access_key` (String) GCP access key.
+- `project_id` (String) GCP project id.
+- `workload_identity` (Block List, Max: 1) GCP workload identity. (see [below for nested schema](#nestedblock--gcr_gen--workload_identity))
+
+<a id="nestedblock--gcr_gen--workload_identity"></a>
+### Nested Schema for `gcr_gen.workload_identity`
+
+Optional:
+
+- `cluster_location` (String) Cluster location.
+- `cluster_name` (String) Cluster name.
+- `cluster_project_id` (String) Cluster project id.
+- `service_account_ref` (Block List, Max: 1) Service account reference. (see [below for nested schema](#nestedblock--gcr_gen--workload_identity--service_account_ref))
+
+<a id="nestedblock--gcr_gen--workload_identity--service_account_ref"></a>
+### Nested Schema for `gcr_gen.workload_identity.service_account_ref`
+
+Optional:
+
+- `audiences` (List of String) Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list
+- `name` (String) The name of the ServiceAccount resource being referred to.
+- `namespace` (String) Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.
+
+
 
 
 <a id="nestedblock--update_mask"></a>

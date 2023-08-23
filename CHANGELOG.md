@@ -1,3 +1,43 @@
+# 0.24.3 (August 22,2023) 
+
+BUG FIXES:
+
+* PolicySets list must return sorted ordered list of policysets. ([#658](https://github.com/harness/terraform-provider-harness/issues/658))
+* UI update to service environment override resource is not reflected accurately if this resource is created using Terraform. ([#654](https://github.com/harness/terraform-provider-harness/issues/654))
+
+# 0.24.2 (August 17,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_gitops_agent: add support for getting agent token while creation. ([#653](https://github.com/harness/terraform-provider-harness/issues/653))
+
+BUG FIXES:
+
+* - Deprecated enabled from the monitored service dto to not allow customer to set monitored service as enabled to start with via terraform ([#640](https://github.com/harness/terraform-provider-harness/issues/640))
+* Fixed the environment group resource to support org and account level environment groups also. ([#655](https://github.com/harness/terraform-provider-harness/issues/655))
+
+# 0.24.1 (August 10,2023) 
+
+ENHANCEMENTS:
+
+* harness_platform_template - Added support to update stable version of a template from terraform. ([#628](https://github.com/harness/terraform-provider-harness/issues/628))
+
+BUG FIXES:
+
+* resource_manual_freeze : bug fix for deployment freeze while saving expired freeze ([#650](https://github.com/harness/terraform-provider-harness/issues/650))
+
+# 0.24.0 (August 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_file_store_file - Added a File Store file resource.
+harness_platform_file_store_folder - Added a File Store folder resource.` ([#629](https://github.com/harness/terraform-provider-harness/issues/629))
+
+ENHANCEMENTS:
+
+* Add more fields for overrides v2 data source ([#636](https://github.com/harness/terraform-provider-harness/issues/636))
+* resource/harness_platform_gitops_repository: add support for token update for OCI helm repo with ESO ([#638](https://github.com/harness/terraform-provider-harness/issues/638))
+
 # 0.23.3 (July 25,2023) 
 
 ENHANCEMENTS:
