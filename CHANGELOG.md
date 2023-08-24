@@ -1,6 +1,6 @@
 
-<a name="0.3.44"></a>
-## 0.3.44 (2023-08-16)
+<a name="0.3.45"></a>
+## 0.3.45 (2023-08-23)
 
 ### Added
 
@@ -38,6 +38,8 @@
 
 ### Release
 
+* Release version 0.3.44 08-16-2023
+* Release v0.3.44
 * Release version 0.3.43 08-11-2023
 * Release v0.3.43
 * Release version 0.3.42 08-08-2023
@@ -90,12 +92,14 @@
 * Release v0.3.21
 * Release version 0.3.20 03-13-2023
 * Release v0.3.20
-* Release version 0.3.19 03-11-2023
-* Release v0.3.19
 
 ### Remove
 
 * remove unused field
+
+### Removing
+
+* removing the unset engine
 
 ### Revert
 
@@ -132,6 +136,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#390](https://github.com/harness/harness-go-sdk/issues/390) from harness/cds-76833-gitops-agent-flux
 * Merge pull request [#386](https://github.com/harness/harness-go-sdk/issues/386) from harness/cds-77080
 * Merge pull request [#384](https://github.com/harness/harness-go-sdk/issues/384) from harness/dockerexecuteondelegate
 * Merge pull request [#382](https://github.com/harness/harness-go-sdk/issues/382) from harness/dockerexecuteondelegate
@@ -168,5 +173,4 @@
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 * Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
-* Merge pull request [#294](https://github.com/harness/harness-go-sdk/issues/294) from harness/pl-31762
 
