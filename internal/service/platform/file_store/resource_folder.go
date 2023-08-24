@@ -205,6 +205,20 @@ func buildFileStoreApiFolderUpdateRequest(d *schema.ResourceData) (*nextgen.File
 	return update, nil
 }
 
+func getSafeEmail(user *nextgen.EmbeddedUserDetailsDto) string {
+	if user != nil {
+		return user.Email
+	}
+	return ""
+}
+
+func getSafeName(user *nextgen.EmbeddedUserDetailsDto) string {
+	if user != nil {
+		return user.Name
+	}
+	return ""
+}
+
 func readFolderNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt optional.Interface) {
 	d.SetId(file.Identifier)
 	d.Set(identifier, file.Identifier)
@@ -217,14 +231,14 @@ func readFolderNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt o
 	d.Set(path, file.Path)
 	d.Set(createdBy, []interface{}{
 		map[string]interface{}{
-			"email": file.CreatedBy.Email,
-			"name":  file.CreatedBy.Name,
+			"email": getSafeEmail(file.CreatedBy),
+			"name":  getSafeName(file.CreatedBy),
 		},
 	})
 	d.Set(lastModifiedBy, []interface{}{
 		map[string]interface{}{
-			"email": file.LastModifiedBy.Email,
-			"name":  file.LastModifiedBy.Name,
+			"email": getSafeEmail(file.LastModifiedBy),
+			"name":  getSafeName(file.LastModifiedBy),
 		},
 	})
 	d.Set(lastModifiedAt, file.LastModifiedAt)
