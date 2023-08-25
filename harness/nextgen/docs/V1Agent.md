@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 **Version** | [***V1SemanticVersion**](v1SemanticVersion.md) |  | [optional] [default to null]
 **UpgradeAvailable** | **bool** |  | [optional] [default to null]
 **Scope** | [***V1AgentScope**](v1AgentScope.md) |  | [optional] [default to null]
-**Engine** | [***V1AgentEngine**](v1AgentEngine.md) |  | [optional] [default to null]
+**Operator** | [***V1AgentOperator**](v1AgentOperator.md) |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
