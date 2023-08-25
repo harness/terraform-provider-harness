@@ -269,14 +269,14 @@ func readFileNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt opt
 	d.Set(tags, FlattenTags(file.Tags))
 	d.Set(createdBy, []interface{}{
 		map[string]interface{}{
-			"email": file.CreatedBy.Email,
-			"name":  file.CreatedBy.Name,
+			"email": getSafeEmail(file.CreatedBy),
+			"name":  getSafeName(file.CreatedBy),
 		},
 	})
 	d.Set(lastModifiedBy, []interface{}{
 		map[string]interface{}{
-			"email": file.LastModifiedBy.Email,
-			"name":  file.LastModifiedBy.Name,
+			"email": getSafeEmail(file.LastModifiedBy),
+			"name":  getSafeName(file.LastModifiedBy),
 		},
 	})
 	d.Set(lastModifiedAt, file.LastModifiedAt)
