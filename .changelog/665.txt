@@ -1,3 +1,3 @@
 ```release-note:bug
-Fixed harness_platform_file_store_folder create resource when createdBy user is nil
+Fixed harness_platform_file_store_folder create resource plugin crash, when service account token was used to create
 ```
