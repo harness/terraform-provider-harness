@@ -141,13 +141,18 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	return nil
 }
 
+var creationSemaphore = make(chan struct{}, 2)
+
 func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	creationSemaphore <- struct{}{}
+	defer func() { <-creationSemaphore }()
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
 
 	var err error
 	var httpResp *http.Response
+
 
 	if id == "" {
 		addUserBody := createAddUserBody(d)
@@ -184,6 +189,8 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 }
 
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	creationSemaphore <- struct{}{}
+	defer func() { <-creationSemaphore }()
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	uuid := d.Get("identifier").(string)
