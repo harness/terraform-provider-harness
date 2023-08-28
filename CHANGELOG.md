@@ -1,3 +1,10 @@
+# 0.24.3 (August 22,2023) 
+
+BUG FIXES:
+
+* PolicySets list must return sorted ordered list of policysets. ([#658](https://github.com/harness/terraform-provider-harness/issues/658))
+* UI update to service environment override resource is not reflected accurately if this resource is created using Terraform. ([#654](https://github.com/harness/terraform-provider-harness/issues/654))
+
 # 0.24.2 (August 17,2023) 
 
 ENHANCEMENTS:

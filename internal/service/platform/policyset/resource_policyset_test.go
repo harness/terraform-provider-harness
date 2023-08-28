@@ -61,6 +61,17 @@ func TestAccResourcePolicyset(t *testing.T) {
 
 func testAccResourcePolicyset(id, name, action, policyType string, enabled bool) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_policy" "first" {
+			identifier = "policyFirst"
+			name = "policyFirst"
+			rego = "some text"
+		}
+
+		resource "harness_platform_policy" "second" {
+			identifier = "policySecond"
+			name = "policySecond"
+			rego = "some text"
+		}
 		resource "harness_platform_policyset" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -68,8 +79,13 @@ func testAccResourcePolicyset(id, name, action, policyType string, enabled bool)
 			type = "%[4]s"
 			enabled = %[5]t
 			policies {
-				identifier = "rajP2"
-				severity = "warning"
+				identifier = harness_platform_policy.first.identifier
+			  severity = "warning"
+			}
+
+			policies {
+				identifier = harness_platform_policy.second.identifier
+			  severity = "warning"
 			}
 		}
 `, id, name, action, policyType, enabled)

@@ -87,6 +87,35 @@ func TestAccResourcePipelineInline(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_pipeline.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPipelineDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "gitx"),
+					resource.TestCheckResourceAttr(resourceName, "name", "gitx"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+                ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path","git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
+			},
+		},
+	})
+}
+
 func TestAccResourcePipeline_DeleteUnderlyingResource(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
@@ -367,5 +396,31 @@ func testAccResourcePipelineInline(id string, name string) string {
                                             type: StageRollback
             EOT
         }
+        `, id, name)
+}
+
+func testAccResourcePipelineImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_pipeline" "test" {
+                        identifier = "gitx"
+                        org_id = "default"
+						project_id = "V"
+                        name = "gitx"
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/gitx.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        pipeline_import_request {
+                            pipeline_name = "gitx"
+                            pipeline_description = "Pipeline Description"
+                        }
+                }
         `, id, name)
 }

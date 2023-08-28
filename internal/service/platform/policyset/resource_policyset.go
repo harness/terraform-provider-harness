@@ -38,16 +38,13 @@ func ResourcePolicyset() *schema.Resource {
 			"enabled": {
 				Description: "Enabled for the policyset.",
 				Type:        schema.TypeBool,
-				Required:    false,
-				Computed:    false,
 				Optional:    true,
 			},
 			"policies": {
 				Description: "List of policy identifiers / severity for the policyset.",
 				Type:        schema.TypeList,
-				Computed:    false,
+				Computed:    true,
 				Optional:    true,
-				Required:    false,
 				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
