@@ -1,6 +1,6 @@
 
-<a name="0.3.45"></a>
-## 0.3.45 (2023-08-23)
+<a name="0.3.46"></a>
+## 0.3.46 (2023-08-28)
 
 ### Added
 
@@ -22,7 +22,6 @@
 ### Fixed
 
 * Fixed Masking of API Key In Debug Console
-* Fixed AddUserDto Struct
 
 ### IAM
 
@@ -38,6 +37,8 @@
 
 ### Release
 
+* Release version 0.3.45 08-24-2023
+* Release v0.3.45
 * Release version 0.3.44 08-16-2023
 * Release v0.3.44
 * Release version 0.3.43 08-11-2023
@@ -90,8 +91,6 @@
 * Release v0.3.14
 * Release version 0.3.21 03-20-2023
 * Release v0.3.21
-* Release version 0.3.20 03-13-2023
-* Release v0.3.20
 
 ### Remove
 
@@ -107,6 +106,10 @@
 
 ### Update
 
+* update contract
+
+### Update
+
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
 * Update model_repositories_check_eso_response.go
@@ -116,10 +119,6 @@
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
-
-### Update
-
-* update contract
 
 ### Updating
 
@@ -136,6 +135,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#393](https://github.com/harness/harness-go-sdk/issues/393) from harness/OIP-803
 * Merge pull request [#390](https://github.com/harness/harness-go-sdk/issues/390) from harness/cds-76833-gitops-agent-flux
 * Merge pull request [#386](https://github.com/harness/harness-go-sdk/issues/386) from harness/cds-77080
 * Merge pull request [#384](https://github.com/harness/harness-go-sdk/issues/384) from harness/dockerexecuteondelegate
@@ -172,5 +172,4 @@
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
-* Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 
