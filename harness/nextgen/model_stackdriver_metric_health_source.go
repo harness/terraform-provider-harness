@@ -9,8 +9,9 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the Stackdriver Metric Health Source spec entity defined in Harness
+type StackdriverMetricHealthSource struct {
+	ConnectorRef      string                    `json:"connectorRef"`
+	MetricPacks       []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
+	MetricDefinitions []StackdriverDefinition   `json:"metricDefinitions,omitempty"`
 }

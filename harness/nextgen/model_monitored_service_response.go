@@ -10,7 +10,7 @@
 package nextgen
 
 type MonitoredServiceResponse struct {
-	CreatedAt int64 `json:"createdAt,omitempty"`
-	LastModifiedAt int64 `json:"lastModifiedAt,omitempty"`
-	MonitoredService *MonitoredServiceDto `json:"monitoredService"`
+	CreatedAt        int64             `json:"createdAt,omitempty"`
+	LastModifiedAt   int64             `json:"lastModifiedAt,omitempty"`
+	MonitoredService *MonitoredService `json:"monitoredService"`
 }

@@ -9,8 +9,10 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the NextGenHealthSource Health Source spec entity defined in Harness
+type NextGenHealthSource struct {
+	ConnectorRef       string                    `json:"connectorRef"`
+	MetricPacks        []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
+	QueryDefinitions   []QueryDefinition         `json:"queryDefinitions,omitempty"`
+	HealthSourceParams *HealthSourceParamsDto    `json:"healthSourceParams,omitempty"`
 }

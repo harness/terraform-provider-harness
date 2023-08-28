@@ -9,8 +9,8 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+type ProjectParams struct {
+	AccountIdentifier string `json:"accountIdentifier"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
+	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 }

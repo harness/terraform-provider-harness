@@ -9,8 +9,9 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+type ResponseDtoMonitoredServiceResponse struct {
+	Status        string                    `json:"status,omitempty"`
+	Data          *MonitoredServiceResponse `json:"data,omitempty"`
+	MetaData      *interface{}              `json:"metaData,omitempty"`
+	CorrelationId string                    `json:"correlationId,omitempty"`
 }

@@ -9,8 +9,6 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+type HealthSourceParamsDto struct {
+	Region string `json:"region,omitempty"`
 }

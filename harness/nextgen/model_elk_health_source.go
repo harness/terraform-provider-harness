@@ -9,8 +9,9 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the ELK Log Health Source spec entity defined in Harness
+type ElkHealthSource struct {
+	ConnectorRef string                    `json:"connectorRef"`
+	Feature      string                    `json:"feature"`
+	Queries      []ElkHealthSourceQueryDto `json:"queries"`
 }
