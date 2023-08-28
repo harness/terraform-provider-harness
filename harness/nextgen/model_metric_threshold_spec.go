@@ -11,4 +11,5 @@ package nextgen
 
 type MetricThresholdSpec struct {
 	Action string `json:"action"`
+	Type_  string `json:"type"`
 }

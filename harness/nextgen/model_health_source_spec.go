@@ -9,6 +9,7 @@
  */
 package nextgen
 
+// This is the Health Source entity defined in Harness
 type HealthSourceSpec struct {
-	ConnectorRef string `json:"connectorRef,omitempty"`
+	ConnectorRef string `json:"connectorRef"`
 }

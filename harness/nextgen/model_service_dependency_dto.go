@@ -14,8 +14,8 @@ import "encoding/json"
 type ServiceDependencyDto struct {
 	MonitoredServiceIdentifier string `json:"monitoredServiceIdentifier,omitempty"`
 
-	Type_               DependencyMetadataType        `json:"type,omitempty"`
-	KUBERNETES          *KubernetesDependencyMetadata `json:"-"`
+	Type_      DependencyMetadataType        `json:"type,omitempty"`
+	KUBERNETES *KubernetesDependencyMetadata `json:"-"`
 
-	DependencyMetadata  json.RawMessage               `json:"dependencyMetadata"`
+	DependencyMetadata json.RawMessage `json:"dependencyMetadata,omitempty"`
 }

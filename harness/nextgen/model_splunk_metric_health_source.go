@@ -9,8 +9,10 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the Splunk Metric Health Source spec entity defined in Harness
+type SplunkMetricHealthSource struct {
+	ConnectorRef      string                    `json:"connectorRef"`
+	MetricPacks       []TimeSeriesMetricPackDto `json:"metricPacks,omitempty"`
+	Feature           string                    `json:"feature"`
+	MetricDefinitions []SplunkMetricDefinition  `json:"metricDefinitions,omitempty"`
 }

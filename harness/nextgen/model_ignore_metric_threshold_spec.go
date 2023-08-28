@@ -11,4 +11,5 @@ package nextgen
 
 type IgnoreMetricThresholdSpec struct {
 	Action string `json:"action"`
+	Type_  string `json:"type"`
 }

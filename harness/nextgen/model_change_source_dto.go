@@ -12,17 +12,14 @@ package nextgen
 import "encoding/json"
 
 type ChangeSourceDto struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-
-	Type_               ChangeSourceType                     `json:"type,omitempty"`
-	HarnessCDNextGen    *HarnessCdChangeSourceSpec           `json:"-"`
-	PagerDuty           *PagerDutyChangeSourceSpec           `json:"-"`
-	K8sCluster          *KubernetesChangeSourceSpec          `json:"-"`
-	HarnessCD           *HarnessCdCurrentGenChangeSourceSpec `json:"-"`
-
-	Enabled bool `json:"enabled,omitempty"`
-	Spec json.RawMessage `json:"spec"`
-
-	Category string `json:"category,omitempty"`
+	Name             string                               `json:"name"`
+	Identifier       string                               `json:"identifier"`
+	Type_            ChangeSourceType                     `json:"type,omitempty"`
+	HarnessCDNextGen *HarnessCdChangeSourceSpec           `json:"-"`
+	PagerDuty        *PagerDutyChangeSourceSpec           `json:"-"`
+	K8sCluster       *KubernetesChangeSourceSpec          `json:"-"`
+	HarnessCD        *HarnessCdCurrentGenChangeSourceSpec `json:"-"`
+	Enabled          bool                                 `json:"enabled,omitempty"`
+	Spec             json.RawMessage                      `json:"spec"`
+	Category         string                               `json:"category,omitempty"`
 }

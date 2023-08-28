@@ -9,8 +9,10 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the Datadog Metric Health Source spec entity defined in Harness
+type DatadogMetricHealthSource struct {
+	ConnectorRef      string                          `json:"connectorRef"`
+	MetricPacks       []TimeSeriesMetricPackDto       `json:"metricPacks,omitempty"`
+	Feature           string                          `json:"feature"`
+	MetricDefinitions []DatadogMetricHealthDefinition `json:"metricDefinitions,omitempty"`
 }

@@ -9,8 +9,8 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the ErrorTracking Health Source spec entity defined in Harness
+type ErrorTrackingHealthSource struct {
+	ConnectorRef string `json:"connectorRef"`
+	Feature      string `json:"feature"`
 }

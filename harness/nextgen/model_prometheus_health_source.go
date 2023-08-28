@@ -9,8 +9,9 @@
  */
 package nextgen
 
-type FailMetricThresholdSpec struct {
-	Action string                         `json:"action"`
-	Type_  string                         `json:"type"`
-	Spec   *FailMetricCustomThresholdSpec `json:"spec,omitempty"`
+// This is the Prometheus Metric Health Source spec entity defined in Harness
+type PrometheusHealthSource struct {
+	ConnectorRef      string                       `json:"connectorRef"`
+	MetricPacks       []TimeSeriesMetricPackDto    `json:"metricPacks,omitempty"`
+	MetricDefinitions []PrometheusMetricDefinition `json:"metricDefinitions,omitempty"`
 }

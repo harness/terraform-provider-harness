@@ -53,6 +53,18 @@ func (a *HealthSource) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.CloudWatchMetrics)
 	case HealthSourceTypes.AwsPrometheus:
 		err = json.Unmarshal(aux.Spec, &a.AwsPrometheus)
+	case HealthSourceTypes.SumologicMetrics:
+		err = json.Unmarshal(aux.Spec, &a.SumologicMetrics)
+	case HealthSourceTypes.SumologicLogs:
+		err = json.Unmarshal(aux.Spec, &a.SumologicLogs)
+	case HealthSourceTypes.SplunkSignalFXMetrics:
+		err = json.Unmarshal(aux.Spec, &a.SplunkSignalFXMetrics)
+	case HealthSourceTypes.GrafanaLokiLogs:
+		err = json.Unmarshal(aux.Spec, &a.GrafanaLokiLogs)
+	case HealthSourceTypes.AzureLogs:
+		err = json.Unmarshal(aux.Spec, &a.AzureLogs)
+	case HealthSourceTypes.AzureMetrics:
+		err = json.Unmarshal(aux.Spec, &a.AzureMetrics)
 	default:
 		panic(fmt.Sprintf("unknown health source type %s", a.Type_))
 	}
@@ -99,6 +111,18 @@ func (a *HealthSource) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.CloudWatchMetrics)
 	case HealthSourceTypes.AwsPrometheus:
 		spec, err = json.Marshal(a.AwsPrometheus)
+	case HealthSourceTypes.SumologicMetrics:
+		spec, err = json.Marshal(a.SumologicMetrics)
+	case HealthSourceTypes.SumologicLogs:
+		spec, err = json.Marshal(a.SumologicLogs)
+	case HealthSourceTypes.SplunkSignalFXMetrics:
+		spec, err = json.Marshal(a.SplunkSignalFXMetrics)
+	case HealthSourceTypes.GrafanaLokiLogs:
+		spec, err = json.Marshal(a.GrafanaLokiLogs)
+	case HealthSourceTypes.AzureLogs:
+		spec, err = json.Marshal(a.AzureLogs)
+	case HealthSourceTypes.AzureMetrics:
+		spec, err = json.Marshal(a.AzureMetrics)
 	default:
 		panic(fmt.Sprintf("unknown health source type %s", a.Type_))
 	}

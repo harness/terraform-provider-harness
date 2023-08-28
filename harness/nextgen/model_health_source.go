@@ -12,26 +12,32 @@ package nextgen
 import "encoding/json"
 
 type HealthSource struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
+	Name                  string                         `json:"name"`
+	Identifier            string                         `json:"identifier"`
+	Version               string                         `json:"version,omitempty"`
+	Type_                 HealthSourceType               `json:"type,omitempty"`
+	AppDynamics           *AppDynamicsHealthSource       `json:"-"`
+	NewRelic              *NewRelicHealthSource          `json:"-"`
+	StackdriverLog        *StackdriverLogHealthSource    `json:"-"`
+	Splunk                *SplunkHealthSource            `json:"-"`
+	Prometheus            *PrometheusHealthSource        `json:"-"`
+	Stackdriver           *StackdriverMetricHealthSource `json:"-"`
+	DatadogMetrics        *DatadogMetricHealthSource     `json:"-"`
+	DatadogLog            *DatadogLogHealthSource        `json:"-"`
+	Dynatrace             *DynatraceHealthSource         `json:"-"`
+	ErrorTracking         *ErrorTrackingHealthSource     `json:"-"`
+	CustomHealthMetric    *CustomHealthSourceMetric      `json:"-"`
+	CustomHealthLog       *CustomHealthSourceLog         `json:"-"`
+	SplunkMetric          *SplunkMetricHealthSource      `json:"-"`
+	ElasticSearch         *NextGenHealthSource           `json:"-"`
+	CloudWatchMetrics     *CloudWatchMetricsHealthSource `json:"-"`
+	AwsPrometheus         *AwsPrometheusHealthSource     `json:"-"`
+	SumologicMetrics      *NextGenHealthSource           `json:"-"`
+	SumologicLogs         *NextGenHealthSource           `json:"-"`
+	SplunkSignalFXMetrics *NextGenHealthSource           `json:"-"`
+	GrafanaLokiLogs       *NextGenHealthSource           `json:"-"`
+	AzureLogs             *NextGenHealthSource           `json:"-"`
+	AzureMetrics          *NextGenHealthSource           `json:"-"`
 
-	Type_              HealthSourceType                   `json:"type,omitempty"`
-	AppDynamics        *AppDynamicsHealthSourceSpec       `json:"-"`
-	NewRelic           *NewRelicHealthSourceSpec          `json:"-"`
-	StackdriverLog     *StackdriverLogHealthSourceSpec    `json:"-"`
-	Splunk             *SplunkHealthSourceSpec            `json:"-"`
-	Prometheus         *PrometheusHealthSourceSpec        `json:"-"`
-	Stackdriver        *StackdriverMetricHealthSourceSpec `json:"-"`
-	DatadogMetrics     *DatadogMetricHealthSourceSpec     `json:"-"`
-	DatadogLog         *DatadogLogHealthSourceSpec        `json:"-"`
-	Dynatrace          *DynatraceHealthSourceSpec         `json:"-"`
-	ErrorTracking      *ErrorTrackingHealthSourceSpec     `json:"-"`
-	CustomHealthMetric *CustomHealthSourceMetricSpec      `json:"-"`
-	CustomHealthLog    *CustomHealthSourceLogSpec         `json:"-"`
-	SplunkMetric       *SplunkMetricHealthSourceSpec      `json:"-"`
-	ElasticSearch      *ElkHealthSourceSpec               `json:"-"`
-	CloudWatchMetrics  *CloudWatchMetricsHealthSourceSpec `json:"-"`
-	AwsPrometheus      *AwsPrometheusHealthSourceSpec     `json:"-"`
-
-	Spec               json.RawMessage                    `json:"spec"`
+	Spec json.RawMessage `json:"spec"`
 }
