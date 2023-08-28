@@ -3,8 +3,8 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Name** | **string** |  | [optional] [default to null]
-**Identifier** | **string** |  | [optional] [default to null]
+**Name** | **string** |  | [default to null]
+**Identifier** | **string** |  | [default to null]
 **Type_** | **string** |  | [optional] [default to null]
 **Enabled** | **bool** |  | [optional] [default to null]
 **Spec** | [***ChangeSourceSpec**](ChangeSourceSpec.md) |  | [default to null]
