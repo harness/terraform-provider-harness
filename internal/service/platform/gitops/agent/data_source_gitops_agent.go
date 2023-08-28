@@ -86,8 +86,8 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"engine": {
-				Description: "Engine to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
+			"operator": {
+				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

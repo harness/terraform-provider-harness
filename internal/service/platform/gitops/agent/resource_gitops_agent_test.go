@@ -252,7 +252,7 @@ func testAccResourceGitopsFluxAgentAccountLevel(agentId string, accountId string
 				namespace = "%[4]s"
         		high_availability = false
     		}
-			engine = "FLAMINGO"
+			operator = "FLAMINGO"
 		}
 		`, agentId, accountId, agentName, namespace)
 }
@@ -280,7 +280,7 @@ func testAccResourceGitopsAgentFluxProjectLevel(agentId string, accountId string
 				namespace = "%[4]s"
         		high_availability = false
     		}
-			engine = "FLAMINGO"	
+			operator = "FLAMINGO"	
 		}
 		`, agentId, accountId, agentName, namespace)
 }

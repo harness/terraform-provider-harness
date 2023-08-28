@@ -119,7 +119,7 @@ func testAccDataSourceGitopsAgentFlamingo(agentId string, name string, accountId
         		namespace = "terraform-test"
         		high_availability = false
 			}
-			engine = "FLAMINGO"	
+			operator = "FLAMINGO"	
 		}
 
 		data "harness_platform_gitops_agent" "test" {
