@@ -141,7 +141,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	return nil
 }
 
-var creationSemaphore = make(chan struct{}, 2)
+var creationSemaphore = make(chan struct{}, 1)
 
 func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	creationSemaphore <- struct{}{}
@@ -152,7 +152,6 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 
 	var err error
 	var httpResp *http.Response
-
 
 	if id == "" {
 		addUserBody := createAddUserBody(d)
