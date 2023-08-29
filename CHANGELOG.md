@@ -1,3 +1,9 @@
+# 0.24.5 (August 29,2023) 
+
+BUG FIXES:
+
+* Fixed policy-set api to correctly enable/disable policy-sets ([#670](https://github.com/harness/terraform-provider-harness/issues/670))
+
 # 0.24.4 (August 29,2023) 
 
 ENHANCEMENTS:
