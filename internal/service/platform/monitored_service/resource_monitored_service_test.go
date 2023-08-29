@@ -76,7 +76,7 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	})
 }*/
 
-func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredServiceDto, error) {
+func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredService, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
@@ -320,4 +320,3 @@ func testMonitoredServiceWithoutEnabled(id string, name string) string {
 		}
 `, id, name)
 }
-
