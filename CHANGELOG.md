@@ -1,6 +1,6 @@
 
-<a name="0.3.46"></a>
-## 0.3.46 (2023-08-28)
+<a name="0.3.47"></a>
+## 0.3.47 (2023-08-29)
 
 ### Added
 
@@ -19,10 +19,6 @@
 * Delete GithubAppSpec.md
 * Delete model_github_api_access_spec.go
 
-### Fixed
-
-* Fixed Masking of API Key In Debug Console
-
 ### IAM
 
 * IAM role changes in contract
@@ -37,6 +33,8 @@
 
 ### Release
 
+* Release version 0.3.46 08-28-2023
+* Release v0.3.46
 * Release version 0.3.45 08-24-2023
 * Release v0.3.45
 * Release version 0.3.44 08-16-2023
@@ -135,6 +133,9 @@
 
 ### Pull Requests
 
+* Merge pull request [#394](https://github.com/harness/harness-go-sdk/issues/394) from harness/CDS-76702
+* Merge pull request [#398](https://github.com/harness/harness-go-sdk/issues/398) from harness/cds-76833-gitops-agent-rename-engi
+* Merge pull request [#395](https://github.com/harness/harness-go-sdk/issues/395) from harness/cds-76833-gitops-agent-rename-engin
 * Merge pull request [#393](https://github.com/harness/harness-go-sdk/issues/393) from harness/OIP-803
 * Merge pull request [#390](https://github.com/harness/harness-go-sdk/issues/390) from harness/cds-76833-gitops-agent-flux
 * Merge pull request [#386](https://github.com/harness/harness-go-sdk/issues/386) from harness/cds-77080
@@ -171,5 +172,4 @@
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
-* Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 
