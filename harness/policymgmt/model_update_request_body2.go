@@ -14,7 +14,7 @@ type UpdateRequestBody2 struct {
 	// Description of the policy set
 	Description string `json:"description,omitempty"`
 	// Only enabled policy sets are evaluated when evaluating by type/action
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// Name of the policy set
 	Name string `json:"name,omitempty"`
 	// Policies linked to this policy set
