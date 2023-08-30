@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
@@ -266,8 +267,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
-				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_feature_flag":                    feature_flag.ResourceFeatureFlag(),
+				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
+				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
