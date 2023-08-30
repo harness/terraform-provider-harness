@@ -17,8 +17,8 @@ resource "harness_platform_policyset" "test" {
   action     = "onrun"
   type       = "pipeline"
   enabled    = true
-  org_id     = "terraform_example_org"
-  project_id = "terraform_test_project"
+  org_id      = "terraform_example_org"
+  project_id  = "terraform_test_project"
   policies {
     identifier = "policy_identifier1"
     severity   = "warning"
