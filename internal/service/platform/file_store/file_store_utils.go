@@ -79,5 +79,16 @@ func getOptionalString(str interface{}) optional.String {
 	return optional.NewString(v)
 }
 
+func getEmail(user *nextgen.EmbeddedUserDetailsDto) string {
+	if user != nil {
+		return user.Email
+	}
+	return ""
+}
 
-
+func getName(user *nextgen.EmbeddedUserDetailsDto) string {
+	if user != nil {
+		return user.Name
+	}
+	return ""
+}
