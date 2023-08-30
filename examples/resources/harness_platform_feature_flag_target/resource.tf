@@ -1,4 +1,3 @@
-// Boolean Flag
 resource "harness_platform_feature_flag_target" "target" {
   org_id     = "test"
   project_id = "test"
