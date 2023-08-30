@@ -30,7 +30,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project", id),
 					resource.TestCheckResourceAttr(resourceName, "name", targetName),
 				),
 			},
@@ -39,7 +39,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project", id),
 					resource.TestCheckResourceAttr(resourceName, "name", targetName),
 				),
 			},
@@ -122,14 +122,15 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
       EOT
   	}
 
-		resource "harness_platform_feature_flag_target" "test" {
+		resource "harness_platform_feature_flag_target_group" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
-			project_id = harness_platform_project.test.id
+			project = harness_platform_project.test.id
 			environment = harness_platform_environment.test.id
 			account_id = harness_platform_project.test.id
 			name = "%[2]s"
-			attributes = {}
+			included = []
+			excluded = []
 		}
 `, id, name, updatedName, environmentId, environment)
 }

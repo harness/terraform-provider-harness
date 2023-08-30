@@ -1,0 +1,3 @@
+```release-note:bug
+Fixed policy-set api to correctly enable/disable policy-sets
+```

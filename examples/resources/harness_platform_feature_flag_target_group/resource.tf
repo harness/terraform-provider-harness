@@ -1,6 +1,6 @@
 resource "harness_platform_feature_flag_target_group" "target" {
   org_id     = "test"
-  project_id = "test"
+  project    = "test"
 
   identifier  = "MY_FEATURE"
   environment = "MY_ENVIRONMENT"

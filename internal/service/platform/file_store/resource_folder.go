@@ -217,14 +217,14 @@ func readFolderNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt o
 	d.Set(path, file.Path)
 	d.Set(createdBy, []interface{}{
 		map[string]interface{}{
-			"email": file.CreatedBy.Email,
-			"name":  file.CreatedBy.Name,
+			"email": getEmail(file.CreatedBy),
+			"name":  getName(file.CreatedBy),
 		},
 	})
 	d.Set(lastModifiedBy, []interface{}{
 		map[string]interface{}{
-			"email": file.LastModifiedBy.Email,
-			"name":  file.LastModifiedBy.Name,
+			"email": getEmail(file.LastModifiedBy),
+			"name":  getName(file.LastModifiedBy),
 		},
 	})
 	d.Set(lastModifiedAt, file.LastModifiedAt)
