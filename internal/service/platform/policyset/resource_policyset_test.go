@@ -53,7 +53,7 @@ func TestAccResourcePolicyset(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -61,9 +61,15 @@ func TestAccResourcePolicyset(t *testing.T) {
 
 func testAccResourcePolicyset(id, name, action, policyType string, enabled bool) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_policy" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
+		resource "harness_platform_policy" "first" {
+			identifier = "policyFirst"
+			name = "policyFirst"
+			rego = "some text"
+		}
+
+		resource "harness_platform_policy" "second" {
+			identifier = "policySecond"
+			name = "policySecond"
 			rego = "some text"
 		}
 		resource "harness_platform_policyset" "test" {
@@ -73,7 +79,12 @@ func testAccResourcePolicyset(id, name, action, policyType string, enabled bool)
 			type = "%[4]s"
 			enabled = %[5]t
 			policies {
-				identifier = "%[1]s"
+				identifier = harness_platform_policy.first.identifier
+			  severity = "warning"
+			}
+
+			policies {
+				identifier = harness_platform_policy.second.identifier
 			  severity = "warning"
 			}
 		}
