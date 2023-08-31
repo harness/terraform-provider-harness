@@ -6,11 +6,8 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
-<<<<<<< HEAD
-	featureflagtargetgroup "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
-=======
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
->>>>>>> main
+	featureflagtargetgroup "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
