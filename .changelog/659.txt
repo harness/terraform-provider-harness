@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_gitops_app_project_mapping - GitOps app project mapping for agents resource.
+```
