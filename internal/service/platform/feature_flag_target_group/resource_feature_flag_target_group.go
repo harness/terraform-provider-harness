@@ -62,7 +62,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Required:    true,
 			},
 			"included": {
-				Description: "The list of rules to include in the feature flag target group.",
+				Description: "A list of targets to include in the target group",
 				Type:        schema.TypeList,
 				Optional:    true,
 				MinItems:    0,
@@ -71,7 +71,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				},
 			},
 			"excluded": {
-				Description: "The list of rules to include in the feature flag target group.",
+				Description: "A list of targets to exclude from the target group",
 				Type:        schema.TypeList,
 				Optional:    true,
 				MinItems:    0,
@@ -80,18 +80,13 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				},
 			},
 			"rules": {
-				Description: "The list of rules to exclude in the feature flag target group.",
+				Description: "The list of rules to include in the feature flag target group.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"attribute": {
 							Description: "The attribute to use in the clause.  This can be any target attribute",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"id": {
-							Description: "The unique ID for the clause",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -192,7 +187,9 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	time.Sleep(1 * time.Second)
+	if httpResp.StatusCode != http.StatusCreated {
+		return diag.Errorf("createstatus: %s", httpResp.Status)
+	}
 
 	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {

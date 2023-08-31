@@ -152,7 +152,7 @@ func testAccGetPlatformFeatureFlagTargetGroup(resourceName string, state *terraf
 	id := r.Primary.ID
 	environment := r.Primary.Attributes["environment"]
 	orgId := r.Primary.Attributes["org_id"]
-	projId := r.Primary.Attributes["project"]
+	projId := r.Primary.Attributes["project_id"]
 
 	segment, resp, err := c.TargetGroupsApi.GetSegment((ctx), c.AccountId, orgId, id, projId, environment)
 
