@@ -20,7 +20,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 		Description: "Resource for creating a Harness Feature Flag Target Group.",
 
 		ReadContext:   resourceFeatureFlagTargetGroupRead,
-		CreateContext: resourceFeatureFlagTargetCreateOrUpdate,
+		CreateContext: resourceFeatureFlagTargetCreate,
 		UpdateContext: resourceFeatureFlagTargetGroupUpdate,
 		DeleteContext: resourceFeatureFlagTargetGroupDelete,
 		Importer:      helpers.ProjectResourceImporter,
@@ -133,13 +133,22 @@ type FFTargetGroupQueryParameters struct {
 
 // FFTargetGroupOpts ...
 type FFTargetGroupOpts struct {
+	Identifier string           `json:"identifier,omitempty"`
+	Name       string           `json:"name,omitempty"`
+	Included   []nextgen.Target `json:"included,omitempty"`
+	Excluded   []nextgen.Target `json:"excluded,omitempty"`
+	Rules      []nextgen.Clause `json:"rules,omitempty"`
+}
+
+// SegmentRequest ...
+type SegmentRequest struct {
 	Identifier  string           `json:"identifier,omitempty"`
+	Project     string           `json:"project,omitempty"`
+	Environment string           `json:"environment,omitempty"`
 	Name        string           `json:"name,omitempty"`
-	Description string           `json:"description,omitempty"`
-	Included    []nextgen.Target `json:"included,omitempty"`
-	Excluded    []nextgen.Target `json:"excluded,omitempty"`
+	Included    []string         `json:"included,omitempty"`
+	Excluded    []string         `json:"excluded,omitempty"`
 	Rules       []nextgen.Clause `json:"rules,omitempty"`
-	Tags        []nextgen.Tag    `json:"tags,omitempty"`
 }
 
 func resourceFeatureFlagTargetGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -164,22 +173,31 @@ func resourceFeatureFlagTargetGroupRead(ctx context.Context, d *schema.ResourceD
 }
 
 // resourceFeatureFlagTargetGroupCreate ...
-func resourceFeatureFlagTargetCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var err error
 	var httpResp *http.Response
-	segment := buildFFTargetGroupCreate(d)
+	var segment nextgen.Segment
+	segmentRequest := buildSegmentRequest(d)
 	qp := buildFFTargetGroupQueryParameters(d)
 	id := d.Id()
-
 	if id == "" {
-		httpResp, err = c.TargetGroupsApi.CreateSegment(ctx, segment, c.AccountId, qp.OrgID)
-	} else {
-		segment, httpResp, err = c.TargetGroupsApi.PatchSegment(ctx, c.AccountId, qp.OrgID, qp.Project, qp.Environment, id, buildFFTargetGroupOpts(d))
+		id = d.Get("identifier").(string)
+		d.MarkNewResource()
 	}
+
+	httpResp, err = c.TargetGroupsApi.CreateSegment(ctx, segmentRequest, c.AccountId, qp.OrgID)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	time.Sleep(1 * time.Second)
+
+	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
+	if err != nil {
+		body, _ := io.ReadAll(httpResp.Body)
+		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -209,7 +227,7 @@ func resourceFeatureFlagTargetGroupUpdate(ctx context.Context, d *schema.Resourc
 
 	time.Sleep(1 * time.Second)
 
-	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, id, c.AccountId, qp.OrgID, qp.Project, qp.Environment)
+	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
 		body, _ := io.ReadAll(httpResp.Body)
 		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
@@ -250,7 +268,6 @@ func readFeatureFlagTargetGroup(d *schema.ResourceData, segment *nextgen.Segment
 	d.Set("included", segment.Included)
 	d.Set("excluded", segment.Excluded)
 	d.Set("rules", segment.Rules)
-	d.Set("tags", segment.Tags)
 }
 
 // buildFFTargetGroupQueryParameters ...
@@ -264,29 +281,25 @@ func buildFFTargetGroupQueryParameters(d *schema.ResourceData) *FFTargetGroupQue
 	}
 }
 
-// buildFFTargetGroupCreate ...
-func buildFFTargetGroupCreate(d *schema.ResourceData) nextgen.Segment {
-	opts := nextgen.Segment{
+// buildSegmentRequest builds a SegmentRequest from a ResourceData
+func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
+	opts := &SegmentRequest{
 		Identifier:  d.Get("identifier").(string),
+		Project:     d.Get("project").(string),
 		Environment: d.Get("environment").(string),
 		Name:        d.Get("name").(string),
-		CreatedAt:   time.Now().Unix(),
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		opts.Included = included.([]nextgen.Target)
+		opts.Included = included.([]string)
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		opts.Excluded = excluded.([]nextgen.Target)
+		opts.Excluded = excluded.([]string)
 	}
 
 	if rules, ok := d.GetOk("rules"); ok {
 		opts.Rules = rules.([]nextgen.Clause)
-	}
-
-	if tags, ok := d.GetOk("tags"); ok {
-		opts.Tags = tags.([]nextgen.Tag)
 	}
 
 	return opts
@@ -295,9 +308,8 @@ func buildFFTargetGroupCreate(d *schema.ResourceData) nextgen.Segment {
 // buildFFTargetGroupOpts ...
 func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatchSegmentOpts {
 	opts := &FFTargetGroupOpts{
-		Identifier:  d.Get("identifier").(string),
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
+		Identifier: d.Get("identifier").(string),
+		Name:       d.Get("name").(string),
 	}
 
 	if included, ok := d.GetOk("included"); ok {
@@ -310,10 +322,6 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 
 	if rules, ok := d.GetOk("rules"); ok {
 		opts.Rules = rules.([]nextgen.Clause)
-	}
-
-	if tags, ok := d.GetOk("tags"); ok {
-		opts.Tags = tags.([]nextgen.Tag)
 	}
 
 	return &nextgen.TargetGroupsApiPatchSegmentOpts{
