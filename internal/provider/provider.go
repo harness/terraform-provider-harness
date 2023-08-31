@@ -37,6 +37,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
+	pl_delegatetoken "github.com/harness/terraform-provider-harness/internal/service/platform/delegate_token"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
@@ -228,6 +229,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_token":                           pl_token.DataSourceToken(),
 				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
+				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -344,6 +346,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_token":                           pl_token.ResourceToken(),
 				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
+				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 			},
 		}
 
