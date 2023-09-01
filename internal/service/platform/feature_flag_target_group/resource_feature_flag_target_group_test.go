@@ -131,6 +131,7 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
 			name = "%[2]s"
 			included = []
 			excluded = []
+			rules    = []
 		}
 `, id, name, updatedName, environmentId, environment)
 }
