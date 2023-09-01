@@ -80,7 +80,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				},
 			},
 			"rules": {
-				Description: "The list of rules to include in the feature flag target group.",
+				Description: "The list of rules used to include targets in the target group.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
