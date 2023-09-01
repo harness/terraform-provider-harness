@@ -1,3 +1,9 @@
+# 0.26.0 (September 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `resource_feature_flag_target_group - Added feature flag target group resources to the Harness Terraform Provider.` ([#661](https://github.com/harness/terraform-provider-harness/issues/661))
+
 # 0.25.0 (September 01,2023) 
 
 FEATURES:
