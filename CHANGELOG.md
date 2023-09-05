@@ -1,6 +1,6 @@
 
-<a name="0.3.47"></a>
-## 0.3.47 (2023-08-29)
+<a name="0.3.48"></a>
+## 0.3.48 (2023-09-05)
 
 ### Added
 
@@ -33,6 +33,8 @@
 
 ### Release
 
+* Release version 0.3.47 08-29-2023
+* Release v0.3.47
 * Release version 0.3.46 08-28-2023
 * Release v0.3.46
 * Release version 0.3.45 08-24-2023
@@ -88,7 +90,6 @@
 * Release version 0.3.14 03-30-2023
 * Release v0.3.14
 * Release version 0.3.21 03-20-2023
-* Release v0.3.21
 
 ### Remove
 
@@ -133,6 +134,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#400](https://github.com/harness/harness-go-sdk/issues/400) from harness/SRM-15032-1
 * Merge pull request [#394](https://github.com/harness/harness-go-sdk/issues/394) from harness/CDS-76702
 * Merge pull request [#398](https://github.com/harness/harness-go-sdk/issues/398) from harness/cds-76833-gitops-agent-rename-engi
 * Merge pull request [#395](https://github.com/harness/harness-go-sdk/issues/395) from harness/cds-76833-gitops-agent-rename-engin
@@ -171,5 +173,4 @@
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
-* Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 
