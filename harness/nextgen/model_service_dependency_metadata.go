@@ -10,6 +10,6 @@
 package nextgen
 
 type ServiceDependencyMetadata struct {
-	Type_ string `json:"type,omitempty"`
-	SupportedChangeSourceTypes []string `json:"supportedChangeSourceTypes,omitempty"`
+	Type_      DependencyMetadataType        `json:"type,omitempty"`
+	KUBERNETES *KubernetesDependencyMetadata `json:"-"`
 }
