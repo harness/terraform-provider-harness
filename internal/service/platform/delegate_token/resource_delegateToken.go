@@ -23,6 +23,11 @@ func ResourceDelegateToken() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "Identifier of the delegate token",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"name": {
 				Description: "Name of the delegate token",
 				Type:        schema.TypeString,
@@ -54,11 +59,13 @@ func ResourceDelegateToken() *schema.Resource {
 				Description: "Value of the delegate token. Encoded in base64.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"created_at": {
 				Description: "Time when the delegate token is created. This is an epoch timestamp.",
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -118,15 +125,31 @@ func resourceDelegateTokenCreateOrUpdate(ctx context.Context, d *schema.Resource
 }
 
 func resourceDelegateTokenDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return diag.Errorf("Delete operation is not allowed for Delegate Token resource.")
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	var err error
+	var resp nextgen.RestResponseDelegateTokenDetails
+	var httpResp *http.Response
+
+	delegateToken := buildDelegateToken(d)
+
+	resp, httpResp, err = c.DelegateTokenResourceApi.RevokeDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiRevokeDelegateTokenOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+	})
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	readDelegateToken(d, resp.Resource)
+
+	return nil
+
 }
 
 func buildDelegateToken(d *schema.ResourceData) *nextgen.DelegateTokenDetails {
 	delegateToken := &nextgen.DelegateTokenDetails{}
-
-	// if attr, ok := d.GetOk("Uuid"); ok {
-	// 	delegateToken.Uuid = attr.(string)
-	// }
 
 	if attr, ok := d.GetOk("account_id"); ok {
 		delegateToken.AccountId = attr.(string)
@@ -137,7 +160,7 @@ func buildDelegateToken(d *schema.ResourceData) *nextgen.DelegateTokenDetails {
 	}
 
 	if attr, ok := d.GetOk("created_at"); ok {
-		delegateToken.CreatedAt = attr.(int64)
+		delegateToken.CreatedAt = int64(attr.(int))
 	}
 
 	if attr, ok := d.GetOk("token_status"); ok {
@@ -148,18 +171,15 @@ func buildDelegateToken(d *schema.ResourceData) *nextgen.DelegateTokenDetails {
 		delegateToken.Value = attr.(string)
 	}
 
-	// if attr, ok := d.GetOk("OwnerIdentifier"); ok {
-	// 	delegateToken.OwnerIdentifier = attr.(string)
-	// }
 	return delegateToken
 }
 
 func readDelegateToken(d *schema.ResourceData, delegateTokenDetails *nextgen.DelegateTokenDetails) {
-	// d.Set("Uuid", delegateTokenDetails.Uuid)
+	d.SetId(delegateTokenDetails.Name)
+	d.Set("identifier", delegateTokenDetails.Name)
 	d.Set("name", delegateTokenDetails.Name)
 	d.Set("account_id", delegateTokenDetails.AccountId)
 	d.Set("token_status", delegateTokenDetails.Status)
-	// d.Set("CreatedByNgUser", delegateTokenDetails.CreatedByNgUser)
 	d.Set("created_at", delegateTokenDetails.CreatedAt)
 	d.Set("value", delegateTokenDetails.Value)
 }
