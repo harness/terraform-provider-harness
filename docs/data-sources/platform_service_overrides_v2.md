@@ -25,7 +25,7 @@ data "harness_platform_service_overrides_v2" "test" {
 
 ### Required
 
-- `identifier` (String) Unique identifier of the resource.
+- `identifier` (String) The identifier of the override entity.
 
 ### Optional
 
@@ -35,3 +35,9 @@ data "harness_platform_service_overrides_v2" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `cluster_id` (String) The GitOps cluster ID to which the override entity is associated.
+- `infra_id` (String) The infrastructure ID to which the override entity is associated.
+- `service_id` (String) The service ID to which the override entity is associated.
+- `env_id` (String) The environment ID to which the override entity is associated.
+- `type` (String) The type of the override entity.
+- `yaml` (String) The yaml of the override entity's spec property. More details regarding the spec property can be found [here](https://apidocs.harness.io/tag/ServiceOverrides#operation/createServiceOverride!path=spec&t=request)

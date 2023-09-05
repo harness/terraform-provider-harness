@@ -20,7 +20,7 @@ resource "harness_platform_service_overrides_v2" "test" {
   service_id = "serviceIdentifier"
   infra_id   = "infraIdentifier"
   cluster_id = "clusterIdentifier"
-  type       = "ENV_SERVICE_OVERRIDE"
+  type       = "INFRA_SERVICE_OVERRIDE"
   yaml       = <<-EOT
     {
       "variables": [
@@ -75,17 +75,21 @@ resource "harness_platform_service_overrides_v2" "test" {
 
 ### Required
 
-- `env_id` (String) The environment ID to which the overrides are associated.
-- `type` (String) The type of the overrides.
-- `yaml` (String) The yaml of the overrides spec object.
+- `env_id` (String) The environment ID to which the override entity is associated.
+- `yaml` (String) The yaml of the overrides spec object. This yaml will contain the details regarding the variables, config files, manifests, etc. which we want to override. The required yaml format is given in the example above. 
+- `type` (String) The type of the overrides. There can be four types of overrides - 
+  -  "ENV_GLOBAL_OVERRIDE" : Applies to an environment globally irrespective of the service used with it. We do not need to provide service_id for this type of override.  
+  -  "ENV_SERVICE_OVERRIDE" : Applies to a specific environment & service combination. We need to provide both service_id & env_id for this type of override.
+  -  "INFRA_GLOBAL_OVERRIDE" : Applies to an infrastructure globally irrespective of the service used with it. We do not need to provide service_id for this type of override. However, we need to provide the env_id as an infrastructure is always associated with an environment. 
+  -  "INFRA_SERVICE_OVERRIDE" : Applies to a specific infrastructure & service combination. We need to provide all three i.e. service_id, infra_id & env_id (to which the infrastructure is associated) for this type of override.
 
 ### Optional
 
-- `cluster_id` (String) The cluster ID to which the overrides are associated.
-- `infra_id` (String) The infrastructure ID to which the overrides are associated.
+- `cluster_id` (String) The GitOps cluster ID to which the override entity is associated. (This is required only when creating overrides for GitOps cluster infrastructure)
+- `infra_id` (String) The infrastructure ID to which the override entity is associated.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `service_id` (String) The service ID to which the overrides applies.
+- `service_id` (String) The service ID to which the override entity is associated.
 
 ### Read-Only
 
@@ -97,6 +101,12 @@ resource "harness_platform_service_overrides_v2" "test" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using serviceoverride id
-terraform import harness_platform_service_overrides_v2.example <serviceoverride_id>
+# Import account level service override
+terraform import harness_platform_service_overrides_v2.example <override_id>
+
+# Import org level service override
+terraform import harness_platform_service_overrides_v2.example <org_id>/<override_id>
+
+# Import project level service override
+terraform import harness_platform_service_overrides_v2.example <org_id>/<project_id>/<override_id>
 ```
