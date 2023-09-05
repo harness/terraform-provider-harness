@@ -169,11 +169,6 @@ func ResourceMonitoredService() *schema.Resource {
 										Type:        schema.TypeString,
 										Required:    true,
 									},
-									"type": {
-										Description: "Type of the service dependency.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
 									"dependency_metadata": {
 										Description: "Dependency metadata for the monitored service.",
 										Type:        schema.TypeString,
