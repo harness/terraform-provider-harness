@@ -67,6 +67,12 @@ func ResourceDelegateToken() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"created_by": {
+				Description: "created by details",
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -181,5 +187,21 @@ func readDelegateToken(d *schema.ResourceData, delegateTokenDetails *nextgen.Del
 	d.Set("account_id", delegateTokenDetails.AccountId)
 	d.Set("token_status", delegateTokenDetails.Status)
 	d.Set("created_at", delegateTokenDetails.CreatedAt)
+	d.Set("created_by", readCreatedByData(delegateTokenDetails.CreatedByNgUser.Type_, delegateTokenDetails.CreatedByNgUser.Name, delegateTokenDetails.CreatedByNgUser.Jwtclaims))
 	d.Set("value", delegateTokenDetails.Value)
+}
+
+func readCreatedByData(userType string, name_ string, details map[string]string) map[string]string {
+	var result = make(map[string]string)
+	var type_ string
+	var name string
+
+	result[type_] = userType
+	result[name] = name_
+
+	for key, value := range details {
+		result[key] = value
+	}
+
+	return result
 }
