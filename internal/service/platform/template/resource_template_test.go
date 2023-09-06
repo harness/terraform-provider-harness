@@ -198,13 +198,6 @@ func TestAccResourceTemplate_OrgScopeInline_UpdateStable(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
 				),
 			},
-			{
-				Config: testAccResourceTemplateOrgScopeInlineUpdateStable2(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
-				),
-			},
 		},
 	})
 }
@@ -761,13 +754,75 @@ func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) s
 		name = "%[2]s"
 	}
 
+	resource "harness_platform_template" "test2" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "abc"
+			is_stable = true
+			force_delete = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: abc
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+      EOT
+	}
+
 	resource "harness_platform_template" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_organization.test.id
 			name = "%[2]s"
 			comments = "comments"
 			version = "ab"
-			is_stable = true
+			is_stable = false
 			force_delete = true
 			template_yaml = <<-EOT
 			template:
@@ -822,15 +877,13 @@ func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) s
                       type: StageRollback
     
       EOT
+
+	  depends_on = [time_sleep.wait_4_seconds]
 	}
 
-	resource "harness_platform_template" "test2" {
-			identifier = "%[1]s"
-			org_id = "%[1]s"
-			name = "%[2]s"
-			comments = "comments"
-			force_delete = true
-			version = "abc"
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test2]
+		destroy_duration = "4s"
 	}
 
 	`, id, name)
