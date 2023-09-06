@@ -69,5 +69,5 @@ type ConnectorInfo struct {
 	Spec                json.RawMessage               `json:"spec"`
 	ElasticSearch       *ElkConnectorDto              `json:"-"`
 	Rancher             *RancherConnector             `json:"-"`
-	CustomHealthSource  *CustomHealthConnectorDto     `json:"-"`
+	CustomHealth        *CustomHealthConnectorDto     `json:"-"`
 }
