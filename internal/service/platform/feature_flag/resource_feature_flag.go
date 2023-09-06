@@ -211,7 +211,6 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		body, _ := io.ReadAll(httpResp.Body)
 		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
-		//return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readFeatureFlag(d, &resp, qp)
