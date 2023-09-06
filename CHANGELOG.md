@@ -1,3 +1,16 @@
+# 0.26.0 (September 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `resource_feature_flag_target_group - Added feature flag target group resources to the Harness Terraform Provider.` ([#661](https://github.com/harness/terraform-provider-harness/issues/661))
+
+# 0.25.0 (September 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitops_app_project_mapping - GitOps app project mapping for agents resource.` ([#659](https://github.com/harness/terraform-provider-harness/issues/659))
+* **New Resource:** `resource_feature_flag_target - Added feature flag target resources to the Harness Terraform Provider.` ([#660](https://github.com/harness/terraform-provider-harness/issues/660))
+
 # 0.24.5 (August 29,2023) 
 
 BUG FIXES:

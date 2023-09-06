@@ -71,6 +71,9 @@ resource "harness_platform_monitored_service" "example" {
       })
       category = "Deployment"
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref"
       enabled               = true
@@ -78,6 +81,9 @@ resource "harness_platform_monitored_service" "example" {
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
     }
     template_ref  = "template_ref"
     version_label = "version_label"
@@ -140,6 +146,9 @@ resource "harness_platform_monitored_service" "example1" {
         ]
       })
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     template_ref  = "template_ref"
     version_label = "version_label"
   }
@@ -184,6 +193,9 @@ resource "harness_platform_monitored_service" "example2" {
           }
         ]
       })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
     }
     template_ref  = "template_ref"
     version_label = "version_label"
@@ -244,6 +256,9 @@ resource "harness_platform_monitored_service" "example3" {
         ]
       })
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     template_ref  = "template_ref"
     version_label = "version_label"
   }
@@ -292,6 +307,9 @@ resource "harness_platform_monitored_service" "example4" {
           }
         ]
       })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
     }
     template_ref  = "template_ref"
     version_label = "version_label"
@@ -364,6 +382,9 @@ resource "harness_platform_monitored_service" "example5" {
         ]
       })
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     template_ref  = "template_ref"
     version_label = "version_label"
   }
@@ -404,6 +425,9 @@ resource "harness_platform_monitored_service" "example6" {
           }
         ]
       })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
     }
     template_ref  = "template_ref"
     version_label = "version_label"
@@ -455,6 +479,9 @@ resource "harness_platform_monitored_service" "example7" {
           }
         ]
       })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
     }
     template_ref  = "template_ref"
     version_label = "version_label"
@@ -539,6 +566,9 @@ resource "harness_platform_monitored_service" "example8" {
         ]
       })
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     template_ref  = "template_ref"
     version_label = "version_label"
   }
@@ -607,7 +637,6 @@ Optional:
 Required:
 
 - `monitored_service_identifier` (String) Monitored service identifier of the dependency.
-- `type` (String) Type of the service dependency.
 
 Optional:
 
