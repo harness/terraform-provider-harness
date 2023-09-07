@@ -1,3 +1,39 @@
+# 0.26.0 (September 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `resource_feature_flag_target_group - Added feature flag target group resources to the Harness Terraform Provider.` ([#661](https://github.com/harness/terraform-provider-harness/issues/661))
+
+# 0.25.0 (September 01,2023) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitops_app_project_mapping - GitOps app project mapping for agents resource.` ([#659](https://github.com/harness/terraform-provider-harness/issues/659))
+* **New Resource:** `resource_feature_flag_target - Added feature flag target resources to the Harness Terraform Provider.` ([#660](https://github.com/harness/terraform-provider-harness/issues/660))
+
+# 0.24.5 (August 29,2023) 
+
+BUG FIXES:
+
+* Fixed policy-set api to correctly enable/disable policy-sets ([#670](https://github.com/harness/terraform-provider-harness/issues/670))
+
+# 0.24.4 (August 29,2023) 
+
+ENHANCEMENTS:
+
+* data_source_monitored_service_test.go Added tests for multiple healthsources such as Prometheus, Datadog etc.
+resource_monitored_service.go Added version field and renamed MonitoredServiceSpec to MonitoredService
+resource_monitored_service_test.go renamed MonitoredServiceSpec to MonitoredService
+utils.go Deserializer updated with new health sources such as azure, signalFx, loki and sumologic
+platform_monitored_service.md Added docs for health sources such as azure, signalFx, loki and sumologic
+resource.tf Added examples for all newly added health sources, datadog and prometheus ([#669](https://github.com/harness/terraform-provider-harness/issues/669))
+* harness_platform_pipeline - Added support to import pipeline entity from git. ([#643](https://github.com/harness/terraform-provider-harness/issues/643))
+* resource/harness_plaform_user: Limit the user creation call to 1 at a time. ([#668](https://github.com/harness/terraform-provider-harness/issues/668))
+
+BUG FIXES:
+
+* Fixed harness_platform_file_store_folder create resource plugin crash, when service account token was used to create ([#665](https://github.com/harness/terraform-provider-harness/issues/665))
+
 # 0.24.3 (August 22,2023) 
 
 BUG FIXES:

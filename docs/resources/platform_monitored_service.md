@@ -13,11 +13,11 @@ Resource for creating a monitored service.
 ## Example Usage
 
 ```terraform
+#Sample template for Elastic Search Log Health Source
 resource "harness_platform_monitored_service" "example" {
-  account_id = "account_id"
-  org_id     = "default"
-  project_id = "default_project"
-  identifier = "Terraform"
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
   request {
     name            = "name"
     type            = "Application"
@@ -29,27 +29,35 @@ resource "harness_platform_monitored_service" "example" {
       name       = "name"
       identifier = "identifier"
       type       = "ElasticSearch"
+      version    = "v2"
       spec = jsonencode({
         connectorRef = "connectorRef"
-        feature      = "feature"
-        queries = [
+        queryDefinitions = [
           {
-            name                      = "name"
-            query                     = "query"
-            index                     = "index"
-            serviceInstanceIdentifier = "serviceInstanceIdentifier"
-            timeStampIdentifier       = "timeStampIdentifier"
-            timeStampFormat           = "timeStampFormat"
-            messageIdentifier         = "messageIdentifier"
+            name      = "name"
+            query     = "query"
+            index     = "index"
+            groupName = "Logs_Group"
+            queryParams = {
+              index                = "index"
+              serviceInstanceField = "serviceInstanceIdentifier"
+              timeStampIdentifier  = "timeStampIdentifier"
+              timeStampFormat      = "timeStampFormat"
+              messageIdentifier    = "messageIdentifier"
+            }
           },
           {
-            name                      = "name2"
-            query                     = "query2"
-            index                     = "index2"
-            serviceInstanceIdentifier = "serviceInstanceIdentifier2"
-            timeStampIdentifier       = "timeStampIdentifier2"
-            timeStampFormat           = "timeStampFormat2"
-            messageIdentifier         = "messageIdentifier2"
+            name      = "name2"
+            query     = "query2"
+            index     = "index2"
+            groupName = "Logs_Group"
+            queryParams = {
+              index                = "index"
+              serviceInstanceField = "serviceInstanceIdentifier"
+              timeStampIdentifier  = "timeStampIdentifier"
+              timeStampFormat      = "timeStampFormat"
+              messageIdentifier    = "messageIdentifier"
+            }
           }
         ]
       })
@@ -63,6 +71,9 @@ resource "harness_platform_monitored_service" "example" {
       })
       category = "Deployment"
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref"
       enabled               = true
@@ -71,6 +82,495 @@ resource "harness_platform_monitored_service" "example" {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
     }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+#Sample template for Sumologic Metrics Health Source
+resource "harness_platform_monitored_service" "example1" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "sumologicmetrics"
+      identifier = "sumo_metric_identifier"
+      type       = "SumologicMetrics"
+      version    = "v2"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        queryDefinitions = [
+          {
+            name       = "metric_cpu"
+            identifier = "metric_cpu"
+            query      = "metric=cpu"
+            groupName  = "g1"
+            queryParams = {
+            }
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            liveMonitoringEnabled         = "true"
+            continuousVerificationEnabled = "true"
+            sliEnabled                    = "false"
+          },
+          {
+            name       = "name2"
+            identifier = "identifier2"
+            groupName  = "g2"
+            query      = "metric=memory"
+            queryParams = {
+            }
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            liveMonitoringEnabled         = "false"
+            continuousVerificationEnabled = "false"
+            sliEnabled                    = "false"
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+#Sample template for Sumologic Log Health Source
+resource "harness_platform_monitored_service" "example2" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "sumologic"
+      identifier = "sumo_metric_identifier"
+      type       = "SumologicLogs"
+      version    = "v2"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        queryDefinitions = [
+          {
+            name       = "log1"
+            identifier = "log1"
+            query      = "*"
+            groupName  = "Logs Group"
+            queryParams = {
+              serviceInstanceField = "_sourcehost"
+            }
+          },
+          {
+            name       = "log2"
+            identifier = "identifier2"
+            groupName  = "g2"
+            query      = "error"
+            queryParams = {
+              serviceInstanceField = "_sourcehost"
+            }
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+
+#Sample template for Splunk Signal FX Health Source
+resource "harness_platform_monitored_service" "example3" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "signalfxmetrics"
+      identifier = "signalfxmetrics"
+      type       = "SplunkSignalFXMetrics"
+      version    = "v2"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        queryDefinitions = [
+          {
+            name       = "metric_infra_cpu"
+            identifier = "metric_infra_cpu"
+            query      = "***"
+            groupName  = "g"
+            riskProfile = {
+              riskCategory = "Errors"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER",
+                "ACT_WHEN_LOWER"
+              ]
+            }
+            liveMonitoringEnabled         = "true"
+            continuousVerificationEnabled = "true"
+            sliEnabled                    = "false"
+          },
+          {
+            name       = "name2"
+            identifier = "identifier2"
+            groupName  = "g2"
+            query      = "*"
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            liveMonitoringEnabled         = "true"
+            continuousVerificationEnabled = "false"
+            sliEnabled                    = "false"
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+
+#Sample template for Grafana Loki Log Health Source
+resource "harness_platform_monitored_service" "example4" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "Test"
+      identifier = "Test"
+      type       = "GrafanaLokiLogs"
+      version    = "v2"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        queryDefinitions = [
+          {
+            name       = "Demo"
+            identifier = "Demo"
+            query      = "{job=~\".+\"}"
+            groupName  = "Log_Group"
+            queryParams = {
+              serviceInstanceField = "job"
+            }
+          },
+          {
+            name       = "log2"
+            identifier = "identifier2"
+            groupName  = "g2"
+            query      = "error"
+            queryParams = {
+              serviceInstanceField = "_sourcehost"
+            }
+            liveMonitoringEnabled         = "false"
+            continuousVerificationEnabled = "false"
+            sliEnabled                    = "false"
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+
+#Sample template for Azure Metrics Health Source
+resource "harness_platform_monitored_service" "example5" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "azure metrics verify step"
+      identifier = "azure_metrics_verify_step"
+      type       = "AzureMetrics"
+      version    = "v2"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        queryDefinitions = [
+          {
+            name       = "metric"
+            identifier = "metric"
+            query      = "default"
+            groupName  = "g1"
+            queryParams = {
+              serviceInstanceField        = "host"
+              index                       = "/subscriptions/12d2db62-5aa9-471d-84bb-faa489b3e319/resourceGroups/srm-test/providers/Microsoft.ContainerService/managedClusters/srm-test",
+              healthSourceMetricName      = "cpuUsagePercentage",
+              healthSourceMetricNamespace = "insights.container/nodes",
+              aggregationType             = "average"
+            }
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            liveMonitoringEnabled         = "true"
+            continuousVerificationEnabled = "true"
+            sliEnabled                    = "false"
+          },
+          {
+            name       = "name2"
+            identifier = "identifier2"
+            groupName  = "g2"
+            queryParams = {
+              serviceInstanceField        = "host"
+              index                       = "/subscriptions/12d2db62-5aa9-471d-84bb-faa489b3e319/resourceGroups/srm-test/providers/Microsoft.ContainerService/managedClusters/srm-test",
+              healthSourceMetricName      = "cpuUsagePercentage",
+              healthSourceMetricNamespace = "insights.container/nodes",
+              aggregationType             = "average"
+            }
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            liveMonitoringEnabled         = "false"
+            continuousVerificationEnabled = "false"
+            sliEnabled                    = "false"
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+#Sample template for Azure Log Health Source
+resource "harness_platform_monitored_service" "example6" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "Demo azure"
+      identifier = "Demo_azure"
+      type       = "AzureLogs"
+      version    = "v2"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        queryDefinitions = [
+          {
+            name       = "name2"
+            identifier = "identifier2"
+            groupName  = "g2"
+            query      = "*"
+            queryParams = {
+              serviceInstanceField = "Name",
+              timeStampIdentifier  = "StartedTime",
+              messageIdentifier    = "Image",
+              index                = "/subscriptions/12d2db62-5aa9-471d-84bb-faa489b3e319/resourceGroups/srm-test/providers/Microsoft.ContainerService/managedClusters/srm-test"
+            }
+            liveMonitoringEnabled         = "false"
+            continuousVerificationEnabled = "false"
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+#Sample template for Prometheus Metrics Health Source
+resource "harness_platform_monitored_service" "example7" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "prometheus metrics verify step"
+      identifier = "prometheus_metrics"
+      type       = "Prometheus"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        metricDefinitions = [
+          {
+            identifier = "Prometheus_Metric",
+            metricName = "Prometheus Metric",
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            analysis = {
+              liveMonitoring = {
+                enabled = true
+              }
+              deploymentVerification = {
+                enabled                  = true
+                serviceInstanceFieldName = "pod_name"
+              }
+            }
+            sli : {
+              enabled = true
+            }
+            query         = "count(up{group=\"cv\",group=\"cv\"})"
+            groupName     = "met"
+            isManualQuery = true
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
+  }
+}
+#Sample template for Datadog Metrics Health Source
+resource "harness_platform_monitored_service" "example8" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "ddm"
+      identifier = "ddm"
+      type       = "DatadogMetrics"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        feature      = "Datadog Cloud Metrics"
+        metricDefinitions = [
+          {
+            metricName            = "metric"
+            metricPath            = "M1"
+            identifier            = "metric"
+            query                 = "avg:kubernetes.cpu.limits{*}.rollup(avg, 60);\navg:kubernetes.cpu.limits{*}.rollup(avg, 30);\n(a+b)/10"
+            isManualQuery         = true
+            isCustomCreatedMetric = true
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            analysis = {
+              liveMonitoring = {
+                enabled = true
+              }
+              deploymentVerification = {
+                enabled                  = true
+                serviceInstanceFieldName = "pod"
+              }
+            }
+            sli : {
+              enabled = true
+            }
+          },
+          {
+            metricName            = "dashboard_metric_cpu"
+            identifier            = "metric_cpu"
+            query                 = "avg:kubernetes.cpu.limits{*}.rollup(avg, 60);\navg:kubernetes.cpu.limits{*}.rollup(avg, 30);\n(a+b)/10"
+            isManualQuery         = false
+            dashboardName         = "dashboard"
+            metricPath            = "M1"
+            groupingQuery         = "avg:kubernetes.cpu.limits{*} by {host}.rollup(avg, 60)"
+            metric                = "kubernetes.cpu.limits"
+            aggregation           = "avg"
+            isCustomCreatedMetric = true
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            analysis = {
+              liveMonitoring = {
+                enabled = true
+              }
+              deploymentVerification = {
+                enabled                  = true
+                serviceInstanceFieldName = "pod"
+              }
+            }
+            sli : {
+              enabled = true
+            }
+          }
+        ]
+      })
+    }
+    dependencies {
+        monitored_service_identifier = "dependent_ms_identifier"
+    }
+    template_ref  = "template_ref"
+    version_label = "version_label"
   }
 }
 ```
@@ -104,16 +604,16 @@ Required:
 
 Optional:
 
+- `change_sources` (Block Set) Set of change sources for the monitored service. (see [below for nested schema](#nestedblock--request--change_sources))
 - `dependencies` (Block Set) Dependencies of the monitored service. (see [below for nested schema](#nestedblock--request--dependencies))
 - `description` (String) Description for the monitored service.
+- `enabled` (Boolean, Deprecated) Enable or disable the monitored service.
 - `environment_ref_list` (List of String) Environment reference list for the monitored service.
+- `health_sources` (Block Set) Set of health sources for the monitored service. (see [below for nested schema](#nestedblock--request--health_sources))
 - `notification_rule_refs` (Block List) Notification rule references for the monitored service. (see [below for nested schema](#nestedblock--request--notification_rule_refs))
-- `enabled` (Boolean) Enable or disable the monitored service. Enabled field is deprecated.
 - `tags` (Set of String) Tags for the monitored service. comma-separated key value string pairs.
 - `template_ref` (String) Template reference for the monitored service.
 - `version_label` (String) Template version label for the monitored service.
-- `change_sources` (Block Set) Set of change sources for the monitored service. (see [below for nested schema](#nestedblock--request--change_sources))
-- `health_sources` (Block Set) Set of health sources for the monitored service. (see [below for nested schema](#nestedblock--request--health_sources))
 
 <a id="nestedblock--request--change_sources"></a>
 ### Nested Schema for `request.change_sources`
@@ -131,6 +631,18 @@ Optional:
 - `spec` (String) Specification of the change source. Depends on the type of the change source.
 
 
+<a id="nestedblock--request--dependencies"></a>
+### Nested Schema for `request.dependencies`
+
+Required:
+
+- `monitored_service_identifier` (String) Monitored service identifier of the dependency.
+
+Optional:
+
+- `dependency_metadata` (String) Dependency metadata for the monitored service.
+
+
 <a id="nestedblock--request--health_sources"></a>
 ### Nested Schema for `request.health_sources`
 
@@ -141,18 +653,9 @@ Required:
 - `spec` (String) Specification of the health source. Depends on the type of the health source.
 - `type` (String) Type of the health source.
 
-
-<a id="nestedblock--request--dependencies"></a>
-### Nested Schema for `request.dependencies`
-
-Required:
-
-- `monitored_service_identifier` (String) Monitored service identifier of the dependency.
-- `type` (String) Type of the service dependency.
-
 Optional:
 
-- `dependency_metadata` (String) Dependency metadata for the monitored service.
+- `version` (String) Version of the health source.
 
 
 <a id="nestedblock--request--notification_rule_refs"></a>
