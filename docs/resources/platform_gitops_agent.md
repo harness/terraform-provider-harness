@@ -41,7 +41,7 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 ### Optional
 
 - `description` (String) Description of the GitOps agent.
-- `engine` (String) Engine to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
+- `operator` (String) Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `metadata` (Block List) Metadata of the agent. (see [below for nested schema](#nestedblock--metadata))
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.

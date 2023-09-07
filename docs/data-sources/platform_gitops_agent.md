@@ -38,7 +38,7 @@ data "harness_platform_gitops_agent" "example" {
 
 - `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
 - `description` (String) Description of the GitOps agent.
-- `engine` (String) Engine to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
+- `operator` (String) Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `id` (String) The ID of this resource.
 - `metadata` (List of Object) Metadata of the agent. (see [below for nested schema](#nestedatt--metadata))
 - `name` (String) Name of the GitOps agent.
