@@ -878,12 +878,12 @@ func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) s
     
       EOT
 
-	  depends_on = [time_sleep.wait_4_seconds]
+	  depends_on = [time_sleep.wait_10_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_10_seconds" {
 		depends_on = [harness_platform_template.test2]
-		destroy_duration = "4s"
+		destroy_duration = "10s"
 	}
 
 	`, id, name)
