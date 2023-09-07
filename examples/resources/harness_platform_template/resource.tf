@@ -953,14 +953,14 @@ resource "harness_platform_template" "template_v2" {
 
 ##Updating the Stable Version of the Template from v1 to v2.
 resource "harness_platform_template" "template_v2" {
-			identifier = "temp"
-			org_id = harness_platform_organization.test.id
-			name = "temp"
-			comments = "comments"
-			version = "v2"
-			is_stable = true
-			force_delete = true
-			template_yaml = <<-EOT
+  identifier    = "temp"
+  org_id        = harness_platform_organization.test.id
+  name          = "temp"
+  comments      = "comments"
+  version       = "v2"
+  is_stable     = true
+  force_delete  = true
+  template_yaml = <<-EOT
 			template:
       name: "temp"
       identifier: "temp"
@@ -1012,17 +1012,17 @@ resource "harness_platform_template" "template_v2" {
                     action:
                       type: StageRollback
       EOT
-	}
+}
 
-	resource "harness_platform_template" "template_v1" {
-			identifier = "temp"
-			org_id = harness_platform_organization.test.id
-			name = "temp"
-			comments = "comments"
-			version = "v1"
-			is_stable = false
-			force_delete = true
-			template_yaml = <<-EOT
+resource "harness_platform_template" "template_v1" {
+  identifier    = "temp"
+  org_id        = harness_platform_organization.test.id
+  name          = "temp"
+  comments      = "comments"
+  version       = "v1"
+  is_stable     = false
+  force_delete  = true
+  template_yaml = <<-EOT
 			template:
       name: "temp"
       identifier: "temp"
@@ -1076,10 +1076,10 @@ resource "harness_platform_template" "template_v2" {
     
       EOT
 
-	  depends_on = [time_sleep.wait_10_seconds]
-	}
+  depends_on = [time_sleep.wait_10_seconds]
+}
 
-	resource "time_sleep" "wait_10_seconds" {
-		depends_on = [harness_platform_template.test2]
-		destroy_duration = "10s"
-	}
+resource "time_sleep" "wait_10_seconds" {
+  depends_on       = [harness_platform_template.test2]
+  destroy_duration = "10s"
+}
