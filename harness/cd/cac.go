@@ -297,7 +297,51 @@ func (c *ConfigAsCodeClient) DeleteEntity(filePath cac.YamlPath) error {
 	return nil
 }
 
-func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPath, responseObj interface{}) error {
+func (c *ConfigAsCodeClient) UpsertObjectOld(input interface{}, filePath cac.YamlPath, responseObj interface{}) error {
+	if input == nil {
+		return errors.New("object to upsert is nil")
+	}
+
+	if ok, err := utils.RequiredFieldsCheck(input, []string{"Name", "Id"}); !ok {
+		return err
+	}
+
+	// If the object implements the Validation interface then check it
+	if v, ok := input.(cac.Entity); ok {
+		if ok, err := v.Validate(); !ok {
+			return err
+		}
+	}
+
+	// Upsert the yaml document
+	_, err := c.UpsertYamlEntity(filePath, input)
+	if err != nil {
+		return err
+	}
+
+	appId, ok := utils.TryGetFieldValue(input, "ApplicationId")
+	if !ok {
+		appId = ""
+	}
+
+	err = c.FindObjectByPath(appId.(string), filePath, responseObj)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPath, responseObj interface{}) (err error) {
+	defer func(err error, input interface{}, filePath cac.YamlPath, responseObj interface{}) error {
+		if r := recover(); r != nil {
+			return c.UpsertObjectOld(input, filePath, responseObj)
+		}
+		return err
+	}(err, input, filePath, responseObj)
+
+	panic("test")
+
 	if input == nil {
 		return errors.New("object to upsert is nil")
 	}
