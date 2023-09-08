@@ -1,0 +1,3 @@
+```release-note:bug
+Make file content optional, if the file content is provided use it directly else get the content from file path. 
+```
