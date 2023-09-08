@@ -246,6 +246,7 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	comments := d.Get("comments").(string)
 	version := d.Get("version").(string)
 	template_yaml := d.Get("template_yaml").(string)
+	is_stable := d.Get("is_stable").(bool)
 
 	if id == "" {
 		template := buildCreateTemplate(d)
@@ -329,7 +330,9 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 					template_id = resp.Slug
 				}
 			}
-		} else {
+		} 
+		
+		if is_stable == true {
 			if project_id != "" {
 				_ , httpResp, err = c.ProjectTemplateApi.UpdateTemplateStableProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateStableProjectOpts{
 					Body:           optional.NewInterface(template),
