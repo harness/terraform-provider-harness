@@ -1,0 +1,9 @@
+```release-note:enhancement
+platform_connector_customhealthsource.md Added documentation for custom health connector
+resource.tf Example of loki health source with custom health source connector added
+provider.go : Added new data source harness_platform_connector_customhealthsource
+custom_health_data_source.go Schema and CRUD of custom health source connector
+custom_health_data_source_test.go Test for Schema and CRUD of custom health source connector
+customhealthsource.go Schema and CRUD of custom health source connector
+customhealthsource_test.go Test for Schema and CRUD of custom health source connector
+```
