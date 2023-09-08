@@ -1,6 +1,6 @@
 
-<a name="0.3.48"></a>
-## 0.3.48 (2023-09-05)
+<a name="0.3.49"></a>
+## 0.3.49 (2023-09-08)
 
 ### Added
 
@@ -33,6 +33,8 @@
 
 ### Release
 
+* Release version 0.3.48 09-05-2023
+* Release v0.3.48
 * Release version 0.3.47 08-29-2023
 * Release v0.3.47
 * Release version 0.3.46 08-28-2023
@@ -87,9 +89,6 @@
 * Release v0.3.22
 * Release version 0.3.15 04-18-2023
 * Release v0.3.15
-* Release version 0.3.14 03-30-2023
-* Release v0.3.14
-* Release version 0.3.21 03-20-2023
 
 ### Remove
 
@@ -134,6 +133,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#404](https://github.com/harness/harness-go-sdk/issues/404) from harness/OIP-880
 * Merge pull request [#400](https://github.com/harness/harness-go-sdk/issues/400) from harness/SRM-15032-1
 * Merge pull request [#394](https://github.com/harness/harness-go-sdk/issues/394) from harness/CDS-76702
 * Merge pull request [#398](https://github.com/harness/harness-go-sdk/issues/398) from harness/cds-76833-gitops-agent-rename-engi
