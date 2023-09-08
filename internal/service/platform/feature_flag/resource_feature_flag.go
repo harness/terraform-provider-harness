@@ -21,6 +21,7 @@ func ResourceFeatureFlag() *schema.Resource {
 		ReadContext:   resourceFeatureFlagRead,
 		DeleteContext: resourceFeatureFlagDelete,
 		CreateContext: resourceFeatureFlagCreate,
+		UpdateContext: resourceFeatureFlagUpdate,
 		Importer:      helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -130,6 +131,38 @@ func ResourceFeatureFlag() *schema.Resource {
 					},
 				},
 			},
+			"targeting": {
+				Description: "The targeting rules for the flag",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"to_target": {
+							Description: "The list of targets to include in the ta",
+							Type:        schema.TypeList,
+							Optional:    true,
+							MinItems:    0,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"to_target_group": {
+							Description: "Whether or not the targeting rules are enabled",
+							Type:        schema.TypeList,
+							Optional:    true,
+							MinItems:    0,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"percentage_rollout": {
+							Description: "The percentage of users to rollout to",
+							Type:        schema.TypeMap,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -155,6 +188,42 @@ type FFOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
+}
+
+// FFPatchOpts is the options for patching a feature flag
+type FFPatchOpts struct {
+	Identifier          string              `json:"identifier"`
+	Name                string              `json:"name"`
+	Description         string              `json:"description,omitempty"`
+	Archived            bool                `json:"archived,omitempty"`
+	DefaultOffVariation string              `json:"defaultOffVariation"`
+	DefaultOnVariation  string              `json:"defaultOnVariation"`
+	GitDetails          nextgen.GitDetails  `json:"gitDetails,omitempty"`
+	Kind                string              `json:"kind"`
+	Owner               string              `json:"owner,omitempty"`
+	Permanent           bool                `json:"permanent"`
+	Project             string              `json:"project"`
+	Variations          []nextgen.Variation `json:"variations"`
+}
+
+func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	id := d.Id()
+	if id == "" {
+		return nil
+	}
+
+	qp := buildFFQueryParameters(d)
+	opts := buildFFCreateOpts(d)
+
+	httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	return nil
 }
 
 func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -196,6 +265,7 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	var err error
 	var resp nextgen.Feature
 	var httpResp *http.Response
+	var target nextgen.Target
 
 	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
 
@@ -309,7 +379,13 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 	return &nextgen.FeatureFlagsApiCreateFeatureFlagOpts{
 		Body: optional.NewInterface(opts),
 	}
+}
 
+func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatureOpts {
+	return &nextgen.FeatureFlagsApiPatchFeatureOpts{
+		Body:                  optional.NewInterface(opts),
+		EnvironmentIdentifier: optional.EmptyString(),
+	}
 }
 
 func buildFFReadOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiGetFeatureFlagOpts {
