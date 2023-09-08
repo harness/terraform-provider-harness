@@ -2,7 +2,6 @@ package feature_flag
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -207,11 +206,8 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	time.Sleep(1 * time.Second)
 
 	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
-
 	if err != nil {
-		body, _ := io.ReadAll(httpResp.Body)
-		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
-		//return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlag(d, &resp, qp)
