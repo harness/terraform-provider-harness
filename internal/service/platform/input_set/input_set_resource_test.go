@@ -159,6 +159,39 @@ func TestAccResourceInputSetInline(t *testing.T) {
 
 }
 
+func TestAccResourceInputSetImportFromGit(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	
+	resourceName := "harness_platform_input_set.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccInputSetDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceInputSetImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "inputset"),
+					resource.TestCheckResourceAttr(resourceName, "pipeline_id", "DoNotDeletePipeline"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.PipelineResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+
+
 func testAccGetInputSet(resourceName string, state *terraform.State) (*nextgen.InputSetResponseBody, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetClientWithContext()
@@ -685,6 +718,33 @@ func testAccResourceInputSet(id string, name string) string {
                 resource "time_sleep" "wait_5_seconds" {
                     depends_on = [harness_platform_pipeline.test]
                     create_duration = "5s"
+                }
+        `, id, name)
+}
+
+func testAccResourceInputSetImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_input_set" "test" {
+                        identifier = "inputset"
+                        org_id = "default"
+						project_id = "V"
+                        name = "inputset"
+                        pipeline_id = "DoNotDeletePipeline"
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/inputset.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        input_set_import_request {
+                            input_set_name = "inputset"
+                            input_set_description = ""
+                        }
                 }
         `, id, name)
 }
