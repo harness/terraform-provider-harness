@@ -1324,7 +1324,7 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
 						version = "v2"
 						is_stable = false
                         import_from_git = true
-                        git_import_info {
+                        git_import_details {
                             branch_name = "main"
                             file_path = ".harness/orgtemplate.yaml"
                             connector_ref = "account.DoNotDeleteGithub"
@@ -1353,7 +1353,7 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
 						version = "v2"
 						is_stable = false
                         import_from_git = true
-                        git_import_info {
+                        git_import_details {
                             branch_name = "main"
                             file_path = ".harness/projecttemplate.yaml"
                             connector_ref = "account.DoNotDeleteGithub"
@@ -1380,7 +1380,7 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
 						version = "v2"
 						is_stable = false
                         import_from_git = true
-                        git_import_info {
+                        git_import_details {
                             branch_name = "main"
                             file_path = ".harness/accounttemplate.yaml"
                             connector_ref = "account.DoNotDeleteGithub"

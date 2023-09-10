@@ -157,7 +157,7 @@ func ResourceTemplate() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
-			"git_import_info": {
+			"git_import_details": {
 				Description: "Contains Git Information for importing entities from Git",
 				Type:        schema.TypeList,
 				MaxItems:    1,
@@ -497,23 +497,23 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 func createImportFromGitRequestForTemplates(d *schema.ResourceData) *nextgen.TemplatesImportRequestBody {
 
-	template_git_import_info := &nextgen.GitImportInfo{}
-	if attr, ok := d.GetOk("git_import_info"); ok {
+	template_git_import_details := &nextgen.GitImportDetails{}
+	if attr, ok := d.GetOk("git_import_details"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		if attr, ok := config["branch_name"]; ok {
-			template_git_import_info.BranchName = attr.(string)
+			template_git_import_details.BranchName = attr.(string)
 		}
 		if attr, ok := config["file_path"]; ok {
-			template_git_import_info.FilePath = attr.(string)
+			template_git_import_details.FilePath = attr.(string)
 		}
 		if attr, ok := config["connector_ref"]; ok {
-			template_git_import_info.ConnectorRef = attr.(string)
+			template_git_import_details.ConnectorRef = attr.(string)
 		}
 		if attr, ok := config["repo_name"]; ok {
-			template_git_import_info.RepoName = attr.(string)
+			template_git_import_details.RepoName = attr.(string)
 		}
 		if attr, ok := config["is_force_import"]; ok {
-			template_git_import_info.IsForceImport = attr.(bool)
+			template_git_import_details.IsForceImport = attr.(bool)
 		}
 	}
 
@@ -533,7 +533,7 @@ func createImportFromGitRequestForTemplates(d *schema.ResourceData) *nextgen.Tem
 	}
 
 	template_import_request_body := &nextgen.TemplatesImportRequestBody{}
-	template_import_request_body.GitImportInfo = template_git_import_info
+	template_import_request_body.GitImportDetails = template_git_import_details
 	template_import_request_body.TemplatesImportRequest = template_import_request
 
 	return template_import_request_body
