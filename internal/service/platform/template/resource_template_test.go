@@ -169,6 +169,96 @@ func TestAccResourceTemplate_OrgScopeInline(t *testing.T) {
 	})
 }
 
+func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateOrgScopeImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateProjectScopeImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateAccountScopeImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
 func TestAccResourceTemplate_OrgScopeInline_UpdateStable(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
 	name := id
@@ -1220,3 +1310,88 @@ func testAccResourceTemplateProjectScopeInline(id string, name string) string {
 	}
 	`, id, name)
 }
+
+func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_template" "test" {
+                        identifier = "orgtemplate"
+                        org_id = "default"
+                        name = "orgtemplate"
+						version = "v2"
+						is_stable = false
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/orgtemplate.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "orgtemplate"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+        `, id, name)
+}
+
+func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_template" "test" {
+                        identifier = "projecttemplate"
+                        org_id = "default"
+						project_id = "V"
+                        name = "projecttemplate"
+						version = "v2"
+						is_stable = false
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/projecttemplate.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "projecttemplate"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+        `, id, name)
+}
+
+func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_template" "test" {
+                        identifier = "accounttemplate"
+                        name = "accounttemplate"
+						version = "v2"
+						is_stable = false
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/accounttemplate.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "accounttemplate"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+        `, id, name)
+}
+
