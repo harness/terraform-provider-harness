@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_file_store_file -  Update doc for making file content optional. 
+```
