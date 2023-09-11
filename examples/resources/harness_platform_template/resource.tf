@@ -1086,60 +1086,60 @@ resource "time_sleep" "wait_10_seconds" {
 
 ##Importing Account Level Templates
 resource "harness_platform_template" "test" {
-  identifier = "accounttemplate"
-  name = "accounttemplate"
-  version = "v2"
-  is_stable = false
+  identifier      = "accounttemplate"
+  name            = "accounttemplate"
+  version         = "v2"
+  is_stable       = false
   import_from_git = true
   git_import_details {
-    branch_name = "main"
-    file_path = ".harness/accounttemplate.yaml"
+    branch_name   = "main"
+    file_path     = ".harness/accounttemplate.yaml"
     connector_ref = "account.DoNotDeleteGithub"
-    repo_name = "open-repo"
+    repo_name     = "open-repo"
   }
   template_import_request {
-    template_name = "accounttemplate"
-		template_version = "v2"
+    template_name        = "accounttemplate"
+    template_version     = "v2"
     template_description = ""
   }
 }
 
 ##Importing Org Level Templates
 resource "harness_platform_template" "test" {
-  identifier = "orgtemplate"
-  name = "orgtemplate"
-  version = "v2"
-  is_stable = false
+  identifier      = "orgtemplate"
+  name            = "orgtemplate"
+  version         = "v2"
+  is_stable       = false
   import_from_git = true
   git_import_details {
-    branch_name = "main"
-    file_path = ".harness/orgtemplate.yaml"
+    branch_name   = "main"
+    file_path     = ".harness/orgtemplate.yaml"
     connector_ref = "account.DoNotDeleteGithub"
-    repo_name = "open-repo"
+    repo_name     = "open-repo"
   }
   template_import_request {
-    template_name = "orgtemplate"
-		template_version = "v2"
+    template_name        = "orgtemplate"
+    template_version     = "v2"
     template_description = ""
   }
 }
 
 ##Importing Project Level Templates
 resource "harness_platform_template" "test" {
-  identifier = "projecttemplate"
-  name = "projecttemplate"
-  version = "v2"
-  is_stable = false
+  identifier      = "projecttemplate"
+  name            = "projecttemplate"
+  version         = "v2"
+  is_stable       = false
   import_from_git = true
   git_import_details {
-    branch_name = "main"
-    file_path = ".harness/projecttemplate.yaml"
+    branch_name   = "main"
+    file_path     = ".harness/projecttemplate.yaml"
     connector_ref = "account.DoNotDeleteGithub"
-    repo_name = "open-repo"
+    repo_name     = "open-repo"
   }
   template_import_request {
-    template_name = "projecttemplate"
-		template_version = "v2"
+    template_name        = "projecttemplate"
+    template_version     = "v2"
     template_description = ""
   }
 }
