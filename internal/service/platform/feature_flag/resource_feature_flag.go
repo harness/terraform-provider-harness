@@ -2,6 +2,7 @@ package feature_flag
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -131,34 +132,127 @@ func ResourceFeatureFlag() *schema.Resource {
 					},
 				},
 			},
-			"targeting": {
+			"instructions": {
 				Description: "The targeting rules for the flag",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"to_target": {
-							Description: "The list of targets to include in the ta",
-							Type:        schema.TypeList,
-							Optional:    true,
-							MinItems:    0,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
+						"kind": {
+							Description: "The type of targeting rule. Valid values are `removeTargets`, `removeRule`, `addRule`, `addTargets`",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
-						"to_target_group": {
+						"parameters": {
 							Description: "Whether or not the targeting rules are enabled",
-							Type:        schema.TypeList,
-							Optional:    true,
-							MinItems:    0,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
+							Type:        schema.TypeSet,
+							Required:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"ruleID": {
+										Description: "The identifier of the rule",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"variation": {
+										Description: "The identifier of the variation",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"targets": {
+										Description: "The targets of the rule",
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem: &schema.Resource{
+											Type: schema.TypeString,
+										},
+									},
+									"priority": {
+										Description: "The priority of the rule",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"clauses": {
+										Description: "The list of rules used to include targets in the target group.",
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"attribute": {
+													Description: "The attribute to use in the clause.  This can be any target attribute",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
+												"negate": {
+													Description: "Is the operation negated?",
+													Type:        schema.TypeBool,
+													Optional:    true,
+												},
+												"op": {
+													Description: "The type of operation such as equals, starts_with, contains",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
+												"values": {
+													Description: "The values that are compared against the operator",
+													Type:        schema.TypeList,
+													Optional:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+									"serve": {
+										Description: "Whether or not the rule is enabled",
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"variation": {
+													Description: "The identifier of the variation",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
+												"distribution": {
+													Description: "The distribution of the rule",
+													Type:        schema.TypeList,
+													Optional:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"bucketBy": {
+																Description: "The bucketing strategy of the rule",
+																Type:        schema.TypeString,
+																Optional:    true,
+															},
+															"variations": {
+																Description: "The variations of the rule",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"variation": {
+																			Description: "The identifier of the variation",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																		},
+																		"weight": {
+																			Description: "The weight of the variation",
+																			Type:        schema.TypeInt,
+																			Optional:    true,
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
 							},
-						},
-						"percentage_rollout": {
-							Description: "The percentage of users to rollout to",
-							Type:        schema.TypeMap,
-							Optional:    true,
 						},
 					},
 				},
@@ -173,6 +267,36 @@ type FFQueryParameters struct {
 	Identifier     string
 	OrganizationId string
 	ProjectId      string
+}
+
+// Instructions ...
+type Instructions struct {
+	Kind       string `json:"kind"`
+	Parameters nextgen.Parameters
+	Parameters []struct {
+		RuleID    string           `json:"ruleId,omitempty"`
+		Variation string           `json:"variation,omitempty"`
+		Targets   []string         `json:"targets,omitempty"`
+		Priority  string           `json:"priority,omitempty"`
+		Clauses   []nextgen.Clause `json:"clauses,omitempty"`
+		Serve     []struct {
+			Variation    string `json:"variation,omitempty"`
+			Distribution []struct {
+				BucketBy   string `json:"bucketBy,omitempty"`
+				Variations []struct {
+					Variation string `json:"variation,omitempty"`
+					Weight    int    `json:"weight,omitempty"`
+				} `json:"variations,omitempty"`
+			} `json:"distribution,omitempty"`
+		} `json:"serve,omitempty"`
+	} `json:"parameters"`
+}
+
+type KindMap map[string]string{
+	"removeTargets": "removeTargetsToVariationTargetMap",
+	"removeRule": "removeRule",
+	"addRule": "addRule",
+	"addTargets": "addTargetsToVariationTargetMap",
 }
 
 type FFOpts struct {
@@ -204,6 +328,7 @@ type FFPatchOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
+	Instructions        Instructions        `json:"instructions"`
 }
 
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -276,8 +401,11 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	time.Sleep(1 * time.Second)
 
 	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
+
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		body, _ := io.ReadAll(httpResp.Body)
+		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
+		//return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readFeatureFlag(d, &resp, qp)
