@@ -2,7 +2,6 @@ package feature_flag
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -173,7 +172,8 @@ func ResourceFeatureFlag() *schema.Resource {
 										Description: "The targets of the rule",
 										Type:        schema.TypeList,
 										Optional:    true,
-										Elem: &schema.Resource{
+										MinItems:    0,
+										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
 									},
@@ -274,33 +274,46 @@ type FFQueryParameters struct {
 	ProjectId      string
 }
 
-// Instructions ...
-type Instructions struct {
-	Kind       string `json:"kind"`
-	Parameters []struct {
-		RuleID    string           `json:"ruleId,omitempty"`
-		Variation string           `json:"variation,omitempty"`
-		Targets   []string         `json:"targets,omitempty"`
-		Priority  string           `json:"priority,omitempty"`
-		Clauses   []nextgen.Clause `json:"clauses,omitempty"`
-		Serve     []struct {
-			Variation    string `json:"variation,omitempty"`
-			Distribution []struct {
-				BucketBy   string `json:"bucketBy,omitempty"`
-				Variations []struct {
-					Variation string `json:"variation,omitempty"`
-					Weight    int    `json:"weight,omitempty"`
-				} `json:"variations,omitempty"`
-			} `json:"distribution,omitempty"`
-		} `json:"serve,omitempty"`
-	} `json:"parameters"`
+// KindMap is a map of the kind to the actual kind
+var KindMap = map[string]string{
+	"removeTargets": "removeTargetsToVariationTargetMap",
+	"removeRule":    "removeRule",
+	"addRule":       "addRule",
+	"addTargets":    "addTargetsToVariationTargetMap",
 }
 
-type KindMap map[string]string{
-	"removeTargets": "removeTargetsToVariationTargetMap",
-	"removeRule": "removeRule",
-	"addRule": "addRule",
-	"addTargets": "addTargetsToVariationTargetMap",
+// Variation ...
+type Variation struct {
+	Variation string `json:"variation,omitempty"`
+	Weight    int    `json:"weight,omitempty"`
+}
+
+// Distribution ...
+type Distribution struct {
+	BucketBy   string      `json:"bucketBy,omitempty"`
+	Variations []Variation `json:"variations,omitempty"`
+}
+
+// Serve ...
+type Serve struct {
+	Variation    string         `json:"variation,omitempty"`
+	Distribution []Distribution `json:"distribution,omitempty"`
+}
+
+// Parameter ...
+type Parameter struct {
+	RuleID    string           `json:"ruleId,omitempty"`
+	Variation string           `json:"variation,omitempty"`
+	Targets   []string         `json:"targets,omitempty"`
+	Priority  string           `json:"priority,omitempty"`
+	Clauses   []nextgen.Clause `json:"clauses,omitempty"`
+	Serve     []Serve          `json:"serve,omitempty"`
+}
+
+// Instructions ...
+type Instructions struct {
+	Kind       string      `json:"kind"`
+	Parameters []Parameter `json:"parameters"`
 }
 
 type FFOpts struct {
@@ -346,11 +359,13 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPatchOpts(d)
 
-	httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
+
+	readFeatureFlag(d, &feature, qp)
 
 	return nil
 }
@@ -394,7 +409,6 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	var err error
 	var resp nextgen.Feature
 	var httpResp *http.Response
-	var target nextgen.Target
 
 	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
 
@@ -445,8 +459,6 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.Set("owner", strings.Join(flag.Owner, ","))
 	d.Set("org_id", qp.OrganizationId)
 	d.Set("variation", expandVariations(flag.Variations))
-	d.Set("instructions", expandInstructions(flag.Instructions))
-
 }
 
 func expandVariations(variations []nextgen.Variation) []interface{} {
@@ -553,28 +565,45 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	instructionsData := d.Get("instructions").([]interface{})
 	for _, instructionData := range instructionsData {
 		vMap := instructionData.(map[string]interface{})
-		clauses := vMap["parameters"].([]interface{})[0].(map[string]interface{})["clauses"].([]interface{})
-		serve := vMap["parameters"].([]interface{})[0].(map[string]interface{})["serve"].([]interface{})
+		parameters := vMap["parameters"].([]interface{})[0].(map[string]interface{})
+		clauses := parameters["clauses"].([]interface{})
+		serve := parameters["serve"].([]interface{})
+
+		// get all the variations
+		var variations []Variation
+		for _, variation := range serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["variations"].([]interface{}) {
+			current := Variation{
+				Variation: variation.(map[string]interface{})["variation"].(string),
+				Weight:    variation.(map[string]interface{})["weight"].(int),
+			}
+			variations = append(variations, current)
+		}
+
+		// build the Instruction
 		instruction := Instructions{
 			Kind: vMap["kind"].(string),
-			Parameters: []struct {
-				RuleID: vMap["parameters"].([]interface{})[0].(map[string]interface{})["ruleID"].(string),
-				Variation: vMap["parameters"].([]interface{})[0].(map[string]interface{})["variation"].(string),
-				Targets: vMap["parameters"].([]interface{})[0].(map[string]interface{})["targets"].([]string),
-				Priority: vMap["parameters"].([]interface{})[0].(map[string]interface{})["priority"].(string),
-				Clauses: nextgen.Clause{
-					Attribute: clauses[0].(map[string]interface{})["attribute"].(string),
-					Negate: clauses[0].(map[string]interface{})["negate"].(bool),
-					Op: clauses[0].(map[string]interface{})["op"].(string),
-					Values: clauses[0].(map[string]interface{})["values"].([]string),
-				},
-				Serve: []struct {
-					Variation: serve[0].(map[string]interface{})["variation"].(string),
-					Distribution: []struct {
-						BucketBy: serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["bucketBy"].(string),
-						Variations: []struct {
-							Variation: serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["variations"].([]interface{})[0].(map[string]interface{})["variation"].(string),
-							Weight: serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["variations"].([]interface{})[0].(map[string]interface{})["weight"].(int),
+			Parameters: []Parameter{
+				{
+					Variation: parameters["variation"].(string),
+					Targets:   parameters["targets"].([]string),
+					Priority:  parameters["priority"].(string),
+					Clauses: []nextgen.Clause{
+						{
+							Attribute: clauses[0].(map[string]interface{})["attribute"].(string),
+							Negate:    clauses[0].(map[string]interface{})["negate"].(bool),
+							Op:        clauses[0].(map[string]interface{})["op"].(string),
+							Values:    clauses[0].(map[string]interface{})["values"].([]string),
+						},
+					},
+					Serve: []Serve{
+						{
+							Variation: serve[0].(map[string]interface{})["variation"].(string),
+							Distribution: []Distribution{
+								{
+									BucketBy:   serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["bucketBy"].(string),
+									Variations: variations,
+								},
+							},
 						},
 					},
 				},
@@ -582,9 +611,8 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 		}
 		instructions = append(instructions, instruction)
 	}
-	if instructions, ok := d.GetOk("instructions"); ok {
-		opts.Instructions = instructions.(Instructions)
-	}
+
+	opts.Instructions = instructions[0]
 
 	// fix kind mapping, since use does need to know the mapping
 	if kind, ok := KindMap[opts.Instructions.Kind]; ok {
