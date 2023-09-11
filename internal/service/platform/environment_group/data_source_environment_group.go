@@ -27,12 +27,12 @@ func DataSourceEnvironmentGroup() *schema.Resource {
 			"org_id": {
 				Description: "org_id of the environment group.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"project_id": {
 				Description: "project_id of the environment group.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"color": {
 				Description: "Color of the environment group.",
@@ -57,20 +57,19 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 	var err error
 	var env *nextgen.EnvironmentGroupResponse
 	var httpResp *http.Response
+	var resp nextgen.ResponseDtoEnvironmentGroup
 
 	id := d.Get("identifier").(string)
 
 	if id != "" {
-		var resp nextgen.ResponseDtoEnvironmentGroup
 
-		orgIdentifier := (d.Get("org_id").(string))
-		projectIdentifier := (d.Get("project_id").(string))
-
-		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-			Branch:         helpers.BuildField(d, "branch"),
-			RepoIdentifier: helpers.BuildField(d, "repo_id"),
+		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+			Branch:            helpers.BuildField(d, "branch"),
+			RepoIdentifier:    helpers.BuildField(d, "repo_id"),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
-		env = resp.Data.EnvGroup
+
 	} else {
 		return diag.FromErr(errors.New("identifier must be specified"))
 	}
@@ -78,6 +77,8 @@ func dataSourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData,
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
+
+	env = resp.Data.EnvGroup
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765

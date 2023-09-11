@@ -1,0 +1,3 @@
+```release-note:bug
+resource_manual_freeze : bug fix for deployment freeze while saving expired freeze
+```

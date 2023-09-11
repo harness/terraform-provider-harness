@@ -3,7 +3,7 @@ resource "harness_platform_environment" "example" {
   name       = "name"
   org_id     = "org_id"
   project_id = "project_id"
-  tags       = ["foo:bar", "baz"]
+  tags       = ["foo:bar", "bar:foo"]
   type       = "PreProduction"
 
   ## ENVIRONMENT V2 Update
@@ -11,7 +11,7 @@ resource "harness_platform_environment" "example" {
   ## Not Mandatory for Environment Creation nor Pipeline Usage
 
   yaml = <<-EOT
-			   environment:
+      environment:
          name: name
          identifier: identifier
          orgIdentifier: org_id
@@ -19,7 +19,7 @@ resource "harness_platform_environment" "example" {
          type: PreProduction
          tags:
            foo: bar
-           baz: ""
+           bar: foo
          variables:
            - name: envVar1
              type: String
@@ -54,5 +54,5 @@ resource "harness_platform_environment" "example" {
                        files:
                          - account:/Add-ons/svcOverrideTest
                        secretFiles: []
-      EOT
+  EOT
 }

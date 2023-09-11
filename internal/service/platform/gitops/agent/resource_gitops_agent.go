@@ -85,6 +85,11 @@ func ResourceGitopsAgent() *schema.Resource {
 						},
 					}},
 			},
+			"agent_token": {
+				Description: "Agent token to be used for authentication of the agent with Harness.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
 		},
 	}
 	return resource
@@ -178,6 +183,9 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 
 func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 	var v1Agent nextgen.V1Agent
+	if attr, ok := d.GetOk("account_id"); ok {
+		v1Agent.AccountIdentifier = attr.(string)
+	}
 	if attr, ok := d.GetOk("project_id"); ok {
 		v1Agent.ProjectIdentifier = attr.(string)
 	}
@@ -235,4 +243,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	metaDataMap["high_availability"] = agent.Metadata.HighAvailability
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
+	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
+		d.Set("agent_token", agent.Credentials.PrivateKey)
+	}
 }

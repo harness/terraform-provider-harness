@@ -48,6 +48,7 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 ### Read-Only
 
+- `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--metadata"></a>

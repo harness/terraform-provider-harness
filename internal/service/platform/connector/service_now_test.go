@@ -109,6 +109,58 @@ func TestAccResourceConnectorServiceNow_Adfs(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorServiceNow_RefreshToken(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_service_now.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorServiceNow_RefreshToken(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "service_now_url", "https://test.service-now.com"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.token_url", "https://test.service-now.com/oauth_token.do"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.scope", "email openid profile"),					
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorServiceNow_RefreshToken(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "service_now_url", "https://test.service-now.com"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.token_url", "https://test.service-now.com/oauth_token.do"),
+					resource.TestCheckResourceAttr(resourceName, "auth.0.refresh_token.0.scope", "email openid profile"),					
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorServiceNow_UsernamePassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -176,6 +228,47 @@ func testAccResourceConnectorServiceNow_Adfs(id string, name string) string {
 					client_id_ref = "account.${harness_platform_secret_text.test.id}"
 					resource_id_ref = "account.${harness_platform_secret_text.test.id}"
 					adfs_url = "https://adfs_url.com"
+				}
+			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorServiceNow_RefreshToken(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+		resource "harness_platform_connector_service_now" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			service_now_url = "https://test.service-now.com"
+			delegate_selectors = ["harness-delegate"]
+			auth {
+				auth_type = "RefreshTokenGrantType"
+				refresh_token {
+					token_url = "https://test.service-now.com/oauth_token.do"
+					refresh_token_ref = "account.${harness_platform_secret_text.test.id}"
+					client_id_ref = "account.${harness_platform_secret_text.test.id}"
+					client_secret_ref = "account.${harness_platform_secret_text.test.id}"
+					scope = "email openid profile"
 				}
 			}
 			depends_on = [time_sleep.wait_4_seconds]

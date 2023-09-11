@@ -1,0 +1,8 @@
+```release-note:enhancement
+data_source_monitored_service_test.go Added tests for multiple healthsources such as Prometheus, Datadog etc.
+resource_monitored_service.go Added version field and renamed MonitoredServiceSpec to MonitoredService
+resource_monitored_service_test.go renamed MonitoredServiceSpec to MonitoredService
+utils.go Deserializer updated with new health sources such as azure, signalFx, loki and sumologic
+platform_monitored_service.md Added docs for health sources such as azure, signalFx, loki and sumologic
+resource.tf Added examples for all newly added health sources, datadog and prometheus
+```

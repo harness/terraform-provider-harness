@@ -54,6 +54,84 @@ func TestAccResourceEnvironmentGroup(t *testing.T) {
 	})
 }
 
+func TestAccResourceEnvironmentGroupOrgLevel(t *testing.T) {
+
+	name := t.Name()
+	color := "#0063F7"
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_environment_group.test"
+	updatedColor := "#0063F8"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironmentGroupOrgLevel(id, name, color),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
+				),
+			},
+			{
+				Config: testAccResourceEnvironmentGroupOrgLevel(id, name, updatedColor),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", updatedColor),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceEnvironmentGroupAccountLevel(t *testing.T) {
+
+	name := t.Name()
+	color := "#0063F7"
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_environment_group.test"
+	updatedColor := "#0063F8"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceEnvironmentGroupAccountLevel(id, name, color),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
+				),
+			},
+			{
+				Config: testAccResourceEnvironmentGroupAccountLevel(id, name, updatedColor),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "color", updatedColor),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"yaml"},
+				ImportStateIdFunc:       acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func testAccGetPlatformEnvironmentGroup(resourceName string, state *terraform.State) (*nextgen.EnvironmentGroupResponse, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -63,9 +141,11 @@ func testAccGetPlatformEnvironmentGroup(resourceName string, state *terraform.St
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup((ctx), id, c.AccountId, orgId, projId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-		Branch:         optional.NewString(branch),
-		RepoIdentifier: optional.NewString(repoIdentifier),
+	resp, _, err := c.EnvironmentGroupApi.GetEnvironmentGroup((ctx), id, c.AccountId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+		Branch:            optional.NewString(branch),
+		RepoIdentifier:    optional.NewString(repoIdentifier),
+		OrgIdentifier:     optional.NewString(orgId),
+		ProjectIdentifier: optional.NewString(projId),
 	})
 
 	if err != nil {
@@ -147,6 +227,43 @@ func testAccResourceEnvironmentGroup(id string, name string, color string) strin
 			                 description: "temp"
 			                 orgIdentifier: ${harness_platform_project.test.org_id}
 			                 projectIdentifier: ${harness_platform_project.test.id}
+			                 envIdentifiers: []
+		  EOT
+		}
+`, id, name, color)
+}
+func testAccResourceEnvironmentGroupOrgLevel(id string, name string, color string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_environment_group" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.identifier
+			color = "%[3]s"
+			yaml = <<-EOT
+			   environmentGroup:
+			                 name: "%[1]s"
+			                 identifier: "%[1]s"
+			                 description: "temp"
+			                 orgIdentifier: ${harness_platform_organization.test.identifier}
+			                 envIdentifiers: []
+		  EOT
+		}
+`, id, name, color)
+}
+func testAccResourceEnvironmentGroupAccountLevel(id string, name string, color string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_environment_group" "test" {
+			identifier = "%[1]s"
+			color = "%[3]s"
+			yaml = <<-EOT
+			   environmentGroup:
+			                 name: "%[1]s"
+			                 identifier: "%[1]s"
+			                 description: "temp"
 			                 envIdentifiers: []
 		  EOT
 		}

@@ -26,16 +26,6 @@ func ResourceToken() *schema.Resource {
 		Importer:      MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Identifier of the Token",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"name": {
-				Description: "Name of the Token",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"apikey_id": {
 				Description: "Identifier of the API Key",
 				Type:        schema.TypeString,
@@ -56,17 +46,6 @@ func ResourceToken() *schema.Resource {
 				Description: "Account Identifier for the Entity",
 				Type:        schema.TypeString,
 				Required:    true,
-			},
-			"org_id": {
-				Description: "Organization Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description:  "Project Identifier for the Entity",
-				Type:         schema.TypeString,
-				Optional:     true,
-				RequiredWith: []string{"org_id"},
 			},
 			"valid_from": {
 				Description: "This is the time from which the Token is valid. The time is in milliseconds",
@@ -92,11 +71,6 @@ func ResourceToken() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
-			"description": {
-				Description: "Description of the Token",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"email": {
 				Description: "Email Id of the user who created the Token",
 				Type:        schema.TypeString,
@@ -112,14 +86,15 @@ func ResourceToken() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"tags": {
-				Description: "Tags for the Token",
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Elem:        &schema.Schema{Type: schema.TypeString},
+			"value": {
+				Description: "Value of the Token",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -156,13 +131,15 @@ func resourceTokenCreateOrUpdate(ctx context.Context, d *schema.ResourceData, me
 	var err error
 	var resp nextgen.ResponseDtoToken
 	var httpResp *http.Response
+	var createResponse nextgen.ResponseDtoString
 
 	id := d.Id()
 	token := buildToken(d)
 
 	if id == "" {
-		_, httpResp, err = c.TokenApi.CreateToken(ctx, c.AccountId, &nextgen.TokenApiCreateTokenOpts{Body: optional.NewInterface(token)})
+		createResponse, httpResp, err = c.TokenApi.CreateToken(ctx, c.AccountId, &nextgen.TokenApiCreateTokenOpts{Body: optional.NewInterface(token)})
 		if err == nil {
+			d.Set("value", createResponse.Data)
 			return resourceTokenRead(ctx, d, meta)
 		}
 	} else {
@@ -215,7 +192,7 @@ func buildToken(d *schema.ResourceData) *nextgen.Token {
 	}
 
 	if attr, ok := d.GetOk("tags"); ok {
-		token.Tags = attr.(map[string]string)
+		token.Tags = helpers.ExpandTags(attr.(*schema.Set).List())
 	}
 
 	if attr, ok := d.GetOk("apikey_id"); ok {
@@ -276,7 +253,7 @@ func readToken(d *schema.ResourceData, token *nextgen.Token) {
 	d.SetId(token.Identifier)
 	d.Set("name", token.Name)
 	d.Set("description", token.Description)
-	d.Set("tags", token.Tags)
+	d.Set("tags", helpers.FlattenTags(token.Tags))
 	d.Set("apikey_id", token.ApiKeyIdentifier)
 	d.Set("apikey_type", token.ApiKeyType)
 	d.Set("parent_id", token.ParentIdentifier)

@@ -49,7 +49,16 @@ data "harness_platform_connector_jira" "example" {
 Read-Only:
 
 - `auth_type` (String)
+- `personal_access_token` (List of Object) (see [below for nested schema](#nestedobjatt--auth--personal_access_token))
 - `username_password` (List of Object) (see [below for nested schema](#nestedobjatt--auth--username_password))
+
+<a id="nestedobjatt--auth--personal_access_token"></a>
+### Nested Schema for `auth.personal_access_token`
+
+Read-Only:
+
+- `pat_ref` (String)
+
 
 <a id="nestedobjatt--auth--username_password"></a>
 ### Nested Schema for `auth.username_password`

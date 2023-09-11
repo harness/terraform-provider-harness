@@ -136,6 +136,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	d.SetId(env.Identifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("org_id", env.OrgIdentifier)
+	d.Set("project_id", env.ProjectIdentifier)
 	d.Set("name", env.Name)
 	d.Set("color", env.Color)
 	d.Set("description", env.Description)
