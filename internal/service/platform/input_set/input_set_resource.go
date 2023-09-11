@@ -231,6 +231,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var err error
 	var inputSet_id string
 	var resp nextgen.InputSetResponseBody
+	var response nextgen.InputSetSaveResponseBody
 	var httpResp *http.Response
 
 	id := d.Id()
@@ -249,10 +250,11 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 			input_set_import_request_body := createImportFromGitRequest(d)
 
-			_, httpResp, err = c.InputSetsApi.ImportInputSetsFromGit(ctx, orgIdentifier, projectIdentifier, pipelineIdentifier, inputSet_id,
+			response, httpResp, err = c.InputSetsApi.ImportInputSetsFromGit(ctx, orgIdentifier, projectIdentifier, pipelineIdentifier, inputSet_id,
 				&nextgen.InputSetsApiImportInputSetsFromGitOpts{
 					Body:           optional.NewInterface(input_set_import_request_body),
 					HarnessAccount: optional.NewString(c.AccountId)})
+
 		} else{
 			inputSet := buildCreateInputSet(d)
 			if inputSet.GitDetails != nil {
@@ -283,6 +285,30 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	if d.Get("import_from_git").(bool) {
+
+		inputSet_id = response.Identifier
+
+		branch_name := helpers.BuildField(d, "git_import_info.0.branch_name")
+		parent_entity_connector_ref := helpers.BuildField(d, "git_import_info.0.connector_ref")
+		parent_entity_repo_name := helpers.BuildField(d, "git_import_info.0.repo_name")
+
+		resp, httpResp, err := c.InputSetsApi.GetInputSet(ctx, orgIdentifier, projectIdentifier, inputSet_id, pipelineIdentifier, &nextgen.InputSetsApiGetInputSetOpts{
+			HarnessAccount:           optional.NewString(c.AccountId),
+			BranchName:               branch_name,
+			ParentEntityConnectorRef: parent_entity_connector_ref,
+			ParentEntityRepoName:     parent_entity_repo_name,
+		})
+
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+		readInputSet(d, &resp, pipelineIdentifier, optional.NewString("REMOTE"), optional.EmptyString() , optional.EmptyString(), parent_entity_connector_ref)
+
+		return nil
 	}
 
 	readInputSet(d, &resp, pipelineIdentifier, store_type, base_branch, commit_message, connector_ref)

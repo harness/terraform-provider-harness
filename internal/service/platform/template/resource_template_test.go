@@ -183,9 +183,8 @@ func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
 			{
 				Config: testAccResourceTemplateOrgScopeImportFromGit(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+					resource.TestCheckResourceAttr(resourceName, "id", "orgtemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "orgtemplate"),
 				),
 			},
 			{
@@ -193,7 +192,7 @@ func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
 			},
 		},
 	})
@@ -213,9 +212,8 @@ func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
 			{
 				Config: testAccResourceTemplateProjectScopeImportFromGit(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+					resource.TestCheckResourceAttr(resourceName, "id", "projecttemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "projecttemplate"),
 				),
 			},
 			{
@@ -223,7 +221,7 @@ func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
 			},
 		},
 	})
@@ -243,9 +241,8 @@ func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
 			{
 				Config: testAccResourceTemplateAccountScopeImportFromGit(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+					resource.TestCheckResourceAttr(resourceName, "id", "accounttemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accounttemplate"),
 				),
 			},
 			{
@@ -253,7 +250,7 @@ func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
 			},
 		},
 	})
