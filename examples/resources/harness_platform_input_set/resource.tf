@@ -58,3 +58,23 @@ inputSet:
       value: "value"
 EOT
 }
+
+# Importing Input Set from Git
+resource "harness_platform_input_set" "test" {
+  identifier = "inputset"
+  org_id = "default"
+	project_id = "V"
+  name = "inputset"
+  pipeline_id = "DoNotDeletePipeline"
+  import_from_git = true
+  git_import_info {
+    branch_name = "main"
+    file_path = ".harness/inputset.yaml"
+    connector_ref = "account.DoNotDeleteGithub"
+    repo_name = "open-repo"
+  }
+  input_set_import_request {
+    input_set_name = "inputset"
+    input_set_description = ""
+  }
+}
