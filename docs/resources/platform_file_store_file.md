@@ -23,6 +23,7 @@ resource "harness_platform_file_store_file" "example" {
   tags              = ["foo:bar", "baz:qux"]
   parent_identifier = "parent_identifier"
   file_content_path = "file_content_path"
+  content           = "file_content"
   mime_type         = "mime_type"
   file_usage        = "MANIFEST_FILE|CONFIG|SCRIPT"
 }
@@ -39,6 +40,7 @@ resource "harness_platform_file_store_file" "example" {
 
 ### Optional
 
+- `content` (String) File content stored on on Harness File Store. (Please prefer using content over file_content_path)
 - `description` (String) Description of the resource.
 - `file_content_path` (String) File content path to be upladed on Harness File Store
 - `file_usage` (String) File usage. Valid options are ManifestFile, Config, Script
