@@ -13,7 +13,7 @@ Resource for creating files in Harness.
 ## Example Usage
 
 ```terraform
-// Create file
+// Create file with file content path
 resource "harness_platform_file_store_file" "example" {
   org_id            = "org_id"
   project_id        = "project_id"
@@ -23,7 +23,21 @@ resource "harness_platform_file_store_file" "example" {
   tags              = ["foo:bar", "baz:qux"]
   parent_identifier = "parent_identifier"
   file_content_path = "file_content_path"
-  content           = "file_content"
+  mime_type         = "mime_type"
+  file_usage        = "MANIFEST_FILE|CONFIG|SCRIPT"
+}
+
+// Create file with file content
+// File content can be passed directly or via using the entire file path as shown below
+resource "harness_platform_file_store_file" "example" {
+  org_id            = "org_id"
+  project_id        = "project_id"
+  identifier        = "identifier"
+  name              = "name"
+  description       = "description"
+  tags              = ["foo:bar", "baz:qux"]
+  parent_identifier = "parent_identifier"
+  content           = file("${path.module}/input.json")
   mime_type         = "mime_type"
   file_usage        = "MANIFEST_FILE|CONFIG|SCRIPT"
 }
