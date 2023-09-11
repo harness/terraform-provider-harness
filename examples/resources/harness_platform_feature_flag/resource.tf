@@ -61,3 +61,110 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 }
+
+// Assign targets to flag
+resource "harness_platform_feature_flag" "mymultivariateflag" {
+  org_id     = "test"
+  project_id = "testff"
+
+  kind       = "int"
+  name       = "FREE_TRIAL_DURATION"
+  identifier = "FREE_TRIAL_DURATION"
+  permanent  = false
+
+  default_on_variation  = "trial7"
+  default_off_variation = "trial20"
+
+  variation {
+    identifier  = "trial7"
+    name        = "7 days trial"
+    description = "Free trial period 7 days"
+    value       = "7"
+  }
+
+  variation {
+    identifier  = "trial14"
+    name        = "14 days trial"
+    description = "Free trial period 14 days"
+    value       = "14"
+  }
+
+  variation {
+    identifier  = "trial20"
+    name        = "20 days trial"
+    description = "Free trial period 20 days"
+    value       = "20"
+  }
+
+  instructions {
+    kind = "removeTargets"
+    parameters = {
+      variation = "enabled"
+      targets = ["targets1", "targets2"]
+    }
+  }
+}
+
+// Assign target groups to flag
+resource "harness_platform_feature_flag" "mymultivariateflag" {
+  org_id     = "test"
+  project_id = "testff"
+
+  kind       = "int"
+  name       = "FREE_TRIAL_DURATION"
+  identifier = "FREE_TRIAL_DURATION"
+  permanent  = false
+
+  default_on_variation  = "trial7"
+  default_off_variation = "trial20"
+
+  variation {
+    identifier  = "trial7"
+    name        = "7 days trial"
+    description = "Free trial period 7 days"
+    value       = "7"
+  }
+
+  variation {
+    identifier  = "trial14"
+    name        = "14 days trial"
+    description = "Free trial period 14 days"
+    value       = "14"
+  }
+
+  variation {
+    identifier  = "trial20"
+    name        = "20 days trial"
+    description = "Free trial period 20 days"
+    value       = "20"
+  }
+
+  instructions {
+    kind = "addRule"
+    parameters = {
+      serve = {
+        distribution = {
+          bucketBy = "identifier",
+          variations = [
+            {
+                variation = "foo"
+                weight = 30
+            },
+            {
+                variation = "bat"
+                weight = 30
+            },
+            {
+                variation = "name"
+                weight = 40
+            }
+          ]
+        }
+      }
+      clauses = {
+        op =  "segmentMatch",
+        values = ["terraform_target_test"]
+      }
+    }
+  }
+}
