@@ -140,7 +140,6 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     group_name = "group_name"
     variation = "enabled"
     distribution = {
-      bucketBy = "identifier",
       variations = [
         {
             variation = "foo"
