@@ -96,12 +96,9 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  instructions {
-    kind = "removeTargets"
-    parameters = {
-      variation = "enabled"
-      targets = ["targets1", "targets2"]
-    }
+  addTargetRules {
+    variation = "enabled"
+    targets = ["targets1", "targets2"]
   }
 }
 
@@ -139,32 +136,25 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  instructions {
-    kind = "addRule"
-    parameters = {
-      serve = {
-        distribution = {
-          bucketBy = "identifier",
-          variations = [
-            {
-                variation = "foo"
-                weight = 30
-            },
-            {
-                variation = "bat"
-                weight = 30
-            },
-            {
-                variation = "name"
-                weight = 40
-            }
-          ]
+  addTargetGroupsRules {
+    group_name = "group_name"
+    variation = "enabled"
+    distribution = {
+      bucketBy = "identifier",
+      variations = [
+        {
+            variation = "foo"
+            weight = 30
+        },
+        {
+            variation = "bat"
+            weight = 30
+        },
+        {
+            variation = "name"
+            weight = 40
         }
-      }
-      clauses = {
-        op =  "segmentMatch",
-        values = ["terraform_target_test"]
-      }
+      ]
     }
   }
 }

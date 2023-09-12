@@ -111,12 +111,9 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  instructions {
-    kind = "removeTargets"
-    parameters = {
-      variation = "enabled"
-      targets = ["targets1", "targets2"]
-    }
+  addTargetRules {
+    variation = "enabled"
+    targets = ["targets1", "targets2"]
   }
 }
 
@@ -154,32 +151,25 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  instructions {
-    kind = "addRule"
-    parameters = {
-      serve = {
-        distribution = {
-          bucketBy = "identifier",
-          variations = [
-            {
-                variation = "foo"
-                weight = 30
-            },
-            {
-                variation = "bat"
-                weight = 30
-            },
-            {
-                variation = "name"
-                weight = 40
-            }
-          ]
+  addTargetGroupsRules {
+    group_name = "group_name"
+    variation = "enabled"
+    distribution = {
+      bucketBy = "identifier",
+      variations = [
+        {
+            variation = "foo"
+            weight = 30
+        },
+        {
+            variation = "bat"
+            weight = 30
+        },
+        {
+            variation = "name"
+            weight = 40
         }
-      }
-      clauses = {
-        op =  "segmentMatch",
-        values = ["terraform_target_test"]
-      }
+      ]
     }
   }
 }
@@ -202,9 +192,10 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
 ### Optional
 
+- `add_target_group_rules` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_group_rules))
+- `add_target_rules` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_rules))
 - `archived` (Boolean) Whether or not the flag is archived
 - `git_details` (Block Set, Max: 1) (see [below for nested schema](#nestedblock--git_details))
-- `instructions` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--instructions))
 - `owner` (String) The owner of the flag
 
 ### Read-Only
@@ -222,66 +213,45 @@ Required:
 - `value` (String) The value of the variation
 
 
+<a id="nestedblock--add_target_group_rules"></a>
+### Nested Schema for `add_target_group_rules`
+
+Optional:
+
+- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--add_target_group_rules--distribution))
+- `group_name` (String) The name of the target group
+- `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
+
+<a id="nestedblock--add_target_group_rules--distribution"></a>
+### Nested Schema for `add_target_group_rules.distribution`
+
+Optional:
+
+- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--add_target_group_rules--distribution--variations))
+
+<a id="nestedblock--add_target_group_rules--distribution--variations"></a>
+### Nested Schema for `add_target_group_rules.distribution.variations`
+
+Optional:
+
+- `variation` (String) The identifier of the variation
+- `weight` (Number) The weight of the variation
+
+
+
+
+<a id="nestedblock--add_target_rules"></a>
+### Nested Schema for `add_target_rules`
+
+Optional:
+
+- `targets` (List of String) The targets of the rule
+- `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
+
+
 <a id="nestedblock--git_details"></a>
 ### Nested Schema for `git_details`
 
 Required:
 
 - `commit_msg` (String) The commit message to use as part of a gitsync operation
-
-
-<a id="nestedblock--instructions"></a>
-### Nested Schema for `instructions`
-
-Required:
-
-- `kind` (String) The type of targeting rule. Valid values are `removeTargets`, `removeRule`, `addRule`, `addTargets`
-- `parameters` (Block List, Min: 1) Whether or not the targeting rules are enabled (see [below for nested schema](#nestedblock--instructions--parameters))
-
-<a id="nestedblock--instructions--parameters"></a>
-### Nested Schema for `instructions.parameters`
-
-Optional:
-
-- `clauses` (Block List) The list of rules used to include targets in the target group. (see [below for nested schema](#nestedblock--instructions--parameters--clauses))
-- `priority` (String) The priority of the rule
-- `ruleID` (String) The identifier of the rule
-- `serve` (Block List) Whether or not the rule is enabled (see [below for nested schema](#nestedblock--instructions--parameters--serve))
-- `targets` (List of String) The targets of the rule
-- `uuid` (String) The identifier of the parameter
-- `variation` (String) The identifier of the variation
-
-<a id="nestedblock--instructions--parameters--clauses"></a>
-### Nested Schema for `instructions.parameters.clauses`
-
-Optional:
-
-- `attribute` (String) The attribute to use in the clause.  This can be any target attribute
-- `negate` (Boolean) Is the operation negated?
-- `op` (String) The type of operation such as equals, starts_with, contains
-- `values` (List of String) The values that are compared against the operator
-
-
-<a id="nestedblock--instructions--parameters--serve"></a>
-### Nested Schema for `instructions.parameters.serve`
-
-Optional:
-
-- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--instructions--parameters--serve--distribution))
-- `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
-
-<a id="nestedblock--instructions--parameters--serve--distribution"></a>
-### Nested Schema for `instructions.parameters.serve.distribution`
-
-Optional:
-
-- `bucketBy` (String) The bucketing strategy of the rule
-- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--instructions--parameters--serve--distribution--variations))
-
-<a id="nestedblock--instructions--parameters--serve--distribution--variations"></a>
-### Nested Schema for `instructions.parameters.serve.distribution.variations`
-
-Optional:
-
-- `variation` (String) The identifier of the variation
-- `weight` (Number) The weight of the variation

@@ -131,127 +131,66 @@ func ResourceFeatureFlag() *schema.Resource {
 					},
 				},
 			},
-			"instructions": {
+			"add_target_rules": {
 				Description: "The targeting rules for the flag",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"kind": {
-							Description: "The type of targeting rule. Valid values are `removeTargets`, `removeRule`, `addRule`, `addTargets`",
+						"variation": {
+							Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
-						"parameters": {
-							Description: "Whether or not the targeting rules are enabled",
+						"targets": {
+							Description: "The targets of the rule",
 							Type:        schema.TypeList,
-							Required:    true,
+							Optional:    true,
+							MinItems:    0,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
+			},
+			"add_target_group_rules": {
+				Description: "The targeting rules for the flag",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"group_name": {
+							Description: "The name of the target group",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"variation": {
+							Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"distribution": {
+							Description: "The distribution of the rule",
+							Type:        schema.TypeList,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"uuid": {
-										Description: "The identifier of the parameter",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"ruleID": {
-										Description: "The identifier of the rule",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"priority": {
-										Description: "The priority of the rule",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"variation": {
-										Description: "The identifier of the variation",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"targets": {
-										Description: "The targets of the rule",
-										Type:        schema.TypeList,
-										Optional:    true,
-										MinItems:    0,
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
-										},
-									},
-									"clauses": {
-										Description: "The list of rules used to include targets in the target group.",
-										Type:        schema.TypeList,
-										Optional:    true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"attribute": {
-													Description: "The attribute to use in the clause.  This can be any target attribute",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"negate": {
-													Description: "Is the operation negated?",
-													Type:        schema.TypeBool,
-													Optional:    true,
-												},
-												"op": {
-													Description: "The type of operation such as equals, starts_with, contains",
-													Type:        schema.TypeString,
-													Optional:    true,
-												},
-												"values": {
-													Description: "The values that are compared against the operator",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Schema{
-														Type: schema.TypeString,
-													},
-												},
-											},
-										},
-									},
-									"serve": {
-										Description: "Whether or not the rule is enabled",
+									"variations": {
+										Description: "The variations of the rule",
 										Type:        schema.TypeList,
 										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"variation": {
-													Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
+													Description: "The identifier of the variation",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
-												"distribution": {
-													Description: "The distribution of the rule",
-													Type:        schema.TypeList,
+												"weight": {
+													Description: "The weight of the variation",
+													Type:        schema.TypeInt,
 													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"bucketBy": {
-																Description: "The bucketing strategy of the rule",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"variations": {
-																Description: "The variations of the rule",
-																Type:        schema.TypeList,
-																Optional:    true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-																		"variation": {
-																			Description: "The identifier of the variation",
-																			Type:        schema.TypeString,
-																			Optional:    true,
-																		},
-																		"weight": {
-																			Description: "The weight of the variation",
-																			Type:        schema.TypeInt,
-																			Optional:    true,
-																		},
-																	},
-																},
-															},
-														},
-													},
 												},
 											},
 										},
@@ -282,16 +221,30 @@ var KindMap = map[string]string{
 	"addTargets":    "addTargetsToVariationTargetMap",
 }
 
-// Variation ...
+// TargetRules is the target rules for the feature flag
+type TargetRules struct {
+	Kind      string   `json:"kind,omitempty"`
+	Variation string   `json:"variation,omitempty"`
+	Targets   []string `json:"targets,omitempty"`
+}
+
+// Variation is the variation for the feature flag
 type Variation struct {
 	Variation string `json:"variation,omitempty"`
 	Weight    int    `json:"weight,omitempty"`
 }
 
-// Distribution ...
+// Distribution is the distribution for the feature flag
 type Distribution struct {
-	BucketBy   string      `json:"bucketBy,omitempty"`
 	Variations []Variation `json:"variations,omitempty"`
+}
+
+// TargetGroupRules is the target group rules for the feature flag
+type TargetGroupRules struct {
+	Kind         string         `json:"kind,omitempty"`
+	GroupName    string         `json:"groupName,omitempty"`
+	Variation    string         `json:"variation,omitempty"`
+	Distribution []Distribution `json:"distribution,omitempty"`
 }
 
 // Serve ...
@@ -345,7 +298,7 @@ type FFPatchOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        Instructions        `json:"instructions"`
+	Instructions        []Instructions      `json:"instructions"`
 }
 
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -560,50 +513,75 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 	opts.Variations = variations
 
-	// TODO: Add instructions
-	var instructions []Instructions
-	instructionsData := d.Get("instructions").([]interface{})
-	for _, instructionData := range instructionsData {
-		vMap := instructionData.(map[string]interface{})
-		parameters := vMap["parameters"].([]interface{})[0].(map[string]interface{})
-		clauses := parameters["clauses"].([]interface{})
-		serve := parameters["serve"].([]interface{})
-
-		// get all the variations
-		var variations []Variation
-		for _, variation := range serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["variations"].([]interface{}) {
-			current := Variation{
-				Variation: variation.(map[string]interface{})["variation"].(string),
-				Weight:    variation.(map[string]interface{})["weight"].(int),
+	var targetRules []TargetRules
+	if targetRulesData, ok := d.GetOk("addTargetRules"); ok {
+		for _, targetRuleData := range targetRulesData.([]interface{}) {
+			vMap := targetRuleData.(map[string]interface{})
+			targetRule := TargetRules{
+				Kind:      "addTargetsToVariationTargetMap",
+				Variation: vMap["variation"].(string),
+				Targets:   vMap["targets"].([]string),
 			}
-			variations = append(variations, current)
+			targetRules = append(targetRules, targetRule)
 		}
+	}
 
-		// build the Instruction
+	var targetGroupRules []TargetGroupRules
+	if targetGroupRulesData, ok := d.GetOk("addTargetGroupRules"); ok {
+		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
+			vMap := targetGroupRuleData.(map[string]interface{})
+			targetGroupRule := TargetGroupRules{
+				Kind:      "addRule",
+				GroupName: vMap["group_name"].(string),
+				Variation: vMap["variation"].(string),
+			}
+			var distributions []Distribution
+			for _, distributionData := range vMap["distribution"].([]interface{}) {
+				vMap := distributionData.(map[string]interface{})
+				distribution := Distribution{}
+				var variations []Variation
+				for _, variationData := range vMap["variations"].([]interface{}) {
+					vMap := variationData.(map[string]interface{})
+					variation := Variation{
+						Variation: vMap["variation"].(string),
+						Weight:    vMap["weight"].(int),
+					}
+					variations = append(variations, variation)
+				}
+				distribution.Variations = variations
+				distributions = append(distributions, distribution)
+			}
+			targetGroupRule.Distribution = distributions
+			targetGroupRules = append(targetGroupRules, targetGroupRule)
+		}
+	}
+
+	var instructions []Instructions
+	for _, target := range targetRules {
 		instruction := Instructions{
-			Kind: vMap["kind"].(string),
+			Kind: target.Kind,
 			Parameters: []Parameter{
 				{
-					Variation: parameters["variation"].(string),
-					Targets:   parameters["targets"].([]string),
-					Priority:  parameters["priority"].(string),
-					Clauses: []nextgen.Clause{
-						{
-							Attribute: clauses[0].(map[string]interface{})["attribute"].(string),
-							Negate:    clauses[0].(map[string]interface{})["negate"].(bool),
-							Op:        clauses[0].(map[string]interface{})["op"].(string),
-							Values:    clauses[0].(map[string]interface{})["values"].([]string),
-						},
-					},
+					RuleID:    target.Variation,
+					Variation: target.Variation,
+					Targets:   target.Targets,
+				},
+			},
+		}
+		instructions = append(instructions, instruction)
+	}
+
+	for _, targetGroup := range targetGroupRules {
+		instruction := Instructions{
+			Kind: targetGroup.Kind,
+			Parameters: []Parameter{
+				{
+					RuleID:    targetGroup.GroupName,
+					Variation: targetGroup.Variation,
 					Serve: []Serve{
 						{
-							Variation: serve[0].(map[string]interface{})["variation"].(string),
-							Distribution: []Distribution{
-								{
-									BucketBy:   serve[0].(map[string]interface{})["distribution"].([]interface{})[0].(map[string]interface{})["bucketBy"].(string),
-									Variations: variations,
-								},
-							},
+							Variation:    targetGroup.Variation,
+							Distribution: targetGroup.Distribution,
 						},
 					},
 				},
@@ -612,12 +590,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 		instructions = append(instructions, instruction)
 	}
 
-	opts.Instructions = instructions[0]
-
-	// fix kind mapping, since use does need to know the mapping
-	if kind, ok := KindMap[opts.Instructions.Kind]; ok {
-		opts.Instructions.Kind = kind
-	}
+	opts.Instructions = instructions
 
 	return &nextgen.FeatureFlagsApiPatchFeatureOpts{
 		Body:                  optional.NewInterface(opts),
