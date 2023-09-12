@@ -1108,6 +1108,7 @@ resource "harness_platform_template" "test" {
 resource "harness_platform_template" "test" {
   identifier      = "orgtemplate"
   name            = "orgtemplate"
+  org_id          = "org"
   version         = "v2"
   is_stable       = false
   import_from_git = true
@@ -1128,6 +1129,8 @@ resource "harness_platform_template" "test" {
 resource "harness_platform_template" "test" {
   identifier      = "projecttemplate"
   name            = "projecttemplate"
+  org_id          = "org"
+  project_id      = "project"
   version         = "v2"
   is_stable       = false
   import_from_git = true
