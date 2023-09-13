@@ -1,6 +1,6 @@
 
-<a name="0.3.49"></a>
-## 0.3.49 (2023-09-08)
+<a name="0.3.50"></a>
+## 0.3.50 (2023-09-13)
 
 ### Added
 
@@ -17,7 +17,6 @@
 ### Delete
 
 * Delete GithubAppSpec.md
-* Delete model_github_api_access_spec.go
 
 ### IAM
 
@@ -33,6 +32,8 @@
 
 ### Release
 
+* Release version 0.3.49 09-08-2023
+* Release v0.3.49
 * Release version 0.3.48 09-05-2023
 * Release v0.3.48
 * Release version 0.3.47 08-29-2023
@@ -86,9 +87,6 @@
 * Release version 0.3.23 04-19-2023
 * Release v0.3.23
 * Release version 0.3.22 04-18-2023
-* Release v0.3.22
-* Release version 0.3.15 04-18-2023
-* Release v0.3.15
 
 ### Remove
 
@@ -116,7 +114,6 @@
 * Update RepositoriesApi.md
 * Update the load balancer model
 * Update ClustersClusterConfig.md
-* Update model_github_app_spec.go
 
 ### Updating
 
@@ -133,6 +130,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#406](https://github.com/harness/harness-go-sdk/issues/406) from harness/SRM-15418
 * Merge pull request [#404](https://github.com/harness/harness-go-sdk/issues/404) from harness/OIP-880
 * Merge pull request [#400](https://github.com/harness/harness-go-sdk/issues/400) from harness/SRM-15032-1
 * Merge pull request [#394](https://github.com/harness/harness-go-sdk/issues/394) from harness/CDS-76702
@@ -172,5 +170,4 @@
 * Merge pull request [#313](https://github.com/harness/harness-go-sdk/issues/313) from harness/CDS-56975
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
-* Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 
