@@ -317,7 +317,7 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 		if d.Get("import_from_git").(bool) {
 
-			template_id = d.Get("template_import_request.0.template_name").(string)
+			template_id = d.Get("identifier").(string)
 
 			template_import_request_body := createImportFromGitRequestForTemplates(d)
 

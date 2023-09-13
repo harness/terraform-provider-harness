@@ -246,7 +246,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
-			inputSet_id = d.Get("input_set_import_request.0.input_set_name").(string)
+			inputSet_id = d.Get("identifier").(string)
 
 			input_set_import_request_body := createImportFromGitRequest(d)
 
