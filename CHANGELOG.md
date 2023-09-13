@@ -1,3 +1,9 @@
+# 0.27.1 (September 13,2023) 
+
+ENHANCEMENTS:
+
+* harness_platform_feature_flag - Add support to add targets with feature flags ([#684](https://github.com/harness/terraform-provider-harness/issues/684))
+
 # 0.27.0 (September 13,2023) 
 
 ENHANCEMENTS:
