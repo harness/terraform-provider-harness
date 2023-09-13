@@ -14,8 +14,8 @@ Resource for creating a Harness Feature Flag Target Group.
 
 ```terraform
 resource "harness_platform_feature_flag_target_group" "target" {
-  org_id  = "test"
-  project = "test"
+  org_id     = "test"
+  project    = "test"
 
   identifier  = "MY_FEATURE"
   environment = "MY_ENVIRONMENT"
@@ -23,13 +23,13 @@ resource "harness_platform_feature_flag_target_group" "target" {
   account_id  = "MY_ACCOUNT_ID"
   included    = ["target_id_1"]
   excluded    = ["target_id_2"]
-  rules = [
-    {
-      attribute = "MY_ATTRIBUTE"
-      operator  = "EQUALS"
-      value     = "MY_VALUE"
-    }
-  ]
+  rules       = [
+                  {
+                    attribute = "MY_ATTRIBUTE"
+                    operator  = "EQUALS"
+                    value     = "MY_VALUE"
+                  }
+                ]
 }
 ```
 
