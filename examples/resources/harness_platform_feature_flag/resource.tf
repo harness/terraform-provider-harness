@@ -97,8 +97,8 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   }
 
   add_target_rules {
-    variation = "enabled"
-    targets = ["targets1", "targets2"]
+    variation = "Enabled"
+    targets = ["target1", "targets2"]
   }
 }
 
@@ -138,7 +138,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
   add_target_groups_rules {
     group_name = "group_name"
-    variation = "enabled"
+    variation = "Enabled"
     distribution = {
       variations = [
         {
