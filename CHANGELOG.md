@@ -1,3 +1,25 @@
+# 0.27.0 (September 13,2023) 
+
+ENHANCEMENTS:
+
+* harness_platform_template - Added support to import Template entity from git.
+harness_platform_input_set - Added support to import InputSet entity from git. ([#682](https://github.com/harness/terraform-provider-harness/issues/682))
+* harness_platform_template - Added support to update stable version of a template via terraform ([#675](https://github.com/harness/terraform-provider-harness/issues/675))
+* platform_connector_customhealthsource.md Added documentation for custom health connector
+resource.tf Example of loki health source with custom health source connector added
+provider.go : Added new data source harness_platform_connector_customhealthsource
+custom_health_data_source.go Schema and CRUD of custom health source connector
+custom_health_data_source_test.go Test for Schema and CRUD of custom health source connector
+customhealthsource.go Schema and CRUD of custom health source connector
+customhealthsource_test.go Test for Schema and CRUD of custom health source connector ([#677](https://github.com/harness/terraform-provider-harness/issues/677))
+* resource/harness_platform_service_overrides_v2: Added Support For Service Overrides V2 ([#673](https://github.com/harness/terraform-provider-harness/issues/673))
+
+BUG FIXES:
+
+* - Removed type support from the service dependencies since we only support inside the dependencyMetadata. ([#672](https://github.com/harness/terraform-provider-harness/issues/672))
+* Fixed aws-cc to allow non-billing connector type ([#679](https://github.com/harness/terraform-provider-harness/issues/679))
+* harness_platform_file_store_file -  Make file content optional, if the file content is provided use it directly else get the content from file path. ([#681](https://github.com/harness/terraform-provider-harness/issues/681))
+
 # 0.26.0 (September 01,2023) 
 
 FEATURES:
