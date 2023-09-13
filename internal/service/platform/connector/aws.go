@@ -395,6 +395,14 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 	default:
 		return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.Credential.Type_)
 	}
+	if connector.Aws.Credential.CrossAccountAccess != nil {
+		d.Set("cross_account_access", []map[string]interface{}{
+			{
+				"role_arn":    connector.Aws.Credential.CrossAccountAccess.CrossAccountRoleArn,
+				"external_id": connector.Aws.Credential.CrossAccountAccess.ExternalId,
+			},
+		})
+	}
 	if connector.Aws.AwsSdkClientBackOffStrategyOverride != nil {
 		switch connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ {
 		case nextgen.AwsSdkClientBackOffStrategyTypes.EqualJitterBackoffStrategy:
