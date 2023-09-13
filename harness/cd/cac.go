@@ -340,8 +340,6 @@ func (c *ConfigAsCodeClient) UpsertObject(input interface{}, filePath cac.YamlPa
 		return err
 	}(err, input, filePath, responseObj)
 
-	panic("test")
-
 	if input == nil {
 		return errors.New("object to upsert is nil")
 	}
