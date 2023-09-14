@@ -12,23 +12,23 @@ import (
 
 func DataSourceSrmNotification() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a monitored service.",
+		Description: "Data source for retrieving an SRM Notification.",
 
-		ReadContext: dataSourceMonitoredServiceRead,
+		ReadContext: dataSourceSrmNotification,
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Identifier of the organization in which the monitored service is configured.",
+				Description: "Identifier of the organization in which the srm notification is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Identifier of the project in which the monitored service is configured.",
+				Description: "Identifier of the project in which the srm notification is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the monitored service.",
+				Description: "Identifier of the srm notification.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -38,7 +38,7 @@ func DataSourceSrmNotification() *schema.Resource {
 	return resource
 }
 
-func dataSourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceSrmNotification(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
@@ -50,12 +50,12 @@ func dataSourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	resp, httpResp, err := c.MonitoredServiceApi.GetMonitoredService(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
+	resp, httpResp, err := c.SrmNotificationApiService.GetSrmNotification(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readMonitoredService(d, &resp.Data)
+	readSrmNotification(d, &resp.NotificationRule)
 	return nil
 }
