@@ -15,7 +15,7 @@ Resource for creating a Harness Feature Flag Target Group.
 ```terraform
 resource "harness_platform_feature_flag_target_group" "target" {
   org_id     = "test"
-  project    = "test"
+  project_id = "test"
 
   identifier  = "MY_FEATURE"
   environment = "MY_ENVIRONMENT"
@@ -43,7 +43,7 @@ resource "harness_platform_feature_flag_target_group" "target" {
 - `identifier` (String) The unique identifier of the feature flag target group.
 - `name` (String) The name of the feature flag target group.
 - `org_id` (String) Organization Identifier
-- `project` (String) Project Identifier
+- `project_id` (String) Project Identifier
 
 ### Optional
 
