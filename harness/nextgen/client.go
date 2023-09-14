@@ -184,6 +184,8 @@ type APIClient struct {
 
 	SloApi *SloApiService
 
+	SrmNotificationApiService *SrmNotificationApiService
+
 	SourceCodeManagerApi *SourceCodeManagerApiService
 
 	TargetGroupsApi *TargetGroupsApiService
