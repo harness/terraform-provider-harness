@@ -1,3 +1,9 @@
+# 0.27.2 (September 14,2023) 
+
+BUG FIXES:
+
+* harness_platform_connector_aws -  Set value for cross_account_access if not nil. ([#687](https://github.com/harness/terraform-provider-harness/issues/687))
+
 # 0.27.1 (September 13,2023) 
 
 ENHANCEMENTS:
