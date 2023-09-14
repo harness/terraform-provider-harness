@@ -146,7 +146,7 @@ func ResourceConnectorServiceNow() *schema.Resource {
 							},
 						},
 						"refresh_token": {
-							Description:   "Authenticate using refresh token grant type. Currently, this feature is behind the feature flag CDS_SERVICENOW_REFRESH_TOKEN_AUTH. Contact Harness Support to enable the feature.",
+							Description:   "Authenticate using refresh token grant type.",
 							Type:          schema.TypeList,
 							MaxItems:      1,
 							Optional:      true,
