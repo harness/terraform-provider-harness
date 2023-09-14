@@ -10,11 +10,13 @@
 package nextgen
 
 type MetricThreshold struct {
-	GroupName string `json:"groupName,omitempty"`
-	MetricName string `json:"metricName,omitempty"`
-	MetricIdentifier string `json:"metricIdentifier,omitempty"`
-	MetricType string `json:"metricType,omitempty"`
-	Spec *MetricThresholdSpec `json:"spec"`
-	Criteria *MetricThresholdCriteria `json:"criteria,omitempty"`
-	Type_ string `json:"type,omitempty"`
+	GroupName        string                   `json:"groupName,omitempty"`
+	MetricName       string                   `json:"metricName,omitempty"`
+	MetricIdentifier string                   `json:"identifier,omitempty"`
+	MetricType       string                   `json:"metricType,omitempty"`
+	Criteria         *MetricThresholdCriteria `json:"criteria,omitempty"`
+
+	Type_           string                     `json:"type,omitempty"`
+	FailImmediately *FailMetricThresholdSpec   `json:"-"`
+	IgnoreThreshold *IgnoreMetricThresholdSpec `json:"-"`
 }
