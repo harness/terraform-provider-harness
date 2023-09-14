@@ -193,8 +193,7 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 
 	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		body, _ := io.ReadAll(httpResp.Body)
-		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -303,14 +302,18 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 		opts.Excluded = targets
 	}
 
-	if rules, ok := d.GetOk("rules"); ok {
+	if rules, ok := d.GetOk("rule"); ok {
 		var rulesList []nextgen.Clause
 		for _, rule := range rules.([]interface{}) {
+			var values []string
+			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
+				values = append(values, value.(string))
+			}
 			rule := nextgen.Clause{
 				Attribute: rule.(map[string]interface{})["attribute"].(string),
 				Negate:    rule.(map[string]interface{})["negate"].(bool),
 				Op:        rule.(map[string]interface{})["op"].(string),
-				Values:    rule.(map[string]interface{})["values"].([]string),
+				Values:    values,
 			}
 			rules = append(rulesList, rule)
 		}
@@ -343,14 +346,18 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 		opts.Excluded = targets
 	}
 
-	if rules, ok := d.GetOk("rules"); ok {
+	if rules, ok := d.GetOk("rule"); ok {
 		var rulesList []nextgen.Clause
 		for _, rule := range rules.([]interface{}) {
+			var values []string
+			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
+				values = append(values, value.(string))
+			}
 			rule := nextgen.Clause{
 				Attribute: rule.(map[string]interface{})["attribute"].(string),
 				Negate:    rule.(map[string]interface{})["negate"].(bool),
 				Op:        rule.(map[string]interface{})["op"].(string),
-				Values:    rule.(map[string]interface{})["values"].([]string),
+				Values:    values,
 			}
 			rules = append(rulesList, rule)
 		}

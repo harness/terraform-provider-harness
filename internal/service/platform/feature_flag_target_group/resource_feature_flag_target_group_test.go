@@ -122,6 +122,20 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
       EOT
   	}
 
+		resource "harness_platform_feature_flag_target" "target" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+		
+			identifier  = "%[1]s"
+			name        = "%[2]s"
+		
+			attributes = {
+				foo : "bar"
+			}
+		}
+
 		resource "harness_platform_feature_flag_target_group" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
@@ -131,7 +145,11 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
 			name = "%[2]s"
 			included = []
 			excluded = []
-			rules    = []
+			rule {
+				attribute = "identifier"
+				op        = "EQUALS"
+				values    = [harness_platform_feature_flag_target.target.id]
+			}
 		}
 `, id, name, updatedName, environmentId, environment)
 }
