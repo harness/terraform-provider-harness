@@ -130,8 +130,8 @@ type FFTargetGroupQueryParameters struct {
 type FFTargetGroupOpts struct {
 	Identifier string           `json:"identifier,omitempty"`
 	Name       string           `json:"name,omitempty"`
-	Included   []nextgen.Target `json:"included,omitempty"`
-	Excluded   []nextgen.Target `json:"excluded,omitempty"`
+	Included   []string         `json:"included,omitempty"`
+	Excluded   []string         `json:"excluded,omitempty"`
 	Rules      []nextgen.Clause `json:"rules,omitempty"`
 }
 
@@ -288,11 +288,19 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		opts.Included = included.([]string)
+		var targets []string
+		for _, target := range included.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Included = targets
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		opts.Excluded = excluded.([]string)
+		var targets []string
+		for _, target := range excluded.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Excluded = targets
 	}
 
 	if rules, ok := d.GetOk("rules"); ok {
@@ -310,11 +318,19 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		opts.Included = included.([]nextgen.Target)
+		var targets []string
+		for _, target := range included.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Included = targets
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		opts.Excluded = excluded.([]nextgen.Target)
+		var targets []string
+		for _, target := range excluded.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Excluded = targets
 	}
 
 	if rules, ok := d.GetOk("rules"); ok {
