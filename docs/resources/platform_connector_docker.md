@@ -60,6 +60,7 @@ resource "harness_platform_connector_docker" "test" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
+- `execute_on_delegate` (Boolean) Execute on delegate or not.
 
 ### Read-Only
 

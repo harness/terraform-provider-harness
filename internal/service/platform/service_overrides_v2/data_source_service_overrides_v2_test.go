@@ -156,6 +156,24 @@ func testAccDataSourceServiceOverrides(id string, name string) string {
                     org_id = harness_platform_service_overrides_v2.test.org_id
                     project_id = harness_platform_service_overrides_v2.test.project_id
 				}
+
+				resource "harness_platform_service_overrides_v2" "test2" {
+					org_id = data.harness_platform_service_overrides_v2.test.org_id
+					project_id = data.harness_platform_service_overrides_v2.test.project_id
+					env_id = data.harness_platform_service_overrides_v2.test.env_id
+		            type = "ENV_GLOBAL_OVERRIDE"
+                    yaml = <<-EOT
+              {
+                "variables": [
+                  {
+                    "name": "v2",
+                    "type": "String",
+                    "value": "val2"
+                  }
+                ]
+}
+              EOT
+                }
 		`, id, name)
 
 }

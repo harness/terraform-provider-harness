@@ -100,3 +100,26 @@ resource "harness_platform_pipeline" "example" {
                                   type: StageRollback
   EOT
 }
+
+### Importing Pipeline from Git
+resource "harness_platform_organization" "test" {
+  identifier = "identifier"
+  name       = "name"
+}
+resource "harness_platform_pipeline" "test" {
+  identifier      = "gitx"
+  org_id          = "default"
+  project_id      = "V"
+  name            = "gitx"
+  import_from_git = true
+  git_import_info {
+    branch_name   = "main"
+    file_path     = ".harness/gitx.yaml"
+    connector_ref = "account.DoNotDeleteGithub"
+    repo_name     = "open-repo"
+  }
+  pipeline_import_request {
+    pipeline_name        = "gitx"
+    pipeline_description = "Pipeline Description"
+  }
+}

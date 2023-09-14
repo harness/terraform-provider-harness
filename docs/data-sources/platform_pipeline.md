@@ -60,5 +60,3 @@ Read-Only:
 - `file_path` (String) File path of the Entity in the repository.
 - `repo_name` (String) Name of the repository.
 - `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.
-
-

@@ -82,6 +82,14 @@ func resourceServiceOverridesV2Read(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
+	// GET call for service environment override returns a 200 ok for empty list.
+	// Hence specifically marking the resource as new, instead of in L#91
+	if &resp == nil || resp.Data == nil {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	readServiceOverridesV2(d, resp.Data)
 
 	return nil

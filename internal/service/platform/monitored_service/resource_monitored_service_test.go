@@ -44,39 +44,7 @@ func TestAccResourceMonitoredService(t *testing.T) {
 	})
 }
 
-/*func TestAccResourceMonitoredService_DeleteUnderlyingResource(t *testing.T) {
-	name := t.Name()
-	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_monitored_service.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceMonitoredService(id, name),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-				),
-			},
-			{
-				PreConfig: func() {
-					acctest.TestAccConfigureProvider()
-					c, ctx := acctest.TestAccProvider.Meta().(*internal.Session).GetPlatformClient()
-					resp, _, err := c.MonitoredServiceApi.DeleteMonitoredService(ctx, c.AccountId, id, id, id)
-					require.NoError(t, err)
-					require.NotNil(t, resp)
-					require.Equal(t, resp.Resource, true)
-				},
-				Config:             testAccResourceMonitoredService(id, name),
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}*/
-
-func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredServiceDto, error) {
+func testAccGetMonitoredService(resourceName string, state *terraform.State) (*nextgen.MonitoredService, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
@@ -160,6 +128,38 @@ func testAccResourceMonitoredService(id string, name string) string {
 				enabled = true
 			}
 		}
+		resource "harness_platform_monitored_service" "test1" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "service_ref1_environment_ref"
+			request {
+				name = "service_ref1_environment_ref"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref1"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "DatadogLog"
+					spec = jsonencode({
+					connectorRef = "connectorRef"
+					feature = "feature"
+					queries = [
+						{
+							name   = "name"
+							query = "query"
+							indexes = ["index"]
+							serviceInstanceIdentifier = "serviceInstanceIdentifier"
+						}
+					]})
+				}
+				dependencies {
+					monitored_service_identifier = "%[1]s"
+				}
+			}
+		}
 `, id, name)
 }
 
@@ -238,6 +238,84 @@ func testMonitoredServiceWithoutChangeSource(id string, name string) string {
 				}
 
 				enabled = true
+			}
+		}
+`, id, name)
+}
+
+func TestMonitoredServiceWithoutEnabled(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testMonitoredServiceWithoutEnabled(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				Config: testMonitoredServiceWithoutEnabled(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testMonitoredServiceWithoutEnabled(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "DatadogLog"
+					spec = jsonencode({
+					connectorRef = "connectorRef"
+					feature = "feature"
+					queries = [
+						{
+							name   = "name"
+							query = "query"
+							indexes = ["index"]
+							serviceInstanceIdentifier = "serviceInstanceIdentifier"
+						}
+					]})
+				}
 			}
 		}
 `, id, name)

@@ -16,7 +16,44 @@ func DataSourceServiceOverrides() *schema.Resource {
 
 		ReadContext: dataSourceServiceOverridesRead,
 
-		Schema: map[string]*schema.Schema{},
+		Schema: map[string]*schema.Schema{
+			"service_id": {
+				Description: "The service ID to which the override entity is associated.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"env_id": {
+				Description: "The environment ID to which the override entity is associated.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"infra_id": {
+				Description: "The infrastructure ID to which the override entity is associated.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"cluster_id": {
+				Description: "The cluster ID to which the override entity is associated.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"type": {
+				Description: "The type of the override entity.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"yaml": {
+				Description: "The yaml of the override entity's spec property.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"identifier": {
+				Description: "The identifier of the override entity.",
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
+			},
+		},
 	}
 
 	SetScopeDataResourceSchemaForServiceOverride(resource.Schema)
@@ -53,5 +90,4 @@ func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData,
 func SetScopeDataResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
 	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional)
 	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional)
-	s["identifier"] = helpers.GetIdentifierSchema(helpers.SchemaFlagTypes.Required)
 }
