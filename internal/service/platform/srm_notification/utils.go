@@ -6,339 +6,124 @@ import (
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 )
 
-func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
-	healthSourceType := hs["type"].(string)
-	healthSource := hs["spec"].(string)
+func getNotificationRuleConditionByType(hs map[string]interface{}) nextgen.NotificationRuleCondition {
+	notificationRuleConditionType := hs["type"].(string)
+	notificationRuleConditionSpec := hs["spec"].(string)
 
-	if healthSourceType == "AppDynamics" {
-		data := nextgen.AppDynamicsHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "ErrorBudgetRemainingPercentage" {
+		data := nextgen.ErrorBudgetRemainingPercentageConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:        hs["name"].(string),
-			Identifier:  hs["identifier"].(string),
-			Version:     hs["version"].(string),
-			Type_:       nextgen.HealthSourceType(healthSourceType),
-			AppDynamics: &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:                          nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			ErrorBudgetRemainingPercentage: &data,
 		}
 	}
-	if healthSourceType == "NewRelic" {
-		data := nextgen.NewRelicHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "ErrorBudgetRemainingMinutes" {
+		data := nextgen.ErrorBudgetRemainingMinutesConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:       hs["name"].(string),
-			Identifier: hs["identifier"].(string),
-			Version:    hs["version"].(string),
-			Type_:      nextgen.HealthSourceType(healthSourceType),
-			NewRelic:   &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:                       nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			ErrorBudgetRemainingMinutes: &data,
 		}
 	}
-	if healthSourceType == "StackdriverLog" {
-		data := nextgen.StackdriverLogHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "ErrorBudgetBurnRate" {
+		data := nextgen.ErrorBudgetBurnRateConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:           hs["name"].(string),
-			Identifier:     hs["identifier"].(string),
-			Version:        hs["version"].(string),
-			Type_:          nextgen.HealthSourceType(healthSourceType),
-			StackdriverLog: &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:               nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			ErrorBudgetBurnRate: &data,
 		}
 	}
-	if healthSourceType == "Splunk" {
-		data := nextgen.SplunkHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "ChangeImpact" {
+		data := nextgen.ChangeImpactConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:       hs["name"].(string),
-			Identifier: hs["identifier"].(string),
-			Version:    hs["version"].(string),
-			Type_:      nextgen.HealthSourceType(healthSourceType),
-			Splunk:     &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:        nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			ChangeImpact: &data,
 		}
 	}
-	if healthSourceType == "Prometheus" {
-		data := nextgen.PrometheusHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "HealthScore" {
+		data := nextgen.HealthScoreConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:       hs["name"].(string),
-			Identifier: hs["identifier"].(string),
-			Version:    hs["version"].(string),
-			Type_:      nextgen.HealthSourceType(healthSourceType),
-			Prometheus: &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:       nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			HealthScore: &data,
 		}
 	}
-	if healthSourceType == "Stackdriver" {
-		data := nextgen.StackdriverMetricHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "ChangeObserved" {
+		data := nextgen.ChangeObservedConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:        hs["name"].(string),
-			Identifier:  hs["identifier"].(string),
-			Version:     hs["version"].(string),
-			Type_:       nextgen.HealthSourceType(healthSourceType),
-			Stackdriver: &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:          nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			ChangeObserved: &data,
 		}
 	}
-	if healthSourceType == "DatadogMetrics" {
-		data := nextgen.DatadogMetricHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "CodeErrors" {
+		data := nextgen.ErrorTrackingConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:           hs["name"].(string),
-			Identifier:     hs["identifier"].(string),
-			Version:        hs["version"].(string),
-			Type_:          nextgen.HealthSourceType(healthSourceType),
-			DatadogMetrics: &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:      nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			CodeErrors: &data,
 		}
 	}
-	if healthSourceType == "DatadogLog" {
-		data := nextgen.DatadogLogHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+	if notificationRuleConditionType == "DeploymentImpactReport" {
+		data := nextgen.DeploymentImpactReportConditionSpec{}
+		json.Unmarshal([]byte(notificationRuleConditionSpec), &data)
 
-		return nextgen.HealthSource{
-			Name:       hs["name"].(string),
-			Identifier: hs["identifier"].(string),
-			Version:    hs["version"].(string),
-			Type_:      nextgen.HealthSourceType(healthSourceType),
-			DatadogLog: &data,
+		return nextgen.NotificationRuleCondition{
+			Type_:                  nextgen.NotificationRuleConditionType(notificationRuleConditionType),
+			DeploymentImpactReport: &data,
 		}
 	}
-	if healthSourceType == "Dynatrace" {
-		data := nextgen.DynatraceHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:       hs["name"].(string),
-			Identifier: hs["identifier"].(string),
-			Version:    hs["version"].(string),
-			Type_:      nextgen.HealthSourceType(healthSourceType),
-			Dynatrace:  &data,
-		}
-	}
-	if healthSourceType == "ErrorTracking" {
-		data := nextgen.ErrorTrackingHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:          hs["name"].(string),
-			Identifier:    hs["identifier"].(string),
-			Version:       hs["version"].(string),
-			Type_:         nextgen.HealthSourceType(healthSourceType),
-			ErrorTracking: &data,
-		}
-	}
-	if healthSourceType == "CustomHealthMetric" {
-		data := nextgen.CustomHealthSourceMetric{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:               hs["name"].(string),
-			Identifier:         hs["identifier"].(string),
-			Version:            hs["version"].(string),
-			Type_:              nextgen.HealthSourceType(healthSourceType),
-			CustomHealthMetric: &data,
-		}
-	}
-	if healthSourceType == "CustomHealthLog" {
-		data := nextgen.CustomHealthSourceLog{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:            hs["name"].(string),
-			Identifier:      hs["identifier"].(string),
-			Version:         hs["version"].(string),
-			Type_:           nextgen.HealthSourceType(healthSourceType),
-			CustomHealthLog: &data,
-		}
-	}
-	if healthSourceType == "SplunkMetric" {
-		data := nextgen.SplunkMetricHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:         hs["name"].(string),
-			Identifier:   hs["identifier"].(string),
-			Version:      hs["version"].(string),
-			Type_:        nextgen.HealthSourceType(healthSourceType),
-			SplunkMetric: &data,
-		}
-	}
-	if healthSourceType == "ElasticSearch" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:          hs["name"].(string),
-			Identifier:    hs["identifier"].(string),
-			Version:       hs["version"].(string),
-			Type_:         nextgen.HealthSourceType(healthSourceType),
-			ElasticSearch: &data,
-		}
-	}
-	if healthSourceType == "CloudWatchMetrics" {
-		data := nextgen.CloudWatchMetricsHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:              hs["name"].(string),
-			Identifier:        hs["identifier"].(string),
-			Version:           hs["version"].(string),
-			Type_:             nextgen.HealthSourceType(healthSourceType),
-			CloudWatchMetrics: &data,
-		}
-	}
-	if healthSourceType == "AwsPrometheus" {
-		data := nextgen.AwsPrometheusHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:          hs["name"].(string),
-			Identifier:    hs["identifier"].(string),
-			Version:       hs["version"].(string),
-			Type_:         nextgen.HealthSourceType(healthSourceType),
-			AwsPrometheus: &data,
-		}
-	}
-	if healthSourceType == "SumologicMetrics" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:             hs["name"].(string),
-			Identifier:       hs["identifier"].(string),
-			Version:          hs["version"].(string),
-			Type_:            nextgen.HealthSourceType(healthSourceType),
-			SumologicMetrics: &data,
-		}
-	}
-	if healthSourceType == "SumologicLogs" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:          hs["name"].(string),
-			Identifier:    hs["identifier"].(string),
-			Version:       hs["version"].(string),
-			Type_:         nextgen.HealthSourceType(healthSourceType),
-			SumologicLogs: &data,
-		}
-	}
-	if healthSourceType == "SplunkSignalFXMetrics" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:                  hs["name"].(string),
-			Identifier:            hs["identifier"].(string),
-			Version:               hs["version"].(string),
-			Type_:                 nextgen.HealthSourceType(healthSourceType),
-			SplunkSignalFXMetrics: &data,
-		}
-	}
-	if healthSourceType == "GrafanaLokiLogs" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:            hs["name"].(string),
-			Identifier:      hs["identifier"].(string),
-			Version:         hs["version"].(string),
-			Type_:           nextgen.HealthSourceType(healthSourceType),
-			GrafanaLokiLogs: &data,
-		}
-	}
-	if healthSourceType == "AzureLogs" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:       hs["name"].(string),
-			Identifier: hs["identifier"].(string),
-			Version:    hs["version"].(string),
-			Type_:      nextgen.HealthSourceType(healthSourceType),
-			AzureLogs:  &data,
-		}
-	}
-	if healthSourceType == "AzureMetrics" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
-
-		return nextgen.HealthSource{
-			Name:         hs["name"].(string),
-			Identifier:   hs["identifier"].(string),
-			Version:      hs["version"].(string),
-			Type_:        nextgen.HealthSourceType(healthSourceType),
-			AzureMetrics: &data,
-		}
-	}
-	panic(fmt.Sprintf("Invalid health source type for monitored service"))
+	panic(fmt.Sprintf("Invalid notification rule conditions for srm notification"))
 }
 
-func getChangeSourceByType(cs map[string]interface{}) nextgen.ChangeSourceDto {
-	changeSourceType := cs["type"].(string)
-	changeSourceSpec := cs["spec"].(string)
+func getNotificationChannelByType(hs map[string]interface{}) nextgen.CvngNotificationChannel {
+	notificationChannelType := hs["type"].(string)
+	notificationChannelSpec := hs["spec"].(string)
 
-	if changeSourceType == "HarnessCDNextGen" {
-		data := nextgen.HarnessCdChangeSourceSpec{}
-		json.Unmarshal([]byte(changeSourceSpec), &data)
+	if notificationChannelType == "Email" {
+		data := nextgen.CvngEmailChannelSpec{}
+		json.Unmarshal([]byte(notificationChannelSpec), &data)
 
-		return nextgen.ChangeSourceDto{
-			Name:             cs["name"].(string),
-			Identifier:       cs["identifier"].(string),
-			Type_:            nextgen.ChangeSourceType(changeSourceType),
-			HarnessCDNextGen: &data,
-			Enabled:          cs["enabled"].(bool),
-			Category:         cs["category"].(string),
+		return nextgen.CvngNotificationChannel{
+			Type_: nextgen.CVNGNotificationChannelType(notificationChannelType),
+			Email: &data,
 		}
 	}
-	if changeSourceType == "PagerDuty" {
-		data := nextgen.PagerDutyChangeSourceSpec{}
-		json.Unmarshal([]byte(changeSourceSpec), &data)
+	if notificationChannelType == "Slack" {
+		data := nextgen.CvngSlackChannelSpec{}
+		json.Unmarshal([]byte(notificationChannelSpec), &data)
 
-		return nextgen.ChangeSourceDto{
-			Name:       cs["name"].(string),
-			Identifier: cs["identifier"].(string),
-			Type_:      nextgen.ChangeSourceType(changeSourceType),
-			PagerDuty:  &data,
-			Enabled:    cs["enabled"].(bool),
-			Category:   cs["category"].(string),
+		return nextgen.CvngNotificationChannel{
+			Type_: nextgen.CVNGNotificationChannelType(notificationChannelType),
+			Slack: &data,
 		}
 	}
-	if changeSourceType == "K8sCluster" {
-		data := nextgen.KubernetesChangeSourceSpec{}
-		json.Unmarshal([]byte(changeSourceSpec), &data)
+	if notificationChannelType == "PagerDuty" {
+		data := nextgen.CvngPagerDutyChannelSpec{}
+		json.Unmarshal([]byte(notificationChannelSpec), &data)
 
-		return nextgen.ChangeSourceDto{
-			Name:       cs["name"].(string),
-			Identifier: cs["identifier"].(string),
-			Type_:      nextgen.ChangeSourceType(changeSourceType),
-			K8sCluster: &data,
-			Enabled:    cs["enabled"].(bool),
-			Category:   cs["category"].(string),
+		return nextgen.CvngNotificationChannel{
+			Type_:     nextgen.CVNGNotificationChannelType(notificationChannelType),
+			PagerDuty: &data,
 		}
 	}
-	if changeSourceType == "HarnessCD" {
-		data := nextgen.HarnessCdCurrentGenChangeSourceSpec{}
-		json.Unmarshal([]byte(changeSourceSpec), &data)
+	if notificationChannelType == "MsTeams" {
+		data := nextgen.CvngMsTeamsChannelSpec{}
+		json.Unmarshal([]byte(notificationChannelSpec), &data)
 
-		return nextgen.ChangeSourceDto{
-			Name:       cs["name"].(string),
-			Identifier: cs["identifier"].(string),
-			Type_:      nextgen.ChangeSourceType(changeSourceType),
-			HarnessCD:  &data,
-			Enabled:    cs["enabled"].(bool),
-			Category:   cs["category"].(string),
+		return nextgen.CvngNotificationChannel{
+			Type_:   nextgen.CVNGNotificationChannelType(notificationChannelType),
+			MsTeams: &data,
 		}
 	}
-
-	panic(fmt.Sprintf("Invalid change source type for monitored service"))
-}
-
-func getServiceDependencyByType(sd map[string]interface{}) nextgen.ServiceDependencyDto {
-	return nextgen.ServiceDependencyDto{
-		MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
-	}
+	panic(fmt.Sprintf("Invalid notification channel for srm notification"))
 }

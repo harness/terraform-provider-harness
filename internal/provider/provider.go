@@ -71,6 +71,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
 	pl_service_overrides_v2 "github.com/harness/terraform-provider-harness/internal/service/platform/service_overrides_v2"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/srm_notification"
 	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/template_filters"
 	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
@@ -217,6 +218,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_secret_manager":                           secrets.DataSourceSecretManager(),
 				"harness_service":                                  service.DataSourceService(),
 				"harness_platform_slo":                             slo.DataSourceSloService(),
+				"harness_platform_srm_notification":                srm_notification.DataSourceSrmNotification(),
 				"harness_ssh_credential":                           secrets.DataSourceSshCredential(),
 				"harness_sso_provider":                             sso.DataSourceSSOProvider(),
 				"harness_user_group":                               user.DataSourceUserGroup(),
@@ -344,6 +346,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service_tanzu":                            service.ResourcePCFService(),
 				"harness_service_winrm":                            service.ResourceWinRMService(),
 				"harness_platform_slo":                             slo.ResourceSloService(),
+				"harness_platform_srm_notification":                srm_notification.ResourceSrmNotification(),
 				"harness_ssh_credential":                           secrets.ResourceSSHCredential(),
 				"harness_user_group":                               user.ResourceUserGroup(),
 				"harness_user_group_permissions":                   user.ResourceUserGroupPermissions(),

@@ -9,37 +9,36 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strings"
 )
 
-func ResourceMonitoredService() *schema.Resource {
+func ResourceSrmNotification() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a monitored service.",
+		Description: "Resource for creating a srm notificatione.",
 
-		CreateContext: resourceMonitoredServiceCreate,
-		ReadContext:   resourceMonitoredServiceRead,
-		UpdateContext: resourceMonitoredServiceUpdate,
-		DeleteContext: resourceMonitoredServiceDelete,
+		CreateContext: resourceSrmNotificationCreate,
+		ReadContext:   resourceSrmNotificationRead,
+		UpdateContext: resourceSrmNotificationUpdate,
+		DeleteContext: resourceSrmNotificationDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"org_id": {
-				Description: "Identifier of the organization in which the monitored service is configured.",
+				Description: "Identifier of the organization in which the Srm Notification is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"project_id": {
-				Description: "Identifier of the project in which the monitored service is configured.",
+				Description: "Identifier of the project in which the Srm Notification is configured.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the monitored service.",
+				Description: "Identifier of the Srm Notification",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"request": {
-				Description: "Request for creating or updating a monitored service.",
+				Description: "Request for creating or updating a Srm Notification.",
 				Type:        schema.TypeList,
 				MinItems:    1,
 				MaxItems:    1,
@@ -47,170 +46,54 @@ func ResourceMonitoredService() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Description: "Name for the monitored service.",
+							Description: "Name for the Srm Notification.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"type": {
-							Description: "Type of the monitored service.",
+							Description: "Type of the Srm Notification.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
-						"description": {
-							Description: "Description for the monitored service.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"service_ref": {
-							Description: "Service reference for the monitored service.",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-						"environment_ref": {
-							Description: "Environment in which the service is deployed.",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-						"environment_ref_list": {
-							Description: "Environment reference list for the monitored service.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem:        &schema.Schema{Type: schema.TypeString},
-						},
-						"tags": {
-							Description: "Tags for the monitored service. comma-separated key value string pairs.",
+						"conditions": {
+							Description: "Set of notification conditions for SRM Notifications.",
 							Type:        schema.TypeSet,
-							Optional:    true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-						"health_sources": {
-							Description: "Set of health sources for the monitored service.",
-							Type:        schema.TypeSet,
-							Optional:    true,
+							Required:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": {
-										Description: "Name of the health source.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"identifier": {
-										Description: "Identifier of the health source.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
 									"type": {
-										Description: "Type of the health source.",
+										Description: "Type of the notification condition.",
 										Type:        schema.TypeString,
 										Required:    true,
-									},
-									"version": {
-										Description: "Version of the health source.",
-										Type:        schema.TypeString,
-										Optional:    true,
 									},
 									"spec": {
-										Description: "Specification of the health source. Depends on the type of the health source.",
+										Description: "Specification of the condition. Depends on the type of the condition.",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
 								},
 							},
 						},
-						"change_sources": {
-							Description: "Set of change sources for the monitored service.",
+						"notificationMethod": {
+							Description: "Notification channel for the SRM Notification.",
 							Type:        schema.TypeSet,
-							Optional:    true,
+							MinItems:    1,
+							MaxItems:    1,
+							Required:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"name": {
-										Description: "Name of the change source.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"identifier": {
-										Description: "Identifier of the change source.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
 									"type": {
-										Description: "Type of the change source.",
+										Description: "Type of the Notification channel.",
 										Type:        schema.TypeString,
 										Required:    true,
-									},
-									"enabled": {
-										Description: "Enable or disable the change source.",
-										Type:        schema.TypeBool,
-										Optional:    true,
 									},
 									"spec": {
-										Description: "Specification of the change source. Depends on the type of the change source.",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"category": {
-										Description: "Category of the change source.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-								},
-							},
-						},
-						"dependencies": {
-							Description: "Dependencies of the monitored service.",
-							Type:        schema.TypeSet,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"monitored_service_identifier": {
-										Description: "Monitored service identifier of the dependency.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"dependency_metadata": {
-										Description: "Dependency metadata for the monitored service.",
+										Description: "Specification of the Notification Channel. Depends on the type of the Notification channel.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 								},
 							},
-						},
-						"notification_rule_refs": {
-							Description: "Notification rule references for the monitored service.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"notification_rule_ref": {
-										Description: "Notification rule reference for the monitored service.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"enabled": {
-										Description: "Enable or disable notification rule reference for the monitored service.",
-										Type:        schema.TypeBool,
-										Required:    true,
-									},
-								},
-							},
-						},
-						"template_ref": {
-							Description: "Template reference for the monitored service.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"version_label": {
-							Description: "Template version label for the monitored service.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"enabled": {
-							Description: "Enable or disable the monitored service.",
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Deprecated:  "enabled field is deprecated",
 						},
 					},
 				},
@@ -221,26 +104,26 @@ func ResourceMonitoredService() *schema.Resource {
 	return resource
 }
 
-func resourceMonitoredServiceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSrmNotificationCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier string
 	accountIdentifier = c.AccountId
-	createMonitoredServiceRequest := buildMonitoredServiceRequest(d)
-	respCreate, httpRespCreate, errCreate := c.MonitoredServiceApi.SaveMonitoredService(ctx, accountIdentifier,
-		&nextgen.MonitoredServiceApiSaveMonitoredServiceOpts{
-			Body: optional.NewInterface(createMonitoredServiceRequest),
+	createSrmNotificationRequest := buildSrmNotificationRequest(d)
+	respCreate, httpRespCreate, errCreate := c.SrmNotificationApiService.SaveSrmNotification(ctx, accountIdentifier,
+		&nextgen.SrmNotificationServiceSaveSrmNotificationOpts{
+			Body: optional.NewInterface(createSrmNotificationRequest),
 		})
 
 	if errCreate != nil {
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	readMonitoredService(d, &respCreate.Resource)
+	readSrmNotification(d, &respCreate.NotificationRule)
 	return nil
 }
 
-func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSrmNotificationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
@@ -252,7 +135,7 @@ func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, m
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	resp, httpResp, err := c.MonitoredServiceApi.GetMonitoredService(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
+	resp, httpResp, err := c.SrmNotificationApiService.GetSrmNotification(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
@@ -266,31 +149,31 @@ func resourceMonitoredServiceRead(ctx context.Context, d *schema.ResourceData, m
 		return nil
 	}
 
-	readMonitoredService(d, &resp.Data)
+	readSrmNotification(d, &resp.NotificationRule)
 	return nil
 }
 
-func resourceMonitoredServiceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSrmNotificationUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier string
 	accountIdentifier = c.AccountId
 	identifier := d.Get("identifier").(string)
-	updateMonitoredServiceRequest := buildMonitoredServiceRequest(d)
-	respCreate, httpRespCreate, errCreate := c.MonitoredServiceApi.UpdateMonitoredService(ctx, accountIdentifier, identifier,
-		&nextgen.MonitoredServiceApiUpdateMonitoredServiceOpts{
-			Body: optional.NewInterface(updateMonitoredServiceRequest),
+	updateSrmNotificationRequest := buildSrmNotificationRequest(d)
+	respCreate, httpRespCreate, errCreate := c.SrmNotificationApiService.UpdateSrmNotification(ctx, accountIdentifier, identifier,
+		&nextgen.SrmNotificationApiUpdateSrmNotificationOpts{
+			Body: optional.NewInterface(updateSrmNotificationRequest),
 		})
 
 	if errCreate != nil {
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	readMonitoredService(d, &respCreate.Resource)
+	readSrmNotification(d, &respCreate.NotificationRule)
 	return nil
 }
 
-func resourceMonitoredServiceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSrmNotificationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var accountIdentifier, orgIdentifier, projectIdentifier string
@@ -303,7 +186,7 @@ func resourceMonitoredServiceDelete(ctx context.Context, d *schema.ResourceData,
 		projectIdentifier = attr.(string)
 	}
 
-	_, httpResp, err := c.MonitoredServiceApi.DeleteMonitoredService(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier)
+	_, httpResp, err := c.SrmNotificationApiService.DeleteSrmNotification(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -311,103 +194,48 @@ func resourceMonitoredServiceDelete(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
-func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServiceDto {
-	monitoredService := &nextgen.MonitoredServiceDto{}
+func buildSrmNotificationRequest(d *schema.ResourceData) *nextgen.NotificationRule {
+	srmNotification := &nextgen.NotificationRule{}
 
 	if attr, ok := d.GetOk("org_id"); ok {
-		monitoredService.OrgIdentifier = attr.(string)
+		srmNotification.OrgIdentifier = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("project_id"); ok {
-		monitoredService.ProjectIdentifier = attr.(string)
+		srmNotification.ProjectIdentifier = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("identifier"); ok {
-		monitoredService.Identifier = attr.(string)
+		srmNotification.Identifier = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 
-		monitoredService.Name = request["name"].(string)
-		monitoredService.Type_ = request["type"].(string)
-		monitoredService.Description = request["description"].(string)
-		monitoredService.ServiceRef = request["service_ref"].(string)
-		monitoredService.EnvironmentRef = request["environment_ref"].(string)
+		srmNotification.Name = request["name"].(string)
+		srmNotification.Type_ = request["type"].(string)
 
-		environmentRefListReq := request["environment_ref_list"].([]interface{})
-		environmentRefList := make([]string, len(environmentRefListReq))
-		for i, environmentRef := range environmentRefListReq {
-			environmentRefList[i] = environmentRef.(string)
-		}
-		monitoredService.EnvironmentRefList = environmentRefList
-
-		tags := map[string]string{}
-		for _, t := range request["tags"].(*schema.Set).List() {
-			tagStr := t.(string)
-			parts := strings.Split(tagStr, ":")
-			tags[parts[0]] = parts[1]
-		}
-		monitoredService.Tags = tags
-
-		healthSources := request["health_sources"].(*schema.Set).List()
-		hss := make([]nextgen.HealthSource, len(healthSources))
-		for i, healthSource := range healthSources {
-			hs := healthSource.(map[string]interface{})
-			healthSourceDto := getHealthSourceByType(hs)
-			hss[i] = healthSourceDto
+		conditions := request["conditions"].(*schema.Set).List()
+		hss := make([]nextgen.NotificationRuleCondition, len(conditions))
+		for i, condition := range conditions {
+			hs := condition.(map[string]interface{})
+			notificationRuleConditionDto := getNotificationRuleConditionByType(hs)
+			hss[i] = notificationRuleConditionDto
 		}
 
-		changeSources := request["change_sources"].(*schema.Set).List()
-		csDto := make([]nextgen.ChangeSourceDto, len(changeSources))
-		for i, changeSource := range changeSources {
-			cs := changeSource.(map[string]interface{})
-			changeSourceDto := getChangeSourceByType(cs)
-			csDto[i] = changeSourceDto
-		}
-
-		monitoredService.Sources = &nextgen.Sources{
-			HealthSources: hss,
-			ChangeSources: csDto,
-		}
-
-		dependencies := request["dependencies"].(*schema.Set).List()
-		serviceDependencyDto := make([]nextgen.ServiceDependencyDto, len(dependencies))
-		for i, dependency := range dependencies {
-			sd := dependency.(map[string]interface{})
-			serviceDependency := getServiceDependencyByType(sd)
-			serviceDependencyDto[i] = serviceDependency
-		}
-		monitoredService.Dependencies = serviceDependencyDto
-
-		notificationRuleRefsReq := request["notification_rule_refs"].([]interface{})
-		notificationRuleRefs := make([]nextgen.NotificationRuleRefDto, len(notificationRuleRefsReq))
-		for i, notificationRuleRef := range notificationRuleRefsReq {
-			test := notificationRuleRef.(map[string]interface{})
-			notificationRuleRefDto := &nextgen.NotificationRuleRefDto{
-				NotificationRuleRef: test["notification_rule_ref"].(string),
-				Enabled:             test["enabled"].(bool),
-			}
-			notificationRuleRefs[i] = *notificationRuleRefDto
-		}
-		monitoredService.NotificationRuleRefs = notificationRuleRefs
-
-		monitoredService.Template = &nextgen.TemplateDto{
-			TemplateRef:  request["template_ref"].(string),
-			VersionLabel: request["version_label"].(string),
-		}
-
+		notificationMethod := getNotificationChannelByType(request["notificationMethod"].(map[string]interface{}))
+		srmNotification.NotificationMethod = &notificationMethod
 	}
 
-	return monitoredService
+	return srmNotification
 }
 
-func readMonitoredService(d *schema.ResourceData, monitoredServiceResponse **nextgen.MonitoredServiceResponse) {
-	monitoredService := &(*monitoredServiceResponse).MonitoredService
+func readSrmNotification(d *schema.ResourceData, srmNotificationResponse **nextgen.NotificationRule) {
+	notificationRule := &(*srmNotificationResponse)
 
-	d.SetId((*monitoredService).Identifier)
+	d.SetId((*notificationRule).Identifier)
 
-	d.Set("org_id", (*monitoredService).OrgIdentifier)
-	d.Set("project_id", (*monitoredService).ProjectIdentifier)
-	d.Set("identifier", (*monitoredService).Identifier)
+	d.Set("org_id", (*notificationRule).OrgIdentifier)
+	d.Set("project_id", (*notificationRule).ProjectIdentifier)
+	d.Set("identifier", (*notificationRule).Identifier)
 }
