@@ -79,7 +79,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"rules": {
+			"rule": {
 				Description: "The list of rules used to include targets in the target group.",
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -304,7 +304,17 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if rules, ok := d.GetOk("rules"); ok {
-		opts.Rules = rules.([]nextgen.Clause)
+		var rulesList []nextgen.Clause
+		for _, rule := range rules.([]interface{}) {
+			rule := nextgen.Clause{
+				Attribute: rule.(map[string]interface{})["attribute"].(string),
+				Negate:    rule.(map[string]interface{})["negate"].(bool),
+				Op:        rule.(map[string]interface{})["op"].(string),
+				Values:    rule.(map[string]interface{})["values"].([]string),
+			}
+			rules = append(rulesList, rule)
+		}
+		opts.Rules = rulesList
 	}
 
 	return opts
@@ -334,7 +344,17 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if rules, ok := d.GetOk("rules"); ok {
-		opts.Rules = rules.([]nextgen.Clause)
+		var rulesList []nextgen.Clause
+		for _, rule := range rules.([]interface{}) {
+			rule := nextgen.Clause{
+				Attribute: rule.(map[string]interface{})["attribute"].(string),
+				Negate:    rule.(map[string]interface{})["negate"].(bool),
+				Op:        rule.(map[string]interface{})["op"].(string),
+				Values:    rule.(map[string]interface{})["values"].([]string),
+			}
+			rules = append(rulesList, rule)
+		}
+		opts.Rules = rulesList
 	}
 
 	return &nextgen.TargetGroupsApiPatchSegmentOpts{

@@ -23,13 +23,11 @@ resource "harness_platform_feature_flag_target_group" "target" {
   account_id  = "MY_ACCOUNT_ID"
   included    = ["target_id_1"]
   excluded    = ["target_id_2"]
-  rules       = [
-                  {
-                    attribute = "MY_ATTRIBUTE"
-                    operator  = "EQUALS"
-                    value     = "MY_VALUE"
-                  }
-                ]
+  rule        =  {
+    attribute = "MY_ATTRIBUTE"
+    operator  = "EQUALS"
+    value     = "MY_VALUE"
+  }              
 }
 ```
 
@@ -49,14 +47,14 @@ resource "harness_platform_feature_flag_target_group" "target" {
 
 - `excluded` (List of String) A list of targets to exclude from the target group
 - `included` (List of String) A list of targets to include in the target group
-- `rules` (Block List) The list of rules used to include targets in the target group. (see [below for nested schema](#nestedblock--rules))
+- `rule` (Block List) The list of rules used to include targets in the target group. (see [below for nested schema](#nestedblock--rule))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--rules"></a>
-### Nested Schema for `rules`
+<a id="nestedblock--rule"></a>
+### Nested Schema for `rule`
 
 Optional:
 
