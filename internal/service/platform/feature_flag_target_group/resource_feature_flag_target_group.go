@@ -159,7 +159,7 @@ func resourceFeatureFlagTargetGroupRead(ctx context.Context, d *schema.ResourceD
 
 	segment, httpResp, err := c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -303,7 +303,7 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if rules, ok := d.GetOk("rule"); ok {
-		var rulesList []nextgen.Clause
+		var rulesList = make([]nextgen.Clause, 0)
 		for _, rule := range rules.([]interface{}) {
 			var values []string
 			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
@@ -315,7 +315,7 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 				Op:        rule.(map[string]interface{})["op"].(string),
 				Values:    values,
 			}
-			rules = append(rulesList, rule)
+			rulesList = append(rulesList, rule)
 		}
 		opts.Rules = rulesList
 	}
@@ -347,7 +347,7 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if rules, ok := d.GetOk("rule"); ok {
-		var rulesList []nextgen.Clause
+		var rulesList = make([]nextgen.Clause, 0)
 		for _, rule := range rules.([]interface{}) {
 			var values []string
 			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
@@ -359,7 +359,7 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 				Op:        rule.(map[string]interface{})["op"].(string),
 				Values:    values,
 			}
-			rules = append(rulesList, rule)
+			rulesList = append(rulesList, rule)
 		}
 		opts.Rules = rulesList
 	}
