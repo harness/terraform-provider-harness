@@ -293,6 +293,6 @@ func ResourceVMRule() *schema.Resource {
 
 func resourceVMRuleCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	saveServiceRequestV2 := buildASRule(d, Database, c.AccountId)
+	saveServiceRequestV2 := buildASRule(d, Instance, c.AccountId)
 	return resourceASRuleCreateOrUpdate(ctx, d, meta, saveServiceRequestV2)
 }
