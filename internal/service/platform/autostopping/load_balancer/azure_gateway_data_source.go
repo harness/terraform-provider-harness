@@ -4,9 +4,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceAzureProxy() *schema.Resource {
+func DataSourceAzureGateway() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for Azure Autostopping proxy",
+		Description: "Data source for AWS Autostopping proxy",
 		ReadContext: resourceLoadBalancerRead,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -39,69 +39,30 @@ func DataSourceAzureProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"subnet_id": {
-				Description: "Subnet in which cloud resources are hosted",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"security_groups": {
-				Description: "Security Group to define the security rules that determine the inbound and outbound traffic",
-				Type:        schema.TypeList,
-				Optional:    true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
 			"vpc": {
 				Description: "VPC in which cloud resources are hosted",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"allocate_static_ip": {
-				Description: "Boolean value to indicate if proxy vm needs to have static IP",
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-			},
-			"machine_type": {
-				Description: "Machine instance type",
+			"subnet_id": {
+				Description: "Subnet in which cloud resources are hosted",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"api_key": {
-				Description: "Harness NG API key",
-				Sensitive:   true,
+			"azure_func_region": {
+				Description: "Region in which azure cloud function will be provisioned",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"keypair": {
+			"frontend_ip": {
 				Description: "",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"certificate_id": {
-				Description: "",
+			"sku_size": {
+				Description: "Size of machine used for the gateway",
 				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"certificates": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"cert_secret_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Certificate secret ID",
-						},
-						"key_secret_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Private key secret ID",
-						},
-					},
-				},
+				Required:    true,
 			},
 		},
 	}

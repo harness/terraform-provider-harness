@@ -235,6 +235,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_aws_proxy":                   load_balancer.DataSourceAWSProxy(),
 				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
 				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -357,6 +358,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_aws_proxy":                   load_balancer.ResourceAWSProxy(),
 				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
 				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
 			},
 		}
 
