@@ -47,7 +47,7 @@ func TestResourceAzureProxy(t *testing.T) {
 
 func testAzureProxyDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		proxy, _ := testGetAzureProxy(resourceName, state)
+		proxy, _ := testGetLoadBalancer(resourceName, state)
 		if proxy != nil {
 			return fmt.Errorf("Found azure proxy: %s", proxy.Id)
 		}
@@ -55,7 +55,7 @@ func testAzureProxyDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testGetAzureProxy(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
+func testGetLoadBalancer(resourceName string, state *terraform.State) (*nextgen.AccessPoint, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceAWSProxy() *schema.Resource {
+func ResourceGCPProxy() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an AWS Autostopping proxy",
+		Description:   "Resource for creating an GCP Autostopping proxy",
 		ReadContext:   resourceLoadBalancerRead,
-		CreateContext: resourceAWSProxyCreateOrUpdate,
-		UpdateContext: resourceAWSProxyCreateOrUpdate,
+		CreateContext: resourceGCPProxyCreateOrUpdate,
+		UpdateContext: resourceGCPProxyCreateOrUpdate,
 		DeleteContext: resourceLoadBalancerDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 
@@ -41,6 +41,16 @@ func ResourceAWSProxy() *schema.Resource {
 			},
 			"region": {
 				Description: "Region in which cloud resources are hosted",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"zone": {
+				Description: "Zone in which cloud resources are hosted",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"subnet_id": {
+				Description: "VPC in which cloud resources are hosted",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -74,16 +84,6 @@ func ResourceAWSProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"route53_hosted_zone_id": {
-				Description: "Route 53 hosted zone id",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"keypair": {
-				Description: "",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"certificates": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -109,8 +109,8 @@ func ResourceAWSProxy() *schema.Resource {
 	return resource
 }
 
-func resourceAWSProxyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceGCPProxyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	lb := buildLoadBalancer(d, c.AccountId, "aws", "autostopping_proxy")
+	lb := buildLoadBalancer(d, c.AccountId, "gcp", "autostopping_proxy")
 	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
 }
