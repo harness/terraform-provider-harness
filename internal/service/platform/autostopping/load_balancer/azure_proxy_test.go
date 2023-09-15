@@ -77,13 +77,13 @@ func testAzureProxy(name string, hostName string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "Azure_SE"
+			cloud_connector_id = "cloud_connector_id"
 			host_name = "%[2]s"
-            region = "eastus2"
-            resource_group = "tkouhsari-autostop-1_group"
-            vpc = "/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Network/virtualNetworks/tkouhsari-autostop-1-vnet"
-			subnet_id = "/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Network/virtualNetworks/tkouhsari-autostop-1-vnet/subnets/default"
-			security_groups =["/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Network/networkSecurityGroups/tkouhsari-autostop-1-nsg"]
+			region             = "eastus2"
+			resource_group     = "resource_group"
+			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
+			subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
+			security_groups    = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/networkSecurityGroups/network_security_group"]
 			allocate_static_ip = true
             machine_type = "Standard_D2s_v3"
 			keypair = "PLACE_HOLDER_VALUE"
@@ -96,13 +96,13 @@ func testAzureProxyUpdate(name string, hostName string) string {
 	return fmt.Sprintf(`
 		resource "harness_autostopping_azure_proxy" "test" {
 			name = "%[1]s"
-			cloud_connector_id = "Azure_SE"
+			cloud_connector_id = "cloud_connector_id"
 			host_name = "%[2]s"
-            region = "eastus2"
-            resource_group = "tkouhsari-autostop-1_group"
-            vpc = "/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Network/virtualNetworks/tkouhsari-autostop-1-vnet"
-			subnet_id = "/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Network/virtualNetworks/tkouhsari-autostop-1-vnet/subnets/default"
-			security_groups =["/subscriptions/e8389fc5-0cb8-44ab-947b-c6cf62552be0/resourceGroups/tkouhsari-autostop-1_group/providers/Microsoft.Network/networkSecurityGroups/tkouhsari-autostop-2-nsg"]
+			region             = "eastus2"
+			resource_group     = "resource_group"
+			vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
+			subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
+			security_groups    = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/networkSecurityGroups/network_security_group"]
 			allocate_static_ip = true
             machine_type = "Standard_D2s_v3"
 			keypair = "PLACE_HOLDER_VALUE"
