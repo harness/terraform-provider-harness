@@ -131,7 +131,7 @@ func ResourceFeatureFlag() *schema.Resource {
 					},
 				},
 			},
-			"add_target_rules": {
+			"add_target_rule": {
 				Description: "The targeting rules for the flag",
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -154,7 +154,7 @@ func ResourceFeatureFlag() *schema.Resource {
 					},
 				},
 			},
-			"add_target_group_rules": {
+			"add_target_group_rule": {
 				Description: "The targeting rules for the flag",
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -514,7 +514,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	opts.Variations = variations
 
 	var targetRules []TargetRules
-	if targetRulesData, ok := d.GetOk("addTargetRules"); ok {
+	if targetRulesData, ok := d.GetOk("add_target_rule"); ok {
 		for _, targetRuleData := range targetRulesData.([]interface{}) {
 			vMap := targetRuleData.(map[string]interface{})
 			targetRule := TargetRules{
@@ -527,7 +527,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 
 	var targetGroupRules []TargetGroupRules
-	if targetGroupRulesData, ok := d.GetOk("addTargetGroupRules"); ok {
+	if targetGroupRulesData, ok := d.GetOk("add_target_group_rule"); ok {
 		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
 			vMap := targetGroupRuleData.(map[string]interface{})
 			targetGroupRule := TargetGroupRules{

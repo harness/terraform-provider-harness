@@ -96,7 +96,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_rules {
+  add_target_rule {
     variation = "trial14"
     targets = ["targets1", "targets2"]
   }
@@ -136,7 +136,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_groups_rules {
+  add_target_groups_rule {
     group_name = "group_name"
     variation = "trial14"
     distribution = {
