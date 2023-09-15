@@ -6,7 +6,7 @@ import (
 
 func DataSourceAzureProxy() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Variable.",
+		Description: "Data source for Azure Autostopping proxy",
 		ReadContext: resourceLoadBalancerRead,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -61,7 +61,7 @@ func DataSourceAzureProxy() *schema.Resource {
 				Description: "Boolean value to indicate if proxy vm needs to have static IP",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Default:     true,
+				Default:     false,
 			},
 			"machine_type": {
 				Description: "Machine instance type",
