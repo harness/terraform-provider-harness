@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceAzureProxy() *schema.Resource {
+func DataSourceAWSProxy() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness Variable.",
 		ReadContext: resourceLoadBalancerRead,
@@ -31,16 +31,6 @@ func DataSourceAzureProxy() *schema.Resource {
 			},
 			"region": {
 				Description: "Region in which cloud resources are hosted",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"resource_group": {
-				Description: "Region in which cloud resources are hosted",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"subnet_id": {
-				Description: "VPC in which cloud resources are hosted",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -74,15 +64,15 @@ func DataSourceAzureProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"route53_hosted_zone_id": {
+				Description: "Route 53 hosted zone id",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"keypair": {
 				Description: "",
 				Type:        schema.TypeString,
 				Required:    true,
-			},
-			"certificate_id": {
-				Description: "",
-				Type:        schema.TypeString,
-				Optional:    true,
 			},
 			"certificates": {
 				Type:     schema.TypeList,
