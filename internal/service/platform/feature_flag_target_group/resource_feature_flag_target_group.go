@@ -287,7 +287,7 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		var targets []string
+		var targets []string = make([]string, 0)
 		for _, target := range included.([]interface{}) {
 			targets = append(targets, target.(string))
 		}
@@ -295,7 +295,7 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		var targets []string
+		var targets []string = make([]string, 0)
 		for _, target := range excluded.([]interface{}) {
 			targets = append(targets, target.(string))
 		}
@@ -331,7 +331,7 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		var targets []string
+		var targets []string = make([]string, 0)
 		for _, target := range included.([]interface{}) {
 			targets = append(targets, target.(string))
 		}
@@ -339,7 +339,7 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		var targets []string
+		var targets []string = make([]string, 0)
 		for _, target := range excluded.([]interface{}) {
 			targets = append(targets, target.(string))
 		}
@@ -349,7 +349,7 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	if rules, ok := d.GetOk("rule"); ok {
 		var rulesList = make([]nextgen.Clause, 0)
 		for _, rule := range rules.([]interface{}) {
-			var values []string
+			var values []string = make([]string, 0)
 			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
 				values = append(values, value.(string))
 			}
