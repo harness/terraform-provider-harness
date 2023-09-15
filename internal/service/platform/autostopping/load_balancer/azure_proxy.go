@@ -88,7 +88,7 @@ func ResourceAzureProxy() *schema.Resource {
 			"keypair": {
 				Description: "",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"certificate_id": {
 				Description: "",
