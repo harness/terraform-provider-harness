@@ -74,7 +74,7 @@ func ResourceAzureProxy() *schema.Resource {
 				Default:     false,
 			},
 			"machine_type": {
-				Description: "Machine instance type",
+				Description: "Type of instance to be used for proxy",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -85,7 +85,7 @@ func ResourceAzureProxy() *schema.Resource {
 				Required:    true,
 			},
 			"keypair": {
-				Description: "",
+				Description: "Name of SSH Key to be used for proxy VM",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -103,12 +103,12 @@ func ResourceAzureProxy() *schema.Resource {
 						"cert_secret_id": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Certificate secret ID",
+							Description: "ID of certificate secret uploaded to vault",
 						},
 						"key_secret_id": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Private key secret ID",
+							Description: "ID of certificate key uploaded to vault",
 						},
 					},
 				},

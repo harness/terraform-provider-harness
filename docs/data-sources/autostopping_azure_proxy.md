@@ -26,8 +26,8 @@ data "harness_autostopping_azure_proxy" "test" {
 - `api_key` (String, Sensitive) Harness NG API key
 - `cloud_connector_id` (String) Id of the cloud connector
 - `host_name` (String) Hostname for the proxy
-- `keypair` (String)
-- `machine_type` (String) Machine instance type
+- `keypair` (String) Name of SSH Key to be used for proxy VM
+- `machine_type` (String) Type of instance to be used for proxy
 - `name` (String) Name of the proxy
 - `region` (String) Region in which cloud resources are hosted
 - `resource_group` (String) Resource group in which cloud resources are hosted
@@ -51,5 +51,5 @@ data "harness_autostopping_azure_proxy" "test" {
 
 Required:
 
-- `cert_secret_id` (String) Certificate secret ID
-- `key_secret_id` (String) Private key secret ID
+- `cert_secret_id` (String) ID of certificate secret uploaded to vault
+- `key_secret_id` (String) ID of certificate key uploaded to vault
