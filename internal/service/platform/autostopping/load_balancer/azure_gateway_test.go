@@ -48,12 +48,12 @@ func testAzureGateway(name string, hostName string) string {
 		cloud_connector_id = "cloud_connector_id"
 		host_name = "%[2]s"
 		region = "eastus2"
-		resource_group = "resource_group"
-		subnet_id = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
-		vpc = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
-		azure_func_region = "westus2"
-		frontend_ip = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
-		sku_size = "sku2"
+		resource_group     = "resource_group"
+		subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
+		vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
+		azure_func_region  = "westus2"
+		frontend_ip        = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
+		sku_size           = "sku2"
 	}
 `, name, hostName)
 }

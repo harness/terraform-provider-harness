@@ -47,18 +47,18 @@ func testGCPProxy(name string, hostName string) string {
 			name = "%[1]s"
 			cloud_connector_id = "developerxgcpfm"
 			host_name = "%[2]s"
-            region = "us-central1"
-			vpc = "https://www.googleapis.com/compute/v1/projects/gcpccmdemo/global/networks/default"
-			zone = "us-central1-a"
-			security_groups =["http-server"]
-			machine_type = "e2-micro"
-			subnet_id = "https://www.googleapis.com/compute/v1/projects/gcpccmdemo/regions/us-central1/subnetworks/default"
-            api_key = ""
+            region             = "region"
+			vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
+			zone               = "zone"
+			security_groups    = ["http-server"]
+			machine_type       = "e2-micro"
+			subnet_id          = "https://www.googleapis.com/compute/v1/projects/project_id/regions/region/subnetworks/subnet_name"
+			api_key            = ""
 			allocate_static_ip = false
 			certificates {
-				key_secret_id = "projects/643752427051/secrets/secret-ccmpriv/versions/1"
-				cert_secret_id = "projects/643752427051/secrets/secret-ccmpub/versions/1"
-			  }  
+				key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
+				cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
+			}
 		}
 `, name, hostName)
 }
@@ -69,18 +69,18 @@ func testGCPProxyUpdate(name string, hostName string) string {
 		name = "%[1]s"
 		cloud_connector_id = "developerxgcpfm"
 		host_name = "%[2]s"
-		region = "us-central1"
-		vpc = "https://www.googleapis.com/compute/v1/projects/gcpccmdemo/global/networks/default"
-		zone = "us-central1-a"
-		security_groups =["http-server","https-server"]
-		machine_type = "e2-micro"
-		subnet_id = "https://www.googleapis.com/compute/v1/projects/gcpccmdemo/regions/us-central1/subnetworks/default"
-		api_key = ""
+		region             = "region"
+		vpc                = "https://www.googleapis.com/compute/v1/projects/project_id/global/networks/netwok_id"
+		zone               = "zone"
+		security_groups    = ["http-server","https-server"]
+		machine_type       = "e2-micro"
+		subnet_id          = "https://www.googleapis.com/compute/v1/projects/project_id/regions/region/subnetworks/subnet_name"
+		api_key            = ""
 		allocate_static_ip = false
 		certificates {
-			key_secret_id = "projects/643752427051/secrets/secret-ccmpriv/versions/1"
-			cert_secret_id = "projects/643752427051/secrets/secret-ccmpub/versions/1"
-		  }  
+			key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
+			cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
+		}
 	}
 `, name, hostName)
 }
