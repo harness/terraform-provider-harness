@@ -109,7 +109,7 @@ Required:
 Optional:
 
 - `adfs` (Block List, Max: 1) Authenticate using adfs client credentials with certificate. (see [below for nested schema](#nestedblock--auth--adfs))
-- `refresh_token` (Block List, Max: 1) Authenticate using refresh token grant type. Currently, this feature is behind the feature flag CDS_SERVICENOW_REFRESH_TOKEN_AUTH. Contact Harness Support to enable the feature. (see [below for nested schema](#nestedblock--auth--refresh_token))
+- `refresh_token` (Block List, Max: 1) Authenticate using refresh token grant type. (see [below for nested schema](#nestedblock--auth--refresh_token))
 - `username_password` (Block List, Max: 1) Authenticate using username password. (see [below for nested schema](#nestedblock--auth--username_password))
 
 <a id="nestedblock--auth--adfs"></a>

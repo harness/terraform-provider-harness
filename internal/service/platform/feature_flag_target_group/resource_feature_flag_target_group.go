@@ -38,7 +38,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
-			"project": {
+			"project_id": {
 				Description: "Project Identifier",
 				Type:        schema.TypeString,
 				Required:    true,
@@ -272,7 +272,7 @@ func buildFFTargetGroupQueryParameters(d *schema.ResourceData) *FFTargetGroupQue
 	return &FFTargetGroupQueryParameters{
 		Identifier:  d.Get("identifier").(string),
 		OrgID:       d.Get("org_id").(string),
-		Project:     d.Get("project").(string),
+		Project:     d.Get("project_id").(string),
 		AcountID:    d.Get("account_id").(string),
 		Environment: d.Get("environment").(string),
 	}
@@ -282,7 +282,7 @@ func buildFFTargetGroupQueryParameters(d *schema.ResourceData) *FFTargetGroupQue
 func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	opts := &SegmentRequest{
 		Identifier:  d.Get("identifier").(string),
-		Project:     d.Get("project").(string),
+		Project:     d.Get("project_id").(string),
 		Environment: d.Get("environment").(string),
 		Name:        d.Get("name").(string),
 	}
