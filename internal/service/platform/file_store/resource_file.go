@@ -51,8 +51,7 @@ func ResourceFileStoreNodeFile() *schema.Resource {
 			"content": {
 				Description: "File content stored on Harness File Store",
 				Type:        schema.TypeString,
-				Optional:    false,
-				Computed:    true,
+				Optional:    true,
 			},
 			"path": {
 				Description: "Harness File Store file path",
@@ -201,7 +200,7 @@ func resourceFileStoreNodeFileDelete(ctx context.Context, d *schema.ResourceData
 }
 
 func buildFileStoreApiFileCreateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiCreateOpts, error) {
-	fileContent, err := getFileContent(d.Get(fileContentPath))
+	fileContent, err := getFileContent(d.Get(fileContentPath), d.Get(content))
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +229,7 @@ func buildFileStoreApiFileCreateRequest(d *schema.ResourceData) (*nextgen.FileSt
 }
 
 func buildFileStoreApiFileUpdateRequest(d *schema.ResourceData) (*nextgen.FileStoreApiUpdateOpts, error) {
-	fileContent, err := getFileContent(d.Get(fileContentPath))
+	fileContent, err := getFileContent(d.Get(fileContentPath), d.Get(content))
 	if err != nil {
 		return nil, err
 	}
@@ -269,14 +268,14 @@ func readFileNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt opt
 	d.Set(tags, FlattenTags(file.Tags))
 	d.Set(createdBy, []interface{}{
 		map[string]interface{}{
-			"email": file.CreatedBy.Email,
-			"name":  file.CreatedBy.Name,
+			"email": getEmail(file.CreatedBy),
+			"name":  getName(file.CreatedBy),
 		},
 	})
 	d.Set(lastModifiedBy, []interface{}{
 		map[string]interface{}{
-			"email": file.LastModifiedBy.Email,
-			"name":  file.LastModifiedBy.Name,
+			"email": getEmail(file.LastModifiedBy),
+			"name":  getName(file.LastModifiedBy),
 		},
 	})
 	d.Set(lastModifiedAt, file.LastModifiedAt)
@@ -293,7 +292,11 @@ func readFileNode(d *schema.ResourceData, file *nextgen.File, fileContentOpt opt
 	d.Set(content, fileContent)
 }
 
-func getFileContent(filePath interface{}) (optional.Interface, error) {
+func getFileContent(filePath interface{}, fileContent interface{}) (optional.Interface, error) {
+	if fileContentStr, ok := fileContent.(string); ok && len(fileContentStr) > 0 {
+		// If fileContent is a non-empty string, return it directly
+		return optional.NewInterface([]byte(fileContentStr)), nil
+	}
 	filePathStr, ok := filePath.(string)
 	if !ok {
 		return optional.Interface{}, nil

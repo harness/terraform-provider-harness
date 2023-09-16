@@ -7,3 +7,4 @@
   
 - Build: `trigger build`
 - Sub Category Field Check: `trigger subcategoryfieldcheck`
+- gitleaks: `trigger gitleaks`

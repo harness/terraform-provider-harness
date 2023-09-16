@@ -1,0 +1,4 @@
+```release-note:enhancement
+harness_platform_template - Added support to import Template entity from git.
+harness_platform_input_set - Added support to import InputSet entity from git.
+```

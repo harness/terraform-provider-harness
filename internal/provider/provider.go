@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
+	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
@@ -43,6 +45,7 @@ import (
 	file_store "github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
+	gitops_project_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/app_project"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
@@ -140,6 +143,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":                 connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                connector.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":             connector.DatasourceConnectorBitbucket(),
+				"harness_platform_connector_customhealthsource":    connector.DatasourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.DatasourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.DatasourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":             connector.DatasourceConnectorDynatrace(),
@@ -173,6 +177,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.DataSourceGitopsGnupg(),
+				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.DatasourceGitopsAppProjectMapping(),
 				"harness_platform_gitops_repository":               gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.DataSourceGitOpsRepoCert(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
@@ -240,6 +245,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":                 connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                connector.ResourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":             connector.ResourceConnectorBitbucket(),
+				"harness_platform_connector_customhealthsource":    connector.ResourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.ResourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.ResourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":             connector.ResourceConnectorDynatrace(),
@@ -266,13 +272,16 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
-				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_feature_flag":                    feature_flag.ResourceFeatureFlag(),
+				"harness_platform_feature_flag_target_group":       feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
+				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
+				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
+				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.ResourceGitopsAppProjectMapping(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),

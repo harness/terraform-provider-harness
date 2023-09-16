@@ -1,0 +1,3 @@
+```release-note:new-resource
+resource_feature_flag_target_group - Added feature flag target group resources to the Harness Terraform Provider.
+```
