@@ -305,28 +305,32 @@ func getRoutingConfigurations(d *schema.ResourceData) (*nextgen.HttpProxy, *next
 			tcpProxy.Proxy = proxy
 		}
 		if attr, ok := tcpRoutingObj["ssh"]; ok {
-			sshConfig := attr.([]interface{})[0].(map[string]interface{})
-			ssh := &nextgen.ServiceRoutingTcpPort{}
-			if attr, ok := sshConfig["connect_on"]; ok {
-				ssh.Source = attr.(int)
+			if valArr, ok := attr.([]interface{}); ok && len(valArr) > 0 {
+				sshConfig := valArr[0].(map[string]interface{})
+				ssh := &nextgen.ServiceRoutingTcpPort{}
+				if attr, ok := sshConfig["connect_on"]; ok {
+					ssh.Source = attr.(int)
+				}
+				ssh.Target = 22
+				if attr, ok := sshConfig["port"]; ok {
+					ssh.Target = attr.(int)
+				}
+				tcpProxy.SshConf = ssh
 			}
-			ssh.Target = 22
-			if attr, ok := sshConfig["port"]; ok {
-				ssh.Target = attr.(int)
-			}
-			tcpProxy.SshConf = ssh
 		}
 		if attr, ok := tcpRoutingObj["rdp"]; ok {
-			rdpConfig := attr.([]interface{})[0].(map[string]interface{})
-			rdp := &nextgen.ServiceRoutingTcpPort{}
-			if attr, ok := rdpConfig["connect_on"]; ok {
-				rdp.Source = attr.(int)
+			if valArr, ok := attr.([]interface{}); ok && len(valArr) > 0 {
+				rdpConfig := valArr[0].(map[string]interface{})
+				rdp := &nextgen.ServiceRoutingTcpPort{}
+				if attr, ok := rdpConfig["connect_on"]; ok {
+					rdp.Source = attr.(int)
+				}
+				rdp.Target = 3389
+				if attr, ok := rdpConfig["port"]; ok {
+					rdp.Target = attr.(int)
+				}
+				tcpProxy.RdpConf = rdp
 			}
-			rdp.Target = 3389
-			if attr, ok := rdpConfig["port"]; ok {
-				rdp.Target = attr.(int)
-			}
-			tcpProxy.RdpConf = rdp
 		}
 		if attr, ok := tcpRoutingObj["forward_rule"]; ok {
 			forwardRules := attr.([]interface{})
