@@ -10,7 +10,7 @@ resource "harness_platform_feature_flag_target_group" "target" {
   excluded    = ["target_id_2"]
   rule        =  {
     attribute = "MY_ATTRIBUTE"
-    operator  = "EQUALS"
+    operator  = "equal"
     value     = "MY_VALUE"
   }              
 }

@@ -25,7 +25,7 @@ resource "harness_platform_feature_flag_target_group" "target" {
   excluded    = ["target_id_2"]
   rule        =  {
     attribute = "MY_ATTRIBUTE"
-    operator  = "EQUALS"
+    operator  = "equal"
     value     = "MY_VALUE"
   }              
 }
@@ -60,5 +60,5 @@ Optional:
 
 - `attribute` (String) The attribute to use in the clause.  This can be any target attribute
 - `negate` (Boolean) Is the operation negated?
-- `op` (String) The type of operation such as equals, starts_with, contains
+- `op` (String) The type of operation such as equal, starts_with, contains, ends_with, in
 - `values` (List of String) The values that are compared against the operator
