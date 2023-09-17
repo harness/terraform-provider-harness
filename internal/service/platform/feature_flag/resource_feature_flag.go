@@ -282,6 +282,7 @@ type FFOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
+	Instructions        []Instructions      `json:"instructions"`
 }
 
 // FFPatchOpts is the options for patching a feature flag
@@ -312,7 +313,10 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPatchOpts(d)
 
-	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, &nextgen.FeatureFlagsApiPatchFeatureOpts{
+		Body:                  optional.NewInterface(opts),
+		EnvironmentIdentifier: optional.EmptyString(),
+	})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -471,6 +475,89 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 		variations = append(variations, variation)
 	}
 	opts.Variations = variations
+
+	var targetRules []TargetRules
+	if targetRulesData, ok := d.GetOk("add_target_rule"); ok {
+		for _, targetRuleData := range targetRulesData.([]interface{}) {
+			vMap := targetRuleData.(map[string]interface{})
+			var targets []string = make([]string, 0)
+			for _, target := range vMap["targets"].([]interface{}) {
+				targets = append(targets, target.(string))
+			}
+			targetRule := TargetRules{
+				Kind:      "addTargetsToVariationTargetMap",
+				Variation: vMap["variation"].(string),
+				Targets:   targets,
+			}
+			targetRules = append(targetRules, targetRule)
+		}
+	}
+
+	var targetGroupRules []TargetGroupRules
+	if targetGroupRulesData, ok := d.GetOk("add_target_group_rule"); ok {
+		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
+			vMap := targetGroupRuleData.(map[string]interface{})
+			targetGroupRule := TargetGroupRules{
+				Kind:      "addRule",
+				GroupName: vMap["group_name"].(string),
+				Variation: vMap["variation"].(string),
+			}
+			var distributions []Distribution
+			for _, distributionData := range vMap["distribution"].([]interface{}) {
+				vMap := distributionData.(map[string]interface{})
+				distribution := Distribution{}
+				var variations []Variation
+				for _, variationData := range vMap["variations"].([]interface{}) {
+					vMap := variationData.(map[string]interface{})
+					variation := Variation{
+						Variation: vMap["variation"].(string),
+						Weight:    vMap["weight"].(int),
+					}
+					variations = append(variations, variation)
+				}
+				distribution.Variations = variations
+				distributions = append(distributions, distribution)
+			}
+			targetGroupRule.Distribution = distributions
+			targetGroupRules = append(targetGroupRules, targetGroupRule)
+		}
+	}
+
+	var instructions []Instructions
+	for _, target := range targetRules {
+		instruction := Instructions{
+			Kind: target.Kind,
+			Parameters: []Parameter{
+				{
+					RuleID:    target.Variation,
+					Variation: target.Variation,
+					Targets:   target.Targets,
+				},
+			},
+		}
+		instructions = append(instructions, instruction)
+	}
+
+	for _, targetGroup := range targetGroupRules {
+		instruction := Instructions{
+			Kind: targetGroup.Kind,
+			Parameters: []Parameter{
+				{
+					RuleID:    targetGroup.GroupName,
+					Variation: targetGroup.Variation,
+					Serve: []Serve{
+						{
+							Variation:    targetGroup.Variation,
+							Distribution: targetGroup.Distribution,
+						},
+					},
+				},
+			},
+		}
+		instructions = append(instructions, instruction)
+	}
+
+	opts.Instructions = instructions
 
 	return &nextgen.FeatureFlagsApiCreateFeatureFlagOpts{
 		Body: optional.NewInterface(opts),
