@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -255,18 +254,17 @@ type Serve struct {
 
 // Parameter ...
 type Parameter struct {
-	RuleID    string           `json:"ruleId,omitempty"`
 	Variation string           `json:"variation,omitempty"`
 	Targets   []string         `json:"targets,omitempty"`
 	Priority  string           `json:"priority,omitempty"`
 	Clauses   []nextgen.Clause `json:"clauses,omitempty"`
-	Serve     []Serve          `json:"serve,omitempty"`
+	Serve     Serve            `json:"serve,omitempty"`
 }
 
 // Instruction defines the instruction for the feature flag
 type Instruction struct {
-	Kind       string    `json:"kind"`
-	Parameters Parameter `json:"parameters"`
+	Kind       string    `json:"kind,omitempty"`
+	Parameters Parameter `json:"parameters,omitempty"`
 }
 
 type FFOpts struct {
@@ -282,7 +280,7 @@ type FFOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []Instruction       `json:"instructions"`
+	Instructions        []Instruction       `json:"instructions,omitempty"`
 }
 
 // FFPatchOpts is the options for patching a feature flag
@@ -299,7 +297,7 @@ type FFPatchOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []Instruction       `json:"instructions"`
+	Instructions        []Instruction       `json:"instructions,omitempty"`
 }
 
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -373,8 +371,6 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	time.Sleep(1 * time.Second)
-
 	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
 
 	if err != nil {
@@ -382,6 +378,18 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	readFeatureFlag(d, &resp, qp)
+
+	// update the feature flag with the git details
+	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, resp.Identifier, &nextgen.FeatureFlagsApiPatchFeatureOpts{
+		Body:                  optional.NewInterface(opts),
+		EnvironmentIdentifier: optional.EmptyString(),
+	})
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	readFeatureFlag(d, &feature, qp)
 
 	return nil
 }
@@ -540,11 +548,9 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 		instruction := Instruction{
 			Kind: targetGroup.Kind,
 			Parameters: Parameter{
-				Serve: []Serve{
-					{
-						Variation:    targetGroup.Variation,
-						Distribution: distribution,
-					},
+				Serve: Serve{
+					Variation:    targetGroup.Variation,
+					Distribution: distribution,
 				},
 				Clauses: []nextgen.Clause{
 					{
@@ -664,11 +670,9 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 		instruction := Instruction{
 			Kind: targetGroup.Kind,
 			Parameters: Parameter{
-				Serve: []Serve{
-					{
-						Variation:    targetGroup.Variation,
-						Distribution: distribution,
-					},
+				Serve: Serve{
+					Variation:    targetGroup.Variation,
+					Distribution: distribution,
 				},
 				Clauses: []nextgen.Clause{
 					{
