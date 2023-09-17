@@ -15,6 +15,7 @@ import (
 const (
 	Database = "database"
 	Instance = "instance"
+	ECS      = "containers"
 )
 
 func resourceASRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -205,7 +206,10 @@ func getContainerConfig(d *schema.ResourceData) *nextgen.ContainerSvc {
 		}
 		containerSvc.TaskCount = 1
 		if attr, ok := databaseObj["task_count"]; ok {
-			containerSvc.TaskCount = attr.(float64)
+			desCount, ok := attr.(int64)
+			if ok {
+				containerSvc.TaskCount = float64(desCount)
+			}
 		}
 	}
 	return containerSvc

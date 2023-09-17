@@ -40,6 +40,14 @@ func ResourceECSRule() *schema.Resource {
 				Optional:    true,
 				Default:     15,
 			},
+			"custom_domains": {
+				Description: "Custom URLs used to access the instances",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"container": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -66,35 +74,16 @@ func ResourceECSRule() *schema.Resource {
 					},
 				},
 			},
-			"tcp": {
-				Description: "TCP routing configuration",
+			"http": {
+				Description: "Http routing configuration",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"proxy_id": {
-							Description: "Id of the Proxy",
+							Description: "Id of the proxy",
 							Type:        schema.TypeString,
 							Required:    true,
-						},
-						"forward_rule": {
-							Description: "Additional tcp forwarding rules",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"connect_on": {
-										Description: "Port to listen on the proxy",
-										Type:        schema.TypeInt,
-										Optional:    true,
-									},
-									"port": {
-										Description: "Port to listen on the vm",
-										Type:        schema.TypeInt,
-										Required:    true,
-									},
-								},
-							},
 						},
 					},
 				},
@@ -127,6 +116,6 @@ func ResourceECSRule() *schema.Resource {
 
 func resourceECSRuleCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	saveServiceRequestV2 := buildASRule(d, Database, c.AccountId)
+	saveServiceRequestV2 := buildASRule(d, ECS, c.AccountId)
 	return resourceASRuleCreateOrUpdate(ctx, d, meta, saveServiceRequestV2)
 }

@@ -34,16 +34,13 @@ func testECSRule(name string) string {
 		cloud_connector_id = "Azure_SE" 
 		idle_time_mins = 10              
 		container {
-			cluster = ["cluster"]
-			service = ["service"]
+			cluster = "cluster"
+			service = "service"
 			region = "useast2"
 			task_count = 1
 		}		
-		tcp {
+		http {
 			proxy_id = "ap-chdpf8f83v0c1aj69oog"             
-			forward_rule {
-				port = 2233
-			}                     
 		}
 		depends {
 			rule_id = 24576

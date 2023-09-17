@@ -31,6 +31,14 @@ func DataSourceECSRule() *schema.Resource {
 				Optional:    true,
 				Default:     15,
 			},
+			"custom_domains": {
+				Description: "Custom URLs used to access the instances",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"container": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -57,35 +65,16 @@ func DataSourceECSRule() *schema.Resource {
 					},
 				},
 			},
-			"tcp": {
-				Description: "TCP routing configuration",
+			"http": {
+				Description: "Http routing configuration",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"proxy_id": {
-							Description: "Id of the Proxy",
+							Description: "Id of the proxy",
 							Type:        schema.TypeString,
 							Required:    true,
-						},
-						"forward_rule": {
-							Description: "Additional tcp forwarding rules",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"connect_on": {
-										Description: "Port to listen on the proxy",
-										Type:        schema.TypeInt,
-										Optional:    true,
-									},
-									"port": {
-										Description: "Port to listen on the vm",
-										Type:        schema.TypeInt,
-										Required:    true,
-									},
-								},
-							},
 						},
 					},
 				},
