@@ -148,6 +148,22 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			}
 		}
 
+		resource "harness_platform_feature_flag_target_group" "targetgroup1" {
+			identifier = "targetgroup1"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+			name = "targetgroup1"
+			included = []
+			excluded = []
+			rule {
+				attribute = "identifier"
+				op        = "equal"
+				values    = [harness_platform_feature_flag_target.target1.id]
+			}
+		}
+
 		resource "harness_platform_feature_flag" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id

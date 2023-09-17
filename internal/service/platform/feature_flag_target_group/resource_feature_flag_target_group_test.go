@@ -147,7 +147,7 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
 			excluded = []
 			rule {
 				attribute = "identifier"
-				op        = "EQUALS"
+				op        = "equal"
 				values    = [harness_platform_feature_flag_target.target.id]
 			}
 		}
