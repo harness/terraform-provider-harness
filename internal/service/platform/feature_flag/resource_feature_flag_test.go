@@ -120,6 +120,34 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
       EOT
   	}
 
+		resource "harness_platform_feature_flag_target" "target1" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+		
+			identifier  = "target1"
+			name        = "target1"
+		
+			attributes = {
+				foo : "bar"
+			}
+		}
+
+		resource "harness_platform_feature_flag_target" "target2" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+		
+			identifier  = "target2"
+			name        = "target2"
+		
+			attributes = {
+				foo : "bar"
+			}
+		}
+
 		resource "harness_platform_feature_flag" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
@@ -143,6 +171,11 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			  name        = "Disabled"
 			  description = "The feature is disabled"
 			  value       = "false"
+			}
+
+			add_target_rule {
+				variation = "Enabled"
+				targets = ["targets1", "targets2"]
 			}
 		}
 `, id, name, updatedName)
