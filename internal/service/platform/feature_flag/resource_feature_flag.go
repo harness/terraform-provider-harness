@@ -236,21 +236,21 @@ type Variation struct {
 
 // Distribution is the distribution for the feature flag
 type Distribution struct {
+	BuckedBy   string      `json:"buckedBy,omitempty"`
 	Variations []Variation `json:"variations,omitempty"`
 }
 
 // TargetGroupRules is the target group rules for the feature flag
 type TargetGroupRules struct {
-	Kind         string         `json:"kind,omitempty"`
-	GroupName    string         `json:"groupName,omitempty"`
-	Variation    string         `json:"variation,omitempty"`
-	Distribution []Distribution `json:"distribution,omitempty"`
+	Kind      string `json:"kind,omitempty"`
+	GroupName string `json:"groupName,omitempty"`
+	Variation string `json:"variation,omitempty"`
 }
 
 // Serve ...
 type Serve struct {
-	Variation    string         `json:"variation,omitempty"`
-	Distribution []Distribution `json:"distribution,omitempty"`
+	Variation    string       `json:"variation,omitempty"`
+	Distribution Distribution `json:"distribution,omitempty"`
 }
 
 // Parameter ...
@@ -263,10 +263,10 @@ type Parameter struct {
 	Serve     []Serve          `json:"serve,omitempty"`
 }
 
-// Instructions ...
-type Instructions struct {
-	Kind       string      `json:"kind"`
-	Parameters []Parameter `json:"parameters"`
+// Instruction defines the instruction for the feature flag
+type Instruction struct {
+	Kind       string    `json:"kind"`
+	Parameters Parameter `json:"parameters"`
 }
 
 type FFOpts struct {
@@ -282,7 +282,7 @@ type FFOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []Instructions      `json:"instructions"`
+	Instructions        []Instruction       `json:"instructions"`
 }
 
 // FFPatchOpts is the options for patching a feature flag
@@ -299,7 +299,7 @@ type FFPatchOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []Instructions      `json:"instructions"`
+	Instructions        []Instruction       `json:"instructions"`
 }
 
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -494,6 +494,7 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 	}
 
 	var targetGroupRules []TargetGroupRules
+	var distribution Distribution
 	if targetGroupRulesData, ok := d.GetOk("add_target_group_rule"); ok {
 		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
 			vMap := targetGroupRuleData.(map[string]interface{})
@@ -502,10 +503,12 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 				GroupName: vMap["group_name"].(string),
 				Variation: vMap["variation"].(string),
 			}
-			var distributions []Distribution
+
 			for _, distributionData := range vMap["distribution"].([]interface{}) {
 				vMap := distributionData.(map[string]interface{})
-				distribution := Distribution{}
+				distribution = Distribution{
+					BuckedBy: "identifier",
+				}
 				var variations []Variation
 				for _, variationData := range vMap["variations"].([]interface{}) {
 					vMap := variationData.(map[string]interface{})
@@ -516,40 +519,37 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 					variations = append(variations, variation)
 				}
 				distribution.Variations = variations
-				distributions = append(distributions, distribution)
 			}
-			targetGroupRule.Distribution = distributions
 			targetGroupRules = append(targetGroupRules, targetGroupRule)
 		}
 	}
 
-	var instructions []Instructions
+	var instructions []Instruction
 	for _, target := range targetRules {
-		instruction := Instructions{
+		instruction := Instruction{
 			Kind: target.Kind,
-			Parameters: []Parameter{
-				{
-					RuleID:    target.Variation,
-					Variation: target.Variation,
-					Targets:   target.Targets,
-				},
+			Parameters: Parameter{
+				Variation: target.Variation,
+				Targets:   target.Targets,
 			},
 		}
 		instructions = append(instructions, instruction)
 	}
 
 	for _, targetGroup := range targetGroupRules {
-		instruction := Instructions{
+		instruction := Instruction{
 			Kind: targetGroup.Kind,
-			Parameters: []Parameter{
-				{
-					RuleID:    targetGroup.GroupName,
-					Variation: targetGroup.Variation,
-					Serve: []Serve{
-						{
-							Variation:    targetGroup.Variation,
-							Distribution: targetGroup.Distribution,
-						},
+			Parameters: Parameter{
+				Serve: []Serve{
+					{
+						Variation:    targetGroup.Variation,
+						Distribution: distribution,
+					},
+				},
+				Clauses: []nextgen.Clause{
+					{
+						Op:     "segmentMatch",
+						Values: []string{targetGroup.GroupName},
 					},
 				},
 			},
@@ -618,6 +618,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 
 	var targetGroupRules []TargetGroupRules
+	var distribution Distribution
 	if targetGroupRulesData, ok := d.GetOk("add_target_group_rule"); ok {
 		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
 			vMap := targetGroupRuleData.(map[string]interface{})
@@ -626,10 +627,12 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 				GroupName: vMap["group_name"].(string),
 				Variation: vMap["variation"].(string),
 			}
-			var distributions []Distribution
+
 			for _, distributionData := range vMap["distribution"].([]interface{}) {
 				vMap := distributionData.(map[string]interface{})
-				distribution := Distribution{}
+				distribution = Distribution{
+					BuckedBy: "identifier",
+				}
 				var variations []Variation
 				for _, variationData := range vMap["variations"].([]interface{}) {
 					vMap := variationData.(map[string]interface{})
@@ -640,40 +643,37 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 					variations = append(variations, variation)
 				}
 				distribution.Variations = variations
-				distributions = append(distributions, distribution)
 			}
-			targetGroupRule.Distribution = distributions
 			targetGroupRules = append(targetGroupRules, targetGroupRule)
 		}
 	}
 
-	var instructions []Instructions
+	var instructions []Instruction
 	for _, target := range targetRules {
-		instruction := Instructions{
+		instruction := Instruction{
 			Kind: target.Kind,
-			Parameters: []Parameter{
-				{
-					RuleID:    target.Variation,
-					Variation: target.Variation,
-					Targets:   target.Targets,
-				},
+			Parameters: Parameter{
+				Variation: target.Variation,
+				Targets:   target.Targets,
 			},
 		}
 		instructions = append(instructions, instruction)
 	}
 
 	for _, targetGroup := range targetGroupRules {
-		instruction := Instructions{
+		instruction := Instruction{
 			Kind: targetGroup.Kind,
-			Parameters: []Parameter{
-				{
-					RuleID:    targetGroup.GroupName,
-					Variation: targetGroup.Variation,
-					Serve: []Serve{
-						{
-							Variation:    targetGroup.Variation,
-							Distribution: targetGroup.Distribution,
-						},
+			Parameters: Parameter{
+				Serve: []Serve{
+					{
+						Variation:    targetGroup.Variation,
+						Distribution: distribution,
+					},
+				},
+				Clauses: []nextgen.Clause{
+					{
+						Op:     "segmentMatch",
+						Values: []string{targetGroup.GroupName},
 					},
 				},
 			},
