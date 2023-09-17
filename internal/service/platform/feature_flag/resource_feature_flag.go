@@ -604,10 +604,14 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	if targetRulesData, ok := d.GetOk("add_target_rule"); ok {
 		for _, targetRuleData := range targetRulesData.([]interface{}) {
 			vMap := targetRuleData.(map[string]interface{})
+			var targets []string = make([]string, 0)
+			for _, target := range vMap["targets"].([]interface{}) {
+				targets = append(targets, target.(string))
+			}
 			targetRule := TargetRules{
 				Kind:      "addTargetsToVariationTargetMap",
 				Variation: vMap["variation"].(string),
-				Targets:   vMap["targets"].([]string),
+				Targets:   targets,
 			}
 			targetRules = append(targetRules, targetRule)
 		}

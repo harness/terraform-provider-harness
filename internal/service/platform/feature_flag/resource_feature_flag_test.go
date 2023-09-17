@@ -191,7 +191,12 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 
 			add_target_rule {
 				variation = "Enabled"
-				targets = ["targets1", "targets2"]
+				targets = ["targets1"]
+			}
+
+			add_target_group_rule {
+				variation = "Enabled"
+				group_name = "targetgroup1"
 			}
 		}
 `, id, name, updatedName)
