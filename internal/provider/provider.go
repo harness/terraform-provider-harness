@@ -35,6 +35,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
@@ -235,6 +236,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_ecs":                    as_rule.DataSourceECSRule(),
 				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
+				"harness_autostopping_azure_proxy":                 load_balancer.DataSourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.DataSourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -356,6 +362,11 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_rule_ecs":                    as_rule.ResourceECSRule(),
 				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
+				"harness_autostopping_azure_proxy":                 load_balancer.ResourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.ResourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
 			},
 		}
 
