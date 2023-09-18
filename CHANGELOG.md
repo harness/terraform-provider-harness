@@ -1,3 +1,20 @@
+# 0.28.0 (September 18,2023) 
+
+FEATURES:
+
+* **New Resource:** `- Support for AutoStopping LoadBalancers - AWS proxy, AWS ALB, Azure gateway, Azure proxy, GCP proxy` ([#698](https://github.com/harness/terraform-provider-harness/issues/698))
+* **New Resource:** `- Support for AutoStopping Rules - AWS VM, Azure VM, GCP VM, AWS RDS, AWS ECS
+ - This version does not support dry run AutoStopping rule creation, provision for hide progress page and tag based ECS rule creation
+ - Does not have support for schedules feature` ([#634](https://github.com/harness/terraform-provider-harness/issues/634))
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_service_now: GA FF CDS_SERVICENOW_REFRESH_TOKEN_AUTH. ([#691](https://github.com/harness/terraform-provider-harness/issues/691))
+
+BUG FIXES:
+
+* harness_platform_feature_flag_target_group -  Fix type issue when casting between types for include and exclude rules ([#694](https://github.com/harness/terraform-provider-harness/issues/694))
+
 # 0.27.2 (September 14,2023) 
 
 BUG FIXES:
