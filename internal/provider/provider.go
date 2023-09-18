@@ -35,6 +35,8 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
+	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
@@ -53,6 +55,7 @@ import (
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -228,8 +231,16 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.DataSourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.DataSourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.DataSourceECSRule(),
 				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
+				"harness_autostopping_azure_proxy":                 load_balancer.DataSourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.DataSourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -346,8 +357,16 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.ResourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.ResourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.ResourceECSRule(),
 				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
+				"harness_autostopping_azure_proxy":                 load_balancer.ResourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.ResourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
 			},
 		}
 

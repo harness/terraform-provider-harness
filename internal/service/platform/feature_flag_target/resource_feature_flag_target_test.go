@@ -121,14 +121,18 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
       EOT
   	}
 
-		resource "harness_platform_feature_flag_target" "test" {
-			identifier = "%[1]s"
+		resource "harness_platform_feature_flag_target" "target" {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			environment = harness_platform_environment.test.id
 			account_id = harness_platform_project.test.id
-			name = "%[2]s"
-			attributes = {}
+		
+			identifier  = "%[1]s"
+			name        = "%[2]s"
+		
+			attributes = {
+				foo : "bar"
+			}
 		}
 `, id, name, updatedName, environmentId, environment)
 }
