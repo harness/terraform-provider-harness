@@ -79,7 +79,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"rules": {
+			"rule": {
 				Description: "The list of rules used to include targets in the target group.",
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -130,8 +130,8 @@ type FFTargetGroupQueryParameters struct {
 type FFTargetGroupOpts struct {
 	Identifier string           `json:"identifier,omitempty"`
 	Name       string           `json:"name,omitempty"`
-	Included   []nextgen.Target `json:"included,omitempty"`
-	Excluded   []nextgen.Target `json:"excluded,omitempty"`
+	Included   []string         `json:"included,omitempty"`
+	Excluded   []string         `json:"excluded,omitempty"`
 	Rules      []nextgen.Clause `json:"rules,omitempty"`
 }
 
@@ -159,7 +159,7 @@ func resourceFeatureFlagTargetGroupRead(ctx context.Context, d *schema.ResourceD
 
 	segment, httpResp, err := c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -193,8 +193,7 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 
 	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		body, _ := io.ReadAll(httpResp.Body)
-		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -288,15 +287,37 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		opts.Included = included.([]string)
+		var targets []string = make([]string, 0)
+		for _, target := range included.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Included = targets
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		opts.Excluded = excluded.([]string)
+		var targets []string = make([]string, 0)
+		for _, target := range excluded.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Excluded = targets
 	}
 
-	if rules, ok := d.GetOk("rules"); ok {
-		opts.Rules = rules.([]nextgen.Clause)
+	if rules, ok := d.GetOk("rule"); ok {
+		var rulesList = make([]nextgen.Clause, 0)
+		for _, rule := range rules.([]interface{}) {
+			var values []string
+			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
+				values = append(values, value.(string))
+			}
+			rule := nextgen.Clause{
+				Attribute: rule.(map[string]interface{})["attribute"].(string),
+				Negate:    rule.(map[string]interface{})["negate"].(bool),
+				Op:        rule.(map[string]interface{})["op"].(string),
+				Values:    values,
+			}
+			rulesList = append(rulesList, rule)
+		}
+		opts.Rules = rulesList
 	}
 
 	return opts
@@ -310,15 +331,37 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		opts.Included = included.([]nextgen.Target)
+		var targets []string = make([]string, 0)
+		for _, target := range included.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Included = targets
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		opts.Excluded = excluded.([]nextgen.Target)
+		var targets []string = make([]string, 0)
+		for _, target := range excluded.([]interface{}) {
+			targets = append(targets, target.(string))
+		}
+		opts.Excluded = targets
 	}
 
-	if rules, ok := d.GetOk("rules"); ok {
-		opts.Rules = rules.([]nextgen.Clause)
+	if rules, ok := d.GetOk("rule"); ok {
+		var rulesList = make([]nextgen.Clause, 0)
+		for _, rule := range rules.([]interface{}) {
+			var values []string = make([]string, 0)
+			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
+				values = append(values, value.(string))
+			}
+			rule := nextgen.Clause{
+				Attribute: rule.(map[string]interface{})["attribute"].(string),
+				Negate:    rule.(map[string]interface{})["negate"].(bool),
+				Op:        rule.(map[string]interface{})["op"].(string),
+				Values:    values,
+			}
+			rulesList = append(rulesList, rule)
+		}
+		opts.Rules = rulesList
 	}
 
 	return &nextgen.TargetGroupsApiPatchSegmentOpts{

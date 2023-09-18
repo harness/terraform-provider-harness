@@ -112,7 +112,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   }
 
   add_target_rules {
-    variation = "Enabled"
+    variation = "trial14"
     targets = ["targets1", "targets2"]
   }
 }
@@ -153,20 +153,19 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
   add_target_groups_rules {
     group_name = "group_name"
-    variation = "Enabled"
+    variation = "trial14"
     distribution = {
-      bucketBy = "identifier",
       variations = [
         {
-            variation = "foo"
+            variation = "trial7"
             weight = 30
         },
         {
-            variation = "bat"
+            variation = "trial14"
             weight = 30
         },
         {
-            variation = "name"
+            variation = "trial20"
             weight = 40
         }
       ]

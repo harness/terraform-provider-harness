@@ -105,7 +105,7 @@ func resourceFeatureFlagTargetRead(ctx context.Context, d *schema.ResourceData, 
 	resp, httpResp, err := c.TargetsApi.GetTarget(ctx, id, c.AccountId, qp.OrganizationID, qp.ProjectID, qp.Environment)
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTarget(d, &resp, *qp)

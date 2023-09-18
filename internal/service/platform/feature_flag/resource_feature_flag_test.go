@@ -120,10 +120,55 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
       EOT
   	}
 
+		resource "harness_platform_feature_flag_target" "target1" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+		
+			identifier  = "target1"
+			name        = "target1"
+		
+			attributes = {
+				foo : "bar"
+			}
+		}
+
+		resource "harness_platform_feature_flag_target" "target2" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+		
+			identifier  = "target2"
+			name        = "target2"
+		
+			attributes = {
+				foo : "bar"
+			}
+		}
+
+		resource "harness_platform_feature_flag_target_group" "targetgroup1" {
+			identifier = "targetgroup1"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+			name = "targetgroup1"
+			included = []
+			excluded = []
+			rule {
+				attribute = "identifier"
+				op        = "equal"
+				values    = [harness_platform_feature_flag_target.target1.id]
+			}
+		}
+
 		resource "harness_platform_feature_flag" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
 			name = "%[2]s"
 			kind       = "boolean"
 			permanent  = false
@@ -143,6 +188,16 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			  name        = "Disabled"
 			  description = "The feature is disabled"
 			  value       = "false"
+			}
+
+			add_target_rule {
+				variation = "Enabled"
+				targets = ["targets1"]
+			}
+
+			add_target_group_rule {
+				variation = "Enabled"
+				group_name = "targetgroup1"
 			}
 		}
 `, id, name, updatedName)
