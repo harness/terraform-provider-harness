@@ -99,6 +99,11 @@ func ResourceFeatureFlag() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
+			"environment": {
+				Description: "Environment Identifier",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"variation": {
 				Description: "The options available for your flag",
 				Type:        schema.TypeList,
@@ -210,6 +215,7 @@ type FFQueryParameters struct {
 	Identifier     string
 	OrganizationId string
 	ProjectId      string
+	Environment    string
 }
 
 // KindMap is a map of the kind to the actual kind
@@ -271,6 +277,7 @@ type FFOpts struct {
 	Identifier          string              `json:"identifier"`
 	Name                string              `json:"name"`
 	Description         string              `json:"description,omitempty"`
+	Environment         string              `json:"environment,omitempty"`
 	Archived            bool                `json:"archived,omitempty"`
 	DefaultOffVariation string              `json:"defaultOffVariation"`
 	DefaultOnVariation  string              `json:"defaultOnVariation"`
@@ -287,6 +294,7 @@ type FFOpts struct {
 type FFPatchOpts struct {
 	Identifier          string              `json:"identifier"`
 	Name                string              `json:"name"`
+	Environment         string              `json:"environment,omitempty"`
 	Description         string              `json:"description,omitempty"`
 	Archived            bool                `json:"archived,omitempty"`
 	DefaultOffVariation string              `json:"defaultOffVariation"`
@@ -311,10 +319,7 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPatchOpts(d)
 
-	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, &nextgen.FeatureFlagsApiPatchFeatureOpts{
-		Body:                  optional.NewInterface(opts),
-		EnvironmentIdentifier: optional.EmptyString(),
-	})
+	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -379,17 +384,14 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	readFeatureFlag(d, &resp, qp)
 
+	// patchOpts := buildFFPatchOpts(d)
+
 	// update the feature flag with the git details
-	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, resp.Identifier, &nextgen.FeatureFlagsApiPatchFeatureOpts{
-		Body:                  optional.NewInterface(opts),
-		EnvironmentIdentifier: optional.EmptyString(),
-	})
+	// feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
 
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	readFeatureFlag(d, &feature, qp)
+	// if err != nil {
+	//	return helpers.HandleApiError(err, d, httpResp)
+	// }
 
 	return nil
 }
@@ -424,6 +426,7 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.Set("owner", strings.Join(flag.Owner, ","))
 	d.Set("org_id", qp.OrganizationId)
 	d.Set("variation", expandVariations(flag.Variations))
+	d.Set("environment", qp.Environment)
 }
 
 func expandVariations(variations []nextgen.Variation) []interface{} {
@@ -445,6 +448,7 @@ func buildFFQueryParameters(d *schema.ResourceData) *FFQueryParameters {
 		Identifier:     d.Get("identifier").(string),
 		OrganizationId: d.Get("org_id").(string),
 		ProjectId:      d.Get("project_id").(string),
+		Environment:    d.Get("environment").(string),
 	}
 }
 
@@ -483,87 +487,6 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 		variations = append(variations, variation)
 	}
 	opts.Variations = variations
-
-	var targetRules []TargetRules
-	if targetRulesData, ok := d.GetOk("add_target_rule"); ok {
-		for _, targetRuleData := range targetRulesData.([]interface{}) {
-			vMap := targetRuleData.(map[string]interface{})
-			var targets []string = make([]string, 0)
-			for _, target := range vMap["targets"].([]interface{}) {
-				targets = append(targets, target.(string))
-			}
-			targetRule := TargetRules{
-				Kind:      "addTargetsToVariationTargetMap",
-				Variation: vMap["variation"].(string),
-				Targets:   targets,
-			}
-			targetRules = append(targetRules, targetRule)
-		}
-	}
-
-	var targetGroupRules []TargetGroupRules
-	var distribution Distribution
-	if targetGroupRulesData, ok := d.GetOk("add_target_group_rule"); ok {
-		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
-			vMap := targetGroupRuleData.(map[string]interface{})
-			targetGroupRule := TargetGroupRules{
-				Kind:      "addRule",
-				GroupName: vMap["group_name"].(string),
-				Variation: vMap["variation"].(string),
-			}
-
-			for _, distributionData := range vMap["distribution"].([]interface{}) {
-				vMap := distributionData.(map[string]interface{})
-				distribution = Distribution{
-					BuckedBy: "identifier",
-				}
-				var variations []Variation
-				for _, variationData := range vMap["variations"].([]interface{}) {
-					vMap := variationData.(map[string]interface{})
-					variation := Variation{
-						Variation: vMap["variation"].(string),
-						Weight:    vMap["weight"].(int),
-					}
-					variations = append(variations, variation)
-				}
-				distribution.Variations = variations
-			}
-			targetGroupRules = append(targetGroupRules, targetGroupRule)
-		}
-	}
-
-	var instructions []Instruction
-	for _, target := range targetRules {
-		instruction := Instruction{
-			Kind: target.Kind,
-			Parameters: Parameter{
-				Variation: target.Variation,
-				Targets:   target.Targets,
-			},
-		}
-		instructions = append(instructions, instruction)
-	}
-
-	for _, targetGroup := range targetGroupRules {
-		instruction := Instruction{
-			Kind: targetGroup.Kind,
-			Parameters: Parameter{
-				Serve: Serve{
-					Variation:    targetGroup.Variation,
-					Distribution: distribution,
-				},
-				Clauses: []nextgen.Clause{
-					{
-						Op:     "segmentMatch",
-						Values: []string{targetGroup.GroupName},
-					},
-				},
-			},
-		}
-		instructions = append(instructions, instruction)
-	}
-
-	opts.Instructions = instructions
 
 	return &nextgen.FeatureFlagsApiCreateFeatureFlagOpts{
 		Body: optional.NewInterface(opts),
@@ -689,7 +612,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 
 	return &nextgen.FeatureFlagsApiPatchFeatureOpts{
 		Body:                  optional.NewInterface(opts),
-		EnvironmentIdentifier: optional.EmptyString(),
+		EnvironmentIdentifier: optional.NewString(d.Get("environment").(string)),
 	}
 }
 
