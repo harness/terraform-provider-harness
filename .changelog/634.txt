@@ -1,0 +1,4 @@
+```release-note:new-resource
+ - Support for AutoStopping Rules - AWS VM, Azure VM, GCP VM, AWS RDS, AWS ECS
+ - This version does not support dry run AutoStopping rule creation, provision for hide progress page and tag based ECS rule creation
+```
