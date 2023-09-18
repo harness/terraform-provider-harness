@@ -46,21 +46,25 @@ func DataSourceECSRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"cluster": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Description: "Name of cluster in which service belong to",
+							Required:    true,
 						},
 						"service": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Description: "Name of service to be onboarded",
+							Required:    true,
 						},
 						"region": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Description: "Region of cluster",
+							Required:    true,
 						},
 						"task_count": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Default:  1,
+							Type:        schema.TypeInt,
+							Description: "Desired number of tasks on warming up a rule",
+							Optional:    true,
+							Default:     1,
 						},
 					},
 				},

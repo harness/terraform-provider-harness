@@ -3,9 +3,9 @@ resource "harness_autostopping_rule_ecs" "test" {
   cloud_connector_id = "cloud_connector_id"
   idle_time_mins     = 10
   container {
-    cluster    = ["cluster"]
-    service    = ["service"]
-    region     = "useast2"
+    cluster    = "cluster"
+    service    = "service"
+    region     = "us-east-1"
     task_count = 1
   }
   tcp {

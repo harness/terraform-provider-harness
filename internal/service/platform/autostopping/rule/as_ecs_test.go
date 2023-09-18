@@ -36,7 +36,7 @@ func testECSRule(name string) string {
 		container {
 			cluster = "cluster"
 			service = "service"
-			region = "useast2"
+			region = "us-east-1"
 			task_count = 1
 		}		
 		http {
