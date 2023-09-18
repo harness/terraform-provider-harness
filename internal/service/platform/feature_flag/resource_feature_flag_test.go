@@ -150,11 +150,11 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 
 		resource "harness_platform_feature_flag_target_group" "targetgroup1" {
 			identifier = "targetgroup1"
+			name = "targetgroup1"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			environment = harness_platform_environment.test.id
 			account_id = harness_platform_project.test.id
-			name = "targetgroup1"
 			included = []
 			excluded = []
 			rule {
@@ -162,6 +162,15 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 				op        = "equal"
 				values    = [harness_platform_feature_flag_target.target1.id]
 			}
+		}
+
+		resource "harness_platform_feature_flag_target_group" "targetgroup2" {
+			identifier = "targetgroup2"
+			name = "targetgroup2"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
 		}
 
 		resource "harness_platform_feature_flag" "test" {
@@ -192,12 +201,26 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 
 			add_target_rule {
 				variation = "Enabled"
-				targets = ["targets1"]
+				targets = ["target1"]
 			}
 
 			add_target_group_rule {
 				variation = "Enabled"
 				group_name = "targetgroup1"
+			}
+
+			add_target_group_rule {
+				group_name = "targetgroup2"
+				distribution {
+					variations {
+						variation = "Enabled"
+						weight = 50
+					}
+					variations {
+						variation = "Disabled"
+						weight = 50
+					}
+				}
 			}
 		}
 `, id, name, updatedName)
