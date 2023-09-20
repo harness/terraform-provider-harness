@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/antihax/optional"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -211,6 +212,17 @@ func ResourceFeatureFlag() *schema.Resource {
 	return resource
 }
 
+const (
+	VariationVar                   = "variation"
+	Weight                         = "weight"
+	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
+	AddRule                        = "addRule"
+	GroupName                      = "group_name"
+	DistributionVar                = "distribution"
+	SegmentMatch                   = "segmentMatch"
+	BuckedBy                       = "identifier"
+)
+
 type FFQueryParameters struct {
 	Identifier     string
 	OrganizationId string
@@ -228,9 +240,9 @@ var KindMap = map[string]string{
 
 // TargetRules is the target rules for the feature flag
 type TargetRules struct {
-	Kind      string   `json:"kind,omitempty"`
-	Variation string   `json:"variation,omitempty"`
-	Targets   []string `json:"targets,omitempty"`
+	Kind      string    `json:"kind,omitempty"`
+	Variation string    `json:"variation,omitempty"`
+	Targets   []*string `json:"targets,omitempty"`
 }
 
 // Variation is the variation for the feature flag
@@ -254,17 +266,17 @@ type TargetGroupRules struct {
 
 // Serve ...
 type Serve struct {
-	Variation    string       `json:"variation,omitempty"`
-	Distribution Distribution `json:"distribution,omitempty"`
+	Variation    string        `json:"variation,omitempty"`
+	Distribution *Distribution `json:"distribution,omitempty"`
 }
 
 // Parameter ...
 type Parameter struct {
-	Variation string           `json:"variation,omitempty"`
-	Targets   []string         `json:"targets,omitempty"`
-	Priority  string           `json:"priority,omitempty"`
-	Clauses   []nextgen.Clause `json:"clauses,omitempty"`
-	Serve     Serve            `json:"serve,omitempty"`
+	Variation string            `json:"variation,omitempty"`
+	Targets   []*string         `json:"targets,omitempty"`
+	Priority  string            `json:"priority,omitempty"`
+	Clauses   []*nextgen.Clause `json:"clauses,omitempty"`
+	Serve     *Serve            `json:"serve,omitempty"`
 }
 
 // Instruction defines the instruction for the feature flag
@@ -376,6 +388,15 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	patchOpts := buildFFPatchOpts(d)
+
+	// update the feature flag with the git details
+	_, httpResp, err = c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
 	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
 
 	if err != nil {
@@ -383,15 +404,6 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	readFeatureFlag(d, &resp, qp)
-
-	// patchOpts := buildFFPatchOpts(d)
-
-	// update the feature flag with the git details
-	// feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
-
-	// if err != nil {
-	//	return helpers.HandleApiError(err, d, httpResp)
-	// }
 
 	return nil
 }
@@ -529,83 +541,77 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 	opts.Variations = variations
 
-	var targetRules []TargetRules
+	var instructions []Instruction
 	if targetRulesData, ok := d.GetOk("add_target_rule"); ok {
 		for _, targetRuleData := range targetRulesData.([]interface{}) {
 			vMap := targetRuleData.(map[string]interface{})
-			var targets []string = make([]string, 0)
+			var targets []*string = make([]*string, 0)
 			for _, target := range vMap["targets"].([]interface{}) {
-				targets = append(targets, target.(string))
+				targets = append(targets, aws.String(target.(string)))
 			}
 			targetRule := TargetRules{
-				Kind:      "addTargetsToVariationTargetMap",
-				Variation: vMap["variation"].(string),
+				Kind:      AddTargetsToVariationTargetMap,
+				Variation: vMap[VariationVar].(string),
 				Targets:   targets,
 			}
-			targetRules = append(targetRules, targetRule)
+			instruction := Instruction{
+				Kind: targetRule.Kind,
+				Parameters: Parameter{
+					Variation: targetRule.Variation,
+					Targets:   targetRule.Targets,
+					Clauses:   nil,
+					Serve:     nil,
+				},
+			}
+			instructions = append(instructions, instruction)
 		}
 	}
 
-	var targetGroupRules []TargetGroupRules
-	var distribution Distribution
 	if targetGroupRulesData, ok := d.GetOk("add_target_group_rule"); ok {
 		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
 			vMap := targetGroupRuleData.(map[string]interface{})
 			targetGroupRule := TargetGroupRules{
-				Kind:      "addRule",
-				GroupName: vMap["group_name"].(string),
-				Variation: vMap["variation"].(string),
+				Kind:      AddRule,
+				GroupName: vMap[GroupName].(string),
+				Variation: vMap[VariationVar].(string),
 			}
 
-			for _, distributionData := range vMap["distribution"].([]interface{}) {
-				vMap := distributionData.(map[string]interface{})
-				distribution = Distribution{
-					BuckedBy: "identifier",
-				}
-				var variations []Variation
-				for _, variationData := range vMap["variations"].([]interface{}) {
-					vMap := variationData.(map[string]interface{})
-					variation := Variation{
-						Variation: vMap["variation"].(string),
-						Weight:    vMap["weight"].(int),
+			var distribution *Distribution = nil
+			if distrib, ok := vMap[DistributionVar]; ok {
+				for _, distributionData := range distrib.([]interface{}) {
+					vMap := distributionData.(map[string]interface{})
+					distribution = &Distribution{
+						BuckedBy: BuckedBy,
 					}
-					variations = append(variations, variation)
+					var variations []Variation
+					for _, variationData := range vMap["variations"].([]interface{}) {
+						vMap := variationData.(map[string]interface{})
+						variation := Variation{
+							Variation: vMap[VariationVar].(string),
+							Weight:    vMap[Weight].(int),
+						}
+						variations = append(variations, variation)
+					}
+					distribution.Variations = variations
 				}
-				distribution.Variations = variations
 			}
-			targetGroupRules = append(targetGroupRules, targetGroupRule)
-		}
-	}
-
-	var instructions []Instruction
-	for _, target := range targetRules {
-		instruction := Instruction{
-			Kind: target.Kind,
-			Parameters: Parameter{
-				Variation: target.Variation,
-				Targets:   target.Targets,
-			},
-		}
-		instructions = append(instructions, instruction)
-	}
-
-	for _, targetGroup := range targetGroupRules {
-		instruction := Instruction{
-			Kind: targetGroup.Kind,
-			Parameters: Parameter{
-				Serve: Serve{
-					Variation:    targetGroup.Variation,
-					Distribution: distribution,
-				},
-				Clauses: []nextgen.Clause{
-					{
-						Op:     "segmentMatch",
-						Values: []string{targetGroup.GroupName},
+			instruction := Instruction{
+				Kind: targetGroupRule.Kind,
+				Parameters: Parameter{
+					Serve: &Serve{
+						Variation:    targetGroupRule.Variation,
+						Distribution: distribution,
+					},
+					Clauses: []*nextgen.Clause{
+						{
+							Op:     SegmentMatch,
+							Values: []string{targetGroupRule.GroupName},
+						},
 					},
 				},
-			},
+			}
+			instructions = append(instructions, instruction)
 		}
-		instructions = append(instructions, instruction)
 	}
 
 	opts.Instructions = instructions
