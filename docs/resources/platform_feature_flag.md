@@ -85,6 +85,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
+  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
@@ -111,7 +112,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_rules {
+  add_target_rule {
     variation = "trial14"
     targets = ["targets1", "targets2"]
   }
@@ -125,6 +126,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
+  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
@@ -151,7 +153,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_groups_rules {
+  add_target_groups_rule {
     group_name = "group_name"
     variation = "trial14"
     distribution = {
@@ -191,9 +193,10 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
 ### Optional
 
-- `add_target_group_rules` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_group_rules))
-- `add_target_rules` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_rules))
+- `add_target_group_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_group_rule))
+- `add_target_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_rule))
 - `archived` (Boolean) Whether or not the flag is archived
+- `environment` (String) Environment Identifier
 - `git_details` (Block Set, Max: 1) (see [below for nested schema](#nestedblock--git_details))
 - `owner` (String) The owner of the flag
 
@@ -212,24 +215,24 @@ Required:
 - `value` (String) The value of the variation
 
 
-<a id="nestedblock--add_target_group_rules"></a>
-### Nested Schema for `add_target_group_rules`
+<a id="nestedblock--add_target_group_rule"></a>
+### Nested Schema for `add_target_group_rule`
 
 Optional:
 
-- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--add_target_group_rules--distribution))
+- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--add_target_group_rule--distribution))
 - `group_name` (String) The name of the target group
 - `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
 
-<a id="nestedblock--add_target_group_rules--distribution"></a>
-### Nested Schema for `add_target_group_rules.distribution`
+<a id="nestedblock--add_target_group_rule--distribution"></a>
+### Nested Schema for `add_target_group_rule.distribution`
 
 Optional:
 
-- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--add_target_group_rules--distribution--variations))
+- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--add_target_group_rule--distribution--variations))
 
-<a id="nestedblock--add_target_group_rules--distribution--variations"></a>
-### Nested Schema for `add_target_group_rules.distribution.variations`
+<a id="nestedblock--add_target_group_rule--distribution--variations"></a>
+### Nested Schema for `add_target_group_rule.distribution.variations`
 
 Optional:
 
@@ -239,8 +242,8 @@ Optional:
 
 
 
-<a id="nestedblock--add_target_rules"></a>
-### Nested Schema for `add_target_rules`
+<a id="nestedblock--add_target_rule"></a>
+### Nested Schema for `add_target_rule`
 
 Optional:
 

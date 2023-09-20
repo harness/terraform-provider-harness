@@ -213,12 +213,13 @@ func ResourceFeatureFlag() *schema.Resource {
 }
 
 const (
-	Variation                      = "variation"
+	VariationVar                   = "variation"
 	Weight                         = "weight"
 	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
 	AddRule                        = "addRule"
-	Description                    = "description"
-	segmentMatch                   = "segmentMatch"
+	GroupName                      = "group_name"
+	DistributionVar                = "distribution"
+	SegmentMatch                   = "segmentMatch"
 	BuckedBy                       = "identifier"
 )
 
@@ -550,7 +551,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 			}
 			targetRule := TargetRules{
 				Kind:      AddTargetsToVariationTargetMap,
-				Variation: vMap[Variation].(string),
+				Variation: vMap[VariationVar].(string),
 				Targets:   targets,
 			}
 			instruction := Instruction{
@@ -572,11 +573,11 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 			targetGroupRule := TargetGroupRules{
 				Kind:      AddRule,
 				GroupName: vMap[GroupName].(string),
-				Variation: vMap[Variation].(string),
+				Variation: vMap[VariationVar].(string),
 			}
 
 			var distribution *Distribution = nil
-			if distrib, ok := vMap[Distribution]; ok {
+			if distrib, ok := vMap[DistributionVar]; ok {
 				for _, distributionData := range distrib.([]interface{}) {
 					vMap := distributionData.(map[string]interface{})
 					distribution = &Distribution{
@@ -586,7 +587,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 					for _, variationData := range vMap["variations"].([]interface{}) {
 						vMap := variationData.(map[string]interface{})
 						variation := Variation{
-							Variation: vMap[Variation].(string),
+							Variation: vMap[VariationVar].(string),
 							Weight:    vMap[Weight].(int),
 						}
 						variations = append(variations, variation)

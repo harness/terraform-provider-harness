@@ -70,6 +70,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
+  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
@@ -110,6 +111,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
+  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
