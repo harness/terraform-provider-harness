@@ -212,6 +212,16 @@ func ResourceFeatureFlag() *schema.Resource {
 	return resource
 }
 
+const (
+	Variation                      = "variation"
+	Weight                         = "weight"
+	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
+	AddRule                        = "addRule"
+	Description                    = "description"
+	segmentMatch                   = "segmentMatch"
+	BuckedBy                       = "identifier"
+)
+
 type FFQueryParameters struct {
 	Identifier     string
 	OrganizationId string
@@ -539,8 +549,8 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 				targets = append(targets, aws.String(target.(string)))
 			}
 			targetRule := TargetRules{
-				Kind:      "addTargetsToVariationTargetMap",
-				Variation: vMap["variation"].(string),
+				Kind:      AddTargetsToVariationTargetMap,
+				Variation: vMap[Variation].(string),
 				Targets:   targets,
 			}
 			instruction := Instruction{
@@ -560,24 +570,24 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
 			vMap := targetGroupRuleData.(map[string]interface{})
 			targetGroupRule := TargetGroupRules{
-				Kind:      "addRule",
-				GroupName: vMap["group_name"].(string),
-				Variation: vMap["variation"].(string),
+				Kind:      AddRule,
+				GroupName: vMap[GroupName].(string),
+				Variation: vMap[Variation].(string),
 			}
 
 			var distribution *Distribution = nil
-			if distrib, ok := vMap["distribution"]; ok {
+			if distrib, ok := vMap[Distribution]; ok {
 				for _, distributionData := range distrib.([]interface{}) {
 					vMap := distributionData.(map[string]interface{})
 					distribution = &Distribution{
-						BuckedBy: "identifier",
+						BuckedBy: BuckedBy,
 					}
 					var variations []Variation
 					for _, variationData := range vMap["variations"].([]interface{}) {
 						vMap := variationData.(map[string]interface{})
 						variation := Variation{
-							Variation: vMap["variation"].(string),
-							Weight:    vMap["weight"].(int),
+							Variation: vMap[Variation].(string),
+							Weight:    vMap[Weight].(int),
 						}
 						variations = append(variations, variation)
 					}
@@ -593,7 +603,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 					},
 					Clauses: []*nextgen.Clause{
 						{
-							Op:     "segmentMatch",
+							Op:     SegmentMatch,
 							Values: []string{targetGroupRule.GroupName},
 						},
 					},
