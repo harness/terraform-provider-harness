@@ -65,6 +65,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Description: "A list of targets to include in the target group",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				MinItems:    0,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -74,6 +75,7 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Description: "A list of targets to exclude from the target group",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				MinItems:    0,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -83,27 +85,32 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Description: "The list of rules used to include targets in the target group.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"attribute": {
 							Description: "The attribute to use in the clause.  This can be any target attribute",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"negate": {
 							Description: "Is the operation negated?",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
 						},
 						"op": {
 							Description: "The type of operation such as equals, starts_with, contains",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"values": {
 							Description: "The values that are compared against the operator",
 							Type:        schema.TypeList,
 							Optional:    true,
+							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
