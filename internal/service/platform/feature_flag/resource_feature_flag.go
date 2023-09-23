@@ -145,13 +145,11 @@ func ResourceFeatureFlag() *schema.Resource {
 							Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed:    true,
 						},
 						"targets": {
 							Description: "The targets of the rule",
 							Type:        schema.TypeList,
 							Optional:    true,
-							Computed:    true,
 							MinItems:    0,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
@@ -171,39 +169,33 @@ func ResourceFeatureFlag() *schema.Resource {
 							Description: "The name of the target group",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed:    true,
 						},
 						"variation": {
 							Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed:    true,
 						},
 						"distribution": {
 							Description: "The distribution of the rule",
 							Type:        schema.TypeList,
 							Optional:    true,
-							Computed:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"variations": {
 										Description: "The variations of the rule",
 										Type:        schema.TypeList,
 										Optional:    true,
-										Computed:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"variation": {
 													Description: "The identifier of the variation",
 													Type:        schema.TypeString,
 													Optional:    true,
-													Computed:    true,
 												},
 												"weight": {
 													Description: "The weight of the variation",
 													Type:        schema.TypeInt,
 													Optional:    true,
-													Computed:    true,
 												},
 											},
 										},
