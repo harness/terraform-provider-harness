@@ -339,13 +339,21 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPatchOpts(d)
 
-	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+	_, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readFeatureFlag(d, &feature, qp)
+	readOpts := buildFFReadOpts(d)
+
+	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	readFeatureFlag(d, &resp, qp)
 
 	return nil
 }
