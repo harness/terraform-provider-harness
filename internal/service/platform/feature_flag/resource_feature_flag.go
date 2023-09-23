@@ -92,14 +92,11 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "The owner of the flag",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
-				Computed:    true,
 			},
 			"permanent": {
 				Description: "Whether or not the flag is permanent. If it is, it will never be flagged as stale",
 				Type:        schema.TypeBool,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"environment": {
 				Description: "Environment Identifier",
