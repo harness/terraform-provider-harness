@@ -217,6 +217,8 @@ const (
 	Weight                         = "weight"
 	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
 	AddRule                        = "addRule"
+	RemoveRule                     = "removeRule"
+	RemoveTarget                   = "removeTargetsToVariationTargetMap"
 	GroupName                      = "group_name"
 	DistributionVar                = "distribution"
 	SegmentMatch                   = "segmentMatch"

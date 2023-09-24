@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_feature_flag -  Fix updates on targets, target groups and feature flags.
+```
