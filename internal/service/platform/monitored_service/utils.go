@@ -338,7 +338,19 @@ func getChangeSourceByType(cs map[string]interface{}) nextgen.ChangeSourceDto {
 }
 
 func getServiceDependencyByType(sd map[string]interface{}) nextgen.ServiceDependencyDto {
-	return nextgen.ServiceDependencyDto{
-		MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
+	dependencyType := sd["type"].(string)
+	dependencyMetadata := sd["dependency_metadata"].(string)
+
+	if dependencyType == "KUBERNETES" {
+		data := nextgen.KubernetesDependencyMetadata{}
+		json.Unmarshal([]byte(dependencyMetadata), &data)
+
+		return nextgen.ServiceDependencyDto{
+			MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
+			Type_:                      nextgen.DependencyMetadataType(dependencyType),
+			KUBERNETES:                 &data,
+		}
 	}
+
+	panic(fmt.Sprintf("Invalid service dependency type for monitored service"))
 }
