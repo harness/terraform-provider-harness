@@ -74,7 +74,7 @@ func ResourceSrmNotification() *schema.Resource {
 								},
 							},
 						},
-						"notificationMethod": {
+						"notification_method": {
 							Description: "Notification channel for the SRM Notification.",
 							Type:        schema.TypeSet,
 							MinItems:    1,
@@ -119,7 +119,7 @@ func resourceSrmNotificationCreate(ctx context.Context, d *schema.ResourceData, 
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	readSrmNotification(d, &respCreate.NotificationRule)
+	readSrmNotification(d, &respCreate.Resource.NotificationRule)
 	return nil
 }
 
@@ -149,7 +149,7 @@ func resourceSrmNotificationRead(ctx context.Context, d *schema.ResourceData, me
 		return nil
 	}
 
-	readSrmNotification(d, &resp.NotificationRule)
+	readSrmNotification(d, &resp.Resource.NotificationRule)
 	return nil
 }
 
@@ -159,8 +159,10 @@ func resourceSrmNotificationUpdate(ctx context.Context, d *schema.ResourceData, 
 	var accountIdentifier string
 	accountIdentifier = c.AccountId
 	identifier := d.Get("identifier").(string)
+	orgIdentifier := d.Get("org_id").(string)
+	projectIdentifier := d.Get("project_id").(string)
 	updateSrmNotificationRequest := buildSrmNotificationRequest(d)
-	respCreate, httpRespCreate, errCreate := c.SrmNotificationApiService.UpdateSrmNotification(ctx, accountIdentifier, identifier,
+	respCreate, httpRespCreate, errCreate := c.SrmNotificationApiService.UpdateSrmNotification(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier,
 		&nextgen.SrmNotificationApiUpdateSrmNotificationOpts{
 			Body: optional.NewInterface(updateSrmNotificationRequest),
 		})
@@ -169,7 +171,7 @@ func resourceSrmNotificationUpdate(ctx context.Context, d *schema.ResourceData, 
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
 
-	readSrmNotification(d, &respCreate.NotificationRule)
+	readSrmNotification(d, &respCreate.Resource.NotificationRule)
 	return nil
 }
 
@@ -222,8 +224,9 @@ func buildSrmNotificationRequest(d *schema.ResourceData) *nextgen.NotificationRu
 			notificationRuleConditionDto := getNotificationRuleConditionByType(hs)
 			hss[i] = notificationRuleConditionDto
 		}
+		srmNotification.Conditions = hss
 
-		notificationMethod := getNotificationChannelByType(request["notificationMethod"].(map[string]interface{}))
+		notificationMethod := getNotificationChannelByType(request["notification_method"].(*schema.Set).List()[0].(map[string]interface{}))
 		srmNotification.NotificationMethod = &notificationMethod
 	}
 

@@ -56,6 +56,6 @@ func dataSourceSrmNotification(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readSrmNotification(d, &resp.NotificationRule)
+	readSrmNotification(d, &resp.Resource.NotificationRule)
 	return nil
 }
