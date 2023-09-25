@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/antihax/optional v1.0.0
-	github.com/aws/aws-sdk-go v1.45.16
 	github.com/docker/docker v24.0.5+incompatible
 	github.com/harness/harness-go-sdk v0.3.49
 	github.com/harness/harness-openapi-go-client v0.0.19
