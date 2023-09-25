@@ -58,6 +58,7 @@ func TestAccDataSourceConnectorAwsFullJitterBackOff(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "full_jitter_backoff_strategy.0.retry_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "full_jitter_backoff_strategy.0.base_delay", "10"),
 					resource.TestCheckResourceAttr(resourceName, "full_jitter_backoff_strategy.0.max_backoff_time", "65"),
+					resource.TestCheckResourceAttr(resourceName, "cross_account_access.0.role_arn", "test"),
 				),
 			},
 		},
@@ -179,6 +180,9 @@ func testAccDataSourceConnectorAwsFullJitterBackOff(name string) string {
 				base_delay = 10
 				max_backoff_time = 65
 				retry_count = 3
+			}
+			cross_account_access {
+				role_arn = "test"
 			}
 		}
 

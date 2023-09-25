@@ -21,7 +21,7 @@ func ResourceFeatureFlagTarget() *schema.Resource {
 		ReadContext:   resourceFeatureFlagTargetRead,
 		DeleteContext: resourceFeatureFlagTargetDelete,
 		CreateContext: resourceFeatureFlagTargetCreateOrUpdate,
-		UpdateContext: resourceFeatureFlagTargetUpdate,
+		UpdateContext: resourceFeatureFlagTargetCreateOrUpdate,
 		Importer:      helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
@@ -65,6 +65,7 @@ func ResourceFeatureFlagTarget() *schema.Resource {
 				Type:        schema.TypeMap,
 				Optional:    true,
 				Computed:    true,
+				ForceNew:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -105,7 +106,7 @@ func resourceFeatureFlagTargetRead(ctx context.Context, d *schema.ResourceData, 
 	resp, httpResp, err := c.TargetsApi.GetTarget(ctx, id, c.AccountId, qp.OrganizationID, qp.ProjectID, qp.Environment)
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTarget(d, &resp, *qp)

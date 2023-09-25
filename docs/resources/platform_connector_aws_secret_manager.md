@@ -24,6 +24,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
+  default     = true
 
   secret_name_prefix = "test"
   region             = "us-east-1"
@@ -39,6 +40,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
+  default     = true
 
   secret_name_prefix = "test"
   region             = "us-east-1"
@@ -57,6 +59,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
+  default     = true
 
   secret_name_prefix = "test"
   region             = "us-east-1"
@@ -89,6 +92,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
 - `project_id` (String) Unique identifier of the project.
 - `secret_name_prefix` (String) A prefix to be added to all secrets.
 - `tags` (Set of String) Tags to associate with the resource.
+- `default` (Boolean) Use as Default Secrets Manager.
 
 ### Read-Only
 

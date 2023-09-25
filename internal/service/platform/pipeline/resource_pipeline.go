@@ -224,7 +224,7 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
-			pipeline_id = d.Get("pipeline_import_request.0.pipeline_name").(string)
+			pipeline_id = d.Get("identifier").(string)
 
 			pipeline_import_request_body := createImportFromGitRequest(d)
 

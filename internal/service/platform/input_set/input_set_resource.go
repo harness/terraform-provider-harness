@@ -32,29 +32,34 @@ func ResourceInputSet() *schema.Resource {
 			"yaml": {
 				Description: "Input Set YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed: true,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
 							Description: "Name of the branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"file_path": {
 							Description: "File path of the Entity in the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"commit_message": {
 							Description: "Commit message used for the merge commit.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"base_branch": {
 							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
@@ -66,17 +71,20 @@ func ResourceInputSet() *schema.Resource {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"store_type": {
 							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
 							Type:         schema.TypeString,
 							Optional:     true,
+							Computed: true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
 						},
 						"repo_name": {
 							Description: "Name of the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed: true,
 						},
 						"last_object_id": {
 							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
@@ -101,6 +109,66 @@ func ResourceInputSet() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
+						},
+					},
+				},
+			},
+			"import_from_git": {
+				Description: "Flag to set if importing from Git",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"git_import_info": {
+				Description: "Contains Git Information for importing entities from Git",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch_name": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"file_path": {
+							Description: "File path of the Entity in the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"connector_ref": {
+							Description: "Identifier of the Harness Connector used for importing entity from Git" + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"repo_name": {
+							Description: "Name of the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"is_force_import": {
+							Description: "",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"input_set_import_request": {
+				Description: "Contains parameters for importing a input set",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"input_set_name": {
+							Description: "Name of the input set.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"input_set_description": {
+							Description: "Description of the input set.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -161,7 +229,9 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetClientWithContext(ctx)
 
 	var err error
+	var inputSet_id string
 	var resp nextgen.InputSetResponseBody
+	var response nextgen.InputSetSaveResponseBody
 	var httpResp *http.Response
 
 	id := d.Id()
@@ -175,17 +245,30 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	var connector_ref optional.String
 
 	if id == "" {
-		inputSet := buildCreateInputSet(d)
-		if inputSet.GitDetails != nil {
-			base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
-			store_type = optional.NewString(inputSet.GitDetails.StoreType)
-			commit_message = optional.NewString(inputSet.GitDetails.CommitMessage)
-			connector_ref = optional.NewString(inputSet.GitDetails.ConnectorRef)
-		}
+		if d.Get("import_from_git").(bool) {
+			inputSet_id = d.Get("identifier").(string)
 
-		resp, httpResp, err = c.InputSetsApi.CreateInputSet(ctx, inputSet, pipelineIdentifier, orgIdentifier, projectIdentifier, &nextgen.InputSetsApiCreateInputSetOpts{
-			HarnessAccount: optional.NewString(c.AccountId),
-		})
+			input_set_import_request_body := createImportFromGitRequest(d)
+
+			response, httpResp, err = c.InputSetsApi.ImportInputSetsFromGit(ctx, orgIdentifier, projectIdentifier, pipelineIdentifier, inputSet_id,
+				&nextgen.InputSetsApiImportInputSetsFromGitOpts{
+					Body:           optional.NewInterface(input_set_import_request_body),
+					HarnessAccount: optional.NewString(c.AccountId)})
+
+		} else{
+			inputSet := buildCreateInputSet(d)
+			if inputSet.GitDetails != nil {
+				base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
+				store_type = optional.NewString(inputSet.GitDetails.StoreType)
+				commit_message = optional.NewString(inputSet.GitDetails.CommitMessage)
+				connector_ref = optional.NewString(inputSet.GitDetails.ConnectorRef)
+			}
+
+			inputSet_id = inputSet.Identifier
+			resp, httpResp, err = c.InputSetsApi.CreateInputSet(ctx, inputSet, pipelineIdentifier, orgIdentifier, projectIdentifier, &nextgen.InputSetsApiCreateInputSetOpts{
+				HarnessAccount: optional.NewString(c.AccountId),
+			})
+		}
 	} else {
 		inputSet := buildUpdateInputSet(d)
 		if inputSet.GitDetails != nil {
@@ -204,9 +287,73 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	if d.Get("import_from_git").(bool) {
+
+		inputSet_id = response.Identifier
+
+		branch_name := helpers.BuildField(d, "git_import_info.0.branch_name")
+		parent_entity_connector_ref := helpers.BuildField(d, "git_import_info.0.connector_ref")
+		parent_entity_repo_name := helpers.BuildField(d, "git_import_info.0.repo_name")
+
+		resp, httpResp, err := c.InputSetsApi.GetInputSet(ctx, orgIdentifier, projectIdentifier, inputSet_id, pipelineIdentifier, &nextgen.InputSetsApiGetInputSetOpts{
+			HarnessAccount:           optional.NewString(c.AccountId),
+			BranchName:               branch_name,
+			ParentEntityConnectorRef: parent_entity_connector_ref,
+			ParentEntityRepoName:     parent_entity_repo_name,
+		})
+
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+		readInputSet(d, &resp, pipelineIdentifier, optional.NewString("REMOTE"), optional.EmptyString() , optional.EmptyString(), parent_entity_connector_ref)
+
+		return nil
+	}
+
 	readInputSet(d, &resp, pipelineIdentifier, store_type, base_branch, commit_message, connector_ref)
 
 	return nil
+}
+
+func createImportFromGitRequest(d *schema.ResourceData) *nextgen.InputSetsImportRequestBody {
+
+	input_set_git_import_info := &nextgen.GitImportInfo{}
+	if attr, ok := d.GetOk("git_import_info"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["branch_name"]; ok {
+			input_set_git_import_info.BranchName = attr.(string)
+		}
+		if attr, ok := config["file_path"]; ok {
+			input_set_git_import_info.FilePath = attr.(string)
+		}
+		if attr, ok := config["connector_ref"]; ok {
+			input_set_git_import_info.ConnectorRef = attr.(string)
+		}
+		if attr, ok := config["repo_name"]; ok {
+			input_set_git_import_info.RepoName = attr.(string)
+		}
+		if attr, ok := config["is_force_import"]; ok {
+			input_set_git_import_info.IsForceImport = attr.(bool)
+		}
+	}
+
+	input_set_import_request := &nextgen.InputSetsImportRequestDto{}
+	if attr, ok := d.GetOk("input_set_import_request"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["input_set_name"]; ok {
+			input_set_import_request.InputSetName = attr.(string)
+		}
+		if attr, ok := config["input_set_description"]; ok {
+			input_set_import_request.InputSetDescription = attr.(string)
+		}
+	}
+
+	input_set_import_request_body := &nextgen.InputSetsImportRequestBody{}
+	input_set_import_request_body.GitImportInfo = input_set_git_import_info
+	input_set_import_request_body.InputSetsImportRequest = input_set_import_request
+
+	return input_set_import_request_body
 }
 
 func resourceInputSetDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

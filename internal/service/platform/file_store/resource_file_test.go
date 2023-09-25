@@ -58,6 +58,39 @@ func TestAccResourceFileStoreFile(t *testing.T) {
 	})
 }
 
+func TestAccResourceFileStoreFileWithContent(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_file_store_file.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccFileStoreDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceFileStore_FileContent(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test file"),
+					resource.TestCheckResourceAttr(resourceName, "content", "file content"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"file_content_path"},
+				ImportStateIdFunc:       acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourceFileStoreFileOrgLevel(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -165,7 +198,7 @@ func TestAccResourceFileStoreFile_DeleteUnderlyingResource(t *testing.T) {
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
 		},
-		CheckDestroy:      testAccFileStoreDestroy(resourceName),
+		CheckDestroy: testAccFileStoreDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceFileStore_FileProjectLevel(id, name),
@@ -263,6 +296,21 @@ func testAccResourceFileStore_File(id string, name string) string {
 		mime_type = "text"
 		file_usage = "SCRIPT"
 		file_content_path =  "%[3]s"
+	}
+		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
+}
+
+func testAccResourceFileStore_FileContent(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_file_store_file" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test file"
+		tags = ["foo:bar", "bar:foo"]
+		parent_identifier = "Root"
+		mime_type = "text"
+		file_usage = "SCRIPT"
+		content =  file("%[3]s")
 	}
 		`, id, name, getAbsFilePath("../../../acctest/file_store_files/file.txt"))
 }
