@@ -6,8 +6,8 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go v1.45.16
 	github.com/docker/docker v24.0.5+incompatible
-	github.com/harness/harness-go-sdk v0.3.48
-	github.com/harness/harness-openapi-go-client v0.0.18
+	github.com/harness/harness-go-sdk v0.3.49
+	github.com/harness/harness-openapi-go-client v0.0.19
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.27.0
