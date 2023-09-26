@@ -23,6 +23,8 @@ func (a *GithubHttpCredentials) UnmarshalJSON(data []byte) error {
 	switch a.Type_ {
 	case GithubHttpCredentialTypes.UsernameToken:
 		err = json.Unmarshal(aux.Spec, &a.UsernameToken)
+	case GithubHttpCredentialTypes.GithubApp:
+		err = json.Unmarshal(aux.Spec, &a.GithubApp)
 	default:
 		panic(fmt.Sprintf("unknown http credentials method type %s", a.Type_))
 	}
