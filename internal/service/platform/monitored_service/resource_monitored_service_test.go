@@ -3,7 +3,6 @@ package monitored_service_test
 import (
 	"fmt"
 	"github.com/antihax/optional"
-	"os"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -323,9 +322,6 @@ func testMonitoredServiceWithoutEnabled(id string, name string) string {
 }
 
 func TestAccResourceMonitoredServiceWithAppD(t *testing.T) {
-	os.Setenv("HARNESS_ACCOUNT_ID", "-k53qRQAQ1O7DBLb9ACnjQ")
-	os.Setenv("HARNESS_ENDPOINT", "https://stress.harness.io")
-	os.Setenv("HARNESS_PLATFORM_API_KEY", "pat.-k53qRQAQ1O7DBLb9ACnjQ.6458d25f434d636d278aa8b8.B9qqRN9neUddbPoTq3Sp")
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
@@ -353,9 +349,6 @@ func TestAccResourceMonitoredServiceWithAppD(t *testing.T) {
 }
 
 func TestAccResourceMonitoredServiceWithGCPLogs(t *testing.T) {
-	os.Setenv("HARNESS_ACCOUNT_ID", "-k53qRQAQ1O7DBLb9ACnjQ")
-	os.Setenv("HARNESS_ENDPOINT", "https://stress.harness.io")
-	os.Setenv("HARNESS_PLATFORM_API_KEY", "pat.-k53qRQAQ1O7DBLb9ACnjQ.6458d25f434d636d278aa8b8.B9qqRN9neUddbPoTq3Sp")
 
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
@@ -383,10 +376,6 @@ func TestAccResourceMonitoredServiceWithGCPLogs(t *testing.T) {
 }
 
 func TestAccResourceMonitoredServiceWithSplunkLogs(t *testing.T) {
-	os.Setenv("HARNESS_ACCOUNT_ID", "-k53qRQAQ1O7DBLb9ACnjQ")
-	os.Setenv("HARNESS_ENDPOINT", "https://stress.harness.io")
-	os.Setenv("HARNESS_PLATFORM_API_KEY", "pat.-k53qRQAQ1O7DBLb9ACnjQ.6458d25f434d636d278aa8b8.B9qqRN9neUddbPoTq3Sp")
-
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 
