@@ -39,6 +39,8 @@ func (a *GithubHttpCredentials) MarshalJSON() ([]byte, error) {
 	switch a.Type_ {
 	case GithubHttpCredentialTypes.UsernameToken:
 		spec, err = json.Marshal(a.UsernameToken)
+	case GithubHttpCredentialTypes.GithubApp:
+		spec, err = json.Marshal(a.GithubApp)
 	default:
 		panic(fmt.Sprintf("unknown git auth method type %s", a.Type_))
 	}
