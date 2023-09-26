@@ -1,0 +1,3 @@
+```release-note:tests
+monitored_service/resource_monitored_service_test.go -  Added additional tests for AppD, GCP Logs and Splunk Logs
+```
