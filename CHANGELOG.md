@@ -1,3 +1,14 @@
+# 0.28.1 (September 27,2023) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_aws_secret_manager: add support for new field "default" which sets the secret manager to be default for the account ([#633](https://github.com/harness/terraform-provider-harness/issues/633))
+
+BUG FIXES:
+
+* harness_platform_feature_flag -  Enable adding target and target groups through features ([#699](https://github.com/harness/terraform-provider-harness/issues/699))
+* harness_platform_feature_flag -  Fix updates on targets, target groups and feature flags. ([#700](https://github.com/harness/terraform-provider-harness/issues/700))
+
 # 0.28.0 (September 18,2023) 
 
 FEATURES:
