@@ -482,12 +482,12 @@ GetDeployYaml returns depoyment yamls for agents.
 */
 
 type AgentsApiAgentServiceForServerGetDeployYamlOpts struct {
-    AccountIdentifier optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-	Namespace         optional.String
-DisasterRecoveryIdentifier optional.String
-    SkipCrds optional.Bool
+	AccountIdentifier          optional.String
+	OrgIdentifier              optional.String
+	ProjectIdentifier          optional.String
+	Namespace                  optional.String
+	DisasterRecoveryIdentifier optional.String
+	SkipCrds                   optional.Bool
 }
 
 func (a *AgentsApiService) AgentServiceForServerGetDeployYaml(ctx context.Context, agentIdentifier string, accountIdentifier string, localVarOptionals *AgentsApiAgentServiceForServerGetDeployYamlOpts) (string, *http.Response, error) {

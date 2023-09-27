@@ -16,5 +16,5 @@ type V1AgentMetadata struct {
 	ExistingInstallation     bool                        `json:"existingInstallation,omitempty"`
 	MappedProjects           *Servicev1AppProjectMapping `json:"mappedProjects,omitempty"`
 	InfraType                *V1ClusterInfraType         `json:"infraType,omitempty"`
-        IsNamespaced              bool                        `json:"isNamespaced,omitempty"`
+	IsNamespaced             bool                        `json:"isNamespaced,omitempty"`
 }
