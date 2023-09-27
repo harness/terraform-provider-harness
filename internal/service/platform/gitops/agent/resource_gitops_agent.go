@@ -90,6 +90,11 @@ func ResourceGitopsAgent() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"operator": {
+				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 	return resource
@@ -98,7 +103,7 @@ func ResourceGitopsAgent() *schema.Resource {
 func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	createAgentRequest := buildCreateUpdateAgentRequest(d)
+	createAgentRequest := buildCreateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerCreate(ctx, *createAgentRequest)
 
@@ -228,6 +233,15 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 	return &v1Agent
 }
 
+func buildCreateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
+	v1Agent := buildCreateUpdateAgentRequest(d)
+	if attr, ok := d.GetOk("operator"); ok {
+		agentOperator := nextgen.V1AgentOperator(attr.(string))
+		v1Agent.Operator = &agentOperator
+	}
+	return v1Agent
+}
+
 func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.SetId(agent.Identifier)
 	d.Set("identifier", agent.Identifier)
@@ -237,6 +251,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("org_id", agent.OrgIdentifier)
 	d.Set("type", agent.Type_)
 	d.Set("project_id", agent.ProjectIdentifier)
+	d.Set("operator", agent.Operator)
 	metadata := []interface{}{}
 	metaDataMap := map[string]interface{}{}
 	metaDataMap["namespace"] = agent.Metadata.Namespace
