@@ -132,8 +132,48 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **AgentServiceForServerGetDeployHelmChart**
+> StreamResultOfV1DownloadResponse AgentServiceForServerGetDeployHelmChart(ctx, agentIdentifier, optional)
+
+
+GetDeployHelmChart returns the Helm Chart for depoying the agents.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **agentIdentifier** | **string**| Agent identifier for entity. | 
+ **optional** | ***AgentsApiAgentServiceForServerGetDeployHelmChartOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a AgentsApiAgentServiceForServerGetDeployHelmChartOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **namespace** | **optional.String**|  | 
+ **disasterRecoveryIdentifier** | **optional.String**| Disaster Recovery Identifier for entity. | 
+ **skipCrds** | **optional.Bool**|  | 
+
+### Return type
+
+[**StreamResultOfV1DownloadResponse**](Stream result of v1DownloadResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/octet-stream
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 # **AgentServiceForServerGetDeployYaml**
-> string AgentServiceForServerGetDeployYaml(ctx, agentIdentifier, accountIdentifier, optional)
+> string AgentServiceForServerGetDeployYaml(ctx, agentIdentifier, optional)
 
 
 GetDeployYaml returns depoyment yamls for agents.
@@ -144,7 +184,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***AgentsApiAgentServiceForServerGetDeployYamlOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -153,9 +192,12 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **namespace** | **optional.String**|  | 
+ **disasterRecoveryIdentifier** | **optional.String**| Disaster Recovery Identifier for entity. | 
+ **skipCrds** | **optional.Bool**|  | 
 
 ### Return type
 
@@ -173,7 +215,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentServiceForServerList**
-> V1AgentList AgentServiceForServerList(ctx, accountIdentifier, type_, optional)
+> V1AgentList AgentServiceForServerList(ctx, optional)
 
 
 List agents.
@@ -183,8 +225,6 @@ List agents.
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
-  **type_** | **string**| MANAGED_ARGO_PROVIDER | [default to AGENT_TYPE_UNSET]
  **optional** | ***AgentsApiAgentServiceForServerListOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -193,17 +233,22 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **identifier** | **optional.String**|  | 
  **name** | **optional.String**|  | 
+ **type_** | **optional.String**|  | [default to AGENT_TYPE_UNSET]
  **tags** | [**optional.Interface of []string**](string.md)|  | 
  **searchTerm** | **optional.String**|  | 
  **pageSize** | **optional.Int32**|  | 
  **pageIndex** | **optional.Int32**|  | 
  **scope** | **optional.String**|  | [default to AGENT_SCOPE_UNSET]
- **metadataOnly** | **optional.Bool**|  |
- **ignoreScope** | **optional.Bool**|  |
+ **drIdentifier** | **optional.String**|  | 
+ **sortBy** | **optional.String**|  | [default to SORT_BY_NOT_SET]
+ **sortOrder** | **optional.String**|  | [default to SORT_ORDER_NOT_SET]
+ **metadataOnly** | **optional.Bool**|  | 
+ **ignoreScope** | **optional.Bool**|  | 
 
 ### Return type
 
