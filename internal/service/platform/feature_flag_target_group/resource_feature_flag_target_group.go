@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/antihax/optional"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -65,6 +66,8 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Description: "A list of targets to include in the target group",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
 				MinItems:    0,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -74,6 +77,8 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Description: "A list of targets to exclude from the target group",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
 				MinItems:    0,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -83,27 +88,36 @@ func ResourceFeatureFlagTargetGroup() *schema.Resource {
 				Description: "The list of rules used to include targets in the target group.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"attribute": {
 							Description: "The attribute to use in the clause.  This can be any target attribute",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
+							ForceNew:    true,
 						},
 						"negate": {
 							Description: "Is the operation negated?",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Computed:    true,
+							ForceNew:    true,
 						},
 						"op": {
 							Description: "The type of operation such as equals, starts_with, contains",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
+							ForceNew:    true,
 						},
 						"values": {
 							Description: "The values that are compared against the operator",
 							Type:        schema.TypeList,
 							Optional:    true,
+							Computed:    true,
+							ForceNew:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -128,22 +142,22 @@ type FFTargetGroupQueryParameters struct {
 
 // FFTargetGroupOpts ...
 type FFTargetGroupOpts struct {
-	Identifier string           `json:"identifier,omitempty"`
-	Name       string           `json:"name,omitempty"`
-	Included   []string         `json:"included,omitempty"`
-	Excluded   []string         `json:"excluded,omitempty"`
-	Rules      []nextgen.Clause `json:"rules,omitempty"`
+	Identifier string            `json:"identifier,omitempty"`
+	Name       string            `json:"name,omitempty"`
+	Included   []*string         `json:"included,omitempty"`
+	Excluded   []*string         `json:"excluded,omitempty"`
+	Rules      []*nextgen.Clause `json:"rules,omitempty"`
 }
 
 // SegmentRequest ...
 type SegmentRequest struct {
-	Identifier  string           `json:"identifier,omitempty"`
-	Project     string           `json:"project,omitempty"`
-	Environment string           `json:"environment,omitempty"`
-	Name        string           `json:"name,omitempty"`
-	Included    []string         `json:"included,omitempty"`
-	Excluded    []string         `json:"excluded,omitempty"`
-	Rules       []nextgen.Clause `json:"rules,omitempty"`
+	Identifier  string            `json:"identifier,omitempty"`
+	Project     string            `json:"project,omitempty"`
+	Environment string            `json:"environment,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Included    []*string         `json:"included,omitempty"`
+	Excluded    []*string         `json:"excluded,omitempty"`
+	Rules       []*nextgen.Clause `json:"rules,omitempty"`
 }
 
 func resourceFeatureFlagTargetGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -287,29 +301,29 @@ func buildSegmentRequest(d *schema.ResourceData) *SegmentRequest {
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		var targets []string = make([]string, 0)
+		var targets = make([]*string, 0)
 		for _, target := range included.([]interface{}) {
-			targets = append(targets, target.(string))
+			targets = append(targets, aws.String(target.(string)))
 		}
 		opts.Included = targets
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		var targets []string = make([]string, 0)
+		var targets = make([]*string, 0)
 		for _, target := range excluded.([]interface{}) {
-			targets = append(targets, target.(string))
+			targets = append(targets, aws.String(target.(string)))
 		}
 		opts.Excluded = targets
 	}
 
 	if rules, ok := d.GetOk("rule"); ok {
-		var rulesList = make([]nextgen.Clause, 0)
+		var rulesList = make([]*nextgen.Clause, 0)
 		for _, rule := range rules.([]interface{}) {
 			var values []string
 			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
 				values = append(values, value.(string))
 			}
-			rule := nextgen.Clause{
+			rule := &nextgen.Clause{
 				Attribute: rule.(map[string]interface{})["attribute"].(string),
 				Negate:    rule.(map[string]interface{})["negate"].(bool),
 				Op:        rule.(map[string]interface{})["op"].(string),
@@ -331,29 +345,29 @@ func buildFFTargetGroupOpts(d *schema.ResourceData) *nextgen.TargetGroupsApiPatc
 	}
 
 	if included, ok := d.GetOk("included"); ok {
-		var targets []string = make([]string, 0)
+		var targets = make([]*string, 0)
 		for _, target := range included.([]interface{}) {
-			targets = append(targets, target.(string))
+			targets = append(targets, aws.String(target.(string)))
 		}
 		opts.Included = targets
 	}
 
 	if excluded, ok := d.GetOk("excluded"); ok {
-		var targets []string = make([]string, 0)
+		var targets = make([]*string, 0)
 		for _, target := range excluded.([]interface{}) {
-			targets = append(targets, target.(string))
+			targets = append(targets, aws.String(target.(string)))
 		}
 		opts.Excluded = targets
 	}
 
 	if rules, ok := d.GetOk("rule"); ok {
-		var rulesList = make([]nextgen.Clause, 0)
+		var rulesList = make([]*nextgen.Clause, 0)
 		for _, rule := range rules.([]interface{}) {
 			var values []string = make([]string, 0)
 			for _, value := range rule.(map[string]interface{})["values"].([]interface{}) {
 				values = append(values, value.(string))
 			}
-			rule := nextgen.Clause{
+			rule := &nextgen.Clause{
 				Attribute: rule.(map[string]interface{})["attribute"].(string),
 				Negate:    rule.(map[string]interface{})["negate"].(bool),
 				Op:        rule.(map[string]interface{})["op"].(string),
