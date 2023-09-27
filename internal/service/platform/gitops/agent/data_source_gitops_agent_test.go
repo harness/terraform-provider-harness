@@ -84,6 +84,7 @@ func testAccDataSourceGitopsAgent(agentId string, name string, accountId string,
         		namespace = "terraform-test"
         		high_availability = false
 			}
+			operator = "ARGO"	
 		}
 
 		data "harness_platform_gitops_agent" "test" {

@@ -211,6 +211,7 @@ func testAccResourceGitopsAgentAccountLevel(agentId string, accountId string, ag
 				namespace = "%[4]s"
         		high_availability = false
     		}
+			operator = "ARGO"		
 		}
 		`, agentId, accountId, agentName, namespace)
 }
@@ -237,6 +238,7 @@ func testAccResourceGitopsAgentProjectLevel(agentId string, accountId string, ag
 				namespace = "%[4]s"
         		high_availability = false
     		}
+			operator = "ARGO"		
 		}
 		`, agentId, accountId, agentName, namespace)
 }

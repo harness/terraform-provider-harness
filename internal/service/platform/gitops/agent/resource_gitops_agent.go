@@ -103,7 +103,7 @@ func ResourceGitopsAgent() *schema.Resource {
 func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	createAgentRequest := buildCreateUpdateAgentRequest(d)
+	createAgentRequest := buildCreateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerCreate(ctx, *createAgentRequest)
 
@@ -230,11 +230,16 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			v1Agent.Metadata = &v1MetaData
 		}
 	}
+	return &v1Agent
+}
+
+func buildCreateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
+	v1Agent := buildCreateUpdateAgentRequest(d)
 	if attr, ok := d.GetOk("operator"); ok {
 		agentOperator := nextgen.V1AgentOperator(attr.(string))
 		v1Agent.Operator = &agentOperator
 	}
-	return &v1Agent
+	return v1Agent
 }
 
 func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
