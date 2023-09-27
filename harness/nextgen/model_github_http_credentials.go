@@ -16,4 +16,5 @@ type GithubHttpCredentials struct {
 	Type_         GithubHttpCredentialType `json:"type"`
 	Spec          json.RawMessage          `json:"spec"`
 	UsernameToken *GithubUsernameToken     `json:"-"`
+	GithubApp     *GithubAppSpec           `json:"-"`
 }
