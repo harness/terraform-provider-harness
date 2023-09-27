@@ -474,10 +474,10 @@ GetDeployYaml returns depoyment yamls for agents.
  * @param agentIdentifier Agent identifier for entity.
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *AgentsApiAgentServiceForServerGetDeployYamlOpts - Optional Parameters:
-     * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "Namespace" (optional.String) -
+ * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
+ * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
+ * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+ * @param "Namespace" (optional.String) -
 @return string
 */
 
