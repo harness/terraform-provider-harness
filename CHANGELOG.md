@@ -1,10 +1,14 @@
 
-<a name="0.3.51"></a>
-## 0.3.51 (2023-09-13)
+<a name="0.3.52"></a>
+## 0.3.52 (2023-09-27)
 
 ### Added
 
 * Added Handling for encoding of space
+
+### Added
+
+* added GitHubApp in credentials
 
 ### Adding
 
@@ -42,6 +46,8 @@
 
 ### Release
 
+* Release version 0.3.51 09-13-2023
+* Release v0.3.51
 * Release version 0.3.50 09-13-2023
 * Release v0.3.50
 * Release version 0.3.49 09-08-2023
@@ -118,9 +124,6 @@
 * Release v0.3.16
 * Release version 0.3.15 02-15-2023
 * Release v0.3.15
-* Release version 0.3.14 01-19-2023
-* Release v0.3.14
-* Release version 0.3.13 12-28-2022
 
 ### Remove
 
@@ -135,12 +138,17 @@
 
 * Revert "Create .gitleaksignore ([#380](https://github.com/harness/harness-go-sdk/issues/380))" ([#381](https://github.com/harness/harness-go-sdk/issues/381))
 
+### Unmarshal
+
+* unmarshal change
+
 ### Update
 
 * update contract
 
 ### Update
 
+* Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
 * Update model_repositories_check_eso_response.go
@@ -167,6 +175,9 @@
 
 ### Pull Requests
 
+* Merge pull request [#413](https://github.com/harness/harness-go-sdk/issues/413) from harness/CDS-76236
+* Merge pull request [#412](https://github.com/harness/harness-go-sdk/issues/412) from harness/CI-9639
+* Merge pull request [#409](https://github.com/harness/harness-go-sdk/issues/409) from harness/SRM-15418-1
 * Merge pull request [#396](https://github.com/harness/harness-go-sdk/issues/396) from harness/cds-77798
 * Merge pull request [#406](https://github.com/harness/harness-go-sdk/issues/406) from harness/SRM-15418
 * Merge pull request [#404](https://github.com/harness/harness-go-sdk/issues/404) from harness/OIP-880
@@ -217,6 +228,4 @@
 * Merge pull request [#289](https://github.com/harness/harness-go-sdk/issues/289) from harness/CDS-54803
 * Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
 * Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
-* Merge pull request [#278](https://github.com/harness/harness-go-sdk/issues/278) from harness/forcedeletequery
-* Merge pull request [#273](https://github.com/harness/harness-go-sdk/issues/273) from harness/CDS-44537_gosdk
 
