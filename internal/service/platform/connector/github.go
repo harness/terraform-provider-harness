@@ -288,28 +288,20 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := credConfig["http"].([]interface{}); len(attr) > 0 {
 			httpConfig := attr[0].(map[string]interface{})
 			connector.Github.Authentication.Type_ = nextgen.GitAuthTypes.Http
+			connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
+				Type_:         nextgen.GithubHttpCredentialTypes.UsernameToken,
+				UsernameToken: &nextgen.GithubUsernameToken{},
+			}
 
 			if attr, ok := httpConfig["username"]; ok {
-				connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
-					Type_:         nextgen.GithubHttpCredentialTypes.UsernameToken,
-					UsernameToken: &nextgen.GithubUsernameToken{},
-				}
 				connector.Github.Authentication.Http.UsernameToken.Username = attr.(string)
 			}
 
 			if attr, ok := httpConfig["username_ref"]; ok {
-				connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
-					Type_:         nextgen.GithubHttpCredentialTypes.UsernameToken,
-					UsernameToken: &nextgen.GithubUsernameToken{},
-				}
 				connector.Github.Authentication.Http.UsernameToken.UsernameRef = attr.(string)
 			}
 
 			if attr, ok := httpConfig["token_ref"]; ok {
-				connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
-					Type_:         nextgen.GithubHttpCredentialTypes.UsernameToken,
-					UsernameToken: &nextgen.GithubUsernameToken{},
-				}
 				connector.Github.Authentication.Http.UsernameToken.TokenRef = attr.(string)
 			}
 
@@ -428,7 +420,15 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 					{
 						"http": []map[string]interface{}{
 							{
-								 "github_app":  connector.Github.Authentication.Http.GithubApp,
+								"github_app": []map[string]interface{}{
+									{
+										"installation_id":     connector.Github.ApiAccess.GithubApp.InstallationId,
+										"application_id":      connector.Github.ApiAccess.GithubApp.ApplicationId,
+										"private_key_ref":     connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+										"installation_id_ref": connector.Github.ApiAccess.GithubApp.InstallationIdRef,
+										"application_id_ref":  connector.Github.ApiAccess.GithubApp.ApplicationIdRef,
+									},
+								},
 							},
 						},
 					},
