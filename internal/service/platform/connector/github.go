@@ -422,11 +422,11 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 							{
 								"github_app": []map[string]interface{}{
 									{
-										"installation_id":     connector.Github.ApiAccess.GithubApp.InstallationId,
-										"application_id":      connector.Github.ApiAccess.GithubApp.ApplicationId,
-										"private_key_ref":     connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
-										"installation_id_ref": connector.Github.ApiAccess.GithubApp.InstallationIdRef,
-										"application_id_ref":  connector.Github.ApiAccess.GithubApp.ApplicationIdRef,
+										"installation_id":     connector.Github.Authentication.Http.GithubApp.InstallationId,
+										"application_id":      connector.Github.Authentication.Http.GithubApp.ApplicationId,
+										"private_key_ref":     connector.Github.Authentication.Http.GithubApp.PrivateKeyRef,
+										"installation_id_ref": connector.Github.Authentication.Http.GithubApp.InstallationIdRef,
+										"application_id_ref":  connector.Github.Authentication.Http.GithubApp.ApplicationIdRef,
 									},
 								},
 							},
