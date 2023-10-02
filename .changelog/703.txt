@@ -1,0 +1,4 @@
+```release-note:added new feature in a resource
+upgraded harness-go-sdk to v0.3.52
+internal/service/platform/connector/github.go- Addded github_app feature in credentials of github connector(https://harness.atlassian.net/browse/CI-9639)
+```
