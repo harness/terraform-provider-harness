@@ -59,6 +59,7 @@ Optional:
 
 - `high_availability` (Boolean) Indicates if the deployment should be deployed using the deploy-ha.yaml
 - `namespace` (String) The k8s namespace that this agent resides in.
+- `is_namespaced` (Boolean) Indicates if the agent is namespaced. If true no cluster roles.
 
 ## Import
 
