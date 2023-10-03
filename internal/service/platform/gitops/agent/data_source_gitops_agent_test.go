@@ -83,6 +83,7 @@ func testAccDataSourceGitopsAgent(agentId string, name string, accountId string,
 			metadata {
         		namespace = "terraform-test"
         		high_availability = false
+                is_namespaced = true
 			}
 			operator = "ARGO"	
 		}

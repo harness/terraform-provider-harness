@@ -53,3 +53,4 @@ Read-Only:
 
 - `high_availability` (Boolean)
 - `namespace` (String)
+- `is_namespaced` (Boolean)

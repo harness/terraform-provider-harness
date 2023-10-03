@@ -78,6 +78,11 @@ func DataSourceGitopsAgent() *schema.Resource {
 							Type:        schema.TypeBool,
 							Computed:    true,
 						},
+						"is_namespaced": {
+							Description: "Indicates if the agent is namespaced.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
 					},
 				},
 			},

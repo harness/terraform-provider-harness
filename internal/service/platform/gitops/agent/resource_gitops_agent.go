@@ -83,6 +83,11 @@ func ResourceGitopsAgent() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
+						"is_namespaced": {
+							Description: "Indicates if the agent is namespaced.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
 					}},
 			},
 			"agent_token": {
@@ -226,6 +231,9 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			if meta["namespace"] != nil {
 				v1MetaData.Namespace = meta["namespace"].(string)
 			}
+			if meta["is_namespaced"] != nil {
+				v1MetaData.IsNamespaced = meta["is_namespaced"].(bool)
+			}
 
 			v1Agent.Metadata = &v1MetaData
 		}
@@ -256,6 +264,7 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	metaDataMap := map[string]interface{}{}
 	metaDataMap["namespace"] = agent.Metadata.Namespace
 	metaDataMap["high_availability"] = agent.Metadata.HighAvailability
+	metaDataMap["is_namespaced"] = agent.Metadata.IsNamespaced
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
 	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
