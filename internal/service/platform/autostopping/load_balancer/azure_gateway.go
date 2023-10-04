@@ -52,7 +52,7 @@ func ResourceAzureGateway() *schema.Resource {
 			"vpc": {
 				Description: "VNet in which cloud resources are hosted. Required only for creating new AppGateway",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"subnet_id": {
 				Description: "Subnet in which cloud resources are hosted. Required only for creating new AppGateway",

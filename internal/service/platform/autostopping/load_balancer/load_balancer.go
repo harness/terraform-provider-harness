@@ -200,6 +200,10 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 		lb.Metadata.Keypair = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("resource_group"); ok {
+		lb.Metadata.ResourceGroup = attr.(string)
+	}
+
 	lb.Metadata.AllocateStaticIp = false
 	if attr, ok := d.GetOk("allocate_static_ip"); ok {
 		lb.Metadata.AllocateStaticIp = attr.(bool)
