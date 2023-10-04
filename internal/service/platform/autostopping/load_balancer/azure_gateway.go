@@ -79,6 +79,11 @@ func ResourceAzureGateway() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"certificate_id": {
+				Description: "ID of existing SSL certificate from AppGateway being imported. Required only for importing existing AppGateway. Required only for SSL based rules",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 
