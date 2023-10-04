@@ -172,6 +172,10 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (n
 		lb.Metadata.Zone = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("alb_arn"); ok {
+		lb.Metadata.AlbArn = attr.(string)
+	}
+
 	if attr, ok := d.GetOk("certificate_id"); ok {
 		lb.Metadata.CertificateId = attr.(string)
 	}
