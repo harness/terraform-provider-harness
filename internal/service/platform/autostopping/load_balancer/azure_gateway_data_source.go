@@ -64,6 +64,16 @@ func DataSourceAzureGateway() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"app_gateway_id": {
+				Description: "ID of Azure AppGateway for importing",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"certificate_id": {
+				Description: "ID of existing SSL certificate from AppGateway being imported. Required only for SSL based rules",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 
