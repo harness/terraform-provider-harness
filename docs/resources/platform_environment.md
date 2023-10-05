@@ -20,6 +20,7 @@ resource "harness_platform_environment" "example" {
   project_id = "project_id"
   tags       = ["foo:bar", "bar:foo"]
   type       = "PreProduction"
+  description = "env description"
 
   ## ENVIRONMENT V2 Update
   ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
