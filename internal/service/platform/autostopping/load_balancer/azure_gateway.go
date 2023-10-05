@@ -70,9 +70,10 @@ func ResourceAzureGateway() *schema.Resource {
 				Optional:    true,
 			},
 			"sku_size": {
-				Description: "Size of machine used for the gateway. Required only for creating new AppGateway",
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:  "Size of machine used for the gateway. Required only for creating new AppGateway",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{"sku1_small", "sku1_medium", "sku1_large", "sku2"},
 			},
 			"app_gateway_id": {
 				Description: "ID of Azure AppGateway for importing. Required only for importing exiging AppGateway",

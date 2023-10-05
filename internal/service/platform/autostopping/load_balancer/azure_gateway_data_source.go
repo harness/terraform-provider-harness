@@ -60,9 +60,10 @@ func DataSourceAzureGateway() *schema.Resource {
 				Required:    true,
 			},
 			"sku_size": {
-				Description: "Size of machine used for the gateway",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:  "Size of machine used for the gateway",
+				Type:         schema.TypeString,
+				Required:     true,
+				ExactlyOneOf: []string{"sku1_small", "sku1_medium", "sku1_large", "sku2"},
 			},
 			"app_gateway_id": {
 				Description: "ID of Azure AppGateway for importing",
