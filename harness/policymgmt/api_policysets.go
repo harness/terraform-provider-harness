@@ -35,8 +35,7 @@ Create a policy set
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "Module" (optional.String) -  The module in which the resource was created, updated or deleted. Only relevant in the context of a project
-@return PolicySet2
+@return PolicySet
 */
 
 type PolicysetsApiPolicysetsCreateOpts struct {
@@ -44,16 +43,15 @@ type PolicysetsApiPolicysetsCreateOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    Module optional.String
 }
 
-func (a *PolicysetsApiService) PolicysetsCreate(ctx context.Context, body CreateRequestBody2, localVarOptionals *PolicysetsApiPolicysetsCreateOpts) (PolicySet2, *http.Response, error) {
+func (a *PolicysetsApiService) PolicysetsCreate(ctx context.Context, body CreateRequestBody2, localVarOptionals *PolicysetsApiPolicysetsCreateOpts) (PolicySet, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue PolicySet2
+		localVarReturnValue PolicySet
 	)
 
 	// create path and map variables
@@ -71,9 +69,6 @@ func (a *PolicysetsApiService) PolicysetsCreate(ctx context.Context, body Create
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Module.IsSet() {
-		localVarQueryParams.Add("module", parameterToString(localVarOptionals.Module.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -140,7 +135,7 @@ func (a *PolicysetsApiService) PolicysetsCreate(ctx context.Context, body Create
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 201 {
-			var v PolicySet2
+			var v PolicySet
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()
@@ -223,7 +218,6 @@ Delete a policy set by identifier
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "Module" (optional.String) -  The module in which the resource was created, updated or deleted. Only relevant in the context of a project
      * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
 
 */
@@ -232,7 +226,6 @@ type PolicysetsApiPolicysetsDeleteOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    Module optional.String
     XApiKey optional.String
 }
 
@@ -264,9 +257,6 @@ func (a *PolicysetsApiService) PolicysetsDelete(ctx context.Context, identifier 
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Module.IsSet() {
-		localVarQueryParams.Add("module", parameterToString(localVarOptionals.Module.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -398,7 +388,7 @@ Find a policy set by identifier
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
      * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
-@return PolicySet2
+@return PolicySet
 */
 
 type PolicysetsApiPolicysetsFindOpts struct {
@@ -408,13 +398,13 @@ type PolicysetsApiPolicysetsFindOpts struct {
     XApiKey optional.String
 }
 
-func (a *PolicysetsApiService) PolicysetsFind(ctx context.Context, identifier string, localVarOptionals *PolicysetsApiPolicysetsFindOpts) (PolicySet2, *http.Response, error) {
+func (a *PolicysetsApiService) PolicysetsFind(ctx context.Context, identifier string, localVarOptionals *PolicysetsApiPolicysetsFindOpts) (PolicySet, *http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Get")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue PolicySet2
+		localVarReturnValue PolicySet
 	)
 
 	// create path and map variables
@@ -500,7 +490,7 @@ func (a *PolicysetsApiService) PolicysetsFind(ctx context.Context, identifier st
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
-			var v PolicySet2
+			var v PolicySet
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()
@@ -796,7 +786,6 @@ Update a policy set by identifier
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "Module" (optional.String) -  The module in which the resource was created, updated or deleted. Only relevant in the context of a project
 
 */
 
@@ -805,7 +794,6 @@ type PolicysetsApiPolicysetsUpdateOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    Module optional.String
 }
 
 func (a *PolicysetsApiService) PolicysetsUpdate(ctx context.Context, body UpdateRequestBody2, identifier string, localVarOptionals *PolicysetsApiPolicysetsUpdateOpts) (*http.Response, error) {
@@ -833,9 +821,6 @@ func (a *PolicysetsApiService) PolicysetsUpdate(ctx context.Context, body Update
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Module.IsSet() {
-		localVarQueryParams.Add("module", parameterToString(localVarOptionals.Module.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}

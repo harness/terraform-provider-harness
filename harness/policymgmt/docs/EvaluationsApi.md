@@ -29,6 +29,7 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Harness account ID | 
  **orgIdentifier** | **optional.String**| Harness organization ID | 
  **projectIdentifier** | **optional.String**| Harness project ID | 
+ **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
@@ -36,7 +37,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[jwt_header_Authorization](../README.md#jwt_header_Authorization)
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
 
 ### HTTP request headers
 
@@ -46,7 +47,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **EvaluationsList**
-> []Evaluation2 EvaluationsList(ctx, optional)
+> []Evaluation EvaluationsList(ctx, optional)
 
 
 List evaluations
@@ -71,15 +72,19 @@ Name | Type | Description  | Notes
  **type_** | **optional.String**| Filter by the type associated with the evaluation | 
  **action** | **optional.String**| Filter by the action associated with the evaluation | 
  **lastSeen** | **optional.Int64**| Retrieve results starting after this last-seen result | 
+ **createdDateFrom** | **optional.Int64**| Retrieve results created from this date | 
+ **createdDateTo** | **optional.Int64**| Retrieve results created up to this date | 
+ **status** | **optional.String**| Retrieve results with these statuses | 
  **includeChildScopes** | **optional.Bool**| When true, evaluations from child scopes will be inculded in the results | [default to false]
+ **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
-[**[]Evaluation2**](Evaluation2.md)
+[**[]Evaluation**](Evaluation.md)
 
 ### Authorization
 
-[jwt_header_Authorization](../README.md#jwt_header_Authorization)
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
 
 ### HTTP request headers
 

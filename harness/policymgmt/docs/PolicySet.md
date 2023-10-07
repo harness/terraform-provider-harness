@@ -8,11 +8,13 @@ Name | Type | Description | Notes
 **Created** | **int64** | Time the policy set was created | [default to null]
 **Description** | **string** | Description of the policy set | [optional] [default to null]
 **Enabled** | **bool** | Only enabled policy sets are evaluated when evaluating by type/action | [default to null]
+**EntitySelector** | **string** | A string enum value which determines which entities the policy set applies to during evaluation | [default to null]
 **Identifier** | **string** | Identifier of the policy set | [default to null]
 **Name** | **string** | Name of the policy set | [default to null]
 **OrgId** | **string** | Harness organization ID associated with this policy set | 
 **Policies** | [**[]LinkedPolicy**](LinkedPolicy.md) | Policies linked to this policy set | [optional] [default to null]
 **ProjectId** | **string** | Harness project ID associated with this policy set | 
+**ResourceGroups** | [**[]ResourceGroup**](ResourceGroup.md) | The groups of resources that this policy set should be applied to | [optional] [default to null]
 **Type_** | **string** | Type of input suitable for the policy set | [default to null]
 **Updated** | **int64** | Time the policy set was last updated | [default to null]
 

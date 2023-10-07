@@ -19,10 +19,16 @@ type Policy struct {
 	GitConnectorRef string `json:"git_connector_ref,omitempty"`
 	// The default branch, the service pulls in changes from from this branch for policy evaluation
 	GitDefaultBranch string `json:"git_default_branch,omitempty"`
+	// The commit sha of the commit that last effected the file in the default branch
+	GitDefaultBranchCommitSha string `json:"git_default_branch_commit_sha,omitempty"`
+	// The file id of the file in the default branch, may be empty for bitbucket files
+	GitDefaultBranchFileId string `json:"git_default_branch_file_id,omitempty"`
+	// The url of the file in the default branch
+	GitDefaultBranchFileUrl string `json:"git_default_branch_file_url,omitempty"`
 	GitDefaultBranchUpdateError *GitErrorResult `json:"git_default_branch_update_error,omitempty"`
 	// The last time the service successfully pulled in changes from the default branch
 	GitDefaultBranchUpdated int64 `json:"git_default_branch_updated,omitempty"`
-	// The file if od the bile being updated
+	// The file id of the file, may be empty for bitbucket files
 	GitFileId string `json:"git_file_id,omitempty"`
 	// The url of the file on the fit provider
 	GitFileUrl string `json:"git_file_url,omitempty"`

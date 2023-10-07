@@ -35,7 +35,6 @@ Create a policy
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "Module" (optional.String) -  The module in which the resource was created, updated or deleted. Only relevant in the context of a project
      * @param "GitCommitMsg" (optional.String) -  The commit message used in git when creating the policy
      * @param "GitImport" (optional.Bool) -  A flag to determine if the api should try and import and existing policy from git
      * @param "GitBranch" (optional.String) -  The git branch the policy will be created in
@@ -49,7 +48,6 @@ type PoliciesApiPoliciesCreateOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    Module optional.String
     GitCommitMsg optional.String
     GitImport optional.Bool
     GitBranch optional.String
@@ -81,9 +79,6 @@ func (a *PoliciesApiService) PoliciesCreate(ctx context.Context, body CreateRequ
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Module.IsSet() {
-		localVarQueryParams.Add("module", parameterToString(localVarOptionals.Module.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.GitCommitMsg.IsSet() {
 		localVarQueryParams.Add("git_commit_msg", parameterToString(localVarOptionals.GitCommitMsg.Value(), ""))
@@ -248,7 +243,6 @@ Delete a policy by identifier
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "Module" (optional.String) -  The module in which the resource was created, updated or deleted. Only relevant in the context of a project
      * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
 
 */
@@ -257,7 +251,6 @@ type PoliciesApiPoliciesDeleteOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    Module optional.String
     XApiKey optional.String
 }
 
@@ -289,9 +282,6 @@ func (a *PoliciesApiService) PoliciesDelete(ctx context.Context, identifier stri
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Module.IsSet() {
-		localVarQueryParams.Add("module", parameterToString(localVarOptionals.Module.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -423,6 +413,7 @@ Find a policy by identifier
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
      * @param "GitBranch" (optional.String) -  The git branch the policy resides in
+     * @param "ShowSummary" (optional.Bool) -  Setting to true returns the metadata about the        requested policy including the information held about the status of this policy in the default branch.        git_branch is ignored as no git operation takes place.
      * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
 @return Policy
 */
@@ -432,6 +423,7 @@ type PoliciesApiPoliciesFindOpts struct {
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
     GitBranch optional.String
+    ShowSummary optional.Bool
     XApiKey optional.String
 }
 
@@ -466,6 +458,9 @@ func (a *PoliciesApiService) PoliciesFind(ctx context.Context, identifier string
 	}
 	if localVarOptionals != nil && localVarOptionals.GitBranch.IsSet() {
 		localVarQueryParams.Add("git_branch", parameterToString(localVarOptionals.GitBranch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ShowSummary.IsSet() {
+		localVarQueryParams.Add("show_summary", parameterToString(localVarOptionals.ShowSummary.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -818,11 +813,10 @@ Update a policy by identifier
      * @param "GitBaseBranch" (optional.String) -  If committing to a new branch, git_base_branch tells the api which branch to base the new branch from
      * @param "GitBranch" (optional.String) -  The git branch the policy resides in
      * @param "GitCommitSha" (optional.String) -  The existing commit sha of the file being updated
-     * @param "GitFileId" (optional.String) -  The existing file if od the bile being updated
+     * @param "GitFileId" (optional.String) -  The existing file id of the file being updated, not required for bitbucket files
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "Module" (optional.String) -  The module in which the resource was created, updated or deleted. Only relevant in the context of a project
 
 */
 
@@ -837,7 +831,6 @@ type PoliciesApiPoliciesUpdateOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    Module optional.String
 }
 
 func (a *PoliciesApiService) PoliciesUpdate(ctx context.Context, body UpdateRequestBody, identifier string, localVarOptionals *PoliciesApiPoliciesUpdateOpts) (*http.Response, error) {
@@ -883,9 +876,6 @@ func (a *PoliciesApiService) PoliciesUpdate(ctx context.Context, body UpdateRequ
 	}
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Module.IsSet() {
-		localVarQueryParams.Add("module", parameterToString(localVarOptionals.Module.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}

@@ -32,7 +32,6 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.**| Harness account ID | 
  **orgIdentifier** | **optional.**| Harness organization ID | 
  **projectIdentifier** | **optional.**| Harness project ID | 
- **module** | **optional.**| The module in which the resource was created, updated or deleted. Only relevant in the context of a project | 
  **gitCommitMsg** | **optional.**| The commit message used in git when creating the policy | 
  **gitImport** | **optional.**| A flag to determine if the api should try and import and existing policy from git | 
  **gitBranch** | **optional.**| The git branch the policy will be created in | 
@@ -77,7 +76,6 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Harness account ID | 
  **orgIdentifier** | **optional.String**| Harness organization ID | 
  **projectIdentifier** | **optional.String**| Harness project ID | 
- **module** | **optional.String**| The module in which the resource was created, updated or deleted. Only relevant in the context of a project | 
  **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
@@ -118,6 +116,7 @@ Name | Type | Description  | Notes
  **orgIdentifier** | **optional.String**| Harness organization ID | 
  **projectIdentifier** | **optional.String**| Harness project ID | 
  **gitBranch** | **optional.String**| The git branch the policy resides in | 
+ **showSummary** | **optional.Bool**| Setting to true returns the metadata about the        requested policy including the information held about the status of this policy in the default branch.        git_branch is ignored as no git operation takes place. | 
  **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
@@ -202,11 +201,10 @@ Name | Type | Description  | Notes
  **gitBaseBranch** | **optional.**| If committing to a new branch, git_base_branch tells the api which branch to base the new branch from | 
  **gitBranch** | **optional.**| The git branch the policy resides in | 
  **gitCommitSha** | **optional.**| The existing commit sha of the file being updated | 
- **gitFileId** | **optional.**| The existing file if od the bile being updated | 
+ **gitFileId** | **optional.**| The existing file id of the file being updated, not required for bitbucket files | 
  **accountIdentifier** | **optional.**| Harness account ID | 
  **orgIdentifier** | **optional.**| Harness organization ID | 
  **projectIdentifier** | **optional.**| Harness project ID | 
- **module** | **optional.**| The module in which the resource was created, updated or deleted. Only relevant in the context of a project | 
  **xApiKey** | **optional.**| Harness PAT key used to perform authorization | 
 
 ### Return type

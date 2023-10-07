@@ -11,7 +11,7 @@ Method | HTTP request | Description
 [**PolicysetsUpdate**](PolicysetsApi.md#PolicysetsUpdate) | **Patch** /api/v1/policysets/{identifier} | 
 
 # **PolicysetsCreate**
-> PolicySet2 PolicysetsCreate(ctx, body, optional)
+> PolicySet PolicysetsCreate(ctx, body, optional)
 
 
 Create a policy set
@@ -32,12 +32,11 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.**| Harness account ID | 
  **orgIdentifier** | **optional.**| Harness organization ID | 
  **projectIdentifier** | **optional.**| Harness project ID | 
- **module** | **optional.**| The module in which the resource was created, updated or deleted. Only relevant in the context of a project | 
  **xApiKey** | **optional.**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
-[**PolicySet2**](PolicySet2.md)
+[**PolicySet**](PolicySet.md)
 
 ### Authorization
 
@@ -72,7 +71,6 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Harness account ID | 
  **orgIdentifier** | **optional.String**| Harness organization ID | 
  **projectIdentifier** | **optional.String**| Harness project ID | 
- **module** | **optional.String**| The module in which the resource was created, updated or deleted. Only relevant in the context of a project | 
  **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
@@ -91,7 +89,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **PolicysetsFind**
-> PolicySet2 PolicysetsFind(ctx, identifier, optional)
+> PolicySet PolicysetsFind(ctx, identifier, optional)
 
 
 Find a policy set by identifier
@@ -116,7 +114,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**PolicySet2**](PolicySet2.md)
+[**PolicySet**](PolicySet.md)
 
 ### Authorization
 
@@ -196,7 +194,6 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.**| Harness account ID | 
  **orgIdentifier** | **optional.**| Harness organization ID | 
  **projectIdentifier** | **optional.**| Harness project ID | 
- **module** | **optional.**| The module in which the resource was created, updated or deleted. Only relevant in the context of a project | 
  **xApiKey** | **optional.**| Harness PAT key used to perform authorization | 
 
 ### Return type

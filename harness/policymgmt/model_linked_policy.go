@@ -12,7 +12,7 @@ type LinkedPolicy struct {
 	// Harness account ID associated with this policy
 	AccountId string `json:"account_id"`
 	// Time the policy was created
-	Created int64 `json:"created,omitempty"`
+	Created int64 `json:"created"`
 	// identifier of the policy
 	Identifier string `json:"identifier"`
 	// Name of the policy
@@ -22,9 +22,9 @@ type LinkedPolicy struct {
 	// Harness project ID associated with this policy
 	ProjectId string `json:"project_id"`
 	// Rego that defines the policy
-	Rego string `json:"rego,omitempty"`
+	Rego string `json:"rego"`
 	// The severity of this policy in this context
 	Severity string `json:"severity"`
 	// Time the policy was last updated
-	Updated int64 `json:"updated,omitempty"`
+	Updated int64 `json:"updated"`
 }

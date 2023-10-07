@@ -34,6 +34,6 @@ type Evaluation struct {
 	ProjectId string `json:"project_id"`
 	// The overall status of the evaluation indicating whether it passed
 	Status string `json:"status"`
-	// The type of the entity under evaluation
+	// The types of the entity under evaluation
 	Type_ string `json:"type"`
 }

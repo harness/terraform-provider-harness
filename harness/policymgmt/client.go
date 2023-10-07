@@ -44,6 +44,8 @@ type APIClient struct {
 
 	// API Services
 
+	AidaApi *AidaApiService
+
 	DashboardApi *DashboardApiService
 
 	EvaluateApi *EvaluateApiService
@@ -75,6 +77,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.common.client = c
 
 	// API Services
+	c.AidaApi = (*AidaApiService)(&c.common)
 	c.DashboardApi = (*DashboardApiService)(&c.common)
 	c.EvaluateApi = (*EvaluateApiService)(&c.common)
 	c.EvaluationsApi = (*EvaluationsApiService)(&c.common)

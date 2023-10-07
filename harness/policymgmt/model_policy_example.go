@@ -20,4 +20,6 @@ type PolicyExample struct {
 	Rego string `json:"rego"`
 	// The type of entity illustrated in this example
 	Type_ string `json:"type"`
+	// The list of substitutable variables in the policy example
+	Variables []Variable `json:"variables,omitempty"`
 }
