@@ -43,13 +43,13 @@ SaveSrmNotification saves srm notification data
 
 @return NotificationRuleResponse
 */
-func (a *SrmNotificationApiService) SaveSrmNotification(ctx context.Context, accountId string, localVarOptionals *SrmNotificationServiceSaveSrmNotificationOpts) (NotificationRuleResponse, *http.Response, error) {
+func (a *SrmNotificationApiService) SaveSrmNotification(ctx context.Context, accountId string, localVarOptionals *SrmNotificationServiceSaveSrmNotificationOpts) (RestResponseSrmNotificationResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue NotificationRuleResponse
+		localVarReturnValue RestResponseSrmNotificationResponse
 	)
 
 	// create path and map variables
@@ -153,13 +153,13 @@ GetSrmNotification get srm notirication data
 
 @return NotificationRuleResponse
 */
-func (a *SrmNotificationApiService) GetSrmNotification(ctx context.Context, identifier string, accountId string, orgIdentifier string, projectIdentifier string) (NotificationRuleResponse, *http.Response, error) {
+func (a *SrmNotificationApiService) GetSrmNotification(ctx context.Context, identifier string, accountId string, orgIdentifier string, projectIdentifier string) (RestResponseSrmNotificationResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue NotificationRuleResponse
+		localVarReturnValue RestResponseSrmNotificationResponse
 	)
 
 	// create path and map variables
@@ -254,19 +254,21 @@ func (a *SrmNotificationApiService) GetSrmNotification(ctx context.Context, iden
 UpdateSrmNotification updates srm notification data
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param accountId
+  - @param orgIdentifier
+  - @param projectIdentifier
   - @param identifier
   - @param optional nil or *SrmNotificationApiUpdateSrmNotificationOpts - Optional Parameters:
   - @param "Body" (optional.Interface of NotificationRule) -
 
 @return NotificationRuleResponse
 */
-func (a *SrmNotificationApiService) UpdateSrmNotification(ctx context.Context, accountId string, identifier string, localVarOptionals *SrmNotificationApiUpdateSrmNotificationOpts) (NotificationRuleResponse, *http.Response, error) {
+func (a *SrmNotificationApiService) UpdateSrmNotification(ctx context.Context, accountId string, orgIdentifier string, projectIdentifier string, identifier string, localVarOptionals *SrmNotificationApiUpdateSrmNotificationOpts) (RestResponseSrmNotificationResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue NotificationRuleResponse
+		localVarReturnValue RestResponseSrmNotificationResponse
 	)
 
 	// create path and map variables
@@ -280,6 +282,8 @@ func (a *SrmNotificationApiService) UpdateSrmNotification(ctx context.Context, a
 	localVarHeaderParams["Harness-Account"] = a.client.cfg.AccountId
 
 	localVarQueryParams.Add("accountId", parameterToString(accountId, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 

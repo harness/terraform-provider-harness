@@ -10,7 +10,6 @@
 package nextgen
 
 type KubernetesDependencyMetadata struct {
-	Type_ string `json:"type"`
 	Namespace string `json:"namespace"`
-	Workload string `json:"workload"`
+	Workload  string `json:"workload"`
 }

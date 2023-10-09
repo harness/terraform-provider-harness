@@ -9,7 +9,8 @@
  */
 package nextgen
 
-type ServiceDependencyMetadata struct {
-	Type_      DependencyMetadataType        `json:"type,omitempty"`
-	KUBERNETES *KubernetesDependencyMetadata `json:"-"`
+type RestResponseSrmNotificationResponse struct {
+	MetaData         map[string]interface{}    `json:"metaData,omitempty"`
+	Resource         *NotificationRuleResponse `json:"resource,omitempty"`
+	ResponseMessages []ResponseMessage         `json:"responseMessages,omitempty"`
 }

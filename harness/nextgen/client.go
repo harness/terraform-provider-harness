@@ -295,6 +295,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ServicesApi = (*ServicesApiService)(&c.common)
 	c.ServiceOverridesApi = (*ServiceOverridesApiService)(&c.common)
 	c.SloApi = (*SloApiService)(&c.common)
+	c.SrmNotificationApiService = (*SrmNotificationApiService)(&c.common)
 	c.SourceCodeManagerApi = (*SourceCodeManagerApiService)(&c.common)
 	c.TargetGroupsApi = (*TargetGroupsApiService)(&c.common)
 	c.TargetsApi = (*TargetsApiService)(&c.common)
