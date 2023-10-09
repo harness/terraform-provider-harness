@@ -320,3 +320,369 @@ func testMonitoredServiceWithoutEnabled(id string, name string) string {
 		}
 `, id, name)
 }
+
+func TestAccResourceMonitoredServiceWithAppD(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredServiceWithAppD(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceMonitoredServiceWithGCPLogs(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredServiceWithGCPLogs(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceMonitoredServiceWithSplunkLogs(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredServiceWithSplunkLogs(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceMonitoredServiceWithDynatrace(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredServiceWithDynatrace(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceMonitoredServiceWithNewRelic(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+
+	resourceName := "harness_platform_monitored_service.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccMonitoredServiceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceMonitoredServiceWithNewRelic(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func testAccResourceMonitoredServiceWithAppD(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "AppDynamics"
+					spec = jsonencode({
+					connectorRef = "connectorRef"
+					feature = "Application Monitoring"
+					metricPacks = [ {
+						identifier= "Errors" 
+					} ]
+					applicationName = "cv-app"
+					tierName = "docker-tier"
+					})
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourceMonitoredServiceWithGCPLogs(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "StackdriverLog"
+					spec = jsonencode({
+					connectorRef = "connectorRef"
+					feature = "Cloud Logs"
+					queries = [
+							{
+								name   = "GCO Logs Query"
+								query = "error"
+								messageIdentifier = "['jsonPayload'].['message']"
+								serviceInstanceIdentifier = "['resource'].['labels'].['pod_name']"
+							}
+						]
+					})
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourceMonitoredServiceWithSplunkLogs(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "Splunk"
+					spec = jsonencode({
+					connectorRef = "connectorRef"
+					feature = "Splunk Cloud Logs"
+					queries = [
+							{
+								identifier = "SPLUNK_Logs_Query"
+								name   = "SPLUNK Logs Query"
+								query = "index=_internal \" error \" NOT debug source=*splunkd.log*"
+								serviceInstanceIdentifier = "['host']"
+							}
+						]
+					})
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourceMonitoredServiceWithDynatrace(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "Dynatrace"
+					spec = jsonencode({
+					connectorRef = "account.dynatraceconnectorforautomation"
+					feature = "dynatrace_apm"
+					metricPacks = [ {
+						identifier= "Performance"
+					},
+					{
+						identifier= "Infrastructure"
+					}]
+					serviceId = "SERVICE-D739201C4CBBA618"
+					serviceMethodIds = [
+						"SERVICE_METHOD-F3988BEE84FF7388"
+					]
+					serviceName = ":4444"
+					})
+				}
+			}
+		}
+`, id, name)
+}
+
+func testAccResourceMonitoredServiceWithNewRelic(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_monitored_service" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			identifier = "%[1]s"
+			request {
+				name = "%[2]s"
+				type = "Application"
+				description = "description"
+				service_ref = "service_ref"
+				environment_ref = "environment_ref"
+				tags = ["foo:bar", "bar:foo"]
+				health_sources {
+					name = "name"
+					identifier = "identifier"
+					type = "NewRelic"
+					spec = jsonencode({
+					connectorRef = "account.Newrelicautomation_do_not_delete"
+					feature = "apm"
+					applicationId = "107019083"
+					applicationName = "My Application"
+					metricPacks = [ {
+							identifier = "Performance"
+						} ]
+					})
+				}
+			}
+		}
+`, id, name)
+}

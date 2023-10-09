@@ -92,13 +92,11 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "The owner of the flag",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    true,
 			},
 			"permanent": {
 				Description: "Whether or not the flag is permanent. If it is, it will never be flagged as stale",
 				Type:        schema.TypeBool,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"environment": {
 				Description: "Environment Identifier",
@@ -140,6 +138,7 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "The targeting rules for the flag",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"variation": {
@@ -163,6 +162,7 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "The targeting rules for the flag",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"group_name": {
@@ -217,6 +217,8 @@ const (
 	Weight                         = "weight"
 	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
 	AddRule                        = "addRule"
+	RemoveRule                     = "removeRule"
+	RemoveTarget                   = "removeTargetsToVariationTargetMap"
 	GroupName                      = "group_name"
 	DistributionVar                = "distribution"
 	SegmentMatch                   = "segmentMatch"
@@ -240,49 +242,49 @@ var KindMap = map[string]string{
 
 // TargetRules is the target rules for the feature flag
 type TargetRules struct {
-	Kind      string    `json:"kind,omitempty"`
-	Variation string    `json:"variation,omitempty"`
+	Kind      *string   `json:"kind,omitempty"`
+	Variation *string   `json:"variation,omitempty"`
 	Targets   []*string `json:"targets,omitempty"`
 }
 
 // Variation is the variation for the feature flag
 type Variation struct {
-	Variation string `json:"variation,omitempty"`
-	Weight    int    `json:"weight,omitempty"`
+	Variation *string `json:"variation,omitempty"`
+	Weight    *int    `json:"weight,omitempty"`
 }
 
 // Distribution is the distribution for the feature flag
 type Distribution struct {
-	BuckedBy   string      `json:"buckedBy,omitempty"`
-	Variations []Variation `json:"variations,omitempty"`
+	BuckedBy   *string      `json:"buckedBy,omitempty"`
+	Variations []*Variation `json:"variations,omitempty"`
 }
 
 // TargetGroupRules is the target group rules for the feature flag
 type TargetGroupRules struct {
-	Kind      string `json:"kind,omitempty"`
-	GroupName string `json:"groupName,omitempty"`
-	Variation string `json:"variation,omitempty"`
+	Kind      *string `json:"kind,omitempty"`
+	GroupName *string `json:"groupName,omitempty"`
+	Variation *string `json:"variation,omitempty"`
 }
 
 // Serve ...
 type Serve struct {
-	Variation    string        `json:"variation,omitempty"`
+	Variation    *string       `json:"variation,omitempty"`
 	Distribution *Distribution `json:"distribution,omitempty"`
 }
 
 // Parameter ...
 type Parameter struct {
-	Variation string            `json:"variation,omitempty"`
+	Variation *string           `json:"variation,omitempty"`
 	Targets   []*string         `json:"targets,omitempty"`
-	Priority  string            `json:"priority,omitempty"`
+	Priority  *string           `json:"priority,omitempty"`
 	Clauses   []*nextgen.Clause `json:"clauses,omitempty"`
 	Serve     *Serve            `json:"serve,omitempty"`
 }
 
 // Instruction defines the instruction for the feature flag
 type Instruction struct {
-	Kind       string    `json:"kind,omitempty"`
-	Parameters Parameter `json:"parameters,omitempty"`
+	Kind       *string    `json:"kind,omitempty"`
+	Parameters *Parameter `json:"parameters,omitempty"`
 }
 
 type FFOpts struct {
@@ -299,7 +301,7 @@ type FFOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []Instruction       `json:"instructions,omitempty"`
+	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
 // FFPatchOpts is the options for patching a feature flag
@@ -317,7 +319,7 @@ type FFPatchOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []Instruction       `json:"instructions,omitempty"`
+	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -331,13 +333,21 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPatchOpts(d)
 
-	feature, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+	_, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readFeatureFlag(d, &feature, qp)
+	readOpts := buildFFReadOpts(d)
+
+	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+
+	readFeatureFlag(d, &resp, qp)
 
 	return nil
 }
@@ -541,7 +551,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 	opts.Variations = variations
 
-	var instructions []Instruction
+	var instructions []*Instruction
 	if targetRulesData, ok := d.GetOk("add_target_rule"); ok {
 		for _, targetRuleData := range targetRulesData.([]interface{}) {
 			vMap := targetRuleData.(map[string]interface{})
@@ -550,13 +560,13 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 				targets = append(targets, aws.String(target.(string)))
 			}
 			targetRule := TargetRules{
-				Kind:      AddTargetsToVariationTargetMap,
-				Variation: vMap[VariationVar].(string),
+				Kind:      aws.String(AddTargetsToVariationTargetMap),
+				Variation: aws.String(vMap[VariationVar].(string)),
 				Targets:   targets,
 			}
-			instruction := Instruction{
+			instruction := &Instruction{
 				Kind: targetRule.Kind,
-				Parameters: Parameter{
+				Parameters: &Parameter{
 					Variation: targetRule.Variation,
 					Targets:   targetRule.Targets,
 					Clauses:   nil,
@@ -571,9 +581,9 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 		for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
 			vMap := targetGroupRuleData.(map[string]interface{})
 			targetGroupRule := TargetGroupRules{
-				Kind:      AddRule,
-				GroupName: vMap[GroupName].(string),
-				Variation: vMap[VariationVar].(string),
+				Kind:      aws.String(AddRule),
+				GroupName: aws.String(vMap[GroupName].(string)),
+				Variation: aws.String(vMap[VariationVar].(string)),
 			}
 
 			var distribution *Distribution = nil
@@ -581,23 +591,23 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 				for _, distributionData := range distrib.([]interface{}) {
 					vMap := distributionData.(map[string]interface{})
 					distribution = &Distribution{
-						BuckedBy: BuckedBy,
+						BuckedBy: aws.String(BuckedBy),
 					}
-					var variations []Variation
+					var variations []*Variation
 					for _, variationData := range vMap["variations"].([]interface{}) {
 						vMap := variationData.(map[string]interface{})
-						variation := Variation{
-							Variation: vMap[VariationVar].(string),
-							Weight:    vMap[Weight].(int),
+						variation := &Variation{
+							Variation: aws.String(vMap[VariationVar].(string)),
+							Weight:    aws.Int(vMap[Weight].(int)),
 						}
 						variations = append(variations, variation)
 					}
 					distribution.Variations = variations
 				}
 			}
-			instruction := Instruction{
+			instruction := &Instruction{
 				Kind: targetGroupRule.Kind,
-				Parameters: Parameter{
+				Parameters: &Parameter{
 					Serve: &Serve{
 						Variation:    targetGroupRule.Variation,
 						Distribution: distribution,
@@ -605,7 +615,7 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 					Clauses: []*nextgen.Clause{
 						{
 							Op:     SegmentMatch,
-							Values: []string{targetGroupRule.GroupName},
+							Values: []string{aws.StringValue(targetGroupRule.GroupName)},
 						},
 					},
 				},
