@@ -56,7 +56,7 @@ func resourceLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, met
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	httpResp, err := c.CloudCostAutoStoppingLoadBalancersApi.DeleteLoadBalancer(ctx, nextgen.DeleteAccessPointPayload{
 		Ids:           []string{d.Id()},
-		WithResources: true,
+		WithResources: false,
 	}, c.AccountId, c.AccountId)
 
 	if err != nil {
