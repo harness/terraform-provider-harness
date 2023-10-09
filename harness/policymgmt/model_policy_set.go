@@ -19,6 +19,8 @@ type PolicySet struct {
 	Description string `json:"description,omitempty"`
 	// Only enabled policy sets are evaluated when evaluating by type/action
 	Enabled bool `json:"enabled"`
+	// A string enum value which determines which entities the policy set applies to during evaluation
+	EntitySelector string `json:"entity_selector"`
 	// Identifier of the policy set
 	Identifier string `json:"identifier"`
 	// Name of the policy set
@@ -29,6 +31,8 @@ type PolicySet struct {
 	Policies []LinkedPolicy `json:"policies,omitempty"`
 	// Harness project ID associated with this policy set
 	ProjectId string `json:"project_id"`
+	// The groups of resources that this policy set should be applied to
+	ResourceGroups []ResourceGroup `json:"resource_groups,omitempty"`
 	// Type of input suitable for the policy set
 	Type_ string `json:"type"`
 	// Time the policy set was last updated

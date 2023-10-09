@@ -15,7 +15,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
 	"github.com/antihax/optional"
 )
 
@@ -24,39 +23,38 @@ var (
 	_ context.Context
 )
 
-type EvaluationsApiService service
+type AidaApiService service
 /*
-EvaluationsApiService
-Find an evaluation by ID
+AidaApiService
+Describe Policy On Basis of rego
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param id The ID of the evaluation to retrieve
- * @param optional nil or *EvaluationsApiEvaluationsFindOpts - Optional Parameters:
+ * @param body
+ * @param optional nil or *AidaApiAidaAnalyzeOpts - Optional Parameters:
+     * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
-@return Evaluation
+@return AnalyzeResponse
 */
 
-type EvaluationsApiEvaluationsFindOpts struct {
+type AidaApiAidaAnalyzeOpts struct {
+    XApiKey optional.String
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    XApiKey optional.String
 }
 
-func (a *EvaluationsApiService) EvaluationsFind(ctx context.Context, id int64, localVarOptionals *EvaluationsApiEvaluationsFindOpts) (Evaluation, *http.Response, error) {
+func (a *AidaApiService) AidaAnalyze(ctx context.Context, body AnalyzeRequestBody, localVarOptionals *AidaApiAidaAnalyzeOpts) (AnalyzeResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
+		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue Evaluation
+		localVarReturnValue AnalyzeResponse
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/evaluations/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", fmt.Sprintf("%v", id), -1)
+	localVarPath := a.client.cfg.BasePath + "/api/v1/aida/analyze"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -72,7 +70,7 @@ func (a *EvaluationsApiService) EvaluationsFind(ctx context.Context, id int64, l
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -91,6 +89,8 @@ func (a *EvaluationsApiService) EvaluationsFind(ctx context.Context, id int64, l
 	if localVarOptionals != nil && localVarOptionals.XApiKey.IsSet() {
 		localVarHeaderParams["x-api-key"] = parameterToString(localVarOptionals.XApiKey.Value(), "")
 	}
+	// body params
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -134,7 +134,7 @@ func (a *EvaluationsApiService) EvaluationsFind(ctx context.Context, id int64, l
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
-			var v Evaluation
+			var v AnalyzeResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()
@@ -209,55 +209,36 @@ func (a *EvaluationsApiService) EvaluationsFind(ctx context.Context, id int64, l
 	return localVarReturnValue, localVarHttpResponse, nil
 }
 /*
-EvaluationsApiService
-List evaluations
+AidaApiService
+Generate Policy On Basis of free Text
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param optional nil or *EvaluationsApiEvaluationsListOpts - Optional Parameters:
+ * @param body
+ * @param optional nil or *AidaApiAidaGenerateOpts - Optional Parameters:
+     * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
-     * @param "PerPage" (optional.Int32) -  Number of results per page
-     * @param "Page" (optional.Int32) -  Page number (starting from 0)
-     * @param "Entity" (optional.String) -  Filter by the entity associated with the evaluation
-     * @param "Type_" (optional.String) -  Filter by the type associated with the evaluation
-     * @param "Action" (optional.String) -  Filter by the action associated with the evaluation
-     * @param "LastSeen" (optional.Int64) -  Retrieve results starting after this last-seen result
-     * @param "CreatedDateFrom" (optional.Int64) -  Retrieve results created from this date
-     * @param "CreatedDateTo" (optional.Int64) -  Retrieve results created up to this date
-     * @param "Status" (optional.String) -  Retrieve results with these statuses
-     * @param "IncludeChildScopes" (optional.Bool) -  When true, evaluations from child scopes will be inculded in the results
-     * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
-@return []Evaluation
+@return PolicySample
 */
 
-type EvaluationsApiEvaluationsListOpts struct {
+type AidaApiAidaGenerateOpts struct {
+    XApiKey optional.String
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
-    PerPage optional.Int32
-    Page optional.Int32
-    Entity optional.String
-    Type_ optional.String
-    Action optional.String
-    LastSeen optional.Int64
-    CreatedDateFrom optional.Int64
-    CreatedDateTo optional.Int64
-    Status optional.String
-    IncludeChildScopes optional.Bool
-    XApiKey optional.String
 }
 
-func (a *EvaluationsApiService) EvaluationsList(ctx context.Context, localVarOptionals *EvaluationsApiEvaluationsListOpts) ([]Evaluation, *http.Response, error) {
+func (a *AidaApiService) AidaGenerate(ctx context.Context, body GenerateRequestBody, localVarOptionals *AidaApiAidaGenerateOpts) (PolicySample, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
+		localVarHttpMethod = strings.ToUpper("Post")
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
-		localVarReturnValue []Evaluation
+		localVarReturnValue PolicySample
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/evaluations"
+	localVarPath := a.client.cfg.BasePath + "/api/v1/aida/generate"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -272,38 +253,8 @@ func (a *EvaluationsApiService) EvaluationsList(ctx context.Context, localVarOpt
 	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
-	if localVarOptionals != nil && localVarOptionals.PerPage.IsSet() {
-		localVarQueryParams.Add("per_page", parameterToString(localVarOptionals.PerPage.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Page.IsSet() {
-		localVarQueryParams.Add("page", parameterToString(localVarOptionals.Page.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Entity.IsSet() {
-		localVarQueryParams.Add("entity", parameterToString(localVarOptionals.Entity.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Type_.IsSet() {
-		localVarQueryParams.Add("type", parameterToString(localVarOptionals.Type_.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Action.IsSet() {
-		localVarQueryParams.Add("action", parameterToString(localVarOptionals.Action.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.LastSeen.IsSet() {
-		localVarQueryParams.Add("last_seen", parameterToString(localVarOptionals.LastSeen.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.CreatedDateFrom.IsSet() {
-		localVarQueryParams.Add("created_date_from", parameterToString(localVarOptionals.CreatedDateFrom.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.CreatedDateTo.IsSet() {
-		localVarQueryParams.Add("created_date_to", parameterToString(localVarOptionals.CreatedDateTo.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.Status.IsSet() {
-		localVarQueryParams.Add("status", parameterToString(localVarOptionals.Status.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.IncludeChildScopes.IsSet() {
-		localVarQueryParams.Add("includeChildScopes", parameterToString(localVarOptionals.IncludeChildScopes.Value(), ""))
-	}
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -322,6 +273,8 @@ func (a *EvaluationsApiService) EvaluationsList(ctx context.Context, localVarOpt
 	if localVarOptionals != nil && localVarOptionals.XApiKey.IsSet() {
 		localVarHeaderParams["x-api-key"] = parameterToString(localVarOptionals.XApiKey.Value(), "")
 	}
+	// body params
+	localVarPostBody = &body
 	if ctx != nil {
 		// API Key Authentication
 		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
@@ -365,7 +318,7 @@ func (a *EvaluationsApiService) EvaluationsList(ctx context.Context, localVarOpt
 			error: localVarHttpResponse.Status,
 		}
 		if localVarHttpResponse.StatusCode == 200 {
-			var v []Evaluation
+			var v PolicySample
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 				if err != nil {
 					newErr.error = err.Error()

@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 **OrgId** | **string** | The Harness organisation in which the evaluation was performed | [default to null]
 **ProjectId** | **string** | The Harness project in which the evaluation was performed | [default to null]
 **Status** | **string** | The overall status of the evaluation indicating whether it passed | [default to null]
-**Type_** | **string** | The type of the entity under evaluation | [default to null]
+**Type_** | **string** | The types of the entity under evaluation | [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

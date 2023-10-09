@@ -21,10 +21,13 @@ All URIs are relative to *https://app.harness.io/gateway/pm/*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*AidaApi* | [**AidaAnalyze**](docs/AidaApi.md#aidaanalyze) | **Post** /api/v1/aida/analyze | 
+*AidaApi* | [**AidaGenerate**](docs/AidaApi.md#aidagenerate) | **Post** /api/v1/aida/generate | 
 *DashboardApi* | [**DashboardMetrics**](docs/DashboardApi.md#dashboardmetrics) | **Get** /api/v1/dashboard | 
 *EvaluateApi* | [**EvaluateEvaluate**](docs/EvaluateApi.md#evaluateevaluate) | **Post** /api/v1/evaluate | 
 *EvaluateApi* | [**EvaluateEvaluateByIds**](docs/EvaluateApi.md#evaluateevaluatebyids) | **Post** /api/v1/evaluate-by-ids | 
 *EvaluateApi* | [**EvaluateEvaluateByType**](docs/EvaluateApi.md#evaluateevaluatebytype) | **Post** /api/v1/evaluate-by-type | 
+*EvaluateApi* | [**EvaluateEvaluateByTypeCheck**](docs/EvaluateApi.md#evaluateevaluatebytypecheck) | **Get** /api/v1/evaluate-by-type-check | evaluate-by-type-check evaluate
 *EvaluationsApi* | [**EvaluationsFind**](docs/EvaluationsApi.md#evaluationsfind) | **Get** /api/v1/evaluations/{id} | 
 *EvaluationsApi* | [**EvaluationsList**](docs/EvaluationsApi.md#evaluationslist) | **Get** /api/v1/evaluations | 
 *ExamplesApi* | [**ExamplesList**](docs/ExamplesApi.md#exampleslist) | **Get** /api/v1/examples | 
@@ -44,30 +47,34 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [AggregateStatus](docs/AggregateStatus.md)
+ - [AnalyzeRequestBody](docs/AnalyzeRequestBody.md)
+ - [AnalyzeResponse](docs/AnalyzeResponse.md)
  - [CreateRequestBody](docs/CreateRequestBody.md)
  - [CreateRequestBody2](docs/CreateRequestBody2.md)
  - [DashboardMetrics](docs/DashboardMetrics.md)
  - [ErrorResultWithIdentifier](docs/ErrorResultWithIdentifier.md)
+ - [EvaluateByTypeCheckResponseBody](docs/EvaluateByTypeCheckResponseBody.md)
  - [EvaluateRequestBody](docs/EvaluateRequestBody.md)
  - [EvaluatedPolicy](docs/EvaluatedPolicy.md)
  - [Evaluation](docs/Evaluation.md)
- - [Evaluation2](docs/Evaluation2.md)
  - [EvaluationCounts](docs/EvaluationCounts.md)
  - [EvaluationDetail](docs/EvaluationDetail.md)
- - [EvaluationDetail2](docs/EvaluationDetail2.md)
+ - [GenerateRequestBody](docs/GenerateRequestBody.md)
  - [GitErrorResult](docs/GitErrorResult.md)
  - [LinkedPolicy](docs/LinkedPolicy.md)
- - [LinkedPolicy2](docs/LinkedPolicy2.md)
  - [Linkedpolicyidentifier](docs/Linkedpolicyidentifier.md)
  - [ModelError](docs/ModelError.md)
  - [Policy](docs/Policy.md)
  - [PolicyExample](docs/PolicyExample.md)
  - [PolicyHealth](docs/PolicyHealth.md)
+ - [PolicySample](docs/PolicySample.md)
  - [PolicySet](docs/PolicySet.md)
- - [PolicySet2](docs/PolicySet2.md)
+ - [ResourceGroup](docs/ResourceGroup.md)
+ - [ResourceGroupIdentifier](docs/ResourceGroupIdentifier.md)
  - [ServiceVersion](docs/ServiceVersion.md)
  - [UpdateRequestBody](docs/UpdateRequestBody.md)
  - [UpdateRequestBody2](docs/UpdateRequestBody2.md)
+ - [Variable](docs/Variable.md)
 
 ## Documentation For Authorization
 

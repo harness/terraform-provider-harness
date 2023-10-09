@@ -33,6 +33,7 @@ Get metrics about policies, policy sets and evaluations
      * @param "AccountIdentifier" (optional.String) -  Harness account ID
      * @param "OrgIdentifier" (optional.String) -  Harness organization ID
      * @param "ProjectIdentifier" (optional.String) -  Harness project ID
+     * @param "XApiKey" (optional.String) -  Harness PAT key used to perform authorization
 @return DashboardMetrics
 */
 
@@ -41,6 +42,7 @@ type DashboardApiDashboardMetricsOpts struct {
     AccountIdentifier optional.String
     OrgIdentifier optional.String
     ProjectIdentifier optional.String
+    XApiKey optional.String
 }
 
 func (a *DashboardApiService) DashboardMetrics(ctx context.Context, localVarOptionals *DashboardApiDashboardMetricsOpts) (DashboardMetrics, *http.Response, error) {
@@ -87,6 +89,22 @@ func (a *DashboardApiService) DashboardMetrics(ctx context.Context, localVarOpti
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if localVarOptionals != nil && localVarOptionals.XApiKey.IsSet() {
+		localVarHeaderParams["x-api-key"] = parameterToString(localVarOptionals.XApiKey.Value(), "")
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+			
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

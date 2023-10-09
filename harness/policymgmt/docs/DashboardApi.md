@@ -27,6 +27,7 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.String**| Harness account ID | 
  **orgIdentifier** | **optional.String**| Harness organization ID | 
  **projectIdentifier** | **optional.String**| Harness project ID | 
+ **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
@@ -34,7 +35,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[jwt_header_Authorization](../README.md#jwt_header_Authorization)
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
 
 ### HTTP request headers
 

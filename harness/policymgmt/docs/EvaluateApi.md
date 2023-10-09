@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**EvaluateEvaluate**](EvaluateApi.md#EvaluateEvaluate) | **Post** /api/v1/evaluate | 
 [**EvaluateEvaluateByIds**](EvaluateApi.md#EvaluateEvaluateByIds) | **Post** /api/v1/evaluate-by-ids | 
 [**EvaluateEvaluateByType**](EvaluateApi.md#EvaluateEvaluateByType) | **Post** /api/v1/evaluate-by-type | 
+[**EvaluateEvaluateByTypeCheck**](EvaluateApi.md#EvaluateEvaluateByTypeCheck) | **Get** /api/v1/evaluate-by-type-check | evaluate-by-type-check evaluate
 
 # **EvaluateEvaluate**
 > EvaluatedPolicy EvaluateEvaluate(ctx, body, optional)
@@ -30,6 +31,7 @@ Name | Type | Description  | Notes
  **accountIdentifier** | **optional.**| Harness account ID | 
  **orgIdentifier** | **optional.**| Harness organization ID | 
  **projectIdentifier** | **optional.**| Harness project ID | 
+ **xApiKey** | **optional.**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
@@ -37,7 +39,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[jwt_header_Authorization](../README.md#jwt_header_Authorization)
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
 
 ### HTTP request headers
 
@@ -73,6 +75,7 @@ Name | Type | Description  | Notes
  **principalIdentifier** | **optional.String**| Identifier of the principal that triggered the evaluation - must be specified in conjunction with &#x27;principalType&#x27; | 
  **principalType** | **optional.String**| Type of principal that triggered the evaluation - must be specified in conjunction with &#x27;principalIdentifier&#x27; | 
  **userIdentifier** | **optional.String**| Deprecated: Please use &#x27;principalIdentifier&#x27; and &#x27;principalType&#x27; instead | 
+ **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
@@ -80,7 +83,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[jwt_header_Authorization](../README.md#jwt_header_Authorization)
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
 
 ### HTTP request headers
 
@@ -118,6 +121,7 @@ Name | Type | Description  | Notes
  **principalIdentifier** | **optional.String**| Identifier of the principal that triggered the evaluation - must be specified in conjunction with &#x27;principalType&#x27; | 
  **principalType** | **optional.String**| Type of principal that triggered the evaluation - must be specified in conjunction with &#x27;principalIdentifier&#x27; | 
  **userIdentifier** | **optional.String**| Deprecated: Please use &#x27;principalIdentifier&#x27; and &#x27;principalType&#x27; instead | 
+ **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
 
 ### Return type
 
@@ -125,7 +129,49 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[jwt_header_Authorization](../README.md#jwt_header_Authorization)
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/vnd.goa.error
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **EvaluateEvaluateByTypeCheck**
+> EvaluateByTypeCheckResponseBody EvaluateEvaluateByTypeCheck(ctx, type_, action, optional)
+evaluate-by-type-check evaluate
+
+Returns true if there are policies to evaluate for the given type, action and acc/org/proj scope.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **type_** | **string**| Type of entity under evaluation | 
+  **action** | **string**| Action that triggered the evaluation | 
+ **optional** | ***EvaluateApiEvaluateEvaluateByTypeCheckOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a EvaluateApiEvaluateEvaluateByTypeCheckOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **accountIdentifier** | **optional.String**| Harness account ID | 
+ **orgIdentifier** | **optional.String**| Harness organization ID | 
+ **projectIdentifier** | **optional.String**| Harness project ID | 
+ **entity** | **optional.String**| User-supplied global identifier of the entity under evaluation | 
+ **xApiKey** | **optional.String**| Harness PAT key used to perform authorization | 
+
+### Return type
+
+[**EvaluateByTypeCheckResponseBody**](EvaluateByTypeCheckResponseBody.md)
+
+### Authorization
+
+[api_key_header_x-api-key](../README.md#api_key_header_x-api-key), [jwt_header_Authorization](../README.md#jwt_header_Authorization)
 
 ### HTTP request headers
 
