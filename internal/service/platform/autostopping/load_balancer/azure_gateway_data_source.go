@@ -55,7 +55,7 @@ func DataSourceAzureGateway() *schema.Resource {
 				Required:    true,
 			},
 			"frontend_ip": {
-				Description: "",
+				Description: "ID of IP address to be used. Required only for creating new AppGateway. See https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address for more details",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

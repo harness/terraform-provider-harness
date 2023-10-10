@@ -31,6 +31,7 @@ data "harness_autostopping_aws_alb" "test" {
 
 ### Optional
 
+- `alb_arn` (String) Arn of AWS ALB to be imported. Required only for importing existing ALB
 - `certificate_id` (String)
 - `route53_hosted_zone_id` (String) Route 53 hosted zone id
 - `security_groups` (List of String) Security Group to define the security rules that determine the inbound and outbound traffic
