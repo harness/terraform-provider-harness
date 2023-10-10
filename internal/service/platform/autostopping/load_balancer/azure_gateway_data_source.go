@@ -47,7 +47,7 @@ func DataSourceAzureGateway() *schema.Resource {
 			"subnet_id": {
 				Description: "Subnet in which cloud resources are hosted",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"azure_func_region": {
 				Description: "Region in which azure cloud function will be provisioned",
@@ -57,12 +57,12 @@ func DataSourceAzureGateway() *schema.Resource {
 			"frontend_ip": {
 				Description: "",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"sku_size": {
 				Description:  "Size of machine used for the gateway",
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				ExactlyOneOf: []string{"sku1_small", "sku1_medium", "sku1_large", "sku2"},
 			},
 			"app_gateway_id": {
