@@ -1,6 +1,6 @@
 
-<a name="0.3.52"></a>
-## 0.3.52 (2023-09-27)
+<a name="0.3.53"></a>
+## 0.3.53 (2023-10-09)
 
 ### Added
 
@@ -46,6 +46,8 @@
 
 ### Release
 
+* Release version 0.3.52 09-28-2023
+* Release v0.3.52
 * Release version 0.3.51 09-13-2023
 * Release v0.3.51
 * Release version 0.3.50 09-13-2023
@@ -119,11 +121,8 @@
 * Release version 0.3.18 03-10-2023
 * Release v0.3.18
 * Release version 0.3.17 03-08-2023
-* Release v0.3.17
 * Release version 0.3.16 02-21-2023
 * Release v0.3.16
-* Release version 0.3.15 02-15-2023
-* Release v0.3.15
 
 ### Remove
 
@@ -162,12 +161,12 @@
 
 ### Updating
 
-* Updating the models with renamed field
-* Updating the model used for rule creation
+* updating the url for the endpoints
 
 ### Updating
 
-* updating the url for the endpoints
+* Updating the models with renamed field
+* Updating the model used for rule creation
 
 ### Reverts
 
@@ -175,6 +174,8 @@
 
 ### Pull Requests
 
+* Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
+* Merge pull request [#411](https://github.com/harness/harness-go-sdk/issues/411) from harness/SRM-15418-2
 * Merge pull request [#413](https://github.com/harness/harness-go-sdk/issues/413) from harness/CDS-76236
 * Merge pull request [#412](https://github.com/harness/harness-go-sdk/issues/412) from harness/CI-9639
 * Merge pull request [#409](https://github.com/harness/harness-go-sdk/issues/409) from harness/SRM-15418-1
@@ -225,7 +226,5 @@
 * Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 * Merge pull request [#294](https://github.com/harness/harness-go-sdk/issues/294) from harness/pl-31762
 * Merge pull request [#292](https://github.com/harness/harness-go-sdk/issues/292) from harness/CDS-52185
-* Merge pull request [#289](https://github.com/harness/harness-go-sdk/issues/289) from harness/CDS-54803
 * Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
-* Merge pull request [#282](https://github.com/harness/harness-go-sdk/issues/282) from harness/cluster-tags-param
 
