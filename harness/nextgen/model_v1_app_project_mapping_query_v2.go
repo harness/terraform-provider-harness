@@ -20,5 +20,5 @@ type V1AppProjectMappingQueryV2 struct {
 	OrgIdentifier string `json:"orgIdentifier,omitempty"`
 	// Project Identifier for the Entity.
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	ArgoProjectName   string `json:"argoProjectIdentifier,omitempty"`
+	ArgoProjectName   string `json:"argoProjectName,omitempty"`
 }
