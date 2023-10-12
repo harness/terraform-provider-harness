@@ -2,7 +2,9 @@ package load_balancer
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -73,7 +75,41 @@ func readLoadBalancer(d *schema.ResourceData, accessPoint *nextgen.AccessPoint) 
 	d.Set("vpc", accessPoint.Vpc)
 }
 
-func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) nextgen.AccessPoint {
+func nonEmptyString(str string) bool {
+	return len(strings.TrimSpace(str)) > 0
+}
+
+func azureAppGwValidator(ap nextgen.AccessPoint) error {
+	importing := nonEmptyString(ap.Metadata.AppGatewayId)
+	if importing {
+		return nil
+	}
+	if !nonEmptyString(ap.Vpc) {
+		return fmt.Errorf("vpc is required for creating Azure AppGateway")
+	}
+	if !nonEmptyString(ap.Metadata.SubnetId) {
+		return fmt.Errorf("subnet_id is required for creating Azure AppGateway")
+	}
+	if !nonEmptyString(ap.Metadata.FeIpId) {
+		return fmt.Errorf("frontend_ip is required for creating Azure AppGateway")
+	}
+	if !nonEmptyString(ap.Metadata.Size) {
+		return fmt.Errorf("sku_size is required for creating Azure AppGateway")
+	}
+	return nil
+}
+
+func implementationSpecificLBValidators(type_, kind string) func(ap nextgen.AccessPoint) error {
+	impl := fmt.Sprintf("%s:%s", strings.ToLower(type_), strings.ToLower(kind))
+	switch impl {
+	case "azure:app_gateway":
+		return azureAppGwValidator
+	default:
+		return nil
+	}
+}
+
+func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) (nextgen.AccessPoint, error) {
 	lb := &nextgen.AccessPoint{
 		Metadata: &nextgen.AccessPointMeta{},
 	}
@@ -108,8 +144,12 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) ne
 		lb.Vpc = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("resource_group"); ok {
-		lb.Metadata.ResourceGroup = attr.(string)
+	if attr, ok := d.GetOk("app_gateway_id"); ok {
+		lb.Metadata.AppGatewayId = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("azure_func_region"); ok {
+		lb.Metadata.FuncRegion = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("security_groups"); ok {
@@ -148,16 +188,16 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) ne
 		lb.Metadata.FeIpId = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("azure_func_region"); ok {
-		lb.Metadata.FuncRegion = attr.(string)
-	}
-
 	if attr, ok := d.GetOk("api_key"); ok {
 		lb.Metadata.ApiKey = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("keypair"); ok {
 		lb.Metadata.Keypair = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("resource_group"); ok {
+		lb.Metadata.ResourceGroup = attr.(string)
 	}
 
 	lb.Metadata.AllocateStaticIp = false
@@ -191,5 +231,10 @@ func buildLoadBalancer(d *schema.ResourceData, accountId, type_, kind string) ne
 			}
 		}
 	}
-	return *lb
+	if validateFunc := implementationSpecificLBValidators(type_, kind); validateFunc != nil {
+		if err := validateFunc(*lb); err != nil {
+			return *lb, err
+		}
+	}
+	return *lb, nil
 }

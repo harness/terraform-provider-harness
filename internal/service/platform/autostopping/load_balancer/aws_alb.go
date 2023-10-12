@@ -75,6 +75,9 @@ func ResourceAwsALB() *schema.Resource {
 
 func resourceAwsALBCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	lb := buildLoadBalancer(d, c.AccountId, "aws", "")
+	lb, err := buildLoadBalancer(d, c.AccountId, "aws", "")
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
 }

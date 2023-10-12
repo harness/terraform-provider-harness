@@ -82,6 +82,9 @@ func ResourceAzureGateway() *schema.Resource {
 
 func resourceAzureGatewayCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	lb := buildLoadBalancer(d, c.AccountId, "azure", "app_gateway")
+	lb, err := buildLoadBalancer(d, c.AccountId, "azure", "app_gateway")
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
 }
