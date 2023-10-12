@@ -57,6 +57,11 @@ func DataSourceAwsALB() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"alb_arn": {
+				Description: "Arn of AWS ALB to be imported. Required only for importing existing ALB",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 	return resource

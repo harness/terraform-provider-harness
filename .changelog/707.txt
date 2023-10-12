@@ -1,0 +1,4 @@
+```release-note:enhancement
+    - Support for import of ALB as AutoStopping Loadbalancer
+    - Support for import of AppGateway as AutoStopping Loadbalancer
+```

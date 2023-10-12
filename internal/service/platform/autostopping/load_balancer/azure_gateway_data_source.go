@@ -47,7 +47,7 @@ func DataSourceAzureGateway() *schema.Resource {
 			"subnet_id": {
 				Description: "Subnet in which cloud resources are hosted",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"azure_func_region": {
 				Description: "Region in which azure cloud function will be provisioned",
@@ -55,14 +55,24 @@ func DataSourceAzureGateway() *schema.Resource {
 				Required:    true,
 			},
 			"frontend_ip": {
-				Description: "",
+				Description: "ID of IP address to be used. Required only for creating new AppGateway. See https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address for more details",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"sku_size": {
 				Description: "Size of machine used for the gateway",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+			},
+			"app_gateway_id": {
+				Description: "ID of Azure AppGateway for importing",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"certificate_id": {
+				Description: "ID of existing SSL certificate from AppGateway being imported. Required only for SSL based rules",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	}

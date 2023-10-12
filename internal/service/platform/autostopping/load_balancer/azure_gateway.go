@@ -50,14 +50,14 @@ func ResourceAzureGateway() *schema.Resource {
 				Required:    true,
 			},
 			"vpc": {
-				Description: "VPC in which cloud resources are hosted",
+				Description: "VNet in which cloud resources are hosted. Required only for creating new AppGateway",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"subnet_id": {
-				Description: "Subnet in which cloud resources are hosted",
+				Description: "Subnet in which cloud resources are hosted. Required only for creating new AppGateway",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"azure_func_region": {
 				Description: "Region in which azure cloud function will be provisioned",
@@ -65,14 +65,24 @@ func ResourceAzureGateway() *schema.Resource {
 				Required:    true,
 			},
 			"frontend_ip": {
-				Description: "",
+				Description: "ID of IP address to be used. Required only for creating new AppGateway. See https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address for more details",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"sku_size": {
-				Description: "Size of machine used for the gateway",
+				Description: "Size of machine used for the gateway. Required only for creating new AppGateway",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+			},
+			"app_gateway_id": {
+				Description: "ID of Azure AppGateway for importing. Required only for importing exiging AppGateway",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"certificate_id": {
+				Description: "ID of existing SSL certificate from AppGateway being imported. Required only for importing existing AppGateway. Required only for SSL based rules",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	}
@@ -82,6 +92,9 @@ func ResourceAzureGateway() *schema.Resource {
 
 func resourceAzureGatewayCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	lb := buildLoadBalancer(d, c.AccountId, "azure", "app_gateway")
+	lb, err := buildLoadBalancer(d, c.AccountId, "azure", "app_gateway")
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
 }

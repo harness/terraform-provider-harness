@@ -121,6 +121,9 @@ func ResourceAzureProxy() *schema.Resource {
 
 func resourceAzureProxyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	lb := buildLoadBalancer(d, c.AccountId, "azure", "autostopping_proxy")
+	lb, err := buildLoadBalancer(d, c.AccountId, "azure", "autostopping_proxy")
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
 }
