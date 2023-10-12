@@ -1,3 +1,17 @@
+# 0.28.2 (October 09,2023) 
+
+ENHANCEMENTS:
+
+* Added is_namespaced for agent creating ([#704](https://github.com/harness/terraform-provider-harness/issues/704))
+* platform_connector_github.md - Added documentation for custom health connector
+resource.tf - Example of github_app in credentials for github connector
+go.mod - upgraded harness-go-sdk version to v0.3.52
+github.go - Added Schema and CRUD for github_app credentials in github connector
+github_test.go - Test for schema and CRUD for github_app credentials in github connector
+github_data_source.go - Added Schema for github_app credentials in github connector
+github_data_source_test.go - Added  test for Schema of github_app credentials in github connector ([#703](https://github.com/harness/terraform-provider-harness/issues/703))
+* resource/harness_platform_gitops_agent: add support for new flux operator. ([#674](https://github.com/harness/terraform-provider-harness/issues/674))
+
 # 0.28.1 (September 27,2023) 
 
 ENHANCEMENTS:
