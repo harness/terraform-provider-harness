@@ -195,6 +195,15 @@ func ResourceVMRule() *schema.Resource {
 					},
 				},
 			},
+			"rules": {
+				Description: "ID of AutoStopping rules on which the schedule applies",
+				Required:    true,
+				Type:        schema.TypeList,
+				MinItems:    1,
+				Elem: &schema.Schema{
+					Type: schema.TypeFloat,
+				},
+			},
 		},
 	}
 
