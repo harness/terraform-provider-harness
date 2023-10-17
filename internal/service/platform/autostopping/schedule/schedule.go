@@ -45,6 +45,15 @@ var (
 		"FRI": 5,
 		"SAT": 6,
 	}
+	dayIndexRev = map[time.Weekday]string{
+		0: "SUN",
+		1: "MON",
+		2: "TUE",
+		3: "WED",
+		4: "THU",
+		5: "FRI",
+		6: "SAT",
+	}
 )
 
 func dateValidation(i interface{}, p cty.Path) diag.Diagnostics {
@@ -406,4 +415,74 @@ func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
 func createSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
 	diag := diag.Diagnostics{}
 	return diag
+}
+
+func readSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	// c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	// scheduleID, err := strconv.ParseFloat(d.Id(), 64)
+	// if err != nil {
+	// 	return diag.Errorf("invalid schedule id")
+	// }
+
+	schedule := &nextgen.FixedSchedule{}
+
+	return setSchedule(d, schedule)
+}
+
+func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.Diagnostics {
+	diags := diag.Diagnostics{}
+	if schedule == nil || schedule.Details == nil {
+		d := diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid schedule. Schedule cannot be nil",
+		}
+		diags = append(diags, d)
+		return diags
+	}
+	identifier := strconv.Itoa(int(schedule.Id))
+	d.SetId(identifier)
+	d.Set("identifier", identifier)
+	d.Set(nameAttribute, schedule.Name)
+	scheduleType := uptimeSchedule
+	schedDet := schedule.Details.Uptime
+	if schedule.Details.Downtime != nil {
+		scheduleType = downtimeSchedule
+		schedDet = schedule.Details.Downtime
+	}
+	d.Set(scheduleTypeAttribute, scheduleType)
+	d.Set(timeZoneAttribute, schedule.Details.Timezone)
+	if schedDet.Period != nil {
+		periodData := map[string]interface{}{}
+		startTime, err := time.Parse(time.DateTime, schedDet.Period.Start)
+		if err == nil {
+			periodData[startAttribute] = startTime
+		}
+		endTime, err := time.Parse(time.DateTime, schedDet.Period.End)
+		if err == nil {
+			periodData[endAttribute] = endTime
+		}
+		d.Set(timePeriodAttribute, periodData)
+	}
+	if schedDet.Days != nil {
+		periodicity := map[string]interface{}{}
+		days := []string{}
+		for _, day := range schedDet.Days.Days {
+			dv, ok := dayIndexRev[time.Weekday(day)]
+			if ok {
+				days = append(days, dv)
+			}
+		}
+		periodicity[daysAttribute] = days
+		if schedDet.Days.StartTime != nil {
+			startTime := fmt.Sprintf("%02d:%02d", int(schedDet.Days.StartTime.Hour), int(schedDet.Days.StartTime.Min))
+			periodicity[startTimeAttribute] = startTime
+		}
+		if schedDet.Days.EndTime != nil {
+			endTime := fmt.Sprintf("%02d:%02d", int(schedDet.Days.EndTime.Hour), int(schedDet.Days.EndTime.Min))
+			periodicity[endTimeAttribute] = endTime
+		}
+		d.Set(periodicityAttribute, periodicity)
+	}
+	return diags
 }
