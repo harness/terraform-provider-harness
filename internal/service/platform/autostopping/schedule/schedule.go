@@ -389,18 +389,18 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 
 func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
 	timeParts := strings.Split(strings.TrimSpace(timeInDayStr), ":")
-	endTime := nextgen.TimeInDay{}
+	timeInDay := nextgen.TimeInDay{}
 	if len(timeParts) == 2 {
 		endTimeHr, err := strconv.ParseInt(timeParts[0], 10, 64)
 		if err == nil {
-			endTime.Hour = float64(endTimeHr)
+			timeInDay.Hour = float64(endTimeHr)
 		}
 		endTimeMin, err := strconv.ParseInt(timeParts[0], 10, 64)
 		if err == nil {
-			endTime.Min = float64(endTimeMin)
+			timeInDay.Min = float64(endTimeMin)
 		}
 	}
-	return endTime
+	return timeInDay
 }
 
 func createSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
