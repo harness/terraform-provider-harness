@@ -10,6 +10,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
+	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,17 +19,17 @@ import (
 type scheduleType string
 
 const (
-	timeZoneLabel         = "time_zone"
-	timePeriodLabel       = "time_period"
-	scheduleTypeLabel     = "schedule_type"
-	startLabel            = "start"
-	endLabel              = "end"
-	periodicityLabel      = "periodicity"
-	startTimeLabel        = "start_time"
-	endTimeLabel          = "end_time"
-	rulesLabel            = "rules"
-	daysLabel             = "days"
-	nameLabel             = "name"
+	timeZoneAttribute     = "time_zone"
+	timePeriodAttribute   = "time_period"
+	scheduleTypeAttribute = "schedule_type"
+	startAttribute        = "start"
+	endAttribute          = "end"
+	periodicityAttribute  = "periodicity"
+	startTimeAttribute    = "start_time"
+	endTimeAttribute      = "end_time"
+	rulesAttribute        = "rules"
+	daysAttribute         = "days"
+	nameAttribute         = "name"
 	scheduleResTypeASrule = "autostopping_rule"
 )
 
@@ -167,35 +168,35 @@ func ResourceVMRule() *schema.Resource {
 				Type:        schema.TypeFloat,
 				Computed:    true,
 			},
-			nameLabel: {
+			nameAttribute: {
 				Description: "Name of the schedule",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			scheduleTypeLabel: {
+			scheduleTypeAttribute: {
 				Description:  fmt.Sprintf("Type of the schedule. Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
 				Type:         schema.TypeString,
 				Required:     true,
 				ExactlyOneOf: []string{string(uptimeSchedule), string(downtimeSchedule)},
 			},
-			timeZoneLabel: {
+			timeZoneAttribute: {
 				Description: "Time zone in which schedule needs to be executed",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			timePeriodLabel: {
+			timePeriodAttribute: {
 				Description: "Time period in which schedule will be active. If specified along with periodicity, this will act as the boundary of periodicity. Otherwise schedule action will be triggered at `start` time and terminate at `end` time.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						startLabel: {
+						startAttribute: {
 							Description:      "Time from which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
 							Type:             schema.TypeString,
 							Required:         true,
 							ValidateDiagFunc: dateValidation,
 						},
-						endLabel: {
+						endAttribute: {
 							Description:      "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
 							Type:             schema.TypeString,
 							Required:         true,
@@ -204,25 +205,25 @@ func ResourceVMRule() *schema.Resource {
 					},
 				},
 			},
-			periodicityLabel: {
+			periodicityAttribute: {
 				Description: "For defining periodic schedule. Periodic nature will be applicable from the time of creation of schedule, unless specific 'time_period' is specified",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						daysLabel: {
+						daysAttribute: {
 							Description:      "Days on which schedule need to be active. Comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday",
 							Type:             schema.TypeString,
 							Required:         true,
 							ValidateDiagFunc: daysValidationFunc,
 						},
-						startTimeLabel: {
+						startTimeAttribute: {
 							Description:      "Starting time of schedule action on the day. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",
 							Type:             schema.TypeString,
 							Required:         true,
 							ValidateDiagFunc: timeValidation,
 						},
-						endTimeLabel: {
+						endTimeAttribute: {
 							Description:      "Ending time of schedule action on the day. Accepted format is HH:MM. Eg : 20:00 for 8pm",
 							Type:             schema.TypeString,
 							Required:         true,
@@ -231,7 +232,7 @@ func ResourceVMRule() *schema.Resource {
 					},
 				},
 			},
-			rulesLabel: {
+			rulesAttribute: {
 				Description: "ID of AutoStopping rules on which the schedule applies",
 				Required:    true,
 				Type:        schema.TypeList,
@@ -247,7 +248,9 @@ func ResourceVMRule() *schema.Resource {
 }
 
 func resourceScheduleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	schedule := parseSchedule(d, c.AccountId)
+	return createSchedule(ctx, d, meta, schedule)
 }
 
 func resourceScheduleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -262,19 +265,19 @@ func resourceScheduleRead(ctx context.Context, d *schema.ResourceData, meta inte
 	return nil
 }
 
-func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextgen.FixedSchedule {
+func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSchedule {
 	schedule := &nextgen.FixedSchedule{
 		Account: accountId,
 		Details: &nextgen.OccurrenceSchedule{},
 	}
-	if attr, ok := d.GetOk(nameLabel); ok {
+	if attr, ok := d.GetOk(nameAttribute); ok {
 		name, ok := attr.(string)
 		if ok {
 			schedule.Name = name
 		}
 	}
 
-	if attr, ok := d.GetOk(timeZoneLabel); ok {
+	if attr, ok := d.GetOk(timeZoneAttribute); ok {
 		timezone, ok := attr.(string)
 		if ok {
 			schedule.Details.Timezone = timezone
@@ -283,21 +286,21 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 
 	tSchedule := &nextgen.TimeSchedule{}
 
-	attr, ok := d.GetOk(timePeriodLabel)
+	attr, ok := d.GetOk(timePeriodAttribute)
 	if ok {
 		timePeriodInf, ok := attr.([]interface{})
 		if ok && len(timePeriodInf) > 0 {
 			tSchedule.Period = &nextgen.TimeSchedulePeriod{}
 			timePeriodObj, ok := timePeriodInf[0].(map[string]interface{})
 			if ok {
-				startInf, ok := timePeriodObj[startLabel]
+				startInf, ok := timePeriodObj[startAttribute]
 				if ok {
 					start, ok := startInf.(string)
 					if ok {
 						tSchedule.Period.Start = start
 					}
 				}
-				endInf, ok := timePeriodObj[endLabel]
+				endInf, ok := timePeriodObj[endAttribute]
 				if ok {
 					end, ok := endInf.(string)
 					if ok {
@@ -308,7 +311,7 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 		}
 	}
 
-	attr, ok = d.GetOk(periodicityLabel)
+	attr, ok = d.GetOk(periodicityAttribute)
 	if ok {
 		periodicInf, ok := attr.([]interface{})
 		if ok && len(periodicInf) > 0 {
@@ -316,7 +319,7 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 			periodicityObj, ok := periodicInf[0].(map[string]interface{})
 			if ok {
 				days := []float64{}
-				daysInf, ok := periodicityObj[daysLabel]
+				daysInf, ok := periodicityObj[daysAttribute]
 				if ok {
 					daysCsv, ok := daysInf.(string)
 					if ok {
@@ -333,7 +336,7 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 				sort.Float64s(days)
 				tSchedule.Days.Days = days
 
-				startTimeInf, ok := periodicityObj[startTimeLabel]
+				startTimeInf, ok := periodicityObj[startTimeAttribute]
 				if ok {
 					startTimeStr, ok := startTimeInf.(string)
 					if ok {
@@ -342,7 +345,7 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 					}
 				}
 
-				endTimeInf, ok := periodicityObj[endTimeLabel]
+				endTimeInf, ok := periodicityObj[endTimeAttribute]
 				if ok {
 					endTimeStr, ok := endTimeInf.(string)
 					if ok {
@@ -354,7 +357,7 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 		}
 	}
 
-	if attr, ok := d.GetOk(scheduleTypeLabel); ok {
+	if attr, ok := d.GetOk(scheduleTypeAttribute); ok {
 		scheduleType, ok := attr.(string)
 		if ok {
 			if strings.EqualFold(scheduleType, string(uptimeSchedule)) {
@@ -365,7 +368,7 @@ func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextg
 			}
 		}
 	}
-	if attr, ok := d.GetOk(rulesLabel); ok {
+	if attr, ok := d.GetOk(rulesAttribute); ok {
 		schedule.Resources = []nextgen.StaticScheduleResource{}
 		ruleIDsInf, ok := attr.([]interface{})
 		if ok {
@@ -398,4 +401,9 @@ func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
 		}
 	}
 	return endTime
+}
+
+func createSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
+	diag := diag.Diagnostics{}
+	return diag
 }
