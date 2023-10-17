@@ -3,10 +3,12 @@ package schedule
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -15,12 +17,36 @@ import (
 
 type scheduleType string
 
+const (
+	timeZoneLabel         = "time_zone"
+	timePeriodLabel       = "time_period"
+	scheduleTypeLabel     = "schedule_type"
+	startLabel            = "start"
+	endLabel              = "end"
+	periodicityLabel      = "periodicity"
+	startTimeLabel        = "start_time"
+	endTimeLabel          = "end_time"
+	rulesLabel            = "rules"
+	daysLabel             = "days"
+	nameLabel             = "name"
+	scheduleResTypeASrule = "autostopping_rule"
+)
+
 var (
 	uptimeSchedule   scheduleType = "uptime"
 	downtimeSchedule scheduleType = "downtime"
+	dayIndex                      = map[string]time.Weekday{
+		"SUN": 0,
+		"MON": 1,
+		"TUE": 2,
+		"WED": 3,
+		"THU": 4,
+		"FRI": 5,
+		"SAT": 6,
+	}
 )
 
-func dateValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
+func dateValidation(i interface{}, p cty.Path) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 	v, _ := i.(string)
 	_, err := time.Parse(time.DateTime, v)
@@ -34,7 +60,7 @@ func dateValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 	return diags
 }
 
-func timeValidateFunc(i interface{}, p cty.Path) diag.Diagnostics {
+func timeValidation(i interface{}, p cty.Path) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 	v, ok := i.(string)
 	if !ok {
@@ -95,12 +121,20 @@ func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 		return diags
 	}
 	parts := strings.Split(v, ",")
-	valids := []string{"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"}
+	unique := map[string]struct{}{}
 	for _, p := range parts {
 		vp := strings.TrimSpace(p)
+		if _, checked := unique[vp]; checked {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("Day `%s` repeats in days", vp),
+			})
+			return diags
+		}
+		unique[vp] = struct{}{}
 		match := false
-		for _, vv := range valids {
-			match = match || strings.EqualFold(vp, vv)
+		for vd := range dayIndex {
+			match = match || strings.EqualFold(vp, vd)
 		}
 		if !match {
 			diags = append(diags, diag.Diagnostic{
@@ -109,7 +143,7 @@ func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 			})
 		}
 	}
-	if len(valids) < 1 || len(valids) > 7 {
+	if len(parts) < 1 || len(parts) > 7 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "At-least one and at-most seven days can be specified",
@@ -133,71 +167,71 @@ func ResourceVMRule() *schema.Resource {
 				Type:        schema.TypeFloat,
 				Computed:    true,
 			},
-			"name": {
+			nameLabel: {
 				Description: "Name of the schedule",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"schedule_type": {
+			scheduleTypeLabel: {
 				Description:  fmt.Sprintf("Type of the schedule. Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
 				Type:         schema.TypeString,
 				Required:     true,
 				ExactlyOneOf: []string{string(uptimeSchedule), string(downtimeSchedule)},
 			},
-			"time_zone": {
+			timeZoneLabel: {
 				Description: "Time zone in which schedule needs to be executed",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"time_period": {
+			timePeriodLabel: {
 				Description: "Time period in which schedule will be active. If specified along with periodicity, this will act as the boundary of periodicity. Otherwise schedule action will be triggered at `start` time and terminate at `end` time.",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"start": {
+						startLabel: {
 							Description:      "Time from which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
 							Type:             schema.TypeString,
 							Required:         true,
-							ValidateDiagFunc: dateValidationFunc,
+							ValidateDiagFunc: dateValidation,
 						},
-						"end": {
+						endLabel: {
 							Description:      "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
 							Type:             schema.TypeString,
 							Required:         true,
-							ValidateDiagFunc: dateValidationFunc,
+							ValidateDiagFunc: dateValidation,
 						},
 					},
 				},
 			},
-			"periodicity": {
+			periodicityLabel: {
 				Description: "For defining periodic schedule. Periodic nature will be applicable from the time of creation of schedule, unless specific 'time_period' is specified",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"days": {
+						daysLabel: {
 							Description:      "Days on which schedule need to be active. Comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday",
 							Type:             schema.TypeString,
 							Required:         true,
 							ValidateDiagFunc: daysValidationFunc,
 						},
-						"start_time": {
+						startTimeLabel: {
 							Description:      "Starting time of schedule action on the day. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",
 							Type:             schema.TypeString,
 							Required:         true,
-							ValidateDiagFunc: timeValidateFunc,
+							ValidateDiagFunc: timeValidation,
 						},
-						"end_time": {
+						endTimeLabel: {
 							Description:      "Ending time of schedule action on the day. Accepted format is HH:MM. Eg : 20:00 for 8pm",
 							Type:             schema.TypeString,
 							Required:         true,
-							ValidateDiagFunc: timeValidateFunc,
+							ValidateDiagFunc: timeValidation,
 						},
 					},
 				},
 			},
-			"rules": {
+			rulesLabel: {
 				Description: "ID of AutoStopping rules on which the schedule applies",
 				Required:    true,
 				Type:        schema.TypeList,
@@ -226,4 +260,142 @@ func resourceScheduleDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceScheduleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
+}
+
+func parseSchedule(d *schema.ResourceData, kind string, accountId string) *nextgen.FixedSchedule {
+	schedule := &nextgen.FixedSchedule{
+		Account: accountId,
+		Details: &nextgen.OccurrenceSchedule{},
+	}
+	if attr, ok := d.GetOk(nameLabel); ok {
+		name, ok := attr.(string)
+		if ok {
+			schedule.Name = name
+		}
+	}
+
+	if attr, ok := d.GetOk(timeZoneLabel); ok {
+		timezone, ok := attr.(string)
+		if ok {
+			schedule.Details.Timezone = timezone
+		}
+	}
+
+	tSchedule := &nextgen.TimeSchedule{}
+
+	attr, ok := d.GetOk(timePeriodLabel)
+	if ok {
+		timePeriodInf, ok := attr.([]interface{})
+		if ok && len(timePeriodInf) > 0 {
+			tSchedule.Period = &nextgen.TimeSchedulePeriod{}
+			timePeriodObj, ok := timePeriodInf[0].(map[string]interface{})
+			if ok {
+				startInf, ok := timePeriodObj[startLabel]
+				if ok {
+					start, ok := startInf.(string)
+					if ok {
+						tSchedule.Period.Start = start
+					}
+				}
+				endInf, ok := timePeriodObj[endLabel]
+				if ok {
+					end, ok := endInf.(string)
+					if ok {
+						tSchedule.Period.End = end
+					}
+				}
+			}
+		}
+	}
+
+	attr, ok = d.GetOk(periodicityLabel)
+	if ok {
+		periodicInf, ok := attr.([]interface{})
+		if ok && len(periodicInf) > 0 {
+			tSchedule.Days = &nextgen.TimeScheduleDays{}
+			periodicityObj, ok := periodicInf[0].(map[string]interface{})
+			if ok {
+				days := []float64{}
+				daysInf, ok := periodicityObj[daysLabel]
+				if ok {
+					daysCsv, ok := daysInf.(string)
+					if ok {
+						dayParts := strings.Split(daysCsv, ",")
+						for _, dp := range dayParts {
+							dv := strings.TrimSpace(dp)
+							i, ok := dayIndex[strings.ToLower(dv)]
+							if ok {
+								days = append(days, float64(i))
+							}
+						}
+					}
+				}
+				sort.Float64s(days)
+				tSchedule.Days.Days = days
+
+				startTimeInf, ok := periodicityObj[startTimeLabel]
+				if ok {
+					startTimeStr, ok := startTimeInf.(string)
+					if ok {
+						startTime := parseTimeInDay(startTimeStr)
+						tSchedule.Days.StartTime = &startTime
+					}
+				}
+
+				endTimeInf, ok := periodicityObj[endTimeLabel]
+				if ok {
+					endTimeStr, ok := endTimeInf.(string)
+					if ok {
+						endTime := parseTimeInDay(endTimeStr)
+						tSchedule.Days.EndTime = &endTime
+					}
+				}
+			}
+		}
+	}
+
+	if attr, ok := d.GetOk(scheduleTypeLabel); ok {
+		scheduleType, ok := attr.(string)
+		if ok {
+			if strings.EqualFold(scheduleType, string(uptimeSchedule)) {
+				schedule.Details.Uptime = tSchedule
+			}
+			if strings.EqualFold(scheduleType, string(downtimeSchedule)) {
+				schedule.Details.Downtime = tSchedule
+			}
+		}
+	}
+	if attr, ok := d.GetOk(rulesLabel); ok {
+		schedule.Resources = []nextgen.StaticScheduleResource{}
+		ruleIDsInf, ok := attr.([]interface{})
+		if ok {
+			for _, ruleIDInf := range ruleIDsInf {
+				ruleID, ok := ruleIDInf.(float64)
+				if ok {
+					res := nextgen.StaticScheduleResource{
+						Id:    fmt.Sprintf("%d", int(ruleID)),
+						Type_: scheduleResTypeASrule,
+					}
+					schedule.Resources = append(schedule.Resources, res)
+				}
+			}
+		}
+	}
+	return schedule
+}
+
+func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
+	timeParts := strings.Split(strings.TrimSpace(timeInDayStr), ":")
+	endTime := nextgen.TimeInDay{}
+	if len(timeParts) == 2 {
+		endTimeHr, err := strconv.ParseInt(timeParts[0], 10, 64)
+		if err == nil {
+			endTime.Hour = float64(endTimeHr)
+		}
+		endTimeMin, err := strconv.ParseInt(timeParts[0], 10, 64)
+		if err == nil {
+			endTime.Min = float64(endTimeMin)
+		}
+	}
+	return endTime
 }
