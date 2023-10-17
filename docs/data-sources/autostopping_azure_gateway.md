@@ -25,14 +25,19 @@ data "harness_autostopping_azure_gateway" "test" {
 
 - `azure_func_region` (String) Region in which azure cloud function will be provisioned
 - `cloud_connector_id` (String) Id of the cloud connector
-- `frontend_ip` (String)
 - `host_name` (String) Hostname for the proxy
 - `name` (String) Name of the proxy
 - `region` (String) Region in which cloud resources are hosted
 - `resource_group` (String) Resource group in which cloud resources are hosted
+- `vpc` (String) VPC in which cloud resources are hosted
+
+### Optional
+
+- `app_gateway_id` (String) ID of Azure AppGateway for importing
+- `certificate_id` (String) ID of existing SSL certificate from AppGateway being imported. Required only for SSL based rules
+- `frontend_ip` (String) ID of IP address to be used. Required only for creating new AppGateway. See https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components#static-versus-dynamic-public-ip-address for more details
 - `sku_size` (String) Size of machine used for the gateway
 - `subnet_id` (String) Subnet in which cloud resources are hosted
-- `vpc` (String) VPC in which cloud resources are hosted
 
 ### Read-Only
 

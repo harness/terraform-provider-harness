@@ -67,6 +67,11 @@ func ResourceAwsALB() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"alb_arn": {
+				Description: "Arn of AWS ALB to be imported. Required only for importing existing ALB",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 		},
 	}
 
@@ -75,6 +80,9 @@ func ResourceAwsALB() *schema.Resource {
 
 func resourceAwsALBCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	lb := buildLoadBalancer(d, c.AccountId, "aws", "")
+	lb, err := buildLoadBalancer(d, c.AccountId, "aws", "")
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	return resourceLoadBalancerCreateOrUpdate(ctx, d, meta, lb)
 }
