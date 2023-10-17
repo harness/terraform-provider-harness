@@ -15,7 +15,7 @@ import (
 
 type V1AppProjectMappingV2 struct {
 	Identifier        string    `json:"identifier,omitempty"`
-	ArgoProjectName   string    `json:"argoProjectIdentifier,omitempty"`
+	ArgoProjectName   string    `json:"argoProjectName,omitempty"`
 	ProjectIdentifier string    `json:"projectIdentifier,omitempty"`
 	OrgIdentifier     string    `json:"orgIdentifier,omitempty"`
 	AccountIdentifier string    `json:"accountIdentifier,omitempty"`
