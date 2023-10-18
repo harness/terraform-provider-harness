@@ -259,11 +259,22 @@ func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 func resourceScheduleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	schedule := parseSchedule(d, c.AccountId)
-	return createSchedule(c, ctx, d, meta, schedule)
+	return saveSchedule(c, ctx, d, meta, schedule)
 }
 
 func resourceScheduleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	schedule := parseSchedule(d, c.AccountId)
+	scheduleID, err := strconv.Atoi(d.Id())
+	if err != nil {
+		diagE := diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Value is mandatory and should be string",
+		}
+		return diag.Diagnostics{diagE}
+	}
+	schedule.Id = float64(scheduleID)
+	return saveSchedule(c, ctx, d, meta, schedule)
 }
 
 func resourceScheduleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -412,7 +423,7 @@ func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
 	return timeInDay
 }
 
-func createSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
+func saveSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
 	createScheduleReq := nextgen.SaveStaticSchedulesRequest{
 		Schedule: schedule,
 	}
