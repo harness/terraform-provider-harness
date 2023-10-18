@@ -267,7 +267,7 @@ func resourceScheduleUpdate(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceScheduleDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	return deleteSchedule(ctx, d, meta)
 }
 
 func resourceScheduleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -422,6 +422,20 @@ func createSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.Resourc
 	}
 	d.SetId(strconv.Itoa(int(createdSchdule.Id)))
 	return readSchedule(ctx, d, meta)
+}
+
+func deleteSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	scheduleID, err := strconv.ParseFloat(d.Id(), 64)
+	if err != nil {
+		return diag.Errorf("invalid schedule id")
+	}
+	_, httpRep, err := c.CloudCostAutoStoppingFixedSchedulesApi.DeleteAutoStoppingSchedule(ctx, c.AccountId, scheduleID, c.AccountId)
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpRep)
+	}
+	return nil
 }
 
 func readSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
