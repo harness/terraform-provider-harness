@@ -1,9 +1,0 @@
-```release-note: enhancement
-platform_connector_github.md - Added documentation for custom health connector
-resource.tf - Example of github_app in credentials for github connector
-go.mod - upgraded harness-go-sdk version to v0.3.52
-github.go - Added Schema and CRUD for github_app credentials in github connector
-github_test.go - Test for schema and CRUD for github_app credentials in github connector
-github_data_source.go - Added Schema for github_app credentials in github connector
-github_data_source_test.go - Added  test for Schema of github_app credentials in github connector
-```

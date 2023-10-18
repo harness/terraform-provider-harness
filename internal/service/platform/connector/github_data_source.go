@@ -116,40 +116,6 @@ func DatasourceConnectorGithub() *schema.Resource {
 										Type:        schema.TypeString,
 										Computed:    true,
 									},
-									"github_app": {
-										Description: "Configuration for using the github app for interacting with the github api.",
-										Type:        schema.TypeList,
-										Computed:    true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"installation_id": {
-													Description: "Enter the Installation ID located in the URL of the installed GitHub App.",
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-												"application_id": {
-													Description: "Enter the GitHub App ID from the GitHub App General tab.",
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-												"application_id_ref": {
-													Description: "Reference to the secret containing application id" + secret_ref_text,
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-												"installation_id_ref": {
-													Description: "Reference to the secret containing installation id." + secret_ref_text,
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-												"private_key_ref": {
-													Description: "Reference to the secret containing the private key." + secret_ref_text,
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-											},
-										},
-									},
 								},
 							},
 						},
