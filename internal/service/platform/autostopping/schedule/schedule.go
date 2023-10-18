@@ -271,7 +271,7 @@ func resourceScheduleDelete(ctx context.Context, d *schema.ResourceData, meta in
 }
 
 func resourceScheduleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	return readSchedule(ctx, d, meta)
 }
 
 func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSchedule {
@@ -418,16 +418,27 @@ func createSchedule(ctx context.Context, d *schema.ResourceData, meta interface{
 }
 
 func readSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	diags := diag.Diagnostics{}
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	// scheduleID, err := strconv.ParseFloat(d.Id(), 64)
-	// if err != nil {
-	// 	return diag.Errorf("invalid schedule id")
-	// }
+	scheduleID, err := strconv.ParseFloat(d.Id(), 64)
+	if err != nil {
+		return diag.Errorf("invalid schedule id")
+	}
 
-	schedule := &nextgen.FixedSchedule{}
-
-	return setSchedule(d, schedule)
+	resp, httpResp, err := c.CloudCostAutoStoppingFixedSchedulesApi.GetStaticSchedule(ctx, c.AccountId, float32(scheduleID), c.AccountId)
+	if err != nil {
+		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+	if resp.Response == nil {
+		d := diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Schedule not found",
+		}
+		diags = append(diags, d)
+		return diags
+	}
+	return setSchedule(d, resp.Response)
 }
 
 func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.Diagnostics {
