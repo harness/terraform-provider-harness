@@ -259,7 +259,7 @@ func ResourceVMRule() *schema.Resource {
 func resourceScheduleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	schedule := parseSchedule(d, c.AccountId)
-	return createSchedule(ctx, d, meta, schedule)
+	return createSchedule(c, ctx, d, meta, schedule)
 }
 
 func resourceScheduleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -412,9 +412,16 @@ func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
 	return timeInDay
 }
 
-func createSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
-	diag := diag.Diagnostics{}
-	return diag
+func createSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.ResourceData, meta interface{}, schedule *nextgen.FixedSchedule) diag.Diagnostics {
+	createScheduleReq := nextgen.SaveStaticSchedulesRequest{
+		Schedule: schedule,
+	}
+	createdSchdule, resp, err := c.CloudCostAutoStoppingFixedSchedulesApi.CreateAutoStoppingSchedules(ctx, createScheduleReq, c.AccountId, c.AccountId)
+	if err != nil {
+		return helpers.HandleApiError(err, d, resp)
+	}
+	d.SetId(strconv.Itoa(int(createdSchdule.Id)))
+	return readSchedule(ctx, d, meta)
 }
 
 func readSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
