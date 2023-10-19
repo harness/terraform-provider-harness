@@ -1,6 +1,6 @@
 
-<a name="0.3.53"></a>
-## 0.3.53 (2023-10-09)
+<a name="0.3.54"></a>
+## 0.3.54 (2023-10-17)
 
 ### Added
 
@@ -46,6 +46,8 @@
 
 ### Release
 
+* Release version 0.3.53 10-10-2023
+* Release v0.3.53
 * Release version 0.3.52 09-28-2023
 * Release v0.3.52
 * Release version 0.3.51 09-13-2023
@@ -119,10 +121,6 @@
 * Release version 0.3.19 03-11-2023
 * Release v0.3.19
 * Release version 0.3.18 03-10-2023
-* Release v0.3.18
-* Release version 0.3.17 03-08-2023
-* Release version 0.3.16 02-21-2023
-* Release v0.3.16
 
 ### Remove
 
@@ -157,7 +155,6 @@
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
-* Update service now models to include new changes
 
 ### Updating
 
@@ -174,6 +171,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#418](https://github.com/harness/harness-go-sdk/issues/418) from harness/cds-81697-gitops-app-project-name-fix
 * Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
 * Merge pull request [#411](https://github.com/harness/harness-go-sdk/issues/411) from harness/SRM-15418-2
 * Merge pull request [#413](https://github.com/harness/harness-go-sdk/issues/413) from harness/CDS-76236
@@ -225,6 +223,4 @@
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 * Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 * Merge pull request [#294](https://github.com/harness/harness-go-sdk/issues/294) from harness/pl-31762
-* Merge pull request [#292](https://github.com/harness/harness-go-sdk/issues/292) from harness/CDS-52185
-* Merge pull request [#284](https://github.com/harness/harness-go-sdk/issues/284) from harness/cluster-tags-param
 
