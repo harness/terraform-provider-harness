@@ -77,10 +77,27 @@ func ResourceVMRule() *schema.Resource {
 				Required:    true,
 			},
 			scheduleTypeAttribute: {
-				Description:  fmt.Sprintf("Type of the schedule. Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
-				Type:         schema.TypeString,
-				Required:     true,
-				ExactlyOneOf: []string{string(uptimeSchedule), string(downtimeSchedule)},
+				Description: fmt.Sprintf("Type of the schedule. Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
+				Type:        schema.TypeString,
+				Required:    true,
+				ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
+					v, ok := i.(string)
+					if ok {
+						dE := diag.Diagnostic{
+							Severity: diag.Error,
+							Summary:  fmt.Sprintf("Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
+						}
+						return []diag.Diagnostic{dE}
+					}
+					if v != string(uptimeSchedule) && v != string(downtimeSchedule) {
+						dE := diag.Diagnostic{
+							Severity: diag.Error,
+							Summary:  fmt.Sprintf("Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
+						}
+						return []diag.Diagnostic{dE}
+					}
+					return nil
+				},
 			},
 			timeZoneAttribute: {
 				Description: "Time zone in which schedule needs to be executed",
