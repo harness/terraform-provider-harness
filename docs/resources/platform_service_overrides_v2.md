@@ -19,53 +19,31 @@ resource "harness_platform_service_overrides_v2" "test" {
   env_id     = "environmentIdentifier"
   service_id = "serviceIdentifier"
   infra_id   = "infraIdentifier"
-  cluster_id = "clusterIdentifier"
   type       = "INFRA_SERVICE_OVERRIDE"
   yaml       = <<-EOT
-    {
-      "variables": [
-        {
-          "name": "v1",
-          "type": "String",
-          "value": "val1"
-        }
-      ],
-      "configFiles": [
-        {
-          "configFile": {
-            "identifier": "sampleConfigFile",
-            "spec": {
-              "store": {
-                "type": "Harness",
-                "spec": {
-                  "files": [
-                    "/launchTemplate2"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ],
-      "manifests": [
-        {
-          "manifest": {
-            "identifier": "sampleManifest",
-            "type": "AsgLaunchTemplate",
-            "spec": {
-              "store": {
-                "type": "Harness",
-                "spec": {
-                  "files": [
-                    "/launchTemplate1"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ]
-    }
+    variables:
+      - name: var1
+        type: String
+        value: val1
+    configFiles:
+      - configFile:
+          identifier: sampleConfigFile
+          spec:
+            store:
+              type: Harness
+              spec:
+                files:
+                  - account:/configFile1
+    manifests:
+      - manifest:
+          identifier: sampleManifestFile
+          type: Values
+          spec:
+            store:
+              type: Harness
+              spec:
+                files:
+                  - account:/manifestFile1
   EOT
 }
 ```
@@ -85,7 +63,6 @@ resource "harness_platform_service_overrides_v2" "test" {
 
 ### Optional
 
-- `cluster_id` (String) The GitOps cluster ID to which the override entity is associated. (This is required only when creating overrides for GitOps cluster infrastructure)
 - `infra_id` (String) The infrastructure ID to which the override entity is associated.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
