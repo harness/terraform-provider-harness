@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_gitops_app_project_mapping -  Fix field name of argo project.
+```

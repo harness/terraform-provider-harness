@@ -4,8 +4,9 @@ go 1.18
 
 require (
 	github.com/antihax/optional v1.0.0
+	github.com/aws/aws-sdk-go v1.45.12
 	github.com/docker/docker v24.0.6+incompatible
-	github.com/harness/harness-go-sdk v0.3.52
+	github.com/harness/harness-go-sdk v0.3.54
 	github.com/harness/harness-openapi-go-client v0.0.19
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-retryablehttp v0.7.4
@@ -25,7 +26,6 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.45.12 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
