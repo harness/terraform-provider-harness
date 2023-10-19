@@ -13,18 +13,12 @@ import (
 )
 
 func (i *ConfigAsCodeItem) ParseYamlContent(respObj interface{}) error {
-	if i.Yaml == "" && i.EntityYaml == "" {
+	if i.Yaml == "" {
 		return nil
 	}
 
-	if i.Yaml != "" {
-		if err := yaml.Unmarshal([]byte(i.Yaml), respObj); err != nil {
-			return err
-		}
-	} else if i.EntityYaml != "" {
-		if err := yaml.Unmarshal([]byte(i.EntityYaml), respObj); err != nil {
-			return err
-		}
+	if err := yaml.Unmarshal([]byte(i.Yaml), respObj); err != nil {
+		return err
 	}
 
 	return nil
