@@ -8,11 +8,11 @@ import (
 
 func DataSourceFixedSchedule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness Variable.",
+		Description: "Data source for retrieving a fixed schedule for Harness AutoStopping rule",
 		ReadContext: resourceScheduleRead,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Unique identifier of the resource",
+				Description: "Unique identifier of the schedule",
 				Type:        schema.TypeFloat,
 				Computed:    true,
 			},

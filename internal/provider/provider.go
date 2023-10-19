@@ -37,6 +37,7 @@ import (
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/schedule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
@@ -241,6 +242,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
 				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
 				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
+				"harness_autostopping_schedule":                    schedule.DataSourceFixedSchedule(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -367,6 +369,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
 				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
 				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
+				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
 			},
 		}
 

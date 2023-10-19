@@ -58,7 +58,7 @@ var (
 
 func ResourceVMRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Variables.",
+		Description: "Resource for creating a fixed schedule for Harness AutoStopping rule",
 
 		ReadContext:   resourceScheduleRead,
 		UpdateContext: resourceScheduleUpdate,
@@ -67,7 +67,7 @@ func ResourceVMRule() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Unique identifier of the resource",
+				Description: "Unique identifier of the schedule",
 				Type:        schema.TypeFloat,
 				Computed:    true,
 			},
