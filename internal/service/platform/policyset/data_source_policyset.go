@@ -78,7 +78,7 @@ func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta int
 	id := d.Get("identifier").(string)
 
 	var err error
-	var policyset policymgmt.PolicySet
+	var policyset policymgmt.PolicySet2
 	var httpResp *http.Response
 
 	if id != "" {
@@ -93,7 +93,7 @@ func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	bla := policymgmt.PolicySet{}
+	bla := policymgmt.PolicySet2{}
 	if policyset.Identifier == bla.Identifier {
 		d.SetId("")
 		d.MarkNewResource()
