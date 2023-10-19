@@ -4,7 +4,6 @@ resource "harness_platform_service_overrides_v2" "test" {
   env_id     = "environmentIdentifier"
   service_id = "serviceIdentifier"
   infra_id   = "infraIdentifier"
-  cluster_id = "clusterIdentifier"
   type       = "INFRA_SERVICE_OVERRIDE"
   yaml       = <<-EOT
     variables:
