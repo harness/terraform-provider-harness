@@ -82,7 +82,7 @@ func ResourceVMRule() *schema.Resource {
 				Required:    true,
 				ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
 					v, ok := i.(string)
-					if ok {
+					if !ok {
 						dE := diag.Diagnostic{
 							Severity: diag.Error,
 							Summary:  fmt.Sprintf("Valid values are `%s` and `%s`", uptimeSchedule, downtimeSchedule),
