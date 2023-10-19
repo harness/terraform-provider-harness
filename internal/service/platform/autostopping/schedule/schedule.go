@@ -30,7 +30,7 @@ const (
 	rulesAttribute        = "rules"
 	daysAttribute         = "days"
 	nameAttribute         = "name"
-	scheduleResTypeASrule = "autostopping_rule"
+	scheduleResTypeASrule = "autostop_rule"
 )
 
 var (
@@ -330,18 +330,22 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 			tSchedule.Period = &nextgen.TimeSchedulePeriod{}
 			timePeriodObj, ok := timePeriodInf[0].(map[string]interface{})
 			if ok {
+				toRFC3339 := func(timeStr string) string {
+					t, _ := time.Parse(time.DateTime, timeStr)
+					return t.Format(time.RFC3339)
+				}
 				startInf, ok := timePeriodObj[startAttribute]
 				if ok {
 					start, ok := startInf.(string)
 					if ok {
-						tSchedule.Period.Start = start
+						tSchedule.Period.Start = toRFC3339(start)
 					}
 				}
 				endInf, ok := timePeriodObj[endAttribute]
 				if ok {
 					end, ok := endInf.(string)
 					if ok {
-						tSchedule.Period.End = end
+						tSchedule.Period.End = toRFC3339(end)
 					}
 				}
 			}
@@ -363,7 +367,7 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 						dayParts := strings.Split(daysCsv, ",")
 						for _, dp := range dayParts {
 							dv := strings.TrimSpace(dp)
-							i, ok := dayIndex[strings.ToLower(dv)]
+							i, ok := dayIndex[strings.ToUpper(dv)]
 							if ok {
 								days = append(days, float64(i))
 							}
@@ -449,7 +453,8 @@ func saveSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.ResourceD
 		return helpers.HandleApiError(err, d, resp)
 	}
 	d.SetId(strconv.Itoa(int(createdSchdule.Id)))
-	return readSchedule(ctx, d, meta)
+	return nil
+	// return readSchedule(ctx, d, meta)
 }
 
 func deleteSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
