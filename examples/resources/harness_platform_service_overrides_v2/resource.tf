@@ -4,52 +4,30 @@ resource "harness_platform_service_overrides_v2" "test" {
   env_id     = "environmentIdentifier"
   service_id = "serviceIdentifier"
   infra_id   = "infraIdentifier"
-  cluster_id = "clusterIdentifier"
-  type       = "ENV_SERVICE_OVERRIDE"
+  type       = "INFRA_SERVICE_OVERRIDE"
   yaml       = <<-EOT
-    {
-      "variables": [
-        {
-          "name": "v1",
-          "type": "String",
-          "value": "val1"
-        }
-      ],
-      "configFiles": [
-        {
-          "configFile": {
-            "identifier": "sampleConfigFile",
-            "spec": {
-              "store": {
-                "type": "Harness",
-                "spec": {
-                  "files": [
-                    "/launchTemplate2"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ],
-      "manifests": [
-        {
-          "manifest": {
-            "identifier": "sampleManifest",
-            "type": "AsgLaunchTemplate",
-            "spec": {
-              "store": {
-                "type": "Harness",
-                "spec": {
-                  "files": [
-                    "/launchTemplate1"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      ]
-    }
+    variables:
+      - name: var1
+        type: String
+        value: val1
+    configFiles:
+      - configFile:
+          identifier: sampleConfigFile
+          spec:
+            store:
+              type: Harness
+              spec:
+                files:
+                  - account:/configFile1
+    manifests:
+      - manifest:
+          identifier: sampleManifestFile
+          type: Values
+          spec:
+            store:
+              type: Harness
+              spec:
+                files:
+                  - account:/manifestFile1
   EOT
 }
