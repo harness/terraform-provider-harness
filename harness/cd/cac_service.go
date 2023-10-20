@@ -42,7 +42,7 @@ func (c *ConfigAsCodeClient) UpsertService(input *cac.Service) (*cac.Service, er
 	}
 
 	if svc.IsEmpty() {
-		return nil, fmt.Errorf("could not upsert service: %s. This is usually an indicator that their is a bug in the Harness API", input.Name)
+		return nil, fmt.Errorf("could not upsert service: %s. This is usually an indicator that their is a bug in the Harness API.", input.Name)
 	}
 
 	return svc, nil
