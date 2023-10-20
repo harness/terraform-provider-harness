@@ -69,3 +69,16 @@ resource "harness_autostopping_schedule" "DownTimeForISTLuchOnEveryFridayInBetwe
 
     rules = [ 123 ]
 }
+
+resource "harness_autostopping_schedule" "DowntimeEveryFridayAfterNoonTillEOD" {
+    name = "DowntimeEveryFridayAfterNoonTillEOD"
+    schedule_type = "downtime"
+    time_zone = "Asia/Calcutta"    
+
+    repeats {
+        days = "FRI"
+        start_time = "17:30"
+    }
+
+    rules = [ 123 ]
+}
