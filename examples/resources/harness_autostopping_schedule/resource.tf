@@ -52,3 +52,20 @@ resource "harness_autostopping_schedule" "MondayThroughFridayUptimeFrom9amTo6pmS
 
     rules = [ 123 ]
 }
+
+resource "harness_autostopping_schedule" "DownTimeForISTLuchOnEveryFridayInBetweenDate" {
+    name = "DownTimeForISTLuchOnEveryFridayInBetweenDate"
+    schedule_type = "downtime"
+    time_zone = "Asia/Calcutta"    
+
+    starting_from = "2023-01-02 15:04:05"
+    ending_on = "2023-02-02 15:04:05"
+
+    repeats {
+        days = "FRI"
+        start_time = "12:30"
+        end_time = "14:30"
+    }
+
+    rules = [ 123 ]
+}
