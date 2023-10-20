@@ -82,3 +82,15 @@ resource "harness_autostopping_schedule" "DowntimeEveryFridayAfterNoonTillEOD" {
 
     rules = [ 123 ]
 }
+
+resource "harness_autostopping_schedule" "CompleteDownTimeOnWeekEnd" {
+    name = "CompleteDownTimeOnWeekEnd"
+    schedule_type = "downtime"
+    time_zone = "UTC"    
+
+    repeats {
+        days = "SUN, SAT"
+    }
+
+    rules = [ 123 ]
+}
