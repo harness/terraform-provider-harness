@@ -448,11 +448,11 @@ func saveSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.ResourceD
 	createScheduleReq := nextgen.SaveStaticSchedulesRequest{
 		Schedule: schedule,
 	}
-	createdSchdule, resp, err := c.CloudCostAutoStoppingFixedSchedulesApi.CreateAutoStoppingSchedules(ctx, createScheduleReq, c.AccountId, c.AccountId)
-	if err != nil {
+	createdSchdule, resp, err := c.CloudCostAutoStoppingFixedSchedulesApi.CreateAutoStoppingSchedules(ctx, c.AccountId, c.AccountId, createScheduleReq)
+	if err != nil || createdSchdule.Response == nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
-	d.SetId(strconv.Itoa(int(createdSchdule.Id)))
+	d.SetId(strconv.Itoa(int(createdSchdule.Response.Id)))
 	return nil
 	// return readSchedule(ctx, d, meta)
 }
@@ -464,7 +464,7 @@ func deleteSchedule(ctx context.Context, d *schema.ResourceData, meta interface{
 	if err != nil {
 		return diag.Errorf("invalid schedule id")
 	}
-	_, httpRep, err := c.CloudCostAutoStoppingFixedSchedulesApi.DeleteAutoStoppingSchedule(ctx, c.AccountId, scheduleID, c.AccountId)
+	_, httpRep, err := c.CloudCostAutoStoppingFixedSchedulesApi.DeleteAutoStoppingFixedSchedule(ctx, c.AccountId, scheduleID, c.AccountId)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpRep)
 	}
@@ -480,7 +480,7 @@ func readSchedule(ctx context.Context, d *schema.ResourceData, meta interface{})
 		return diag.Errorf("invalid schedule id")
 	}
 
-	resp, httpResp, err := c.CloudCostAutoStoppingFixedSchedulesApi.GetStaticSchedule(ctx, c.AccountId, float32(scheduleID), c.AccountId)
+	resp, httpResp, err := c.CloudCostAutoStoppingFixedSchedulesApi.GetFixedSchedule(ctx, c.AccountId, float32(scheduleID), c.AccountId)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
