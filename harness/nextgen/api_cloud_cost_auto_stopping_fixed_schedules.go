@@ -26,22 +26,22 @@ var (
 type CloudCostAutoStoppingFixedSchedulesApiService service
 
 /*
-CloudCostAutoStoppingFixedSchedulesApiService Create a fixed schedule for an AutoStopping Rule
-Creates an AutoStopping rule to run resources based on the schedule.
+CloudCostAutoStoppingFixedSchedulesApiService Create static schedules
+For creating static schedules to run resources based on the schedule
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param body Fixed schedule payload
-  - @param accountIdentifier Account Identifier for the Entity
   - @param accountId Account Identifier for the Entity
+  - @param accountIdentifier Account Identifier for the Entity
+  - @param body Fixed schedule payload
 
-@return FixedSchedule
+@return FixedScheduleCreateResponse
 */
-func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedules(ctx context.Context, body SaveStaticSchedulesRequest, accountIdentifier string, accountId string) (FixedSchedule, *http.Response, error) {
+func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedules(ctx context.Context, accountId string, accountIdentifier string, body SaveStaticSchedulesRequest) (FixedScheduleCreateResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue FixedSchedule
+		localVarReturnValue FixedScheduleCreateResponse
 	)
 
 	// create path and map variables
@@ -54,7 +54,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedu
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
 	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"*/*"}
+	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
@@ -72,19 +72,6 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedu
 	}
 	// body params
 	localVarPostBody = &body
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -104,9 +91,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedu
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -114,8 +99,9 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedu
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v FixedSchedule
+
+		if localVarHttpResponse.StatusCode == 201 {
+			var v FixedScheduleCreateResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -124,101 +110,9 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedu
 			newErr.model = v
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
 
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-CloudCostAutoStoppingFixedSchedulesApiService Delete a fixed schedule for AutoStopping Rule.
-Deletes a fixed schedule for the given AutoStopping Rule.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId Account Identifier for the Entity
- * @param scheduleId ID of a fixed schedule added to an AutoStopping rule
- * @param accountIdentifier Account Identifier for the Entity
-@return InlineResponse2001
-*/
-func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingSchedule(ctx context.Context, accountId string, scheduleId float64, accountIdentifier string) (InlineResponse2001, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Delete")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue InlineResponse2001
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/lw/api/accounts/{account_id}/schedules/{schedule_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"account_id"+"}", fmt.Sprintf("%v", accountId), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"schedule_id"+"}", fmt.Sprintf("%v", scheduleId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v InlineResponse2001
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Model400BadRequestResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -227,6 +121,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingSchedu
 			newErr.model = v
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -234,119 +129,12 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingSchedu
 }
 
 /*
-CloudCostAutoStoppingFixedSchedulesApiService Return all the AutoStopping Rule fixed schedules
-Returns all the AutoStopping Rule fixed schedules for the given identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId Account Identifier for the Entity
- * @param cloudAccountId Connector ID
- * @param accountIdentifier Account Identifier for the Entity
- * @param resId IDs of resources whose fixed schedules are to be fetched. This can be an AutoStopping rule ID if the res_type is \&quot;autostop_rule\&quot;
- * @param resType Type of resource to which schedules are attached
-@return FixedSchedulesListResponse
-*/
-func (a *CloudCostAutoStoppingFixedSchedulesApiService) ListAutoStoppingSchedules(ctx context.Context, accountId string, cloudAccountId string, accountIdentifier string, resId string, resType string) (FixedSchedulesListResponse, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue FixedSchedulesListResponse
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/lw/api/accounts/{account_id}/schedules"
-	localVarPath = strings.Replace(localVarPath, "{"+"account_id"+"}", fmt.Sprintf("%v", accountId), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("cloud_account_id", parameterToString(cloudAccountId, ""))
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	localVarQueryParams.Add("res_id", parameterToString(resId, ""))
-	localVarQueryParams.Add("res_type", parameterToString(resType, ""))
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	if ctx != nil {
-		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
-			}
-			localVarHeaderParams["x-api-key"] = key
-
-		}
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v FixedSchedulesListResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-CloudCostAutoStoppingFixedSchedulesApiService Get a static schedule
+GetStaticScheduleApiService Get a static schedule
 Get a static schedule
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param accountId
-  - @param scheduleId
-  - @param accountIdentifier
+  - @param accountId - accountId Account Identifier for the Entity
+  - @param scheduleId - ID of schedule to be fetched
+  - @param accountIdentifier - Account Identifier for the Entity
 
 @return StaticSchedulesGetResponse
 */
@@ -360,7 +148,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) GetStaticSchedule(ctx co
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/accounts/{account_id}/schedules/{schedule_id}"
+	localVarPath := a.client.cfg.BasePath + "/lw/api/accounts/{account_id}/schedules/{schedule_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"account_id"+"}", fmt.Sprintf("%v", accountId), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"schedule_id"+"}", fmt.Sprintf("%v", scheduleId), -1)
 
@@ -416,6 +204,97 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) GetStaticSchedule(ctx co
 
 		if localVarHttpResponse.StatusCode == 200 {
 			var v StaticSchedulesGetResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+CloudCostAutoStoppingFixedSchedulesApiService DeleteAutoStoppingSchedule
+Delete a static schedule
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId - accountId Account Identifier for the Entity
+  - @param scheduleId - ID of schedule to be deleted
+  - @param accountIdentifier - Account Identifier for the Entity
+
+@return InlineResponse2001
+*/
+func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingSchedule(ctx context.Context, accountId string, scheduleId float64, accountIdentifier string) (InlineResponse2001, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue InlineResponse2001
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/lw/api/accounts/{account_id}/schedules/{schedule_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"account_id"+"}", fmt.Sprintf("%v", accountId), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"schedule_id"+"}", fmt.Sprintf("%v", scheduleId), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+
+		if localVarHttpResponse.StatusCode == 200 {
+			var v InlineResponse2001
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
