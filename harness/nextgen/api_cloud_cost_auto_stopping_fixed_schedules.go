@@ -26,7 +26,7 @@ var (
 type CloudCostAutoStoppingFixedSchedulesApiService service
 
 /*
-CloudCostAutoStoppingFixedSchedulesApiService Create static schedules
+CreateAutoStoppingSchedules Create an AutoStopping fixed schedule
 For creating static schedules to run resources based on the schedule
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param accountId Account Identifier for the Entity
@@ -129,7 +129,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) CreateAutoStoppingSchedu
 }
 
 /*
-GetStaticScheduleApiService Get a static schedule
+GetFixedSchedule Get a static schedule
 Get a static schedule
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param accountId - accountId Account Identifier for the Entity
@@ -138,13 +138,13 @@ Get a static schedule
 
 @return StaticSchedulesGetResponse
 */
-func (a *CloudCostAutoStoppingFixedSchedulesApiService) GetStaticSchedule(ctx context.Context, accountId string, scheduleId float32, accountIdentifier string) (StaticSchedulesGetResponse, *http.Response, error) {
+func (a *CloudCostAutoStoppingFixedSchedulesApiService) GetFixedSchedule(ctx context.Context, accountId string, scheduleId float32, accountIdentifier string) (FixedSchedulesGetResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue StaticSchedulesGetResponse
+		localVarReturnValue FixedSchedulesGetResponse
 	)
 
 	// create path and map variables
@@ -203,7 +203,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) GetStaticSchedule(ctx co
 		}
 
 		if localVarHttpResponse.StatusCode == 200 {
-			var v StaticSchedulesGetResponse
+			var v FixedSchedulesGetResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -220,7 +220,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) GetStaticSchedule(ctx co
 }
 
 /*
-CloudCostAutoStoppingFixedSchedulesApiService DeleteAutoStoppingSchedule
+DeleteAutoStoppingFixedSchedule
 Delete a static schedule
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param accountId - accountId Account Identifier for the Entity
@@ -229,13 +229,13 @@ Delete a static schedule
 
 @return InlineResponse2001
 */
-func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingSchedule(ctx context.Context, accountId string, scheduleId float64, accountIdentifier string) (InlineResponse2001, *http.Response, error) {
+func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingFixedSchedule(ctx context.Context, accountId string, scheduleId float64, accountIdentifier string) (FixedScheduleDeleteResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Delete")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue InlineResponse2001
+		localVarReturnValue FixedScheduleDeleteResponse
 	)
 
 	// create path and map variables
@@ -294,7 +294,7 @@ func (a *CloudCostAutoStoppingFixedSchedulesApiService) DeleteAutoStoppingSchedu
 		}
 
 		if localVarHttpResponse.StatusCode == 200 {
-			var v InlineResponse2001
+			var v FixedScheduleDeleteResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
