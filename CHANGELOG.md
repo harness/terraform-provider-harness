@@ -1,6 +1,6 @@
 
-<a name="0.3.54"></a>
-## 0.3.54 (2023-10-17)
+<a name="0.3.55"></a>
+## 0.3.55 (2023-10-20)
 
 ### Added
 
@@ -46,6 +46,8 @@
 
 ### Release
 
+* Release version 0.3.54 10-19-2023
+* Release v0.3.54
 * Release version 0.3.53 10-10-2023
 * Release v0.3.53
 * Release version 0.3.52 09-28-2023
@@ -119,8 +121,6 @@
 * Release version 0.3.20 03-13-2023
 * Release v0.3.20
 * Release version 0.3.19 03-11-2023
-* Release v0.3.19
-* Release version 0.3.18 03-10-2023
 
 ### Remove
 
@@ -167,10 +167,12 @@
 
 ### Reverts
 
+* Merge pull request [#396](https://github.com/harness/harness-go-sdk/issues/396) from harness/cds-77798
 * fix:[PL-39286]: fixed URL Encoding for characters with space
 
 ### Pull Requests
 
+* Merge pull request [#420](https://github.com/harness/harness-go-sdk/issues/420) from harness/cds-82128
 * Merge pull request [#418](https://github.com/harness/harness-go-sdk/issues/418) from harness/cds-81697-gitops-app-project-name-fix
 * Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
 * Merge pull request [#411](https://github.com/harness/harness-go-sdk/issues/411) from harness/SRM-15418-2
@@ -222,5 +224,4 @@
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 * Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
-* Merge pull request [#294](https://github.com/harness/harness-go-sdk/issues/294) from harness/pl-31762
 
