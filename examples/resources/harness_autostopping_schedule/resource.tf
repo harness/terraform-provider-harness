@@ -22,3 +22,17 @@ resource "harness_autostopping_schedule" "MondayUpTill4:30pm" {
 
     rules = [ 123 ]
 }
+
+resource "harness_autostopping_schedule" "MondayThroughFridayUptimeFrom9amTo6pm" {
+    name = "MondayThroughFridayUptimeFrom9amTo6pm"
+    schedule_type = "uptime"
+    time_zone = "UTC"    
+
+    repeats {
+        days = "MON, TUE, WED, THU, FRI"
+        start_time = "09:00"
+        end_time = "18:00"
+    }
+
+    rules = [ 123 ]
+}
