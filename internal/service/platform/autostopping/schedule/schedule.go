@@ -119,8 +119,9 @@ func ResourceVMRule() *schema.Resource {
 						endAttribute: {
 							Description:      "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
 							Type:             schema.TypeString,
-							Required:         true,
+							Optional:         true,
 							ValidateDiagFunc: dateValidation,
+							Default:          nil,
 						},
 					},
 				},
@@ -168,6 +169,9 @@ func ResourceVMRule() *schema.Resource {
 }
 
 func dateValidation(i interface{}, p cty.Path) diag.Diagnostics {
+	if i == nil {
+		return nil
+	}
 	diags := diag.Diagnostics{}
 	v, _ := i.(string)
 	_, err := time.Parse(time.DateTime, v)
@@ -327,7 +331,7 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 	if ok {
 		timePeriodInf, ok := attr.([]interface{})
 		if ok && len(timePeriodInf) > 0 {
-			tSchedule.Period = &nextgen.TimeSchedulePeriod{}
+			tSchedule.Period = &nextgen.TimeSchedulePeriod{End: nil}
 			timePeriodObj, ok := timePeriodInf[0].(map[string]interface{})
 			if ok {
 				toRFC3339 := func(timeStr string) string {
@@ -344,14 +348,14 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 				endInf, ok := timePeriodObj[endAttribute]
 				if ok {
 					end, ok := endInf.(string)
-					if ok {
-						tSchedule.Period.End = toRFC3339(end)
+					if ok && strings.TrimSpace(end) != "" {
+						end := toRFC3339(end)
+						tSchedule.Period.End = &end
 					}
 				}
 			}
 		}
 	}
-
 	attr, ok = d.GetOk(periodicityAttribute)
 	if ok {
 		periodicInf, ok := attr.([]interface{})
@@ -522,9 +526,11 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 		if err == nil {
 			periodData[startAttribute] = startTime
 		}
-		endTime, err := time.Parse(time.DateTime, schedDet.Period.End)
-		if err == nil {
-			periodData[endAttribute] = endTime
+		if schedDet.Period.End != nil {
+			endTime, err := time.Parse(time.DateTime, *schedDet.Period.End)
+			if err == nil {
+				periodData[endAttribute] = endTime
+			}
 		}
 		d.Set(timePeriodAttribute, periodData)
 	}
