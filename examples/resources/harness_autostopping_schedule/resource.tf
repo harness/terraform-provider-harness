@@ -94,3 +94,13 @@ resource "harness_autostopping_schedule" "CompleteDownTimeOnWeekEnd" {
 
     rules = [ 123 ]
 }
+
+resource "harness_autostopping_schedule" "DecommissionFromDate" {
+    name = "DecommissionFromDate"
+    schedule_type = "downtime"
+    time_zone = "UTC"    
+
+    starting_from = "2023-01-02 15:04:05"
+
+    rules = [ 123 ]
+}
