@@ -453,8 +453,7 @@ func saveSchedule(c *nextgen.APIClient, ctx context.Context, d *schema.ResourceD
 		return helpers.HandleApiError(err, d, resp)
 	}
 	d.SetId(strconv.Itoa(int(createdSchdule.Response.Id)))
-	return nil
-	// return readSchedule(ctx, d, meta)
+	return readSchedule(ctx, d, meta)
 }
 
 func deleteSchedule(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
