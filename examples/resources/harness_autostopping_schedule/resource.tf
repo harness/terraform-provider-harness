@@ -95,8 +95,8 @@ resource "harness_autostopping_schedule" "CompleteDownTimeOnWeekEnd" {
     rules = [ 123 ]
 }
 
-resource "harness_autostopping_schedule" "DecommissionFromDate" {
-    name = "DecommissionFromDate"
+resource "harness_autostopping_schedule" "TriggerDowntimeOnceOnDate" {
+    name = "TriggerDowntimeOnceOnDate"
     schedule_type = "downtime"
     time_zone = "UTC"    
 
