@@ -20,7 +20,7 @@ func ResourcePolicyset() *schema.Resource {
 		UpdateContext: resourcePolicysetCreateOrUpdate,
 		DeleteContext: resourcePolicysetDelete,
 		CreateContext: resourcePolicysetCreateOrUpdate,
-		Importer:      helpers.OrgResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"type": {
@@ -38,16 +38,13 @@ func ResourcePolicyset() *schema.Resource {
 			"enabled": {
 				Description: "Enabled for the policyset.",
 				Type:        schema.TypeBool,
-				Required:    false,
-				Computed:    false,
 				Optional:    true,
 			},
 			"policies": {
 				Description: "List of policy identifiers / severity for the policyset.",
 				Type:        schema.TypeList,
-				Computed:    false,
+				Computed:    true,
 				Optional:    true,
-				Required:    false,
 				MinItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -58,7 +55,7 @@ func ResourcePolicyset() *schema.Resource {
 							Required:    true,
 						},
 						"severity": {
-							Description: "Organization Identifier",
+							Description: "Policy failure response - 'warning' for continuation, 'error' for exit",
 							Type:        schema.TypeString,
 							Optional:    false,
 							Required:    true,
@@ -220,7 +217,6 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet2) {
 	d.SetId(policy.Identifier)
 	_ = d.Set("identifier", policy.Identifier)
 	_ = d.Set("org_id", policy.OrgId)
-	_ = d.Set("account_id", policy.AccountId)
 	_ = d.Set("project_id", policy.ProjectId)
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("action", policy.Action)

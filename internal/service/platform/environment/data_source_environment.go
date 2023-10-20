@@ -30,7 +30,7 @@ func DataSourceEnvironment() *schema.Resource {
 				Computed:    true,
 			},
 			"yaml": {
-				Description: "Input Set YAML",
+				Description: "Environment YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -78,7 +78,20 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 		return nil
 	}
 
-	readEnvironment(d, env)
+	readDataSourceEnvironment(d, env)
 
 	return nil
+}
+
+func readDataSourceEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDetails) {
+	d.SetId(env.Identifier)
+	d.Set("identifier", env.Identifier)
+	d.Set("org_id", env.OrgIdentifier)
+	d.Set("project_id", env.ProjectIdentifier)
+	d.Set("name", env.Name)
+	d.Set("color", env.Color)
+	d.Set("description", env.Description)
+	d.Set("tags", helpers.FlattenTags(env.Tags))
+	d.Set("type", env.Type_.String())
+	d.Set("yaml", env.Yaml)
 }

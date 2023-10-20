@@ -135,6 +135,88 @@ func ResourceConnectorAws() *schema.Resource {
 					},
 				},
 			},
+			"equal_jitter_backoff_strategy": {
+				Description: "Equal Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"full_jitter_backoff_strategy",
+					"fixed_delay_backoff_strategy",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"full_jitter_backoff_strategy": {
+				Description: "Full Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"equal_jitter_backoff_strategy",
+					"fixed_delay_backoff_strategy",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"fixed_delay_backoff_strategy": {
+				Description: "Fixed Delay BackOff Strategy.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"full_jitter_backoff_strategy",
+					"equal_jitter_backoff_strategy",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"fixed_backoff": {
+							Description: "Fixed Backoff.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -236,6 +318,54 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		}
 	}
 
+	if attr, ok := d.GetOk("equal_jitter_backoff_strategy"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.AwsSdkClientBackOffStrategyOverride = &nextgen.AwsSdkClientBackoffStrategy{}
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ = nextgen.AwsSdkClientBackOffStrategyTypes.EqualJitterBackoffStrategy
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter = &nextgen.AwsEqualJitterBackoffStrategy{}
+
+		if val, ok := config["retry_count"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.RetryCount = int32(val.(int))
+		}
+		if val, ok := config["max_backoff_time"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.MaxBackoffTime = int64(val.(int))
+		}
+		if val, ok := config["base_delay"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.BaseDelay = int64(val.(int))
+		}
+	}
+
+	if attr, okk := d.GetOk("full_jitter_backoff_strategy"); okk {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.AwsSdkClientBackOffStrategyOverride = &nextgen.AwsSdkClientBackoffStrategy{}
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ = nextgen.AwsSdkClientBackOffStrategyTypes.FullJitterBackoffStrategy
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter = &nextgen.AwsFullJitterBackoffStrategy{}
+
+		if val, ok := config["retry_count"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.RetryCount = int32(val.(int))
+		}
+		if val, ok := config["max_backoff_time"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.MaxBackoffTime = int64(val.(int))
+		}
+		if val, ok := config["base_delay"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.BaseDelay = int64(val.(int))
+		}
+	}
+
+	if attr, okk := d.GetOk("fixed_delay_backoff_strategy"); okk {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.AwsSdkClientBackOffStrategyOverride = &nextgen.AwsSdkClientBackoffStrategy{}
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ = nextgen.AwsSdkClientBackOffStrategyTypes.FixedDelayBackoffStrategy
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay = &nextgen.AwsFixedDelayBackoffStrategy{}
+
+		if val, ok := config["retry_count"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.RetryCount = int32(val.(int))
+		}
+		if val, ok := config["fixed_backoff"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.FixedBackoff = int64(val.(int))
+		}
+	}
+
 	return connector
 }
 
@@ -265,6 +395,43 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 	default:
 		return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.Credential.Type_)
 	}
+	if connector.Aws.Credential.CrossAccountAccess != nil {
+		d.Set("cross_account_access", []map[string]interface{}{
+			{
+				"role_arn":    connector.Aws.Credential.CrossAccountAccess.CrossAccountRoleArn,
+				"external_id": connector.Aws.Credential.CrossAccountAccess.ExternalId,
+			},
+		})
+	}
+	if connector.Aws.AwsSdkClientBackOffStrategyOverride != nil {
+		switch connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ {
+		case nextgen.AwsSdkClientBackOffStrategyTypes.EqualJitterBackoffStrategy:
+			d.Set("equal_jitter_backoff_strategy", []map[string]interface{}{
+				{
+					"base_delay":       connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.BaseDelay,
+					"max_backoff_time": connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.MaxBackoffTime,
+					"retry_count":      connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.RetryCount,
+				},
+			})
+		case nextgen.AwsSdkClientBackOffStrategyTypes.FullJitterBackoffStrategy:
+			d.Set("full_jitter_backoff_strategy", []map[string]interface{}{
+				{
+					"base_delay":       connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.BaseDelay,
+					"max_backoff_time": connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.MaxBackoffTime,
+					"retry_count":      connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.RetryCount,
+				},
+			})
+		case nextgen.AwsSdkClientBackOffStrategyTypes.FixedDelayBackoffStrategy:
+			d.Set("fixed_delay_backoff_strategy", []map[string]interface{}{
+				{
+					"fixed_backoff": connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.FixedBackoff,
+					"retry_count":   connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.RetryCount,
+				},
+			})
+		default:
+			return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_)
+		}
 
+	}
 	return nil
 }

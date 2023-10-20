@@ -44,11 +44,11 @@ resource "harness_platform_connector_awscc" "test" {
 - `features_enabled` (Set of String) The features enabled for the connector. Valid values are BILLING, OPTIMIZATION, VISIBILITY.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
-- `s3_bucket` (String) The name of s3 bucket.
 
 ### Optional
 
+- `report_name` (String) The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.
+- `s3_bucket` (String) The name of s3 bucket.
 - `description` (String) Description of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.

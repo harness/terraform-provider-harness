@@ -88,9 +88,7 @@ func ResourceMonitoredService() *schema.Resource {
 						"health_sources": {
 							Description: "Set of health sources for the monitored service.",
 							Type:        schema.TypeSet,
-							MinItems:    1,
-							MaxItems:    16,
-							Required:    true,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -108,6 +106,11 @@ func ResourceMonitoredService() *schema.Resource {
 										Type:        schema.TypeString,
 										Required:    true,
 									},
+									"version": {
+										Description: "Version of the health source.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
 									"spec": {
 										Description: "Specification of the health source. Depends on the type of the health source.",
 										Type:        schema.TypeString,
@@ -119,9 +122,7 @@ func ResourceMonitoredService() *schema.Resource {
 						"change_sources": {
 							Description: "Set of change sources for the monitored service.",
 							Type:        schema.TypeSet,
-							MinItems:    1,
-							MaxItems:    4,
-							Required:    true,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -168,11 +169,6 @@ func ResourceMonitoredService() *schema.Resource {
 										Type:        schema.TypeString,
 										Required:    true,
 									},
-									"type": {
-										Description: "Type of the service dependency.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
 									"dependency_metadata": {
 										Description: "Dependency metadata for the monitored service.",
 										Type:        schema.TypeString,
@@ -214,6 +210,7 @@ func ResourceMonitoredService() *schema.Resource {
 							Description: "Enable or disable the monitored service.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Deprecated:  "enabled field is deprecated",
 						},
 					},
 				},
@@ -315,35 +312,35 @@ func resourceMonitoredServiceDelete(ctx context.Context, d *schema.ResourceData,
 }
 
 func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServiceDto {
-	monitoredServiceDto := &nextgen.MonitoredServiceDto{}
+	monitoredService := &nextgen.MonitoredServiceDto{}
 
 	if attr, ok := d.GetOk("org_id"); ok {
-		monitoredServiceDto.OrgIdentifier = attr.(string)
+		monitoredService.OrgIdentifier = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("project_id"); ok {
-		monitoredServiceDto.ProjectIdentifier = attr.(string)
+		monitoredService.ProjectIdentifier = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("identifier"); ok {
-		monitoredServiceDto.Identifier = attr.(string)
+		monitoredService.Identifier = attr.(string)
 	}
 
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 
-		monitoredServiceDto.Name = request["name"].(string)
-		monitoredServiceDto.Type_ = request["type"].(string)
-		monitoredServiceDto.Description = request["description"].(string)
-		monitoredServiceDto.ServiceRef = request["service_ref"].(string)
-		monitoredServiceDto.EnvironmentRef = request["environment_ref"].(string)
+		monitoredService.Name = request["name"].(string)
+		monitoredService.Type_ = request["type"].(string)
+		monitoredService.Description = request["description"].(string)
+		monitoredService.ServiceRef = request["service_ref"].(string)
+		monitoredService.EnvironmentRef = request["environment_ref"].(string)
 
 		environmentRefListReq := request["environment_ref_list"].([]interface{})
 		environmentRefList := make([]string, len(environmentRefListReq))
 		for i, environmentRef := range environmentRefListReq {
 			environmentRefList[i] = environmentRef.(string)
 		}
-		monitoredServiceDto.EnvironmentRefList = environmentRefList
+		monitoredService.EnvironmentRefList = environmentRefList
 
 		tags := map[string]string{}
 		for _, t := range request["tags"].(*schema.Set).List() {
@@ -351,7 +348,7 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			parts := strings.Split(tagStr, ":")
 			tags[parts[0]] = parts[1]
 		}
-		monitoredServiceDto.Tags = tags
+		monitoredService.Tags = tags
 
 		healthSources := request["health_sources"].(*schema.Set).List()
 		hss := make([]nextgen.HealthSource, len(healthSources))
@@ -369,7 +366,7 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			csDto[i] = changeSourceDto
 		}
 
-		monitoredServiceDto.Sources = &nextgen.Sources{
+		monitoredService.Sources = &nextgen.Sources{
 			HealthSources: hss,
 			ChangeSources: csDto,
 		}
@@ -381,7 +378,7 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			serviceDependency := getServiceDependencyByType(sd)
 			serviceDependencyDto[i] = serviceDependency
 		}
-		monitoredServiceDto.Dependencies = serviceDependencyDto
+		monitoredService.Dependencies = serviceDependencyDto
 
 		notificationRuleRefsReq := request["notification_rule_refs"].([]interface{})
 		notificationRuleRefs := make([]nextgen.NotificationRuleRefDto, len(notificationRuleRefsReq))
@@ -389,29 +386,28 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			test := notificationRuleRef.(map[string]interface{})
 			notificationRuleRefDto := &nextgen.NotificationRuleRefDto{
 				NotificationRuleRef: test["notification_rule_ref"].(string),
-				Enabled: test["enabled"].(bool),
+				Enabled:             test["enabled"].(bool),
 			}
 			notificationRuleRefs[i] = *notificationRuleRefDto
 		}
-		monitoredServiceDto.NotificationRuleRefs = notificationRuleRefs
+		monitoredService.NotificationRuleRefs = notificationRuleRefs
 
-		monitoredServiceDto.Template = &nextgen.TemplateDto{
-			TemplateRef: request["template_ref"].(string),
+		monitoredService.Template = &nextgen.TemplateDto{
+			TemplateRef:  request["template_ref"].(string),
 			VersionLabel: request["version_label"].(string),
 		}
 
-		monitoredServiceDto.Enabled = request["enabled"].(bool)
 	}
 
-	return monitoredServiceDto
+	return monitoredService
 }
 
 func readMonitoredService(d *schema.ResourceData, monitoredServiceResponse **nextgen.MonitoredServiceResponse) {
-	monitoredServiceDto := &(*monitoredServiceResponse).MonitoredService
+	monitoredService := &(*monitoredServiceResponse).MonitoredService
 
-	d.SetId((*monitoredServiceDto).Identifier)
+	d.SetId((*monitoredService).Identifier)
 
-	d.Set("org_id", (*monitoredServiceDto).OrgIdentifier)
-	d.Set("project_id", (*monitoredServiceDto).ProjectIdentifier)
-	d.Set("identifier", (*monitoredServiceDto).Identifier)
+	d.Set("org_id", (*monitoredService).OrgIdentifier)
+	d.Set("project_id", (*monitoredService).ProjectIdentifier)
+	d.Set("identifier", (*monitoredService).Identifier)
 }

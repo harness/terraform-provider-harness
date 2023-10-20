@@ -78,7 +78,23 @@ func DataSourceGitopsAgent() *schema.Resource {
 							Type:        schema.TypeBool,
 							Computed:    true,
 						},
-					}},
+						"is_namespaced": {
+							Description: "Indicates if the agent is namespaced.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"agent_token": {
+				Description: "Agent token to be used for authentication of the agent with Harness.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"operator": {
+				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 		},
 	}

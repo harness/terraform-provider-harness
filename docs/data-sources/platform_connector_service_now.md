@@ -50,6 +50,7 @@ Read-Only:
 
 - `adfs` (List of Object) (see [below for nested schema](#nestedobjatt--auth--adfs))
 - `auth_type` (String)
+- `refresh_token` (List of Object) (see [below for nested schema](#nestedobjatt--auth--refresh_token))
 - `username_password` (List of Object) (see [below for nested schema](#nestedobjatt--auth--username_password))
 
 <a id="nestedobjatt--auth--adfs"></a>
@@ -62,6 +63,18 @@ Read-Only:
 - `client_id_ref` (String)
 - `private_key_ref` (String)
 - `resource_id_ref` (String)
+
+
+<a id="nestedobjatt--auth--refresh_token"></a>
+### Nested Schema for `auth.refresh_token`
+
+Read-Only:
+
+- `client_id_ref` (String)
+- `client_secret_ref` (String)
+- `refresh_token_ref` (String)
+- `scope` (String)
+- `token_url` (String)
 
 
 <a id="nestedobjatt--auth--username_password"></a>

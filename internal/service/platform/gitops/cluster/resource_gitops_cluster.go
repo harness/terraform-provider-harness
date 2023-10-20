@@ -219,24 +219,15 @@ func ResourceGitopsCluster() *schema.Resource {
 														},
 													},
 												},
-												"aws_auth_config": {
-													Description: "IAM authentication configuration for AWS.",
-													Type:        schema.TypeList,
+												"role_a_r_n": {
+													Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
+													Type:        schema.TypeString,
 													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"cluster_name": {
-																Description: "AWS cluster name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"role_a_r_n": {
-																Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-														},
-													},
+												},
+												"aws_cluster_name": {
+													Description: "AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 												"exec_provider_config": {
 													Description: "Configuration for an exec provider.",
@@ -606,8 +597,9 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				awsAuthConfig["cluster_name"] = cl.Cluster.Config.AwsAuthConfig.ClusterName
 				awsAuthConfig["role_a_r_n"] = cl.Cluster.Config.AwsAuthConfig.RoleARN
 				awsAuthConfigList = append(awsAuthConfigList, awsAuthConfig)
-				config["aws_auth_config"] = awsAuthConfigList
 			}
+			config["role_a_r_n"] = cl.Cluster.Config.RoleARN
+			config["aws_cluster_name"] = cl.Cluster.Config.AwsClusterName
 			if cl.Cluster.Config.ExecProviderConfig != nil {
 				execProviderConfigList := []interface{}{}
 				execProviderConfig := map[string]interface{}{}
@@ -772,15 +764,12 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					}
 				}
 
-				if clusterConfig["aws_auth_config"] != nil && len(clusterConfig["aws_auth_config"].([]interface{})) > 0 {
-					clusterDetails.Config.AwsAuthConfig = &nextgen.ClustersAwsAuthConfig{}
-					configAwsAuthConfig := clusterConfig["aws_auth_config"].([]interface{})[0].(map[string]interface{})
-					if configAwsAuthConfig["cluster_name"] != nil {
-						clusterDetails.Config.AwsAuthConfig.ClusterName = configAwsAuthConfig["cluster_name"].(string)
-					}
-					if configAwsAuthConfig["role_a_r_n"] != nil {
-						clusterDetails.Config.AwsAuthConfig.RoleARN = configAwsAuthConfig["role_a_r_n"].(string)
-					}
+				if clusterConfig["role_a_r_n"] != nil {
+					clusterDetails.Config.RoleARN = clusterConfig["role_a_r_n"].(string)
+				}
+
+				if clusterConfig["aws_cluster_name"] != nil {
+					clusterDetails.Config.AwsClusterName = clusterConfig["aws_cluster_name"].(string)
 				}
 
 				if clusterConfig["exec_provider_config"] != nil && len(clusterConfig["exec_provider_config"].([]interface{})) > 0 {

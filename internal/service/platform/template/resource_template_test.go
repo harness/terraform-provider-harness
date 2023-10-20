@@ -46,7 +46,7 @@ func TestAccResourceTemplateProjectScope(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "description"},
 			},
 		},
 	})
@@ -164,6 +164,126 @@ func TestAccResourceTemplate_OrgScopeInline(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateOrgScopeImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "orgtemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "orgtemplate"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateProjectScopeImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "projecttemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "projecttemplate"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateAccountScopeImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "accounttemplate"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accounttemplate"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type", "comments", "git_details.0.branch_name", "git_details.0.file_path", "git_details.0.last_commit_id", "git_details.0.repo_name", "git_import_details.#", "git_import_details.0.%", "git_import_details.0.branch_name", "git_import_details.0.connector_ref", "git_import_details.0.file_path", "git_import_details.0.is_force_import", "git_import_details.0.repo_name", "import_from_git", "is_stable", "template_import_request.#", "template_import_request.0.%", "template_import_request.0.template_description", "template_import_request.0.template_name", "template_import_request.0.template_version", "template_yaml", "version", "git_details.0.last_object_id"},
+			},
+		},
+	})
+}
+
+func TestAccResourceTemplate_OrgScopeInline_UpdateStable(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_template.test2"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTemplateOrgScopeInlineMultipleVersion(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
+			},
+			{
+				Config: testAccResourceTemplateOrgScopeInlineUpdateStable(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "comments", "comments"),
+				),
 			},
 		},
 	})
@@ -573,6 +693,373 @@ func testAccResourceTemplateOrgScopeInline(id string, name string) string {
 	`, id, name)
 }
 
+func testAccResourceTemplateOrgScopeInlineMultipleVersion(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_template" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "ab"
+			is_stable = true
+			force_delete = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: ab
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+    
+      EOT
+	}
+
+	resource "harness_platform_template" "test2" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "abc"
+			is_stable = false
+			force_delete = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: abc
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+      EOT
+
+	  depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
+	`, id, name)
+}
+
+func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_template" "test2" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "abc"
+			is_stable = true
+			force_delete = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: abc
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+      EOT
+	}
+
+	resource "harness_platform_template" "test" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "ab"
+			is_stable = false
+			force_delete = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: ab
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+    
+      EOT
+
+	  depends_on = [time_sleep.wait_10_seconds]
+	}
+
+	resource "time_sleep" "wait_10_seconds" {
+		depends_on = [harness_platform_template.test2]
+		destroy_duration = "10s"
+	}
+
+	`, id, name)
+}
+
+func testAccResourceTemplateOrgScopeInlineUpdateStable2(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_template" "test2" {
+			identifier = "%[1]s"
+			org_id = harness_platform_organization.test.id
+			name = "%[2]s"
+			comments = "comments"
+			version = "abc"
+			force_delete = true
+			template_yaml = <<-EOT
+			template:
+      name: "%[2]s"
+      identifier: "%[1]s"
+      versionLabel: abc
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+    
+      EOT
+
+	  depends_on = [harness_platform_template.test]
+
+	}
+
+	resource "harness_platform_template" "test" {
+		identifier = "%[1]s"
+		org_id = "%[1]s"
+		name = "%[2]s"
+		comments = "comments"
+		force_delete = true
+		version = "ab"
+}
+
+	`, id, name)
+}
+
 func testAccResourceTemplateOrgScope(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
@@ -673,6 +1160,7 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
 			name = "%[2]s"
 			comments = "comments"
 			version = "ab"
+			description = "description"
 			is_stable = true
 			git_details {
 				branch_name = "main"
@@ -819,3 +1307,88 @@ func testAccResourceTemplateProjectScopeInline(id string, name string) string {
 	}
 	`, id, name)
 }
+
+func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_template" "test" {
+                        identifier = "orgtemplate"
+                        org_id = "default"
+                        name = "orgtemplate"
+						version = "v2"
+						is_stable = false
+                        import_from_git = true
+                        git_import_details {
+                            branch_name = "main"
+                            file_path = ".harness/orgtemplate.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "orgtemplate"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+        `, id, name)
+}
+
+func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_template" "test" {
+                        identifier = "projecttemplate"
+                        org_id = "default"
+						project_id = "V"
+                        name = "projecttemplate"
+						version = "v2"
+						is_stable = false
+                        import_from_git = true
+                        git_import_details {
+                            branch_name = "main"
+                            file_path = ".harness/projecttemplate.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "projecttemplate"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+        `, id, name)
+}
+
+func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_template" "test" {
+                        identifier = "accounttemplate"
+                        name = "accounttemplate"
+						version = "v2"
+						is_stable = false
+                        import_from_git = true
+                        git_import_details {
+                            branch_name = "main"
+                            file_path = ".harness/accounttemplate.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        template_import_request {
+                            template_name = "accounttemplate"
+							template_version = "v2"
+                            template_description = ""
+                        }
+                }
+        `, id, name)
+}
+

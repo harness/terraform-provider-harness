@@ -178,6 +178,11 @@ func DataSourceGitopsRepository() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"enable_oci": {
+				Description: "Indicates if helm-oci support must be enabled for this repo.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"update_mask": {
 				Description: "Update mask of the repository.",
 				Type:        schema.TypeList,

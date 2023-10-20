@@ -22,7 +22,7 @@ resource "harness_platform_secret_sshkey" " tgt_password" {
   port        = 22
   kerberos {
     tgt_password_spec {
-      password = "password"
+      password = "account.${secret.id}"
     }
     principal             = "principal"
     realm                 = "realm"
@@ -39,8 +39,8 @@ resource "harness_platform_secret_sshkey" "sshkey_reference" {
   ssh {
     sshkey_reference_credential {
       user_name            = "user_name"
-      key                  = "key"
-      encrypted_passphrase = "encrypted_passphrase"
+      key                  = "account.${key.id}"
+      encrypted_passphrase = "account.${secret.id}"
     }
     credential_type = "KeyReference"
   }
@@ -71,7 +71,7 @@ resource "harness_platform_secret_sshkey" "ssh_password" {
   ssh {
     ssh_password_credential {
       user_name = "user_name"
-      password  = "password"
+      password  = "account.${secret.id}"
     }
     credential_type = "Password"
   }

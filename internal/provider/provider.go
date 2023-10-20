@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
+	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
@@ -30,6 +34,9 @@ import (
 	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
+	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
@@ -37,8 +44,10 @@ import (
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
 	pl_environment_service_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/environment_service_overrides"
+	file_store "github.com/harness/terraform-provider-harness/internal/service/platform/file_store"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/filters"
 	gitops_agent "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent"
+	gitops_project_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/app_project"
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
@@ -46,6 +55,7 @@ import (
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -59,9 +69,11 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/secret"
 	pl_service "github.com/harness/terraform-provider-harness/internal/service/platform/service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/service_account"
+	pl_service_overrides_v2 "github.com/harness/terraform-provider-harness/internal/service/platform/service_overrides_v2"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/slo"
 	pl_template "github.com/harness/terraform-provider-harness/internal/service/platform/template"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/template_filters"
+	pl_token "github.com/harness/terraform-provider-harness/internal/service/platform/token"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/triggers"
 	pl_user "github.com/harness/terraform-provider-harness/internal/service/platform/user"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/usergroup"
@@ -127,12 +139,14 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_kubernetes_cloud_cost": connector.DatasourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.DataSourceConnectorAzureCloudCost(),
 				"harness_platform_connector_appdynamics":           connector.DatasourceConnectorAppDynamics(),
+				"harness_platform_connector_elasticsearch":         connector.DatasourceConnectorElasticSearch(),
 				"harness_platform_connector_artifactory":           connector.DatasourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":    connector.DatasourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                   connector.DatasourceConnectorAws(),
 				"harness_platform_connector_awscc":                 connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                connector.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":             connector.DatasourceConnectorBitbucket(),
+				"harness_platform_connector_customhealthsource":    connector.DatasourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.DatasourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.DatasourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":             connector.DatasourceConnectorDynatrace(),
@@ -149,8 +163,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_nexus":                 connector.DatasourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.DatasourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.DatasourceConnectorPrometheus(),
+				"harness_platform_connector_rancher":               connector.DatasourceConnectorRancher(),
 				"harness_platform_connector_splunk":                connector.DatasourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
+				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
@@ -158,11 +174,13 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
+				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.DataSourceServiceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.DataSourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.DataSourceGitopsGnupg(),
+				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.DatasourceGitopsAppProjectMapping(),
 				"harness_platform_gitops_repository":               gitops_repository.DataSourceGitopsRepository(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.DataSourceGitOpsRepoCert(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.DataSourceGitOpsRepoCred(),
@@ -205,11 +223,24 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user":                                     user.DataSourceUser(),
 				"harness_yaml_config":                              yamlconfig.DataSourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.DataSourceConnectorAzureCloudProvider(),
+				"harness_platform_connector_tas":                   connector.DataSourceConnectorTas(),
 				"harness_trigger":                                  cd_trigger.DataSourceTrigger(),
 				"harness_platform_policy":                          policy.DataSourcePolicy(),
 				"harness_platform_policyset":                       policyset.DataSourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.DataSourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
+				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
+				"harness_platform_token":                           pl_token.DataSourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.DataSourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.DataSourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.DataSourceECSRule(),
+				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
+				"harness_autostopping_azure_proxy":                 load_balancer.DataSourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.DataSourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -218,12 +249,14 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_kubernetes_cloud_cost": connector.ResourceConnectorKubernetesCloudCost(),
 				"harness_platform_connector_azure_cloud_cost":      connector.ResourceConnectorAzureCloudCost(),
 				"harness_platform_connector_appdynamics":           connector.ResourceConnectorAppDynamics(),
+				"harness_platform_connector_elasticsearch":         connector.ResourceConnectorElasticSearch(),
 				"harness_platform_connector_artifactory":           connector.ResourceConnectorArtifactory(),
 				"harness_platform_connector_aws_secret_manager":    connector.ResourceConnectorAwsSM(),
 				"harness_platform_connector_aws":                   connector.ResourceConnectorAws(),
 				"harness_platform_connector_awscc":                 connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                connector.ResourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":             connector.ResourceConnectorBitbucket(),
+				"harness_platform_connector_customhealthsource":    connector.ResourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.ResourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.ResourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":             connector.ResourceConnectorDynatrace(),
@@ -241,17 +274,25 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_nexus":                 connector.ResourceConnectorNexus(),
 				"harness_platform_connector_pagerduty":             connector.ResourceConnectorPagerDuty(),
 				"harness_platform_connector_prometheus":            connector.ResourceConnectorPrometheus(),
+				"harness_platform_connector_rancher":               connector.ResourceConnectorK8sRancher(),
 				"harness_platform_connector_splunk":                connector.ResourceConnectorSplunk(),
 				"harness_platform_connector_spot":                  connector.ResourceConnectorSpot(),
+				"harness_platform_connector_terraform_cloud":       connector.ResourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.ResourceConnectorSumologic(),
 				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
+				"harness_platform_feature_flag":                    feature_flag.ResourceFeatureFlag(),
+				"harness_platform_feature_flag_target_group":       feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
+				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
+				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
+				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
 				"harness_platform_gitops_cluster":                  gitops_cluster.ResourceGitopsCluster(),
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
+				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.ResourceGitopsAppProjectMapping(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
@@ -309,10 +350,23 @@ func Provider(version string) func() *schema.Provider {
 				"harness_user":                                     user.ResourceUser(),
 				"harness_yaml_config":                              yamlconfig.ResourceYamlConfig(),
 				"harness_platform_connector_azure_cloud_provider":  connector.ResourceConnectorAzureCloudProvider(),
+				"harness_platform_connector_tas":                   connector.ResourceConnectorTas(),
 				"harness_platform_policy":                          policy.ResourcePolicy(),
 				"harness_platform_policyset":                       policyset.ResourcePolicyset(),
 				"harness_platform_manual_freeze":                   manual_freeze.ResourceManualFreeze(),
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
+				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
+				"harness_platform_token":                           pl_token.ResourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.ResourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.ResourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.ResourceECSRule(),
+				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
+				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
+				"harness_autostopping_azure_proxy":                 load_balancer.ResourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.ResourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
 			},
 		}
 

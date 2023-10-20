@@ -59,8 +59,8 @@ resource "harness_platform_environment_service_overrides" "example" {
 
 ### Required
 
-- `env_id` (String) The env ID to which the overrides associated.
-- `service_id` (String) The service ID to which the overrides applies.
+- `env_id` (String) The env Id associated with the overrides. To reference an environment at the organization scope, prefix 'org' to the expression: org.{env_id}. To reference an environment at the account scope, prefix 'account' to the expression: account.{env_id}).
+- `service_id` (String) The service Id associated with the overrides. To reference a service at the organization scope, prefix 'org' to the expression: org.{service_id}. To reference a service at the account scope, prefix 'account' to the expression: account.{service_id}).
 - `yaml` (String) Environment Service Overrides YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
@@ -71,13 +71,19 @@ resource "harness_platform_environment_service_overrides" "example" {
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using serviceoverride id
-terraform import harness_platform_environment_service_overrides.example <serviceoverride_id>
+# Import list of account level service overrides using the env id associated with them
+terraform import harness_platform_environment_service_overrides.example <env_id>
+
+# Import list of org level service overrides using the env id associated with them
+terraform import harness_platform_environment_service_overrides.example <org_id>/<env_id>
+
+# Import list of project level service overrides using the env id associated with them
+terraform import harness_platform_environment_service_overrides.example <org_id>/<project_id>/<env_id>
 ```

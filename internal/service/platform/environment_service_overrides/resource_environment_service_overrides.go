@@ -27,6 +27,7 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 				Description: "identifier of the service overrides.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
@@ -62,8 +63,15 @@ func resourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.Reso
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
+
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
+	}
+
+	if resp.Data == nil || len(resp.Data.Content) == 0 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
 	}
 
 	readEnvironmentServiceOverridesList(d, resp.Data)

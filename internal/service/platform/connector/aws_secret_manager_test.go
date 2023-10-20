@@ -123,6 +123,7 @@ func TestOrgResourceConnectorAwsSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "default", "true"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -136,6 +137,7 @@ func TestOrgResourceConnectorAwsSM_inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "default", "true"),
 					resource.TestCheckResourceAttr(resourceName, "secret_name_prefix", "test"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.inherit_from_delegate", "true"),
 				),
@@ -470,7 +472,7 @@ func testProjectResourceConnectorAwsSM_inherit(id string, name string) string {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
-	
+
 	resource "harness_platform_project" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -509,6 +511,7 @@ func testOrgResourceConnectorAwsSM_inherit(id string, name string) string {
 			secret_name_prefix = "test"
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
+			default = true
 			credentials {
 				inherit_from_delegate = true
 			}
@@ -559,7 +562,7 @@ func testProjectResourceConnectorAwsSM_manual(id string, name string) string {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
-	
+
 	resource "harness_platform_project" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -616,7 +619,7 @@ func testOrgResourceConnectorAwsSM_manual(id string, name string) string {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
-	
+
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -687,7 +690,7 @@ func testProjectResourceConnectorAwsSM_assumerole(id string, name string) string
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
-	
+
 	resource "harness_platform_project" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
@@ -721,7 +724,7 @@ func testOrgResourceConnectorAwsSM_assumerole(id string, name string) string {
 		identifier = "%[1]s"
 		name = "%[2]s"
 	}
-	
+
 		resource "harness_platform_connector_aws_secret_manager" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"

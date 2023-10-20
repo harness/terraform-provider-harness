@@ -55,6 +55,6 @@ data "harness_platform_policyset" "test" {
 Required:
 
 - `identifier` (String) Account Identifier of the account
-- `severity` (String) Organization Identifier
+- `severity` (String) Policy failure response - 'warning' for continuation, 'error' for exit
 
 

@@ -529,54 +529,55 @@ func TestAccResourceConnectorVault_AppRole(t *testing.T) {
 	resourceName := "harness_platform_connector_vault.test"
 	vault_sercet := os.Getenv("HARNESS_TEST_VAULT_SECRET")
 
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"time": {},
-		},
-		CheckDestroy: testAccConnectorDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
-					resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
-					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
-					resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
-					resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
-					resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
-				),
+		resource.UnitTest(t, resource.TestCase{
+			PreCheck:          func() { acctest.TestAccPreCheck(t) },
+			ProviderFactories: acctest.ProviderFactories,
+			ExternalProviders: map[string]resource.ExternalProvider{
+				"time": {},
 			},
-			{
-				Config: testAccResourceConnectorVault_app_role(id, updatedName, vault_sercet),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
-					resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
-					resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
-					resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
-					resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
-					resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
-				),
+			CheckDestroy: testAccConnectorDestroy(resourceName),
+			Steps: []resource.TestStep{
+				{
+					Config: testAccResourceConnectorVault_app_role(id, name, vault_sercet),
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "id", id),
+						resource.TestCheckResourceAttr(resourceName, "identifier", id),
+						resource.TestCheckResourceAttr(resourceName, "name", name),
+						resource.TestCheckResourceAttr(resourceName, "description", "test"),
+						resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+						resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
+						resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
+						resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
+						resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
+						resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
+						resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
+					),
+				},
+				{
+					Config: testAccResourceConnectorVault_app_role(id, updatedName, vault_sercet),
+					Check: resource.ComposeTestCheckFunc(
+						resource.TestCheckResourceAttr(resourceName, "id", id),
+						resource.TestCheckResourceAttr(resourceName, "identifier", id),
+						resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+						resource.TestCheckResourceAttr(resourceName, "description", "test"),
+						resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+						resource.TestCheckResourceAttr(resourceName, "base_path", "vikas-test/"),
+						resource.TestCheckResourceAttr(resourceName, "is_read_only", "false"),
+						resource.TestCheckResourceAttr(resourceName, "renewal_interval_minutes", "60"),
+						resource.TestCheckResourceAttr(resourceName, "secret_engine_manually_configured", "true"),
+						resource.TestCheckResourceAttr(resourceName, "use_vault_agent", "false"),
+						resource.TestCheckResourceAttr(resourceName, "access_type", "APP_ROLE"),
+					),
+				},
+				{
+					ResourceName:      resourceName,
+					ImportState:       true,
+					ImportStateVerify: true,
+					ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+				},
 			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
+		})
+	}
 func TestProjectResourceConnectorVault_AppRole(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -904,12 +905,12 @@ func testAccResourceConnectorVault_aws_auth(id string, name string, vault_secret
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, vault_secret)
 }
@@ -943,12 +944,12 @@ func testProjectResourceConnectorVault_aws_auth(id string, name string, vault_se
 				value,
 			]
 		}
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_project.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -975,12 +976,12 @@ func testProjectResourceConnectorVault_aws_auth(id string, name string, vault_se
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1006,12 +1007,12 @@ func testOrgResourceConnectorVault_aws_auth(id string, name string, vault_secret
 				value,
 			]
 		}
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_organization.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1037,12 +1038,12 @@ func testOrgResourceConnectorVault_aws_auth(id string, name string, vault_secret
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1058,11 +1059,6 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
 		value = "%[3]s"
-		lifecycle {
-			ignore_changes = [
-				value,
-			]
-		}
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1087,12 +1083,12 @@ func testAccResourceConnectorVault_app_role(id string, name string, vault_secret
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1125,12 +1121,12 @@ func testProjectResourceConnectorVault_app_role(id string, name string, vault_se
 				value,
 			]
 		}
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_project.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	resource "harness_platform_connector_vault" "test" {
 		identifier = "%[1]s"
@@ -1155,12 +1151,12 @@ func testProjectResourceConnectorVault_app_role(id string, name string, vault_se
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1185,12 +1181,12 @@ func testOrgResourceConnectorVault_app_role(id string, name string, vault_secret
 				value,
 			]
 		}
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_organization.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	
 
@@ -1216,12 +1212,12 @@ func testOrgResourceConnectorVault_app_role(id string, name string, vault_secret
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 	`, id, name, vault_secret)
 }
@@ -1265,12 +1261,12 @@ func testAccResourceConnectorVault_k8s_auth(id string, name string) string {
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name)
 }
@@ -1304,12 +1300,12 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string, connecto
 		is_default = false
 
 		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_project.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -1321,12 +1317,12 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string, connecto
 		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
-		depends_on = [time_sleep.wait_5_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_5_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_connector_azure_key_vault.test]
-		create_duration = "5s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1356,12 +1352,12 @@ func testProjectResourceConnectorVault_k8s_auth(id string, name string, connecto
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_3]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds_3" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, connectorName)
 }
@@ -1385,12 +1381,12 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string, connectorNam
 		is_default = false
 
 		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_organization.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 	resource "harness_platform_secret_text" "test" {
 		identifier = "%[1]s"
@@ -1401,12 +1397,12 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string, connectorNam
 		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_connector_azure_key_vault.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1435,12 +1431,12 @@ func testOrgResourceConnectorVault_k8s_auth(id string, name string, connectorNam
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_5_seconds]
+		depends_on = [time_sleep.wait_8_seconds_3]
 	}
 
-	resource "time_sleep" "wait_5_seconds" {
+	resource "time_sleep" "wait_8_seconds_3" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "5s"
+		create_duration = "8s"
 	}
 	`, id, name, connectorName)
 }
@@ -1481,12 +1477,12 @@ func testAccResourceConnectorVault_vault_agent(id string, name string) string {
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name)
 }
@@ -1520,12 +1516,12 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string, conne
 		is_default = false
 
 		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_project.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_secret_text" "test" {
@@ -1538,12 +1534,12 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string, conne
 		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
-		depends_on = [time_sleep.wait_5_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_5_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_connector_azure_key_vault.test]
-		create_duration = "5s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1570,12 +1566,12 @@ func testProjectResourceConnectorVault_vault_agent(id string, name string, conne
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_3]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds_3" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, connectorName)
 }
@@ -1599,12 +1595,12 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string, connector
 		is_default = false
 
 		azure_environment_type = "AZURE"
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_organization.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_secret_text" "test" {
@@ -1616,12 +1612,12 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string, connector
 		secret_manager_identifier = "%[3]s"
 		value_type = "Reference"
 		value = "secret"
-		depends_on = [time_sleep.wait_2_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_2_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_connector_azure_key_vault.test]
-		create_duration = "2s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1647,12 +1643,12 @@ func testOrgResourceConnectorVault_vault_agent(id string, name string, connector
 		delegate_selectors = ["harness-delegate"]
 		vault_url = "https://vault_url.com"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_3]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds_3" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, connectorName)
 }
@@ -1689,12 +1685,12 @@ func testAccResourceConnectorVault_token(id string, name string, vaultToken stri
 		use_k8s_auth = false
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, vaultToken)
 }
@@ -1722,12 +1718,12 @@ func testProjectResourceConnectorVault_token(id string, name string, vaultToken 
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
 		value = "%[3]s"
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_project.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1750,12 +1746,12 @@ func testProjectResourceConnectorVault_token(id string, name string, vaultToken 
 		use_k8s_auth = false
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 	`, id, name, vaultToken)
 }
@@ -1774,12 +1770,12 @@ func testOrgResourceConnectorVault_token(id string, name string, vaultToken stri
 		secret_manager_identifier = "harnessSecretManager"
 		value_type = "Inline"
 		value = "%[3]s"
-		depends_on = [time_sleep.wait_3_seconds]
+		depends_on = [time_sleep.wait_8_seconds]
 	}
 
-	resource "time_sleep" "wait_3_seconds" {
+	resource "time_sleep" "wait_8_seconds" {
 		depends_on = [harness_platform_organization.test]
-		create_duration = "3s"
+		create_duration = "8s"
 	}
 
 	resource "harness_platform_connector_vault" "test" {
@@ -1801,12 +1797,12 @@ func testOrgResourceConnectorVault_token(id string, name string, vaultToken stri
 		use_k8s_auth = false
 		vault_url = "https://vaultqa.harness.io"
 
-		depends_on = [time_sleep.wait_4_seconds]
+		depends_on = [time_sleep.wait_8_seconds_2]
 	}
 
-	resource "time_sleep" "wait_4_seconds" {
+	resource "time_sleep" "wait_8_seconds_2" {
 		depends_on = [harness_platform_secret_text.test]
-		create_duration = "4s"
+		create_duration = "8s"
 	}
 	`, id, name, vaultToken)
 }
