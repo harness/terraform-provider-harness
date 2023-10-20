@@ -31,26 +31,17 @@ func DataSourceFixedSchedule() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			timePeriodAttribute: {
-				Description: "Time period in which schedule will be active. If specified along with periodicity, this will act as the boundary of periodicity. Otherwise schedule action will be triggered at `start` time and terminate at `end` time.",
-				Type:        schema.TypeList,
+			startingFromAttribute: {
+				Description: "Time from which schedule will be active. Schedule will take immediate effect if starting_from is not specified. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
+				Type:        schema.TypeString,
 				Computed:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						startAttribute: {
-							Description: "Time from which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-						endAttribute: {
-							Description: "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-					},
-				},
 			},
-			periodicityAttribute: {
+			endingOnAttribute: {
+				Description: "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			repetitionAttribute: {
 				Description: "For defining periodic schedule. Periodic nature will be applicable from the time of creation of schedule, unless specific 'time_period' is specified",
 				Type:        schema.TypeList,
 				Computed:    true,

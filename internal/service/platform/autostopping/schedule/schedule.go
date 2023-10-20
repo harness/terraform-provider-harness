@@ -20,17 +20,18 @@ type scheduleType string
 
 const (
 	timeZoneAttribute     = "time_zone"
-	timePeriodAttribute   = "time_period"
 	scheduleTypeAttribute = "schedule_type"
-	startAttribute        = "start"
-	endAttribute          = "end"
-	periodicityAttribute  = "periodicity"
+	startingFromAttribute = "starting_from"
+	endingOnAttribute     = "ending_on"
+	repetitionAttribute   = "repeats"
 	startTimeAttribute    = "start_time"
 	endTimeAttribute      = "end_time"
 	rulesAttribute        = "rules"
 	daysAttribute         = "days"
 	nameAttribute         = "name"
 	scheduleResTypeASrule = "autostop_rule"
+	dayStart              = "00:00"
+	dayEnd                = "24:00"
 )
 
 var (
@@ -104,29 +105,21 @@ func ResourceVMRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			timePeriodAttribute: {
-				Description: "Time period in which schedule will be active. If specified along with periodicity, this will act as the boundary of periodicity. Otherwise schedule action will be triggered at `start` time and terminate at `end` time.",
-				Type:        schema.TypeList,
-				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						startAttribute: {
-							Description:      "Time from which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateDiagFunc: dateValidation,
-						},
-						endAttribute: {
-							Description:      "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
-							Type:             schema.TypeString,
-							Optional:         true,
-							ValidateDiagFunc: dateValidation,
-							Default:          nil,
-						},
-					},
-				},
+			startingFromAttribute: {
+				Description:      "Time from which schedule will be active. Schedule will take immediate effect if starting_from is not specified. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: dateValidation,
+				Default:          nil,
 			},
-			periodicityAttribute: {
+			endingOnAttribute: {
+				Description:      "Time until which schedule will be active. Need to be in YYYY-MM-DD HH:mm:SS format. Eg 2006-01-02 15:04:05",
+				Type:             schema.TypeString,
+				Optional:         true,
+				ValidateDiagFunc: dateValidation,
+				Default:          nil,
+			},
+			repetitionAttribute: {
 				Description: "For defining periodic schedule. Periodic nature will be applicable from the time of creation of schedule, unless specific 'time_period' is specified",
 				Type:        schema.TypeList,
 				Optional:    true,
@@ -139,15 +132,15 @@ func ResourceVMRule() *schema.Resource {
 							ValidateDiagFunc: daysValidationFunc,
 						},
 						startTimeAttribute: {
-							Description:      "Starting time of schedule action on the day. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",
+							Description:      "Starting time of schedule action on the day. Defaults to 00:00Hrs unless specified. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",
 							Type:             schema.TypeString,
-							Required:         true,
+							Optional:         true,
 							ValidateDiagFunc: timeValidation,
 						},
 						endTimeAttribute: {
-							Description:      "Ending time of schedule action on the day. Accepted format is HH:MM. Eg : 20:00 for 8pm",
+							Description:      "Ending time of schedule action on the day. Defaults to 24:00Hrs unless specified. Accepted format is HH:MM. Eg : 20:00 for 8pm",
 							Type:             schema.TypeString,
-							Required:         true,
+							Optional:         true,
 							ValidateDiagFunc: timeValidation,
 						},
 					},
@@ -279,13 +272,19 @@ func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 
 func resourceScheduleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	schedule := parseSchedule(d, c.AccountId)
+	schedule, diags := parseSchedule(d, c.AccountId)
+	if diags != nil {
+		return diags
+	}
 	return saveSchedule(c, ctx, d, meta, schedule)
 }
 
 func resourceScheduleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	schedule := parseSchedule(d, c.AccountId)
+	schedule, diags := parseSchedule(d, c.AccountId)
+	if diags != nil {
+		return diags
+	}
 	scheduleID, err := strconv.Atoi(d.Id())
 	if err != nil {
 		diagE := diag.Diagnostic{
@@ -306,7 +305,7 @@ func resourceScheduleRead(ctx context.Context, d *schema.ResourceData, meta inte
 	return readSchedule(ctx, d, meta)
 }
 
-func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSchedule {
+func parseSchedule(d *schema.ResourceData, accountId string) (*nextgen.FixedSchedule, diag.Diagnostics) {
 	schedule := &nextgen.FixedSchedule{
 		Account: accountId,
 		Details: &nextgen.OccurrenceSchedule{},
@@ -327,36 +326,33 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 
 	tSchedule := &nextgen.TimeSchedule{}
 
-	attr, ok := d.GetOk(timePeriodAttribute)
-	if ok {
-		timePeriodInf, ok := attr.([]interface{})
-		if ok && len(timePeriodInf) > 0 {
-			tSchedule.Period = &nextgen.TimeSchedulePeriod{End: nil}
-			timePeriodObj, ok := timePeriodInf[0].(map[string]interface{})
-			if ok {
-				toRFC3339 := func(timeStr string) string {
-					t, _ := time.Parse(time.DateTime, timeStr)
-					return t.Format(time.RFC3339)
-				}
-				startInf, ok := timePeriodObj[startAttribute]
-				if ok {
-					start, ok := startInf.(string)
-					if ok {
-						tSchedule.Period.Start = toRFC3339(start)
-					}
-				}
-				endInf, ok := timePeriodObj[endAttribute]
-				if ok {
-					end, ok := endInf.(string)
-					if ok && strings.TrimSpace(end) != "" {
-						end := toRFC3339(end)
-						tSchedule.Period.End = &end
-					}
-				}
-			}
+	toRFC3339 := func(timeStr string) string {
+		t, _ := time.Parse(time.DateTime, timeStr)
+		return t.Format(time.RFC3339)
+	}
+	startInf, startOk := d.GetOk(startingFromAttribute)
+	if startOk {
+		tSchedule.Period = &nextgen.TimeSchedulePeriod{End: nil}
+		start, ok := startInf.(string)
+		if ok && len(strings.TrimSpace(start)) > 0 {
+			tSchedule.Period.Start = toRFC3339(start)
 		}
 	}
-	attr, ok = d.GetOk(periodicityAttribute)
+	endInf, endOk := d.GetOk(endingOnAttribute)
+	if endOk && startOk {
+		end, ok := endInf.(string)
+		if ok && len(strings.TrimSpace(end)) > 0 {
+			end := toRFC3339(end)
+			tSchedule.Period.End = &end
+		}
+	}
+	if endOk && !startOk {
+		return nil, diag.Diagnostics{{
+			Severity: diag.Error,
+			Summary:  "ending_on cannot be specified without starting_from",
+		}}
+	}
+	attr, ok := d.GetOk(repetitionAttribute)
 	if ok {
 		periodicInf, ok := attr.([]interface{})
 		if ok && len(periodicInf) > 0 {
@@ -381,10 +377,17 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 				sort.Float64s(days)
 				tSchedule.Days.Days = days
 
+				tSchedule.Days.StartTime = &nextgen.TimeInDay{Hour: 00, Min: 00}
+				tSchedule.Days.EndTime = &nextgen.TimeInDay{Hour: 23, Min: 59}
+
+				fromStartOfDay, tillEOD := false, false
 				startTimeInf, ok := periodicityObj[startTimeAttribute]
 				if ok {
 					startTimeStr, ok := startTimeInf.(string)
-					if ok {
+					if ok && len(strings.TrimSpace(startTimeStr)) > 0 {
+						if strings.EqualFold(strings.TrimSpace(startTimeStr), dayStart) {
+							fromStartOfDay = true
+						}
 						startTime := parseTimeInDay(startTimeStr)
 						tSchedule.Days.StartTime = &startTime
 					}
@@ -393,10 +396,18 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 				endTimeInf, ok := periodicityObj[endTimeAttribute]
 				if ok {
 					endTimeStr, ok := endTimeInf.(string)
-					if ok {
+					if ok && len(strings.TrimSpace(endTimeStr)) > 0 {
+						if strings.EqualFold(strings.TrimSpace(endTimeStr), dayEnd) {
+							tillEOD = true
+						}
 						endTime := parseTimeInDay(endTimeStr)
 						tSchedule.Days.EndTime = &endTime
 					}
+				}
+				if fromStartOfDay && tillEOD {
+					tSchedule.Days.StartTime = nil
+					tSchedule.Days.EndTime = nil
+					tSchedule.Days.AllDay = true
 				}
 			}
 		}
@@ -429,7 +440,7 @@ func parseSchedule(d *schema.ResourceData, accountId string) *nextgen.FixedSched
 			}
 		}
 	}
-	return schedule
+	return schedule, nil
 }
 
 func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
@@ -440,7 +451,7 @@ func parseTimeInDay(timeInDayStr string) nextgen.TimeInDay {
 		if err == nil {
 			timeInDay.Hour = float64(endTimeHr)
 		}
-		endTimeMin, err := strconv.ParseInt(timeParts[0], 10, 64)
+		endTimeMin, err := strconv.ParseInt(timeParts[1], 10, 64)
 		if err == nil {
 			timeInDay.Min = float64(endTimeMin)
 		}
@@ -521,18 +532,16 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 	d.Set(scheduleTypeAttribute, scheduleType)
 	d.Set(timeZoneAttribute, schedule.Details.Timezone)
 	if schedDet.Period != nil {
-		periodData := map[string]interface{}{}
 		startTime, err := time.Parse(time.DateTime, schedDet.Period.Start)
 		if err == nil {
-			periodData[startAttribute] = startTime
+			d.Set(startingFromAttribute, startTime)
 		}
 		if schedDet.Period.End != nil {
 			endTime, err := time.Parse(time.DateTime, *schedDet.Period.End)
 			if err == nil {
-				periodData[endAttribute] = endTime
+				d.Set(endingOnAttribute, endTime)
 			}
 		}
-		d.Set(timePeriodAttribute, periodData)
 	}
 	if schedDet.Days != nil {
 		periodicity := map[string]interface{}{}
@@ -544,15 +553,20 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 			}
 		}
 		periodicity[daysAttribute] = days
-		if schedDet.Days.StartTime != nil {
-			startTime := fmt.Sprintf("%02d:%02d", int(schedDet.Days.StartTime.Hour), int(schedDet.Days.StartTime.Min))
-			periodicity[startTimeAttribute] = startTime
+		if schedDet.Days.AllDay {
+			periodicity[startTimeAttribute] = dayStart
+			periodicity[endTimeAttribute] = dayEnd
+		} else {
+			if schedDet.Days.StartTime != nil {
+				startTime := fmt.Sprintf("%02d:%02d", int(schedDet.Days.StartTime.Hour), int(schedDet.Days.StartTime.Min))
+				periodicity[startTimeAttribute] = startTime
+			}
+			if schedDet.Days.EndTime != nil {
+				endTime := fmt.Sprintf("%02d:%02d", int(schedDet.Days.EndTime.Hour), int(schedDet.Days.EndTime.Min))
+				periodicity[endTimeAttribute] = endTime
+			}
 		}
-		if schedDet.Days.EndTime != nil {
-			endTime := fmt.Sprintf("%02d:%02d", int(schedDet.Days.EndTime.Hour), int(schedDet.Days.EndTime.Min))
-			periodicity[endTimeAttribute] = endTime
-		}
-		d.Set(periodicityAttribute, periodicity)
+		d.Set(repetitionAttribute, periodicity)
 	}
 	return diags
 }
