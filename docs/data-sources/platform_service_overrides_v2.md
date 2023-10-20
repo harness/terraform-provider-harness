@@ -35,7 +35,6 @@ data "harness_platform_service_overrides_v2" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `cluster_id` (String) The GitOps cluster ID to which the override entity is associated.
 - `infra_id` (String) The infrastructure ID to which the override entity is associated.
 - `service_id` (String) The service ID to which the override entity is associated.
 - `env_id` (String) The environment ID to which the override entity is associated.
