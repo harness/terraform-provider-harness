@@ -9,6 +9,6 @@
  */
 package nextgen
 
-type InlineResponse2001 struct {
+type FixedScheduleDeleteResponse struct {
 	Response string `json:"response,omitempty"`
 }

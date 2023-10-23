@@ -14,5 +14,5 @@ type TimeSchedulePeriod struct {
 	// Start time of the period
 	Start string `json:"start,omitempty"`
 	// End time of the period
-	End string `json:"end,omitempty"`
+	End *string `json:"end,omitempty"`
 }
