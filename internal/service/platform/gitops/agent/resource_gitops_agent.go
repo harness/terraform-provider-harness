@@ -83,12 +83,22 @@ func ResourceGitopsAgent() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
+						"is_namespaced": {
+							Description: "Indicates if the agent is namespaced.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
 					}},
 			},
 			"agent_token": {
 				Description: "Agent token to be used for authentication of the agent with Harness.",
 				Type:        schema.TypeString,
 				Computed:    true,
+			},
+			"operator": {
+				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	}
@@ -98,7 +108,7 @@ func ResourceGitopsAgent() *schema.Resource {
 func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	createAgentRequest := buildCreateUpdateAgentRequest(d)
+	createAgentRequest := buildCreateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerCreate(ctx, *createAgentRequest)
 
@@ -221,11 +231,23 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			if meta["namespace"] != nil {
 				v1MetaData.Namespace = meta["namespace"].(string)
 			}
+			if meta["is_namespaced"] != nil {
+				v1MetaData.IsNamespaced = meta["is_namespaced"].(bool)
+			}
 
 			v1Agent.Metadata = &v1MetaData
 		}
 	}
 	return &v1Agent
+}
+
+func buildCreateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
+	v1Agent := buildCreateUpdateAgentRequest(d)
+	if attr, ok := d.GetOk("operator"); ok {
+		agentOperator := nextgen.V1AgentOperator(attr.(string))
+		v1Agent.Operator = &agentOperator
+	}
+	return v1Agent
 }
 
 func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
@@ -237,10 +259,12 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("org_id", agent.OrgIdentifier)
 	d.Set("type", agent.Type_)
 	d.Set("project_id", agent.ProjectIdentifier)
+	d.Set("operator", agent.Operator)
 	metadata := []interface{}{}
 	metaDataMap := map[string]interface{}{}
 	metaDataMap["namespace"] = agent.Metadata.Namespace
 	metaDataMap["high_availability"] = agent.Metadata.HighAvailability
+	metaDataMap["is_namespaced"] = agent.Metadata.IsNamespaced
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
 	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {

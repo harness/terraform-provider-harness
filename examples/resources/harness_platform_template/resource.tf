@@ -952,12 +952,75 @@ resource "harness_platform_template" "template_v2" {
 }
 
 ##Updating the Stable Version of the Template from v1 to v2.
+resource "harness_platform_template" "template_v2" {
+  identifier    = "temp"
+  org_id        = harness_platform_organization.test.id
+  name          = "temp"
+  comments      = "comments"
+  version       = "v2"
+  is_stable     = true
+  force_delete  = true
+  template_yaml = <<-EOT
+			template:
+      name: "temp"
+      identifier: "temp"
+      versionLabel: v2
+      type: Pipeline
+      orgIdentifier: ${harness_platform_organization.test.id}
+      tags: {}
+      spec:
+        stages:
+          - stage:
+              name: dvvdvd
+              identifier: dvvdvd
+              description: ""
+              type: Deployment
+              spec:
+                deploymentType: Kubernetes
+                service:
+                  serviceRef: <+input>
+                  serviceInputs: <+input>
+                environment:
+                  environmentRef: <+input>
+                  deployToAll: false
+                  environmentInputs: <+input>
+                  serviceOverrideInputs: <+input>
+                  infrastructureDefinitions: <+input>
+                execution:
+                  steps:
+                    - step:
+                        name: Rollout Deployment
+                        identifier: rolloutDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+                  rollbackSteps:
+                    - step:
+                        name: Rollback Rollout Deployment
+                        identifier: rollbackRolloutDeployment
+                        type: K8sRollingRollback
+                        timeout: 10m
+                        spec:
+                          pruningEnabled: false
+              tags: {}
+              failureStrategies:
+                - onFailure:
+                    errors:
+                      - AllErrors
+                    action:
+                      type: StageRollback
+      EOT
+}
+
 resource "harness_platform_template" "template_v1" {
   identifier    = "temp"
   org_id        = harness_platform_organization.test.id
   name          = "temp"
   comments      = "comments"
   version       = "v1"
+  is_stable     = false
   force_delete  = true
   template_yaml = <<-EOT
 			template:
@@ -1012,13 +1075,74 @@ resource "harness_platform_template" "template_v1" {
                       type: StageRollback
     
       EOT
+
+  depends_on = [time_sleep.wait_10_seconds]
 }
 
-resource "harness_platform_template" "template_v2" {
-  identifier   = "temp"
-  org_id       = "harness_platform_organization.test.id"
-  name         = "temp"
-  comments     = "comments"
-  force_delete = true
-  version      = "v2"
+resource "time_sleep" "wait_10_seconds" {
+  depends_on       = [harness_platform_template.test2]
+  destroy_duration = "10s"
+}
+
+##Importing Account Level Templates
+resource "harness_platform_template" "test" {
+  identifier      = "accounttemplate"
+  name            = "accounttemplate"
+  version         = "v2"
+  is_stable       = false
+  import_from_git = true
+  git_import_details {
+    branch_name   = "main"
+    file_path     = ".harness/accounttemplate.yaml"
+    connector_ref = "account.DoNotDeleteGithub"
+    repo_name     = "open-repo"
+  }
+  template_import_request {
+    template_name        = "accounttemplate"
+    template_version     = "v2"
+    template_description = ""
+  }
+}
+
+##Importing Org Level Templates
+resource "harness_platform_template" "test" {
+  identifier      = "orgtemplate"
+  name            = "orgtemplate"
+  org_id          = "org"
+  version         = "v2"
+  is_stable       = false
+  import_from_git = true
+  git_import_details {
+    branch_name   = "main"
+    file_path     = ".harness/orgtemplate.yaml"
+    connector_ref = "account.DoNotDeleteGithub"
+    repo_name     = "open-repo"
+  }
+  template_import_request {
+    template_name        = "orgtemplate"
+    template_version     = "v2"
+    template_description = ""
+  }
+}
+
+##Importing Project Level Templates
+resource "harness_platform_template" "test" {
+  identifier      = "projecttemplate"
+  name            = "projecttemplate"
+  org_id          = "org"
+  project_id      = "project"
+  version         = "v2"
+  is_stable       = false
+  import_from_git = true
+  git_import_details {
+    branch_name   = "main"
+    file_path     = ".harness/projecttemplate.yaml"
+    connector_ref = "account.DoNotDeleteGithub"
+    repo_name     = "open-repo"
+  }
+  template_import_request {
+    template_name        = "projecttemplate"
+    template_version     = "v2"
+    template_description = ""
+  }
 }

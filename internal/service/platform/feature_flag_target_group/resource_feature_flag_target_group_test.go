@@ -30,7 +30,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", targetName),
 				),
 			},
@@ -39,7 +39,7 @@ func TestAccResourceFeatureFlagTargetGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", targetName),
 				),
 			},
@@ -122,16 +122,34 @@ func testAccResourceFeatureFlagTarget(id string, name string, updatedName string
       EOT
   	}
 
+		resource "harness_platform_feature_flag_target" "target" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			environment = harness_platform_environment.test.id
+			account_id = harness_platform_project.test.id
+		
+			identifier  = "%[1]s"
+			name        = "%[2]s"
+		
+			attributes = {
+				foo : "bar"
+			}
+		}
+
 		resource "harness_platform_feature_flag_target_group" "test" {
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
-			project = harness_platform_project.test.id
+			project_id = harness_platform_project.test.id
 			environment = harness_platform_environment.test.id
 			account_id = harness_platform_project.test.id
 			name = "%[2]s"
 			included = []
 			excluded = []
-			rules    = []
+			rule {
+				attribute = "identifier"
+				op        = "equal"
+				values    = [harness_platform_feature_flag_target.target.id]
+			}
 		}
 `, id, name, updatedName, environmentId, environment)
 }

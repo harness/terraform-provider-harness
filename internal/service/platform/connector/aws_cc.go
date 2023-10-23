@@ -30,7 +30,9 @@ func ResourceConnectorAwsCC() *schema.Resource {
 			"report_name": {
 				Description: "The cost and usage report name. Provided in the delivery options when the template is opened in the AWS console.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Required:    false,
+				Computed:    false,
+                                Optional:    true,
 			},
 			// "region": {
 			// 	Description: "The AWS region.",
@@ -40,7 +42,9 @@ func ResourceConnectorAwsCC() *schema.Resource {
 			"s3_bucket": {
 				Description: "The name of s3 bucket.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Required:    false,
+				Computed:    false,
+                                Optional:    true,
 			},
 			// "s3_prefix": {
 

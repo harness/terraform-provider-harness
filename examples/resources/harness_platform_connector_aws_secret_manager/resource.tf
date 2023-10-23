@@ -41,6 +41,7 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
   secret_name_prefix = "test"
   region             = "us-east-1"
   delegate_selectors = ["harness-delegate"]
+  default            = true
   credentials {
     assume_role {
       role_arn    = "somerolearn"

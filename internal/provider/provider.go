@@ -35,6 +35,8 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
+	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
@@ -54,6 +56,7 @@ import (
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
 	pl_infrastructure "github.com/harness/terraform-provider-harness/internal/service/platform/infrastructure"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
@@ -144,6 +147,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":                 connector.DatasourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                connector.DatasourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":             connector.DatasourceConnectorBitbucket(),
+				"harness_platform_connector_customhealthsource":    connector.DatasourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.DatasourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.DatasourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":             connector.DatasourceConnectorDynatrace(),
@@ -228,9 +232,20 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.DataSourceConnectorSerivceNow(),
 				"harness_platform_apikey":                          pl_apikey.DataSourceApiKey(),
 				"harness_platform_token":                           pl_token.DataSourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.DataSourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.DataSourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.DataSourceECSRule(),
 				"harness_platform_file_store_file":                 file_store.DataSourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.DataSourceFileStoreNodeFolder(),
+<<<<<<< HEAD
 				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
+=======
+				"harness_autostopping_azure_proxy":                 load_balancer.DataSourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.DataSourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
+>>>>>>> 72c8ba282957438450004388a9a768e29d4d7316
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -246,6 +261,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_awscc":                 connector.ResourceConnectorAwsCC(),
 				"harness_platform_connector_awskms":                connector.ResourceConnectorAwsKms(),
 				"harness_platform_connector_bitbucket":             connector.ResourceConnectorBitbucket(),
+				"harness_platform_connector_customhealthsource":    connector.ResourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.ResourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.ResourceConnectorDocker(),
 				"harness_platform_connector_dynatrace":             connector.ResourceConnectorDynatrace(),
@@ -346,9 +362,20 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_service_now":           connector.ResourceConnectorServiceNow(),
 				"harness_platform_apikey":                          pl_apikey.ResourceApiKey(),
 				"harness_platform_token":                           pl_token.ResourceToken(),
+				"harness_autostopping_rule_vm":                     as_rule.ResourceVMRule(),
+				"harness_autostopping_rule_rds":                    as_rule.ResourceRDSRule(),
+				"harness_autostopping_rule_ecs":                    as_rule.ResourceECSRule(),
 				"harness_platform_file_store_file":                 file_store.ResourceFileStoreNodeFile(),
 				"harness_platform_file_store_folder":               file_store.ResourceFileStoreNodeFolder(),
+<<<<<<< HEAD
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
+=======
+				"harness_autostopping_azure_proxy":                 load_balancer.ResourceAzureProxy(),
+				"harness_autostopping_aws_proxy":                   load_balancer.ResourceAWSProxy(),
+				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
+				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
+				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
+>>>>>>> 72c8ba282957438450004388a9a768e29d4d7316
 			},
 		}
 

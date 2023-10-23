@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_feature_flag -  Enable adding target and target groups through features
+```
