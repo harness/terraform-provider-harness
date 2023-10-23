@@ -102,7 +102,7 @@ func resourcePolicysetRead(ctx context.Context, d *schema.ResourceData, meta int
 func resourcePolicysetCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*internal.Session).GetPolicyManagementClient()
 	var err error
-	var responsePolicyset policymgmt.PolicySet2
+	var responsePolicyset policymgmt.PolicySet
 	var httpResp *http.Response
 	id := d.Id()
 
@@ -213,7 +213,7 @@ func resourcePolicysetDelete(ctx context.Context, d *schema.ResourceData, meta i
 	return nil
 }
 
-func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet2) {
+func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet) {
 	d.SetId(policy.Identifier)
 	_ = d.Set("identifier", policy.Identifier)
 	_ = d.Set("org_id", policy.OrgId)
@@ -225,7 +225,7 @@ func readPolicyset(d *schema.ResourceData, policy policymgmt.PolicySet2) {
 	_ = d.Set("policies", flattenPolicies(policy.Policies))
 }
 
-func flattenPolicies(policies []policymgmt.LinkedPolicy2) []map[string]interface{} {
+func flattenPolicies(policies []policymgmt.LinkedPolicy) []map[string]interface{} {
 	var policyList []map[string]interface{}
 	for _, policy := range policies {
 		policyList = append(policyList, map[string]interface{}{
