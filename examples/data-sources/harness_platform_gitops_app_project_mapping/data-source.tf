@@ -1,4 +1,4 @@
-data "harness_platform_gitops_app_project_mapping" "test" {
+data "harness_platform_gitops_app_project_mapping" "example" {
   identifier = "identifier"
   account_id = "account_id"
   org_id = "organization_id"
