@@ -307,6 +307,7 @@ DelegateTokenResourceApiService Retrieves Delegate Tokens by Account, Organizati
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "Status" (optional.String) -  Status of Delegate Token (ACTIVE or REVOKED). If left empty both active and revoked tokens will be retrieved
+		 * @param "Name" (optional.String) -  Name of the delegate token to be retrieved.
 @return RestResponseListDelegateTokenDetails
 */
 
@@ -314,6 +315,7 @@ type DelegateTokenResourceApiGetDelegateTokensOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	Status            optional.String
+	Name              optional.String
 }
 
 func (a *DelegateTokenResourceApiService) GetDelegateTokens(ctx context.Context, accountIdentifier string, localVarOptionals *DelegateTokenResourceApiGetDelegateTokensOpts) (RestResponseListDelegateTokenDetails, *http.Response, error) {
@@ -341,6 +343,9 @@ func (a *DelegateTokenResourceApiService) GetDelegateTokens(ctx context.Context,
 	}
 	if localVarOptionals != nil && localVarOptionals.Status.IsSet() {
 		localVarQueryParams.Add("status", parameterToString(localVarOptionals.Status.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Name.IsSet() {
+		localVarQueryParams.Add("name", parameterToString(localVarOptionals.Name.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
