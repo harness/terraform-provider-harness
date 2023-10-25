@@ -96,6 +96,7 @@ func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, ar
 			project_id = harness_platform_project.test.id
 			name = "%[1]s"
 			type = "MANAGED_ARGO_PROVIDER"
+			operator = "ARGO"
 			metadata {
 				namespace = "%[1]s"
         		high_availability = false
