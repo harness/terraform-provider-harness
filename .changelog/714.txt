@@ -1,0 +1,3 @@
+```release-note:new-resource
+Fixed schedule support for AutoStopping
+```
