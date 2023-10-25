@@ -1,6 +1,6 @@
 
-<a name="0.3.56"></a>
-## 0.3.56 (2023-10-23)
+<a name="0.3.57"></a>
+## 0.3.57 (2023-10-25)
 
 ### API
 
@@ -38,7 +38,6 @@
 ### Fixed
 
 * Fixed Masking of API Key In Debug Console
-* Fixed AddUserDto Struct
 
 ### IAM
 
@@ -59,6 +58,8 @@
 
 ### Release
 
+* Release version 0.3.56 10-25-2023
+* Release v0.3.56
 * Release version 0.3.55 10-20-2023
 * Release v0.3.55
 * Release version 0.3.54 10-19-2023
@@ -133,8 +134,6 @@
 * Release v0.3.14
 * Release version 0.3.21 03-20-2023
 * Release v0.3.21
-* Release version 0.3.20 03-13-2023
-* Release v0.3.20
 
 ### Remove
 
@@ -190,6 +189,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#428](https://github.com/harness/harness-go-sdk/issues/428) from harness/PL-39175
 * Merge pull request [#420](https://github.com/harness/harness-go-sdk/issues/420) from harness/cds-82128
 * Merge pull request [#418](https://github.com/harness/harness-go-sdk/issues/418) from harness/cds-81697-gitops-app-project-name-fix
 * Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
@@ -241,5 +241,4 @@
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
-* Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 
