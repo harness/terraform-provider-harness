@@ -2,10 +2,11 @@ package agent_yaml_test
 
 import (
 	"fmt"
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/harness/harness-go-sdk/harness/utils"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -51,6 +52,7 @@ func testAccDataSourceGitopsAgentDeployYaml(agentId string, accountId string, ag
 			org_id = harness_platform_organization.test.id
 			name = "%[3]s"
 			type = "MANAGED_ARGO_PROVIDER"
+			operator = "ARGO"
 			metadata {
         		namespace = "%[4]s"
         		high_availability = false
