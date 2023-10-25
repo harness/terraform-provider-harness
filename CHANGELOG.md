@@ -1,6 +1,10 @@
 
-<a name="0.3.55"></a>
-## 0.3.55 (2023-10-20)
+<a name="0.3.56"></a>
+## 0.3.56 (2023-10-23)
+
+### API
+
+* API for fetching fixed schedule of AutoStopping rule
 
 ### Added
 
@@ -17,6 +21,10 @@
 ### Correct
 
 * correct connector info
+
+### Correction
+
+* Correction on optional end time of static schedule of fixed schedule
 
 ### Create
 
@@ -42,10 +50,17 @@
 
 ### Model
 
+* Model containing fetch response of fixed schedule of AutoStopping rule
 * Model changes for Load balancer
+
+### Refactored
+
+* Refactored - changed file name and object name of AutoStopping fixed schedule for consistency
 
 ### Release
 
+* Release version 0.3.55 10-20-2023
+* Release v0.3.55
 * Release version 0.3.54 10-19-2023
 * Release v0.3.54
 * Release version 0.3.53 10-10-2023
@@ -120,7 +135,6 @@
 * Release v0.3.21
 * Release version 0.3.20 03-13-2023
 * Release v0.3.20
-* Release version 0.3.19 03-11-2023
 
 ### Remove
 
@@ -158,12 +172,16 @@
 
 ### Updating
 
-* updating the url for the endpoints
+* Updating the models with renamed field
+* Updating the model used for rule creation
 
 ### Updating
 
-* Updating the models with renamed field
-* Updating the model used for rule creation
+* updating the url for the endpoints
+
+### Working
+
+* Working version of static schedule, create, edit and delete tested
 
 ### Reverts
 
