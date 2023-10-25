@@ -32,6 +32,7 @@ const (
 	scheduleResTypeASrule = "autostop_rule"
 	dayStart              = "00:00"
 	dayEnd                = "24:00"
+	dateTimeFormat        = "2006-01-02 15:04:05" //Format is not supported by time package in old Go version, hence extracted to var
 )
 
 var (
@@ -167,7 +168,7 @@ func dateValidation(i interface{}, p cty.Path) diag.Diagnostics {
 	}
 	diags := diag.Diagnostics{}
 	v, _ := i.(string)
-	_, err := time.Parse(time.DateTime, v)
+	_, err := time.Parse(dateTimeFormat, v)
 	if err != nil {
 		d := diag.Diagnostic{
 			Severity: diag.Error,
@@ -327,7 +328,7 @@ func parseSchedule(d *schema.ResourceData, accountId string) (*nextgen.FixedSche
 	tSchedule := &nextgen.TimeSchedule{}
 
 	toRFC3339 := func(timeStr string) string {
-		t, _ := time.Parse(time.DateTime, timeStr)
+		t, _ := time.Parse(dateTimeFormat, timeStr)
 		return t.Format(time.RFC3339)
 	}
 	startInf, startOk := d.GetOk(startingFromAttribute)
@@ -532,12 +533,12 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 	d.Set(scheduleTypeAttribute, scheduleType)
 	d.Set(timeZoneAttribute, schedule.Details.Timezone)
 	if schedDet.Period != nil {
-		startTime, err := time.Parse(time.DateTime, schedDet.Period.Start)
+		startTime, err := time.Parse(dateTimeFormat, schedDet.Period.Start)
 		if err == nil {
 			d.Set(startingFromAttribute, startTime)
 		}
 		if schedDet.Period.End != nil {
-			endTime, err := time.Parse(time.DateTime, *schedDet.Period.End)
+			endTime, err := time.Parse(dateTimeFormat, *schedDet.Period.End)
 			if err == nil {
 				d.Set(endingOnAttribute, endTime)
 			}
