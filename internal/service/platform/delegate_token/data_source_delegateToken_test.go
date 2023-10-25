@@ -82,7 +82,6 @@ func tesAccDataSourceDelegateToken(name string, accountId string) string {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			account_id = "%[2]s"
-			token_status = "ACTIVE"
 		}
 
 		data "harness_platform_delegatetoken" "test" {
@@ -103,7 +102,6 @@ func tesAccDataSourceDelegateTokenOrgLevel(name string, accountId string) string
 			identifier = "%[1]s"
 			name = "%[1]s"
 			account_id = "%[2]s"
-			token_status = "ACTIVE"
 			org_id = harness_platform_organization.test.id
 		}
 
@@ -133,7 +131,6 @@ func tesAccDataSourceDelegateTokenProjectLevel(name string, accountId string) st
 			identifier = "%[1]s"
 			name = "%[1]s"
 			account_id = "%[2]s"
-			token_status = "ACTIVE"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 		}

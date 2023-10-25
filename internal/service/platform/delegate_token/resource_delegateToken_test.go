@@ -88,7 +88,6 @@ func tesAccResourceDelegateToken(name string, accountId string) string {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			account_id = "%[2]s"
-			token_status = "ACTIVE"
 		}
 		`, name, accountId)
 }
@@ -105,7 +104,6 @@ func tesAccResourceDelegateTokenOrgLevel(name string, accountId string, org_id s
 			name = "%[1]s"
 			account_id = "%[2]s"
 			org_id = harness_platform_organization.test.id
-			token_status = "ACTIVE"
 		}
 		`, name, accountId, org_id)
 }
@@ -130,7 +128,6 @@ func tesAccResourceDelegateTokenProjectLevel(name string, accountId string, org_
 			account_id = "%[2]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
-			token_status = "ACTIVE"
 		}
 		`, name, accountId, org_id, project_id)
 }

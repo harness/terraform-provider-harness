@@ -53,6 +53,7 @@ func ResourceDelegateToken() *schema.Resource {
 				Description:  "Status of Delegate Token (ACTIVE or REVOKED). If left empty both active and revoked tokens will be assumed",
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
 				ValidateFunc: validation.StringInSlice([]string{"ACTIVE", "REVOKED"}, false),
 			},
 			"value": {
