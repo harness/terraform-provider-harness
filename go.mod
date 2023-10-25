@@ -6,9 +6,10 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go v1.45.12
 	github.com/docker/docker v24.0.6+incompatible
-	github.com/harness/harness-go-sdk v0.3.55
+	github.com/harness/harness-go-sdk v0.3.56
 	github.com/harness/harness-openapi-go-client v0.0.19
 	github.com/hashicorp/go-cleanhttp v0.5.2
+	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.27.0
 	github.com/pkg/errors v0.9.1
@@ -33,7 +34,6 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
-	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-plugin v1.4.10 // indirect
