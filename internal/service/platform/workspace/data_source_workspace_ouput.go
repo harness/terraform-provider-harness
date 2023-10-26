@@ -82,7 +82,7 @@ func resourceWorkspaceOutputRead(ctx context.Context, d *schema.ResourceData, me
 	return nil
 }
 
-func readOutputs(d *schema.ResourceData, outputsResp *nextgen.IacmResourcw) {
+func readOutputs(d *schema.ResourceData, outputsResp *nextgen.IacmResources) {
 	d.SetId(d.Get("identifier").(string))
 	d.Set("org_id", d.Get("org_id").(string))
 	d.Set("project_id", d.Get("project_id").(string))
