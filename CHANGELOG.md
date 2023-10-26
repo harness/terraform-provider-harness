@@ -1,3 +1,19 @@
+# 0.28.3 (October 25,2023) 
+
+FEATURES:
+
+* **New Resource:** `Fixed schedule support for AutoStopping` ([#714](https://github.com/harness/terraform-provider-harness/issues/714))
+
+ENHANCEMENTS:
+
+* - Support for import of ALB as AutoStopping Loadbalancer
+    - Support for import of AppGateway as AutoStopping Loadbalancer ([#707](https://github.com/harness/terraform-provider-harness/issues/707))
+* harness_platform_service_overrides_v2 -  Updated docs to use yaml format for the yaml property of overrides instead of json format. ([#711](https://github.com/harness/terraform-provider-harness/issues/711))
+
+BUG FIXES:
+
+* harness_platform_gitops_app_project_mapping -  Fix field name of argo project. ([#709](https://github.com/harness/terraform-provider-harness/issues/709))
+
 # 0.28.2 (October 09,2023) 
 
 ENHANCEMENTS:
