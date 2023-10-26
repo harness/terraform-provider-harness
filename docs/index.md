@@ -8,7 +8,7 @@ description: |-
 
 # Harness Provider
 
-For an explanation on how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-provider.
+For an explanation on how to use this Provider along with code samples, refer to the Harness Terraform Provider Quickstart Guide https://docs.harness.io/article/7cude5tvzh-harness-terraform-providerRR
 
 ## Example Usage
 
