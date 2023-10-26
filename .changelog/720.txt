@@ -1,0 +1,11 @@
+```release-note:new-resource
+  harness_platform_workspace: Added workspace resource.
+```
+
+```release-note:new-data-source
+  harness_platform_workspace
+```
+
+```release-note:new-data-source
+  harness_platform_workspace_output
+```
