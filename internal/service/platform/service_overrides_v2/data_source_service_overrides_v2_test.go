@@ -106,7 +106,7 @@ variables:
 manifests:
   - manifest:
       identifier: manifest1
-      type: K8sManifest
+      type: Values
       spec:
         store:
           type: Github

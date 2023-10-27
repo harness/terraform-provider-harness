@@ -25,7 +25,12 @@ data "harness_platform_service_overrides_v2" "test" {
 
 ### Required
 
-- `identifier` (String) The identifier of the override entity.
+- `identifier` (String) The identifier of the override entity. This identifier is generated based on the type of the override entity by joining respective environment, service & infrastructure identifiers with "_".
+  -  "ENV_GLOBAL_OVERRIDE" : If the env_id is e1, then the override identifier will be "e1".
+  -  "ENV_SERVICE_OVERRIDE" : If the env_id is e1 & service_id is s1, then the override identifier will be "e1_s1".
+  -  "INFRA_GLOBAL_OVERRIDE" : If the env_id is e1 & infra_id is i1, then the override identifier will be "e1_i1".
+  -  "INFRA_SERVICE_OVERRIDE" : If the env_id is e1, service_id is s1 & infra_id is i1, then the override identifier will be "e1_s1_i1".
+
 
 ### Optional
 
@@ -38,5 +43,9 @@ data "harness_platform_service_overrides_v2" "test" {
 - `infra_id` (String) The infrastructure ID to which the override entity is associated.
 - `service_id` (String) The service ID to which the override entity is associated.
 - `env_id` (String) The environment ID to which the override entity is associated.
-- `type` (String) The type of the override entity.
+- `type` (String) The type of the override entity. There can be four types of override entity -
+    -  "ENV_GLOBAL_OVERRIDE" : Applies to an environment globally irrespective of the service used with it. We do not need to provide service_id for this type of override.
+    -  "ENV_SERVICE_OVERRIDE" : Applies to a specific environment & service combination. We need to provide both service_id & env_id for this type of override.
+    -  "INFRA_GLOBAL_OVERRIDE" : Applies to an infrastructure globally irrespective of the service used with it. We do not need to provide service_id for this type of override. However, we need to provide the env_id as an infrastructure is always associated with an environment.
+    -  "INFRA_SERVICE_OVERRIDE" : Applies to a specific infrastructure & service combination. We need to provide all three i.e. service_id, infra_id & env_id (to which the infrastructure is associated) for this type of override.
 - `yaml` (String) The yaml of the override entity's spec property. More details regarding the spec property can be found [here](https://apidocs.harness.io/tag/ServiceOverrides#operation/createServiceOverride!path=spec&t=request)
