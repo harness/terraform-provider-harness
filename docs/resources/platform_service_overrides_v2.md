@@ -71,7 +71,11 @@ resource "harness_platform_service_overrides_v2" "test" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `identifier` (String) The identifier of the override entity.
+- `identifier` (String) The identifier of the override entity. This identifier is generated based on the type of the override entity by joining respective environment, service & infrastructure identifiers with "_". 
+  -  "ENV_GLOBAL_OVERRIDE" : If the env_id is e1, then the override identifier will be "e1".
+  -  "ENV_SERVICE_OVERRIDE" : If the env_id is e1 & service_id is s1, then the override identifier will be "e1_s1".
+  -  "INFRA_GLOBAL_OVERRIDE" : If the env_id is e1 & infra_id is i1, then the override identifier will be "e1_i1".
+  -  "INFRA_SERVICE_OVERRIDE" : If the env_id is e1, service_id is s1 & infra_id is i1, then the override identifier will be "e1_s1_i1".
 
 ## Import
 
