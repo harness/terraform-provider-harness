@@ -505,7 +505,7 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 	}
 	identifier := strconv.Itoa(int(schedule.Id))
 	d.SetId(identifier)
-	d.Set("identifier", identifier)
+	d.Set("identifier", float64(schedule.Id))
 	d.Set(nameAttribute, schedule.Name)
 	scheduleType := uptimeSchedule
 	schedDet := schedule.Details.Uptime
