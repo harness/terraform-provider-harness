@@ -39,7 +39,7 @@ func testSchedule(name string) string {
 		}
 	
 		periodicity {
-			days = "MON, THU, TUE"
+			days = ["MON", "THU", "TUE"]
 			start_time = "09:30"
 			end_time = "16:50"
 		}
