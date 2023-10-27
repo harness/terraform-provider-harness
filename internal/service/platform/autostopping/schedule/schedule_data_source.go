@@ -51,7 +51,7 @@ func DataSourceFixedSchedule() *schema.Resource {
 							Description: "List of days on which schedule need to be active. Valid values are `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.",
 							Type:        schema.TypeList,
 							Computed:    true,
-							Elem: schema.Schema{
+							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},

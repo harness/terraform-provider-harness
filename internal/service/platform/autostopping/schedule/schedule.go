@@ -131,7 +131,9 @@ func ResourceVMRule() *schema.Resource {
 							Required:         true,
 							ValidateDiagFunc: daysValidationFunc,
 							Type:             schema.TypeList,
-							Elem: schema.Schema{
+							MinItems:         1,
+							MaxItems:         7,
+							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
 						},
