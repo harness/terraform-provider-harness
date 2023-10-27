@@ -127,10 +127,13 @@ func ResourceVMRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						daysAttribute: {
-							Description:      "Days on which schedule need to be active. Comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday",
+							Description:      "List of days on which schedule need to be active. Valid values are `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.",
 							Type:             schema.TypeString,
 							Required:         true,
 							ValidateDiagFunc: daysValidationFunc,
+							Elem: schema.Schema{
+								Type: schema.TypeString,
+							},
 						},
 						startTimeAttribute: {
 							Description:      "Starting time of schedule action on the day. Defaults to 00:00Hrs unless specified. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",
