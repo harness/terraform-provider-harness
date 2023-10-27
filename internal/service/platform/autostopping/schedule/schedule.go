@@ -234,17 +234,24 @@ func timeValidation(i interface{}, p cty.Path) diag.Diagnostics {
 
 func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 	diags := diag.Diagnostics{}
-	v, ok := i.(string)
+	daysInf, ok := i.([]interface{})
 	if !ok {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Value is mandatory and should be string",
+			Summary:  "Days should be specified for repetition",
 		})
 		return diags
 	}
-	parts := strings.Split(v, ",")
 	unique := map[string]struct{}{}
-	for _, p := range parts {
+	for _, dayInf := range daysInf {
+		p, ok := dayInf.(string)
+		if !ok {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  "Days should be specified for repetition",
+			})
+			continue
+		}
 		vp := strings.TrimSpace(p)
 		if _, checked := unique[vp]; checked {
 			diags = append(diags, diag.Diagnostic{
@@ -261,11 +268,11 @@ func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
 		if !match {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
-				Summary:  "Valid input is comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday ",
+				Summary:  "Valid input is list of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.",
 			})
 		}
 	}
-	if len(parts) < 1 || len(parts) > 7 {
+	if len(daysInf) < 1 || len(daysInf) > 7 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "At-least one and at-most seven days can be specified",
