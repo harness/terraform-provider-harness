@@ -48,9 +48,12 @@ func DataSourceFixedSchedule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						daysAttribute: {
-							Description: "Days on which schedule need to be active. Comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday",
-							Type:        schema.TypeString,
+							Description: "List of days on which schedule need to be active. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT.",
+							Type:        schema.TypeList,
 							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
 						},
 						startTimeAttribute: {
 							Description: "Starting time of schedule action on the day. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",

@@ -127,10 +127,33 @@ func ResourceVMRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						daysAttribute: {
-							Description:      "Days on which schedule need to be active. Comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday",
-							Type:             schema.TypeString,
-							Required:         true,
-							ValidateDiagFunc: daysValidationFunc,
+							Description: "List of days on which schedule need to be active. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT.",
+							Required:    true,
+							Type:        schema.TypeList,
+							MinItems:    1,
+							MaxItems:    7,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+								ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
+									diags := diag.Diagnostics{}
+									iv, ok := i.(string)
+									if !ok {
+										diags = append(diags, diag.Diagnostic{
+											Severity: diag.Error,
+											Summary:  "Day should be string value. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT",
+										})
+										return diags
+									}
+									if _, ok := dayIndex[iv]; !ok {
+										diags = append(diags, diag.Diagnostic{
+											Severity: diag.Error,
+											Summary:  "Valid values are SUN, MON, TUE, WED, THU, FRI and SAT",
+										})
+										return diags
+									}
+									return nil
+								},
+							},
 						},
 						startTimeAttribute: {
 							Description:      "Starting time of schedule action on the day. Defaults to 00:00Hrs unless specified. Accepted format is HH:MM. Eg : 13:15 for 01:15pm",
@@ -229,48 +252,6 @@ func timeValidation(i interface{}, p cty.Path) diag.Diagnostics {
 	return diags
 }
 
-func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
-	diags := diag.Diagnostics{}
-	v, ok := i.(string)
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Value is mandatory and should be string",
-		})
-		return diags
-	}
-	parts := strings.Split(v, ",")
-	unique := map[string]struct{}{}
-	for _, p := range parts {
-		vp := strings.TrimSpace(p)
-		if _, checked := unique[vp]; checked {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  fmt.Sprintf("Day `%s` repeats in days", vp),
-			})
-			return diags
-		}
-		unique[vp] = struct{}{}
-		match := false
-		for vd := range dayIndex {
-			match = match || strings.EqualFold(vp, vd)
-		}
-		if !match {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "Valid input is comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday ",
-			})
-		}
-	}
-	if len(parts) < 1 || len(parts) > 7 {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "At-least one and at-most seven days can be specified",
-		})
-	}
-	return diags
-}
-
 func resourceScheduleCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	schedule, diags := parseSchedule(d, c.AccountId)
@@ -363,14 +344,16 @@ func parseSchedule(d *schema.ResourceData, accountId string) (*nextgen.FixedSche
 				days := []float64{}
 				daysInf, ok := periodicityObj[daysAttribute]
 				if ok {
-					daysCsv, ok := daysInf.(string)
+					daysInf, ok := daysInf.([]interface{})
 					if ok {
-						dayParts := strings.Split(daysCsv, ",")
-						for _, dp := range dayParts {
-							dv := strings.TrimSpace(dp)
-							i, ok := dayIndex[strings.ToUpper(dv)]
+						for _, dayInf := range daysInf {
+							dp, ok := dayInf.(string)
 							if ok {
-								days = append(days, float64(i))
+								dv := strings.TrimSpace(dp)
+								i, ok := dayIndex[strings.ToUpper(dv)]
+								if ok {
+									days = append(days, float64(i))
+								}
 							}
 						}
 					}
@@ -522,7 +505,7 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 	}
 	identifier := strconv.Itoa(int(schedule.Id))
 	d.SetId(identifier)
-	d.Set("identifier", identifier)
+	d.Set("identifier", float64(schedule.Id))
 	d.Set(nameAttribute, schedule.Name)
 	scheduleType := uptimeSchedule
 	schedDet := schedule.Details.Uptime
@@ -567,7 +550,7 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 				periodicity[endTimeAttribute] = endTime
 			}
 		}
-		d.Set(repetitionAttribute, periodicity)
+		d.Set(repetitionAttribute, []interface{}{periodicity})
 	}
 	return diags
 }
