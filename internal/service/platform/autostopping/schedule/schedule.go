@@ -127,14 +127,32 @@ func ResourceVMRule() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						daysAttribute: {
-							Description:      "List of days on which schedule need to be active. Valid values are `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.",
-							Required:         true,
-							ValidateDiagFunc: daysValidationFunc,
-							Type:             schema.TypeList,
-							MinItems:         1,
-							MaxItems:         7,
+							Description: "List of days on which schedule need to be active. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT.",
+							Required:    true,
+							Type:        schema.TypeList,
+							MinItems:    1,
+							MaxItems:    7,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
+								ValidateDiagFunc: func(i interface{}, p cty.Path) diag.Diagnostics {
+									diags := diag.Diagnostics{}
+									iv, ok := i.(string)
+									if !ok {
+										diags = append(diags, diag.Diagnostic{
+											Severity: diag.Error,
+											Summary:  "Day should be string value. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT",
+										})
+										return diags
+									}
+									if _, ok := dayIndex[iv]; !ok {
+										diags = append(diags, diag.Diagnostic{
+											Severity: diag.Error,
+											Summary:  "Valid values are SUN, MON, TUE, WED, THU, FRI and SAT",
+										})
+										return diags
+									}
+									return nil
+								},
 							},
 						},
 						startTimeAttribute: {
@@ -229,55 +247,6 @@ func timeValidation(i interface{}, p cty.Path) diag.Diagnostics {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Minute value should be between 0 and 59",
-		})
-	}
-	return diags
-}
-
-func daysValidationFunc(i interface{}, p cty.Path) diag.Diagnostics {
-	diags := diag.Diagnostics{}
-	daysInf, ok := i.([]interface{})
-	if !ok {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Days should be specified for repetition",
-		})
-		return diags
-	}
-	unique := map[string]struct{}{}
-	for _, dayInf := range daysInf {
-		p, ok := dayInf.(string)
-		if !ok {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "Days should be specified for repetition",
-			})
-			continue
-		}
-		vp := strings.TrimSpace(p)
-		if _, checked := unique[vp]; checked {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  fmt.Sprintf("Day `%s` repeats in days", vp),
-			})
-			return diags
-		}
-		unique[vp] = struct{}{}
-		match := false
-		for vd := range dayIndex {
-			match = match || strings.EqualFold(vp, vd)
-		}
-		if !match {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  "Valid input is list of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.",
-			})
-		}
-	}
-	if len(daysInf) < 1 || len(daysInf) > 7 {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "At-least one and at-most seven days can be specified",
 		})
 	}
 	return diags
