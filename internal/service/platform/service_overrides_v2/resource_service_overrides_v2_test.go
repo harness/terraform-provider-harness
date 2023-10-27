@@ -161,7 +161,7 @@ func testAccServiceOverridesProjectScope(id string, name string) string {
               manifests:
                 - manifest:
                     identifier: manifest1
-                    type: K8sManifest
+                    type: Values
                     spec:
                       store:
                         type: Github
@@ -201,7 +201,7 @@ variables:
 manifests:
   - manifest:
       identifier: manifest1
-      type: K8sManifest
+      type: Values
       spec:
         store:
           type: Github
@@ -255,7 +255,7 @@ func testAccServiceOverridesOrgScope(id string, name string) string {
               manifests:
                 - manifest:
                     identifier: manifest1
-                    type: K8sManifest
+                    type: Values
                     spec:
                       store:
                         type: Github
@@ -294,7 +294,7 @@ variables:
 manifests:
   - manifest:
       identifier: manifest1
-      type: K8sManifest
+      type: Values
       spec:
         store:
           type: Github
@@ -342,7 +342,7 @@ func testAccServiceOverridesAccountScope(id string, name string) string {
               manifests:
                 - manifest:
                     identifier: manifest1
-                    type: K8sManifest
+                    type: Values
                     spec:
                       store:
                         type: Github
@@ -380,7 +380,7 @@ variables:
 manifests:
   - manifest:
       identifier: manifest1
-      type: K8sManifest
+      type: Values
       spec:
         store:
           type: Github
