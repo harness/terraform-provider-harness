@@ -161,7 +161,7 @@ resource "harness_autostopping_schedule" "OverNightDowntimeOnWeekDays" {
 
 Required:
 
-- `days` (List of String) List of days on which schedule need to be active. Valid values are `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.
+- `days` (List of String) List of days on which schedule need to be active. Valid values are SUN, MON, TUE, WED, THU, FRI and SAT.
 
 Optional:
 
