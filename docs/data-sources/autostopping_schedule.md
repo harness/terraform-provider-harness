@@ -35,6 +35,6 @@ Data source for retrieving a fixed schedule for Harness AutoStopping rule
 
 Read-Only:
 
-- `days` (String)
+- `days` (List of String)
 - `end_time` (String)
 - `start_time` (String)

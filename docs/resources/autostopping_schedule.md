@@ -19,7 +19,7 @@ resource "harness_autostopping_schedule" "MondayWholeDayUp" {
   time_zone     = "UTC"
 
   repeats {
-    days = "MON"
+    days = ["MON"]
   }
 
   rules = [123]
@@ -31,7 +31,7 @@ resource "harness_autostopping_schedule" "MondayUpTill4:30pm" {
   time_zone     = "UTC"
 
   repeats {
-    days     = "MON"
+    days     = ["MON"]
     end_time = "16:30"
   }
 
@@ -44,7 +44,7 @@ resource "harness_autostopping_schedule" "MondayThroughFridayUptimeFrom9amTo6pm"
   time_zone     = "UTC"
 
   repeats {
-    days       = "MON, TUE, WED, THU, FRI"
+    days       = ["MON", "TUE", "WED", "THU", "FRI"]
     start_time = "09:00"
     end_time   = "18:00"
   }
@@ -60,7 +60,7 @@ resource "harness_autostopping_schedule" "MondayThroughFridayUptimeFrom9amTo6pmS
   starting_from = "2023-01-02 15:04:05"
 
   repeats {
-    days       = "MON, TUE, WED, THU, FRI"
+    days       = ["MON", "TUE", "WED", "THU", "FRI"]
     start_time = "09:00"
     end_time   = "18:00"
   }
@@ -77,7 +77,7 @@ resource "harness_autostopping_schedule" "DownTimeForISTLuchOnEveryFridayInBetwe
   ending_on     = "2023-02-02 15:04:05"
 
   repeats {
-    days       = "FRI"
+    days       = ["FRI"]
     start_time = "12:30"
     end_time   = "14:30"
   }
@@ -91,7 +91,7 @@ resource "harness_autostopping_schedule" "DowntimeEveryFridayAfterNoonTillEOD" {
   time_zone     = "Asia/Calcutta"
 
   repeats {
-    days       = "FRI"
+    days       = ["FRI"]
     start_time = "17:30"
   }
 
@@ -104,7 +104,7 @@ resource "harness_autostopping_schedule" "CompleteDownTimeOnWeekEnd" {
   time_zone     = "UTC"
 
   repeats {
-    days = "SUN, SAT"
+    days = ["SUN", "SAT"]
   }
 
   rules = [123]
@@ -126,7 +126,7 @@ resource "harness_autostopping_schedule" "OverNightDowntimeOnWeekDays" {
   time_zone     = "Asia/Calcutta"
 
   repeats {
-    days       = "MON, TUE, WED, THU, FRI"
+    days       = ["MON", "TUE", "WED", "THU", "FRI"]
     start_time = "18:00"
     end_time   = "07:00"
   }
@@ -161,7 +161,7 @@ resource "harness_autostopping_schedule" "OverNightDowntimeOnWeekDays" {
 
 Required:
 
-- `days` (String) Days on which schedule need to be active. Comma separated values of `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`. Eg : `MON,TUE,WED,THU,FRI` for Mon through Friday
+- `days` (List of String) List of days on which schedule need to be active. Valid values are `SUN`, `MON`, `TUE`, `WED`, `THU`, `FRI` and `SAT`.
 
 Optional:
 
