@@ -373,14 +373,16 @@ func parseSchedule(d *schema.ResourceData, accountId string) (*nextgen.FixedSche
 				days := []float64{}
 				daysInf, ok := periodicityObj[daysAttribute]
 				if ok {
-					daysCsv, ok := daysInf.(string)
+					daysInf, ok := daysInf.([]interface{})
 					if ok {
-						dayParts := strings.Split(daysCsv, ",")
-						for _, dp := range dayParts {
-							dv := strings.TrimSpace(dp)
-							i, ok := dayIndex[strings.ToUpper(dv)]
+						for _, dayInf := range daysInf {
+							dp, ok := dayInf.(string)
 							if ok {
-								days = append(days, float64(i))
+								dv := strings.TrimSpace(dp)
+								i, ok := dayIndex[strings.ToUpper(dv)]
+								if ok {
+									days = append(days, float64(i))
+								}
 							}
 						}
 					}
