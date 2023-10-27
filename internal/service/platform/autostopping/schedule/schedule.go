@@ -550,7 +550,7 @@ func setSchedule(d *schema.ResourceData, schedule *nextgen.FixedSchedule) diag.D
 				periodicity[endTimeAttribute] = endTime
 			}
 		}
-		d.Set(repetitionAttribute, periodicity)
+		d.Set(repetitionAttribute, []interface{}{periodicity})
 	}
 	return diags
 }
