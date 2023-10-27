@@ -1,0 +1,3 @@
+```release-note:enhancement
+Days attribute of AutoStopping fixed schedule has been modified to be list of weekdays instead of string for brevity
+```
