@@ -81,9 +81,12 @@ Read-Only:
 Import is supported using the following syntax:
 
 ```shell
-# Import a Account level Gitops Cluster
+# Import an Account level Gitops GnuPG Key
 terraform import harness_platform_gitops_gnupg.example <agent_id>/<key_id>
 
-# Import a Project level Gitops Cluster
+# Import an Org level Gitops GnuPG Key
+terraform import harness_platform_gitops_gnupg.example <organization_id>/<agent_id>/<key_id>
+
+# Import a Project level Gitops GnuPG Key
 terraform import harness_platform_gitops_gnupg.example <organization_id>/<project_id>/<agent_id>/<key_id>
 ```
