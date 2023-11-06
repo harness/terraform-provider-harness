@@ -1,11 +1,5 @@
 ```release-note:new-resource
-  harness_platform_workspace: Added workspace resource.
-```
-
-```release-note:new-data-source
-  harness_platform_workspace
-```
-
-```release-note:new-data-source
-  harness_platform_workspace_output
+  harness_platform_workspace - added a new resource for iacm workspaces
+  harness_platform_workspace - added a new data source for iacm workspaces
+  harness_platform_workspace_output - added a new data source for iacm workspace outputs
 ```
