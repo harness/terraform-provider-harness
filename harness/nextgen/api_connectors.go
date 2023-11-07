@@ -202,6 +202,7 @@ ConnectorsApiService Deletes Connector by ID
      * @param "FilePath" (optional.String) -  File Path of the Entity.
      * @param "CommitMsg" (optional.String) -  Commit Message to use for the merge commit.
      * @param "LastObjectId" (optional.String) -  Last Object Id
+	 * @param "ForceDelete" (optional.Bool) -  If true, the Entity will be forced delete, without checking any references/usages
 @return ResponseDtoBoolean
 */
 
@@ -214,6 +215,7 @@ type ConnectorsApiDeleteConnectorOpts struct {
 	FilePath          optional.String
 	CommitMsg         optional.String
 	LastObjectId      optional.String
+	ForceDelete       optional.Bool
 }
 
 func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdentifier string, identifier string, localVarOptionals *ConnectorsApiDeleteConnectorOpts) (ResponseDtoBoolean, *http.Response, error) {
@@ -257,6 +259,9 @@ func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdent
 	}
 	if localVarOptionals != nil && localVarOptionals.LastObjectId.IsSet() {
 		localVarQueryParams.Add("lastObjectId", parameterToString(localVarOptionals.LastObjectId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -355,9 +360,10 @@ func (a *ConnectorsApiService) DeleteConnector(ctx context.Context, accountIdent
 
 /*
 ConnectorsApiService Get the allowed field values by Connector Type
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
- * @param connectorType Connector type
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier Account Identifier for the Entity.
+  - @param connectorType Connector type
+
 @return ResponseDtoFieldValues
 */
 func (a *ConnectorsApiService) GetAllAllowedFieldValues(ctx context.Context, accountIdentifier string, connectorType string) (ResponseDtoFieldValues, *http.Response, error) {
@@ -761,8 +767,9 @@ func (a *ConnectorsApiService) GetConnector(ctx context.Context, accountIdentifi
 
 /*
 ConnectorsApiService Gets the Connector catalogue by Account Identifier
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountIdentifier Account Identifier for the Entity.
+
 @return ResponseDtoConnectorCatalogueResponse
 */
 func (a *ConnectorsApiService) GetConnectorCatalogue(ctx context.Context, accountIdentifier string) (ResponseDtoConnectorCatalogueResponse, *http.Response, error) {
@@ -1676,9 +1683,10 @@ func (a *ConnectorsApiService) GetTestGitRepoConnectionResult(ctx context.Contex
 
 /*
 ConnectorsApiService Get the list of connectors by FQN satisfying the criteria (if any) in the request
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body List of ConnectorsFQN as strings
- * @param accountIdentifier Account Identifier for the Entity.
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body List of ConnectorsFQN as strings
+  - @param accountIdentifier Account Identifier for the Entity.
+
 @return ResponseDtoListConnectorResponse
 */
 func (a *ConnectorsApiService) ListConnectorByFQN(ctx context.Context, body []string, accountIdentifier string) (ResponseDtoListConnectorResponse, *http.Response, error) {
