@@ -2,7 +2,9 @@ package workspace
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -223,7 +225,7 @@ func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, meta i
 		c.AccountId,
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return parseError(err, httpResp)
 	}
 
 	return nil
@@ -249,7 +251,7 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, meta i
 		d.Get("project_id").(string),
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return parseError(err, httpResp)
 	}
 
 	resourceWorkspaceRead(ctx, d, meta)
@@ -277,7 +279,7 @@ func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		d.Get("identifier").(string),
 	)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return parseError(err, httpResp)
 	}
 
 	resourceWorkspaceRead(ctx, d, meta)
@@ -457,4 +459,36 @@ func buildVariables(d *schema.ResourceData, attribute string) (map[string]nextge
 		}
 	}
 	return variables, nil
+}
+
+// iacm errors are in a different format from other harness services
+// this function parses iacm errors and attempts to return them in way
+// that is consistent with the provider.
+func parseError(err error, httpResp *http.Response) diag.Diagnostics {
+	// copied from helpers/errors.go
+	if httpResp != nil && httpResp.StatusCode == 401 {
+		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+			"1) Please check if token has expired or is wrong.\n" +
+			"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+	}
+	if httpResp != nil && httpResp.StatusCode == 403 {
+		return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+			"1) Please check if the token has required permission for this operation.\n" +
+			"2) Please check if the token has expired or is wrong.")
+	}
+
+	se, ok := err.(nextgen.GenericSwaggerError)
+	if !ok {
+		diag.FromErr(err)
+	}
+
+	iacmErrBody := se.Body()
+	iacmErr := nextgen.IacmError{}
+	jsonErr := json.Unmarshal(iacmErrBody, &iacmErr)
+	if jsonErr != nil {
+		return diag.Errorf(err.Error())
+	}
+
+	return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+		"1) " + iacmErr.Message)
 }
