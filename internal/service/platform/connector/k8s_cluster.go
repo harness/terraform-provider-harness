@@ -273,6 +273,12 @@ func ResourceConnectorK8s() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of connector",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 

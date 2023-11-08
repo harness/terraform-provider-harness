@@ -106,6 +106,7 @@ resource "harness_platform_connector_kubernetes" "inheritFromDelegate" {
 - `client_key_cert` (Block List, Max: 1) Client key and certificate config for the connector. (see [below for nested schema](#nestedblock--client_key_cert))
 - `delegate_selectors` (Set of String) Selectors to use for the delegate.
 - `description` (String) Description of the resource.
+- `force_delete` (String) Enable this flag for force deletion of connector
 - `inherit_from_delegate` (Block List, Max: 1) Credentials are inherited from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `openid_connect` (Block List, Max: 1) OpenID configuration for the connector. (see [below for nested schema](#nestedblock--openid_connect))
 - `org_id` (String) Unique identifier of the organization.
