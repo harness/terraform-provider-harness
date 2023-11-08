@@ -331,6 +331,14 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 			return []*schema.ResourceData{d}, nil
 		}
 
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("agent_id", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
 		if len(parts) == 4 { //Project level
 			d.Set("org_id", parts[0])
 			d.Set("project_id", parts[1])
