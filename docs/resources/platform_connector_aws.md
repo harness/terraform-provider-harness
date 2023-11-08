@@ -102,7 +102,7 @@ resource "harness_platform_connector_aws" "aws" {
 - `description` (String) Description of the resource.
 - `equal_jitter_backoff_strategy` (Block List, Max: 1) Equal Jitter BackOff Strategy. (see [below for nested schema](#nestedblock--equal_jitter_backoff_strategy))
 - `fixed_delay_backoff_strategy` (Block List, Max: 1) Fixed Delay BackOff Strategy. (see [below for nested schema](#nestedblock--fixed_delay_backoff_strategy))
-- `force_delete` (String) Enable this flag for force deletion of connector
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
 - `full_jitter_backoff_strategy` (Block List, Max: 1) Full Jitter BackOff Strategy. (see [below for nested schema](#nestedblock--full_jitter_backoff_strategy))
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
