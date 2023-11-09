@@ -177,7 +177,6 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			identifier = "%[1]s"
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
-			environment = harness_platform_environment.test.id
 			name = "%[2]s"
 			kind       = "boolean"
 			permanent  = false
@@ -199,26 +198,30 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			  value       = "false"
 			}
 
-			add_target_rule {
-				variation = "Enabled"
-				targets = ["target1"]
-			}
+			environment {
+				identifier = harness_platform_environment.test.id
+				
+				add_target_rule {
+					variation = "Enabled"
+					targets = ["target1"]
+				}
 
-			add_target_group_rule {
-				variation = "Enabled"
-				group_name = "targetgroup1"
-			}
+				add_target_group_rule {
+					variation = "Enabled"
+					group_name = "targetgroup1"
+				}
 
-			add_target_group_rule {
-				group_name = "targetgroup2"
-				distribution {
-					variations {
-						variation = "Enabled"
-						weight = 50
-					}
-					variations {
-						variation = "Disabled"
-						weight = 50
+				add_target_group_rule {
+					group_name = "targetgroup2"
+					distribution {
+						variations {
+							variation = "Enabled"
+							weight = 50
+						}
+						variations {
+							variation = "Disabled"
+							weight = 50
+						}
 					}
 				}
 			}
