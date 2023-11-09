@@ -13,6 +13,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
 	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -245,6 +246,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
 				"harness_autostopping_schedule":                    schedule.DataSourceFixedSchedule(),
 				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
+				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
+				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -373,6 +376,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
 				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
+				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
 			},
 		}
 
