@@ -112,9 +112,12 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_rule {
-    variation = "trial14"
-    targets = ["targets1", "targets2"]
+  environment {
+    identifier = "MY_ENVIRONMENT"
+    add_target_rule {
+      variation = "trial14"
+      targets = ["targets1", "targets2"]
+    }
   }
 }
 
@@ -126,7 +129,6 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
-  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
@@ -153,24 +155,27 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_groups_rule {
-    group_name = "group_name"
-    variation = "trial14"
-    distribution = {
-      variations = [
-        {
-            variation = "trial7"
-            weight = 30
-        },
-        {
-            variation = "trial14"
-            weight = 30
-        },
-        {
-            variation = "trial20"
-            weight = 40
-        }
-      ]
+  environment {
+    identifier = "MY_ENVIRONMENT"
+    add_target_groups_rule {
+      group_name = "group_name"
+      variation = "trial14"
+      distribution = {
+        variations = [
+          {
+              variation = "trial7"
+              weight = 30
+          },
+          {
+              variation = "trial14"
+              weight = 30
+          },
+          {
+              variation = "trial20"
+              weight = 40
+          }
+        ]
+      }
     }
   }
 }
@@ -196,7 +201,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 - `add_target_group_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_group_rule))
 - `add_target_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_rule))
 - `archived` (Boolean) Whether or not the flag is archived
-- `environment` (String) Environment Identifier
+- `environment` (Block List, Min: 0) Environment block, containing the target group and rules
 - `git_details` (Block Set, Max: 1) (see [below for nested schema](#nestedblock--git_details))
 - `owner` (String) The owner of the flag
 
