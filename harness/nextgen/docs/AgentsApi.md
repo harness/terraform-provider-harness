@@ -265,6 +265,64 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **AgentServiceForServerPostDeployHelmChart**
+> StreamResultOfV1DownloadResponse AgentServiceForServerPostDeployHelmChart(ctx, body, agentIdentifier)
+
+
+PostDeployHelmChart returns the Helm Chart for deploying the agents.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **body** | [**V1AgentYamlQuery**](V1AgentYamlQuery.md)|  |
+  **agentIdentifier** | **string**| Agent identifier for entity. |
+
+### Return type
+
+[**StreamResultOfV1DownloadResponse**](Stream result of v1DownloadResponse.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/octet-stream
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **AgentServiceForServerPostDeployYaml**
+> string AgentServiceForServerPostDeployYaml(ctx, body, agentIdentifier)
+
+
+PostDeployYaml returns deployment yamls for agents.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **body** | [**V1AgentYamlQuery**](V1AgentYamlQuery.md)|  |
+  **agentIdentifier** | **string**| Agent identifier for entity. |
+
+### Return type
+
+**string**
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/x-yml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **AgentServiceForServerRegenerateCredentials**
 > V1Agent AgentServiceForServerRegenerateCredentials(ctx, identifier)
 
