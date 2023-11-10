@@ -97,9 +97,12 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_rule {
-    variation = "trial14"
-    targets = ["targets1", "targets2"]
+  environment {
+    identifier = "MY_ENVIRONMENT"
+    add_target_rule {
+      variation = "trial14"
+      targets = ["targets1", "targets2"]
+    }
   }
 }
 
@@ -111,7 +114,6 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
-  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
@@ -138,24 +140,27 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     value       = "20"
   }
 
-  add_target_groups_rule {
-    group_name = "group_name"
-    variation = "trial14"
-    distribution = {
-      variations = [
-        {
-            variation = "trial7"
-            weight = 30
-        },
-        {
-            variation = "trial14"
-            weight = 30
-        },
-        {
-            variation = "trial20"
-            weight = 40
-        }
-      ]
+  environment {
+    identifier = "MY_ENVIRONMENT"
+    add_target_groups_rule {
+      group_name = "group_name"
+      variation = "trial14"
+      distribution = {
+        variations = [
+          {
+              variation = "trial7"
+              weight = 30
+          },
+          {
+              variation = "trial14"
+              weight = 30
+          },
+          {
+              variation = "trial20"
+              weight = 40
+          }
+        ]
+      }
     }
   }
 }

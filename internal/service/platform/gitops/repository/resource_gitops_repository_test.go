@@ -14,6 +14,49 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+func TestAccResourceGitopsRepositoryOrgLevel(t *testing.T) {
+
+	// Org level
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	repo := "https://github.com/willycoll/argocd-example-apps"
+	repoName := id
+	repoNameUpdated := id + "_updated"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	resourceName := "harness_platform_gitops_repository.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsRepositoryOrgLevel(id, name, repo, repoName, agentId, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceGitopsRepositoryOrgLevel(id, name, repo, repoNameUpdated, agentId, accountId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "repo.0.name", repoNameUpdated),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
+				ImportStateIdFunc:       acctest.GitopsAgentOrgLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
 func TestAccResourceGitopsRepository(t *testing.T) {
 	// Project level
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -139,6 +182,33 @@ func testAccResourceGitopsRepositoryProjectLevel(id string, name string, repo st
 			identifier = "%[1]s"
 			account_id = "%[6]s"
 			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[5]s"
+			repo {
+					repo = "%[3]s"
+        			name = "%[4]s"
+        			insecure = true
+        			connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+			update_mask {
+				paths = ["name"]
+			}
+
+		}
+	`, id, name, repo, repoName, agentId, accountId)
+}
+
+func testAccResourceGitopsRepositoryOrgLevel(id string, name string, repo string, repoName string, agentId string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[6]s"
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[5]s"
 			repo {

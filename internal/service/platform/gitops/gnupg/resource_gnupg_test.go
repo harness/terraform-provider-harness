@@ -21,7 +21,7 @@ func TestAccResourceGitopsGnupg(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
 	name := id
-	agentId := "account.terraformagent1"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_gnupg.test"
 	resource.UnitTest(t, resource.TestCase{

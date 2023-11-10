@@ -560,16 +560,19 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 		}
 	}
 
-	return nextgen.RepositoriesRepoUpdateRequest{
+	request := nextgen.RepositoriesRepoUpdateRequest{
 		Repo:            buildRepo(d),
 		RefreshInterval: refreshInterval,
-		GenType:         &genType,
-		EcrGen:          ecrGen,
-		GcrGen:          gcrGen,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
 		},
 	}
+	if genType != "" {
+		request.GenType = &genType
+		request.EcrGen = ecrGen
+		request.GcrGen = gcrGen
+	}
+	return request
 }
 
 func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCreateRequest {
@@ -607,15 +610,19 @@ func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCrea
 		}
 	}
 
-	return nextgen.RepositoriesRepoCreateRequest{
-		Upsert:          upsert,
-		CredsOnly:       credsOnly,
-		Repo:            buildRepo(d),
-		GenType:         &genType,
-		GcrGen:          gcrGen,
-		EcrGen:          ecrGen,
+	request := nextgen.RepositoriesRepoCreateRequest{
+		Upsert:    upsert,
+		CredsOnly: credsOnly,
+		Repo:      buildRepo(d),
+
 		RefreshInterval: refreshInterval,
 	}
+	if genType != "" {
+		request.GenType = &genType
+		request.GcrGen = gcrGen
+		request.EcrGen = ecrGen
+	}
+	return request
 }
 
 func buildEcrGen(ecrGen map[string]interface{}) *nextgen.RepositoriesEcrAuthorizationTokenGenerator {
