@@ -18,5 +18,6 @@ type SecretTextSpec struct {
 	// This has details to specify if the secret value is inline or referenced.
 	ValueType SecretTextValueType `json:"valueType"`
 	// Value of the Secret
-	Value string `json:"value,omitempty"`
+	Value              string             `json:"value,omitempty"`
+	AdditionalMetadata AdditionalMetadata `json:"additionalMetadata,omitempty"`
 }
