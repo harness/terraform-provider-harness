@@ -44,32 +44,32 @@ func DataSourceGitopsApplications() *schema.Resource {
 			"cluster_id": {
 				Description: "Cluster identifier of the GitOps application.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"repo_id": {
 				Description: "Repository identifier of the GitOps application.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps application should be updated if existing and inserted if not.",
 				Type:        schema.TypeBool,
-				Optional:    true,
+				Computed:    true,
 			},
 			"validate": {
 				Description: "Indicates if the GitOps application has to be validated.",
 				Type:        schema.TypeBool,
-				Optional:    true,
+				Computed:    true,
 			},
 			"project": {
 				Description: "Reference to the project corresponding to this GitOps application. An empty string means that the GitOps application belongs to the 'default' project.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"kind": {
 				Description: "Kind of the GitOps application.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"query_refresh": {
 				Description: "Forces the GitOps application to reconcile when set to true.",
@@ -99,17 +99,17 @@ func DataSourceGitopsApplications() *schema.Resource {
 			"request_propagation_policy": {
 				Description: "Request propagation policy to delete the GitOps application.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Computed:    true,
 			},
 			"request_cascade": {
 				Description: "Request cascade to delete the GitOps application.",
 				Type:        schema.TypeBool,
-				Optional:    true,
+				Computed:    true,
 			},
 			"options_remove_existing_finalizers": {
 				Description: "Options to remove existing finalizers to delete the GitOps application.",
 				Type:        schema.TypeBool,
-				Optional:    true,
+				Computed:    true,
 			},
 			"request_name": {
 				Description: "Request name to delete the GitOps application.",
@@ -124,7 +124,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 			"application": {
 				Description: "Definition of the GitOps application resource.",
 				Type:        schema.TypeList,
-				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {

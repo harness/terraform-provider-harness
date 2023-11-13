@@ -12,7 +12,7 @@ import (
 
 func ResourceGitopsApplication() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Application.",
+		Description: "Resource for managing a Harness Gitops Application.",
 
 		CreateContext: resourceGitopsApplicationCreate,
 		ReadContext:   resourceGitopsApplicationRead,

@@ -49,7 +49,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Computed:    true,
 			},
 			"argo_project_name": {
-				Description: "ArgoCD Project Identifier which is to be mapped to the Harness project.",
+				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
