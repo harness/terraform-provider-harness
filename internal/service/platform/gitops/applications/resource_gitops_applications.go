@@ -709,7 +709,7 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 
 func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var agentIdentifier, orgIdentifier, projectIdentifier, repoIdentifier, queryName, queryResourceVersion, querySelector string
+	var agentIdentifier, orgIdentifier, projectIdentifier, repoIdentifier, queryName string
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -726,9 +726,7 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 		repoIdentifier = attr.(string)
 	}
 	resp, httpResp, err := c.ApplicationsApiService.AgentApplicationServiceGet(ctx, agentIdentifier, queryName, c.AccountId, orgIdentifier, projectIdentifier, &nextgen.ApplicationsApiAgentApplicationServiceGetOpts{
-		QueryResourceVersion: optional.NewString(queryResourceVersion),
-		QuerySelector:        optional.NewString(querySelector),
-		QueryRepo:            optional.NewString(repoIdentifier),
+		QueryRepo: optional.NewString(repoIdentifier),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
