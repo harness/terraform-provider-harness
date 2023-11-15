@@ -622,12 +622,13 @@ func (a *AgentsApiService) AgentServiceForServerPostDeployHelmChart(ctx context.
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/agents/{agentIdentifier}/deployment-spec/helm"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/deployment-spec/helm"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	localVarQueryParams.Add("routingId", parameterToString(body.AccountIdentifier, ""))
 
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -722,12 +723,13 @@ func (a *AgentsApiService) AgentServiceForServerPostDeployYaml(ctx context.Conte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/agents/{agentIdentifier}/deployment-spec/yaml"
+	localVarPath := a.client.cfg.BasePath + "/gitops/api/v1/agents/{agentIdentifier}/deployment-spec/yaml"
 	localVarPath = strings.Replace(localVarPath, "{"+"agentIdentifier"+"}", fmt.Sprintf("%v", agentIdentifier), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	localVarQueryParams.Add("routingId", parameterToString(body.AccountIdentifier, ""))
 
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -739,7 +741,7 @@ func (a *AgentsApiService) AgentServiceForServerPostDeployYaml(ctx context.Conte
 	}
 
 	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/x-yml"}
+	localVarHttpHeaderAccepts := []string{"application/yaml"}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
@@ -748,6 +750,19 @@ func (a *AgentsApiService) AgentServiceForServerPostDeployYaml(ctx context.Conte
 	}
 	// body params
 	localVarPostBody = &body
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
