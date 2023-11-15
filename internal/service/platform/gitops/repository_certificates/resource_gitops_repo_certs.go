@@ -14,7 +14,7 @@ import (
 
 func ResourceGitopsRepoCerts() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for managing a Harness Gitops Repository Certificate. You can only create 1 instance which has all the certificates of this resource.",
+		Description: "Resource for managing a Harness Gitops Repository Certificate. You can only create 1 instance per agent which has all the certificates of this resource.",
 
 		CreateContext: resourceGitopsRepoCertsCreateOrUpdate,
 		ReadContext:   resourceGitopsRepoCertsRead,
