@@ -91,7 +91,7 @@ func testAccDataSourceRepoCertSSH(id string, accountId string, name string, agen
 					items {
 						server_name = "bitbucket.org"
 						cert_type = "ssh"
-                        cert_sub_type = "ssh-rsa"
+						cert_sub_type = "ssh-rsa"
 						cert_data = "QUFBQUIzTnphQzF5YzJFQUFBQUJJd0FBQVFFQXViaU44MWVEY2FmcmdNZUx6YUZQc3cya052RWNxVEtsL1ZxTGF0L01hQjMzcFp5MHkzckpadG5xd1IycU9PdmJ3S1pZS2lFTzFPNlZxTkVCeEt2SkplbENxMGRUWFdUNXBiTzJnRFhDNmg2UURYQ2FIbzZwT0hHUFV5K1lCYUdRUkd1U3VzTUVBU1lpV3VuWU4wdkNBSThRYVhuV01YTk1kRlAzakhBSkgwZURzb2lHbkxQQmxCcDRUTm02cllJNzRuTXpnejNCOUlpa1c0V1ZLK2RjOEtaSlpXWWpBdU9SVTNqYzFjL05Qc2tEMkFTaW5mOHYzeG5mWGV1a1Uwc0o1TjZtNUU4VkxqT2JQRU8rbU4ydC9GWlRNWkxpRnFQV2MvQUxTcW5Nbm5od3JOaTJyYmZnL3JkL0lwTDhMZTNwU0JuZTgrc2VlRlZCb0dxekhNOXlYdz09"
 					}
 				}
