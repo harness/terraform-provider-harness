@@ -12,7 +12,7 @@ import (
 
 func DataSourceGitopsRepository() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data Source for fetching a Harness GitOps Repository.",
+		Description: "Data source for fetching a Harness GitOps Repository.",
 
 		ReadContext: dataSourceGitOpsRepositoryRead,
 
@@ -54,22 +54,22 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Optional:    true,
 						},
 						"username": {
-							Description: "Username used for authenticating at the remote repository.",
+							Description: "Username to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"password": {
-							Description: "Password or PAT used for authenticating at the remote repository.",
+							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"ssh_private_key": {
-							Description: "PEM data for authenticating at the repo server. Only used with Git repos.",
+							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"insecure_ignore_host_key": {
-							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos.",
+							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
@@ -84,12 +84,12 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Optional:    true,
 						},
 						"tls_client_cert_data": {
-							Description: "Certificate in PEM format for authenticating at the repo server.",
+							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_key": {
-							Description: "Private key in PEM format for authenticating at the repo server.",
+							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -105,7 +105,7 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Optional:    true,
 						},
 						"inherited_creds": {
-							Description: "Indicates if the credentials were inherited from a credential set.",
+							Description: "Indicates if the credentials were inherited from a repository credential.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
@@ -140,53 +140,30 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Optional:    true,
 						},
 						"project": {
-							Description: "Reference between project and repository that allow you automatically to be added as item inside SourceRepos project entity.",
+							Description: "The ArgoCD project name corresponding to this GitOps repository. An empty string means that the GitOps repository belongs to the default project created by Harness.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
 						},
 						"connection_type": {
-							Description: "Identifies the authentication method used to connect to the repository.",
+							Description: "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS_CONNECTION_TYPE\"",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 					},
 				},
 			},
-			"upsert": {
-				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
-			"creds_only": {
-				Description: "Indicates if to operate on credential set instead of repository.",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
-			"query_repo": {
-				Description: "GitOps repository to query.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"query_project": {
-				Description: "Project to query for the GitOps repo.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"query_force_refresh": {
-				Description: "Indicates to force refresh query for repository.",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
 			"enable_oci": {
 				Description: "Indicates if helm-oci support must be enabled for this repo.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Computed:    true,
 			},
 			"update_mask": {
 				Description: "Update mask of the repository.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"paths": {
@@ -207,8 +184,7 @@ func DataSourceGitopsRepository() *schema.Resource {
 
 func dataSourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier, identifier, queryRepo, queryProject string
-	var queryForceRefresh bool
+	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -221,21 +197,9 @@ func dataSourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("query_repo"); ok {
-		queryRepo = attr.(string)
-	}
-	if attr, ok := d.GetOk("query_project"); ok {
-		queryProject = attr.(string)
-	}
-	if attr, ok := d.GetOk("query_force_refresh"); ok {
-		queryForceRefresh = attr.(bool)
-	}
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.RepositoriesApiAgentRepositoryServiceGetOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
-		QueryRepo:         optional.NewString(queryRepo),
-		QueryForceRefresh: optional.NewBool(queryForceRefresh),
-		QueryProject:      optional.NewString(queryProject),
 	})
 
 	if err != nil {
