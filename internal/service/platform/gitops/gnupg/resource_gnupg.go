@@ -91,7 +91,7 @@ func ResourceGitopsGnupg() *schema.Resource {
 										Computed:    true,
 									},
 									"key_data": {
-										Description: "KeyData holds the raw key data, in base64 encoded format",
+										Description: "KeyData holds the raw key data, in base64 encoded format.",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
