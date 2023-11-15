@@ -14,7 +14,7 @@ import (
 
 func DataSourceGitopsGnupg() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a GPG public key in the server's configuration.",
+		Description: "Data source for fetching a Harness GitOps GPG public key.",
 
 		ReadContext: dataSourceGitopsGnupgRead,
 
