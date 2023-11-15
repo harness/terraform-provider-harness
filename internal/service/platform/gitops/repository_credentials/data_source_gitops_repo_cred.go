@@ -14,23 +14,23 @@ import (
 
 func DataSourceGitOpsRepoCred() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a GitOps RepoCred.",
+		Description: "Data source for fetching a GitOps Repository Credential.",
 
 		ReadContext: dataSourceGitopsRepoCredRead,
 
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "agent identifier of the Repository Credentials.",
+				Description: "Agent identifier of the Repository Credential.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "account identifier of the Repository Credentials.",
+				Description: "Account identifier of the Repository Credential.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the Repository Credentials.",
+				Description: "Identifier of the Repository Credential.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -44,11 +44,6 @@ func DataSourceGitOpsRepoCred() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"upsert": {
-				Description: "if the Repository credential should be upserted.",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
 			"creds": {
 				Description: "credential details.",
 				Type:        schema.TypeList,
@@ -57,32 +52,32 @@ func DataSourceGitOpsRepoCred() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"url": {
-							Description: "url representing this object.",
+							Description: "URL of the remote repository. Make sure you pass at least an org, this will not work if you just provide the host, for eg. \"https://github.com\"",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"username": {
-							Description: "Username for authenticating at the repo server.",
+							Description: "Username to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"password": {
-							Description: "Password for authenticating at the repo server.",
+							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"ssh_private_key": {
-							Description: "Contains the private key data for authenticating at the repo server using SSH (only Git repos).",
+							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_data": {
-							Description: "Specifies the TLS client cert data for authenticating at the repo server.",
+							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_key": {
-							Description: "Specifies the TLS client cert key for authenticating at the repo server.",
+							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
