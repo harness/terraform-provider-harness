@@ -1,6 +1,6 @@
 
-<a name="0.3.59"></a>
-## 0.3.59 (2023-11-07)
+<a name="0.3.60"></a>
+## 0.3.60 (2023-11-15)
 
 ### API
 
@@ -8,6 +8,7 @@
 
 ### Added
 
+* Added AdditionalMetadata struct
 * Added Handling for encoding of space
 
 ### Added
@@ -59,6 +60,8 @@
 
 ### Release
 
+* Release version 0.3.59 11-08-2023
+* Release v0.3.59
 * Release version 0.3.58 10-26-2023
 * Release v0.3.58
 * Release version 0.3.57 10-25-2023
@@ -140,8 +143,6 @@
 * Release version 0.3.21 03-20-2023
 * Release v0.3.21
 * Release version 0.3.20 03-13-2023
-* Release v0.3.20
-* Release version 0.3.19 03-11-2023
 
 ### Remove
 
@@ -162,10 +163,6 @@
 
 ### Update
 
-* update contract
-
-### Update
-
 * Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
@@ -176,6 +173,10 @@
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
+
+### Update
+
+* update contract
 
 ### Updating
 
@@ -197,6 +198,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#437](https://github.com/harness/harness-go-sdk/issues/437) from harness/additional-metadata-ref-secrets
 * Merge pull request [#432](https://github.com/harness/harness-go-sdk/issues/432) from harness/cds-82953-go-sdk-conn-force
 * Merge pull request [#426](https://github.com/harness/harness-go-sdk/issues/426) from harness/IAC-1130
 * Merge pull request [#428](https://github.com/harness/harness-go-sdk/issues/428) from harness/PL-39175
@@ -251,5 +253,4 @@
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 * Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
-* Merge pull request [#291](https://github.com/harness/harness-go-sdk/issues/291) from harness/oci-support
 
