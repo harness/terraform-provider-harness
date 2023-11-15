@@ -14,7 +14,7 @@ import (
 
 func ResourceGitopsCluster() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Cluster.",
+		Description: "Resource for managing a Harness Gitops Cluster.",
 
 		CreateContext: resourceGitopsClusterCreate,
 		ReadContext:   resourceGitopsClusterRead,
@@ -140,7 +140,7 @@ func ResourceGitopsCluster() *schema.Resource {
 																Optional:    true,
 															},
 															"ca_data": {
-																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile",
+																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},

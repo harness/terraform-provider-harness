@@ -15,7 +15,7 @@ import (
 
 func ResourceGitopsAgent() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Agent.",
+		Description: "Resource for managing a Harness Gitops Agent.",
 
 		CreateContext: resourceGitopsAgentCreate,
 		ReadContext:   resourceGitopsAgentRead,

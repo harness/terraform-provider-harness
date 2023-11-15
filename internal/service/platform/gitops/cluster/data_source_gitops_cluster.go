@@ -43,43 +43,6 @@ func DataSourceGitopsCluster() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"query": {
-				Description: "Query for the GitOps cluster resources.",
-				Type:        schema.TypeList,
-				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"server": {
-							Description: "Server of the GitOps cluster.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"name": {
-							Description: "Name of the GitOps cluster.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"id": {
-							Description: "Cluster server URL or the cluster name.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"type": {
-										Description: "Type of the specified GitOps cluster identifier ( 'server' - default, 'name' ).",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"value": {
-										Description: "Cluster server URL or the cluster name.",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-								}},
-						},
-					},
-				},
-			},
 			"request": {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
@@ -99,48 +62,13 @@ func DataSourceGitopsCluster() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
-						"update_mask": {
-							Description: "Update mask of the GitOps cluster.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"paths": {
-										Description: "The set of field mask paths.",
-										Optional:    true,
-										Type:        schema.TypeList,
-										Elem: &schema.Schema{
-											Type: schema.TypeList,
-										},
-									},
-								},
-							},
-						},
 						"tags": {
-							Description: "Tags associated with the clusters",
+							Description: "Tags for the GitOps cluster. These can be used to search or filter the GitOps agents.",
 							Type:        schema.TypeSet,
 							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
-						},
-						"id": {
-							Description: "Cluster server URL or the cluster name.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"type": {
-										Description: "Type of the specified cluster identifier ( 'server' - default, 'name' ).",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"value": {
-										Description: "Cluster server URL or the cluster name.",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-								}},
 						},
 						"cluster": {
 							Description: "GitOps cluster details.",
@@ -154,7 +82,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 										Optional:    true,
 									},
 									"name": {
-										Description: "Name of the cluster. If omitted, will use the server address.",
+										Description: "Name of the cluster. If omitted, the server address will be used.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -191,22 +119,22 @@ func DataSourceGitopsCluster() *schema.Resource {
 																Optional:    true,
 															},
 															"server_name": {
-																Description: "Server name for SNI in the client to check server certificates against.",
+																Description: "Server name for SNI in the client to check server certificates against. If ServerName is empty, the hostname used to contact the server is used.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"cert_data": {
-																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file).",
+																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"key_data": {
-																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file).",
+																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"ca_data": {
-																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle).",
+																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
@@ -388,7 +316,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"shard": {
-										Description: "Shard number. Calculated on the fly by the application controller if not specified.",
+										Description: "Shard number to be managed by a specific application controller pod. Calculated on the fly by the application controller if not specified.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -398,7 +326,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 										Optional:    true,
 									},
 									"project": {
-										Description: "Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.",
+										Description: "The ArgoCD project name corresponding to this GitOps cluster. An empty string means that the GitOps cluster belongs to the default project created by Harness.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -434,17 +362,9 @@ func dataSourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, me
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
-	var queryName, queryServer string
-	if d.Get("query") != nil && len(d.Get("query").([]interface{})) > 0 {
-		query := d.Get("query").([]interface{})[0].(map[string]interface{})
-		queryServer = query["server"].(string)
-		queryName = query["name"].(string)
-	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.ClustersApiAgentClusterServiceGetOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-		QueryServer:       optional.NewString(queryServer),
-		QueryName:         optional.NewString(queryName),
 	})
 
 	if err != nil {
