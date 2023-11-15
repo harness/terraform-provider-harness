@@ -112,7 +112,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 													Optional:    true,
 												},
 												"cert_data": {
-													Description: "CertData contains the actual certificate data, dependent on the certificate type.",
+													Description: "CertData contains the actual certificate data, dependent on the certificate type. The value should be base64 encoded",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
