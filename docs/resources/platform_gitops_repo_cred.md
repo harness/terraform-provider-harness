@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repo_cred Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Gitops Repositories Credentials.
+  Resource for managing a Harness Gitops Repository Credential.
 ---
 
 # harness_platform_gitops_repo_cred (Resource)
 
-Resource for creating a Harness Gitops Repositories Credentials.
+Resource for managing a Harness Gitops Repository Credential.
 
 ## Example Usage
 
@@ -47,7 +47,7 @@ resource "harness_platform_gitops_repo_cred" "test" {
 - `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
 - `org_id` (String) Organization identifier of the Repository Credential.
 - `project_id` (String) Project identifier of the Repository Credential.
-- `upsert` (Boolean) if the Repository credential should be upserted.
+- `upsert` (Boolean) Indicates if the GitOps repository credential should be updated if existing and inserted if not.
 
 ### Read-Only
 
@@ -63,13 +63,13 @@ Optional:
 - `github_app_id` (String) Specifies the Github App ID of the app used to access the repo for GitHub app authentication.
 - `github_app_installation_id` (String) Specifies the ID of the installed GitHub App for GitHub app authentication.
 - `github_app_private_key` (String) github_app_private_key specifies the private key PEM data for authentication via GitHub app.
-- `password` (String) Password for authenticating at the repo server.
-- `ssh_private_key` (String) Contains the private key data for authenticating at the repo server using SSH (only Git repos).
-- `tls_client_cert_data` (String) Specifies the TLS client cert data for authenticating at the repo server.
-- `tls_client_cert_key` (String) Specifies the TLS client cert key for authenticating at the repo server.
+- `password` (String) Password or PAT to be used for authenticating the remote repository.
+- `ssh_private_key` (String) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
+- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS.
+- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS.
 - `type` (String) Type specifies the type of the repoCreds.Can be either 'git' or 'helm. 'git' is assumed if empty or absent
-- `url` (String) url representing this object.
-- `username` (String) Username for authenticating at the repo server.
+- `url` (String) URL of the remote repository. Make sure you pass at least an org, this will not work if you just provide the host, for eg. "https://github.com"
+- `username` (String) Username to be used for authenticating the remote repository.
 
 ## Import
 

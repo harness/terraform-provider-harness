@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for fetching a Harness Gitops Agents.
+  Datasource for fetching a Harness Gitops Agent.
 ---
 
 # harness_platform_gitops_agent (Data Source)
 
-Datasource for fetching a Harness Gitops Agents.
+Datasource for fetching a Harness Gitops Agent.
 
 ## Example Usage
 
@@ -38,10 +38,10 @@ data "harness_platform_gitops_agent" "example" {
 
 - `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
 - `description` (String) Description of the GitOps agent.
-- `operator` (String) Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `id` (String) The ID of this resource.
 - `metadata` (List of Object) Metadata of the agent. (see [below for nested schema](#nestedatt--metadata))
 - `name` (String) Name of the GitOps agent.
+- `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 - `type` (String) Default: "AGENT_TYPE_UNSET"
 Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
@@ -52,5 +52,5 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 Read-Only:
 
 - `high_availability` (Boolean)
-- `namespace` (String)
 - `is_namespaced` (Boolean)
+- `namespace` (String)
