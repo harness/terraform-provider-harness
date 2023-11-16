@@ -1,6 +1,6 @@
 
-<a name="0.3.60"></a>
-## 0.3.60 (2023-11-15)
+<a name="0.3.61"></a>
+## 0.3.61 (2023-11-16)
 
 ### API
 
@@ -36,10 +36,10 @@
 * Delete GithubAppSpec.md
 * Delete model_github_api_access_spec.go
 
-### Fixed
+### Fix
 
-* Fixed Masking of API Key In Debug Console
-* Fixed AddUserDto Struct
+* fix : [CCM-14434] API key based authentication for fixed schedule
+* fix : API key based authentication for fixed schedule
 
 ### IAM
 
@@ -60,6 +60,8 @@
 
 ### Release
 
+* Release version 0.3.60 11-15-2023
+* Release v0.3.60
 * Release version 0.3.59 11-08-2023
 * Release v0.3.59
 * Release version 0.3.58 10-26-2023
@@ -142,7 +144,6 @@
 * Release v0.3.14
 * Release version 0.3.21 03-20-2023
 * Release v0.3.21
-* Release version 0.3.20 03-13-2023
 
 ### Remove
 
@@ -163,6 +164,10 @@
 
 ### Update
 
+* update contract
+
+### Update
+
 * Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
@@ -173,10 +178,6 @@
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
-
-### Update
-
-* update contract
 
 ### Updating
 
@@ -252,5 +253,4 @@
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 * Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
-* Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 
