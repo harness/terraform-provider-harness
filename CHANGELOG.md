@@ -1,3 +1,25 @@
+# 0.29.0 (November 16,2023) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_workspace - added a new resource for iacm workspaces
+  harness_platform_workspace - added a new data source for iacm workspaces
+  harness_platform_workspace_output - added a new data source for iacm workspace outputs` ([#726](https://github.com/harness/terraform-provider-harness/issues/726))
+* **New Resource:** `resource/harness_platform_delegatetoken: Added delegate token resource.` ([#719](https://github.com/harness/terraform-provider-harness/issues/719))
+
+ENHANCEMENTS:
+
+* Allow for multiple environments, with each environment containing its own target group and rules ([#742](https://github.com/harness/terraform-provider-harness/issues/742))
+* Days attribute of AutoStopping fixed schedule has been modified to be list of weekdays instead of string for brevity ([#731](https://github.com/harness/terraform-provider-harness/issues/731))
+* harness_platform_service_overrides_v2 -  Updated documentation with details of how overrides v2 identifiers are generated. ([#730](https://github.com/harness/terraform-provider-harness/issues/730))
+* resource/platform_connector_aws: added force deletion support
+resource/platform_connector_azure_cloud_provider: added force deletion support
+resources/platform_connector_gcp: added force deletion support
+resources/platform_connector_helm: added force deletion support
+resources/platform_connector_kubernetes: added force deletion support
+resources/platform_connector_oci_helm: added force deletion support
+resources/platform_connector_rancher: added force deletion support ([#743](https://github.com/harness/terraform-provider-harness/issues/743))
+
 # 0.28.3 (October 25,2023) 
 
 FEATURES:
