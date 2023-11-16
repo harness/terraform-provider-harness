@@ -14,7 +14,7 @@ import (
 
 func DataSourceGitopsAgent() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for fetching a Harness Gitops Agent.",
+		Description: "Datasource for fetching a Harness GitOps Agent.",
 
 		ReadContext: dataSourceGitopsAgentRead,
 
@@ -69,12 +69,12 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
-							Description: "The kubernetes namespace where the agent is installed.",
+							Description: "The kubernetes namespace where the agent should be installed.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"high_availability": {
-							Description: "Indicates if the agent is installed in HA mode.",
+							Description: "Indicates if the agent is deployed in HA mode.",
 							Type:        schema.TypeBool,
 							Computed:    true,
 						},

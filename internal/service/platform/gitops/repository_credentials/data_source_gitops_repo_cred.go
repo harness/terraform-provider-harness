@@ -14,33 +14,33 @@ import (
 
 func DataSourceGitOpsRepoCred() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for fetching a GitOps Repository Credential.",
+		Description: "Data source for fetching a GitOps Repository Credentials.",
 
 		ReadContext: dataSourceGitopsRepoCredRead,
 
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "Agent identifier of the Repository Credential.",
+				Description: "Agent identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the Repository Credential.",
+				Description: "Account identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"identifier": {
-				Description: "Identifier of the Repository Credential.",
+				Description: "Identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "Organization identifier of the Repository Credential.",
+				Description: "Organization identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the Repository Credential.",
+				Description: "Project identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

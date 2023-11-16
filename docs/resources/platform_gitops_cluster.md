@@ -189,10 +189,10 @@ Optional:
 
 Optional:
 
-- `ca_data` (String) CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile.
-- `cert_data` (String) Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS.
+- `ca_data` (String) CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded.
+- `cert_data` (String) Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded.
 - `insecure` (Boolean) Indicates if the TLS connection to the cluster should be insecure.
-- `key_data` (String) Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS.
+- `key_data` (String) Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded.
 - `server_name` (String) Server name for SNI in the client to check server certificates against. If ServerName is empty, the hostname used to contact the server is used.
 
 

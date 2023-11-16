@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing a Harness Gitops Agent.
+  Resource for managing a Harness GitOps Agent.
 ---
 
 # harness_platform_gitops_agent (Resource)
 
-Resource for managing a Harness Gitops Agent.
+Resource for managing a Harness GitOps Agent.
 
 ## Example Usage
 
@@ -57,9 +57,9 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 Optional:
 
-- `high_availability` (Boolean) Indicates if the agent is installed in HA mode.
+- `high_availability` (Boolean) Indicates if the agent is deployed in HA mode.
 - `is_namespaced` (Boolean) Indicates if the agent is namespaced.
-- `namespace` (String) The kubernetes namespace where the agent is installed.
+- `namespace` (String) The kubernetes namespace where the agent should be installed.
 
 ## Import
 

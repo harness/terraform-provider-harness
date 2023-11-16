@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for fetching a Harness Gitops Agent.
+  Datasource for fetching a Harness GitOps Agent.
 ---
 
 # harness_platform_gitops_agent (Data Source)
 
-Datasource for fetching a Harness Gitops Agent.
+Datasource for fetching a Harness GitOps Agent.
 
 ## Example Usage
 

@@ -84,12 +84,12 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Optional:    true,
 						},
 						"tls_client_cert_data": {
-							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
+							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_key": {
-							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
+							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},

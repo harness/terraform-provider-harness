@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repo_cred Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for fetching a GitOps Repository Credential.
+  Data source for fetching a GitOps Repository Credentials.
 ---
 
 # harness_platform_gitops_repo_cred (Data Source)
 
-Data source for fetching a GitOps Repository Credential.
+Data source for fetching a GitOps Repository Credentials.
 
 ## Example Usage
 
@@ -27,15 +27,15 @@ data "harness_platform_gitops_repo_cred" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the Repository Credential.
-- `agent_id` (String) Agent identifier of the Repository Credential.
-- `identifier` (String) Identifier of the Repository Credential.
+- `account_id` (String) Account identifier of the Repository Credentials.
+- `agent_id` (String) Agent identifier of the Repository Credentials.
+- `identifier` (String) Identifier of the Repository Credentials.
 
 ### Optional
 
 - `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
-- `org_id` (String) Organization identifier of the Repository Credential.
-- `project_id` (String) Project identifier of the Repository Credential.
+- `org_id` (String) Organization identifier of the Repository Credentials.
+- `project_id` (String) Project identifier of the Repository Credentials.
 
 ### Read-Only
 

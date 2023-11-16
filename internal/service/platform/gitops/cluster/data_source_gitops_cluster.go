@@ -124,17 +124,17 @@ func DataSourceGitopsCluster() *schema.Resource {
 																Optional:    true,
 															},
 															"cert_data": {
-																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS",
+																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"key_data": {
-																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS.",
+																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"ca_data": {
-																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile.",
+																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},

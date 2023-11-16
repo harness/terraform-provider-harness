@@ -29,6 +29,24 @@ resource "harness_platform_gitops_repository" "example" {
   upsert = true
 }
 
+// Create a ssh git repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "git@github.com:yourorg"
+    name            = "repo_name"
+    insecure        = false
+    connection_type = "SSH"
+    ssh_private_key = "----- BEGIN OPENSSH PRIVATE KEY-----\nXXXXX\nXXXXX\nXXXXX\n-----END OPENSSH PRIVATE KEY -----\n"
+  }
+  upsert = true
+}
+
+
 // Create a HELM repository at project level
 resource "harness_platform_gitops_repository" "example" {
   identifier = "identifier"
@@ -231,8 +249,8 @@ Optional:
 - `project` (String) The ArgoCD project name corresponding to this GitOps repository. An empty string means that the GitOps repository belongs to the default project created by Harness.
 - `proxy` (String) The HTTP/HTTPS proxy used to access the repo.
 - `ssh_private_key` (String) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
-- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS.
-- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS.
+- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
+- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
 - `type_` (String) Type specifies the type of the repo. Can be either "git" or "helm. "git" is assumed if empty or absent.
 - `username` (String) Username to be used for authenticating the remote repository.
 

@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repo_cred Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for managing a Harness Gitops Repository Credential.
+  Resource for managing a Harness Gitops Repository Credentials.
 ---
 
 # harness_platform_gitops_repo_cred (Resource)
 
-Resource for managing a Harness Gitops Repository Credential.
+Resource for managing a Harness Gitops Repository Credentials.
 
 ## Example Usage
 
@@ -21,8 +21,8 @@ resource "harness_platform_gitops_repo_cred" "test" {
   org_id     = "org_id"
   creds {
     type            = "git"
-    url             = "github.com"
-    ssh_private_key = "yoursshprivatekey"
+    url             = "git@github.com:yourorg"
+    ssh_private_key = "----- BEGIN OPENSSH PRIVATE KEY-----\nXXXXX\nXXXXX\nXXXXX\n-----END OPENSSH PRIVATE KEY -----\n"
   }
   lifecycle {
     ignore_changes = [
@@ -38,15 +38,15 @@ resource "harness_platform_gitops_repo_cred" "test" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the Repository Credential.
-- `agent_id` (String) Agent identifier of the Repository Credential.
-- `identifier` (String) Identifier of the Repository Credential.
+- `account_id` (String) Account identifier of the Repository Credentials.
+- `agent_id` (String) Agent identifier of the Repository Credentials.
+- `identifier` (String) Identifier of the Repository Credentials.
 
 ### Optional
 
 - `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
-- `org_id` (String) Organization identifier of the Repository Credential.
-- `project_id` (String) Project identifier of the Repository Credential.
+- `org_id` (String) Organization identifier of the Repository Credentials.
+- `project_id` (String) Project identifier of the Repository Credentials.
 - `upsert` (Boolean) Indicates if the GitOps repository credential should be updated if existing and inserted if not.
 
 ### Read-Only
