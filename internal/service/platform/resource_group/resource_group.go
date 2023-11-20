@@ -44,7 +44,7 @@ func ResourceResourceGroup() *schema.Resource {
 				},
 			},
 			"included_scopes": {
-				Description: "Included scopes",
+				Description: "Included scopes; default chosen based on resource group scope if not specified.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem: &schema.Resource{
