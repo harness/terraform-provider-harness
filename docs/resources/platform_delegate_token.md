@@ -21,7 +21,7 @@ resource "harness_platform_delegatetoken" "test" {
 }
 
 # Create token for org level apikey
-resource "harness_platform_token" "test" {
+resource "harness_platform_delegatetoken" "test" {
   identifier  = "test_token"
   name        = "test token"
   account_id  = "account_id"
@@ -29,7 +29,7 @@ resource "harness_platform_token" "test" {
 }
 
 # Create token for project level apikey
-resource "harness_platform_token" "test" {
+resource "harness_platform_delegatetoken" "test" {
   identifier  = "test_token"
   name        = "test token"
   account_id  = "account_id"
