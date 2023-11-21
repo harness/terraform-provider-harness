@@ -84,8 +84,7 @@ func TestAccResourceDelegateTokenProjectLevel(t *testing.T) {
 
 func tesAccResourceDelegateToken(name string, accountId string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_delegatetoken" "test" {
-			identifier = "%[1]s"
+		resource "harness_platform_delegatetoken" "test" {			
 			name = "%[1]s"
 			account_id = "%[2]s"
 		}
@@ -99,8 +98,7 @@ func tesAccResourceDelegateTokenOrgLevel(name string, accountId string, org_id s
 			name = "%[1]s"
 		}
 
-		resource "harness_platform_delegatetoken" "test" {
-			identifier = "%[1]s"
+		resource "harness_platform_delegatetoken" "test" {			
 			name = "%[1]s"
 			account_id = "%[2]s"
 			org_id = harness_platform_organization.test.id
@@ -122,8 +120,7 @@ func tesAccResourceDelegateTokenProjectLevel(name string, accountId string, org_
 			color = "#472848"
 		}
 
-		resource "harness_platform_delegatetoken" "test" {
-			identifier = "%[1]s"
+		resource "harness_platform_delegatetoken" "test" {			
 			name = "%[1]s"
 			account_id = "%[2]s"
 			org_id = harness_platform_organization.test.id
