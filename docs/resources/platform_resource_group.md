@@ -56,7 +56,7 @@ resource "harness_platform_resource_group" "test" {
 - `allowed_scope_levels` (Set of String) The scope levels at which this resource group can be used
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `included_scopes` (Block Set) Included scopes; default chosen based on resource group scope if not specified. (see [below for nested schema](#nestedblock--included_scopes))
+- `included_scopes` (Block Set) Included scopes. The default is selected based on the resource group scope if not specified. (Go to [nested schema](#nestedblock--included_scopes) below.)
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `resource_filter` (Block List) Contains resource filter for a resource group (see [below for nested schema](#nestedblock--resource_filter))
