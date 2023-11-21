@@ -23,11 +23,6 @@ func ResourceDelegateToken() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Description: "Identifier of the delegate token",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
 			"name": {
 				Description: "Name of the delegate token",
 				Type:        schema.TypeString,
@@ -94,7 +89,7 @@ func resourceDelegateTokenRead(ctx context.Context, d *schema.ResourceData, meta
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	if resp.Resource != nil {
+	if resp.Resource != nil && (len(resp.Resource) > 0) {
 		readDelegateToken(d, &resp.Resource[0])
 	}
 
@@ -116,10 +111,7 @@ func resourceDelegateTokenCreateOrUpdate(ctx context.Context, d *schema.Resource
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		resp, httpResp, err = c.DelegateTokenResourceApi.RevokeDelegateToken(ctx, c.AccountId, delegateToken.Name, &nextgen.DelegateTokenResourceApiRevokeDelegateTokenOpts{
-			OrgIdentifier:     helpers.BuildField(d, "org_id"),
-			ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		})
+		return diag.Errorf("Update operation is not allowed for Delegate Token resource.")
 	}
 
 	if err != nil {
@@ -183,7 +175,6 @@ func buildDelegateToken(d *schema.ResourceData) *nextgen.DelegateTokenDetails {
 
 func readDelegateToken(d *schema.ResourceData, delegateTokenDetails *nextgen.DelegateTokenDetails) {
 	d.SetId(delegateTokenDetails.Name)
-	d.Set("identifier", delegateTokenDetails.Name)
 	d.Set("name", delegateTokenDetails.Name)
 	d.Set("account_id", delegateTokenDetails.AccountId)
 	d.Set("token_status", delegateTokenDetails.Status)
