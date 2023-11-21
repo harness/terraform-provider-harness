@@ -115,7 +115,7 @@ func resourcePipelineFiltersCreateOrUpdate(ctx context.Context, d *schema.Resour
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
-	var resp nextgen.ResponseDtoFilter
+	var resp nextgen.ResponseDtoPipelineFilter
 	var httpResp *http.Response
 
 	id := d.Id()
@@ -153,9 +153,9 @@ func resourcePipelineFiltersDelete(ctx context.Context, d *schema.ResourceData, 
 	return nil
 }
 
-func buildPipelineFilter(d *schema.ResourceData) *nextgen.Filter {
-	filter := &nextgen.Filter{
-		FilterProperties: &nextgen.FilterProperties{},
+func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
+	filter := &nextgen.PipelineFilter{
+		FilterProperties: &nextgen.PipelineFilterProperties{},
 	}
 
 	if attr, ok := d.GetOk("org_id"); ok {
@@ -192,7 +192,7 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.Filter {
 	return filter
 }
 
-func readPipelineFilter(d *schema.ResourceData, filter *nextgen.Filter) {
+func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) {
 	d.SetId(filter.Identifier)
 	d.Set("identifier", filter.Identifier)
 	d.Set("org_id", filter.OrgIdentifier)

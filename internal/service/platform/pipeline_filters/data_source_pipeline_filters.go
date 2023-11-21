@@ -82,7 +82,7 @@ func DataSourcePipelineFilters() *schema.Resource {
 func dataSourcePipelineFiltersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	var filter *nextgen.Filter
+	var filter *nextgen.PipelineFilter
 	var err error
 	var httpResp *http.Response
 
@@ -90,7 +90,7 @@ func dataSourcePipelineFiltersRead(ctx context.Context, d *schema.ResourceData, 
 	type_ := d.Get("type").(string)
 
 	if id != "" {
-		var resp nextgen.ResponseDtoFilter
+		var resp nextgen.ResponseDtoPipelineFilter
 		resp, httpResp, err = c.FilterApi.PipelinegetFilter(ctx, c.AccountId, id, type_, &nextgen.FilterApiPipelinegetFilterOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),

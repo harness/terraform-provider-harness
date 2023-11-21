@@ -100,7 +100,7 @@ func TestAccResourcePipelineFiltersOrgLevel(t *testing.T) {
 	})
 }
 
-func testAccGetResourcePipelineFilters(resourceName string, state *terraform.State) (*nextgen.Filter, error) {
+func testAccGetResourcePipelineFilters(resourceName string, state *terraform.State) (*nextgen.PipelineFilter, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
