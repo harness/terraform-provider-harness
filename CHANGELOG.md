@@ -1,6 +1,6 @@
 
-<a name="0.3.61"></a>
-## 0.3.61 (2023-11-16)
+<a name="0.3.62"></a>
+## 0.3.62 (2023-11-16)
 
 ### API
 
@@ -8,12 +8,12 @@
 
 ### Added
 
-* Added AdditionalMetadata struct
-* Added Handling for encoding of space
+* added GitHubApp in credentials
 
 ### Added
 
-* added GitHubApp in credentials
+* Added AdditionalMetadata struct
+* Added Handling for encoding of space
 
 ### Adding
 
@@ -60,6 +60,8 @@
 
 ### Release
 
+* Release version 0.3.61 11-16-2023
+* Release v0.3.61
 * Release version 0.3.60 11-15-2023
 * Release v0.3.60
 * Release version 0.3.59 11-08-2023
@@ -181,12 +183,12 @@
 
 ### Updating
 
-* Updating the models with renamed field
-* Updating the model used for rule creation
+* updating the url for the endpoints
 
 ### Updating
 
-* updating the url for the endpoints
+* Updating the models with renamed field
+* Updating the model used for rule creation
 
 ### Working
 
@@ -199,6 +201,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#435](https://github.com/harness/harness-go-sdk/issues/435) from harness/CDS-83545
 * Merge pull request [#437](https://github.com/harness/harness-go-sdk/issues/437) from harness/additional-metadata-ref-secrets
 * Merge pull request [#432](https://github.com/harness/harness-go-sdk/issues/432) from harness/cds-82953-go-sdk-conn-force
 * Merge pull request [#426](https://github.com/harness/harness-go-sdk/issues/426) from harness/IAC-1130
@@ -252,5 +255,4 @@
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
-* Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
 
