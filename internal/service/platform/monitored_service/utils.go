@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
@@ -11,8 +12,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 	healthSource := hs["spec"].(string)
 
 	if healthSourceType == "AppDynamics" {
-		data := nextgen.AppDynamicsHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getAppDynamicsHealthSource(hs["spec"].(map[string]interface{}))
 
 		return nextgen.HealthSource{
 			Name:        hs["name"].(string),
@@ -59,8 +59,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "Prometheus" {
-		data := nextgen.PrometheusHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getPrometheusHealthSource(hs["spec"].(map[string]interface{}))
 
 		return nextgen.HealthSource{
 			Name:       hs["name"].(string),
@@ -341,4 +340,108 @@ func getServiceDependencyByType(sd map[string]interface{}) nextgen.ServiceDepend
 	return nextgen.ServiceDependencyDto{
 		MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
 	}
+}
+
+func getMetricThresholdByType(hs map[string]interface{}) nextgen.MetricThreshold {
+	metricThresholdType := hs["type"].(string)
+	spec := hs["spec"].(string)
+
+	if metricThresholdType == "FailImmediately" {
+		data := nextgen.FailMetricThresholdSpec{}
+		json.Unmarshal([]byte(spec), &data)
+
+		return nextgen.MetricThreshold{
+			GroupName:        hs["groupName"].(string),
+			MetricName:       hs["metricName"].(string),
+			MetricIdentifier: hs["metricIdentifier"].(string),
+			MetricType:       hs["metricType"].(string),
+			Type_:            nextgen.MetricThresholdType(metricThresholdType),
+			FailImmediately:  &data,
+		}
+	}
+	if metricThresholdType == "IgnoreThreshold" {
+		data := nextgen.IgnoreMetricThresholdSpec{}
+		json.Unmarshal([]byte(spec), &data)
+
+		return nextgen.MetricThreshold{
+			GroupName:        hs["groupName"].(string),
+			MetricName:       hs["metricName"].(string),
+			MetricIdentifier: hs["metricIdentifier"].(string),
+			MetricType:       hs["metricType"].(string),
+			Type_:            nextgen.MetricThresholdType(metricThresholdType),
+			IgnoreThreshold:  &data,
+		}
+	}
+	panic(fmt.Sprintf("Invalid metric threshold"))
+}
+
+func getAppDynamicsHealthSource(hs map[string]interface{}) nextgen.AppDynamicsHealthSource {
+	appDynamicHealthSource := &nextgen.AppDynamicsHealthSource{}
+
+	appDynamicHealthSource.ConnectorRef = hs["connectorRef"].(string)
+	appDynamicHealthSource.Feature = hs["feature"].(string)
+	appDynamicHealthSource.ApplicationName = hs["applicationName"].(string)
+	appDynamicHealthSource.TierName = hs["tierName"].(string)
+
+	metricDefinitions := hs["metricDefinitions"].(*schema.Set).List()
+	appDMetricDefinitions := make([]nextgen.AppDMetricDefinitions, len(metricDefinitions))
+	for i, metricDefinition := range metricDefinitions {
+		data := nextgen.AppDMetricDefinitions{}
+		md := metricDefinition.(string)
+		json.Unmarshal([]byte(md), &data)
+		appDMetricDefinitions[i] = data
+	}
+	appDynamicHealthSource.MetricDefinitions = appDMetricDefinitions
+
+	metricPacks := hs["metricPacks"].(*schema.Set).List()
+	metricPackDto := make([]nextgen.TimeSeriesMetricPackDto, len(metricPacks))
+	for i, metricPack := range metricPacks {
+		test := metricPack.(map[string]interface{})
+		metricThresholds := test["metricThresholds"].(*schema.Set).List()
+		metricThresholdDto := make([]nextgen.MetricThreshold, len(metricPacks))
+		for j, metricThreshold := range metricThresholds {
+			metricThresholdDto[j] = getMetricThresholdByType(metricThreshold.(map[string]interface{}))
+		}
+		timeSeriesMetricPackDto := &nextgen.TimeSeriesMetricPackDto{
+			Identifier:       test["identifier"].(string),
+			MetricThresholds: metricThresholdDto,
+		}
+		metricPackDto[i] = *timeSeriesMetricPackDto
+	}
+	appDynamicHealthSource.MetricPacks = metricPackDto
+	return *appDynamicHealthSource
+}
+
+func getPrometheusHealthSource(hs map[string]interface{}) nextgen.PrometheusHealthSource {
+	appDynamicHealthSource := &nextgen.PrometheusHealthSource{}
+
+	appDynamicHealthSource.ConnectorRef = hs["connectorRef"].(string)
+
+	metricDefinitions := hs["metricDefinitions"].(*schema.Set).List()
+	appDMetricDefinitions := make([]nextgen.PrometheusMetricDefinition, len(metricDefinitions))
+	for i, metricDefinition := range metricDefinitions {
+		data := nextgen.PrometheusMetricDefinition{}
+		md := metricDefinition.(string)
+		json.Unmarshal([]byte(md), &data)
+		appDMetricDefinitions[i] = data
+	}
+	appDynamicHealthSource.MetricDefinitions = appDMetricDefinitions
+
+	metricPacks := hs["metricPacks"].(*schema.Set).List()
+	metricPackDto := make([]nextgen.TimeSeriesMetricPackDto, len(metricPacks))
+	for i, metricPack := range metricPacks {
+		test := metricPack.(map[string]interface{})
+		metricThresholds := test["metricThresholds"].(*schema.Set).List()
+		metricThresholdDto := make([]nextgen.MetricThreshold, len(metricPacks))
+		for j, metricThreshold := range metricThresholds {
+			metricThresholdDto[j] = getMetricThresholdByType(metricThreshold.(map[string]interface{}))
+		}
+		timeSeriesMetricPackDto := &nextgen.TimeSeriesMetricPackDto{
+			Identifier:       test["identifier"].(string),
+			MetricThresholds: metricThresholdDto,
+		}
+		metricPackDto[i] = *timeSeriesMetricPackDto
+	}
+	appDynamicHealthSource.MetricPacks = metricPackDto
+	return *appDynamicHealthSource
 }
