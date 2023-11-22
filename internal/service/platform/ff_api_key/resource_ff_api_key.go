@@ -111,7 +111,7 @@ func resourceFFApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 	resp, httpResp, err := c.APIKeysApi.GetAPIKey(ctx, id, qp.ProjectId, qp.EnvironmentId, c.AccountId, qp.OrganizationId)
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFFApiKey(d, &resp, qp)
