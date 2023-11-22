@@ -9,6 +9,8 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type MetricThreshold struct {
 	GroupName        string                   `json:"groupName,omitempty"`
 	MetricName       string                   `json:"metricName,omitempty"`
@@ -16,7 +18,9 @@ type MetricThreshold struct {
 	MetricType       string                   `json:"metricType,omitempty"`
 	Criteria         *MetricThresholdCriteria `json:"criteria,omitempty"`
 
-	Type_           string                     `json:"type,omitempty"`
+	Type_           MetricThresholdType        `json:"type,omitempty"`
 	FailImmediately *FailMetricThresholdSpec   `json:"-"`
 	IgnoreThreshold *IgnoreMetricThresholdSpec `json:"-"`
+
+	Spec json.RawMessage `json:"spec"`
 }

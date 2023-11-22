@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-func (a *MetricThresholdSpec) UnmarshalJSON(data []byte) error {
+func (a *MetricThreshold) UnmarshalJSON(data []byte) error {
 
-	type Alias HealthSource
+	type Alias MetricThreshold
 
 	aux := &struct {
 		*Alias
@@ -22,9 +22,9 @@ func (a *MetricThresholdSpec) UnmarshalJSON(data []byte) error {
 
 	switch a.Type_ {
 	case MetricThresholdTypes.FailImmediately:
-		err = json.Unmarshal(aux.Spec, &a.AppDynamics)
+		err = json.Unmarshal(aux.Spec, &a.FailImmediately)
 	case MetricThresholdTypes.IgnoreThreshold:
-		err = json.Unmarshal(aux.Spec, &a.NewRelic)
+		err = json.Unmarshal(aux.Spec, &a.IgnoreThreshold)
 	default:
 		panic(fmt.Sprintf("unknown metric threshold type %s", a.Type_))
 	}
@@ -32,7 +32,7 @@ func (a *MetricThresholdSpec) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (a *MetricThresholdSpec) MarshalJSON() ([]byte, error) {
+func (a *MetricThreshold) MarshalJSON() ([]byte, error) {
 	type Alias MetricThreshold
 
 	var spec []byte

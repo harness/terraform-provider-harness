@@ -15,6 +15,6 @@ var MetricThresholdTypesSlice = []string{
 	MetricThresholdTypes.IgnoreThreshold.String(),
 }
 
-func (c HealthSourceType) String() string {
+func (c MetricThresholdType) String() string {
 	return string(c)
 }
