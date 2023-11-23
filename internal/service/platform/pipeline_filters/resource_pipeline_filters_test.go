@@ -121,6 +121,9 @@ func TestAccResourcePipelineFiltersTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.key", "tag1"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.value", "123"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.name", "pipeline_name"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.description", "pipeline_description"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_identifiers.0", "id1"),
 				),
 			},
 			{
@@ -132,6 +135,9 @@ func TestAccResourcePipelineFiltersTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.key", "tag1"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.value", "123"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.name", "pipeline_name"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.description", "pipeline_description"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_identifiers.0", "id1"),
 				),
 			},
 			{
@@ -267,6 +273,9 @@ func testAccResourcePipelineFiltersWithTags(id string, name string) string {
 			type = "PipelineSetup"
 			filter_properties {
 				filter_type = "PipelineSetup"
+				name = "pipeline_name"
+				description = "pipeline_description"
+				pipeline_identifiers = ["id1", "id2"]
 				pipeline_tags = [
 					{
 						"key" = "tag1"

@@ -219,35 +219,53 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
 	}
 
 	if attr, ok := d.GetOk("filter_properties"); ok {
-		config := attr.([]interface{})[0].(map[string]interface{})
-		if attr, ok := config["filter_type"]; ok {
+		filterProperties := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := filterProperties["filter_type"]; ok {
 			filter.FilterProperties.FilterType = attr.(string)
 		}
 
-		if attr := config["tags"].(*schema.Set).List(); len(attr) > 0 {
+		if attr := filterProperties["tags"].(*schema.Set).List(); len(attr) > 0 {
 			filter.FilterProperties.Tags = helpers.ExpandTags(attr)
 		}
 
-		if attr, ok := config["pipeline_tags"]; ok {
-			pipelineTags := attr.([]interface{})
-			if pipelineTags != nil && len(pipelineTags) > 0 {
-				var hPipelineTags []nextgen.NgTag
-				for _, v := range pipelineTags {
-					if v != nil {
-						var vMap = v.(map[string]interface{})
-						key := vMap["key"].(string)
-						value := vMap["value"].(string)
-						if key != "" && value != "" {
-							hPipelineTag := nextgen.NgTag{
-								Key:   key,
-								Value: value,
-							}
-							hPipelineTags = append(hPipelineTags, hPipelineTag)
+		if attr := filterProperties["pipeline_tags"].([]interface{}); len(attr) > 0 {
+			var hPipelineTags []nextgen.NgTag
+			for _, v := range attr {
+				if v != nil {
+					var vMap = v.(map[string]interface{})
+					key := vMap["key"].(string)
+					value := vMap["value"].(string)
+					if key != "" && value != "" {
+						hPipelineTag := nextgen.NgTag{
+							Key:   key,
+							Value: value,
 						}
+						hPipelineTags = append(hPipelineTags, hPipelineTag)
 					}
 				}
-				filter.FilterProperties.PipelineTags = hPipelineTags
 			}
+			filter.FilterProperties.PipelineTags = hPipelineTags
+
+		}
+
+		if attr := filterProperties["pipeline_identifiers"].([]interface{}); len(attr) > 0 {
+			pipelineIdentifiers := helpers.ExpandField(attr)
+			filter.FilterProperties.PipelineIdentifiers = pipelineIdentifiers
+		}
+
+		if attr, ok := filterProperties["name"]; ok {
+			name := attr.(string)
+			filter.FilterProperties.Name = name
+		}
+
+		if attr, ok := filterProperties["description"]; ok {
+			description := attr.(string)
+			filter.FilterProperties.Description = description
+		}
+
+		if attr, ok := filterProperties["module_properties"]; ok {
+			moduleProperties := attr.(map[string]interface{})
+			filter.FilterProperties.ModuleProperties = moduleProperties
 		}
 	}
 
@@ -263,6 +281,9 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 	d.Set("type", filter.FilterProperties.FilterType)
 	d.Set("filter_visibility", filter.FilterVisibility)
 
+	filterProperties := make(map[string]interface{})
+	filterProperties["filter_type"] = filter.FilterProperties.FilterType
+	filterProperties["tags"] = helpers.FlattenTags(filter.FilterProperties.Tags)
 	var pipelineTags []interface{}
 	for _, tagV := range filter.FilterProperties.PipelineTags {
 		pipelineTag := make(map[string]interface{})
@@ -274,11 +295,20 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 			pipelineTags = append(pipelineTags, pipelineTag)
 		}
 	}
-
-	filterProperties := make(map[string]interface{})
-	filterProperties["filter_type"] = filter.FilterProperties.FilterType
-	filterProperties["tags"] = helpers.FlattenTags(filter.FilterProperties.Tags)
 	filterProperties["pipeline_tags"] = pipelineTags
+
+	if filter.FilterProperties.Name != "" {
+		filterProperties["name"] = filter.FilterProperties.Name
+	}
+	if filter.FilterProperties.Description != "" {
+		filterProperties["description"] = filter.FilterProperties.Description
+	}
+	if filter.FilterProperties.PipelineIdentifiers != nil && len(filter.FilterProperties.PipelineIdentifiers) > 0 {
+		filterProperties["pipeline_identifiers"] = filter.FilterProperties.PipelineIdentifiers
+	}
+	if filter.FilterProperties.ModuleProperties != nil && len(filter.FilterProperties.ModuleProperties) > 0 {
+		filterProperties["module_properties"] = filter.FilterProperties.ModuleProperties
+	}
 
 	d.Set("filter_properties", []interface{}{filterProperties})
 }
