@@ -119,6 +119,8 @@ func TestAccResourcePipelineFiltersTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "type", "PipelineSetup"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.key", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.value", "123"),
 				),
 			},
 			{
@@ -128,6 +130,8 @@ func TestAccResourcePipelineFiltersTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "type", "PipelineSetup"),
 					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.key", "tag1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.pipeline_tags.0.value", "123"),
 				),
 			},
 			{
