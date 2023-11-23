@@ -100,6 +100,46 @@ func TestAccResourcePipelineFiltersOrgLevel(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineFiltersTags(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_pipeline_filters.pipelinetags"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPipelineFiltersDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineFiltersWithTags(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
+				),
+			},
+			{
+				Config: testAccResourcePipelineFiltersWithTags(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "type", "PipelineSetup"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "PipelineSetup"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectFilterImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func testAccGetResourcePipelineFilters(resourceName string, state *terraform.State) (*nextgen.PipelineFilter, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -197,6 +237,43 @@ func testAccResourcePipelineFiltersOrgLevel(id string, name string) string {
 				filter_type = "PipelineExecution"
 			}
 			filter_visibility = "OnlyCreator"
+		}
+`, id, name)
+}
+
+func testAccResourcePipelineFiltersWithTags(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_pipeline_filters" "pipelinetags" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			type = "PipelineSetup"
+			filter_properties {
+				filter_type = "PipelineSetup"
+				pipeline_tags = [
+					{
+						"key" = "tag1"
+                		"value" = "123"
+					},
+					{
+						"key" = "tag2"
+                		"value" = "456"
+					},
+				]
+			}
 		}
 `, id, name)
 }

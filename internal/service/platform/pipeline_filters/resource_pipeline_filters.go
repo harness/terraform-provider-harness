@@ -3,6 +3,7 @@ package pipeline_filters
 import (
 	"context"
 	"net/http"
+	"regexp"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -70,6 +71,44 @@ func ResourcePipelineFilters() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
+						"pipeline_tags": {
+							Description: "Tags to associate with the pipeline. tags should be in the form of `{key:key1, value:key1value}`",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type:             schema.TypeMap,
+								ValidateDiagFunc: validation.MapKeyMatch(regexp.MustCompile("^key$|^value$"), "Please provide valid pipeline tags. valid values: key and value."),
+								Elem: &schema.Schema{
+									Type: schema.TypeString,
+								},
+							},
+						},
+						"pipeline_identifiers": {
+							Description: "Pipeline identifiers to filter on.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"name": {
+							Description: "Name of the pipeline filter.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"description": {
+							Description: "description of the pipline filter.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"module_properties": {
+							Description: "module properties of the pipline filter.",
+							Type:        schema.TypeMap,
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeMap,
+							},
+						},
 					},
 				},
 			},
@@ -77,6 +116,7 @@ func ResourcePipelineFilters() *schema.Resource {
 				Description:  "This indicates visibility of filters. By default, everyone can view this filter.",
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
 				ValidateFunc: validation.StringInSlice([]string{"EveryOne", "OnlyCreator"}, false),
 			},
 		},
@@ -187,6 +227,28 @@ func buildPipelineFilter(d *schema.ResourceData) *nextgen.PipelineFilter {
 		if attr := config["tags"].(*schema.Set).List(); len(attr) > 0 {
 			filter.FilterProperties.Tags = helpers.ExpandTags(attr)
 		}
+
+		if attr, ok := config["pipeline_tags"]; ok {
+			pipelineTags := attr.([]interface{})
+			if pipelineTags != nil && len(pipelineTags) > 0 {
+				var hPipelineTags []nextgen.NgTag
+				for _, v := range pipelineTags {
+					if v != nil {
+						var vMap = v.(map[string]interface{})
+						key := vMap["key"].(string)
+						value := vMap["value"].(string)
+						if key != "" && value != "" {
+							hPipelineTag := nextgen.NgTag{
+								Key:   key,
+								Value: value,
+							}
+							hPipelineTags = append(hPipelineTags, hPipelineTag)
+						}
+					}
+				}
+				filter.FilterProperties.PipelineTags = hPipelineTags
+			}
+		}
 	}
 
 	return filter
@@ -200,10 +262,23 @@ func readPipelineFilter(d *schema.ResourceData, filter *nextgen.PipelineFilter) 
 	d.Set("name", filter.Name)
 	d.Set("type", filter.FilterProperties.FilterType)
 	d.Set("filter_visibility", filter.FilterVisibility)
-	d.Set("filter_properties", []interface{}{
-		map[string]interface{}{
-			"filter_type": filter.FilterProperties.FilterType,
-			"tags":        helpers.FlattenTags(filter.FilterProperties.Tags),
-		},
-	})
+
+	var pipelineTags []interface{}
+	for _, tagV := range filter.FilterProperties.PipelineTags {
+		pipelineTag := make(map[string]interface{})
+		key := tagV.Key
+		value := tagV.Value
+		if key != "" && value != "" {
+			pipelineTag["key"] = key
+			pipelineTag["value"] = value
+			pipelineTags = append(pipelineTags, pipelineTag)
+		}
+	}
+
+	filterProperties := make(map[string]interface{})
+	filterProperties["filter_type"] = filter.FilterProperties.FilterType
+	filterProperties["tags"] = helpers.FlattenTags(filter.FilterProperties.Tags)
+	filterProperties["pipeline_tags"] = pipelineTags
+
+	d.Set("filter_properties", []interface{}{filterProperties})
 }
