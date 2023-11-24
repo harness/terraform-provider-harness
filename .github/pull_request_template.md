@@ -6,3 +6,4 @@
   <summary>PR Check triggers</summary>
   
 - Build: `trigger build`
+- gitleaks: `trigger gitleaks`
