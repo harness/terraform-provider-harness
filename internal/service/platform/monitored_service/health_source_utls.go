@@ -28,7 +28,7 @@ func getAppDynamicsHealthSource(hs map[string]interface{}) nextgen.AppDynamicsHe
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -55,7 +55,7 @@ func getPrometheusHealthSource(hs map[string]interface{}) nextgen.PrometheusHeal
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -82,7 +82,7 @@ func getNewRelicHealthSource(hs map[string]interface{}) nextgen.NewRelicHealthSo
 	healthSource.NewRelicMetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -109,7 +109,7 @@ func getStackDriverHealthSource(hs map[string]interface{}) nextgen.StackdriverMe
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -136,7 +136,7 @@ func getDataDogHealthSource(hs map[string]interface{}) nextgen.DatadogMetricHeal
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -163,7 +163,7 @@ func getDynatraceHealthSource(hs map[string]interface{}) nextgen.DynatraceHealth
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -190,7 +190,7 @@ func getCustomHealthSource(hs map[string]interface{}) nextgen.CustomHealthSource
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -217,7 +217,7 @@ func getSplunkHealthSource(hs map[string]interface{}) nextgen.SplunkMetricHealth
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -244,7 +244,7 @@ func getCloudWatchHealthSource(hs map[string]interface{}) nextgen.CloudWatchMetr
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -271,7 +271,7 @@ func getAwsPrometheusHealthSource(hs map[string]interface{}) nextgen.AwsPromethe
 	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
-		healthSource.MetricPacks = getMetricPacks(hs)
+		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
 	}
 	return *healthSource
 }
@@ -291,28 +291,77 @@ func getNextGenHealthSource(hs map[string]interface{}) nextgen.NextGenHealthSour
 		panic(fmt.Sprintf("Invalid health source param dto %s", hs))
 	}
 
+	queryDefinitions := hs["queryDefinitions"].([]interface{})
+	queryDefinitionDtos := make([]nextgen.QueryDefinition, len(queryDefinitions))
+	for i, queryDefinition := range queryDefinitions {
+		data := queryDefinition.(map[string]interface{})
+
+		queryParams := nextgen.QueryParamsDto{}
+		queryParamsData, errMarshal := json.Marshal(hs["queryParamsDto"])
+		if errMarshal != nil {
+			panic(fmt.Sprintf("Invalid queryParam %s", hs))
+		}
+		errUnMarshal := json.Unmarshal(queryParamsData, &queryParams)
+		if errUnMarshal != nil {
+			panic(fmt.Sprintf("Invalid metric threshold %s", hs))
+		}
+
+		riskProfile := nextgen.RiskProfile{}
+		riskProfileData, errMarshal := json.Marshal(hs["riskProfile"])
+		if errMarshal != nil {
+			panic(fmt.Sprintf("Invalid Risk Profile %s", hs))
+		}
+		errUnMarshalRiskProfile := json.Unmarshal(riskProfileData, &riskProfile)
+		if errUnMarshalRiskProfile != nil {
+			panic(fmt.Sprintf("Invalid Risk Profile %s", hs))
+		}
+
+		query := ""
+		if hs["query"] != nil {
+			query = hs["query"].(string)
+		}
+
+		queryDefinitionDto := &nextgen.QueryDefinition{
+			Identifier:       data["identifier"].(string),
+			Name:             data["name"].(string),
+			GroupName:        data["groupName"].(string),
+			Query:            query,
+			MetricThresholds: getMetricThreshold(data),
+			QueryParams:      &queryParams,
+			RiskProfile:      &riskProfile,
+		}
+		queryDefinitionDtos[i] = *queryDefinitionDto
+	}
 	healthSource.HealthSourceParams = &healthSourceParamDto
 
 	return *healthSource
 }
 
-func getMetricPacks(hs map[string]interface{}) []nextgen.TimeSeriesMetricPackDto {
-	metricPacks := hs["metricPacks"].([]interface{})
+func getMetricPacks(hs map[string]interface{}, path string) []nextgen.TimeSeriesMetricPackDto {
+	metricPacks := hs[path].([]interface{})
 	metricPackDto := make([]nextgen.TimeSeriesMetricPackDto, len(metricPacks))
 	for i, metricPack := range metricPacks {
 		test := metricPack.(map[string]interface{})
-		metricThresholds := test["metricThresholds"].([]interface{})
-		metricThresholdDto := make([]nextgen.MetricThreshold, len(metricPacks))
-		for j, metricThreshold := range metricThresholds {
-			metricThresholdDto[j] = getMetricThresholdByType(metricThreshold.(map[string]interface{}))
-		}
 		timeSeriesMetricPackDto := &nextgen.TimeSeriesMetricPackDto{
 			Identifier:       test["identifier"].(string),
-			MetricThresholds: metricThresholdDto,
+			MetricThresholds: getMetricThreshold(test),
 		}
 		metricPackDto[i] = *timeSeriesMetricPackDto
 	}
 	return metricPackDto
+}
+
+func getMetricThreshold(hs map[string]interface{}) []nextgen.MetricThreshold {
+	if hs["metricThresholds"] != nil {
+		metricThresholds := hs["metricThresholds"].([]interface{})
+		metricThresholdDto := make([]nextgen.MetricThreshold, len(metricThresholds))
+		for j, metricThreshold := range metricThresholds {
+			metricThresholdDto[j] = getMetricThresholdByType(metricThreshold.(map[string]interface{}))
+		}
+		return metricThresholdDto
+	} else {
+		return make([]nextgen.MetricThreshold, 0)
+	}
 }
 
 func getMetricThresholdByType(hs map[string]interface{}) nextgen.MetricThreshold {
