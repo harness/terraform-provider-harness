@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"strconv" //this package is used to convert the data type
 )
 
 func getAppDynamicsHealthSource(hs map[string]interface{}) nextgen.AppDynamicsHealthSource {
@@ -297,38 +298,40 @@ func getNextGenHealthSource(hs map[string]interface{}) nextgen.NextGenHealthSour
 		data := queryDefinition.(map[string]interface{})
 
 		queryParams := nextgen.QueryParamsDto{}
-		queryParamsData, errMarshal := json.Marshal(hs["queryParamsDto"])
-		if errMarshal != nil {
-			panic(fmt.Sprintf("Invalid queryParam %s", hs))
-		}
-		errUnMarshal := json.Unmarshal(queryParamsData, &queryParams)
-		if errUnMarshal != nil {
-			panic(fmt.Sprintf("Invalid metric threshold %s", hs))
-		}
+		queryParamsData, _ := json.Marshal(hs["queryParamsDto"])
+		json.Unmarshal(queryParamsData, &queryParams)
 
 		riskProfile := nextgen.RiskProfile{}
-		riskProfileData, errMarshal := json.Marshal(hs["riskProfile"])
-		if errMarshal != nil {
-			panic(fmt.Sprintf("Invalid Risk Profile %s", hs))
-		}
-		errUnMarshalRiskProfile := json.Unmarshal(riskProfileData, &riskProfile)
-		if errUnMarshalRiskProfile != nil {
-			panic(fmt.Sprintf("Invalid Risk Profile %s", hs))
-		}
+		riskProfileData, _ := json.Marshal(hs["riskProfile"])
+		json.Unmarshal(riskProfileData, &riskProfile)
 
 		query := ""
 		if hs["query"] != nil {
 			query = hs["query"].(string)
 		}
-
+		liveMonitoringEnabled := false
+		if data["liveMonitoringEnabled"] != nil {
+			liveMonitoringEnabled, _ = strconv.ParseBool(data["liveMonitoringEnabled"].(string))
+		}
+		continuousVerificationEnabled := false
+		if data["continuousVerificationEnabled"] != nil {
+			continuousVerificationEnabled, _ = strconv.ParseBool(data["continuousVerificationEnabled"].(string))
+		}
+		sliEnabled := false
+		if data["sliEnabled"] != nil {
+			sliEnabled, _ = strconv.ParseBool(data["sliEnabled"].(string))
+		}
 		queryDefinitionDto := &nextgen.QueryDefinition{
-			Identifier:       data["identifier"].(string),
-			Name:             data["name"].(string),
-			GroupName:        data["groupName"].(string),
-			Query:            query,
-			MetricThresholds: getMetricThreshold(data),
-			QueryParams:      &queryParams,
-			RiskProfile:      &riskProfile,
+			Identifier:                    data["identifier"].(string),
+			Name:                          data["name"].(string),
+			GroupName:                     data["groupName"].(string),
+			LiveMonitoringEnabled:         liveMonitoringEnabled,
+			ContinuousVerificationEnabled: continuousVerificationEnabled,
+			SliEnabled:                    sliEnabled,
+			Query:                         query,
+			MetricThresholds:              getMetricThreshold(data),
+			QueryParams:                   &queryParams,
+			RiskProfile:                   &riskProfile,
 		}
 		queryDefinitionDtos[i] = *queryDefinitionDto
 	}
