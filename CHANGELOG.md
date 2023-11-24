@@ -1,6 +1,6 @@
 
-<a name="0.3.62"></a>
-## 0.3.62 (2023-11-16)
+<a name="0.3.63"></a>
+## 0.3.63 (2023-11-24)
 
 ### API
 
@@ -8,12 +8,12 @@
 
 ### Added
 
-* added GitHubApp in credentials
+* Added AdditionalMetadata struct
+* Added Handling for encoding of space
 
 ### Added
 
-* Added AdditionalMetadata struct
-* Added Handling for encoding of space
+* added GitHubApp in credentials
 
 ### Adding
 
@@ -41,6 +41,11 @@
 * fix : [CCM-14434] API key based authentication for fixed schedule
 * fix : API key based authentication for fixed schedule
 
+### Fixed
+
+* Fixed Masking of API Key In Debug Console
+* Fixed AddUserDto Struct
+
 ### IAM
 
 * IAM role changes in contract
@@ -60,6 +65,8 @@
 
 ### Release
 
+* Release version 0.3.62 11-22-2023
+* Release v0.3.62
 * Release version 0.3.61 11-16-2023
 * Release v0.3.61
 * Release version 0.3.60 11-15-2023
@@ -146,6 +153,7 @@
 * Release v0.3.14
 * Release version 0.3.21 03-20-2023
 * Release v0.3.21
+* Release version 0.3.20 03-13-2023
 
 ### Remove
 
@@ -166,10 +174,6 @@
 
 ### Update
 
-* update contract
-
-### Update
-
 * Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
@@ -181,14 +185,18 @@
 * Update ClustersClusterConfig.md
 * Update model_github_app_spec.go
 
-### Updating
+### Update
 
-* updating the url for the endpoints
+* update contract
 
 ### Updating
 
 * Updating the models with renamed field
 * Updating the model used for rule creation
+
+### Updating
+
+* updating the url for the endpoints
 
 ### Working
 
@@ -201,6 +209,7 @@
 
 ### Pull Requests
 
+* Merge pull request [#441](https://github.com/harness/harness-go-sdk/issues/441) from harness/SRM-16226
 * Merge pull request [#435](https://github.com/harness/harness-go-sdk/issues/435) from harness/CDS-83545
 * Merge pull request [#437](https://github.com/harness/harness-go-sdk/issues/437) from harness/additional-metadata-ref-secrets
 * Merge pull request [#432](https://github.com/harness/harness-go-sdk/issues/432) from harness/cds-82953-go-sdk-conn-force
@@ -255,4 +264,6 @@
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 * Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
+* Merge pull request [#298](https://github.com/harness/harness-go-sdk/issues/298) from harness/maskApi
+* Merge pull request [#297](https://github.com/harness/harness-go-sdk/issues/297) from harness/updateStruct
 
