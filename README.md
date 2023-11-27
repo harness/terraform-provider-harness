@@ -44,3 +44,5 @@ cp terraform-provider-harness ~/.terraform.d/plugins/$source/$version/$platform/
 ```
 
 5. Run the Bash Script `./local.sh`
+
+*Note: Please make sure the terraform provider version matches the version in the script*
