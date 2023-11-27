@@ -12,7 +12,7 @@ import (
 
 func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for fetching a Harness Gitops Agents.",
+		Description: "Datasource for fetching a Harness Gitops Agent deployment manifest YAML.",
 
 		ReadContext: dataSourceGitopsAgentDeployYamlRead,
 
@@ -38,12 +38,12 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 				Required:    true,
 			},
 			"namespace": {
-				Description: "The k8s namespace that the GitOps agent resides in.",
+				Description: "The kubernetes namespace where the agent is installed.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"yaml": {
-				Description: "Deployment YAML of the GitOps agent.",
+				Description: "The deployment manifest YAML of the GitOps agent.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

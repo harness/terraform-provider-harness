@@ -14,7 +14,7 @@ import (
 
 func ResourceGitopsGnupg() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "GPG public key in the server's configuration.",
+		Description: "Resource for managing Harness GitOps GPG public key.",
 
 		CreateContext: resourceGitopsGnupgCreate,
 		ReadContext:   resourceGitopsGnupgRead,
@@ -91,7 +91,7 @@ func ResourceGitopsGnupg() *schema.Resource {
 										Computed:    true,
 									},
 									"key_data": {
-										Description: "KeyData holds the raw key data, in base64 encoded format",
+										Description: "KeyData holds the raw key data, in base64 encoded format.",
 										Type:        schema.TypeString,
 										Required:    true,
 									},
