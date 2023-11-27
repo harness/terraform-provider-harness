@@ -86,7 +86,6 @@ func (a *CloudCostAutoStoppingRulesApiService) AllAutoStoppingResources(ctx cont
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -105,12 +104,10 @@ func (a *CloudCostAutoStoppingRulesApiService) AllAutoStoppingResources(ctx cont
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -118,16 +115,11 @@ func (a *CloudCostAutoStoppingRulesApiService) AllAutoStoppingResources(ctx cont
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v AllResourcesOfAccountResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -189,7 +181,6 @@ func (a *CloudCostAutoStoppingRulesApiService) AutoStoppingRuleDetails(ctx conte
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -208,12 +199,10 @@ func (a *CloudCostAutoStoppingRulesApiService) AutoStoppingRuleDetails(ctx conte
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -221,16 +210,11 @@ func (a *CloudCostAutoStoppingRulesApiService) AutoStoppingRuleDetails(ctx conte
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v InlineResponse200
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -290,7 +274,6 @@ func (a *CloudCostAutoStoppingRulesApiService) CumulativeAutoStoppingSavings(ctx
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -309,12 +292,10 @@ func (a *CloudCostAutoStoppingRulesApiService) CumulativeAutoStoppingSavings(ctx
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -322,16 +303,11 @@ func (a *CloudCostAutoStoppingRulesApiService) CumulativeAutoStoppingSavings(ctx
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v CumulativeSavingsResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -341,18 +317,18 @@ func (a *CloudCostAutoStoppingRulesApiService) CumulativeAutoStoppingSavings(ctx
 /*
 CloudCostAutoStoppingRulesApiService Delete an AutoStopping Rule
 Deletes an AutoStopping Rule for the given identifier.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param ruleId ID of the AutoStopping Rule that you want to delete
- * @param accountId Account Identifier for the Entity
- * @param accountIdentifier Account Identifier for the Entity
-
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param ruleId ID of the AutoStopping Rule that you want to delete
+  - @param accountId Account Identifier for the Entity
+  - @param accountIdentifier Account Identifier for the Entity
 */
 func (a *CloudCostAutoStoppingRulesApiService) DeleteAutoStoppingRule(ctx context.Context, ruleId float64, accountId string, accountIdentifier string) (*http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue DeleteAutoStoppingRuleResponse
 	)
 
 	// create path and map variables
@@ -392,7 +368,6 @@ func (a *CloudCostAutoStoppingRulesApiService) DeleteAutoStoppingRule(ctx contex
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -416,6 +391,12 @@ func (a *CloudCostAutoStoppingRulesApiService) DeleteAutoStoppingRule(ctx contex
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHttpResponse, newErr
+		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarHttpResponse, newErr
 	}
 
@@ -700,12 +681,10 @@ func (a *CloudCostAutoStoppingRulesApiService) ListAutoStoppingRules(ctx context
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -713,16 +692,11 @@ func (a *CloudCostAutoStoppingRulesApiService) ListAutoStoppingRules(ctx context
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v ServicesResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1032,12 +1006,10 @@ func (a *CloudCostAutoStoppingRulesApiService) UpdateAutoStoppingRule(ctx contex
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1045,16 +1017,11 @@ func (a *CloudCostAutoStoppingRulesApiService) UpdateAutoStoppingRule(ctx contex
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v LwServiceResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

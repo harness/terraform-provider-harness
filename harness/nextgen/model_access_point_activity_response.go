@@ -11,4 +11,6 @@ package nextgen
 
 type AccessPointActivityResponse struct {
 	Response *ServiceUsageRecord `json:"response,omitempty"`
+	Errors   []string            `json:"errors,omitempty"`
+	Success  bool                `json:"success"`
 }

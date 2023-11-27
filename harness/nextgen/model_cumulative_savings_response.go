@@ -11,4 +11,6 @@ package nextgen
 
 type CumulativeSavingsResponse struct {
 	Response *CumulativeSavings `json:"response,omitempty"`
+	Errors   []string           `json:"errors,omitempty"`
+	Success  bool               `json:"success"`
 }

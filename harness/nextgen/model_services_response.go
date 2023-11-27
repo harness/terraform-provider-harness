@@ -11,4 +11,6 @@ package nextgen
 
 type ServicesResponse struct {
 	Response []Service `json:"response,omitempty"`
+	Errors   []string  `json:"errors,omitempty"`
+	Success  bool      `json:"success"`
 }

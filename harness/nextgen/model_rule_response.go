@@ -11,4 +11,6 @@ package nextgen
 
 type RuleResponse struct {
 	Response *ServiceV2 `json:"response,omitempty"`
+	Errors   []string   `json:"errors,omitempty"`
+	Success  bool       `json:"success"`
 }

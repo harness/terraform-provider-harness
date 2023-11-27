@@ -10,5 +10,7 @@
 package nextgen
 
 type FixedScheduleDeleteResponse struct {
-	Response string `json:"response,omitempty"`
+	Response string   `json:"response,omitempty"`
+	Errors   []string `json:"errors,omitempty"`
+	Success  bool     `json:"success"`
 }

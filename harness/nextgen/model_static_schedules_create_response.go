@@ -12,4 +12,6 @@ package nextgen
 
 type FixedScheduleCreateResponse struct {
 	Response *FixedSchedule `json:"response,omitempty"`
+	Errors   []string       `json:"errors,omitempty"`
+	Success  bool           `json:"success"`
 }

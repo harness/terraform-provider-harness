@@ -83,7 +83,6 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) AccessPointRules(ctx cont
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -102,12 +101,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) AccessPointRules(ctx cont
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -115,16 +112,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) AccessPointRules(ctx cont
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v ServicesResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -188,7 +180,6 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) CreateLoadBalancer(ctx co
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -207,12 +198,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) CreateLoadBalancer(ctx co
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -220,16 +209,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) CreateLoadBalancer(ctx co
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v CreateAccessPointResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -246,10 +230,11 @@ Deletes load balancers and the associated resources for the given identifier.
 */
 func (a *CloudCostAutoStoppingLoadBalancersApiService) DeleteLoadBalancer(ctx context.Context, body DeleteAccessPointPayload, accountIdentifier string, accountId string) (*http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue DeleteAccessPointResponse
 	)
 
 	// create path and map variables
@@ -290,7 +275,6 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DeleteLoadBalancer(ctx co
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -314,6 +298,12 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DeleteLoadBalancer(ctx co
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err != nil {
+			newErr.error = err.Error()
+			return localVarHttpResponse, newErr
+		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarHttpResponse, newErr
 	}
 
@@ -395,12 +385,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DescribeLoadBalancer(ctx 
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -408,16 +396,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) DescribeLoadBalancer(ctx 
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v GetAccessPointResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -481,7 +464,6 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) EditLoadBalancer(ctx cont
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -500,12 +482,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) EditLoadBalancer(ctx cont
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -513,16 +493,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) EditLoadBalancer(ctx cont
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v CreateAccessPointResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -599,7 +574,6 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) ListLoadBalancers(ctx con
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -618,12 +592,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) ListLoadBalancers(ctx con
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -631,16 +603,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) ListLoadBalancers(ctx con
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v ListAccessPointResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -703,7 +670,6 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) LoadBalancerActivity(ctx 
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -722,12 +688,10 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) LoadBalancerActivity(ctx 
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -735,16 +699,11 @@ func (a *CloudCostAutoStoppingLoadBalancersApiService) LoadBalancerActivity(ctx 
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v AccessPointActivityResponse
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
+		if err != nil {
+			newErr.error = err.Error()
 			return localVarReturnValue, localVarHttpResponse, newErr
 		}
+		newErr.error = strings.Join(localVarReturnValue.Errors, ", ")
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 

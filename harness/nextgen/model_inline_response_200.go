@@ -11,4 +11,6 @@ package nextgen
 
 type InlineResponse200 struct {
 	Response *SaveServiceRequest `json:"response,omitempty"`
+	Errors   []string            `json:"errors,omitempty"`
+	Success  bool                `json:"success"`
 }

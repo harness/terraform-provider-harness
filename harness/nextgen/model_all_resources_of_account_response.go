@@ -11,4 +11,6 @@ package nextgen
 
 type AllResourcesOfAccountResponse struct {
 	Response []Resource `json:"response,omitempty"`
+	Errors   []string   `json:"errors,omitempty"`
+	Success  bool       `json:"success"`
 }

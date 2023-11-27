@@ -9,8 +9,6 @@
  */
 package nextgen
 
-type LwServiceResponse struct {
-	Response *Service `json:"response,omitempty"`
-	Errors   []string `json:"errors,omitempty"`
-	Success  bool     `json:"success"`
+type DeleteAutoStoppingRuleResponse struct {
+	Errors []string `json:"errors,omitempty"`
 }
