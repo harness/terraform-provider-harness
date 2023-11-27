@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_current_account -  new data resource for account id
+```
