@@ -980,7 +980,7 @@ resource "harness_platform_monitored_service" "test" {
 			{
 			  identifier: "Custom",
 			  metricThresholds: [
-				{
+			  {
 				  type: "IgnoreThreshold",
 				  spec: {
 					action: "Ignore"
@@ -993,7 +993,24 @@ resource "harness_platform_monitored_service" "test" {
 				  },
 				  metricType: "Custom",
 				  metricName: "metric"
-				}
+              },
+			  {
+				"type": "FailImmediately",
+				"spec": {
+				  "action": "FailAfterOccurrence",
+				  "spec": {
+					"count": 2
+				  }
+				},
+				"criteria": {
+				  "type": "Absolute",
+				  "spec": {
+					"greaterThan": 100
+				  }
+				},
+				"metricType": "Custom",
+				"metricName": "metric"
+			  }
 			  ]
 			}
 		]
