@@ -18,8 +18,8 @@ type PipelineFilterProperties struct {
 	// This is the Pipeline Name on which the filter will be applied.
 	Name string `json:"name,omitempty"`
 	// This is the Pipeline Description on which the filter will be applied.
-	Description      string                    `json:"description,omitempty"`
-	ModuleProperties *PipelineFilterProperties `json:"moduleProperties,omitempty"`
+	Description      string                 `json:"description,omitempty"`
+	ModuleProperties map[string]interface{} `json:"moduleProperties,omitempty"`
 	// This is the Pipeline repo filter on which the filter will be applied.
 	RepoName string `json:"repoName,omitempty"`
 	// Filter tags as a key-value pair.

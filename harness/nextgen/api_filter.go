@@ -1419,13 +1419,13 @@ type FilterApiPipelinegetFilterOpts struct {
 	ProjectIdentifier optional.String
 }
 
-func (a *FilterApiService) PipelinegetFilter(ctx context.Context, accountIdentifier string, identifier string, type_ string, localVarOptionals *FilterApiPipelinegetFilterOpts) (ResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) PipelinegetFilter(ctx context.Context, accountIdentifier string, identifier string, type_ string, localVarOptionals *FilterApiPipelinegetFilterOpts) (ResponseDtoPipelineFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoFilter
+		localVarReturnValue ResponseDtoPipelineFilter
 	)
 
 	// create path and map variables
@@ -1548,13 +1548,13 @@ Creates a Filter.
 
 @return ResponseDtoFilter
 */
-func (a *FilterApiService) PipelinepostFilter(ctx context.Context, body Filter, accountIdentifier string) (ResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) PipelinepostFilter(ctx context.Context, body PipelineFilter, accountIdentifier string) (ResponseDtoPipelineFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoFilter
+		localVarReturnValue ResponseDtoPipelineFilter
 	)
 
 	// create path and map variables
@@ -1671,13 +1671,13 @@ Updates the filter for the given ID.
 
 @return ResponseDtoFilter
 */
-func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body Filter, accountIdentifier string) (ResponseDtoFilter, *http.Response, error) {
+func (a *FilterApiService) PipelineupdateFilter(ctx context.Context, body PipelineFilter, accountIdentifier string) (ResponseDtoPipelineFilter, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Put")
 		localVarPostBody    interface{}
 		localVarFileName    string
 		localVarFileBytes   []byte
-		localVarReturnValue ResponseDtoFilter
+		localVarReturnValue ResponseDtoPipelineFilter
 	)
 
 	// create path and map variables
