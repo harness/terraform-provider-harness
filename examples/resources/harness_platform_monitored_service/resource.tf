@@ -104,6 +104,39 @@ resource "harness_platform_monitored_service" "example1" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
+            metricThresholds: [
+              {
+                type: "IgnoreThreshold",
+                spec: {
+                  action: "Ignore"
+                },
+                criteria: {
+                  type: "Absolute",
+                  spec: {
+                    greaterThan: 100
+                  }
+                },
+                metricType: "Custom",
+                metricName: "metric_cpu"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "metric_cpu"
+              }
+            ]
           },
           {
             name       = "name2"
@@ -225,6 +258,39 @@ resource "harness_platform_monitored_service" "example3" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "false"
             sliEnabled                    = "false"
+            metricThresholds: [
+              {
+                type: "IgnoreThreshold",
+                spec: {
+                  action: "Ignore"
+                },
+                criteria: {
+                  type: "Absolute",
+                  spec: {
+                    greaterThan: 100
+                  }
+                },
+                metricType: "Custom",
+                metricName: "identifier2"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "identifier2"
+              }
+            ]
           }
         ]
       })
@@ -324,6 +390,38 @@ resource "harness_platform_monitored_service" "example5" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
+            metricThresholds: [
+              {
+                type: "IgnoreThreshold",
+                spec: {
+                  action: "Ignore"
+                },
+                criteria: {
+                  type: "Absolute",
+                  spec: {
+                    greaterThan: 100
+                  }
+                },
+                metricType: "Custom",
+                metricName: "metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "metric"
+              }]
           },
           {
             name       = "name2"
@@ -439,6 +537,44 @@ resource "harness_platform_monitored_service" "example7" {
             isManualQuery = true
           }
         ]
+        metricPacks: [
+          {
+            identifier: "Custom",
+            metricThresholds: [
+              {
+                type: "IgnoreThreshold",
+                spec: {
+                  action: "Ignore"
+                },
+                criteria: {
+                  type: "Absolute",
+                  spec: {
+                    greaterThan: 100
+                  }
+                },
+                metricType: "Custom",
+                metricName: "Prometheus Metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "Prometheus Metric"
+              }
+            ]
+          }
+        ]
       })
     }
     template_ref  = "template_ref"
@@ -520,6 +656,44 @@ resource "harness_platform_monitored_service" "example8" {
             sli : {
               enabled = true
             }
+          }
+        ]
+        metricPacks: [
+          {
+            identifier: "Custom",
+            metricThresholds: [
+              {
+                type: "IgnoreThreshold",
+                spec: {
+                  action: "Ignore"
+                },
+                criteria: {
+                  type: "Absolute",
+                  spec: {
+                    greaterThan: 100
+                  }
+                },
+                metricType: "Custom",
+                metricName: "metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "metric"
+              }
+            ]
           }
         ]
       })
