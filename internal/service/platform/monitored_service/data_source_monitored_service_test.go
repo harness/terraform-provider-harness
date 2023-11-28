@@ -496,6 +496,23 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
 						},
 						metricType: "Custom",
 						metricName: "identifier2"
+					  },
+					  {
+						"type": "FailImmediately",
+						"spec": {
+						  "action": "FailAfterOccurrence",
+						  "spec": {
+							"count": 2
+						  }
+						},
+						"criteria": {
+						  "type": "Absolute",
+						  "spec": {
+							"greaterThan": 100
+						  }
+						},
+						"metricType": "Custom",
+						"metricName": "identifier2"
 					  }]
 					}
 				]})
@@ -677,6 +694,23 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
 						},
 						metricType: "Custom",
 						metricName: "metric"
+					  },
+					  {
+						"type": "FailImmediately",
+						"spec": {
+						  "action": "FailAfterOccurrence",
+						  "spec": {
+							"count": 2
+						  }
+						},
+						"criteria": {
+						  "type": "Absolute",
+						  "spec": {
+							"greaterThan": 100
+						  }
+						},
+						"metricType": "Custom",
+						"metricName": "metric"
 					  }
 					]
 					},
@@ -873,6 +907,23 @@ resource "harness_platform_monitored_service" "test" {
 				  },
 				  metricType: "Custom",
 				  metricName: "Prometheus Metric"
+				},
+				{
+				  "type": "FailImmediately",
+				  "spec": {
+					"action": "FailAfterOccurrence",
+					"spec": {
+					  "count": 2
+					}
+				  },
+				  "criteria": {
+					"type": "Absolute",
+					"spec": {
+					  "greaterThan": 100
+					}
+				  },
+				  "metricType": "Custom",
+				  "metricName": "Prometheus Metric"
 				}
 			  ]
 			}

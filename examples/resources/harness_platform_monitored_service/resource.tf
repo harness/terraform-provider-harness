@@ -255,6 +255,23 @@ resource "harness_platform_monitored_service" "example3" {
                 },
                 metricType: "Custom",
                 metricName: "identifier2"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "identifier2"
               }
             ]
           }
@@ -370,6 +387,23 @@ resource "harness_platform_monitored_service" "example5" {
                 },
                 metricType: "Custom",
                 metricName: "metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "metric"
               }]
           },
           {
@@ -503,6 +537,23 @@ resource "harness_platform_monitored_service" "example7" {
                 },
                 metricType: "Custom",
                 metricName: "Prometheus Metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "Prometheus Metric"
               }
             ]
           }
