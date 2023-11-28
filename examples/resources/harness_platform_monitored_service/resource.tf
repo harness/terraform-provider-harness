@@ -118,6 +118,23 @@ resource "harness_platform_monitored_service" "example1" {
                 },
                 metricType: "Custom",
                 metricName: "metric_cpu"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "metric_cpu"
               }
             ]
           },
@@ -658,6 +675,23 @@ resource "harness_platform_monitored_service" "example8" {
                 },
                 metricType: "Custom",
                 metricName: "metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "metric"
               }
             ]
           }
