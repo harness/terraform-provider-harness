@@ -482,6 +482,21 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
+			    	metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "identifier2"
+					  }]
 					}
 				]})
 			}
@@ -561,6 +576,22 @@ func testAccGrafanaLokiLogsDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "false"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
+				    metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "identifier2"
+					  }
+					]
 					}
 				]})
 			}
@@ -632,6 +663,22 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
+				    metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "metric"
+					  }
+					]
 					},
 					{
 					name  = "name2"
