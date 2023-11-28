@@ -1,3 +1,10 @@
+# 0.29.1 (November 28,2023) 
+
+BUG FIXES:
+
+* Monitored service didn't use to honour metric threshold correctly earlier with this fix customer can add metric threshold to all the health sources ([#777](https://github.com/harness/terraform-provider-harness/issues/777))
+* harness_platform_ff_api_key -  Fix error type ([#763](https://github.com/harness/terraform-provider-harness/issues/763))
+
 # 0.29.0 (November 16,2023) 
 
 FEATURES:
