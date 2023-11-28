@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_gnupg Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  GPG public key in the server's configuration.
+  Resource for managing Harness GitOps GPG public key.
 ---
 
 # harness_platform_gitops_gnupg (Resource)
 
-GPG public key in the server's configuration.
+Resource for managing Harness GitOps GPG public key.
 
 ## Example Usage
 
@@ -66,7 +66,7 @@ Optional:
 
 Required:
 
-- `key_data` (String) KeyData holds the raw key data, in base64 encoded format
+- `key_data` (String) KeyData holds the raw key data, in base64 encoded format.
 
 Read-Only:
 

@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent_deploy_yaml Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for fetching a Harness Gitops Agents.
+  Datasource for fetching a Harness Gitops Agent deployment manifest YAML.
 ---
 
 # harness_platform_gitops_agent_deploy_yaml (Data Source)
 
-Datasource for fetching a Harness Gitops Agents.
+Datasource for fetching a Harness Gitops Agent deployment manifest YAML.
 
 ## Example Usage
 
@@ -29,7 +29,7 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 - `account_id` (String) Account identifier of the GitOps agent.
 - `identifier` (String) Identifier of the GitOps agent.
-- `namespace` (String) The k8s namespace that the GitOps agent resides in.
+- `namespace` (String) The kubernetes namespace where the agent is installed.
 
 ### Optional
 
@@ -39,6 +39,4 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `yaml` (String) Deployment YAML of the GitOps agent.
-
-
+- `yaml` (String) The deployment manifest YAML of the GitOps agent.

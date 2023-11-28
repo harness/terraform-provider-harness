@@ -148,8 +148,10 @@ func buildTag(no_of_tags int, tags *schema.Set) string {
 	return result
 }
 
-
 func readSecretFile(d *schema.ResourceData, secret *nextgen.Secret) error {
+	if secret == nil {
+		return nil
+	}
 	d.Set("secret_manager_identifier", secret.File.SecretManagerIdentifier)
 	d.SetId(secret.Identifier)
 	d.Set("identifier", secret.Identifier)

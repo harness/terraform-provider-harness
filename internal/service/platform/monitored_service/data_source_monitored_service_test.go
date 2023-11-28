@@ -284,6 +284,22 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
+					metricThresholds: [
+					{
+					  type: "IgnoreThreshold",
+					  spec: {
+						action: "Ignore"
+					  },
+					  criteria: {
+						type: "Absolute",
+						spec: {
+						  greaterThan: 100
+						}
+					  },
+					  metricType: "Custom",
+					  metricName: "sumologicmetrics"
+					}
+					]
 					},
 					{
 					name  = "name2"
@@ -466,6 +482,38 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
+			    	metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "identifier2"
+					  },
+					  {
+						"type": "FailImmediately",
+						"spec": {
+						  "action": "FailAfterOccurrence",
+						  "spec": {
+							"count": 2
+						  }
+						},
+						"criteria": {
+						  "type": "Absolute",
+						  "spec": {
+							"greaterThan": 100
+						  }
+						},
+						"metricType": "Custom",
+						"metricName": "identifier2"
+					  }]
 					}
 				]})
 			}
@@ -545,6 +593,22 @@ func testAccGrafanaLokiLogsDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "false"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
+				    metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "identifier2"
+					  }
+					]
 					}
 				]})
 			}
@@ -616,6 +680,39 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
+				    metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "metric"
+					  },
+					  {
+						"type": "FailImmediately",
+						"spec": {
+						  "action": "FailAfterOccurrence",
+						  "spec": {
+							"count": 2
+						  }
+						},
+						"criteria": {
+						  "type": "Absolute",
+						  "spec": {
+							"greaterThan": 100
+						  }
+						},
+						"metricType": "Custom",
+						"metricName": "metric"
+					  }
+					]
 					},
 					{
 					name  = "name2"
@@ -793,6 +890,44 @@ resource "harness_platform_monitored_service" "test" {
             isManualQuery            = true
           }
         ]
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+				{
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "Prometheus Metric"
+				},
+				{
+				  "type": "FailImmediately",
+				  "spec": {
+					"action": "FailAfterOccurrence",
+					"spec": {
+					  "count": 2
+					}
+				  },
+				  "criteria": {
+					"type": "Absolute",
+					"spec": {
+					  "greaterThan": 100
+					}
+				  },
+				  "metricType": "Custom",
+				  "metricName": "Prometheus Metric"
+				}
+			  ]
+			}
+		]
       })
     }
     template_ref  = "template_ref"
@@ -841,6 +976,44 @@ resource "harness_platform_monitored_service" "test" {
       spec = jsonencode({
         connectorRef = "connectorRef"
         feature = "Datadog Cloud Metrics"
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+			  {
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "metric"
+              },
+			  {
+				"type": "FailImmediately",
+				"spec": {
+				  "action": "FailAfterOccurrence",
+				  "spec": {
+					"count": 2
+				  }
+				},
+				"criteria": {
+				  "type": "Absolute",
+				  "spec": {
+					"greaterThan": 100
+				  }
+				},
+				"metricType": "Custom",
+				"metricName": "metric"
+			  }
+			  ]
+			}
+		]
         metricDefinitions = [
           {
             metricName       = "metric"

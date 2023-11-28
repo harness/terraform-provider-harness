@@ -14,6 +14,24 @@ resource "harness_platform_gitops_repository" "example" {
   upsert = true
 }
 
+// Create a ssh git repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "git@github.com:yourorg"
+    name            = "repo_name"
+    insecure        = false
+    connection_type = "SSH"
+    ssh_private_key = "----- BEGIN OPENSSH PRIVATE KEY-----\nXXXXX\nXXXXX\nXXXXX\n-----END OPENSSH PRIVATE KEY -----\n"
+  }
+  upsert = true
+}
+
+
 // Create a HELM repository at project level
 resource "harness_platform_gitops_repository" "example" {
   identifier = "identifier"
