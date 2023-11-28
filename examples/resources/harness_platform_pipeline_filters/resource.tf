@@ -22,7 +22,7 @@ resource "harness_platform_pipeline_filters" "example_with_tags" {
   project_id = "project_id"
   type       = "PipelineSetup"
   filter_properties {
-    filter_type   = "PipelineSetup"
+    filter_type = "PipelineSetup"
     pipeline_tags = [
       {
         "key"   = "tag1"
