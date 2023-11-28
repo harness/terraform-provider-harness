@@ -174,6 +174,11 @@ func ResourceMonitoredService() *schema.Resource {
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
+									"type": {
+										Description: "Type of the service dependency.",
+										Type:        schema.TypeString,
+										Required:    true,
+									},
 								},
 							},
 						},

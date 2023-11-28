@@ -284,6 +284,22 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
+					metricThresholds: [
+					{
+					  type: "IgnoreThreshold",
+					  spec: {
+						action: "Ignore"
+					  },
+					  criteria: {
+						type: "Absolute",
+						spec: {
+						  greaterThan: 100
+						}
+					  },
+					  metricType: "Custom",
+					  metricName: "sumologicmetrics"
+					}
+					]
 					},
 					{
 					name  = "name2"
@@ -793,6 +809,27 @@ resource "harness_platform_monitored_service" "test" {
             isManualQuery            = true
           }
         ]
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+				{
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "Prometheus Metric"
+				}
+			  ]
+			}
+		]
       })
     }
     template_ref  = "template_ref"
@@ -841,6 +878,27 @@ resource "harness_platform_monitored_service" "test" {
       spec = jsonencode({
         connectorRef = "connectorRef"
         feature = "Datadog Cloud Metrics"
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+				{
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "metric"
+				}
+			  ]
+			}
+		]
         metricDefinitions = [
           {
             metricName       = "metric"
