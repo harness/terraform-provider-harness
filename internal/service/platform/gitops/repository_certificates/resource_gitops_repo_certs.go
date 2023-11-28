@@ -14,7 +14,7 @@ import (
 
 func ResourceGitopsRepoCerts() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Repositories Certificates.",
+		Description: "Resource for managing a Harness Gitops Repository Certificate. You can only create 1 instance per agent which has all the certificates of this resource.",
 
 		CreateContext: resourceGitopsRepoCertsCreateOrUpdate,
 		ReadContext:   resourceGitopsRepoCertsRead,
@@ -24,33 +24,33 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "agent identifier of the Repository Certificates.",
+				Description: "Agent identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "account identifier of the Repository Certificates.",
+				Description: "Account identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "organization identifier of the Repository Certificates.",
+				Description: "Organization identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project identifier of the Repository Certificates.",
+				Description: "Project identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"request": {
-				Description: "Repository Certificates create/Update request.",
+				Description: "Repository Certificate create/update request.",
 				Type:        schema.TypeList,
 				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
-							Description: "if the Repository Certificates should be upserted.",
+							Description: "Indicates if the GitOps repository certificate should be updated if existing and inserted if not.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
@@ -73,7 +73,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 													Optional:    true,
 												},
 												"resource_version": {
-													Description: "dentifies the server's internal version.",
+													Description: "Identifies the server's internal version.",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
@@ -112,12 +112,12 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 													Optional:    true,
 												},
 												"cert_data": {
-													Description: "CertData contains the actual certificate data, dependent on the certificate type.",
+													Description: "CertData contains the actual certificate data, dependent on the certificate type. The value should be base64 encoded",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
 												"cert_info": {
-													Description: "CertInfo will hold additional certificate info, depdendent on the certificate type .",
+													Description: "CertInfo will hold additional certificate info, dependent on the certificate type .",
 													Type:        schema.TypeString,
 													Optional:    true,
 												},
