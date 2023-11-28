@@ -1,3 +1,5 @@
+# 0.29.2 (November 28,2023) 
+
 # 0.29.1 (November 28,2023) 
 
 BUG FIXES:
