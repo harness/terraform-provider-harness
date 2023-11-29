@@ -2,7 +2,6 @@ package agent_yaml
 
 import (
 	"context"
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -47,6 +46,40 @@ func DataSourceGitopsAgentDeployYaml() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"ca_data": {
+				Description: "CA data of the GitOps agent, base64 encoded content of ca chain.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"proxy": {
+				Description: "Proxy settings for the GitOps agent.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"http": {
+							Description: "HTTP proxy settings for the GitOps agent.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"https": {
+							Description: "HTTPS proxy settings for the GitOps agent.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"username": {
+							Description: "Username for the proxy.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"password": {
+							Description: "Password for the proxy.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 	return resource
@@ -56,11 +89,46 @@ func dataSourceGitopsAgentDeployYamlRead(ctx context.Context, d *schema.Resource
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	agentIdentifier := d.Get("identifier").(string)
 
-	resp, httpResp, err := c.AgentApi.AgentServiceForServerGetDeployYaml(ctx, agentIdentifier, c.AccountId, &nextgen.AgentsApiAgentServiceForServerGetDeployYamlOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-		Namespace:         optional.NewString(d.Get("namespace").(string)),
-	})
+	resp, httpResp, err := c.AgentApi.AgentServiceForServerPostDeployYaml(ctx, func() nextgen.V1AgentYamlQuery {
+		var yamlQuery nextgen.V1AgentYamlQuery
+		if attr, ok := d.GetOk("account_id"); ok {
+			yamlQuery.AccountIdentifier = attr.(string)
+		}
+		if attr, ok := d.GetOk("project_id"); ok {
+			yamlQuery.ProjectIdentifier = attr.(string)
+		}
+		if attr, ok := d.GetOk("org_id"); ok {
+			yamlQuery.OrgIdentifier = attr.(string)
+		}
+		if attr, ok := d.GetOk("namespace"); ok {
+			yamlQuery.Namespace = attr.(string)
+		}
+		if attr, ok := d.GetOk("ca_data"); ok {
+			yamlQuery.CaData = attr.(string)
+		}
+
+		if attr, ok := d.GetOk("proxy"); ok {
+			proxy := attr.([]interface{})
+			if attr != nil && len(proxy) > 0 {
+				p := proxy[0].(map[string]interface{})
+				var v1Proxy nextgen.V1Proxy
+				if p["http"] != nil {
+					v1Proxy.Http = p["http"].(string)
+				}
+				if p["https"] != nil {
+					v1Proxy.Https = p["https"].(string)
+				}
+				if p["username"] != nil {
+					v1Proxy.Username = p["username"].(string)
+				}
+				if p["password"] != nil {
+					v1Proxy.Password = p["password"].(string)
+				}
+				yamlQuery.Proxy = &v1Proxy
+			}
+		}
+		return yamlQuery
+	}(), agentIdentifier)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
