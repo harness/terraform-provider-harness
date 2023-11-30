@@ -198,6 +198,11 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			  value       = "false"
 			}
 
+			tags {
+				name = "foo"
+				identifier = "bar"
+			}
+
 			environment {
 				identifier = harness_platform_environment.test.id
 				
