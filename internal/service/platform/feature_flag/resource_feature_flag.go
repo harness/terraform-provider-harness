@@ -98,6 +98,25 @@ func ResourceFeatureFlag() *schema.Resource {
 				Type:        schema.TypeBool,
 				Required:    true,
 			},
+			"tags": {
+				Description: "The tags for the flag",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Description: "The name of the tag",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"identifier": {
+							Description: "The identifier of the tag",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
 			"environment": {
 				Description: "Environment Identifier",
 				Type:        schema.TypeList,
@@ -226,6 +245,8 @@ const (
 	Weight                         = "weight"
 	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
 	AddRule                        = "addRule"
+	AddTag                         = "addTag"
+	RemoveTag                      = "removeTag"
 	RemoveRule                     = "removeRule"
 	RemoveTarget                   = "removeTargetsToVariationTargetMap"
 	GroupName                      = "group_name"
@@ -282,11 +303,13 @@ type Serve struct {
 
 // Parameter ...
 type Parameter struct {
-	Variation *string           `json:"variation,omitempty"`
-	Targets   []*string         `json:"targets,omitempty"`
-	Priority  *string           `json:"priority,omitempty"`
-	Clauses   []*nextgen.Clause `json:"clauses,omitempty"`
-	Serve     *Serve            `json:"serve,omitempty"`
+	Variation  *string           `json:"variation,omitempty"`
+	Targets    []*string         `json:"targets,omitempty"`
+	Priority   *string           `json:"priority,omitempty"`
+	Clauses    []*nextgen.Clause `json:"clauses,omitempty"`
+	Serve      *Serve            `json:"serve,omitempty"`
+	Name       *string           `json:"name,omitempty"`
+	Identifier *string           `json:"identifier,omitempty"`
 }
 
 // Instruction defines the instruction for the feature flag
@@ -638,6 +661,22 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 						instructions = append(instructions, instruction)
 					}
 				}
+			}
+		}
+	}
+
+	// add the tags to the instructions
+	if tagData, ok := d.GetOk("tags"); ok {
+		for _, tag := range tagData.([]interface{}) {
+			if tagMap, ok := tag.(map[string]interface{}); ok {
+				instruction := &Instruction{
+					Kind: aws.String(AddTag),
+					Parameters: &Parameter{
+						Name:       aws.String(tagMap["name"].(string)),
+						Identifier: aws.String(tagMap["identifier"].(string)),
+					},
+				}
+				instructions = append(instructions, instruction)
 			}
 		}
 	}

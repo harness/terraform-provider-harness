@@ -13,7 +13,7 @@ import (
 
 func DatasourceGitopsAppProjectMapping() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for managing Harness GitOps Application Project Mappings.",
+		Description: "Resource for managing the Harness GitOps Application Project Mappings.",
 
 		ReadContext: datasourceGitopsAppProjectMappingRead,
 		Importer:    helpers.ProjectResourceImporter,
@@ -45,7 +45,7 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 				Required:    true,
 			},
 			"argo_project_name": {
-				Description: "ArgoCD Project Identifier which is to be mapped to the Harness project.",
+				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},

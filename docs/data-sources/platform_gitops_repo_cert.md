@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repo_cert Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a GitOps RepoCert.
+  Data source for retrieving a GitOps Repository Certificate. It fetches all the certificates that are added to the provided agent.
 ---
 
 # harness_platform_gitops_repo_cert (Data Source)
 
-Data source for retrieving a GitOps RepoCert.
+Data source for retrieving a GitOps Repository Certificate. It fetches all the certificates that are added to the provided agent.
 
 ## Example Usage
 
@@ -27,16 +27,14 @@ data "harness_platform_gitops_repo_cert" "test" {
 
 ### Required
 
-- `account_id` (String) account identifier of the Repository Certificates.
+- `account_id` (String) Account identifier of the GitOps repository certificate.
 
 ### Optional
 
-- `agent_id` (String) agent identifier of the Repository Certificates.
-- `org_id` (String) organization identifier of the Repository Certificates.
-- `project_id` (String) project identifier of the Repository Certificates.
+- `agent_id` (String) Agent identifier of the GitOps repository certificate.
+- `org_id` (String) Organization identifier of the GitOps repository certificate.
+- `project_id` (String) Project identifier of the GitOps repository certificate.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-

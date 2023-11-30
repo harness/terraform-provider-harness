@@ -14,28 +14,28 @@ import (
 
 func DataSourceGitOpsRepoCert() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a GitOps RepoCert.",
+		Description: "Data source for retrieving a GitOps Repository Certificate. It fetches all the certificates that are added to the provided agent.",
 
 		ReadContext: dataSourceGitopsRepoCertRead,
 
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "agent identifier of the Repository Certificates.",
+				Description: "Agent identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"account_id": {
-				Description: "account identifier of the Repository Certificates.",
+				Description: "Account identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "organization identifier of the Repository Certificates.",
+				Description: "Organization identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project identifier of the Repository Certificates.",
+				Description: "Project identifier of the GitOps repository certificate.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},

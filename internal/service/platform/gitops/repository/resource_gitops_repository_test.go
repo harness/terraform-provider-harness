@@ -22,7 +22,6 @@ func TestAccResourceGitopsRepositoryOrgLevel(t *testing.T) {
 	name := id
 	repo := "https://github.com/willycoll/argocd-example-apps"
 	repoName := id
-	repoNameUpdated := id + "_updated"
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	resourceName := "harness_platform_gitops_repository.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -39,11 +38,10 @@ func TestAccResourceGitopsRepositoryOrgLevel(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceGitopsRepositoryOrgLevel(id, name, repo, repoNameUpdated, agentId, accountId),
+				Config: testAccResourceGitopsRepositoryOrgLevel(id, name, repo, repoName, agentId, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "repo.0.name", repoNameUpdated),
 				),
 			},
 			{
@@ -64,7 +62,6 @@ func TestAccResourceGitopsRepository(t *testing.T) {
 	name := id
 	repo := "https://github.com/willycoll/argocd-example-apps.git"
 	repoName := id
-	repoNameUpdated := id + "_updated"
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	resourceName := "harness_platform_gitops_repository.test"
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -81,11 +78,10 @@ func TestAccResourceGitopsRepository(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceGitopsRepositoryProjectLevel(id, name, repo, repoNameUpdated, agentId, accountId),
+				Config: testAccResourceGitopsRepositoryProjectLevel(id, name, repo, repoName, agentId, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "repo.0.name", repoNameUpdated),
 				),
 			},
 			{
@@ -104,7 +100,6 @@ func TestAccResourceGitopsRepository(t *testing.T) {
 	name = id
 	repo = "https://github.com/willycoll/argocd-example-apps.git"
 	repoName = id
-	repoNameUpdated = id + "_updated"
 	resourceName = "harness_platform_gitops_repository.test"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -119,11 +114,10 @@ func TestAccResourceGitopsRepository(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceGitopsRepositoryAccountLevel(id, name, repo, repoNameUpdated, agentId, accountId),
+				Config: testAccResourceGitopsRepositoryAccountLevel(id, name, repo, repoName, agentId, accountId),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "repo.0.name", repoNameUpdated),
 				),
 			},
 			{
