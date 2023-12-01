@@ -26,6 +26,10 @@ resource "harness_platform_feature_flag" "mybooleanflag" {
   default_on_variation  = "Enabled"
   default_off_variation = "Disabled"
 
+  environment {
+    identifier = "MY_ENVIRONMENT"
+  }
+
   variation {
     identifier  = "Enabled"
     name        = "Enabled"
@@ -38,6 +42,11 @@ resource "harness_platform_feature_flag" "mybooleanflag" {
     name        = "Disabled"
     description = "The feature is disabled"
     value       = "false"
+  }
+
+  tags {
+    name       = "mytag"
+    identifier = "mytag"
   }
 }
 
@@ -85,7 +94,6 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
   kind       = "int"
   name       = "FREE_TRIAL_DURATION"
   identifier = "FREE_TRIAL_DURATION"
-  environment = "MY_ENVIRONMENT"
   permanent  = false
 
   default_on_variation  = "trial7"
@@ -116,7 +124,7 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     identifier = "MY_ENVIRONMENT"
     add_target_rule {
       variation = "trial14"
-      targets = ["targets1", "targets2"]
+      targets   = ["targets1", "targets2"]
     }
   }
 }
@@ -159,20 +167,20 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
     identifier = "MY_ENVIRONMENT"
     add_target_groups_rule {
       group_name = "group_name"
-      variation = "trial14"
+      variation  = "trial14"
       distribution = {
         variations = [
           {
-              variation = "trial7"
-              weight = 30
+            variation = "trial7"
+            weight    = 30
           },
           {
-              variation = "trial14"
-              weight = 30
+            variation = "trial14"
+            weight    = 30
           },
           {
-              variation = "trial20"
-              weight = 40
+            variation = "trial20"
+            weight    = 40
           }
         ]
       }
@@ -198,12 +206,11 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
 ### Optional
 
-- `add_target_group_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_group_rule))
-- `add_target_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--add_target_rule))
 - `archived` (Boolean) Whether or not the flag is archived
-- `environment` (Block List, Min: 0) Environment block, containing the target group and rules
+- `environment` (Block List) Environment Identifier (see [below for nested schema](#nestedblock--environment))
 - `git_details` (Block Set, Max: 1) (see [below for nested schema](#nestedblock--git_details))
 - `owner` (String) The owner of the flag
+- `tags` (Block List) The tags for the flag (see [below for nested schema](#nestedblock--tags))
 
 ### Read-Only
 
@@ -220,24 +227,36 @@ Required:
 - `value` (String) The value of the variation
 
 
-<a id="nestedblock--add_target_group_rule"></a>
-### Nested Schema for `add_target_group_rule`
+<a id="nestedblock--environment"></a>
+### Nested Schema for `environment`
+
+Required:
+
+- `identifier` (String) Identifier of the Environment
 
 Optional:
 
-- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--add_target_group_rule--distribution))
+- `add_target_group_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--environment--add_target_group_rule))
+- `add_target_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--environment--add_target_rule))
+
+<a id="nestedblock--environment--add_target_group_rule"></a>
+### Nested Schema for `environment.add_target_group_rule`
+
+Optional:
+
+- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--environment--add_target_group_rule--distribution))
 - `group_name` (String) The name of the target group
 - `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
 
-<a id="nestedblock--add_target_group_rule--distribution"></a>
-### Nested Schema for `add_target_group_rule.distribution`
+<a id="nestedblock--environment--add_target_group_rule--distribution"></a>
+### Nested Schema for `environment.add_target_group_rule.distribution`
 
 Optional:
 
-- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--add_target_group_rule--distribution--variations))
+- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--environment--add_target_group_rule--distribution--variations))
 
-<a id="nestedblock--add_target_group_rule--distribution--variations"></a>
-### Nested Schema for `add_target_group_rule.distribution.variations`
+<a id="nestedblock--environment--add_target_group_rule--distribution--variations"></a>
+### Nested Schema for `environment.add_target_group_rule.distribution.variations`
 
 Optional:
 
@@ -247,13 +266,14 @@ Optional:
 
 
 
-<a id="nestedblock--add_target_rule"></a>
-### Nested Schema for `add_target_rule`
+<a id="nestedblock--environment--add_target_rule"></a>
+### Nested Schema for `environment.add_target_rule`
 
 Optional:
 
 - `targets` (List of String) The targets of the rule
 - `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
+
 
 
 <a id="nestedblock--git_details"></a>
@@ -262,3 +282,12 @@ Optional:
 Required:
 
 - `commit_msg` (String) The commit message to use as part of a gitsync operation
+
+
+<a id="nestedblock--tags"></a>
+### Nested Schema for `tags`
+
+Required:
+
+- `identifier` (String) The identifier of the tag
+- `name` (String) The name of the tag
