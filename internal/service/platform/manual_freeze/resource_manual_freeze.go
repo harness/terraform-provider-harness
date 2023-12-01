@@ -76,9 +76,10 @@ func ResourceManualFreeze() *schema.Resource {
 				Computed:    true,
 			},
 			"yaml": {
-				Description: "Yaml of the freeze",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "Yaml of the freeze",
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"current_or_upcoming_windows": {
 				Description: "Current or upcoming windows",
@@ -274,7 +275,7 @@ func readFreezeResponse(d *schema.ResourceData, freezeResponse *nextgen.FreezeDe
 			},
 		})
 	} else {
-		d.Set("current_or_upcoming_windows", nil);
+		d.Set("current_or_upcoming_windows", nil)
 	}
 	d.Set("freeze_windows", expandFreezeWindows(freezeResponse.Windows))
 }
