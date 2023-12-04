@@ -14,6 +14,7 @@ Resource for creating a Jenkins connector.
 ### References:
 - For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
 - To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
+- To understand more about Jenkins Connectors, please see  [Jenkins Connectors](https://developer.harness.io/docs/platform/connectors/artifact-repositories/connect-to-jenkins/)
 
 ## Example to create Jenkins Connector at different levels (Org, Project, Account)
 ### Account Level
