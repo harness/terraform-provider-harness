@@ -53,15 +53,9 @@ func resourceLoadBalancerCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 }
 
 func deletionConsent(d *schema.ResourceData) (bool, error) {
-	attr, ok := d.GetOk("delete_cloud_resources_on_destroy")
-	if !ok {
-		return false, fmt.Errorf("delete_cloud_resources_on_destroy attribute should be set for destroying Loadabalancer")
-	}
-	delConsent, ok := attr.(bool)
-	if !ok {
-		return false, fmt.Errorf("delete_cloud_resources_on_destroy should be of bool type. Value can be true or false")
-	}
-	return delConsent, nil
+	consent, _ := d.GetOk("delete_cloud_resources_on_destroy")
+	delConsent, ok := consent.(bool)
+	return ok && delConsent, nil
 }
 
 func resourceLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
