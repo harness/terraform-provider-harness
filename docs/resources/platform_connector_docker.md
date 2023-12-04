@@ -10,8 +10,13 @@ description: |-
 
 Resource for creating a Docker connector.
 
-## Example Usage
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
+- To understand more about Docker Connectors, please see  [Docker Connectors](https://developer.harness.io/docs/platform/connectors/cloud-providers/ref-cloud-providers/docker-registry-connector-settings-reference/)
 
+## Example to create Docker Connector at different levels (Org, Project, Account)
+### Account Level
 ```terraform
 # credentials anonymous
 resource "harness_platform_connector_docker" "test" {
@@ -31,6 +36,72 @@ resource "harness_platform_connector_docker" "test" {
   name        = "name"
   description = "test"
   tags        = ["foo:bar"]
+
+  type               = "DockerHub"
+  url                = "https://hub.docker.com"
+  delegate_selectors = ["harness-delegate"]
+  credentials {
+    username     = "admin"
+    password_ref = "account.secret_id"
+  }
+}
+```
+### Org Level
+```terraform
+# credentials anonymous
+resource "harness_platform_connector_docker" "test" {
+  identifier  = "identifer"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+  org_id      = harness_platform_project.test.org_id
+
+  type               = "DockerHub"
+  url                = "https://hub.docker.com"
+  delegate_selectors = ["harness-delegate"]
+}
+
+# credentials username password
+resource "harness_platform_connector_docker" "test" {
+  identifier  = "identifer"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+  org_id      = harness_platform_project.test.org_id
+
+  type               = "DockerHub"
+  url                = "https://hub.docker.com"
+  delegate_selectors = ["harness-delegate"]
+  credentials {
+    username     = "admin"
+    password_ref = "account.secret_id"
+  }
+}
+```
+### Project Level
+```terraform
+# credentials anonymous
+resource "harness_platform_connector_docker" "test" {
+  identifier  = "identifer"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+  org_id      = harness_platform_project.test.org_id
+  project_id  = harness_platform_project.test.id
+
+  type               = "DockerHub"
+  url                = "https://hub.docker.com"
+  delegate_selectors = ["harness-delegate"]
+}
+
+# credentials username password
+resource "harness_platform_connector_docker" "test" {
+  identifier  = "identifer"
+  name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+  org_id      = harness_platform_project.test.org_id
+  project_id  = harness_platform_project.test.id
 
   type               = "DockerHub"
   url                = "https://hub.docker.com"
