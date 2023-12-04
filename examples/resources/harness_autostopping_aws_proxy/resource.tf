@@ -9,5 +9,6 @@ resource "harness_autostopping_aws_proxy" "test" {
   machine_type           = "t2.medium"
   api_key                = ""
   allocate_static_ip     = true
+  delete_cloud_resources_on_destroy = true
 }
 

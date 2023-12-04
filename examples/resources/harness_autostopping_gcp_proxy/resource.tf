@@ -14,5 +14,6 @@ resource "harness_autostopping_gcp_proxy" "test" {
     key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
     cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
   }
+  delete_cloud_resources_on_destroy = false
 }
 

@@ -11,5 +11,6 @@ resource "harness_autostopping_azure_proxy" "test" {
   machine_type       = "Standard_D2s_v3"
   keypair            = ""
   api_key            = ""
+  delete_cloud_resources_on_destroy = true
 }
 

@@ -9,6 +9,7 @@ resource "harness_autostopping_azure_gateway" "test" {
   azure_func_region  = "westus2"
   frontend_ip        = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
   sku_size           = "sku2"
+  delete_cloud_resources_on_destroy = true
 }
 
 resource "harness_autostopping_azure_gateway" "import_test" {
@@ -21,4 +22,5 @@ resource "harness_autostopping_azure_gateway" "import_test" {
   certificate_id     = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/applicationGateways/TestAppGateway/sslCertificates/certificate_name"
   azure_func_region  = "westus2"
   vpc                = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/virtualNetworks/test_resource_group_vnet"
+  delete_cloud_resources_on_destroy = false
 }
