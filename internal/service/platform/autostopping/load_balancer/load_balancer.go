@@ -52,11 +52,32 @@ func resourceLoadBalancerCreateOrUpdate(ctx context.Context, d *schema.ResourceD
 	return nil
 }
 
+func deletionConsent(d *schema.ResourceData) (bool, error) {
+	attr, ok := d.GetOk("delete_cloud_resources_on_destroy")
+	if !ok {
+		return false, fmt.Errorf("delete_cloud_resources_on_destroy attribute should be set for destroying Loadabalancer")
+	}
+	delConsent, ok := attr.(bool)
+	if !ok {
+		return false, fmt.Errorf("delete_cloud_resources_on_destroy should be of bool type. Value can be true or false")
+	}
+	return delConsent, nil
+}
+
 func resourceLoadBalancerDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	consent, err := deletionConsent(d)
+	if err != nil {
+		return diag.Diagnostics{
+			{
+				Severity: diag.Error,
+				Summary:  err.Error(),
+			},
+		}
+	}
 	httpResp, err := c.CloudCostAutoStoppingLoadBalancersApi.DeleteLoadBalancer(ctx, nextgen.DeleteAccessPointPayload{
 		Ids:           []string{d.Id()},
-		WithResources: false,
+		WithResources: consent,
 	}, c.AccountId, c.AccountId)
 
 	if err != nil {
