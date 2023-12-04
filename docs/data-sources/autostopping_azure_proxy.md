@@ -25,6 +25,7 @@ data "harness_autostopping_azure_proxy" "test" {
 
 - `api_key` (String, Sensitive) Harness NG API key
 - `cloud_connector_id` (String) Id of the cloud connector
+- `delete_cloud_resources_on_destroy` (Boolean) Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in Azure account itself.
 - `host_name` (String) Hostname for the proxy
 - `keypair` (String) Name of SSH Key to be used for proxy VM
 - `machine_type` (String) Type of instance to be used for proxy

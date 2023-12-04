@@ -25,6 +25,7 @@ data "harness_autostopping_aws_proxy" "test" {
 
 - `api_key` (String, Sensitive) Harness NG API key
 - `cloud_connector_id` (String) Id of the cloud connector
+- `delete_cloud_resources_on_destroy` (Boolean) Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from AWS account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in AWS account itself.
 - `host_name` (String) Hostname for the proxy
 - `machine_type` (String) Machine instance type
 - `name` (String) Name of the proxy
