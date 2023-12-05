@@ -1,6 +1,6 @@
 
-<a name="0.3.64"></a>
-## 0.3.64 (2023-11-27)
+<a name="0.3.65"></a>
+## 0.3.65 (2023-11-28)
 
 ### API
 
@@ -60,6 +60,8 @@
 
 ### Release
 
+* Release version 0.3.64 11-27-2023
+* Release v0.3.64
 * Release version 0.3.63 11-24-2023
 * Release v0.3.63
 * Release version 0.3.62 11-22-2023
@@ -147,9 +149,6 @@
 * Release version 0.3.15 04-18-2023
 * Release v0.3.15
 * Release version 0.3.14 03-30-2023
-* Release v0.3.14
-* Release version 0.3.21 03-20-2023
-* Release v0.3.21
 
 ### Remove
 
