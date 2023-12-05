@@ -13,6 +13,7 @@ Resource for creating a Nexus connector.
 ### References:
 - For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
 - To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
+- To understand more about Nexus Connectors, please see [Nexus Connectors](https://developer.harness.io/docs/platform/connectors/artifact-repositories/nexus-connector-settings-reference/)
 
 ## Example to create Nexus Connector at different levels (Org, Project, Account)
 ### Account Level
