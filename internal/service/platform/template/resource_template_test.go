@@ -287,7 +287,6 @@ func TestAccResourceTemplate_OrgScopeInline_UpdateStable(t *testing.T) {
 		CheckDestroy:      testAccTemplateDestroy(resourceName),
 		ExternalProviders: map[string]resource.ExternalProvider{
 			"time": {},
-			"null": {},
 		},
 		Steps: []resource.TestStep{
 			{
@@ -875,10 +874,6 @@ func testAccResourceTemplateOrgScopeInlineMultipleVersion(id string, name string
 		depends_on = [harness_platform_template.test]
 		destroy_duration = "4s"
 	}
-
-	resource "null_resource" "next" {
-  			depends_on = [time_sleep.wait_4_seconds]
-	}
 	`, id, name)
 }
 
@@ -1020,11 +1015,6 @@ func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) s
 		depends_on = [harness_platform_template.test2]
 		destroy_duration = "10s"
 	}
-
-	resource "null_resource" "next" {
-  			depends_on = [time_sleep.wait_4_seconds]
-	}
-
 	`, id, name)
 }
 
