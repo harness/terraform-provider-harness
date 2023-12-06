@@ -274,6 +274,7 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
 					query = "metric=cpu"
                     groupName = "g1"
                     queryParams = {
+                      serviceInstanceField = "_sourceHost"
                     }
                     riskProfile = {
                     riskCategory = "Performance_Other"
@@ -307,6 +308,7 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     groupName = "g2"
                     query = "metric=memory"
 					queryParams = {
+                     serviceInstanceField = "_sourceHost"
                     }
                     riskProfile = {
                     riskCategory = "Performance_Other"
@@ -456,6 +458,9 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
 					name = "metric_infra_cpu"
                     identifier = "metric_infra_cpu"
 					query = "***"
+                    queryParams = {
+                    serviceInstanceField = "pod"
+                    }
                     groupName = "g"
                     riskProfile = {
                     riskCategory = "Errors"
@@ -473,6 +478,9 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     identifier = "identifier2"
                     groupName = "g2"
                     query = "*"
+                    queryParams = {
+                    serviceInstanceField = "pod"
+                    }
                     riskProfile = {
                     riskCategory = "Performance_Other"
                     thresholdTypes = [
@@ -593,22 +601,6 @@ func testAccGrafanaLokiLogsDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "false"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
-				    metricThresholds: [
-					  {
-						type: "IgnoreThreshold",
-						spec: {
-						  action: "Ignore"
-						},
-						criteria: {
-						  type: "Absolute",
-						  spec: {
-							greaterThan: 100
-						  }
-						},
-						metricType: "Custom",
-						metricName: "identifier2"
-					  }
-					]
 					}
 				]})
 			}
