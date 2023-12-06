@@ -250,8 +250,14 @@ func testAccDataSourceTemplateProjectScope(id string, name string) string {
     
       EOT
 	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+	}
 
   data "harness_platform_template" "test" {
+	depends_on = [time_sleep.wait_4_seconds]
 		identifier = harness_platform_template.test.id
     org_id = harness_platform_project.test.org_id
     project_id = harness_platform_project.test.id
@@ -328,8 +334,14 @@ func testAccDataSourceTemplate(id string, name string) string {
     
       EOT
 	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+	}
 
 	data "harness_platform_template" "test" {
+		depends_on = [time_sleep.wait_4_seconds]
 		identifier = harness_platform_template.test.id
 	}
 	`, id, name)
