@@ -73,6 +73,8 @@ github.com/harness/harness-go-sdk v0.3.61 h1:r5UDIkv+ugi4c8hraMJTPPbBgcd5epevg2r
 github.com/harness/harness-go-sdk v0.3.61/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
 github.com/harness/harness-go-sdk v0.3.64 h1:+wHgDjJSxPI8P2W2JyNkjdaz+g3nZY2cud24wwqYcVI=
 github.com/harness/harness-go-sdk v0.3.64/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
+github.com/harness/harness-go-sdk v0.3.65 h1:7r0yGKv0OscDGP+mEUGiCkjdZJLZJSwCDjHSF6K04IQ=
+github.com/harness/harness-go-sdk v0.3.65/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
 github.com/harness/harness-openapi-go-client v0.0.19 h1:8XuZvSPZrNqKRLh7Qksdz78WvRMRzRf88LgzxoT5u7k=
 github.com/harness/harness-openapi-go-client v0.0.19/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
