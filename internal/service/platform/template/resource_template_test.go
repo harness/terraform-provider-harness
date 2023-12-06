@@ -546,6 +546,10 @@ func testAccResourceTemplateAccScopeInline(id string, name string) string {
     
       EOT
 	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
 	`, id, name)
 }
 
@@ -617,6 +621,10 @@ func testAccResourceTemplateAccScope(id string, name string) string {
                       type: StageRollback
     
       EOT
+	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
 	}
 	`, id, name)
 }
@@ -1135,6 +1143,10 @@ func testAccResourceTemplateOrgScope(id string, name string) string {
     
       EOT
 	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
 	`, id, name)
 }
 
@@ -1223,6 +1235,11 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
                       type: StageRollback
     
       EOT
+	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
 	}
 	`, id, name)
 }
@@ -1331,6 +1348,11 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
                             template_description = ""
                         }
                 }
+		
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
         `, id, name)
 }
 
@@ -1366,6 +1388,11 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
                             template_description = ""
                         }
                 }
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
         `, id, name)
 }
 
@@ -1389,5 +1416,10 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
                             template_description = ""
                         }
                 }
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
         `, id, name)
 }
