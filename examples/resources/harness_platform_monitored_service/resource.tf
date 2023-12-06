@@ -64,8 +64,6 @@ resource "harness_platform_monitored_service" "example" {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Sumologic Metrics Health Source
@@ -158,8 +156,6 @@ resource "harness_platform_monitored_service" "example1" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Sumologic Log Health Source
@@ -203,8 +199,6 @@ resource "harness_platform_monitored_service" "example2" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 
@@ -295,8 +289,6 @@ resource "harness_platform_monitored_service" "example3" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 
@@ -344,8 +336,6 @@ resource "harness_platform_monitored_service" "example4" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 
@@ -447,8 +437,6 @@ resource "harness_platform_monitored_service" "example5" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Azure Log Health Source
@@ -488,8 +476,6 @@ resource "harness_platform_monitored_service" "example6" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Prometheus Metrics Health Source
@@ -528,9 +514,6 @@ resource "harness_platform_monitored_service" "example7" {
                 enabled                  = true
                 serviceInstanceFieldName = "pod_name"
               }
-            }
-            sli : {
-              enabled = true
             }
             query         = "count(up{group=\"cv\",group=\"cv\"})"
             groupName     = "met"
@@ -577,8 +560,6 @@ resource "harness_platform_monitored_service" "example7" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Datadog Metrics Health Source
@@ -623,9 +604,6 @@ resource "harness_platform_monitored_service" "example8" {
                 serviceInstanceFieldName = "pod"
               }
             }
-            sli : {
-              enabled = true
-            }
           },
           {
             metricName            = "dashboard_metric_cpu"
@@ -652,9 +630,6 @@ resource "harness_platform_monitored_service" "example8" {
                 enabled                  = true
                 serviceInstanceFieldName = "pod"
               }
-            }
-            sli : {
-              enabled = true
             }
           }
         ]
@@ -698,7 +673,63 @@ resource "harness_platform_monitored_service" "example8" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
+  }
+}
+#Sample template for New Relic Metrics Health Source
+resource "harness_platform_monitored_service" "example9" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "name"
+      identifier = "identifier"
+      type       = "NewRelic"
+      spec       = jsonencode({
+        connectorRef    = "account.Newrelicautomation_do_not_delete"
+        feature         = "apm"
+        applicationId   = "107019083"
+        applicationName = "My Application"
+        metricData = {
+          "Performance": true
+        }
+        # this section is for using metric packs.
+        metricPacks     = [
+          {
+            identifier = "Performance"
+          }
+        ]
+        # Below is for using custom NRQL queries instead of metric packs.
+        "newRelicMetricDefinitions" = [
+          {
+            "identifier" = "New_Relic_Metric"
+            "metricName" = "New Relic Metric"
+            riskProfile  = {
+              riskCategory   = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            analysis = {
+              deploymentVerification = {
+                enabled = true
+              }
+            }
+            "groupName"       = "group1",
+            "nrql"            = "SELECT count(apm.service.instance.count) FROM Metric WHERE appName LIKE 'My Application' TIMESERIES",
+            "responseMapping" = {
+              "metricValueJsonPath" = "$.['timeSeries'].[*].['results'].[*].['count']",
+              "timestampJsonPath"   = "$.['timeSeries'].[*].['beginTimeSeconds']"
+            }
+          }
+        ]
+      })
+    }
   }
 }

@@ -593,22 +593,6 @@ func testAccGrafanaLokiLogsDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "false"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
-				    metricThresholds: [
-					  {
-						type: "IgnoreThreshold",
-						spec: {
-						  action: "Ignore"
-						},
-						criteria: {
-						  type: "Absolute",
-						  spec: {
-							greaterThan: 100
-						  }
-						},
-						metricType: "Custom",
-						metricName: "identifier2"
-					  }
-					]
 					}
 				]})
 			}
