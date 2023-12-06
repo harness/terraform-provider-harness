@@ -199,9 +199,8 @@ func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
 }
 
 func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	id := "projecttemplate"
 	name := id
-
 	resourceName := "harness_platform_template.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -228,7 +227,7 @@ func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
 }
 
 func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	id := "accounttemplate"
 	name := id
 
 	resourceName := "harness_platform_template.test"
@@ -387,8 +386,8 @@ func TestAccResourceTemplate_AccountScopeInline(t *testing.T) {
 func TestAccResourceTemplate_DeleteUnderlyingResource(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	project_id := id
-	org_id := id
+	project_id := id + "project"
+	org_id := id + "org"
 	resourceName := "harness_platform_template.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -625,7 +624,7 @@ func testAccResourceTemplateAccScope(id string, name string) string {
 func testAccResourceTemplateOrgScopeInline(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sorg"
 		name = "%[2]s"
 	}
 
@@ -696,7 +695,7 @@ func testAccResourceTemplateOrgScopeInline(id string, name string) string {
 func testAccResourceTemplateOrgScopeInlineMultipleVersion(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sorg"
 		name = "%[2]s"
 	}
 
@@ -837,7 +836,7 @@ func testAccResourceTemplateOrgScopeInlineMultipleVersion(id string, name string
 func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sorg"
 		name = "%[2]s"
 	}
 
@@ -1142,12 +1141,12 @@ func testAccResourceTemplateOrgScope(id string, name string) string {
 func testAccResourceTemplateProjectScope(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sorg"
 		name = "%[2]s"
 	}
 
 	resource "harness_platform_project" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sproject"
 		name = "%[2]s"
 		org_id = harness_platform_organization.test.id
 		color = "#472848"
@@ -1231,12 +1230,12 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
 func testAccResourceTemplateProjectScopeInline(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sorg"
 		name = "%[2]s"
 	}
 
 	resource "harness_platform_project" "test" {
-		identifier = "%[1]s"
+		identifier = "%[1]sproject"
 		name = "%[2]s"
 		org_id = harness_platform_organization.test.id
 		color = "#472848"
@@ -1311,7 +1310,7 @@ func testAccResourceTemplateProjectScopeInline(id string, name string) string {
 func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string {
 	return fmt.Sprintf(`
         resource "harness_platform_organization" "test" {
-					identifier = "%[1]s"
+					identifier = "%[1]sorg"
 					name = "%[2]s"
 				}
         resource "harness_platform_template" "test" {
@@ -1319,7 +1318,6 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
                         org_id = "default"
                         name = "orgtemplate"
 						version = "v2"
-						is_stable = false
                         import_from_git = true
                         git_import_details {
                             branch_name = "main"
@@ -1342,13 +1340,19 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
 					identifier = "%[1]s"
 					name = "%[2]s"
 				}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
         resource "harness_platform_template" "test" {
-                        identifier = "projecttemplate"
-                        org_id = "default"
-						project_id = "V"
-                        name = "projecttemplate"
+                        identifier = "%[1]s"
+                        org_id = harness_platform_project.test.id
+						project_id = harness_platform_organization.test.id
+                        name = "%[2]s"
 						version = "v2"
-						is_stable = false
                         import_from_git = true
                         git_import_details {
                             branch_name = "main"
@@ -1357,7 +1361,7 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
                             repo_name = "open-repo"
                         }
                         template_import_request {
-                            template_name = "projecttemplate"
+                            template_name = "%[2]s"
 							template_version = "v2"
                             template_description = ""
                         }
@@ -1367,15 +1371,11 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
 
 func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) string {
 	return fmt.Sprintf(`
-        resource "harness_platform_organization" "test" {
-					identifier = "%[1]s"
-					name = "%[2]s"
-				}
         resource "harness_platform_template" "test" {
-                        identifier = "accounttemplate"
-                        name = "accounttemplate"
+                        identifier = "%[1]s"
+                        name = "%[2]s"
 						version = "v2"
-						is_stable = false
+				
                         import_from_git = true
                         git_import_details {
                             branch_name = "main"
@@ -1391,4 +1391,3 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
                 }
         `, id, name)
 }
-
