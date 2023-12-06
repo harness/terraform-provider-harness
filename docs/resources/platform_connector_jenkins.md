@@ -169,7 +169,7 @@ Required:
 
 - `type` (String) Can be one of UsernamePassword, Anonymous, Bearer Token(HTTP Header)
 
-Option(any one of the field is required):
+Optional(any one of the field is required):
 
 - `jenkins_bearer_token` (Block List, Max: 1) Authenticate to App Dynamics using bearer token. (see [below for nested schema](#nestedblock--auth--jenkins_bearer_token))
 - `jenkins_user_name_password` (Block List, Max: 1) Authenticate to App Dynamics using user name and password. (see [below for nested schema](#nestedblock--auth--jenkins_user_name_password))
