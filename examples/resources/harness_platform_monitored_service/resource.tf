@@ -380,6 +380,7 @@ resource "harness_platform_monitored_service" "example5" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
+            # Below section is for adding your own custom thresholds
             metricThresholds              = [
               {
                 type = "IgnoreThreshold",
@@ -521,6 +522,7 @@ resource "harness_platform_monitored_service" "example7" {
             isManualQuery = true
           }
         ]
+        # Below section is for adding your own custom thresholds
         metricPacks = [
           {
             identifier       = "Custom",
@@ -634,6 +636,7 @@ resource "harness_platform_monitored_service" "example8" {
             }
           }
         ]
+        # Below section is for adding your own custom thresholds
         metricPacks = [
           {
             identifier       = "Custom",
@@ -728,6 +731,46 @@ resource "harness_platform_monitored_service" "example9" {
               "metricValueJsonPath" = "$.['timeSeries'].[*].['results'].[*].['count']",
               "timestampJsonPath"   = "$.['timeSeries'].[*].['beginTimeSeconds']"
             }
+          }
+        ]
+
+        # Below section is for adding your own custom thresholds
+        metricPacks: [
+          {
+            identifier: "Custom",
+            metricThresholds: [
+              {
+                type: "IgnoreThreshold",
+                spec: {
+                  action: "Ignore"
+                },
+                criteria: {
+                  type: "Absolute",
+                  spec: {
+                    greaterThan: 100
+                  }
+                },
+                metricType: "Custom",
+                metricName: "New Relic Metric"
+              },
+              {
+                "type": "FailImmediately",
+                "spec": {
+                  "action": "FailAfterOccurrence",
+                  "spec": {
+                    "count": 2
+                  }
+                },
+                "criteria": {
+                  "type": "Absolute",
+                  "spec": {
+                    "greaterThan": 100
+                  }
+                },
+                "metricType": "Custom",
+                "metricName": "New Relic Metric"
+              }
+            ]
           }
         ]
       })
