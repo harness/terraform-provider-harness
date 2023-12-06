@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"regexp"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -65,6 +66,170 @@ func DataSourcePipelineFilters() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
+						"pipeline_tags": {
+							Description: "Tags to associate with the pipeline. tags should be in the form of `{key:key1, value:key1value}`",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem: &schema.Schema{
+								Type:             schema.TypeMap,
+								ValidateDiagFunc: validation.MapKeyMatch(regexp.MustCompile("^key$|^value$"), "Please provide valid pipeline tags. valid values: key and value."),
+								Elem: &schema.Schema{
+									Type: schema.TypeString,
+								},
+							},
+						},
+						"pipeline_identifiers": {
+							Description: "Pipeline identifiers to filter on.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"name": {
+							Description: "Name of the pipeline filter.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"description": {
+							Description: "description of the pipline filter.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"module_properties": {
+							Description: "module properties of the pipline filter.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"ci": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										Description: "CI related properties to be filtered on.",
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"build_type": {
+													Description: "Build type of the pipeline. Possible values: branch.",
+													Type:        schema.TypeString,
+													Optional:    true,
+													Computed:    true,
+												},
+												"branch": {
+													Description: "Branch which was used while building.",
+													Type:        schema.TypeString,
+													Optional:    true,
+													Computed:    true,
+												},
+												"tag": {
+													Description: "Tags to associate with the CI pipeline resource.",
+													Type:        schema.TypeString,
+													Optional:    true,
+													Computed:    true,
+												},
+												"repo_names": {
+													Description: "name of the repository used in the pipeline.",
+													Type:        schema.TypeString,
+													Optional:    true,
+													Computed:    true,
+												},
+												"ci_execution_info": {
+													Description: "CI execution info for the pipeline.",
+													Type:        schema.TypeList,
+													Optional:    true,
+													MaxItems:    1,
+													Computed:    true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"event": {
+																Description: "Event for the ci execution, Possible values: pullRequest.",
+																Type:        schema.TypeString,
+																Optional:    true,
+																Computed:    true,
+															},
+															"pull_request": {
+																Description: "The pull request details of the CI pipeline.",
+																Type:        schema.TypeList,
+																Optional:    true,
+																Computed:    true,
+																MaxItems:    1,
+																Elem: &schema.Resource{
+																	Schema: map[string]*schema.Schema{
+																		"source_branch": {
+																			Description: "Source branch of the pull request.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																			Computed:    true,
+																		},
+																		"target_branch": {
+																			Description: "Target branch of the pull request.",
+																			Type:        schema.TypeString,
+																			Optional:    true,
+																			Computed:    true,
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									"cd": {
+										Description: "CD related properties to be filtered on.",
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"deployment_types": {
+													Description: "Deployment type of the CD pipeline, eg. Kubernetes",
+													Type:        schema.TypeString,
+													Optional:    true,
+													Computed:    true,
+												},
+												"service_names": {
+													Description: "Service names of the CD pipeline.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Computed:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"environment_names": {
+													Description: "Environment names of the CD pipeline.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Computed:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"artifact_display_names": {
+													Description: "Artifact display names of the CD pipeline.",
+													Type:        schema.TypeSet,
+													Optional:    true,
+													Computed:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -82,7 +247,7 @@ func DataSourcePipelineFilters() *schema.Resource {
 func dataSourcePipelineFiltersRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	var filter *nextgen.Filter
+	var filter *nextgen.PipelineFilter
 	var err error
 	var httpResp *http.Response
 
@@ -90,7 +255,7 @@ func dataSourcePipelineFiltersRead(ctx context.Context, d *schema.ResourceData, 
 	type_ := d.Get("type").(string)
 
 	if id != "" {
-		var resp nextgen.ResponseDtoFilter
+		var resp nextgen.ResponseDtoPipelineFilter
 		resp, httpResp, err = c.FilterApi.PipelinegetFilter(ctx, c.AccountId, id, type_, &nextgen.FilterApiPipelinegetFilterOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
