@@ -15,14 +15,14 @@ resource "harness_platform_monitored_service" "example" {
       identifier = "identifier"
       type       = "ElasticSearch"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name      = "name"
-            query     = "query"
-            index     = "index"
-            groupName = "Logs_Group"
+            name        = "name"
+            query       = "query"
+            index       = "index"
+            groupName   = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -32,10 +32,10 @@ resource "harness_platform_monitored_service" "example" {
             }
           },
           {
-            name      = "name2"
-            query     = "query2"
-            index     = "index2"
-            groupName = "Logs_Group"
+            name        = "name2"
+            query       = "query2"
+            index       = "index2"
+            groupName   = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -52,7 +52,7 @@ resource "harness_platform_monitored_service" "example" {
       identifier = "harness_cd_next_gen"
       type       = "HarnessCDNextGen"
       enabled    = true
-      spec = jsonencode({
+      spec       = jsonencode({
       })
       category = "Deployment"
     }
@@ -83,18 +83,18 @@ resource "harness_platform_monitored_service" "example1" {
       identifier = "sumo_metric_identifier"
       type       = "SumologicMetrics"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name       = "metric_cpu"
-            identifier = "metric_cpu"
-            query      = "metric=cpu"
-            groupName  = "g1"
+            name        = "metric_cpu"
+            identifier  = "metric_cpu"
+            query       = "metric=cpu"
+            groupName   = "g1"
             queryParams = {
             }
             riskProfile = {
-              riskCategory = "Performance_Other"
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -102,49 +102,49 @@ resource "harness_platform_monitored_service" "example1" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
-            metricThresholds: [
+            metricThresholds              = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "metric_cpu"
+                metricType = "Custom",
+                metricName = "metric_cpu"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec"   = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "metric_cpu"
+                "metricType" = "Custom",
+                "metricName" = "metric_cpu"
               }
             ]
           },
           {
-            name       = "name2"
-            identifier = "identifier2"
-            groupName  = "g2"
-            query      = "metric=memory"
+            name        = "name2"
+            identifier  = "identifier2"
+            groupName   = "g2"
+            query       = "metric=memory"
             queryParams = {
             }
             riskProfile = {
-              riskCategory = "Performance_Other"
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -175,23 +175,23 @@ resource "harness_platform_monitored_service" "example2" {
       identifier = "sumo_metric_identifier"
       type       = "SumologicLogs"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name       = "log1"
-            identifier = "log1"
-            query      = "*"
-            groupName  = "Logs Group"
+            name        = "log1"
+            identifier  = "log1"
+            query       = "*"
+            groupName   = "Logs Group"
             queryParams = {
               serviceInstanceField = "_sourcehost"
             }
           },
           {
-            name       = "log2"
-            identifier = "identifier2"
-            groupName  = "g2"
-            query      = "error"
+            name        = "log2"
+            identifier  = "identifier2"
+            groupName   = "g2"
+            query       = "error"
             queryParams = {
               serviceInstanceField = "_sourcehost"
             }
@@ -219,16 +219,16 @@ resource "harness_platform_monitored_service" "example3" {
       identifier = "signalfxmetrics"
       type       = "SplunkSignalFXMetrics"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name       = "metric_infra_cpu"
-            identifier = "metric_infra_cpu"
-            query      = "***"
-            groupName  = "g"
+            name        = "metric_infra_cpu"
+            identifier  = "metric_infra_cpu"
+            query       = "***"
+            groupName   = "g"
             riskProfile = {
-              riskCategory = "Errors"
+              riskCategory   = "Errors"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER",
                 "ACT_WHEN_LOWER"
@@ -239,12 +239,12 @@ resource "harness_platform_monitored_service" "example3" {
             sliEnabled                    = "false"
           },
           {
-            name       = "name2"
-            identifier = "identifier2"
-            groupName  = "g2"
-            query      = "*"
+            name        = "name2"
+            identifier  = "identifier2"
+            groupName   = "g2"
+            query       = "*"
             riskProfile = {
-              riskCategory = "Performance_Other"
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -252,37 +252,37 @@ resource "harness_platform_monitored_service" "example3" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "false"
             sliEnabled                    = "false"
-            metricThresholds: [
+            metricThresholds              = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "identifier2"
+                metrictype = "Custom",
+                metricName = "identifier2"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec"   = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "identifier2"
+                "metricType" = "Custom",
+                "metricName" = "identifier2"
               }
             ]
           }
@@ -309,23 +309,23 @@ resource "harness_platform_monitored_service" "example4" {
       identifier = "Test"
       type       = "GrafanaLokiLogs"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name       = "Demo"
-            identifier = "Demo"
-            query      = "{job=~\".+\"}"
-            groupName  = "Log_Group"
+            name        = "Demo"
+            identifier  = "Demo"
+            query       = "{job=~\".+\"}"
+            groupName   = "Log_Group"
             queryParams = {
               serviceInstanceField = "job"
             }
           },
           {
-            name       = "log2"
-            identifier = "identifier2"
-            groupName  = "g2"
-            query      = "error"
+            name        = "log2"
+            identifier  = "identifier2"
+            groupName   = "g2"
+            query       = "error"
             queryParams = {
               serviceInstanceField = "_sourcehost"
             }
@@ -356,14 +356,14 @@ resource "harness_platform_monitored_service" "example5" {
       identifier = "azure_metrics_verify_step"
       type       = "AzureMetrics"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name       = "metric"
-            identifier = "metric"
-            query      = "default"
-            groupName  = "g1"
+            name        = "metric"
+            identifier  = "metric"
+            query       = "default"
+            groupName   = "g1"
             queryParams = {
               serviceInstanceField        = "host"
               index                       = "/subscriptions/12d2db62-5aa9-471d-84bb-faa489b3e319/resourceGroups/srm-test/providers/Microsoft.ContainerService/managedClusters/srm-test",
@@ -372,7 +372,7 @@ resource "harness_platform_monitored_service" "example5" {
               aggregationType             = "average"
             }
             riskProfile = {
-              riskCategory = "Performance_Other"
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -380,43 +380,44 @@ resource "harness_platform_monitored_service" "example5" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
-            metricThresholds: [
+            metricThresholds              = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "metric"
+                metrictype = "Custom",
+                metricName = "metric"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec"   = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "metric"
-              }]
+                "metricType" = "Custom",
+                "metricName" = "metric"
+              }
+            ]
           },
           {
-            name       = "name2"
-            identifier = "identifier2"
-            groupName  = "g2"
+            name        = "name2"
+            identifier  = "identifier2"
+            groupName   = "g2"
             queryParams = {
               serviceInstanceField        = "host"
               index                       = "/subscriptions/12d2db62-5aa9-471d-84bb-faa489b3e319/resourceGroups/srm-test/providers/Microsoft.ContainerService/managedClusters/srm-test",
@@ -425,7 +426,7 @@ resource "harness_platform_monitored_service" "example5" {
               aggregationType             = "average"
             }
             riskProfile = {
-              riskCategory = "Performance_Other"
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -456,14 +457,14 @@ resource "harness_platform_monitored_service" "example6" {
       identifier = "Demo_azure"
       type       = "AzureLogs"
       version    = "v2"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef     = "connectorRef"
         queryDefinitions = [
           {
-            name       = "name2"
-            identifier = "identifier2"
-            groupName  = "g2"
-            query      = "*"
+            name        = "name2"
+            identifier  = "identifier2"
+            groupName   = "g2"
+            query       = "*"
             queryParams = {
               serviceInstanceField = "Name",
               timeStampIdentifier  = "StartedTime",
@@ -494,14 +495,14 @@ resource "harness_platform_monitored_service" "example7" {
       name       = "prometheus metrics verify step"
       identifier = "prometheus_metrics"
       type       = "Prometheus"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
+      spec       = jsonencode({
+        connectorRef      = "connectorRef"
         metricDefinitions = [
           {
-            identifier = "Prometheus_Metric",
-            metricName = "Prometheus Metric",
+            identifier  = "Prometheus_Metric",
+            metricName  = "Prometheus Metric",
             riskProfile = {
-              riskCategory = "Performance_Other"
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -520,40 +521,40 @@ resource "harness_platform_monitored_service" "example7" {
             isManualQuery = true
           }
         ]
-        metricPacks: [
+        metricPacks = [
           {
-            identifier: "Custom",
-            metricThresholds: [
+            identifier       = "Custom",
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "Prometheus Metric"
+                metrictype = "Custom",
+                metricName = "Prometheus Metric"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec"   = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "Prometheus Metric"
+                "metricType" = "Custom",
+                "metricName" = "Prometheus Metric"
               }
             ]
           }
@@ -578,9 +579,9 @@ resource "harness_platform_monitored_service" "example8" {
       name       = "ddm"
       identifier = "ddm"
       type       = "DatadogMetrics"
-      spec = jsonencode({
-        connectorRef = "connectorRef"
-        feature      = "Datadog Cloud Metrics"
+      spec       = jsonencode({
+        connectorRef      = "connectorRef"
+        feature           = "Datadog Cloud Metrics"
         metricDefinitions = [
           {
             metricName            = "metric"
@@ -589,8 +590,8 @@ resource "harness_platform_monitored_service" "example8" {
             query                 = "avg:kubernetes.cpu.limits{*}.rollup(avg, 60);\navg:kubernetes.cpu.limits{*}.rollup(avg, 30);\n(a+b)/10"
             isManualQuery         = true
             isCustomCreatedMetric = true
-            riskProfile = {
-              riskCategory = "Performance_Other"
+            riskProfile           = {
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -616,8 +617,8 @@ resource "harness_platform_monitored_service" "example8" {
             metric                = "kubernetes.cpu.limits"
             aggregation           = "avg"
             isCustomCreatedMetric = true
-            riskProfile = {
-              riskCategory = "Performance_Other"
+            riskProfile           = {
+              riskCategory   = "Performance_Other"
               thresholdTypes = [
                 "ACT_WHEN_HIGHER"
               ]
@@ -633,40 +634,40 @@ resource "harness_platform_monitored_service" "example8" {
             }
           }
         ]
-        metricPacks: [
+        metricPacks = [
           {
-            identifier: "Custom",
-            metricThresholds: [
+            identifier       = "Custom",
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "metric"
+                metrictype = "Custom",
+                metricName = "metric"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec"   = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "metric"
+                "metricType" = "Custom",
+                "metricName" = "metric"
               }
             ]
           }
@@ -696,11 +697,11 @@ resource "harness_platform_monitored_service" "example9" {
         feature         = "apm"
         applicationId   = "107019083"
         applicationName = "My Application"
-        metricData = {
-          "Performance": true
+        metricData      = {
+          "Performance" = true
         }
         # this section is for using metric packs.
-        metricPacks     = [
+        metricPacks = [
           {
             identifier = "Performance"
           }
