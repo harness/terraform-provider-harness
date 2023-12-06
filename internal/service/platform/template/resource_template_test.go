@@ -23,7 +23,11 @@ func TestAccResourceTemplateProjectScope(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateProjectScope(id, name),
@@ -101,7 +105,11 @@ func TestAccResourceTemplate_OrgScope(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateOrgScope(id, name),
@@ -178,7 +186,11 @@ func TestAccResourceTemplate_OrgScopeImportFromGit(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateOrgScopeImportFromGit(id, name),
@@ -206,7 +218,11 @@ func TestAccResourceTemplate_ProjectScopeImportFromGit(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateProjectScopeImportFromGit(id, name),
@@ -235,7 +251,11 @@ func TestAccResourceTemplate_AccountScopeImportFromGit(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateAccountScopeImportFromGit(id, name),
@@ -298,7 +318,11 @@ func TestAccResourceTemplate_AccountScope(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateAccScope(id, name),
@@ -354,7 +378,11 @@ func TestAccResourceTemplate_AccountScopeInline(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccTemplateDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+			"null": {},
+		},
+		CheckDestroy: testAccTemplateDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTemplateAccScopeInline(id, name),
@@ -546,6 +574,14 @@ func testAccResourceTemplateAccScopeInline(id string, name string) string {
     
       EOT
 	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
+	
+	resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
+	}
 	`, id, name)
 }
 
@@ -617,6 +653,14 @@ func testAccResourceTemplateAccScope(id string, name string) string {
                       type: StageRollback
     
       EOT
+	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
+
+	resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
 	}
 	`, id, name)
 }
@@ -971,7 +1015,6 @@ func testAccResourceTemplateOrgScopeInlineUpdateStable(id string, name string) s
 		depends_on = [harness_platform_template.test2]
 		destroy_duration = "10s"
 	}
-
 	`, id, name)
 }
 
@@ -1135,6 +1178,14 @@ func testAccResourceTemplateOrgScope(id string, name string) string {
     
       EOT
 	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
+
+	resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
+	}
 	`, id, name)
 }
 
@@ -1223,6 +1274,15 @@ func testAccResourceTemplateProjectScope(id string, name string) string {
                       type: StageRollback
     
       EOT
+	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_template.test]
+		destroy_duration = "4s"
+	}
+		
+	resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
 	}
 	`, id, name)
 }
@@ -1331,26 +1391,25 @@ func testAccResourceTemplateOrgScopeImportFromGit(id string, name string) string
                             template_description = ""
                         }
                 }
+		
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
+
+		resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
+		}
         `, id, name)
 }
 
 func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) string {
+	// This has project and org id static due to its config in the git.
 	return fmt.Sprintf(`
-        resource "harness_platform_organization" "test" {
-					identifier = "%[1]s"
-					name = "%[2]s"
-				}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			color = "#472848"
-		}
         resource "harness_platform_template" "test" {
                         identifier = "%[1]s"
-                        org_id = harness_platform_project.test.id
-						project_id = harness_platform_organization.test.id
+                        org_id = "default"
+						project_id = "V"
                         name = "%[2]s"
 						version = "v2"
                         import_from_git = true
@@ -1366,6 +1425,15 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
                             template_description = ""
                         }
                 }
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
+		
+		resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
+		}
         `, id, name)
 }
 
@@ -1389,5 +1457,14 @@ func testAccResourceTemplateAccountScopeImportFromGit(id string, name string) st
                             template_description = ""
                         }
                 }
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+		}
+		
+		resource "null_resource" "next" {
+  			depends_on = [time_sleep.wait_4_seconds]
+		}
         `, id, name)
 }
