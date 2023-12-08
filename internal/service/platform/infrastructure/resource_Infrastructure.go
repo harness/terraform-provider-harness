@@ -41,9 +41,10 @@ func ResourceInfrastructure() *schema.Resource {
 				Required:    true,
 			},
 			"yaml": {
-				Description: "Infrastructure YAML." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "Infrastructure YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"deployment_type": {
 				Description: fmt.Sprintf("Infrastructure deployment type. Valid values are %s.", strings.Join(nextgen.InfrastructureDeploymentypeValues, ", ")),
