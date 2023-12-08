@@ -25,7 +25,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
-    region             = "test_aws_region"
+    region             = "aws_region"
   }
 }
 
@@ -41,7 +41,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
-    region             = "test_aws_region"
+    region             = "aws_region"
   }
   equal_jitter_backoff_strategy {
     base_delay       = 10
@@ -62,7 +62,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
-    region             = "test_aws_region"
+    region             = "aws_region"
   }
   full_jitter_backoff_strategy {
     base_delay       = 10
@@ -83,7 +83,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
-    region             = "test_aws_region"
+    region             = "aws_region"
   }
   fixed_delay_backoff_strategy {
     fixed_backoff = 10
