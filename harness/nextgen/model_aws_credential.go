@@ -17,4 +17,5 @@ type AwsCredential struct {
 	Type_              AwsAuthType          `json:"type"`
 	ManualConfig       *AwsManualConfigSpec `json:"-"`
 	Spec               json.RawMessage      `json:"spec,omitempty"`
+	Region             string               `json:"region,omitempty"`
 }
