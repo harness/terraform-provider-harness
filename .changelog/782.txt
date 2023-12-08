@@ -1,3 +1,0 @@
-```release-note:enhancement
-resource/harness_platform_connector_aws - Added support to add aws region field in connector to perform connection test.
-```
