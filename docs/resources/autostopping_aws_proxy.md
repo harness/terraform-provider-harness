@@ -14,16 +14,17 @@ Resource for creating an AWS Autostopping proxy
 
 ```terraform
 resource "harness_autostopping_aws_proxy" "test" {
-  name                   = "name"
-  cloud_connector_id     = "cloud_connector_id"
-  host_name              = "host_name"
-  region                 = "region"
-  vpc                    = "vpc"
-  security_groups        = ["sg1", "sg2"]
-  route53_hosted_zone_id = "/hostedzone/zone_id"
-  machine_type           = "t2.medium"
-  api_key                = ""
-  allocate_static_ip     = true
+  name                              = "name"
+  cloud_connector_id                = "cloud_connector_id"
+  host_name                         = "host_name"
+  region                            = "region"
+  vpc                               = "vpc"
+  security_groups                   = ["sg1", "sg2"]
+  route53_hosted_zone_id            = "/hostedzone/zone_id"
+  machine_type                      = "t2.medium"
+  api_key                           = ""
+  allocate_static_ip                = true
+  delete_cloud_resources_on_destroy = true
 }
 ```
 
@@ -34,6 +35,7 @@ resource "harness_autostopping_aws_proxy" "test" {
 
 - `api_key` (String, Sensitive) Harness NG API key
 - `cloud_connector_id` (String) Id of the cloud connector
+- `delete_cloud_resources_on_destroy` (Boolean) Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from AWS account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in AWS account itself.
 - `host_name` (String) Hostname for the proxy
 - `machine_type` (String) Machine instance type
 - `name` (String) Name of the proxy

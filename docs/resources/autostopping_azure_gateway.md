@@ -14,28 +14,30 @@ Resource for creating an Azure Application Gateway
 
 ```terraform
 resource "harness_autostopping_azure_gateway" "test" {
-  name               = "name"
-  cloud_connector_id = "cloud_connector_id"
-  host_name          = "host_name"
-  region             = "eastus2"
-  resource_group     = "resource_group"
-  subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
-  vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
-  azure_func_region  = "westus2"
-  frontend_ip        = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
-  sku_size           = "sku2"
+  name                              = "name"
+  cloud_connector_id                = "cloud_connector_id"
+  host_name                         = "host_name"
+  region                            = "eastus2"
+  resource_group                    = "resource_group"
+  subnet_id                         = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
+  vpc                               = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
+  azure_func_region                 = "westus2"
+  frontend_ip                       = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
+  sku_size                          = "sku2"
+  delete_cloud_resources_on_destroy = true
 }
 
 resource "harness_autostopping_azure_gateway" "import_test" {
-  name               = "import_test"
-  cloud_connector_id = "cloud_connector_id"
-  host_name          = "host_name"
-  region             = "westus2"
-  resource_group     = "test_resource_group"
-  app_gateway_id     = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/applicationGateways/TestAppGateway"
-  certificate_id     = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/applicationGateways/TestAppGateway/sslCertificates/certificate_name"
-  azure_func_region  = "westus2"
-  vpc                = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/virtualNetworks/test_resource_group_vnet"
+  name                              = "import_test"
+  cloud_connector_id                = "cloud_connector_id"
+  host_name                         = "host_name"
+  region                            = "westus2"
+  resource_group                    = "test_resource_group"
+  app_gateway_id                    = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/applicationGateways/TestAppGateway"
+  certificate_id                    = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/applicationGateways/TestAppGateway/sslCertificates/certificate_name"
+  azure_func_region                 = "westus2"
+  vpc                               = "/subscriptions/subscription_id/resourceGroups/test_resource_group/providers/Microsoft.Network/virtualNetworks/test_resource_group_vnet"
+  delete_cloud_resources_on_destroy = false
 }
 ```
 
@@ -46,6 +48,7 @@ resource "harness_autostopping_azure_gateway" "import_test" {
 
 - `azure_func_region` (String) Region in which azure cloud function will be provisioned
 - `cloud_connector_id` (String) Id of the cloud connector
+- `delete_cloud_resources_on_destroy` (Boolean) Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated Application Gateway will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.
 - `host_name` (String) Hostname for the proxy
 - `name` (String) Name of the proxy
 - `region` (String) Region in which cloud resources are hosted
