@@ -33,9 +33,10 @@ func ResourceTriggers() *schema.Resource {
 				Optional:    true,
 			},
 			"yaml": {
-				Description: "trigger yaml." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "trigger yaml." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"if_match": {
 				Description: "if-Match",

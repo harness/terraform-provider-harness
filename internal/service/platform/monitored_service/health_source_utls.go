@@ -9,24 +9,27 @@ import (
 
 func getAppDynamicsHealthSource(hs map[string]interface{}) nextgen.AppDynamicsHealthSource {
 	healthSource := &nextgen.AppDynamicsHealthSource{}
-
 	healthSource.ConnectorRef = hs["connectorRef"].(string)
-
-	metricDefinitions := hs["metricDefinitions"].([]interface{})
-	healthSourceMetricDefinitions := make([]nextgen.AppDMetricDefinitions, len(metricDefinitions))
-	for i, metricDefinition := range metricDefinitions {
-		data := nextgen.AppDMetricDefinitions{}
-		metricDef, errMarshal := json.Marshal(metricDefinition)
-		if errMarshal != nil {
-			panic(fmt.Sprintf("Invalid Health source %s", hs))
+	healthSource.ApplicationName = hs["applicationName"].(string)
+	healthSource.Feature = hs["feature"].(string)
+	healthSource.TierName = hs["tierName"].(string)
+	if hs["metricDefinitions"] != nil {
+		metricDefinitions := hs["metricDefinitions"].([]interface{})
+		healthSourceMetricDefinitions := make([]nextgen.AppDMetricDefinitions, len(metricDefinitions))
+		for i, metricDefinition := range metricDefinitions {
+			data := nextgen.AppDMetricDefinitions{}
+			metricDef, errMarshal := json.Marshal(metricDefinition)
+			if errMarshal != nil {
+				panic(fmt.Sprintf("Invalid Health source %s", hs))
+			}
+			errUnMarshal := json.Unmarshal(metricDef, &data)
+			if errUnMarshal != nil {
+				panic(fmt.Sprintf("Invalid Health source %s", hs))
+			}
+			healthSourceMetricDefinitions[i] = data
 		}
-		errUnMarshal := json.Unmarshal(metricDef, &data)
-		if errUnMarshal != nil {
-			panic(fmt.Sprintf("Invalid Health source %s", hs))
-		}
-		healthSourceMetricDefinitions[i] = data
+		healthSource.MetricDefinitions = healthSourceMetricDefinitions
 	}
-	healthSource.MetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
 		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
@@ -65,22 +68,23 @@ func getNewRelicHealthSource(hs map[string]interface{}) nextgen.NewRelicHealthSo
 	healthSource := &nextgen.NewRelicHealthSource{}
 
 	healthSource.ConnectorRef = hs["connectorRef"].(string)
-
-	metricDefinitions := hs["newRelicMetricDefinitions"].([]interface{})
-	healthSourceMetricDefinitions := make([]nextgen.NewRelicMetricDefinition, len(metricDefinitions))
-	for i, metricDefinition := range metricDefinitions {
-		data := nextgen.NewRelicMetricDefinition{}
-		metricDef, errMarshal := json.Marshal(metricDefinition)
-		if errMarshal != nil {
-			panic(fmt.Sprintf("Invalid Health source %s", hs))
+	if hs["newRelicMetricDefinitions"] != nil {
+		metricDefinitions := hs["newRelicMetricDefinitions"].([]interface{})
+		healthSourceMetricDefinitions := make([]nextgen.NewRelicMetricDefinition, len(metricDefinitions))
+		for i, metricDefinition := range metricDefinitions {
+			data := nextgen.NewRelicMetricDefinition{}
+			metricDef, errMarshal := json.Marshal(metricDefinition)
+			if errMarshal != nil {
+				panic(fmt.Sprintf("Invalid Health source %s", hs))
+			}
+			errUnMarshal := json.Unmarshal(metricDef, &data)
+			if errUnMarshal != nil {
+				panic(fmt.Sprintf("Invalid Health source %s", hs))
+			}
+			healthSourceMetricDefinitions[i] = data
 		}
-		errUnMarshal := json.Unmarshal(metricDef, &data)
-		if errUnMarshal != nil {
-			panic(fmt.Sprintf("Invalid Health source %s", hs))
-		}
-		healthSourceMetricDefinitions[i] = data
+		healthSource.NewRelicMetricDefinitions = healthSourceMetricDefinitions
 	}
-	healthSource.NewRelicMetricDefinitions = healthSourceMetricDefinitions
 
 	if hs["metricPacks"] != nil {
 		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
@@ -144,24 +148,35 @@ func getDataDogHealthSource(hs map[string]interface{}) nextgen.DatadogMetricHeal
 
 func getDynatraceHealthSource(hs map[string]interface{}) nextgen.DynatraceHealthSource {
 	healthSource := &nextgen.DynatraceHealthSource{}
-
 	healthSource.ConnectorRef = hs["connectorRef"].(string)
-
-	metricDefinitions := hs["metricDefinitions"].([]interface{})
-	healthSourceMetricDefinitions := make([]nextgen.DynatraceMetricDefinition, len(metricDefinitions))
-	for i, metricDefinition := range metricDefinitions {
-		data := nextgen.DynatraceMetricDefinition{}
-		metricDef, errMarshal := json.Marshal(metricDefinition)
-		if errMarshal != nil {
-			panic(fmt.Sprintf("Invalid Health source %s", hs))
+	healthSource.ServiceId = hs["serviceId"].(string)
+	if hs["serviceMethodIds"] != nil {
+		serviceMethodIds := hs["serviceMethodIds"].([]interface{})
+		s := make([]string, len(serviceMethodIds))
+		for i, v := range serviceMethodIds {
+			s[i] = fmt.Sprint(v)
 		}
-		errUnMarshal := json.Unmarshal(metricDef, &data)
-		if errUnMarshal != nil {
-			panic(fmt.Sprintf("Invalid Health source %s", hs))
-		}
-		healthSourceMetricDefinitions[i] = data
+		healthSource.ServiceMethodIds = s
 	}
-	healthSource.MetricDefinitions = healthSourceMetricDefinitions
+	healthSource.ServiceName = hs["serviceName"].(string)
+	healthSource.Feature = hs["feature"].(string)
+	if hs["metricDefinitions"] != nil {
+		metricDefinitions := hs["metricDefinitions"].([]interface{})
+		healthSourceMetricDefinitions := make([]nextgen.DynatraceMetricDefinition, len(metricDefinitions))
+		for i, metricDefinition := range metricDefinitions {
+			data := nextgen.DynatraceMetricDefinition{}
+			metricDef, errMarshal := json.Marshal(metricDefinition)
+			if errMarshal != nil {
+				panic(fmt.Sprintf("Invalid Health source %s", hs))
+			}
+			errUnMarshal := json.Unmarshal(metricDef, &data)
+			if errUnMarshal != nil {
+				panic(fmt.Sprintf("Invalid Health source %s", hs))
+			}
+			healthSourceMetricDefinitions[i] = data
+		}
+		healthSource.MetricDefinitions = healthSourceMetricDefinitions
+	}
 
 	if hs["metricPacks"] != nil {
 		healthSource.MetricPacks = getMetricPacks(hs, "metricPacks")
@@ -279,9 +294,7 @@ func getAwsPrometheusHealthSource(hs map[string]interface{}) nextgen.AwsPromethe
 
 func getNextGenHealthSource(hs map[string]interface{}) nextgen.NextGenHealthSource {
 	healthSource := &nextgen.NextGenHealthSource{}
-
 	healthSource.ConnectorRef = hs["connectorRef"].(string)
-
 	healthSourceParamDto := nextgen.HealthSourceParamsDto{}
 	healthSourceParamData, errMarshal := json.Marshal(hs["healthSourceParams"])
 	if errMarshal != nil {
@@ -291,7 +304,6 @@ func getNextGenHealthSource(hs map[string]interface{}) nextgen.NextGenHealthSour
 	if errUnMarshal != nil {
 		panic(fmt.Sprintf("Invalid health source param dto %s", hs))
 	}
-
 	queryDefinitions := hs["queryDefinitions"].([]interface{})
 	queryDefinitionDtos := make([]nextgen.QueryDefinition, len(queryDefinitions))
 	for i, queryDefinition := range queryDefinitions {
