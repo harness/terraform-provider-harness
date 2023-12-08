@@ -14,18 +14,19 @@ Resource for creating an Azure autostopping proxy
 
 ```terraform
 resource "harness_autostopping_azure_proxy" "test" {
-  name               = "name"
-  cloud_connector_id = "cloud_connector_id"
-  host_name          = "host_name"
-  region             = "eastus2"
-  resource_group     = "resource_group"
-  vpc                = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
-  subnet_id          = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
-  security_groups    = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/networkSecurityGroups/network_security_group"]
-  allocate_static_ip = true
-  machine_type       = "Standard_D2s_v3"
-  keypair            = ""
-  api_key            = ""
+  name                              = "name"
+  cloud_connector_id                = "cloud_connector_id"
+  host_name                         = "host_name"
+  region                            = "eastus2"
+  resource_group                    = "resource_group"
+  vpc                               = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network"
+  subnet_id                         = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/virtualNetworks/virtual_network/subnets/subnet_id"
+  security_groups                   = ["/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/networkSecurityGroups/network_security_group"]
+  allocate_static_ip                = true
+  machine_type                      = "Standard_D2s_v3"
+  keypair                           = ""
+  api_key                           = ""
+  delete_cloud_resources_on_destroy = true
 }
 ```
 
@@ -36,6 +37,7 @@ resource "harness_autostopping_azure_proxy" "test" {
 
 - `api_key` (String, Sensitive) Harness NG API key
 - `cloud_connector_id` (String) Id of the cloud connector
+- `delete_cloud_resources_on_destroy` (Boolean) Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in Azure account itself.
 - `host_name` (String) Hostname for the proxy
 - `keypair` (String) Name of SSH Key to be used for proxy VM
 - `machine_type` (String) Type of instance to be used for proxy

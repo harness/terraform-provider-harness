@@ -54,6 +54,7 @@ func testAzureGateway(name string, hostName string) string {
 		azure_func_region  = "westus2"
 		frontend_ip        = "/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Network/publicIPAddresses/publicip"
 		sku_size           = "sku2"
+		delete_cloud_resources_on_destroy = true
 	}
 `, name, hostName)
 }

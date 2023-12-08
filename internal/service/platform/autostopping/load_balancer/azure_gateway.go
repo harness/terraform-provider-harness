@@ -84,6 +84,11 @@ func ResourceAzureGateway() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"delete_cloud_resources_on_destroy": {
+				Description: "Governs how the loadabalancer entity will be deleted on Terraform destroy. When set to true, the associated Application Gateway will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, leaving the cloud resources intact.",
+				Type:        schema.TypeBool,
+				Required:    true,
+			},
 		},
 	}
 
