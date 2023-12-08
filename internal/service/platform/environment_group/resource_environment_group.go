@@ -46,9 +46,10 @@ func ResourceEnvironmentGroup() *schema.Resource {
 				Computed:    true,
 			},
 			"yaml": {
-				Description: "Env group YAML." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "Env group YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of environment group",
