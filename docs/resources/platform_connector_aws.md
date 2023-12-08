@@ -25,6 +25,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "test_aws_region"
   }
 }
 
@@ -40,6 +41,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "test_aws_region"
   }
   equal_jitter_backoff_strategy {
     base_delay       = 10
@@ -60,6 +62,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "test_aws_region"
   }
   full_jitter_backoff_strategy {
     base_delay       = 10
@@ -80,6 +83,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "test_aws_region"
   }
   fixed_delay_backoff_strategy {
     fixed_backoff = 10
@@ -110,6 +114,7 @@ resource "harness_platform_connector_aws" "aws" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
+-  `region` AWS Region to perform Connection test of Connector.
 
 ### Read-Only
 
@@ -162,6 +167,7 @@ Optional:
 Required:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+-  `region` AWS Region to perform Connection test of Connector.
 
 
 <a id="nestedblock--irsa"></a>
@@ -170,6 +176,7 @@ Required:
 Required:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+-  `region` AWS Region to perform Connection test of Connector.
 
 
 <a id="nestedblock--manual"></a>
@@ -184,6 +191,7 @@ Optional:
 - `access_key` (String) AWS access key.
 - `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `delegate_selectors` (Set of String) Connect only use delegates with these tags.
+-  `region` AWS Region to perform Connection test of Connector.
 
 ## Import
 

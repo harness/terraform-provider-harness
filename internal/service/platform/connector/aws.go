@@ -62,6 +62,11 @@ func ResourceConnectorAws() *schema.Resource {
 							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -87,6 +92,11 @@ func ResourceConnectorAws() *schema.Resource {
 							Required:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -111,6 +121,11 @@ func ResourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeSet,
 							Required:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -291,6 +306,10 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
+		}
 	}
 
 	if attr, ok := d.GetOk("irsa"); ok {
@@ -300,6 +319,10 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
+		}
 	}
 
 	if attr, ok := d.GetOk("inherit_from_delegate"); ok {
@@ -308,6 +331,10 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
 		}
 	}
 
@@ -384,18 +411,21 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 				"access_key_ref":     connector.Aws.Credential.ManualConfig.AccessKeyRef,
 				"secret_key_ref":     connector.Aws.Credential.ManualConfig.SecretKeyRef,
 				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
 			},
 		})
 	case nextgen.AwsAuthTypes.Irsa:
 		d.Set("irsa", []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
 			},
 		})
 	case nextgen.AwsAuthTypes.InheritFromDelegate:
 		d.Set("inherit_from_delegate", []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
 			},
 		})
 	default:
