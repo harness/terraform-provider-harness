@@ -1,6 +1,6 @@
 
-<a name="0.3.65"></a>
-## 0.3.65 (2023-11-28)
+<a name="0.3.66"></a>
+## 0.3.66 (2023-12-08)
 
 ### API
 
@@ -60,6 +60,8 @@
 
 ### Release
 
+* Release version 0.3.65 12-05-2023
+* Release v0.3.65
 * Release version 0.3.64 11-27-2023
 * Release v0.3.64
 * Release version 0.3.63 11-24-2023
@@ -147,8 +149,6 @@
 * Release version 0.3.22 04-18-2023
 * Release v0.3.22
 * Release version 0.3.15 04-18-2023
-* Release v0.3.15
-* Release version 0.3.14 03-30-2023
 
 ### Remove
 
@@ -182,7 +182,6 @@
 * Update RepositoriesApi.md
 * Update the load balancer model
 * Update ClustersClusterConfig.md
-* Update model_github_app_spec.go
 
 ### Updating
 
@@ -258,5 +257,4 @@
 * Merge pull request [#313](https://github.com/harness/harness-go-sdk/issues/313) from harness/CDS-56975
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
 * Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
-* Merge pull request [#307](https://github.com/harness/harness-go-sdk/issues/307) from harness/CDS-54508
 
