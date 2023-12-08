@@ -298,16 +298,16 @@ func getNextGenHealthSource(hs map[string]interface{}) nextgen.NextGenHealthSour
 		data := queryDefinition.(map[string]interface{})
 
 		queryParams := nextgen.QueryParamsDto{}
-		queryParamsData, _ := json.Marshal(hs["queryParamsDto"])
+		queryParamsData, _ := json.Marshal(data["queryParams"])
 		json.Unmarshal(queryParamsData, &queryParams)
 
 		riskProfile := nextgen.RiskProfile{}
-		riskProfileData, _ := json.Marshal(hs["riskProfile"])
+		riskProfileData, _ := json.Marshal(data["riskProfile"])
 		json.Unmarshal(riskProfileData, &riskProfile)
 
 		query := ""
-		if hs["query"] != nil {
-			query = hs["query"].(string)
+		if data["query"] != nil {
+			query = data["query"].(string)
 		}
 		liveMonitoringEnabled := false
 		if data["liveMonitoringEnabled"] != nil {
@@ -335,6 +335,7 @@ func getNextGenHealthSource(hs map[string]interface{}) nextgen.NextGenHealthSour
 		}
 		queryDefinitionDtos[i] = *queryDefinitionDto
 	}
+	healthSource.QueryDefinitions = queryDefinitionDtos
 	healthSource.HealthSourceParams = &healthSourceParamDto
 
 	return *healthSource
