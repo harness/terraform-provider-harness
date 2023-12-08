@@ -29,6 +29,7 @@ resource "harness_autostopping_gcp_proxy" "test" {
     key_secret_id  = "projects/project_id/secrets/secret_id/versions/1"
     cert_secret_id = "projects/project_id/secrets/secret_id/versions/1"
   }
+  delete_cloud_resources_on_destroy = false
 }
 ```
 
@@ -39,6 +40,7 @@ resource "harness_autostopping_gcp_proxy" "test" {
 
 - `api_key` (String, Sensitive) Harness NG API key
 - `cloud_connector_id` (String) Id of the cloud connector
+- `delete_cloud_resources_on_destroy` (Boolean) Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from GCP account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in GCP account itself.
 - `host_name` (String) Hostname for the proxy
 - `machine_type` (String) Machine instance type
 - `name` (String) Name of the proxy
