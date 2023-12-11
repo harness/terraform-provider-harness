@@ -52,9 +52,10 @@ func ResourceServiceOverrides() *schema.Resource {
 				Required:    true,
 			},
 			"yaml": {
-				Description: "The yaml of the overrides spec object.",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "The yaml of the overrides spec object.",
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"identifier": {
 				Description: "The identifier of the override entity.",
