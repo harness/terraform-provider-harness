@@ -1,6 +1,6 @@
 
-<a name="0.3.66"></a>
-## 0.3.66 (2023-12-08)
+<a name="0.3.67"></a>
+## 0.3.67 (2023-12-12)
 
 ### API
 
@@ -8,12 +8,13 @@
 
 ### Added
 
-* added GitHubApp in credentials
+* Added Field Execute on Delegate ([#454](https://github.com/harness/harness-go-sdk/issues/454))
+* Added AdditionalMetadata struct
+* Added Handling for encoding of space
 
 ### Added
 
-* Added AdditionalMetadata struct
-* Added Handling for encoding of space
+* added GitHubApp in credentials
 
 ### Adding
 
@@ -30,11 +31,6 @@
 ### Create
 
 * Create .gitleaksignore ([#380](https://github.com/harness/harness-go-sdk/issues/380))
-
-### Delete
-
-* Delete GithubAppSpec.md
-* Delete model_github_api_access_spec.go
 
 ### Fix
 
@@ -60,6 +56,8 @@
 
 ### Release
 
+* Release version 0.3.66 12-08-2023
+* Release v0.3.66
 * Release version 0.3.65 12-05-2023
 * Release v0.3.65
 * Release version 0.3.64 11-27-2023
@@ -146,9 +144,6 @@
 * Release v0.3.24
 * Release version 0.3.23 04-19-2023
 * Release v0.3.23
-* Release version 0.3.22 04-18-2023
-* Release v0.3.22
-* Release version 0.3.15 04-18-2023
 
 ### Remove
 
@@ -169,10 +164,6 @@
 
 ### Update
 
-* update contract
-
-### Update
-
 * Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
@@ -182,6 +173,10 @@
 * Update RepositoriesApi.md
 * Update the load balancer model
 * Update ClustersClusterConfig.md
+
+### Update
+
+* update contract
 
 ### Updating
 
