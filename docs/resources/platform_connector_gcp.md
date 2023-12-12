@@ -50,6 +50,7 @@ resource "harness_platform_connector_gcp" "test" {
 ### Optional
 
 - `description` (String) Description of the resource.
+- `execute_on_delegate` (Boolean) Enable this flag to execute on Delegate
 - `force_delete` (Boolean) Enable this flag for force deletion of connector
 - `inherit_from_delegate` (Block List) Inherit configuration from delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `manual` (Block List, Max: 1) Manual credential configuration. (see [below for nested schema](#nestedblock--manual))
