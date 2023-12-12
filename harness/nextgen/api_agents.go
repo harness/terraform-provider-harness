@@ -781,8 +781,10 @@ func (a *AgentsApiService) AgentServiceForServerPostDeployYaml(ctx context.Conte
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
+		if localVarHttpResponse.Header.Get("Content-Type") == "application/yaml" {
+			return string(localVarBody), localVarHttpResponse, err
+		}
+		if err := a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type")); err != nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
@@ -1298,7 +1300,7 @@ func (a *AgentsApiService) AgentServiceForServerUpdate(ctx context.Context, body
 	}
 
 	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
+	localVarHttpHeaderAccepts := []string{"application/yaml"}
 
 	// set Accept header
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
