@@ -1,3 +1,9 @@
+# 0.29.4 (December 12,2023) 
+
+BUG FIXES:
+
+* resource/monitored_service - Added missing examples for monitored service with thresholds and NewRelic health source. ([#814](https://github.com/harness/terraform-provider-harness/issues/814))
+
 # 0.29.3 (December 11,2023) 
 
 ENHANCEMENTS:
