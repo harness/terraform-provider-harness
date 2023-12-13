@@ -191,10 +191,7 @@ func ResourceWorkspace() *schema.Resource {
 
 func resourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	id := d.Id()
-	if id == "" {
-		d.MarkNewResource()
-	}
+
 	resp, httpResp, err := c.WorkspaceApi.WorkspacesShowWorkspace(
 		ctx,
 		d.Get("org_id").(string),
@@ -202,8 +199,15 @@ func resourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta int
 		d.Get("identifier").(string),
 		c.AccountId,
 	)
+
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return parseError(err, httpResp)
 	}
 
 	readWorkspace(d, &resp)
@@ -212,10 +216,6 @@ func resourceWorkspaceRead(ctx context.Context, d *schema.ResourceData, meta int
 
 func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	id := d.Id()
-	if id == "" {
-		return nil
-	}
 
 	httpResp, err := c.WorkspaceApi.WorkspacesDestroyWorkspace(
 		ctx,
@@ -233,10 +233,6 @@ func resourceWorkspaceDelete(ctx context.Context, d *schema.ResourceData, meta i
 
 func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	id := d.Id()
-	if id == "" {
-		d.MarkNewResource()
-	}
 
 	createWorkspace, err := buildCreateWorkspace(d)
 	if err != nil {
@@ -254,16 +250,23 @@ func resourceWorkspaceCreate(ctx context.Context, d *schema.ResourceData, meta i
 		return parseError(err, httpResp)
 	}
 
-	resourceWorkspaceRead(ctx, d, meta)
+	resp, httpResp, err := c.WorkspaceApi.WorkspacesShowWorkspace(
+		ctx,
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
+		d.Get("identifier").(string),
+		c.AccountId,
+	)
+	if err != nil {
+		return parseError(err, httpResp)
+	}
+	readWorkspace(d, &resp)
+
 	return nil
 }
 
 func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	id := d.Id()
-	if id == "" {
-		d.MarkNewResource()
-	}
 
 	updateWorkspace, err := buildUpdateWorkspace(d)
 	if err != nil {
@@ -282,7 +285,18 @@ func resourceWorkspaceUpdate(ctx context.Context, d *schema.ResourceData, meta i
 		return parseError(err, httpResp)
 	}
 
-	resourceWorkspaceRead(ctx, d, meta)
+	resp, httpResp, err := c.WorkspaceApi.WorkspacesShowWorkspace(
+		ctx,
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
+		d.Get("identifier").(string),
+		c.AccountId,
+	)
+	if err != nil {
+		return parseError(err, httpResp)
+	}
+	readWorkspace(d, &resp)
+
 	return nil
 }
 
