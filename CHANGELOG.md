@@ -1,6 +1,6 @@
 
-<a name="0.3.67"></a>
-## 0.3.67 (2023-12-12)
+<a name="0.3.68"></a>
+## 0.3.68 (2023-12-12)
 
 ### API
 
@@ -56,6 +56,8 @@
 
 ### Release
 
+* Release version 0.3.67 12-12-2023
+* Release v0.3.67
 * Release version 0.3.66 12-08-2023
 * Release v0.3.66
 * Release version 0.3.65 12-05-2023
@@ -142,8 +144,6 @@
 * Release v0.3.25
 * Release version 0.3.24 05-02-2023
 * Release v0.3.24
-* Release version 0.3.23 04-19-2023
-* Release v0.3.23
 
 ### Remove
 
@@ -164,6 +164,10 @@
 
 ### Update
 
+* update contract
+
+### Update
+
 * Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
@@ -173,10 +177,6 @@
 * Update RepositoriesApi.md
 * Update the load balancer model
 * Update ClustersClusterConfig.md
-
-### Update
-
-* update contract
 
 ### Updating
 
@@ -251,5 +251,4 @@
 * Merge pull request [#319](https://github.com/harness/harness-go-sdk/issues/319) from harness/SRM-14684
 * Merge pull request [#313](https://github.com/harness/harness-go-sdk/issues/313) from harness/CDS-56975
 * Merge pull request [#316](https://github.com/harness/harness-go-sdk/issues/316) from harness/forcedeleteinfra
-* Merge pull request [#308](https://github.com/harness/harness-go-sdk/issues/308) from harness/abhinav/CI-6678
 
