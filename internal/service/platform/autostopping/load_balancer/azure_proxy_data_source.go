@@ -103,6 +103,11 @@ func DataSourceAzureProxy() *schema.Resource {
 					},
 				},
 			},
+			"delete_cloud_resources_on_destroy": {
+				Description: "Governs how the proxy entity will be deleted on Terraform destroy. When set to true, the associated VM will be deleted permanently from Azure account. Be fully aware of the consequneces of settting this to true, as the action is irreversible. When set to false, solely the Harness LB representation will be deleted, which leaves the proxy VM in Azure account itself.",
+				Type:        schema.TypeBool,
+				Required:    true,
+			},
 		},
 	}
 

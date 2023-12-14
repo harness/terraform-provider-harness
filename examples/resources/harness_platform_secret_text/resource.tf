@@ -1,21 +1,23 @@
-resource "harness_platform_secret_text" "inline" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "example"
-  tags        = ["foo:bar"]
-
-  secret_manager_identifier = "harnessSecretManager"
-  value_type                = "Inline"
-  value                     = "secret"
+terraform {
+  required_providers {
+    harness = {
+      source = "harness/harness"
+    }
+  }
 }
 
 resource "harness_platform_secret_text" "reference" {
-  identifier  = "identifier"
-  name        = "name"
-  description = "example"
+  identifier  = "test_tf_secret_77"
+  name        = "test_tf_secret_77"
+  description = "test_tf_secret_description"
   tags        = ["foo:bar"]
 
-  secret_manager_identifier = "azureSecretManager"
+  secret_manager_identifier = "GCP_SM"
   value_type                = "Reference"
-  value                     = "secret"
+  value                     = "sfdfsfewrewrxc"
+  additional_metadata {
+    values {
+      version = "5"
+    }
+  }
 }

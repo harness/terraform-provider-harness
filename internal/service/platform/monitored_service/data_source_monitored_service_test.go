@@ -274,6 +274,7 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
 					query = "metric=cpu"
                     groupName = "g1"
                     queryParams = {
+                      serviceInstanceField = "_sourceHost"
                     }
                     riskProfile = {
                     riskCategory = "Performance_Other"
@@ -284,6 +285,22 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
+					metricThresholds: [
+					{
+					  type: "IgnoreThreshold",
+					  spec: {
+						action: "Ignore"
+					  },
+					  criteria: {
+						type: "Absolute",
+						spec: {
+						  greaterThan: 100
+						}
+					  },
+					  metricType: "Custom",
+					  metricName: "sumologicmetrics"
+					}
+					]
 					},
 					{
 					name  = "name2"
@@ -291,6 +308,7 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     groupName = "g2"
                     query = "metric=memory"
 					queryParams = {
+                     serviceInstanceField = "_sourceHost"
                     }
                     riskProfile = {
                     riskCategory = "Performance_Other"
@@ -440,6 +458,9 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
 					name = "metric_infra_cpu"
                     identifier = "metric_infra_cpu"
 					query = "***"
+                    queryParams = {
+                    serviceInstanceField = "pod"
+                    }
                     groupName = "g"
                     riskProfile = {
                     riskCategory = "Errors"
@@ -457,6 +478,9 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     identifier = "identifier2"
                     groupName = "g2"
                     query = "*"
+                    queryParams = {
+                    serviceInstanceField = "pod"
+                    }
                     riskProfile = {
                     riskCategory = "Performance_Other"
                     thresholdTypes = [
@@ -466,6 +490,38 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
+			    	metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "identifier2"
+					  },
+					  {
+						"type": "FailImmediately",
+						"spec": {
+						  "action": "FailAfterOccurrence",
+						  "spec": {
+							"count": 2
+						  }
+						},
+						"criteria": {
+						  "type": "Absolute",
+						  "spec": {
+							"greaterThan": 100
+						  }
+						},
+						"metricType": "Custom",
+						"metricName": "identifier2"
+					  }]
 					}
 				]})
 			}
@@ -616,6 +672,39 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
+				    metricThresholds: [
+					  {
+						type: "IgnoreThreshold",
+						spec: {
+						  action: "Ignore"
+						},
+						criteria: {
+						  type: "Absolute",
+						  spec: {
+							greaterThan: 100
+						  }
+						},
+						metricType: "Custom",
+						metricName: "metric"
+					  },
+					  {
+						"type": "FailImmediately",
+						"spec": {
+						  "action": "FailAfterOccurrence",
+						  "spec": {
+							"count": 2
+						  }
+						},
+						"criteria": {
+						  "type": "Absolute",
+						  "spec": {
+							"greaterThan": 100
+						  }
+						},
+						"metricType": "Custom",
+						"metricName": "metric"
+					  }
+					]
 					},
 					{
 					name  = "name2"
@@ -793,6 +882,44 @@ resource "harness_platform_monitored_service" "test" {
             isManualQuery            = true
           }
         ]
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+				{
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "Prometheus Metric"
+				},
+				{
+				  "type": "FailImmediately",
+				  "spec": {
+					"action": "FailAfterOccurrence",
+					"spec": {
+					  "count": 2
+					}
+				  },
+				  "criteria": {
+					"type": "Absolute",
+					"spec": {
+					  "greaterThan": 100
+					}
+				  },
+				  "metricType": "Custom",
+				  "metricName": "Prometheus Metric"
+				}
+			  ]
+			}
+		]
       })
     }
     template_ref  = "template_ref"
@@ -841,6 +968,44 @@ resource "harness_platform_monitored_service" "test" {
       spec = jsonencode({
         connectorRef = "connectorRef"
         feature = "Datadog Cloud Metrics"
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+			  {
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "metric"
+              },
+			  {
+				"type": "FailImmediately",
+				"spec": {
+				  "action": "FailAfterOccurrence",
+				  "spec": {
+					"count": 2
+				  }
+				},
+				"criteria": {
+				  "type": "Absolute",
+				  "spec": {
+					"greaterThan": 100
+				  }
+				},
+				"metricType": "Custom",
+				"metricName": "metric"
+			  }
+			  ]
+			}
+		]
         metricDefinitions = [
           {
             metricName       = "metric"

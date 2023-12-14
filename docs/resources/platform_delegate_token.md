@@ -14,23 +14,20 @@ Resource for creating delegate tokens.
 
 ```terraform
 # Create delegate token for account level 
-resource "harness_platform_delegatetoken" "test" {
-  identifier  = "test_token"
+resource "harness_platform_delegatetoken" "test" {  
   name        = "test token"
   account_id  = "account_id"
 }
 
 # Create token for org level apikey
-resource "harness_platform_token" "test" {
-  identifier  = "test_token"
+resource "harness_platform_delegatetoken" "test" {  
   name        = "test token"
   account_id  = "account_id"
   org_id      = "org_id"
 }
 
 # Create token for project level apikey
-resource "harness_platform_token" "test" {
-  identifier  = "test_token"
+resource "harness_platform_delegatetoken" "test" {  
   name        = "test token"
   account_id  = "account_id"
   org_id      = "org_id"
@@ -44,7 +41,6 @@ resource "harness_platform_token" "test" {
 ### Required
 
 - `account_id` (String) Account Identifier for the Entity
-- `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 
 ### Optional

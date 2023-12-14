@@ -27,8 +27,8 @@ func ResourceTemplate() *schema.Resource {
 			"template_yaml": {
 				Description: "Yaml for creating new Template." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"version": {
 				Description: "Version Label for Template.",
@@ -39,7 +39,7 @@ func ResourceTemplate() *schema.Resource {
 				Description: "True if given version for template to be set as stable.",
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 			},
 			"comments": {
 				Description: "Specify comment with respect to changes.",
@@ -338,7 +338,7 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 						HarnessAccount: optional.NewString(c.AccountId)})
 			}
 
-		} else{
+		} else {
 			template := buildCreateTemplate(d)
 			if template.GitDetails != nil {
 				base_branch = optional.NewString(template.GitDetails.BaseBranch)
@@ -421,21 +421,21 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 					template_id = resp.Slug
 				}
 			}
-		} 
-		
+		}
+
 		if is_stable == true {
 			if project_id != "" {
-				_ , httpResp, err = c.ProjectTemplateApi.UpdateTemplateStableProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiUpdateTemplateStableProjectOpts{
+				_, httpResp, err = c.ProjectTemplateApi.UpdateTemplateStableProject(ctx, org_id, project_id, id, version, &nextgen.ProjectTemplateApiUpdateTemplateStableProjectOpts{
 					Body:           optional.NewInterface(template),
 					HarnessAccount: optional.NewString(c.AccountId),
 				})
 			} else if org_id != "" && project_id == "" {
-				_ , httpResp, err = c.OrgTemplateApi.UpdateTemplateStableOrg(ctx, id, org_id, version, &nextgen.OrgTemplateApiUpdateTemplateStableOrgOpts{
+				_, httpResp, err = c.OrgTemplateApi.UpdateTemplateStableOrg(ctx, org_id, id, version, &nextgen.OrgTemplateApiUpdateTemplateStableOrgOpts{
 					HarnessAccount: optional.NewString(c.AccountId),
 					Body:           optional.NewInterface(template),
 				})
 			} else {
-				_ , httpResp, err = c.AccountTemplateApi.UpdateTemplateStableAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateStableAccOpts{
+				_, httpResp, err = c.AccountTemplateApi.UpdateTemplateStableAcc(ctx, id, version, &nextgen.AccountTemplateApiUpdateTemplateStableAccOpts{
 					HarnessAccount: optional.NewString(c.AccountId),
 					Body:           optional.NewInterface(template),
 				})
@@ -529,7 +529,7 @@ func createImportFromGitRequestForTemplates(d *schema.ResourceData) *nextgen.Tem
 		if attr, ok := config["template_description"]; ok {
 			template_import_request.TemplateDescription = attr.(string)
 		}
-		
+
 	}
 
 	template_import_request_body := &nextgen.TemplatesImportRequestBody{}

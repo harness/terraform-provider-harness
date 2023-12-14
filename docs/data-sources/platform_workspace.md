@@ -75,8 +75,8 @@ Read-Only:
 
 Read-Only:
 
-- `repository` (String) Repository is the name of the repository to use
-- `repository_branch` (String) Repository Branch in which the code should be accessed
-- `repository_commit` (String) Repository Commit/Tag in which the code should be accessed
-- `repository_connector` (String) Repository Connector is the reference to the connector to use for this code
-- `repository_path` (String) Repository Commit/Tag in which the code should be accessed
+- `repository` (String) Repository is the name of the repository to fetch the code from.
+- `repository_branch` (String) Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit is set
+- `repository_commit` (String) Repository commit is commit or tag to fetch the variables from. This cannot be set if repository branch is set.
+- `repository_connector` (String) Repository connector is the reference to the connector used to fetch the variables.
+- `repository_path` (String) Repository path is the path in which the variables reside.

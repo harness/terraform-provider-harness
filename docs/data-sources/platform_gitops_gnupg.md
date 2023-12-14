@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_gnupg Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a GPG public key in the server's configuration.
+  Data source for fetching a Harness GitOps GPG public key.
 ---
 
 # harness_platform_gitops_gnupg (Data Source)
 
-Data source for retrieving a GPG public key in the server's configuration.
+Data source for fetching a Harness GitOps GPG public key.
 
 ## Example Usage
 
@@ -27,10 +27,10 @@ data "harness_platform_gitops_gnupg" "example" {
 
 - `account_id` (String) Account Identifier for the GnuPG Key.
 - `agent_id` (String) Agent identifier for the GnuPG Key.
+- `identifier` (String) Identifier for the GnuPG Key.
 
 ### Optional
 
-- `identifier` (String) Identifier for the GnuPG Key.
 - `org_id` (String) Organization Identifier for the GnuPG Key.
 - `project_id` (String) Project Identifier for the GnuPG Key.
 - `request` (Block List) GnuPGPublicKey is a representation of a GnuPG public key (see [below for nested schema](#nestedblock--request))
@@ -53,10 +53,8 @@ Optional:
 Optional:
 
 - `fingerprint` (String) Fingerprint is the fingerprint of the key
-- `key_data` (String) KeyData holds the raw key data, in base64 encoded format
+- `key_data` (String) KeyData holds the raw key data, in base64 encoded format.
 - `key_id` (String) KeyID specifies the key ID, in hexadecimal string format.
 - `owner` (String) Owner holds the owner identification, e.g. a name and e-mail address
 - `sub_type` (String) SubType holds the key's sub type
 - `trust` (String) Trust holds the level of trust assigned to this key
-
-

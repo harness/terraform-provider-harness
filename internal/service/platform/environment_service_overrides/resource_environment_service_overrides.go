@@ -40,9 +40,10 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 				Required:    true,
 			},
 			"yaml": {
-				Description: "Environment Service Overrides YAML." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "Environment Service Overrides YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 		},
 	}
