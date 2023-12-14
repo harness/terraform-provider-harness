@@ -130,6 +130,9 @@ func readSecretText(d *schema.ResourceData, secret *nextgen.Secret) error {
 	if secret.Text.ValueType == "Reference" {
 		d.Set("value", secret.Text.Value)
 	}
+	if secret.Text.AdditionalMetadata.Values != nil {
+		d.Set("additional_metadata", importAdditionalMetadata_2(&secret.Text.AdditionalMetadata))
+	}
 	return nil
 }
 
@@ -156,6 +159,41 @@ func readAdditionalMetadata(metadata interface{}) nextgen.AdditionalMetadata {
 	}
 
 	return result
+}
+
+func importAdditionalMetadata(data map[string]string) []map[string]interface{} {
+	var result []map[string]interface{}
+
+	for _, value := range data {
+		entry := map[string]interface{}{
+			"version": value,
+			// Add other fields for the inner map as needed
+		}
+
+		result = append(result, entry)
+	}
+
+	return result
+}
+
+func importAdditionalMetadata_2(additionalMetadata *nextgen.AdditionalMetadata) []interface{} {
+	response := make([]interface{}, 0)
+	data := map[string]interface{}{}
+	if additionalMetadata != nil && len(additionalMetadata.Values) > 0 {
+		var valuesList []interface{}
+
+		for _, value := range additionalMetadata.Values {
+			entry := map[string]string{
+				"version": value,
+				// Add other fields for the inner map as needed
+			}
+
+			valuesList = append(valuesList, entry)
+		}
+
+		data["values"] = valuesList
+	}
+	return append(response, data)
 }
 
 // This code uses the Terraform SDK's schema package to decode the additional_metadata parameter from the Terraform configuration into the AdditionalMetadata struct. Adjust the import paths and modify the decoding logic based on your actual requirements and structure.
