@@ -9,14 +9,8 @@
  */
 package nextgen
 
-import "encoding/json"
-
-type ServiceLevelIndicatorSpec struct {
-	Type_      SLIMetricType                         `json:"type,omitempty"`
-	Threshold  *ThresholdSliMetricSpec               `json:"-"`
-	Window     *WindowBasedServiceLevelIndicatorSpec `json:"-"`
-	Ratio      *RatioSliMetricSpec                   `json:"-"`
-	MetricLess *MetricLessServiceLevelIndicatorSpec  `json:"-"`
-
-	Spec json.RawMessage `json:"spec"`
+type WindowBasedServiceLevelIndicatorSpec struct {
+	Spec               *SliMetricSpec `json:"spec"`
+	SliMissingDataType string         `json:"sliMissingDataType,omitempty"`
+	Type_              string         `json:"type,omitempty"`
 }
