@@ -11,4 +11,6 @@ package nextgen
 
 type CompositeServiceLevelObjectiveSpec struct {
 	ServiceLevelObjectivesDetails []ServiceLevelObjectiveDetailsDto `json:"serviceLevelObjectivesDetails"`
+	EvaluationType                string                            `json:"evaluationType,omitempty"`
+	SloFormulaType                string                            `json:"sloFormulaType,omitempty"`
 }

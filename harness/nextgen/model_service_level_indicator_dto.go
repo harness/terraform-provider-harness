@@ -9,11 +9,15 @@
  */
 package nextgen
 
+import "encoding/json"
+
 type ServiceLevelIndicatorDto struct {
-	Name string `json:"name,omitempty"`
-	Identifier string `json:"identifier,omitempty"`
-	Type_ string `json:"type"`
-	Spec *ServiceLevelIndicatorSpec `json:"spec"`
-	SliMissingDataType string `json:"sliMissingDataType"`
-	HealthSourceRef string `json:"healthSourceRef,omitempty"`
+	Name       string                                 `json:"name,omitempty"`
+	Identifier string                                 `json:"identifier,omitempty"`
+	Type_      SLIEvaluationType                      `json:"type,omitempty"`
+	Window     *WindowBasedServiceLevelIndicatorSpec  `json:"-"`
+	Request    *RequestBasedServiceLevelIndicatorSpec `json:"-"`
+	MetricLess *MetricLessServiceLevelIndicatorSpec   `json:"-"`
+
+	Spec json.RawMessage `json:"spec"`
 }
