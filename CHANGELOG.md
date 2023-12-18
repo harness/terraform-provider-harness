@@ -1,6 +1,6 @@
 
-<a name="0.3.70"></a>
-## 0.3.70 (2023-12-15)
+<a name="0.3.71"></a>
+## 0.3.71 (2023-12-18)
 
 ### API
 
@@ -56,6 +56,8 @@
 
 ### Release
 
+* Release version 0.3.70 12-15-2023
+* Release v0.3.70
 * Release version 0.3.69 12-13-2023
 * Release v0.3.69
 * Release version 0.3.68 12-13-2023
@@ -115,9 +117,6 @@
 * Release version 0.3.41 08-01-2023
 * Release v0.3.41
 * Release version 0.3.40 07-26-2023
-* Release v0.3.40
-* Release version 0.3.39 07-24-2023
-* Release v0.3.39
 * Release version 0.3.37 07-13-2023
 * Release v0.3.37
 * Release version 0.3.36 07-12-2023
@@ -139,9 +138,6 @@
 * Release version 0.3.28 06-02-2023
 * Release v0.3.28
 * Release version 0.3.27 05-24-2023
-* Release v0.3.27
-* Release version 0.3.26 05-08-2023
-* Release v0.3.26
 
 ### Remove
 
@@ -169,9 +165,6 @@
 * Update api_agents.go
 * Update model_oci_repo_type_response_oci_repo_type_enum.go
 * Update model_repositories_aws_secret_ref.go
-* Update model_repositories_check_eso_response.go
-* Update model_v1_oci_repo_type_response.go
-* Update model_v1_oci_repo_type.go
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 
@@ -224,8 +217,6 @@
 * Merge pull request [#376](https://github.com/harness/harness-go-sdk/issues/376) from harness/SRM-15255
 * Merge pull request [#365](https://github.com/harness/harness-go-sdk/issues/365) from harness/CDS-73704
 * Merge pull request [#374](https://github.com/harness/harness-go-sdk/issues/374) from harness/cds-70803
-* Merge pull request [#369](https://github.com/harness/harness-go-sdk/issues/369) from harness/CDS-45765
-* Merge pull request [#370](https://github.com/harness/harness-go-sdk/issues/370) from harness/cds-72208-path-change
 * Merge pull request [#360](https://github.com/harness/harness-go-sdk/issues/360) from harness/CDS-69871
 * Merge pull request [#363](https://github.com/harness/harness-go-sdk/issues/363) from harness/CDS-57635
 * Merge pull request [#362](https://github.com/harness/harness-go-sdk/issues/362) from harness/CCM-12839
@@ -243,6 +234,4 @@
 * Merge pull request [#336](https://github.com/harness/harness-go-sdk/issues/336) from harness/PL-39286
 * Merge pull request [#333](https://github.com/harness/harness-go-sdk/issues/333) from harness/CDS-59495
 * Merge pull request [#330](https://github.com/harness/harness-go-sdk/issues/330) from harness/CI-8165-fix-sdk-
-* Merge pull request [#323](https://github.com/harness/harness-go-sdk/issues/323) from harness/go-sdk-support-for-elasticsearch-connector
-* Merge pull request [#319](https://github.com/harness/harness-go-sdk/issues/319) from harness/SRM-14684
 
