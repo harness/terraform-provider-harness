@@ -45,6 +45,7 @@ var ConnectorTypes = struct {
 	ElasticSearch    ConnectorType
 	Rancher          ConnectorType
 	CustomHealth     ConnectorType
+	Pdc              ConnectorType
 }{
 	K8sCluster:       "K8sCluster",
 	Git:              "Git",
@@ -88,6 +89,7 @@ var ConnectorTypes = struct {
 	ElasticSearch:    "ElasticSearch",
 	Rancher:          "Rancher",
 	CustomHealth:     "CustomHealth",
+	Pdc:              "Pdc",
 }
 
 var ConnectorTypesSlice = []string{
@@ -133,6 +135,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.ElasticSearch.String(),
 	ConnectorTypes.Rancher.String(),
 	ConnectorTypes.CustomHealth.String(),
+	ConnectorTypes.Pdc.String(),
 }
 
 func (c ConnectorType) String() string {
