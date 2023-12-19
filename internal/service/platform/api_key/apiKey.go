@@ -36,7 +36,7 @@ func ResourceApiKey() *schema.Resource {
 				Required:    true,
 			},
 			"default_time_to_expire_token": {
-				Description: "Default expiration time of the Token within API Key",
+				Description: "Default expiration time of the Token within API Key. If not specified the default value is set to 30 Days in Milliseconds.",
 				Type:        schema.TypeInt,
 				Optional:    true,
 			},
