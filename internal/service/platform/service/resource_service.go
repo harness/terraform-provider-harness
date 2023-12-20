@@ -24,10 +24,11 @@ func ResourceService() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
-				Description: "Service YAML." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Description:      "Service YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Computed:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of service",

@@ -88,6 +88,7 @@ func testAzureProxy(name string, hostName string) string {
             machine_type = "Standard_D2s_v3"
 			keypair = "PLACE_HOLDER_VALUE"
             api_key = "PLACE_HOLDER_VALUE"
+			delete_cloud_resources_on_destroy = true
 		}
 `, name, hostName)
 }
@@ -107,6 +108,7 @@ func testAzureProxyUpdate(name string, hostName string) string {
             machine_type = "Standard_D2s_v3"
 			keypair = "PLACE_HOLDER_VALUE"
             api_key = "PLACE_HOLDER_VALUE"
+			delete_cloud_resources_on_destroy = false
 		}
 `, name, hostName)
 }
