@@ -1,3 +1,20 @@
+# 0.29.4 (December 12,2023) 
+
+BUG FIXES:
+
+* resource/monitored_service - Added missing examples for monitored service with thresholds and NewRelic health source. ([#814](https://github.com/harness/terraform-provider-harness/issues/814))
+
+# 0.29.3 (December 11,2023) 
+
+ENHANCEMENTS:
+
+* Allow for tags to be included in feature flags ([#781](https://github.com/harness/terraform-provider-harness/issues/781))
+
+BUG FIXES:
+
+* resource/harness_platform_connector_aws - Added support to add aws region field in connector to perform connection test. ([#806](https://github.com/harness/terraform-provider-harness/issues/806))
+* resource/harness_platform_template: Fixing the update flow for templates ([#780](https://github.com/harness/terraform-provider-harness/issues/780))
+
 # 0.29.2 (November 28,2023) 
 
 # 0.29.1 (November 28,2023) 

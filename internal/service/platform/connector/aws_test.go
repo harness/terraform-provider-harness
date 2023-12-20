@@ -29,6 +29,7 @@ func TestAccResourceConnectorAws_Inherit(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.region", "us-east-1"),
 				),
 			},
 			{
@@ -60,6 +61,7 @@ func TestAccResourceConnectorAws_Irsa(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "irsa.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "irsa.0.region", "us-east-1"),
 				),
 			},
 			{
@@ -94,6 +96,7 @@ func TestAccResourceConnectorAws_Manual(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.region", "us-east-1"),
 				),
 			},
 			{
@@ -128,6 +131,7 @@ func TestAccResourceConnectorAws_Manual_Equal_Jitter(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "equal_jitter_backoff_strategy.0.retry_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "equal_jitter_backoff_strategy.0.base_delay", "10"),
 					resource.TestCheckResourceAttr(resourceName, "equal_jitter_backoff_strategy.0.max_backoff_time", "65"),
@@ -165,6 +169,7 @@ func TestAccResourceConnectorAws_Manual_Fixed_Delay(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "fixed_delay_backoff_strategy.0.retry_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "fixed_delay_backoff_strategy.0.fixed_backoff", "10"),
 				),
@@ -201,6 +206,7 @@ func TestAccResourceConnectorAws_Manual_Full_Jitter(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "manual.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "manual.0.region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "full_jitter_backoff_strategy.0.retry_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "full_jitter_backoff_strategy.0.base_delay", "10"),
 					resource.TestCheckResourceAttr(resourceName, "full_jitter_backoff_strategy.0.max_backoff_time", "65"),
@@ -235,6 +241,7 @@ func TestAccResourceConnectorAws_ForceDelete(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.region", "us-east-1"),
 					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
 				),
 			},
@@ -258,6 +265,7 @@ func testAccResourceConnectorAws_inherit(id string, name string) string {
 
 			inherit_from_delegate {
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 		}
 `, id, name)
@@ -273,6 +281,7 @@ func testAccResourceConnectorAws_irsa(id string, name string) string {
 
 			irsa {
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 		}
 `, id, name)
@@ -301,6 +310,7 @@ func testAccResourceConnectorAws_manual(id string, name string) string {
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 			depends_on = [time_sleep.wait_4_seconds]
 		}
@@ -335,6 +345,7 @@ func testAccResourceConnectorAws_manual_equal_jitter(id string, name string) str
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 			equal_jitter_backoff_strategy {
 				base_delay = 10
@@ -374,6 +385,7 @@ func testAccResourceConnectorAws_manual_full_jitter(id string, name string) stri
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 			full_jitter_backoff_strategy {
 				base_delay = 10
@@ -413,6 +425,7 @@ func testAccResourceConnectorAws_manual_fixed_delay(id string, name string) stri
 				access_key_ref = "account.${harness_platform_secret_text.test.id}"
 				secret_key_ref = "account.${harness_platform_secret_text.test.id}"
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 			fixed_delay_backoff_strategy {
 				fixed_backoff = 10
@@ -438,6 +451,7 @@ func testAccResourceConnectorAws_force_delete(id string, name string) string {
 
 			inherit_from_delegate {
 				delegate_selectors = ["harness-delegate"]
+				region = "us-east-1"
 			}
 
 			force_delete = true

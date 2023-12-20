@@ -42,6 +42,7 @@ data "harness_platform_connector_aws" "example" {
 - `inherit_from_delegate` (List of Object) Inherit credentials from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `irsa` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--irsa))
 - `manual` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--manual))
+- `region` AWS Region to perform Connection test of Connector.
 - `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--cross_account_access"></a>
@@ -88,6 +89,7 @@ Read-Only:
 Read-Only:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+- `region` AWS Region to perform Connection test of Connector.
 
 
 <a id="nestedatt--irsa"></a>
@@ -96,6 +98,7 @@ Read-Only:
 Read-Only:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+- `region` AWS Region to perform Connection test of Connector.
 
 
 <a id="nestedatt--manual"></a>
@@ -107,5 +110,7 @@ Read-Only:
 - `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `delegate_selectors` (Set of String) Connect only use delegates with these tags.
 - `secret_key_ref` (String) Reference to the Harness secret containing the aws secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `region` AWS Region to perform Connection test of Connector.
+
 
 
