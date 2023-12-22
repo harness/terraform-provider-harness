@@ -27,7 +27,7 @@ var (
 type MonitoredServiceApiService service
 
 type MonitoredServiceApiSaveMonitoredServiceOpts struct {
-    Body optional.Interface
+	Body optional.Interface
 }
 
 type MonitoredServiceApiUpdateMonitoredServiceOpts struct {
@@ -36,18 +36,19 @@ type MonitoredServiceApiUpdateMonitoredServiceOpts struct {
 
 /*
 SaveMonitoredService saves monitored service data
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId
- * @param optional nil or *MonitoredServiceApiSaveMonitoredServiceOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of MonitoredServiceDto) -
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId
+  - @param optional nil or *MonitoredServiceApiSaveMonitoredServiceOpts - Optional Parameters:
+  - @param "Body" (optional.Interface of MonitoredServiceDto) -
+
 @return RestResponseMonitoredServiceResponse
 */
 func (a *MonitoredServiceApiService) SaveMonitoredService(ctx context.Context, accountId string, localVarOptionals *MonitoredServiceApiSaveMonitoredServiceOpts) (RestResponseMonitoredServiceResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue RestResponseMonitoredServiceResponse
 	)
 
@@ -80,7 +81,7 @@ func (a *MonitoredServiceApiService) SaveMonitoredService(ctx context.Context, a
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
@@ -114,27 +115,55 @@ func (a *MonitoredServiceApiService) SaveMonitoredService(ctx context.Context, a
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil { 
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-		fmt.Sprintf("MessiMessi")
-		fmt.Sprintf("%+v\n", localVarHttpResponse)
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v RestResponseMonitoredServiceResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoBoolean
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -144,19 +173,20 @@ func (a *MonitoredServiceApiService) SaveMonitoredService(ctx context.Context, a
 
 /*
 GetMonitoredService get monitored service data
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param identifier
- * @param accountId
- * @param orgIdentifier
- * @param projectIdentifier
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param identifier
+  - @param accountId
+  - @param orgIdentifier
+  - @param projectIdentifier
+
 @return ResponseMonitoredServiceResponse
 */
 func (a *MonitoredServiceApiService) GetMonitoredService(ctx context.Context, identifier string, accountId string, orgIdentifier string, projectIdentifier string) (ResponseMonitoredServiceResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue ResponseMonitoredServiceResponse
 	)
 
@@ -229,8 +259,28 @@ func (a *MonitoredServiceApiService) GetMonitoredService(ctx context.Context, id
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v ResponseMonitoredServiceResponse
@@ -250,19 +300,20 @@ func (a *MonitoredServiceApiService) GetMonitoredService(ctx context.Context, id
 
 /*
 UpdateMonitoredService updates monitored service data
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId
- * @param identifier
- * @param optional nil or *MonitoredServiceApiUpdateMonitoredServiceOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of MonitoredServiceDto) -
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId
+  - @param identifier
+  - @param optional nil or *MonitoredServiceApiUpdateMonitoredServiceOpts - Optional Parameters:
+  - @param "Body" (optional.Interface of MonitoredServiceDto) -
+
 @return RestResponseMonitoredServiceResponse
 */
 func (a *MonitoredServiceApiService) UpdateMonitoredService(ctx context.Context, accountId string, identifier string, localVarOptionals *MonitoredServiceApiUpdateMonitoredServiceOpts) (RestResponseMonitoredServiceResponse, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Put")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Put")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue RestResponseMonitoredServiceResponse
 	)
 
@@ -296,7 +347,7 @@ func (a *MonitoredServiceApiService) UpdateMonitoredService(ctx context.Context,
 	}
 	// body params
 	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
-		localVarOptionalBody:= localVarOptionals.Body.Value()
+		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
 	if ctx != nil {
@@ -330,25 +381,45 @@ func (a *MonitoredServiceApiService) UpdateMonitoredService(ctx context.Context,
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil { 
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v RestResponseMonitoredServiceResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
@@ -358,19 +429,20 @@ func (a *MonitoredServiceApiService) UpdateMonitoredService(ctx context.Context,
 
 /*
 DeleteMonitoredService delete monitored service data
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountId
- * @param orgIdentifier
- * @param projectIdentifier
- * @param identifier
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param accountId
+  - @param orgIdentifier
+  - @param projectIdentifier
+  - @param identifier
+
 @return RestResponseBoolean
 */
 func (a *MonitoredServiceApiService) DeleteMonitoredService(ctx context.Context, accountId string, orgIdentifier string, projectIdentifier string, identifier string) (RestResponseBoolean, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue RestResponseBoolean
 	)
 
@@ -443,8 +515,28 @@ func (a *MonitoredServiceApiService) DeleteMonitoredService(ctx context.Context,
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 200 {
 			var v RestResponseBoolean
