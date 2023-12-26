@@ -14,7 +14,6 @@ Resource for creating an SLO.
 
 ```terraform
 resource "harness_platform_slo" "example" {
-  account_id = "account_id"
   org_id     = "default"
   project_id = "default_project"
   identifier = "TerraformSLO"
@@ -27,14 +26,32 @@ resource "harness_platform_slo" "example" {
       type                  = "Rolling"
       slo_target_percentage = 10.0
       spec = jsonencode({
-        periodLength = "28d"
+        type = "Monthly"
+        spec = {
+          periodLength = "28d"
+        }
       })
     }
     type = "Simple"
     spec = jsonencode({
       monitoredServiceRef       = "monitoredServiceRef"
-      healthSourceRef           = "healthSourceRef"
-      serviceLevelIndicatorType = "serviceLevelIndicatorType"
+      serviceLevelIndicatorType = "Availability"
+      serviceLevelIndicators = [
+        {
+          name       = "name"
+          identifier = "identifier"
+          type       = "Availability"
+          spec = {
+            type = "Threshold"
+            spec = {
+              metric1        = "metric1"
+              thresholdValue = 10
+              thresholdType  = ">"
+            }
+          }
+          sliMissingDataType = "Good"
+        }
+      ]
     })
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref"

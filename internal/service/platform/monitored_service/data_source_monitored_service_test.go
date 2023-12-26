@@ -850,81 +850,31 @@ resource "harness_platform_monitored_service" "test" {
     environment_ref = "environment_ref"
     tags            = ["foo:bar", "bar:foo"]
     health_sources {
-      name       = "prometheus metrics verify step"
-      identifier = "prometheus_metrics"
-      type       = "Prometheus"
+      name = "prometheus"
+      identifier = "prometheus"
+      type = "Prometheus"
       spec = jsonencode({
         connectorRef = "connectorRef"
+        feature = "feature"
         metricDefinitions = [
           {
-            identifier = "Prometheus_Metric",
-            metricName = "Prometheus Metric",
-            riskProfile = {
-              riskCategory = "Performance_Other"
-              thresholdTypes = [
-                "ACT_WHEN_HIGHER"
-              ]
+            identifier   = "prometheus_metric"
+            metricName = "Prometheus Metric"
+            sli =  {
+              enabled =  true
             }
             analysis = {
-              liveMonitoring = {
-                enabled = true
-              }
-              deploymentVerification = {
-                enabled                  = true
-              }
+             }
+            riskProfile = {
             }
-            sli : {
-              enabled = true
-            }
-            query                    = "count(up{group=\"cv\",group=\"cv\"})"
-            groupName                = "met"
-            serviceInstanceFieldName = "pod_name"
-            isManualQuery            = true
+            query = "sum(abc{identifier=\"slo-ratiobased-unsuccessfulCalls-datapattern\"})",
+            groupName = "t2",
+            isManualQuery = true
           }
         ]
-		metricPacks: [
-			{
-			  identifier: "Custom",
-			  metricThresholds: [
-				{
-				  type: "IgnoreThreshold",
-				  spec: {
-					action: "Ignore"
-				  },
-				  criteria: {
-					type: "Absolute",
-					spec: {
-					  greaterThan: 100
-					}
-				  },
-				  metricType: "Custom",
-				  metricName: "Prometheus Metric"
-				},
-				{
-				  "type": "FailImmediately",
-				  "spec": {
-					"action": "FailAfterOccurrence",
-					"spec": {
-					  "count": 2
-					}
-				  },
-				  "criteria": {
-					"type": "Absolute",
-					"spec": {
-					  "greaterThan": 100
-					}
-				  },
-				  "metricType": "Custom",
-				  "metricName": "Prometheus Metric"
-				}
-			  ]
-			}
-		]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
-  }
+}
 }
 
 	data "harness_platform_monitored_service" "test" {

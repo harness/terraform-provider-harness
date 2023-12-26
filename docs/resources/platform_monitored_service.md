@@ -34,10 +34,11 @@ resource "harness_platform_monitored_service" "example" {
         connectorRef = "connectorRef"
         queryDefinitions = [
           {
-            name      = "name"
-            query     = "query"
-            index     = "index"
-            groupName = "Logs_Group"
+            name       = "error_4xx"
+            identifier = "error_4xx_id"
+            query      = "Bad Request"
+            index      = "index"
+            groupName  = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -47,10 +48,11 @@ resource "harness_platform_monitored_service" "example" {
             }
           },
           {
-            name      = "name2"
-            query     = "query2"
-            index     = "index2"
-            groupName = "Logs_Group"
+            name       = "error_5xx"
+            identifier = "error_5xx_id"
+            query      = "Internal Server Error"
+            index      = "index2"
+            groupName  = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -107,6 +109,7 @@ resource "harness_platform_monitored_service" "example1" {
             query      = "metric=cpu"
             groupName  = "g1"
             queryParams = {
+              serviceInstanceField = "_sourcehost"
             }
             riskProfile = {
               riskCategory = "Performance_Other"
@@ -157,6 +160,7 @@ resource "harness_platform_monitored_service" "example1" {
             groupName  = "g2"
             query      = "metric=memory"
             queryParams = {
+              serviceInstanceField = "_sourcehost"
             }
             riskProfile = {
               riskCategory = "Performance_Other"
