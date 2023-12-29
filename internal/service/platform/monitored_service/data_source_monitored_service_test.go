@@ -874,6 +874,79 @@ resource "harness_platform_monitored_service" "test" {
         ]
       })
     }
+    health_sources {
+      name       = "prometheus metrics verify step"
+      identifier = "prometheus_metrics"
+      type       = "Prometheus"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        metricDefinitions = [
+          {
+            identifier = "Prometheus_Metric",
+            metricName = "Prometheus Metric",
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            analysis = {
+              liveMonitoring = {
+                enabled = true
+              }
+              deploymentVerification = {
+                enabled                  = true
+              }
+            }
+            sli : {
+              enabled = true
+            }
+            query                    = "count(up{group=\"cv\",group=\"cv\"})"
+            groupName                = "met"
+            serviceInstanceFieldName = "pod_name"
+            isManualQuery            = true
+          }
+        ]
+		metricPacks: [
+			{
+			  identifier: "Custom",
+			  metricThresholds: [
+				{
+				  type: "IgnoreThreshold",
+				  spec: {
+					action: "Ignore"
+				  },
+				  criteria: {
+					type: "Absolute",
+					spec: {
+					  greaterThan: 100
+					}
+				  },
+				  metricType: "Custom",
+				  metricName: "Prometheus Metric"
+				},
+				{
+				  "type": "FailImmediately",
+				  "spec": {
+					"action": "FailAfterOccurrence",
+					"spec": {
+					  "count": 2
+					}
+				  },
+				  "criteria": {
+					"type": "Absolute",
+					"spec": {
+					  "greaterThan": 100
+					}
+				  },
+				  "metricType": "Custom",
+				  "metricName": "Prometheus Metric"
+				}
+			  ]
+			}
+		]
+      })
+    }
 }
 }
 
