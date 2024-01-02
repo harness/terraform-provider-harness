@@ -18,7 +18,7 @@ resource "harness_platform_workspace" "example" {
   identifier              = "example"
   org_id                  = harness_platform_organization.test.id
   project_id              = harness_platform_project.test.id
-  provisioner             = "terraform"
+  provisioner_type        = "terraform"
   provisioner_version     = "1.5.6"
   repository              = "https://github.com/org/repo"
   repository_branch       = "main"
