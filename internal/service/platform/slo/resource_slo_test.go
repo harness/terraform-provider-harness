@@ -176,11 +176,12 @@ func testAccResourceSloForTimeWindow(id string, name string) string {
 					type = "ElasticSearch"
 					spec = jsonencode({
 						connectorRef = "connectorRef"
-\						queryDefinitions = [
+						queryDefinitions = [
 							{
 								name   = "name"
                                 identifier = "identifier"
 								query = "query"
+								groupName = "Logs Group"	
                                 queryParams = {
 								  index = "index"
 								  serviceInstanceField = "serviceInstanceIdentifier"
@@ -193,6 +194,7 @@ func testAccResourceSloForTimeWindow(id string, name string) string {
 								name   = "name2"
                                 identifier = "identifier2"
 								query = "query2"
+								groupName = "Logs Group"
                                 queryParams = {
 								  index = "index2"
 								  serviceInstanceField = "serviceInstanceIdentifier2"
@@ -203,8 +205,6 @@ func testAccResourceSloForTimeWindow(id string, name string) string {
 							}
 						]
 					})
-				}
-				change_sources {
 				}
 			}
 		}
@@ -341,17 +341,7 @@ func testAccResourceSloForRequest(id string, name string) string {
 						]
 					})
 				}
-            change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
+			}
 		}
 
          resource "harness_platform_slo" "test" {
