@@ -23,12 +23,12 @@ resource "harness_platform_slo" "example" {
     tags              = ["foo:bar", "bar:foo"]
     user_journey_refs = ["one", "two"]
     slo_target {
-      type                  = "Rolling"
-      slo_target_percentage = 10.0
+      type                  = "Calender"
+      slo_target_percentage = 10
       spec = jsonencode({
         type = "Monthly"
         spec = {
-          periodLength = "28d"
+          dayOfMonth = 5
         }
       })
     }
@@ -40,7 +40,7 @@ resource "harness_platform_slo" "example" {
         {
           name       = "name"
           identifier = "identifier"
-          type       = "Availability"
+          type       = "Window"
           spec = {
             type = "Threshold"
             spec = {
@@ -48,8 +48,8 @@ resource "harness_platform_slo" "example" {
               thresholdValue = 10
               thresholdType  = ">"
             }
+            sliMissingDataType = "Good"
           }
-          sliMissingDataType = "Good"
         }
       ]
     })
