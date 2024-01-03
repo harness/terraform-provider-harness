@@ -212,17 +212,6 @@ func testAccELKDataSourceMonitoredService(id string, name string) string {
 					}
 				]})
 			}
-			change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
 		}
 	}
 
@@ -322,17 +311,6 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
 					}
 				]})
 			}
-			change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
 		}
 	}
 
@@ -398,17 +376,6 @@ func testAccSumologicLogDataSourceMonitoredService(id string, name string) strin
 					}
 				]})
 			}
-			change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
 		}
 	}
 
@@ -525,17 +492,6 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
 					}
 				]})
 			}
-			change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
 		}
 	}
 
@@ -727,17 +683,6 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
 					}
 				]})
 			}
-			change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
 		}
 	}
 
@@ -799,17 +744,6 @@ func testAccAzureLogsDataSourceMonitoredService(id string, name string) string {
 					}
 				]})
 			}
-			change_sources {
-              name       = "BAC"
-              identifier = "BAC"
-              type       = "PagerDuty"
-              enabled    = true
-              spec = jsonencode({
-                connectorRef = "account.pd"
-                pagerDutyServiceId = "P0N21OB"
-           })
-              category = "Alert"
-           }
 		}
 	}
 
