@@ -850,6 +850,31 @@ resource "harness_platform_monitored_service" "test" {
     environment_ref = "environment_ref"
     tags            = ["foo:bar", "bar:foo"]
     health_sources {
+      name = "prometheus"
+      identifier = "prometheus"
+      type = "Prometheus"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        feature = "feature"
+        metricDefinitions = [
+          {
+            identifier   = "prometheus_metric"
+            metricName = "Prometheus Metric"
+            sli =  {
+              enabled =  true
+            }
+            analysis = {
+             }
+            riskProfile = {
+            }
+            query = "sum(abc{identifier=\"slo-ratiobased-unsuccessfulCalls-datapattern\"})",
+            groupName = "t2",
+            isManualQuery = true
+          }
+        ]
+      })
+    }
+    health_sources {
       name       = "prometheus metrics verify step"
       identifier = "prometheus_metrics"
       type       = "Prometheus"
@@ -922,9 +947,7 @@ resource "harness_platform_monitored_service" "test" {
 		]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
-  }
+}
 }
 
 	data "harness_platform_monitored_service" "test" {
