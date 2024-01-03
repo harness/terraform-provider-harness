@@ -176,40 +176,36 @@ func testAccResourceSloForTimeWindow(id string, name string) string {
 					type = "ElasticSearch"
 					spec = jsonencode({
 						connectorRef = "connectorRef"
-						feature = "feature"
-						queries = [
+\						queryDefinitions = [
 							{
 								name   = "name"
+                                identifier = "identifier"
 								query = "query"
-								index = "index"
-								serviceInstanceIdentifier = "serviceInstanceIdentifier"
-								timeStampIdentifier = "timeStampIdentifier"
-								timeStampFormat = "timeStampFormat"
-								messageIdentifier = "messageIdentifier"
+                                queryParams = {
+								  index = "index"
+								  serviceInstanceField = "serviceInstanceIdentifier"
+								  timeStampIdentifier = "timeStampIdentifier"
+								  timeStampFormat = "timeStampFormat"
+								  messageIdentifier = "messageIdentifier"
+                                }
 							},
 							{
 								name   = "name2"
+                                identifier = "identifier2"
 								query = "query2"
-								index = "index2"
-								serviceInstanceIdentifier = "serviceInstanceIdentifier2"
-								timeStampIdentifier = "timeStampIdentifier2"
-								timeStampFormat = "timeStampFormat2"
-								messageIdentifier = "messageIdentifier2"
+                                queryParams = {
+								  index = "index2"
+								  serviceInstanceField = "serviceInstanceIdentifier2"
+								  timeStampIdentifier = "timeStampIdentifier2"
+								  timeStampFormat = "timeStampFormat2"
+								  messageIdentifier = "messageIdentifier2"
+                              }
 							}
 						]
 					})
 				}
 				change_sources {
-					name = "csName1"
-					identifier = "harness_cd_next_gen"
-					type = "HarnessCDNextGen"
-					enabled = true
-					spec = jsonencode({
-					})
-					category = "Deployment"
 				}
-				template_ref = "template_ref"
-				version_label = "version_label"
 			}
 		}
 
@@ -345,18 +341,17 @@ func testAccResourceSloForRequest(id string, name string) string {
 						]
 					})
 				}
-				change_sources {
-					name = "csName1"
-					identifier = "harness_cd_next_gen"
-					type = "HarnessCDNextGen"
-					enabled = true
-					spec = jsonencode({
-					})
-					category = "Deployment"
-				}
-				template_ref = "template_ref"
-				version_label = "version_label"
-			}
+            change_sources {
+              name       = "BAC"
+              identifier = "BAC"
+              type       = "PagerDuty"
+              enabled    = true
+              spec = jsonencode({
+                connectorRef = "account.pd"
+                pagerDutyServiceId = "P0N21OB"
+           })
+              category = "Alert"
+           }
 		}
 
          resource "harness_platform_slo" "test" {
