@@ -49,12 +49,8 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/harness/harness-go-sdk v0.3.59 h1:l2aDHzLiWdHy48onBE5iZeclEYMPtHhlsz8iAtgreBg=
-github.com/harness/harness-go-sdk v0.3.59/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
-github.com/harness/harness-go-sdk v0.3.61 h1:r5UDIkv+ugi4c8hraMJTPPbBgcd5epevg2rxvvI9ANc=
-github.com/harness/harness-go-sdk v0.3.61/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
-github.com/harness/harness-go-sdk v0.3.64 h1:+wHgDjJSxPI8P2W2JyNkjdaz+g3nZY2cud24wwqYcVI=
-github.com/harness/harness-go-sdk v0.3.64/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
+github.com/harness/harness-go-sdk v0.3.72 h1:wHa/aez4aeE08CR761Fw/bzK8mBVoHKNG7+5qW1qcuQ=
+github.com/harness/harness-go-sdk v0.3.72/go.mod h1:CPXydorp4zd5Dz2u2FXiHyWL4yd5PQafOMN69cgPSvk=
 github.com/harness/harness-openapi-go-client v0.0.19 h1:8XuZvSPZrNqKRLh7Qksdz78WvRMRzRf88LgzxoT5u7k=
 github.com/harness/harness-openapi-go-client v0.0.19/go.mod h1:u0vqYb994BJGotmEwJevF4L3BNAdU9i8ui2d22gmLPA=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=

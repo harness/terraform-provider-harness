@@ -60,6 +60,7 @@ func testAWSProxy(name string, hostName string) string {
 			machine_type = "t2.medium"
             api_key = ""
 			allocate_static_ip = true
+			delete_cloud_resources_on_destroy = false
 		}
 `, name, hostName)
 }
@@ -77,6 +78,7 @@ func testAWSProxyUpdate(name string, hostName string) string {
             machine_type = "t2.medium"
             api_key = ""
 			allocate_static_ip = true
+			delete_cloud_resources_on_destroy = true
 		}
 `, name, hostName)
 }

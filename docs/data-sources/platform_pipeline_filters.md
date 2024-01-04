@@ -37,7 +37,56 @@ Data source for retrieving a Harness Pipeline Filter.
 
 Read-Only:
 
+- `description` (String)
 - `filter_type` (String)
+- `module_properties` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties))
+- `name` (String)
+- `pipeline_identifiers` (List of String)
+- `pipeline_tags` (List of Map of String)
 - `tags` (Set of String)
 
+<a id="nestedobjatt--filter_properties--module_properties"></a>
+### Nested Schema for `filter_properties.module_properties`
 
+Read-Only:
+
+- `cd` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties--cd))
+- `ci` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties--ci))
+
+<a id="nestedobjatt--filter_properties--module_properties--cd"></a>
+### Nested Schema for `filter_properties.module_properties.cd`
+
+Read-Only:
+
+- `artifact_display_names` (Set of String)
+- `deployment_types` (String)
+- `environment_names` (Set of String)
+- `service_names` (Set of String)
+
+
+<a id="nestedobjatt--filter_properties--module_properties--ci"></a>
+### Nested Schema for `filter_properties.module_properties.ci`
+
+Read-Only:
+
+- `branch` (String)
+- `build_type` (String)
+- `ci_execution_info` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties--ci--ci_execution_info))
+- `repo_names` (String)
+- `tag` (String)
+
+<a id="nestedobjatt--filter_properties--module_properties--ci--ci_execution_info"></a>
+### Nested Schema for `filter_properties.module_properties.ci.tag`
+
+Read-Only:
+
+- `event` (String)
+- `pull_request` (List of Object) (see [below for nested schema](#nestedobjatt--filter_properties--module_properties--ci--tag--pull_request))
+
+<a id="nestedobjatt--filter_properties--module_properties--ci--tag--pull_request"></a>
+### Nested Schema for `filter_properties.module_properties.ci.tag.pull_request`
+
+Read-Only:
+
+- `source_branch` (String)
+- `target_branch` (String)

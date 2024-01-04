@@ -212,17 +212,6 @@ func testAccELKDataSourceMonitoredService(id string, name string) string {
 					}
 				]})
 			}
-			change_sources {
-				name = "csName1"
-				identifier = "harness_cd_next_gen"
-				type = "HarnessCDNextGen"
-				enabled = true
-				spec = jsonencode({
-				})
-				category = "Deployment"
-			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -274,6 +263,7 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
 					query = "metric=cpu"
                     groupName = "g1"
                     queryParams = {
+                      serviceInstanceField = "_sourceHost"
                     }
                     riskProfile = {
                     riskCategory = "Performance_Other"
@@ -284,20 +274,20 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
-					metricThresholds: [
+					metricThresholds = [
 					{
-					  type: "IgnoreThreshold",
-					  spec: {
-						action: "Ignore"
+					  type = "IgnoreThreshold",
+					  spec = {
+						action = "Ignore"
 					  },
-					  criteria: {
-						type: "Absolute",
-						spec: {
-						  greaterThan: 100
+					  criteria = {
+						type = "Absolute",
+						spec = {
+						  greaterThan = 100
 						}
 					  },
-					  metricType: "Custom",
-					  metricName: "sumologicmetrics"
+					  metricType = "Custom",
+					  metricName = "sumologicmetrics"
 					}
 					]
 					},
@@ -307,6 +297,7 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
                     groupName = "g2"
                     query = "metric=memory"
 					queryParams = {
+                     serviceInstanceField = "_sourceHost"
                     }
                     riskProfile = {
                     riskCategory = "Performance_Other"
@@ -320,17 +311,6 @@ func testAccSumologicMetricDataSourceMonitoredService(id string, name string) st
 					}
 				]})
 			}
-			change_sources {
-				name = "csName1"
-				identifier = "harness_cd_next_gen"
-				type = "HarnessCDNextGen"
-				enabled = true
-				spec = jsonencode({
-				})
-				category = "Deployment"
-			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -396,17 +376,6 @@ func testAccSumologicLogDataSourceMonitoredService(id string, name string) strin
 					}
 				]})
 			}
-			change_sources {
-				name = "csName1"
-				identifier = "harness_cd_next_gen"
-				type = "HarnessCDNextGen"
-				enabled = true
-				spec = jsonencode({
-				})
-				category = "Deployment"
-			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -456,6 +425,9 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
 					name = "metric_infra_cpu"
                     identifier = "metric_infra_cpu"
 					query = "***"
+                    queryParams = {
+                    serviceInstanceField = "pod"
+                    }
                     groupName = "g"
                     riskProfile = {
                     riskCategory = "Errors"
@@ -473,6 +445,9 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     identifier = "identifier2"
                     groupName = "g2"
                     query = "*"
+                    queryParams = {
+                    serviceInstanceField = "pod"
+                    }
                     riskProfile = {
                     riskCategory = "Performance_Other"
                     thresholdTypes = [
@@ -482,52 +457,41 @@ func testAccSplunkSignalFXDataSourceMonitoredService(id string, name string) str
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
-			    	metricThresholds: [
+			    	metricThresholds = [
 					  {
-						type: "IgnoreThreshold",
-						spec: {
-						  action: "Ignore"
+						type = "IgnoreThreshold",
+						spec = {
+						  action = "Ignore"
 						},
-						criteria: {
-						  type: "Absolute",
-						  spec: {
+						criteria = {
+						  type = "Absolute",
+						  spec = {
 							greaterThan: 100
 						  }
 						},
-						metricType: "Custom",
-						metricName: "identifier2"
+						metricType = "Custom",
+						metricName = "identifier2"
 					  },
 					  {
-						"type": "FailImmediately",
-						"spec": {
-						  "action": "FailAfterOccurrence",
-						  "spec": {
-							"count": 2
+						"type" = "FailImmediately",
+						"spec" = {
+						  "action" = "FailAfterOccurrence",
+						  "spec" = {
+							"count" = 2
 						  }
 						},
-						"criteria": {
-						  "type": "Absolute",
-						  "spec": {
-							"greaterThan": 100
+						"criteria" = {
+						  "type" = "Absolute",
+						  "spec" = {
+							"greaterThan" = 100
 						  }
 						},
-						"metricType": "Custom",
-						"metricName": "identifier2"
+						"metricType" = "Custom",
+						"metricName" = "identifier2"
 					  }]
 					}
 				]})
 			}
-			change_sources {
-				name = "csName1"
-				identifier = "harness_cd_next_gen"
-				type = "HarnessCDNextGen"
-				enabled = true
-				spec = jsonencode({
-				})
-				category = "Deployment"
-			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -593,27 +557,9 @@ func testAccGrafanaLokiLogsDataSourceMonitoredService(id string, name string) st
                     liveMonitoringEnabled = "false"
                     continuousVerificationEnabled = "false"
                     sliEnabled = "false"
-				    metricThresholds: [
-					  {
-						type: "IgnoreThreshold",
-						spec: {
-						  action: "Ignore"
-						},
-						criteria: {
-						  type: "Absolute",
-						  spec: {
-							greaterThan: 100
-						  }
-						},
-						metricType: "Custom",
-						metricName: "identifier2"
-					  }
-					]
 					}
 				]})
 			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -680,37 +626,37 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
                     liveMonitoringEnabled = "true"
                     continuousVerificationEnabled = "true"
                     sliEnabled = "false"
-				    metricThresholds: [
+				    metricThresholds = [
 					  {
-						type: "IgnoreThreshold",
-						spec: {
-						  action: "Ignore"
+						type = "IgnoreThreshold",
+						spec = {
+						  action = "Ignore"
 						},
-						criteria: {
-						  type: "Absolute",
-						  spec: {
-							greaterThan: 100
+						criteria = {
+						  type = "Absolute",
+						  spec = {
+							greaterThan = 100
 						  }
 						},
-						metricType: "Custom",
-						metricName: "metric"
+						metricType = "Custom",
+						metricName = "metric"
 					  },
 					  {
-						"type": "FailImmediately",
-						"spec": {
-						  "action": "FailAfterOccurrence",
-						  "spec": {
-							"count": 2
+						"type" = "FailImmediately",
+						"spec" = {
+						  "action" = "FailAfterOccurrence",
+						  "spec" = {
+							"count" = 2
 						  }
 						},
-						"criteria": {
-						  "type": "Absolute",
-						  "spec": {
-							"greaterThan": 100
+						"criteria" = {
+						  "type" = "Absolute",
+						  "spec" = {
+							"greaterThan" = 100
 						  }
 						},
-						"metricType": "Custom",
-						"metricName": "metric"
+						"metricType" = "Custom",
+						"metricName" = "metric"
 					  }
 					]
 					},
@@ -737,17 +683,6 @@ func testAccAzureMetricsDataSourceMonitoredService(id string, name string) strin
 					}
 				]})
 			}
-			change_sources {
-				name = "csName1"
-				identifier = "harness_cd_next_gen"
-				type = "HarnessCDNextGen"
-				enabled = true
-				spec = jsonencode({
-				})
-				category = "Deployment"
-			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -809,17 +744,6 @@ func testAccAzureLogsDataSourceMonitoredService(id string, name string) string {
 					}
 				]})
 			}
-			change_sources {
-				name = "csName1"
-				identifier = "harness_cd_next_gen"
-				type = "HarnessCDNextGen"
-				enabled = true
-				spec = jsonencode({
-				})
-				category = "Deployment"
-			}
-			template_ref = "template_ref"
-			version_label = "version_label"
 		}
 	}
 
@@ -858,6 +782,31 @@ resource "harness_platform_monitored_service" "test" {
     environment_ref = "environment_ref"
     tags            = ["foo:bar", "bar:foo"]
     health_sources {
+      name = "prometheus"
+      identifier = "prometheus"
+      type = "Prometheus"
+      spec = jsonencode({
+        connectorRef = "connectorRef"
+        feature = "feature"
+        metricDefinitions = [
+          {
+            identifier   = "prometheus_metric"
+            metricName = "Prometheus Metric"
+            sli =  {
+              enabled =  true
+            }
+            analysis = {
+             }
+            riskProfile = {
+            }
+            query = "sum(abc{identifier=\"slo-ratiobased-unsuccessfulCalls-datapattern\"})",
+            groupName = "t2",
+            isManualQuery = true
+          }
+        ]
+      })
+    }
+    health_sources {
       name       = "prometheus metrics verify step"
       identifier = "prometheus_metrics"
       type       = "Prometheus"
@@ -881,7 +830,7 @@ resource "harness_platform_monitored_service" "test" {
                 enabled                  = true
               }
             }
-            sli : {
+            sli = {
               enabled = true
             }
             query                    = "count(up{group=\"cv\",group=\"cv\"})"
@@ -890,49 +839,47 @@ resource "harness_platform_monitored_service" "test" {
             isManualQuery            = true
           }
         ]
-		metricPacks: [
+		metricPacks = [
 			{
-			  identifier: "Custom",
-			  metricThresholds: [
+			  identifier = "Custom",
+			  metricThresholds = [
 				{
-				  type: "IgnoreThreshold",
-				  spec: {
-					action: "Ignore"
+				  type = "IgnoreThreshold",
+				  spec = {
+					action = "Ignore"
 				  },
-				  criteria: {
-					type: "Absolute",
-					spec: {
-					  greaterThan: 100
+				  criteria = {
+					type = "Absolute",
+					spec = {
+					  greaterThan = 100
 					}
 				  },
-				  metricType: "Custom",
-				  metricName: "Prometheus Metric"
+				  metricType = "Custom",
+				  metricName = "Prometheus Metric"
 				},
 				{
-				  "type": "FailImmediately",
-				  "spec": {
-					"action": "FailAfterOccurrence",
-					"spec": {
-					  "count": 2
+				  "type" = "FailImmediately",
+				  "spec" = {
+					"action" = "FailAfterOccurrence",
+					"spec" = {
+					  "count" = 2
 					}
 				  },
-				  "criteria": {
-					"type": "Absolute",
-					"spec": {
-					  "greaterThan": 100
+				  "criteria" = {
+					"type" = "Absolute",
+					"spec" = {
+					  "greaterThan" = 100
 					}
 				  },
-				  "metricType": "Custom",
-				  "metricName": "Prometheus Metric"
+				  "metricType" = "Custom",
+				  "metricName" = "Prometheus Metric"
 				}
 			  ]
 			}
 		]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
-  }
+}
 }
 
 	data "harness_platform_monitored_service" "test" {
@@ -976,40 +923,40 @@ resource "harness_platform_monitored_service" "test" {
       spec = jsonencode({
         connectorRef = "connectorRef"
         feature = "Datadog Cloud Metrics"
-		metricPacks: [
+		metricPacks = [
 			{
-			  identifier: "Custom",
-			  metricThresholds: [
+			  identifier = "Custom",
+			  metricThresholds = [
 			  {
-				  type: "IgnoreThreshold",
-				  spec: {
-					action: "Ignore"
+				  type = "IgnoreThreshold",
+				  spec = {
+					action = "Ignore"
 				  },
-				  criteria: {
-					type: "Absolute",
-					spec: {
-					  greaterThan: 100
+				  criteria = {
+					type = "Absolute",
+					spec = {
+					  greaterThan = 100
 					}
 				  },
-				  metricType: "Custom",
-				  metricName: "metric"
+				  metricType = "Custom",
+				  metricName = "metric"
               },
 			  {
-				"type": "FailImmediately",
-				"spec": {
-				  "action": "FailAfterOccurrence",
-				  "spec": {
-					"count": 2
+				"type" = "FailImmediately",
+				"spec" = {
+				  "action" = "FailAfterOccurrence",
+				  "spec" = {
+					"count" = 2
 				  }
 				},
-				"criteria": {
-				  "type": "Absolute",
-				  "spec": {
+				"criteria" = {
+				  "type" = "Absolute",
+				  "spec" = {
 					"greaterThan": 100
 				  }
 				},
-				"metricType": "Custom",
-				"metricName": "metric"
+				"metricType" = "Custom",
+				"metricName" = "metric"
 			  }
 			  ]
 			}
@@ -1036,7 +983,7 @@ resource "harness_platform_monitored_service" "test" {
                 serviceInstanceFieldName = "group"
               }
             }
-            sli : {
+            sli = {
               enabled = true
             }
           },
@@ -1066,15 +1013,13 @@ resource "harness_platform_monitored_service" "test" {
                 serviceInstanceFieldName = "group"
               }
             }
-            sli : {
+            sli = {
               enabled = true
             }
           }
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 

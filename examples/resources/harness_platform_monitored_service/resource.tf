@@ -19,10 +19,11 @@ resource "harness_platform_monitored_service" "example" {
         connectorRef = "connectorRef"
         queryDefinitions = [
           {
-            name      = "name"
-            query     = "query"
-            index     = "index"
-            groupName = "Logs_Group"
+            name       = "name"
+            identifier = "infraquery"
+            query      = "query"
+            index      = "index"
+            groupName  = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -32,10 +33,11 @@ resource "harness_platform_monitored_service" "example" {
             }
           },
           {
-            name      = "name2"
-            query     = "query2"
-            index     = "index2"
-            groupName = "Logs_Group"
+            name       = "name2"
+            identifier = "errorquery"
+            query      = "query2"
+            index      = "index2"
+            groupName  = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -48,13 +50,28 @@ resource "harness_platform_monitored_service" "example" {
       })
     }
     change_sources {
-      name       = "csName1"
-      identifier = "harness_cd_next_gen"
-      type       = "HarnessCDNextGen"
+      name       = "BAC"
+      identifier = "BAC"
+      type       = "PagerDuty"
       enabled    = true
       spec = jsonencode({
+        connectorRef       = "account.pd"
+        pagerDutyServiceId = "P0N21OB"
       })
-      category = "Deployment"
+      category = "Alert"
+    }
+    change_sources {
+      name       = "FH"
+      identifier = "FH"
+      type       = "CustomIncident"
+      enabled    = true
+      spec = jsonencode({
+        name       = "FH",
+        webhookUrl = "https://harness.io/cv/api/account/sampleAcc/org/sampleOrg/project/sampleProj/webhook/custom-change?monitoredServiceIdentifier=checkout_prod&changeSourceIdentifier=FH",
+        "webhookCurlCommand" : "curl -X POST -H 'content-type: application/json' -H 'X-Api-Key: sample_api_key' --url 'https://harness.io/cv/api/account/sampleAcc/org/sampleOrg/project/sampleProj/webhook/custom-change?monitoredServiceIdentifier=checkout_prod&changeSourceIdentifier=FH' -d '{ \"eventIdentifier\": \"<string>\" (optional), \"user\": \"user@harness.io\", \"startTime\": timeInMs, \"endTime\": timeInMs, \"eventDetail\": { \"description\": \"<String>\", \"changeEventDetailsLink\": \"urlString\" (optional), \"externalLinkToEntity\": \"urlString\" (optional), \"name\": \"changeEventName\" } }'",
+        "type" : "Alert"
+      })
+      category = "Alert"
     }
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref"
@@ -64,8 +81,6 @@ resource "harness_platform_monitored_service" "example" {
       notification_rule_ref = "notification_rule_ref1"
       enabled               = false
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Sumologic Metrics Health Source
@@ -94,6 +109,7 @@ resource "harness_platform_monitored_service" "example1" {
             query      = "metric=cpu"
             groupName  = "g1"
             queryParams = {
+              serviceInstanceField = "_sourcehost"
             }
             riskProfile = {
               riskCategory = "Performance_Other"
@@ -104,37 +120,37 @@ resource "harness_platform_monitored_service" "example1" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
-            metricThresholds: [
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "metric_cpu"
+                metricType = "Custom",
+                metricName = "metric_cpu"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "metric_cpu"
+                "metricType" = "Custom",
+                "metricName" = "metric_cpu"
               }
             ]
           },
@@ -144,6 +160,7 @@ resource "harness_platform_monitored_service" "example1" {
             groupName  = "g2"
             query      = "metric=memory"
             queryParams = {
+              serviceInstanceField = "_sourcehost"
             }
             riskProfile = {
               riskCategory = "Performance_Other"
@@ -158,8 +175,6 @@ resource "harness_platform_monitored_service" "example1" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Sumologic Log Health Source
@@ -203,8 +218,6 @@ resource "harness_platform_monitored_service" "example2" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 
@@ -258,45 +271,43 @@ resource "harness_platform_monitored_service" "example3" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "false"
             sliEnabled                    = "false"
-            metricThresholds: [
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "identifier2"
+                metrictype = "Custom",
+                metricName = "identifier2"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "identifier2"
+                "metricType" = "Custom",
+                "metricName" = "identifier2"
               }
             ]
           }
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 
@@ -344,8 +355,6 @@ resource "harness_platform_monitored_service" "example4" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 
@@ -390,38 +399,40 @@ resource "harness_platform_monitored_service" "example5" {
             liveMonitoringEnabled         = "true"
             continuousVerificationEnabled = "true"
             sliEnabled                    = "false"
-            metricThresholds: [
+            # Below section is for adding your own custom thresholds
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "metric"
+                metrictype = "Custom",
+                metricName = "metric"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "metric"
-              }]
+                "metricType" = "Custom",
+                "metricName" = "metric"
+              }
+            ]
           },
           {
             name       = "name2"
@@ -447,8 +458,6 @@ resource "harness_platform_monitored_service" "example5" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Azure Log Health Source
@@ -488,8 +497,6 @@ resource "harness_platform_monitored_service" "example6" {
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Prometheus Metrics Health Source
@@ -529,56 +536,52 @@ resource "harness_platform_monitored_service" "example7" {
                 serviceInstanceFieldName = "pod_name"
               }
             }
-            sli : {
-              enabled = true
-            }
             query         = "count(up{group=\"cv\",group=\"cv\"})"
             groupName     = "met"
             isManualQuery = true
           }
         ]
-        metricPacks: [
+        # Below section is for adding your own custom thresholds
+        metricPacks = [
           {
-            identifier: "Custom",
-            metricThresholds: [
+            identifier = "Custom",
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "Prometheus Metric"
+                metrictype = "Custom",
+                metricName = "Prometheus Metric"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "Prometheus Metric"
+                "metricType" = "Custom",
+                "metricName" = "Prometheus Metric"
               }
             ]
           }
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
   }
 }
 #Sample template for Datadog Metrics Health Source
@@ -623,9 +626,6 @@ resource "harness_platform_monitored_service" "example8" {
                 serviceInstanceFieldName = "pod"
               }
             }
-            sli : {
-              enabled = true
-            }
           },
           {
             metricName            = "dashboard_metric_cpu"
@@ -653,52 +653,146 @@ resource "harness_platform_monitored_service" "example8" {
                 serviceInstanceFieldName = "pod"
               }
             }
-            sli : {
-              enabled = true
-            }
           }
         ]
-        metricPacks: [
+        # Below section is for adding your own custom thresholds
+        metricPacks = [
           {
-            identifier: "Custom",
-            metricThresholds: [
+            identifier = "Custom",
+            metricThresholds = [
               {
-                type: "IgnoreThreshold",
-                spec: {
-                  action: "Ignore"
+                type = "IgnoreThreshold",
+                spec = {
+                  action = "Ignore"
                 },
-                criteria: {
-                  type: "Absolute",
-                  spec: {
-                    greaterThan: 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType: "Custom",
-                metricName: "metric"
+                metrictype = "Custom",
+                metricName = "metric"
               },
               {
-                "type": "FailImmediately",
-                "spec": {
-                  "action": "FailAfterOccurrence",
-                  "spec": {
-                    "count": 2
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
+                    "count" = 2
                   }
                 },
-                "criteria": {
-                  "type": "Absolute",
-                  "spec": {
-                    "greaterThan": 100
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" = 100
                   }
                 },
-                "metricType": "Custom",
-                "metricName": "metric"
+                "metricType" = "Custom",
+                "metricName" = "metric"
               }
             ]
           }
         ]
       })
     }
-    template_ref  = "template_ref"
-    version_label = "version_label"
+  }
+}
+#Sample template for New Relic Metrics Health Source
+resource "harness_platform_monitored_service" "example9" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  identifier = "identifier"
+  request {
+    name            = "name"
+    type            = "Application"
+    description     = "description"
+    service_ref     = "service_ref"
+    environment_ref = "environment_ref"
+    tags            = ["foo:bar", "bar:foo"]
+    health_sources {
+      name       = "name"
+      identifier = "identifier"
+      type       = "NewRelic"
+      spec = jsonencode({
+        connectorRef    = "account.Newrelicautomation_do_not_delete"
+        feature         = "apm"
+        applicationId   = "107019083"
+        applicationName = "My Application"
+        metricData = {
+          "Performance" = true
+        }
+        # this section is for using metric packs.
+        metricPacks = [
+          {
+            identifier = "Performance"
+          }
+        ]
+        # Below is for using custom NRQL queries instead of metric packs.
+        "newRelicMetricDefinitions" = [
+          {
+            "identifier" = "New_Relic_Metric"
+            "metricName" = "New Relic Metric"
+            riskProfile = {
+              riskCategory = "Performance_Other"
+              thresholdTypes = [
+                "ACT_WHEN_HIGHER"
+              ]
+            }
+            analysis = {
+              deploymentVerification = {
+                enabled = true
+              }
+            }
+            "groupName" = "group1",
+            "nrql"      = "SELECT count(apm.service.instance.count) FROM Metric WHERE appName LIKE 'My Application' TIMESERIES",
+            "responseMapping" = {
+              "metricValueJsonPath" = "$.['timeSeries'].[*].['results'].[*].['count']",
+              "timestampJsonPath"   = "$.['timeSeries'].[*].['beginTimeSeconds']"
+            }
+          }
+        ]
+
+        # Below section is for adding your own custom thresholds
+        metricPacks : [
+          {
+            identifier = "Custom",
+            metricThresholds = [
+              {
+                type = "IgnoreThreshold",
+                spec = {
+                  action : "Ignore"
+                },
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
+                  }
+                },
+                metricType = "Custom",
+                metricName = "New Relic Metric"
+              },
+              {
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
+                    "count" : 2
+                  }
+                },
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
+                    "greaterThan" : 100
+                  }
+                },
+                "metricType" = "Custom",
+                "metricName" = "New Relic Metric"
+              }
+            ]
+          }
+        ]
+      })
+    }
   }
 }
