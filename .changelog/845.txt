@@ -1,0 +1,4 @@
+data_source_slo_test.go: Updated tests
+resource_slo_test.go: Updated tests
+platform_monitored_service.md: Update examples
+data_source_monitored_service_test.go: Update tests
