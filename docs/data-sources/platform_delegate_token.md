@@ -13,7 +13,7 @@ Data Source for retrieving delegate tokens.
 ## Example Usage
 
 ```terraform
-data "harness_platform_token" "test" {
+data "harness_platform_delegatetoken" "test" {
   identifier  = "test_token"
   name        = "test token"
   account_id  = "account_id"

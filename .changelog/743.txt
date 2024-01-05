@@ -1,0 +1,9 @@
+```release-note:enhancement
+resource/platform_connector_aws: added force deletion support
+resource/platform_connector_azure_cloud_provider: added force deletion support
+resources/platform_connector_gcp: added force deletion support
+resources/platform_connector_helm: added force deletion support
+resources/platform_connector_kubernetes: added force deletion support
+resources/platform_connector_oci_helm: added force deletion support
+resources/platform_connector_rancher: added force deletion support
+```

@@ -177,6 +177,14 @@ func BuildFieldForBoolean(d *schema.ResourceData, field string) optional.Bool {
 	return optional.EmptyBool()
 }
 
+func BuildFieldBool(d *schema.ResourceData, field string) optional.Bool {
+	if b, ok := d.GetOk(field); ok {
+		return optional.NewBool(b.(bool))
+	}
+
+	return optional.EmptyBool()
+}
+
 // PipelineResourceImporter defines the importer configuration for all pipeline level resources.
 var PipelineResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
@@ -328,6 +336,14 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 			d.Set("agent_id", parts[0])
 			d.Set("identifier", parts[1])
 			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("agent_id", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
 			return []*schema.ResourceData{d}, nil
 		}
 

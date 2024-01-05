@@ -18,6 +18,9 @@ func TestAccDataSourceTemplate(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceTemplate(id, name),
@@ -83,6 +86,9 @@ func TestAccDataSourceTemplateProjectScope(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceTemplateProjectScope(id, name),
@@ -250,8 +256,14 @@ func testAccDataSourceTemplateProjectScope(id string, name string) string {
     
       EOT
 	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+	}
 
   data "harness_platform_template" "test" {
+	depends_on = [time_sleep.wait_4_seconds]
 		identifier = harness_platform_template.test.id
     org_id = harness_platform_project.test.org_id
     project_id = harness_platform_project.test.id
@@ -328,8 +340,14 @@ func testAccDataSourceTemplate(id string, name string) string {
     
       EOT
 	}
+	
+	resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_template.test]
+			destroy_duration = "4s"
+	}
 
 	data "harness_platform_template" "test" {
+		depends_on = [time_sleep.wait_4_seconds]
 		identifier = harness_platform_template.test.id
 	}
 	`, id, name)

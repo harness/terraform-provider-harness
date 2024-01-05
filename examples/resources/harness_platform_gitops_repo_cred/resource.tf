@@ -6,8 +6,8 @@ resource "harness_platform_gitops_repo_cred" "test" {
   org_id     = "org_id"
   creds {
     type            = "git"
-    url             = "github.com"
-    ssh_private_key = "yoursshprivatekey"
+    url             = "git@github.com:yourorg"
+    ssh_private_key = "----- BEGIN OPENSSH PRIVATE KEY-----\nXXXXX\nXXXXX\nXXXXX\n-----END OPENSSH PRIVATE KEY -----\n"
   }
   lifecycle {
     ignore_changes = [

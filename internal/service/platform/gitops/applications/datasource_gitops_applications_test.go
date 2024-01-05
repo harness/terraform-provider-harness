@@ -68,50 +68,66 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			type = "PreProduction"
   		}
 
+		resource "harness_platform_gitops_repository" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
+			repo {
+					repo = "https://github.com/harness-apps/hosted-gitops-example-apps"
+        			name = "%[1]s"
+        			insecure = true
+        			connection_type = "HTTPS_ANONYMOUS"
+			}
+			upsert = true
+		}
+
 		resource "harness_platform_gitops_applications" "test" {
-    			application {
-        			metadata {
-            			annotations = {}
-						labels = {
-							"harness.io/serviceRef" = harness_platform_service.test.id
-                			"harness.io/envRef" = harness_platform_environment.test.id
-						}
-						name = "%[1]s"
-        			}
-        			spec {
-            			sync_policy {
-                			sync_options = [
-                    			"PrunePropagationPolicy=undefined",
-                    			"CreateNamespace=false",
-                    			"Validate=false",
-                    			"skipSchemaValidations=false",
-                    			"autoCreateNamespace=false",
-								"pruneLast=false",
-                    			"applyOutofSyncOnly=false",
-                    			"Replace=false",
-                    			"retry=false"
-                			]
-            			}
-            			source {
-                			target_revision = "master"
-                			repo_url = "%[9]s"
-                			path = "helm-guestbook"
-                			
-            			}
-            			destination {
-                			namespace = "%[6]s"
-                			server = "%[7]s"
-            			}
-        			}
-    			}
-    			project_id = harness_platform_project.test.id
-    			org_id = harness_platform_organization.test.id
-    			account_id = "%[2]s"
-				identifier = "%[1]s"
-				name = "%[3]s"
-				cluster_id = "%[8]s"
-				repo_id = "%[10]s"
-				agent_id = "%[4]s"
+			depends_on = [harness_platform_gitops_repository.test]
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]s"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "%[9]s"
+						path = "helm-guestbook"
+						
+					}
+					destination {
+						namespace = "%[6]s"
+						server = "%[7]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]s"
+			name = "%[3]s"
+			cluster_id = "%[8]s"
+			repo_id = "%[10]s"
+			agent_id = "%[4]s"
 		}
 		data "harness_platform_gitops_applications" "test"{
 			depends_on = [harness_platform_gitops_applications.test]
@@ -120,7 +136,6 @@ func testAccDataSourceGitopsApplication(id string, accountId string, name string
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
-			repo_id = "%[10]s"
 			name = "%[3]s"
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)

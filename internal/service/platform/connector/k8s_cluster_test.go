@@ -252,6 +252,52 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorK8s_FroceDelete(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_kubernetes.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorK8s_force_delete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorK8s_force_delete(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorK8s_ClientKeyCert(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -419,6 +465,22 @@ func testAccResourceConnectorK8s_InheritFromDelegate(id string, name string) str
 			inherit_from_delegate {
 				delegate_selectors = ["harness-delegate"]
 			}
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorK8s_force_delete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_kubernetes" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			inherit_from_delegate {
+				delegate_selectors = ["harness-delegate"]
+			}
+			force_delete = true
 		}
 `, id, name)
 }

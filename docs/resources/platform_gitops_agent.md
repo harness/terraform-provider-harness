@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Gitops Agents.
+  Resource for managing a Harness GitOps Agent.
 ---
 
 # harness_platform_gitops_agent (Resource)
 
-Resource for creating a Harness Gitops Agents.
+Resource for managing a Harness GitOps Agent.
 
 ## Example Usage
 
@@ -41,8 +41,8 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 ### Optional
 
 - `description` (String) Description of the GitOps agent.
-- `operator` (String) Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `metadata` (Block List) Metadata of the agent. (see [below for nested schema](#nestedblock--metadata))
+- `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
@@ -57,9 +57,9 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 Optional:
 
-- `high_availability` (Boolean) Indicates if the deployment should be deployed using the deploy-ha.yaml
-- `namespace` (String) The k8s namespace that this agent resides in.
-- `is_namespaced` (Boolean) Indicates if the agent is namespaced. If true no cluster roles.
+- `high_availability` (Boolean) Indicates if the agent is deployed in HA mode.
+- `is_namespaced` (Boolean) Indicates if the agent is namespaced.
+- `namespace` (String) The kubernetes namespace where the agent should be installed.
 
 ## Import
 

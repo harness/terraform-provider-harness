@@ -142,27 +142,27 @@ func DataSourceWorkspace() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"repository": {
-							Description: "Repository is the name of the repository to use",
+							Description: "Repository is the name of the repository to fetch the code from.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"repository_branch": {
-							Description: " Repository Branch in which the code should be accessed",
+							Description: "Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit is set",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"repository_commit": {
-							Description: "Repository Commit/Tag in which the code should be accessed",
+							Description: "Repository commit is commit or tag to fetch the variables from. This cannot be set if repository branch is set.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"repository_connector": {
-							Description: "Repository Connector is the reference to the connector to use for this code",
+							Description: "Repository connector is the reference to the connector used to fetch the variables.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"repository_path": {
-							Description: "Repository Commit/Tag in which the code should be accessed",
+							Description: "Repository path is the path in which the variables reside.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
