@@ -9,9 +9,73 @@ description: |-
 # harness_platform_infrastructure (Resource)
 
 Resource for creating a Harness Infrastructure.
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand more about different Infrastructure, please see [Documentation](https://developer.harness.io/docs/continuous-integration/use-ci/set-up-build-infrastructure/which-build-infrastructure-is-right-for-me/)
+- To read specific about the Kubernetes Infrastructure, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/deploy-srv-diff-platforms/kubernetes/define-your-kubernetes-target-infrastructure/)
 
-## Example Usage
+## Example to create Environment Group at different levels (Org, Project, Account)
 
+### Account Level
+```terraform
+resource "harness_platform_infrastructure" "example" {
+  identifier      = "identifier"
+  name            = "name"
+  env_id          = "environmentIdentifier"
+  type            = "KubernetesDirect"
+  deployment_type = "Kubernetes"
+  yaml            = <<-EOT
+        infrastructureDefinition:
+         name: name
+         identifier: identifier
+         description: ""
+         tags:
+           asda: ""
+         orgIdentifier: orgIdentifer
+         projectIdentifier: projectIdentifier
+         environmentRef: environmentIdentifier
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+}
+```
+
+### Org Level
+```terraform
+resource "harness_platform_infrastructure" "example" {
+  identifier      = "identifier"
+  name            = "name"
+  org_id          = "orgIdentifer"
+  env_id          = "environmentIdentifier"
+  type            = "KubernetesDirect"
+  deployment_type = "Kubernetes"
+  yaml            = <<-EOT
+        infrastructureDefinition:
+         name: name
+         identifier: identifier
+         description: ""
+         tags:
+           asda: ""
+         orgIdentifier: orgIdentifer
+         projectIdentifier: projectIdentifier
+         environmentRef: environmentIdentifier
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: account.gfgf
+          namespace: asdasdsa
+          releaseName: release-<+INFRA_KEY>
+          allowSimultaneousDeployments: false
+      EOT
+}
+```
+
+### Project Level
 ```terraform
 resource "harness_platform_infrastructure" "example" {
   identifier      = "identifier"
