@@ -14,7 +14,7 @@ Resource for creating a Harness Infrastructure.
 - To understand more about different Infrastructure, please see [Documentation](https://developer.harness.io/docs/continuous-integration/use-ci/set-up-build-infrastructure/which-build-infrastructure-is-right-for-me/)
 - To read specific about the Kubernetes Infrastructure, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/deploy-srv-diff-platforms/kubernetes/define-your-kubernetes-target-infrastructure/)
 
-## Example to create Environment Group at different levels (Org, Project, Account)
+## Example to create Infrastructure at different levels (Org, Project, Account)
 
 ### Account Level
 ```terraform
