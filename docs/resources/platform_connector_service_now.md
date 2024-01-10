@@ -9,9 +9,14 @@ description: |-
 # harness_platform_connector_service_now (Resource)
 
 Resource for creating a Service Now connector.
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
+- To understand more about ServiceNow Connectors, please see [Documentation](https://developer.harness.io/docs/platform/connectors/ticketing-systems/connect-to-service-now)
 
-## Example Usage
+## Example to create ServiceNow Connector at different levels (Org, Project, Account)
 
+### Account Level
 ```terraform
 # Credential type UsernamePassword
 resource "harness_platform_connector_service_now" "test" {
@@ -56,6 +61,141 @@ resource "harness_platform_connector_service_now" "test" {
 resource "harness_platform_connector_service_now" "test" {
   identifier  = "identifier"
   name        = "name"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://test.service-now.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "RefreshTokenGrantType"
+    adfs {
+      token_url         = "https://test.service-now.com/oauth_token.do"
+      refresh_token_ref = "account.refresh_token_ref"
+      client_id_ref     = "account.client_id_ref"
+      client_secret_ref = "account.client_secret_ref"
+      scope             = "email openid profile"
+    }
+  }
+}
+```
+
+### Org Level
+```terraform
+# Credential type UsernamePassword
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  org_id     = "org_id"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://servicenow.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "UsernamePassword"
+    username_password {
+      username     = "admin"
+      password_ref = "account.password_ref"
+    }
+  }
+}
+
+# Credential type AdfsClientCredentialsWithCertificate
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  org_id     = "org_id"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://servicenow.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "AdfsClientCredentialsWithCertificate"
+    adfs {
+      certificate_ref = "account.certificate_ref"
+      private_key_ref = "account.private_key_ref}"
+      client_id_ref   = "account.client_id_ref"
+      resource_id_ref = "account.resource_id_ref"
+      adfs_url        = "https://adfs_url.com"
+    }
+  }
+}
+
+# Credential type RefreshTokenGrantType
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  org_id     = "org_id"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://test.service-now.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "RefreshTokenGrantType"
+    adfs {
+      token_url         = "https://test.service-now.com/oauth_token.do"
+      refresh_token_ref = "account.refresh_token_ref"
+      client_id_ref     = "account.client_id_ref"
+      client_secret_ref = "account.client_secret_ref"
+      scope             = "email openid profile"
+    }
+  }
+}
+```
+
+### Project Level
+```terraform
+# Credential type UsernamePassword
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://servicenow.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "UsernamePassword"
+    username_password {
+      username     = "admin"
+      password_ref = "account.password_ref"
+    }
+  }
+}
+
+# Credential type AdfsClientCredentialsWithCertificate
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
+  description = "test"
+  tags        = ["foo:bar"]
+
+  service_now_url    = "https://servicenow.com"
+  delegate_selectors = ["harness-delegate"]
+  auth {
+    auth_type = "AdfsClientCredentialsWithCertificate"
+    adfs {
+      certificate_ref = "account.certificate_ref"
+      private_key_ref = "account.private_key_ref}"
+      client_id_ref   = "account.client_id_ref"
+      resource_id_ref = "account.resource_id_ref"
+      adfs_url        = "https://adfs_url.com"
+    }
+  }
+}
+
+# Credential type RefreshTokenGrantType
+resource "harness_platform_connector_service_now" "test" {
+  identifier  = "identifier"
+  name        = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
   description = "test"
   tags        = ["foo:bar"]
 
