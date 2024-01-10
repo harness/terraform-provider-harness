@@ -10,8 +10,126 @@ description: |-
 
 Resource for creating a Harness project.
 
-## Example Usage
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand more about service, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/services/services-overview/)
+- To understand how to create a service, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/services/create-services/)
 
+
+## Example to create Service at different levels (Org, Project, Account)
+
+### Account Level
+```terraform
+resource "harness_platform_service" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+
+  ## SERVICE V2 UPDATE
+  ## We now take in a YAML that can define the service definition for a given Service
+  ## It isn't mandatory for Service creation 
+  ## It is mandatory for Service use in a pipeline
+
+  yaml = <<-EOT
+                service:
+                  name: name
+                  identifier: identifier
+                  serviceDefinition:
+                    spec:
+                      manifests:
+                        - manifest:
+                            identifier: manifest1
+                            type: K8sManifest
+                            spec:
+                              store:
+                                type: Github
+                                spec:
+                                  connectorRef: <+input>
+                                  gitFetchType: Branch
+                                  paths:
+                                    - files1
+                                  repoName: <+input>
+                                  branch: master
+                              skipResourceVersioning: false
+                      configFiles:
+                        - configFile:
+                            identifier: configFile1
+                            spec:
+                              store:
+                                type: Harness
+                                spec:
+                                  files:
+                                    - <+org.description>
+                      variables:
+                        - name: var1
+                          type: String
+                          value: val1
+                        - name: var2
+                          type: String
+                          value: val2
+                    type: Kubernetes
+                  gitOpsEnabled: false
+              EOT
+}
+```
+
+### Org Level
+```terraform
+resource "harness_platform_service" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  org_id      = "org_id"
+
+  ## SERVICE V2 UPDATE
+  ## We now take in a YAML that can define the service definition for a given Service
+  ## It isn't mandatory for Service creation 
+  ## It is mandatory for Service use in a pipeline
+
+  yaml = <<-EOT
+                service:
+                  name: name
+                  identifier: identifier
+                  serviceDefinition:
+                    spec:
+                      manifests:
+                        - manifest:
+                            identifier: manifest1
+                            type: K8sManifest
+                            spec:
+                              store:
+                                type: Github
+                                spec:
+                                  connectorRef: <+input>
+                                  gitFetchType: Branch
+                                  paths:
+                                    - files1
+                                  repoName: <+input>
+                                  branch: master
+                              skipResourceVersioning: false
+                      configFiles:
+                        - configFile:
+                            identifier: configFile1
+                            spec:
+                              store:
+                                type: Harness
+                                spec:
+                                  files:
+                                    - <+org.description>
+                      variables:
+                        - name: var1
+                          type: String
+                          value: val1
+                        - name: var2
+                          type: String
+                          value: val2
+                    type: Kubernetes
+                  gitOpsEnabled: false
+              EOT
+}
+```
+
+### Project Level
 ```terraform
 resource "harness_platform_service" "example" {
   identifier  = "identifier"
