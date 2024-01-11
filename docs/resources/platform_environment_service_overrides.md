@@ -9,9 +9,96 @@ description: |-
 # harness_platform_environment_service_overrides (Resource)
 
 Resource for creating a Harness environment service overrides.
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand about the Environment, please see [Documentation](https://developer.harness.io/docs/category/environments)
+- To understand what are Environment Service Override, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/service-overrides/)
 
-## Example Usage
+## Example to create Jenkins Connector at different levels (Org, Project, Account)
+### Account Level
+```terraform
+resource "harness_platform_environment_service_overrides" "example" {
+  env_id     = "environmentIdentifier"
+  service_id = "serviceIdentifier"
+  yaml       = <<-EOT
+        serviceOverrides:
+          environmentRef: environmentIdentifier
+          serviceRef: serviceIdentifier
+          variables:
+           - name: asda
+             type: String
+             value: asddad
+          manifests:
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
+          configFiles:
+             - configFile:
+                 identifier: configFileEnv
+                 spec:
+                   store:
+                     type: Harness
+                     spec:
+                       files:
+                         - account:/Add-ons/svcOverrideTest
+                       secretFiles: []
+		  EOT
+}
+```
 
+### Org Level
+```terraform
+resource "harness_platform_environment_service_overrides" "example" {
+  org_id     = "orgIdentifier"
+  env_id     = "environmentIdentifier"
+  service_id = "serviceIdentifier"
+  yaml       = <<-EOT
+        serviceOverrides:
+          environmentRef: environmentIdentifier
+          serviceRef: serviceIdentifier
+          variables:
+           - name: asda
+             type: String
+             value: asddad
+          manifests:
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
+          configFiles:
+             - configFile:
+                 identifier: configFileEnv
+                 spec:
+                   store:
+                     type: Harness
+                     spec:
+                       files:
+                         - account:/Add-ons/svcOverrideTest
+                       secretFiles: []
+		  EOT
+}
+```
+
+### Account Level
 ```terraform
 resource "harness_platform_environment_service_overrides" "example" {
   org_id     = "orgIdentifier"
