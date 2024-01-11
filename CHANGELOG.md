@@ -1,3 +1,10 @@
+# 0.30.0 (January 10,2024) 
+
+FEATURES:
+
+* **New Data Source:** `harness_platform_current_account -  new data resource for account id` ([#785](https://github.com/harness/terraform-provider-harness/issues/785))
+* **New Resource:** `resource/harness_platform_connector_pdc: Added Pdc connector resource.` ([#832](https://github.com/harness/terraform-provider-harness/issues/832))
+
 # 0.29.4 (December 12,2023) 
 
 BUG FIXES:
