@@ -14,7 +14,7 @@ Resource for creating a Harness environment service overrides.
 - To understand about the Environment, please see [Documentation](https://developer.harness.io/docs/category/environments)
 - To understand what are Environment Service Override, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/service-overrides/)
 
-## Example to create Jenkins Connector at different levels (Org, Project, Account)
+## Example to create Environment Service Override at different levels (Org, Project, Account)
 ### Account Level
 ```terraform
 resource "harness_platform_environment_service_overrides" "example" {
@@ -98,7 +98,7 @@ resource "harness_platform_environment_service_overrides" "example" {
 }
 ```
 
-### Account Level
+### Project Level
 ```terraform
 resource "harness_platform_environment_service_overrides" "example" {
   org_id     = "orgIdentifier"
