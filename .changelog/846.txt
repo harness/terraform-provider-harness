@@ -1,2 +1,0 @@
-github.go : added suport for force_delete
-github_test.go: added test case for force_delete option
