@@ -15,7 +15,7 @@ Resource for creating a Jira connector.
 - To understand more about Jira Connectors, please see  [Jira Connectors](https://developer.harness.io/docs/platform/connectors/ticketing-systems/connect-to-jira)
 
 
-## Example to create Jira at different levels (Org, Project, Account)
+## Example to create Jira Connector at different levels (Org, Project, Account)
 
 ### Account Level
 ```terraform
