@@ -1,0 +1,6 @@
+data_source_slo_test.go: Updated tests, removed implicit change source and template ref and version label
+resource_slo_test.go: Add group name and removed implicit change source
+platform_monitored_service.md: Update examples
+data_source_monitored_service_test.go: Update tests, removed implicit change source
+resource_monitored_service_test.go: remove dependencies
+
