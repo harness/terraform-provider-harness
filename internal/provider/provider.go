@@ -35,6 +35,7 @@ import (
 	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	pl_account "github.com/harness/terraform-provider-harness/internal/service/platform/account"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
@@ -172,6 +173,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_connector_pdc":                   connector.DatasourceConnectorPdc(),
+				"harness_platform_current_account":                 pl_account.DataSourceCurrentAccount(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
