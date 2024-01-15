@@ -123,6 +123,7 @@ resource "harness_platform_connector_github" "test" {
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `execute_on_delegate` (Boolean) Execute on delegate or not.
+- `force_delete` (String) Enable this flag for force deletion of github connector
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
