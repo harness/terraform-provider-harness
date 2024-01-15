@@ -1,6 +1,6 @@
 
-<a name="0.3.72"></a>
-## 0.3.72 (2024-01-04)
+<a name="0.3.73"></a>
+## 0.3.73 (2024-01-15)
 
 ### API
 
@@ -19,10 +19,6 @@
 
 * adding panic recovering
 
-### Correct
-
-* correct connector info
-
 ### Correction
 
 * Correction on optional end time of static schedule of fixed schedule
@@ -31,10 +27,6 @@
 
 * fix : [CCM-14434] API key based authentication for fixed schedule
 * fix : API key based authentication for fixed schedule
-
-### IAM
-
-* IAM role changes in contract
 
 ### Model
 
@@ -47,6 +39,8 @@
 
 ### Release
 
+* Release version 0.3.72 01-04-2024
+* Release v0.3.72
 * Release version 0.3.71 12-18-2023
 * Release v0.3.71
 * Release version 0.3.70 12-15-2023
@@ -105,7 +99,6 @@
 * Release v0.3.44
 * Release version 0.3.43 08-11-2023
 * Release v0.3.43
-* Release version 0.3.41 08-01-2023
 * Release version 0.3.37 07-13-2023
 * Release v0.3.37
 * Release version 0.3.36 07-12-2023
@@ -115,14 +108,10 @@
 * Release version 0.3.34 06-30-2023
 * Release v0.3.34
 * Release version 0.3.33 06-29-2023
-* Release v0.3.33
-* Release version 0.3.32 06-23-2023
-* Release v0.3.32
 * Release version 0.3.30 06-15-2023
 * Release v0.3.30
 * Release version 0.3.29 06-12-2023
 * Release v0.3.29
-* Release version 0.3.28 06-02-2023
 
 ### Remove
 
@@ -133,17 +122,9 @@
 * removing panic
 * removing the unset engine
 
-### Revert
-
-* Revert "Create .gitleaksignore ([#380](https://github.com/harness/harness-go-sdk/issues/380))" ([#381](https://github.com/harness/harness-go-sdk/issues/381))
-
 ### Unmarshal
 
 * unmarshal change
-
-### Update
-
-* update contract
 
 ### Update
 
@@ -151,13 +132,13 @@
 * Update the load balancer model
 * Update ClustersClusterConfig.md
 
+### Update
+
+* update contract
+
 ### Updating
 
 * Updating the model used for rule creation
-
-### Updating
-
-* updating the url for the endpoints
 
 ### Working
 
@@ -166,7 +147,6 @@
 ### Reverts
 
 * Merge pull request [#396](https://github.com/harness/harness-go-sdk/issues/396) from harness/cds-77798
-* fix:[PL-39286]: fixed URL Encoding for characters with space
 
 ### Pull Requests
 
@@ -195,7 +175,6 @@
 * Merge pull request [#386](https://github.com/harness/harness-go-sdk/issues/386) from harness/cds-77080
 * Merge pull request [#384](https://github.com/harness/harness-go-sdk/issues/384) from harness/dockerexecuteondelegate
 * Merge pull request [#382](https://github.com/harness/harness-go-sdk/issues/382) from harness/dockerexecuteondelegate
-* Merge pull request [#383](https://github.com/harness/harness-go-sdk/issues/383) from harness/cds-76701-appproject-mapping
 * Merge pull request [#360](https://github.com/harness/harness-go-sdk/issues/360) from harness/CDS-69871
 * Merge pull request [#363](https://github.com/harness/harness-go-sdk/issues/363) from harness/CDS-57635
 * Merge pull request [#362](https://github.com/harness/harness-go-sdk/issues/362) from harness/CCM-12839
@@ -204,10 +183,7 @@
 * Merge pull request [#349](https://github.com/harness/harness-go-sdk/issues/349) from harness/CCM-12839
 * Merge pull request [#353](https://github.com/harness/harness-go-sdk/issues/353) from harness/CDS-56689-remove-unused-field
 * Merge pull request [#348](https://github.com/harness/harness-go-sdk/issues/348) from harness/cds-72877
-* Merge pull request [#347](https://github.com/harness/harness-go-sdk/issues/347) from harness/CDS-56689-rancher-connector
-* Merge pull request [#345](https://github.com/harness/harness-go-sdk/issues/345) from harness/CDS-57089
 * Merge pull request [#325](https://github.com/harness/harness-go-sdk/issues/325) from harness/iam-role
 * Merge pull request [#338](https://github.com/harness/harness-go-sdk/issues/338) from harness/cds-68868-overrides-v2
 * Merge pull request [#339](https://github.com/harness/harness-go-sdk/issues/339) from harness/revert-336-PL-39286
-* Merge pull request [#336](https://github.com/harness/harness-go-sdk/issues/336) from harness/PL-39286
 
