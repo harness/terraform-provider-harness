@@ -126,7 +126,6 @@ func buildConnectorHelm(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	}
 
 	if _, ok := d.GetOk("credentials"); ok {
-		//config := attr.([]interface{})[0].(map[string]interface{})
 		connector.HttpHelm.Auth.Type_ = nextgen.HttpHelmAuthTypes.UsernamePassword
 		connector.HttpHelm.Auth.UsernamePassword = &nextgen.HttpHelmUsernamePassword{}
 
@@ -134,8 +133,7 @@ func buildConnectorHelm(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.HttpHelm.Auth.UsernamePassword.Username = attr.(string)
 		}
 
-		if attr, ok := d.GetOk("credentials.0.username_ref"); ok { // need to check if it's not null
-			//if attr, ok := config["credentials.0.username_ref"]; ok {
+		if attr, ok := d.GetOk("credentials.0.username_ref"); ok {
 			connector.HttpHelm.Auth.UsernamePassword.UsernameRef = attr.(string)
 		}
 
