@@ -362,10 +362,12 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	qp := buildFFQueryParameters(d)
 	opts := buildFFPatchOpts(d)
 
-	_, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+	if opts != nil {
+		_, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
 
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
 	}
 
 	readOpts := buildFFReadOpts(d)
@@ -429,11 +431,14 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	patchOpts := buildFFPatchOpts(d)
 
-	// update the feature flag with the git details
-	_, httpResp, err = c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
+	// skip patch if no updates needed
+	if patchOpts != nil {
+		// update the feature flag with any fields that can't be created via initial post via patch requests
+		_, httpResp, err = c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
 
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
 	}
 
 	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
@@ -682,6 +687,9 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 
 	opts.Instructions = instructions
+	if len(instructions) == 0 {
+		return nil
+	}
 
 	return &nextgen.FeatureFlagsApiPatchFeatureOpts{
 		Body:                  optional.NewInterface(opts),
