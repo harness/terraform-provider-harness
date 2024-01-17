@@ -143,10 +143,11 @@ func TestOrgResourceConnectorAwsSM_inherit(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
+				ResourceName:       resourceName,
+				ImportState:        true,
+				ImportStateVerify:  true,
+				ExpectNonEmptyPlan: true,
+				ImportStateIdFunc:  acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
