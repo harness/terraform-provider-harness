@@ -1,3 +1,10 @@
+# 0.30.1 (January 19,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_github: added force deletion support for github connector ([#855](https://github.com/harness/terraform-provider-harness/issues/855))
+* resource/harness_platform_project: added error handling for EntityNotFoundException ([#858](https://github.com/harness/terraform-provider-harness/issues/858))
+
 # 0.30.0 (January 10,2024) 
 
 FEATURES:
