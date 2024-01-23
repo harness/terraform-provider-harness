@@ -64,11 +64,9 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 				"2) Please check if the token has expired or is wrong.")
 		}
 		if erro.Model() != nil && (erro.Code() == nextgen.ErrorCodes.ResourceNotFound || erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
-			if erro.Code() == nextgen.ErrorCodes.ResourceNotFound {
-				d.SetId("")
-				d.MarkNewResource()
-				return nil
-			}
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
 		}
 		return diag.Errorf(erro.Error())
 	}
