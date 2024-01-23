@@ -1,3 +1,9 @@
+# 0.30.2 (January 23,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_project: corrected error handling for EntityNotFoundException ([#872](https://github.com/harness/terraform-provider-harness/issues/872))
+
 # 0.30.1 (January 19,2024) 
 
 ENHANCEMENTS:
