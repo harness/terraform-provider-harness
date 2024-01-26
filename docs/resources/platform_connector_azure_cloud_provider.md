@@ -10,6 +10,11 @@ description: |-
 
 Resource for creating an Azure Cloud Provider in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use the connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors/)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors/)
+
 ## Example Usage
 
 ```terraform
@@ -142,9 +147,9 @@ Optional:
 <a id="nestedblock--credentials--azure_inherit_from_delegate_details"></a>
 ### Nested Schema for `credentials.azure_inherit_from_delegate_details`
 
-Optional:
+Required:
 
-- `auth` (Block List, Max: 1) Auth to authenticate to Azure Cloud Provider using details inheriting from delegate. (see [below for nested schema](#nestedblock--credentials--azure_inherit_from_delegate_details--auth))
+- `auth` (Block List, Min: 1, Max: 1) Auth to authenticate to Azure Cloud Provider using details inheriting from delegate. (see [below for nested schema](#nestedblock--credentials--azure_inherit_from_delegate_details--auth))
 
 <a id="nestedblock--credentials--azure_inherit_from_delegate_details--auth"></a>
 ### Nested Schema for `credentials.azure_inherit_from_delegate_details.auth`
@@ -160,7 +165,7 @@ Optional:
 <a id="nestedblock--credentials--azure_inherit_from_delegate_details--auth--azure_msi_auth_ua"></a>
 ### Nested Schema for `credentials.azure_inherit_from_delegate_details.auth.azure_msi_auth_ua`
 
-Optional:
+Required:
 
 - `client_id` (String) Client Id of the ManagedIdentity resource.
 
@@ -170,20 +175,23 @@ Optional:
 <a id="nestedblock--credentials--azure_manual_details"></a>
 ### Nested Schema for `credentials.azure_manual_details`
 
-Optional:
+Required:
 
 - `application_id` (String) Application ID of the Azure App.
-- `auth` (Block List, Max: 1) Contains Azure auth details. (see [below for nested schema](#nestedblock--credentials--azure_manual_details--auth))
+- `auth` (Block List, Min: 1, Max: 1) Contains Azure auth details. (see [below for nested schema](#nestedblock--credentials--azure_manual_details--auth))
 - `tenant_id` (String) The Azure Active Directory (AAD) directory ID where you created your application.
 
 <a id="nestedblock--credentials--azure_manual_details--auth"></a>
 ### Nested Schema for `credentials.azure_manual_details.auth`
 
+Required:
+
+- `type` (String) Type can either be Certificate or Secret.
+
 Optional:
 
 - `azure_client_key_cert` (Block List, Max: 1) Azure client key certificate details. (see [below for nested schema](#nestedblock--credentials--azure_manual_details--auth--azure_client_key_cert))
 - `azure_client_secret_key` (Block List, Max: 1) Azure Client Secret Key details. (see [below for nested schema](#nestedblock--credentials--azure_manual_details--auth--azure_client_secret_key))
-- `type` (String) Type can either be Certificate or Secret.
 
 <a id="nestedblock--credentials--azure_manual_details--auth--azure_client_key_cert"></a>
 ### Nested Schema for `credentials.azure_manual_details.auth.azure_client_key_cert`

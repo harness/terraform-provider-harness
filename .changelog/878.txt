@@ -1,0 +1,3 @@
+```release-note:enhancement
+harness_platform_connector_azure_cloud_provider - update schema to mark required fields and improve documentation
+```

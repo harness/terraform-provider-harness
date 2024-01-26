@@ -1,3 +1,6 @@
+//go:build connectors || cd
+// +build connectors cd
+
 package connector_test
 
 import (
@@ -49,6 +52,92 @@ func TestAccResourceConnector_oci_helm_Anonymous(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestOrgResourceConnector_oci_helm_Anonymous(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_oci_helm.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceConnector_oci_helm_anonymous(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "admin.azurecr.io"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testOrgResourceConnector_oci_helm_anonymous(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "admin.azurecr.io"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectResourceConnector_oci_helm_Anonymous(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_oci_helm.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceConnector_oci_helm_anonymous(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "admin.azurecr.io"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testProjectResourceConnector_oci_helm_anonymous(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "admin.azurecr.io"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
 			},
 		},
 	})
@@ -167,6 +256,54 @@ func testAccResourceConnector_oci_helm_anonymous(id string, name string) string 
 		resource "harness_platform_connector_oci_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "admin.azurecr.io"
+			delegate_selectors = ["harness-delegate"]
+		}
+`, id, name)
+}
+
+func testOrgResourceConnector_oci_helm_anonymous(id string, name string) string {
+	return fmt.Sprintf(`
+	    resource "harness_platform_organization" "test" {
+	    	identifier = "%[1]s"
+	    	name = "%[2]s"
+	    }
+
+		resource "harness_platform_connector_oci_helm" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "admin.azurecr.io"
+			delegate_selectors = ["harness-delegate"]
+		}
+`, id, name)
+}
+
+func testProjectResourceConnector_oci_helm_anonymous(id string, name string) string {
+	return fmt.Sprintf(`
+	    resource "harness_platform_organization" "test" {
+	    	identifier = "%[1]s"
+	    	name = "%[2]s"
+	    }
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_connector_oci_helm" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 			description = "test"
 			tags = ["foo:bar"]
 

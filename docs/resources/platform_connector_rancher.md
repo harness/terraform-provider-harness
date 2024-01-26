@@ -10,6 +10,11 @@ description: |-
 
 Resource for creating a Rancher connector.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand how to use the connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors/)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors/)
+
 ## Example Usage
 
 ```terraform

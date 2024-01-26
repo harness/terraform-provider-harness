@@ -1,3 +1,6 @@
+//go:build connectors || cd
+// +build connectors cd
+
 package connector_test
 
 import (
@@ -195,6 +198,98 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestOrgResourceConnectorK8s_ServiceAccount(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_kubernetes.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceConnectorK8s_ServiceAccount(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testOrgResourceConnectorK8s_ServiceAccount(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectResourceConnectorK8s_ServiceAccount(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_kubernetes.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceConnectorK8s_ServiceAccount(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testProjectResourceConnectorK8s_ServiceAccount(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
 			},
 		},
 	})
@@ -407,6 +502,90 @@ func testAccResourceConnectorK8s_ServiceAccount(id string, name string) string {
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
 		}
+`, id, name)
+}
+
+func testOrgResourceConnectorK8s_ServiceAccount(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_connector_kubernetes" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		description = "test"
+		tags = ["foo:bar"]
+		service_account {
+			master_url = "https://kubernetes.example.com"
+			service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
+		}
+		delegate_selectors = ["harness-delegate"]
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
+	}
+`, id, name)
+}
+
+func testProjectResourceConnectorK8s_ServiceAccount(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_project" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		color = "#472848"
+	}
+
+	resource "harness_platform_connector_kubernetes" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		project_id = harness_platform_project.test.id
+		description = "test"
+		tags = ["foo:bar"]
+		service_account {
+			master_url = "https://kubernetes.example.com"
+			service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
+		}
+		delegate_selectors = ["harness-delegate"]
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
+	}
 `, id, name)
 }
 

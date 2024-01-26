@@ -46,24 +46,24 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 									"application_id": {
 										Description: "Application ID of the Azure App.",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 									},
 									"tenant_id": {
 										Description: "The Azure Active Directory (AAD) directory ID where you created your application.",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 									},
 									"auth": {
 										Description: "Contains Azure auth details.",
 										Type:        schema.TypeList,
 										MaxItems:    1,
-										Optional:    true,
+										Required:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"type": {
 													Description:  "Type can either be Certificate or Secret.",
 													Type:         schema.TypeString,
-													Optional:     true,
+													Required:     true,
 													ValidateFunc: validation.StringInSlice([]string{"Certificate", "Secret"}, false),
 												},
 												"azure_client_key_cert": {
@@ -114,7 +114,7 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 									"auth": {
 										Description: "Auth to authenticate to Azure Cloud Provider using details inheriting from delegate.",
 										Type:        schema.TypeList,
-										Optional:    true,
+										Required:    true,
 										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -134,7 +134,7 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 															"client_id": {
 																Description: "Client Id of the ManagedIdentity resource.",
 																Type:        schema.TypeString,
-																Optional:    true,
+																Required:    true,
 															},
 														},
 													},

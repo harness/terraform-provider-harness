@@ -1,3 +1,6 @@
+//go:build connectors || cd
+// +build connectors cd
+
 package connector_test
 
 import (
@@ -58,6 +61,100 @@ func TestAccResourceConnectorRancher_BearerToken(t *testing.T) {
 	})
 }
 
+func TestOrgResourceConnectorRancher_BearerToken(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_rancher.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceConnectorRancher_BearerToken(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rancher_url", "https://rancher.cluster.example"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", fmt.Sprintf("account.%s", id)),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testOrgResourceConnectorRancher_BearerToken(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rancher_url", "https://rancher.cluster.example"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", fmt.Sprintf("account.%s", id)),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+func TestProjectResourceConnectorRancher_BearerToken(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_rancher.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceConnectorRancher_BearerToken(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rancher_url", "https://rancher.cluster.example"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", fmt.Sprintf("account.%s", id)),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testProjectResourceConnectorRancher_BearerToken(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "rancher_url", "https://rancher.cluster.example"),
+					resource.TestCheckResourceAttr(resourceName, "bearer_token.0.bearer_token_ref", fmt.Sprintf("account.%s", id)),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorRancher_ForceDelete(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -111,6 +208,98 @@ func testAccResourceConnectorRancher_BearerToken(id string, name string) string 
 		resource "harness_platform_connector_rancher" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			delegate_selectors = ["harness-delegate"]
+			rancher_url = "https://rancher.cluster.example"
+
+			bearer_token {
+				bearer_token_ref = "account.${harness_platform_secret_text.test.id}"
+			}
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+	`, id, name)
+}
+
+func testOrgResourceConnectorRancher_BearerToken(id string, name string) string {
+	return fmt.Sprintf(`
+	    resource "harness_platform_organization" "test" {
+	    	identifier = "%[1]s"
+	    	name = "%[2]s"
+	    }
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_rancher" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			description = "test"
+			tags = ["foo:bar"]
+
+			delegate_selectors = ["harness-delegate"]
+			rancher_url = "https://rancher.cluster.example"
+
+			bearer_token {
+				bearer_token_ref = "account.${harness_platform_secret_text.test.id}"
+			}
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
+		}
+	`, id, name)
+}
+
+func testProjectResourceConnectorRancher_BearerToken(id string, name string) string {
+	return fmt.Sprintf(`
+	    resource "harness_platform_organization" "test" {
+	    	identifier = "%[1]s"
+	    	name = "%[2]s"
+	    }
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "secret"
+		}
+
+		resource "harness_platform_connector_rancher" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 			description = "test"
 			tags = ["foo:bar"]
 

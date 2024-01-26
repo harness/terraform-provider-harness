@@ -1,3 +1,6 @@
+//go:build connectors || cd
+// +build connectors cd
+
 package connector_test
 
 import (
@@ -90,6 +93,38 @@ func TestAccResourceConnector_httphelm_UsernamePassword(t *testing.T) {
 	})
 }
 
+func TestOrgResourceConnector_httphelm_UsernamePassword(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_helm.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceConnector_httphelm_usernamePassword(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://helm.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccResourceConnector_httphelm_UsernameRefPassword(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -121,6 +156,50 @@ func TestAccResourceConnector_httphelm_UsernameRefPassword(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestProjectResourceConnector_httphelm_Anonymous(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_helm.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceConnector_httphelm_anonymous(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://helm.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
+			},
+			{
+				Config: testProjectResourceConnector_httphelm_anonymous(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://helm.example.com"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+				),
 			},
 		},
 	})
@@ -197,6 +276,46 @@ func testAccResourceConnector_httphelm_usernamepassword(id string, name string) 
 `, id, name)
 }
 
+func testOrgResourceConnector_httphelm_usernamePassword(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+	}
+
+	resource "harness_platform_connector_helm" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		org_id = harness_platform_organization.test.id
+		description = "test"
+		tags = ["foo:bar"]
+		url = "https://helm.example.com"
+		delegate_selectors = ["harness-delegate"]
+		credentials {
+			username = "admin"
+			password_ref = "account.${harness_platform_secret_text.test.id}"
+		}
+		depends_on = [time_sleep.wait_4_seconds]
+	}
+
+	resource "time_sleep" "wait_4_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		destroy_duration = "4s"
+	}
+	`, id, name)
+}
+
 func testAccResourceConnector_httphelm_usernameRefpassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -237,6 +356,34 @@ func testAccResourceConnector_httphelm_anonymous(id string, name string) string 
 		resource "harness_platform_connector_helm" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://helm.example.com"
+			delegate_selectors = ["harness-delegate"]
+		}
+`, id, name)
+}
+
+func testProjectResourceConnector_httphelm_anonymous(id string, name string) string {
+	return fmt.Sprintf(`
+	    resource "harness_platform_organization" "test" {
+	    	identifier = "%[1]s"
+	    	name = "%[2]s"
+	    }
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_connector_helm" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 			description = "test"
 			tags = ["foo:bar"]
 
