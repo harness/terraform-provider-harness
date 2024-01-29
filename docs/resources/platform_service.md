@@ -8,7 +8,7 @@ description: |-
 
 # harness_platform_service (Resource)
 
-Resource for creating a Harness project.
+Resource for creating a Harness service.
 
 ### References:
 - For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
