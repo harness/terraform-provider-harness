@@ -3,7 +3,7 @@
 page_title: "harness_platform_service Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness project.
+  Resource for creating a Harness service.
 ---
 
 # harness_platform_service (Resource)
