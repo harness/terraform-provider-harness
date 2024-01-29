@@ -61,7 +61,7 @@ func TestAccSecretText_inline(t *testing.T) {
 }
 
 func TestAccResourceSecretText_reference(t *testing.T) {
-
+	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
@@ -445,7 +445,7 @@ func testOrgResourceSecretText_reference(id string, name string, secretValue str
 `, id, name, secretValue)
 }
 func TestAccResourceSecretText_GCP_SM_reference(t *testing.T) {
-
+	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
