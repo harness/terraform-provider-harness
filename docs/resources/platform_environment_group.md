@@ -51,7 +51,7 @@ resource "harness_platform_environment_group" "example" {
 }
 ```
 
-### Account Level
+### Project Level
 ```terraform
 resource "harness_platform_environment_group" "example" {
   identifier = "identifier"
