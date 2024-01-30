@@ -21,111 +21,7 @@ func ResourceRepo() *schema.Resource {
 		CreateContext: resourceRepoCreateOrUpdate,
 		Importer:      helpers.MultiLevelResourceImporter,
 
-		Schema: map[string]*schema.Schema{
-			"created_by": {
-				Description: "ID of the user who created the repository.",
-				Type:        schema.TypeInt,
-				Required:    true,
-			},
-			"created": {
-				Description: "Timestamp when the repository was created.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Computed:    true,
-			},
-			"default_branch": {
-				Description: "Default branch of the repository.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"description": {
-				Description: "Description of the repository.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"fork_id": {
-				Description: "ID of the forked repository.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"git_url": {
-				Description: "Git URL of the repository.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"id": {
-				Description: "ID of the repository.",
-				Type:        schema.TypeInt,
-				Required:    true,
-			},
-			"importing": {
-				Description: "Whether the repository is being imported.",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
-			"is_public": {
-				Description: "Whether the repository is public.",
-				Type:        schema.TypeBool,
-				Required:    true,
-			},
-			"num_closed_pulls": {
-				Description: "Number of closed pull requests.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"num_forks": {
-				Description: "Number of forks.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"num_merged_pulls": {
-				Description: "Number of merged pull requests.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"num_open_pulls": {
-				Description: "Number of open pull requests.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"num_pulls": {
-				Description: "Total number of pull requests.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"parent_id": {
-				Description: "ID of the parent repository.",
-				Type:        schema.TypeInt,
-				Required:    true,
-			},
-			"path": {
-				Description: "Path of the repository.",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"size": {
-				Description: "Size of the repository.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"size_updated": {
-				Description: "Timestamp when the repository size was last updated.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-			},
-			"uid": {
-				Description: "UID of the repository.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-			},
-			"updated": {
-				Description: "Timestamp when the repository was last updated.",
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Computed:    true,
-			},
-		},
+		Schema: createSchema(),
 	}
 
 	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
@@ -231,4 +127,112 @@ func readRepo(d *schema.ResourceData, resp *code.TypesRepository) {
 	d.Set("size_updated", resp.SizeUpdated)
 	d.Set("uid", resp.Uid)
 	d.Set("updated", resp.Updated)
+}
+
+func createSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"created_by": {
+			Description: "ID of the user who created the repository.",
+			Type:        schema.TypeInt,
+			Required:    true,
+		},
+		"created": {
+			Description: "Timestamp when the repository was created.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Computed:    true,
+		},
+		"default_branch": {
+			Description: "Default branch of the repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"description": {
+			Description: "Description of the repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"fork_id": {
+			Description: "ID of the forked repository.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"git_url": {
+			Description: "Git URL of the repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"id": {
+			Description: "ID of the repository.",
+			Type:        schema.TypeInt,
+			Required:    true,
+		},
+		"importing": {
+			Description: "Whether the repository is being imported.",
+			Type:        schema.TypeBool,
+			Optional:    true,
+		},
+		"is_public": {
+			Description: "Whether the repository is public.",
+			Type:        schema.TypeBool,
+			Required:    true,
+		},
+		"num_closed_pulls": {
+			Description: "Number of closed pull requests.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"num_forks": {
+			Description: "Number of forks.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"num_merged_pulls": {
+			Description: "Number of merged pull requests.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"num_open_pulls": {
+			Description: "Number of open pull requests.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"num_pulls": {
+			Description: "Total number of pull requests.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"parent_id": {
+			Description: "ID of the parent repository.",
+			Type:        schema.TypeInt,
+			Required:    true,
+		},
+		"path": {
+			Description: "Path of the repository.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+		"size": {
+			Description: "Size of the repository.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"size_updated": {
+			Description: "Timestamp when the repository size was last updated.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+		},
+		"uid": {
+			Description: "UID of the repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+			Computed:    true,
+		},
+		"updated": {
+			Description: "Timestamp when the repository was last updated.",
+			Type:        schema.TypeInt,
+			Optional:    true,
+			Computed:    true,
+		},
+	}
 }
