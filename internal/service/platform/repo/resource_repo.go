@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -148,14 +149,38 @@ func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interfac
 
 func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
-	_ = c
+	var err error
+	var repo code.TypesRepository
+	var resp *http.Response
+	id := d.Id()
+
+	if id == "" {
+		repo, resp, err = c.RepositoryApi.CreateRepository(ctx, &code.RepositoryApiCreateRepositoryOpts{})
+		if err != nil {
+			return helpers.HandleApiError(err, d, resp)
+		}
+	} else {
+		repo, resp, err = c.RepositoryApi.UpdateRepository(ctx, d.Get("uid").(string), &code.RepositoryApiUpdateRepositoryOpts{})
+		if err != nil {
+			return helpers.HandleApiError(err, d, resp)
+		}
+	}
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, resp)
+	}
+
+	readRepo(d, &repo)
 
 	return nil
 }
 
 func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
-	_ = c
+	resp, err := c.RepositoryApi.DeleteRepository(ctx, d.Get("uid").(string))
+	if err != nil {
+		return helpers.HandleApiError(err, d, resp)
+	}
 
 	return nil
 }
