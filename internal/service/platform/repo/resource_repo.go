@@ -31,9 +31,8 @@ func ResourceRepo() *schema.Resource {
 
 func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
-	id := d.Id()
 
-	repo, resp, err := c.RepositoryApi.FindRepository(ctx, id)
+	repo, resp, err := c.RepositoryApi.FindRepository(ctx, d.Get("id").(string))
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, resp)
 	}
@@ -48,7 +47,7 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	var err error
 	var repo code.TypesRepository
 	var resp *http.Response
-	id := d.Id()
+	id := d.Get("id").(string)
 
 	if id == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(ctx, &code.RepositoryApiCreateRepositoryOpts{})
@@ -56,7 +55,7 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 			return helpers.HandleApiError(err, d, resp)
 		}
 	} else {
-		repo, resp, err = c.RepositoryApi.UpdateRepository(ctx, d.Get("uid").(string), &code.RepositoryApiUpdateRepositoryOpts{})
+		repo, resp, err = c.RepositoryApi.UpdateRepository(ctx, d.Get("id").(string), &code.RepositoryApiUpdateRepositoryOpts{})
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
@@ -73,7 +72,7 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 
 func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
-	resp, err := c.RepositoryApi.DeleteRepository(ctx, d.Get("uid").(string))
+	resp, err := c.RepositoryApi.DeleteRepository(ctx, d.Get("id").(string))
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
