@@ -25,6 +25,8 @@ func (a *GithubHttpCredentials) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.UsernameToken)
 	case GithubHttpCredentialTypes.GithubApp:
 		err = json.Unmarshal(aux.Spec, &a.GithubApp)
+    case GithubHttpCredentialTypes.Anonymous:
+    	// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown http credentials method type %s", a.Type_))
 	}
@@ -43,6 +45,8 @@ func (a *GithubHttpCredentials) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.UsernameToken)
 	case GithubHttpCredentialTypes.GithubApp:
 		spec, err = json.Marshal(a.GithubApp)
+    case GithubHttpCredentialTypes.Anonymous:
+    	// nothing to do
 	default:
 		panic(fmt.Sprintf("unknown git auth method type %s", a.Type_))
 	}
