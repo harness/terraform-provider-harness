@@ -19,6 +19,7 @@ func ResourceFFApiKey() *schema.Resource {
 		ReadContext:   resourceFFApiKeyRead,
 		DeleteContext: resourceFFApiKeyDelete,
 		CreateContext: resourceFFApiKeyCreate,
+		UpdateContext: resourceFFApiKeyUpdate,
 		Importer:      nil,
 
 		Schema: map[string]*schema.Schema{
@@ -144,6 +145,25 @@ func resourceFFApiKeyCreate(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
+func resourceFFApiKeyUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+
+	id := d.Id()
+	if id == "" {
+		return nil
+	}
+	qp := buildFFApiKeyQueryParameters(d)
+	opts := buildFFApiKeyUpdateOpts(d)
+
+	_, err := c.APIKeysApi.UpdateAPIKey(ctx, qp.ProjectId, qp.EnvironmentId, c.AccountId, qp.OrganizationId, id, opts)
+
+	if err != nil {
+		return helpers.HandleApiError(err, d, nil)
+	}
+
+	return nil
+}
+
 func resourceFFApiKeyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
@@ -197,5 +217,18 @@ func buildFFApiKeyOpts(d *schema.ResourceData) *nextgen.APIKeysApiAddAPIKeyOpts 
 	return &nextgen.APIKeysApiAddAPIKeyOpts{
 		Body: optional.NewInterface(opts),
 	}
+}
 
+func buildFFApiKeyUpdateOpts(d *schema.ResourceData) *nextgen.APIKeysApiUpdateAPIKeyOpts {
+	opts := &ApiKeyOpts{
+		Identifier:  d.Get("identifier").(string),
+		Name:        d.Get("name").(string),
+		Description: d.Get("description").(string),
+		Type_:       d.Get("type").(string),
+		ExpiredAt:   d.Get("expired_at").(int),
+	}
+
+	return &nextgen.APIKeysApiUpdateAPIKeyOpts{
+		Body: optional.NewInterface(opts),
+	}
 }
