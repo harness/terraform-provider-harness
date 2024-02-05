@@ -29,10 +29,14 @@ func ResourceRepo() *schema.Resource {
 	return resource
 }
 
-func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceRepoRead(
+	ctx context.Context,
+	d *schema.ResourceData,
+	meta interface{},
+) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	repo, resp, err := c.RepositoryApi.FindRepository(ctx, d.Get("id").(string))
+	repo, resp, err := c.RepositoryApi.FindRepository(ctx, d.Get("path").(string))
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, resp)
 	}
@@ -47,15 +51,15 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	var err error
 	var repo code.TypesRepository
 	var resp *http.Response
-	id := d.Get("id").(string)
+	path := d.Get("path").(string)
 
-	if id == "" {
+	if path == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(ctx, &code.RepositoryApiCreateRepositoryOpts{})
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
 	} else {
-		repo, resp, err = c.RepositoryApi.UpdateRepository(ctx, d.Get("id").(string), &code.RepositoryApiUpdateRepositoryOpts{})
+		repo, resp, err = c.RepositoryApi.UpdateRepository(ctx, path, &code.RepositoryApiUpdateRepositoryOpts{})
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
@@ -72,37 +76,12 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 
 func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
-	resp, err := c.RepositoryApi.DeleteRepository(ctx, d.Get("id").(string))
+	resp, err := c.RepositoryApi.DeleteRepository(ctx, d.Get("path").(string))
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
 
 	return nil
-}
-
-func buildRepo(d *schema.ResourceData) *code.TypesRepository {
-	return &code.TypesRepository{
-		Created:        d.Get("created").(int32),
-		CreatedBy:      d.Get("created_by").(int32),
-		DefaultBranch:  d.Get("default_branch").(string),
-		Description:    d.Get("description").(string),
-		ForkId:         d.Get("fork_id").(int32),
-		GitUrl:         d.Get("git_url").(string),
-		Id:             d.Get("id").(int32),
-		Importing:      d.Get("importing").(bool),
-		IsPublic:       d.Get("is_public").(bool),
-		NumClosedPulls: d.Get("num_closed_pulls").(int32),
-		NumForks:       d.Get("num_forks").(int32),
-		NumMergedPulls: d.Get("num_merged_pulls").(int32),
-		NumOpenPulls:   d.Get("num_open_pulls").(int32),
-		NumPulls:       d.Get("num_pulls").(int32),
-		ParentId:       d.Get("parent_id").(int32),
-		Path:           d.Get("path").(string),
-		Size:           d.Get("size").(int32),
-		SizeUpdated:    d.Get("size_updated").(int32),
-		Uid:            d.Get("uid").(string),
-		Updated:        d.Get("updated").(int32),
-	}
 }
 
 func readRepo(d *schema.ResourceData, resp *code.TypesRepository) {
@@ -138,7 +117,6 @@ func createSchema() map[string]*schema.Schema {
 		"created": {
 			Description: "Timestamp when the repository was created.",
 			Type:        schema.TypeInt,
-			Optional:    true,
 			Computed:    true,
 		},
 		"default_branch": {
@@ -159,12 +137,12 @@ func createSchema() map[string]*schema.Schema {
 		"git_url": {
 			Description: "Git URL of the repository.",
 			Type:        schema.TypeString,
-			Optional:    true,
+			Computed:    true,
 		},
 		"id": {
 			Description: "ID of the repository.",
 			Type:        schema.TypeInt,
-			Required:    true,
+			Computed:    true,
 		},
 		"importing": {
 			Description: "Whether the repository is being imported.",
@@ -209,7 +187,7 @@ func createSchema() map[string]*schema.Schema {
 		"path": {
 			Description: "Path of the repository.",
 			Type:        schema.TypeString,
-			Required:    true,
+			Computed:    true,
 		},
 		"size": {
 			Description: "Size of the repository.",
@@ -219,18 +197,16 @@ func createSchema() map[string]*schema.Schema {
 		"size_updated": {
 			Description: "Timestamp when the repository size was last updated.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"uid": {
 			Description: "UID of the repository.",
 			Type:        schema.TypeString,
-			Optional:    true,
 			Computed:    true,
 		},
 		"updated": {
 			Description: "Timestamp when the repository was last updated.",
 			Type:        schema.TypeInt,
-			Optional:    true,
 			Computed:    true,
 		},
 	}
