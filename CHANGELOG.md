@@ -1,3 +1,23 @@
+# 0.30.2 (January 23,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_project: corrected error handling for EntityNotFoundException ([#872](https://github.com/harness/terraform-provider-harness/issues/872))
+
+# 0.30.1 (January 19,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_connector_github: added force deletion support for github connector ([#855](https://github.com/harness/terraform-provider-harness/issues/855))
+* resource/harness_platform_project: added error handling for EntityNotFoundException ([#858](https://github.com/harness/terraform-provider-harness/issues/858))
+
+# 0.30.0 (January 10,2024) 
+
+FEATURES:
+
+* **New Data Source:** `harness_platform_current_account -  new data resource for account id` ([#785](https://github.com/harness/terraform-provider-harness/issues/785))
+* **New Resource:** `resource/harness_platform_connector_pdc: Added Pdc connector resource.` ([#832](https://github.com/harness/terraform-provider-harness/issues/832))
+
 # 0.29.4 (December 12,2023) 
 
 BUG FIXES:

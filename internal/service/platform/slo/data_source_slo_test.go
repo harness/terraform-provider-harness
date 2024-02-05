@@ -107,17 +107,7 @@ func testAccDataSourceSlo(id string, name string) string {
 						]
 					})
 				}
-				change_sources {
-					name = "csName1"
-					identifier = "harness_cd_next_gen"
-					type = "HarnessCDNextGen"
-					enabled = true
-					spec = jsonencode({
-					})
-					category = "Deployment"
-				}
-				template_ref = "template_ref"
-				version_label = "version_label"
+				
 			}
 		}
 
@@ -146,7 +136,6 @@ func testAccDataSourceSlo(id string, name string) string {
 				  type = "Simple"
 				  spec = jsonencode({
 						monitoredServiceRef = harness_platform_monitored_service.test.id
-						healthSourceRef = "%[1]s"
 						serviceLevelIndicatorType = "Availability"
 						serviceLevelIndicators = [
 							{

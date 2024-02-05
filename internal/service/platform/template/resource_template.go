@@ -2,6 +2,7 @@ package template
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -548,6 +549,7 @@ func resourceTemplateDelete(ctx context.Context, d *schema.ResourceData, meta in
 	version := d.Get("version").(string)
 	var httpResp *http.Response
 	var err error
+	log.Printf("[DEBUG] Deleting template with identifier %s and version %s", id, version)
 
 	if project_id != "" {
 		httpResp, err = c.ProjectTemplateApi.DeleteTemplateProject(ctx, project_id, id, org_id, version, &nextgen.ProjectTemplateApiDeleteTemplateProjectOpts{

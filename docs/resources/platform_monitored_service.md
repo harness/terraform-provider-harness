@@ -34,10 +34,11 @@ resource "harness_platform_monitored_service" "example" {
         connectorRef = "connectorRef"
         queryDefinitions = [
           {
-            name      = "name"
-            query     = "query"
-            index     = "index"
-            groupName = "Logs_Group"
+            name       = "error_4xx"
+            identifier = "error_4xx_id"
+            query      = "Bad Request"
+            index      = "index"
+            groupName  = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -47,10 +48,11 @@ resource "harness_platform_monitored_service" "example" {
             }
           },
           {
-            name      = "name2"
-            query     = "query2"
-            index     = "index2"
-            groupName = "Logs_Group"
+            name       = "error_5xx"
+            identifier = "error_5xx_id"
+            query      = "Internal Server Error"
+            index      = "index2"
+            groupName  = "Logs_Group"
             queryParams = {
               index                = "index"
               serviceInstanceField = "serviceInstanceIdentifier"
@@ -63,13 +65,28 @@ resource "harness_platform_monitored_service" "example" {
       })
     }
     change_sources {
-      name       = "csName1"
-      identifier = "harness_cd_next_gen"
-      type       = "HarnessCDNextGen"
+      name       = "BAC"
+      identifier = "BAC"
+      type       = "PagerDuty"
       enabled    = true
       spec = jsonencode({
+        connectorRef       = "account.pd"
+        pagerDutyServiceId = "P0N21OB"
       })
-      category = "Deployment"
+      category = "Alert"
+    }
+    change_sources {
+      name       = "FH"
+      identifier = "FH"
+      type       = "CustomIncident"
+      enabled    = true
+      spec = jsonencode({
+        name       = "FH",
+        webhookUrl = "https://harness.io/cv/api/account/sampleAcc/org/sampleOrg/project/sampleProj/webhook/custom-change?monitoredServiceIdentifier=checkout_prod&changeSourceIdentifier=FH",
+        "webhookCurlCommand" : "curl -X POST -H 'content-type: application/json' -H 'X-Api-Key: sample_api_key' --url 'https://harness.io/cv/api/account/sampleAcc/org/sampleOrg/project/sampleProj/webhook/custom-change?monitoredServiceIdentifier=checkout_prod&changeSourceIdentifier=FH' -d '{ \"eventIdentifier\": \"<string>\" (optional), \"user\": \"user@harness.io\", \"startTime\": timeInMs, \"endTime\": timeInMs, \"eventDetail\": { \"description\": \"<String>\", \"changeEventDetailsLink\": \"urlString\" (optional), \"externalLinkToEntity\": \"urlString\" (optional), \"name\": \"changeEventName\" } }'",
+        "type" : "Alert"
+      })
+      category = "Alert"
     }
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref"
@@ -107,6 +124,7 @@ resource "harness_platform_monitored_service" "example1" {
             query      = "metric=cpu"
             groupName  = "g1"
             queryParams = {
+              serviceInstanceField = "_sourcehost"
             }
             riskProfile = {
               riskCategory = "Performance_Other"
@@ -157,6 +175,7 @@ resource "harness_platform_monitored_service" "example1" {
             groupName  = "g2"
             query      = "metric=memory"
             queryParams = {
+              serviceInstanceField = "_sourcehost"
             }
             riskProfile = {
               riskCategory = "Performance_Other"
@@ -752,38 +771,38 @@ resource "harness_platform_monitored_service" "example9" {
         # Below section is for adding your own custom thresholds
         metricPacks : [
           {
-            identifier : "Custom",
-            metricThresholds : [
+            identifier = "Custom",
+            metricThresholds = [
               {
-                type : "IgnoreThreshold",
-                spec : {
+                type = "IgnoreThreshold",
+                spec = {
                   action : "Ignore"
                 },
-                criteria : {
-                  type : "Absolute",
-                  spec : {
-                    greaterThan : 100
+                criteria = {
+                  type = "Absolute",
+                  spec = {
+                    greaterThan = 100
                   }
                 },
-                metricType : "Custom",
-                metricName : "New Relic Metric"
+                metricType = "Custom",
+                metricName = "New Relic Metric"
               },
               {
-                "type" : "FailImmediately",
-                "spec" : {
-                  "action" : "FailAfterOccurrence",
-                  "spec" : {
+                "type" = "FailImmediately",
+                "spec" = {
+                  "action" = "FailAfterOccurrence",
+                  "spec" = {
                     "count" : 2
                   }
                 },
-                "criteria" : {
-                  "type" : "Absolute",
-                  "spec" : {
+                "criteria" = {
+                  "type" = "Absolute",
+                  "spec" = {
                     "greaterThan" : 100
                   }
                 },
-                "metricType" : "Custom",
-                "metricName" : "New Relic Metric"
+                "metricType" = "Custom",
+                "metricName" = "New Relic Metric"
               }
             ]
           }
