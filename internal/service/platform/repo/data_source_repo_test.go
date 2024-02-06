@@ -21,7 +21,7 @@ func TestAccDataSourceProject(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(path, size, sizeUpdated, updated),
+				Config: testAccResourceRepo(path),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),

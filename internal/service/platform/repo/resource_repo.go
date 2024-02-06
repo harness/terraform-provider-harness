@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -24,7 +25,7 @@ func ResourceRepo() *schema.Resource {
 		Schema: createSchema(),
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 
 	return resource
 }
@@ -32,10 +33,13 @@ func ResourceRepo() *schema.Resource {
 func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
+	createdBy := strconv.Itoa(d.Get("created_by").(int))
+	path := d.Get("path").(string)
+
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
-		d.Get("created_by").(string),
-		d.Get("path").(string),
+		createdBy,
+		path,
 		&code.RepositoryApiFindRepositoryOpts{},
 	)
 	if err != nil {
@@ -52,11 +56,13 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	var err error
 	var repo code.TypesRepository
 	var resp *http.Response
+
+	createdBy := strconv.Itoa(d.Get("created_by").(int))
 	path := d.Get("path").(string)
 
 	if path == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(
-			ctx, d.Get("created_by").(string),
+			ctx, createdBy,
 			&code.RepositoryApiCreateRepositoryOpts{},
 		)
 		if err != nil {
@@ -65,7 +71,7 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	} else {
 		repo, resp, err = c.RepositoryApi.UpdateRepository(
 			ctx,
-			d.Get("created_by").(string),
+			createdBy,
 			path,
 			&code.RepositoryApiUpdateRepositoryOpts{},
 		)
@@ -86,10 +92,13 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
+	createdBy := strconv.Itoa(d.Get("created_by").(int))
+	path := d.Get("path").(string)
+
 	resp, err := c.RepositoryApi.DeleteRepository(
 		ctx,
-		d.Get("created_by").(string),
-		d.Get("path").(string), &code.RepositoryApiDeleteRepositoryOpts{},
+		createdBy,
+		path, &code.RepositoryApiDeleteRepositoryOpts{},
 	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
@@ -154,7 +163,7 @@ func createSchema() map[string]*schema.Schema {
 		},
 		"id": {
 			Description: "ID of the repository.",
-			Type:        schema.TypeInt,
+			Type:        schema.TypeString,
 			Computed:    true,
 		},
 		"importing": {
@@ -165,7 +174,7 @@ func createSchema() map[string]*schema.Schema {
 		"is_public": {
 			Description: "Whether the repository is public.",
 			Type:        schema.TypeBool,
-			Required:    true,
+			Optional:    true,
 		},
 		"num_closed_pulls": {
 			Description: "Number of closed pull requests.",
@@ -195,17 +204,17 @@ func createSchema() map[string]*schema.Schema {
 		"parent_id": {
 			Description: "ID of the parent repository.",
 			Type:        schema.TypeInt,
-			Required:    true,
+			Optional:    true,
 		},
 		"path": {
 			Description: "Path of the repository.",
 			Type:        schema.TypeString,
-			Computed:    true,
+			Required:    true,
 		},
 		"size": {
 			Description: "Size of the repository.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"size_updated": {
 			Description: "Timestamp when the repository size was last updated.",

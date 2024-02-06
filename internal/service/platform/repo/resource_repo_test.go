@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const createdBy = "admin"
+const createdBy = 1
 
 func TestAccResourceRepo(t *testing.T) {
 	size := int64(1024)
@@ -22,7 +22,7 @@ func TestAccResourceRepo(t *testing.T) {
 	updatedSizeUpdated := sizeUpdated + 3
 	updated := sizeUpdated
 	updatedUpdated := updatedSizeUpdated
-	resourceName := "code_repo.test"
+	resourceName := "harness_platform_repo.test"
 	path := t.Name()
 
 	resource.UnitTest(t, resource.TestCase{
@@ -31,18 +31,16 @@ func TestAccResourceRepo(t *testing.T) {
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(path, size, sizeUpdated, updated),
+				Config: testAccResourceRepo(path),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
 					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updated, 10)),
 				),
 			},
 			{
-				Config: testAccResourceRepo(path, updatedSize, updatedSizeUpdated, updatedUpdated),
+				Config: testAccResourceRepo(path),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(updatedSize, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(updatedSizeUpdated, 10)),
 					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updatedUpdated, 10)),
@@ -63,7 +61,7 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	size := int64(1024)
 	sizeUpdated := time.Now().Unix()
 	updated := sizeUpdated
-	resourceName := "code_repo.test"
+	resourceName := "harness_platform_repo.test"
 	path := t.Name()
 
 	resource.UnitTest(t, resource.TestCase{
@@ -71,9 +69,8 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(path, size, sizeUpdated, updated),
+				Config: testAccResourceRepo(path),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
 					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updated, 10)),
@@ -84,10 +81,10 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetCodeClientWithContext()
 					_, err := c.RepositoryApi.DeleteRepository(
-						ctx, createdBy, path, &code.RepositoryApiDeleteRepositoryOpts{})
+						ctx, strconv.Itoa(createdBy), path, &code.RepositoryApiDeleteRepositoryOpts{})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceRepo(path, size, sizeUpdated, updated),
+				Config:             testAccResourceRepo(path),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -95,17 +92,15 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccResourceRepo(path string, size, sizeUpdated, updated int64) string {
+func testAccResourceRepo(path string) string {
 	return fmt.Sprintf(`
-		resource "code_repo" "test" {
-			path = %[1]s
-			git_url = "https://github.com/example/repo.git"
-			updated = %[2]d
-			size = %[3]d
-			size_updated = %[4]d
-			created_by = "%[5]s"
+		resource "harness_platform_repo" "test" {
+			identifier = "example_identifier"
+			name       = "example_name"
+			path = "%[1]s"
+			created_by = %[2]d
 		}
-	`, path, updated, size, sizeUpdated, createdBy,
+	`, path, createdBy,
 	)
 }
 
@@ -115,7 +110,7 @@ func testAccFindRepo(resourceName string, state *terraform.State) (*code.TypesRe
 	path := r.Primary.Attributes["path"]
 
 	repo, _, err := c.RepositoryApi.FindRepository(
-		ctx, createdBy, path, &code.RepositoryApiFindRepositoryOpts{})
+		ctx, strconv.Itoa(createdBy), path, &code.RepositoryApiFindRepositoryOpts{})
 	if err != nil {
 		return nil, err
 	}
