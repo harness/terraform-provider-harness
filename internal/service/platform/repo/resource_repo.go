@@ -29,14 +29,15 @@ func ResourceRepo() *schema.Resource {
 	return resource
 }
 
-func resourceRepoRead(
-	ctx context.Context,
-	d *schema.ResourceData,
-	meta interface{},
-) diag.Diagnostics {
+func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	repo, resp, err := c.RepositoryApi.FindRepository(ctx, d.Get("path").(string))
+	repo, resp, err := c.RepositoryApi.FindRepository(
+		ctx,
+		d.Get("created_by").(string),
+		d.Get("path").(string),
+		&code.RepositoryApiFindRepositoryOpts{},
+	)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, resp)
 	}
@@ -54,12 +55,20 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	path := d.Get("path").(string)
 
 	if path == "" {
-		repo, resp, err = c.RepositoryApi.CreateRepository(ctx, &code.RepositoryApiCreateRepositoryOpts{})
+		repo, resp, err = c.RepositoryApi.CreateRepository(
+			ctx, d.Get("created_by").(string),
+			&code.RepositoryApiCreateRepositoryOpts{},
+		)
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
 	} else {
-		repo, resp, err = c.RepositoryApi.UpdateRepository(ctx, path, &code.RepositoryApiUpdateRepositoryOpts{})
+		repo, resp, err = c.RepositoryApi.UpdateRepository(
+			ctx,
+			d.Get("created_by").(string),
+			path,
+			&code.RepositoryApiUpdateRepositoryOpts{},
+		)
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
@@ -76,7 +85,12 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 
 func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
-	resp, err := c.RepositoryApi.DeleteRepository(ctx, d.Get("path").(string))
+
+	resp, err := c.RepositoryApi.DeleteRepository(
+		ctx,
+		d.Get("created_by").(string),
+		d.Get("path").(string), &code.RepositoryApiDeleteRepositoryOpts{},
+	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
@@ -103,7 +117,6 @@ func readRepo(d *schema.ResourceData, resp *code.TypesRepository) {
 	d.Set("path", resp.Path)
 	d.Set("size", resp.Size)
 	d.Set("size_updated", resp.SizeUpdated)
-	d.Set("uid", resp.Uid)
 	d.Set("updated", resp.Updated)
 }
 
@@ -197,11 +210,6 @@ func createSchema() map[string]*schema.Schema {
 		"size_updated": {
 			Description: "Timestamp when the repository size was last updated.",
 			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"uid": {
-			Description: "UID of the repository.",
-			Type:        schema.TypeString,
 			Computed:    true,
 		},
 		"updated": {

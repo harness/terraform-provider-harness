@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -26,7 +27,12 @@ func DataSourceProject() *schema.Resource {
 func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	repo, resp, err := c.RepositoryApi.FindRepository(ctx, d.Get("uid").(string))
+	repo, resp, err := c.RepositoryApi.FindRepository(
+		ctx,
+		d.Get("id").(string),
+		d.Get("created_by").(string),
+		&code.RepositoryApiFindRepositoryOpts{},
+	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}

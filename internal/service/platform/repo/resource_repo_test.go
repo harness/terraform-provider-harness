@@ -7,24 +7,23 @@ import (
 	"time"
 
 	"github.com/harness/harness-go-sdk/harness/code"
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )
 
+const createdBy = "admin"
+
 func TestAccResourceRepo(t *testing.T) {
-	id := int64(123)
-	name := t.Name()
-	uid := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	size := int64(1024)
 	updatedSize := size * 2
 	sizeUpdated := time.Now().Unix()
 	updatedSizeUpdated := sizeUpdated + 3
 	updated := sizeUpdated
 	updatedUpdated := updatedSizeUpdated
-	resourceName := "harness_platform_repo.test"
+	resourceName := "code_repo.test"
+	path := t.Name()
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -32,20 +31,18 @@ func TestAccResourceRepo(t *testing.T) {
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(id, uid, size, sizeUpdated, updated),
+				Config: testAccResourceRepo(path, size, sizeUpdated, updated),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", strconv.FormatInt(id, 10)),
-					resource.TestCheckResourceAttr(resourceName, "uid", uid),
+					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
 					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updated, 10)),
 				),
 			},
 			{
-				Config: testAccResourceRepo(id, uid, updatedSize, updatedSizeUpdated, updatedUpdated),
+				Config: testAccResourceRepo(path, updatedSize, updatedSizeUpdated, updatedUpdated),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", strconv.FormatInt(id, 10)),
-					resource.TestCheckResourceAttr(resourceName, "uid", uid),
+					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(updatedSize, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(updatedSizeUpdated, 10)),
 					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updatedUpdated, 10)),
@@ -63,23 +60,20 @@ func TestAccResourceRepo(t *testing.T) {
 
 func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	t.Skip()
-	id := int64(123)
-	name := t.Name()
-	uid := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
 	size := int64(1024)
 	sizeUpdated := time.Now().Unix()
 	updated := sizeUpdated
-	resourceName := "harness_platform_repo.test"
+	resourceName := "code_repo.test"
+	path := t.Name()
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(id, uid, size, sizeUpdated, updated),
+				Config: testAccResourceRepo(path, size, sizeUpdated, updated),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", strconv.FormatInt(id, 10)),
-					resource.TestCheckResourceAttr(resourceName, "uid", uid),
+					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
 					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updated, 10)),
@@ -89,10 +83,11 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetCodeClientWithContext()
-					_, err := c.RepositoryApi.DeleteRepository(ctx, uid)
+					_, err := c.RepositoryApi.DeleteRepository(
+						ctx, createdBy, path, &code.RepositoryApiDeleteRepositoryOpts{})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceRepo(id, uid, size, sizeUpdated, updated),
+				Config:             testAccResourceRepo(path, size, sizeUpdated, updated),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -100,19 +95,17 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccResourceRepo(id int64, uid string, size, sizeUpdated, updated int64) string {
+func testAccResourceRepo(path string, size, sizeUpdated, updated int64) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_repo" "test" {
-			id = %[1]d
-			uid = "%[2]s"
-			path = "example/path"
+		resource "code_repo" "test" {
+			path = %[1]s
 			git_url = "https://github.com/example/repo.git"
-			is_public = true
-			updated = %[3]d
-			size = %[4]d
-			size_updated = %[5]d
+			updated = %[2]d
+			size = %[3]d
+			size_updated = %[4]d
+			created_by = "%[5]s"
 		}
-	`, id, uid, updated, size, sizeUpdated,
+	`, path, updated, size, sizeUpdated, createdBy,
 	)
 }
 
@@ -121,7 +114,8 @@ func testAccFindRepo(resourceName string, state *terraform.State) (*code.TypesRe
 	c, ctx := acctest.TestAccGetCodeClientWithContext()
 	path := r.Primary.Attributes["path"]
 
-	repo, _, err := c.RepositoryApi.FindRepository(ctx, path)
+	repo, _, err := c.RepositoryApi.FindRepository(
+		ctx, createdBy, path, &code.RepositoryApiFindRepositoryOpts{})
 	if err != nil {
 		return nil, err
 	}
