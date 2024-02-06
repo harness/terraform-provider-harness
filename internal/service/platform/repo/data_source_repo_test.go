@@ -13,7 +13,7 @@ func TestAccDataSourceProject(t *testing.T) {
 	size := int64(1024)
 	sizeUpdated := time.Now().Unix()
 	updated := sizeUpdated
-	resourceName := "data.code_repo.test"
+	resourceName := "harness_platform_repo.test"
 	path := t.Name()
 
 	resource.UnitTest(t, resource.TestCase{
@@ -21,7 +21,7 @@ func TestAccDataSourceProject(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(path),
+				Config: testAccResourceRepo(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "path", path),
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),

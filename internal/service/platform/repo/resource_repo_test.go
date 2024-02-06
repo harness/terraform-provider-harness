@@ -23,7 +23,6 @@ func TestAccResourceRepo(t *testing.T) {
 	updated := sizeUpdated
 	updatedUpdated := updatedSizeUpdated
 	resourceName := "harness_platform_repo.test"
-	path := t.Name()
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -31,7 +30,7 @@ func TestAccResourceRepo(t *testing.T) {
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(path),
+				Config: testAccResourceRepo(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
@@ -39,7 +38,7 @@ func TestAccResourceRepo(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceRepo(path),
+				Config: testAccResourceRepo(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(updatedSize, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(updatedSizeUpdated, 10)),
@@ -57,7 +56,6 @@ func TestAccResourceRepo(t *testing.T) {
 }
 
 func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
-	t.Skip()
 	size := int64(1024)
 	sizeUpdated := time.Now().Unix()
 	updated := sizeUpdated
@@ -69,7 +67,7 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(path),
+				Config: testAccResourceRepo(),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
 					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
@@ -84,7 +82,7 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 						ctx, strconv.Itoa(createdBy), path, &code.RepositoryApiDeleteRepositoryOpts{})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceRepo(path),
+				Config:             testAccResourceRepo(),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -92,15 +90,15 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccResourceRepo(path string) string {
+func testAccResourceRepo() string {
 	return fmt.Sprintf(`
+	
 		resource "harness_platform_repo" "test" {
 			identifier = "example_identifier"
 			name       = "example_name"
-			path = "%[1]s"
-			created_by = %[2]d
+			created_by = %[1]d
 		}
-	`, path, createdBy,
+	`, createdBy,
 	)
 }
 

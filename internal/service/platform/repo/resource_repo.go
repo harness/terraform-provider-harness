@@ -17,9 +17,9 @@ func ResourceRepo() *schema.Resource {
 		Description: "Resource for creating a Harness Repo.",
 
 		ReadContext:   resourceRepoRead,
+		CreateContext: resourceRepoCreateOrUpdate,
 		UpdateContext: resourceRepoCreateOrUpdate,
 		DeleteContext: resourceRepoDelete,
-		CreateContext: resourceRepoCreateOrUpdate,
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: createSchema(),
@@ -209,7 +209,7 @@ func createSchema() map[string]*schema.Schema {
 		"path": {
 			Description: "Path of the repository.",
 			Type:        schema.TypeString,
-			Required:    true,
+			Optional:    true,
 		},
 		"size": {
 			Description: "Size of the repository.",
