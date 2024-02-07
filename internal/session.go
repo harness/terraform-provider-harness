@@ -7,6 +7,7 @@ import (
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 )
 
@@ -53,5 +54,8 @@ func (s *Session) GetCodeClientWithContext(ctx context.Context) (*code.APIClient
 	}
 
 	cfg := code.NewConfiguration()
+
+	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "https://app.harness.io/gateway") + "/code"
+
 	return code.NewAPIClient(cfg), ctx
 }

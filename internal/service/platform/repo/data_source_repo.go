@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -29,9 +30,12 @@ func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interf
 
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
-		d.Get("id").(string),
-		d.Get("created_by").(string),
-		&code.RepositoryApiFindRepositoryOpts{},
+		d.Get("account_id").(string),
+		d.Get("identifier").(string),
+		&code.RepositoryApiFindRepositoryOpts{
+			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
+			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		},
 	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)

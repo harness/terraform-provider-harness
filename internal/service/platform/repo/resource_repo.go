@@ -2,15 +2,30 @@ package repo
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+type RepoBody struct {
+	DefaultBranch string `json:"default_branch"`
+	Description   string `json:"description"`
+	ForkID        int    `json:"fork_id"`
+	GitIgnore     string `json:"git_ignore"`
+	Identifier    string `json:"identifier"`
+	IsPublic      bool   `json:"is_public"`
+	License       string `json:"license"`
+	ParentRef     string `json:"parent_ref"`
+	Readme        bool   `json:"readme"`
+}
 
 func ResourceRepo() *schema.Resource {
 	resource := &schema.Resource{
@@ -33,14 +48,17 @@ func ResourceRepo() *schema.Resource {
 func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	createdBy := strconv.Itoa(d.Get("created_by").(int))
+	accountID := d.Get("account_id").(string)
 	path := d.Get("path").(string)
 
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
-		createdBy,
+		accountID,
 		path,
-		&code.RepositoryApiFindRepositoryOpts{},
+		&code.RepositoryApiFindRepositoryOpts{
+			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
+			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		},
 	)
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, resp)
@@ -51,19 +69,38 @@ func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	return nil
 }
 
-func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceRepoCreateOrUpdate(
+	ctx context.Context,
+	d *schema.ResourceData,
+	meta interface{},
+) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 	var err error
 	var repo code.TypesRepository
 	var resp *http.Response
 
-	createdBy := strconv.Itoa(d.Get("created_by").(int))
+	accountID := d.Get("account_id").(string)
 	path := d.Get("path").(string)
+	id := d.Id()
 
-	if path == "" {
+	bodyJson, err := json.Marshal(buildRepoBody(d))
+	if err != nil {
+		fmt.Println("Error:", err)
+		return helpers.HandleApiError(err, d, nil)
+	}
+
+	body := optional.NewInterface(bodyJson)
+	orgId := d.Get("org_identifier").(string)
+	prjId := d.Get("project_identifier").(string)
+
+	if id == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(
-			ctx, createdBy,
-			&code.RepositoryApiCreateRepositoryOpts{},
+			ctx, accountID,
+			&code.RepositoryApiCreateRepositoryOpts{
+				Body:              body,
+				OrgIdentifier:     optional.NewString(orgId),
+				ProjectIdentifier: optional.NewString(prjId),
+			},
 		)
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
@@ -71,9 +108,13 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	} else {
 		repo, resp, err = c.RepositoryApi.UpdateRepository(
 			ctx,
-			createdBy,
+			accountID,
 			path,
-			&code.RepositoryApiUpdateRepositoryOpts{},
+			&code.RepositoryApiUpdateRepositoryOpts{
+				Body:              optional.NewInterface(bodyJson),
+				OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
+				ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+			},
 		)
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
@@ -89,7 +130,11 @@ func resourceRepoCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 	return nil
 }
 
-func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceRepoDelete(
+	ctx context.Context,
+	d *schema.ResourceData,
+	meta interface{},
+) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
 	createdBy := strconv.Itoa(d.Get("created_by").(int))
@@ -98,7 +143,10 @@ func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interf
 	resp, err := c.RepositoryApi.DeleteRepository(
 		ctx,
 		createdBy,
-		path, &code.RepositoryApiDeleteRepositoryOpts{},
+		path, &code.RepositoryApiDeleteRepositoryOpts{
+			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
+			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		},
 	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
@@ -107,34 +155,66 @@ func resourceRepoDelete(ctx context.Context, d *schema.ResourceData, meta interf
 	return nil
 }
 
-func readRepo(d *schema.ResourceData, resp *code.TypesRepository) {
-	d.Set("created", resp.Created)
-	d.Set("created_by", resp.CreatedBy)
-	d.Set("default_branch", resp.DefaultBranch)
-	d.Set("description", resp.Description)
-	d.Set("fork_id", resp.ForkId)
-	d.Set("git_url", resp.GitUrl)
-	d.Set("id", resp.Id)
-	d.Set("importing", resp.Importing)
-	d.Set("is_public", resp.IsPublic)
-	d.Set("num_closed_pulls", resp.NumClosedPulls)
-	d.Set("num_forks", resp.NumForks)
-	d.Set("num_merged_pulls", resp.NumMergedPulls)
-	d.Set("num_open_pulls", resp.NumOpenPulls)
-	d.Set("num_pulls", resp.NumPulls)
-	d.Set("parent_id", resp.ParentId)
-	d.Set("path", resp.Path)
-	d.Set("size", resp.Size)
-	d.Set("size_updated", resp.SizeUpdated)
-	d.Set("updated", resp.Updated)
+func buildRepoBody(d *schema.ResourceData) *RepoBody {
+	return &RepoBody{
+		DefaultBranch: d.Get("default_branch").(string),
+		Description:   d.Get("description").(string),
+		ForkID:        d.Get("fork_id").(int),
+		GitIgnore:     d.Get("git_ignore").(string),
+		Identifier:    d.Get("identifier").(string),
+		IsPublic:      d.Get("is_public").(bool),
+		License:       d.Get("license").(string),
+		ParentRef:     d.Get("parent_ref").(string),
+		Readme:        d.Get("readme").(bool),
+	}
+}
+
+func readRepo(d *schema.ResourceData, repo *code.TypesRepository) {
+	d.SetId(repo.Identifier)
+
+	d.Set("created", repo.Created)
+	d.Set("created_by", repo.CreatedBy)
+	d.Set("default_branch", repo.DefaultBranch)
+	d.Set("description", repo.Description)
+	d.Set("fork_id", repo.ForkId)
+	d.Set("git_url", repo.GitUrl)
+	d.Set("id", repo.Id)
+	d.Set("importing", repo.Importing)
+	d.Set("is_public", repo.IsPublic)
+	d.Set("num_closed_pulls", repo.NumClosedPulls)
+	d.Set("num_forks", repo.NumForks)
+	d.Set("num_merged_pulls", repo.NumMergedPulls)
+	d.Set("num_open_pulls", repo.NumOpenPulls)
+	d.Set("num_pulls", repo.NumPulls)
+	d.Set("parent_id", repo.ParentId)
+	d.Set("path", repo.Path)
+	d.Set("size", repo.Size)
+	d.Set("size_updated", repo.SizeUpdated)
+	d.Set("updated", repo.Updated)
 }
 
 func createSchema() map[string]*schema.Schema {
+
 	return map[string]*schema.Schema{
+		"account_id": {
+			Description: "ID of the account who created the repository.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+		"org_identifier": {
+			Description: "Identifier of the organization.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"project_identifier": {
+			Description: "Identifier of the project.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
 		"created_by": {
 			Description: "ID of the user who created the repository.",
 			Type:        schema.TypeInt,
-			Required:    true,
+			Computed:    true,
 		},
 		"created": {
 			Description: "Timestamp when the repository was created.",
@@ -154,7 +234,7 @@ func createSchema() map[string]*schema.Schema {
 		"fork_id": {
 			Description: "ID of the forked repository.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"git_url": {
 			Description: "Git URL of the repository.",
@@ -169,7 +249,7 @@ func createSchema() map[string]*schema.Schema {
 		"importing": {
 			Description: "Whether the repository is being imported.",
 			Type:        schema.TypeBool,
-			Optional:    true,
+			Computed:    true,
 		},
 		"is_public": {
 			Description: "Whether the repository is public.",
@@ -179,37 +259,37 @@ func createSchema() map[string]*schema.Schema {
 		"num_closed_pulls": {
 			Description: "Number of closed pull requests.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"num_forks": {
 			Description: "Number of forks.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"num_merged_pulls": {
 			Description: "Number of merged pull requests.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"num_open_pulls": {
 			Description: "Number of open pull requests.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"num_pulls": {
 			Description: "Total number of pull requests.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"parent_id": {
 			Description: "ID of the parent repository.",
 			Type:        schema.TypeInt,
-			Optional:    true,
+			Computed:    true,
 		},
 		"path": {
 			Description: "Path of the repository.",
 			Type:        schema.TypeString,
-			Optional:    true,
+			Computed:    true,
 		},
 		"size": {
 			Description: "Size of the repository.",
@@ -225,6 +305,31 @@ func createSchema() map[string]*schema.Schema {
 			Description: "Timestamp when the repository was last updated.",
 			Type:        schema.TypeInt,
 			Computed:    true,
+		},
+		"git_ignore": {
+			Description: "Gitignore file for the repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"identifier": {
+			Description: "Identifier of the repository.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+		"license": {
+			Description: "License for the repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"parent_ref": {
+			Description: "Reference to the parent repository.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"readme": {
+			Description: "Whether the repository has a readme.",
+			Type:        schema.TypeBool,
+			Optional:    true,
 		},
 	}
 }
