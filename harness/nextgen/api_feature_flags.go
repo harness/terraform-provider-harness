@@ -192,11 +192,12 @@ Delete Feature Flag for the given identifier and account ID
  * @param projectIdentifier The Project identifier
  * @param optional nil or *FeatureFlagsApiDeleteFeatureFlagOpts - Optional Parameters:
      * @param "CommitMsg" (optional.String) -  Git commit message
-
+     * @param "ForceDelete" (optional.Bool) -  Permanently deletes the feature flag
 */
 
 type FeatureFlagsApiDeleteFeatureFlagOpts struct {
-	CommitMsg optional.String
+	CommitMsg   optional.String
+	ForceDelete optional.Bool
 }
 
 func (a *FeatureFlagsApiService) DeleteFeatureFlag(ctx context.Context, identifier string, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *FeatureFlagsApiDeleteFeatureFlagOpts) (*http.Response, error) {
@@ -221,6 +222,10 @@ func (a *FeatureFlagsApiService) DeleteFeatureFlag(ctx context.Context, identifi
 	if localVarOptionals != nil && localVarOptionals.CommitMsg.IsSet() {
 		localVarQueryParams.Add("commitMsg", parameterToString(localVarOptionals.CommitMsg.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+	}
+
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
