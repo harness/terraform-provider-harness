@@ -426,6 +426,10 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
 
 	if err != nil {
+		// handle conflict
+		if httpResp != nil && httpResp.StatusCode == 409 {
+			return diag.Errorf("A feature flag with identifier [%s] orgIdentifier [%s] project [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId)
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
