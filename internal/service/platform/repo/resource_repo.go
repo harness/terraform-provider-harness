@@ -2,10 +2,7 @@ package repo
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
@@ -16,15 +13,15 @@ import (
 )
 
 type RepoBody struct {
+	ParentRef     string `json:"parent_ref"`
+	Identifier    string `json:"identifier"`
 	DefaultBranch string `json:"default_branch"`
 	Description   string `json:"description"`
-	ForkID        int    `json:"fork_id"`
-	GitIgnore     string `json:"git_ignore"`
-	Identifier    string `json:"identifier"`
 	IsPublic      bool   `json:"is_public"`
-	License       string `json:"license"`
-	ParentRef     string `json:"parent_ref"`
+	ForkID        int64  `json:"fork_id"`
 	Readme        bool   `json:"readme"`
+	License       string `json:"license"`
+	GitIgnore     string `json:"git_ignore"`
 }
 
 func ResourceRepo() *schema.Resource {
@@ -48,16 +45,23 @@ func ResourceRepo() *schema.Resource {
 func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
+	id := d.Id()
+	if id == "" {
+		d.MarkNewResource()
+		return nil
+	}
+
 	accountID := d.Get("account_id").(string)
-	path := d.Get("path").(string)
+	orgId := d.Get("org_identifier").(string)
+	prjId := d.Get("project_identifier").(string)
 
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
 		accountID,
-		path,
+		id,
 		&code.RepositoryApiFindRepositoryOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+			OrgIdentifier:     optional.NewString(orgId),
+			ProjectIdentifier: optional.NewString(prjId),
 		},
 	)
 	if err != nil {
@@ -80,19 +84,11 @@ func resourceRepoCreateOrUpdate(
 	var resp *http.Response
 
 	accountID := d.Get("account_id").(string)
-	path := d.Get("path").(string)
-	id := d.Id()
-
-	bodyJson, err := json.Marshal(buildRepoBody(d))
-	if err != nil {
-		fmt.Println("Error:", err)
-		return helpers.HandleApiError(err, d, nil)
-	}
-
-	body := optional.NewInterface(bodyJson)
+	body := optional.NewInterface(buildRepoBody(d))
 	orgId := d.Get("org_identifier").(string)
 	prjId := d.Get("project_identifier").(string)
 
+	id := d.Id()
 	if id == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(
 			ctx, accountID,
@@ -109,9 +105,9 @@ func resourceRepoCreateOrUpdate(
 		repo, resp, err = c.RepositoryApi.UpdateRepository(
 			ctx,
 			accountID,
-			path,
+			id,
 			&code.RepositoryApiUpdateRepositoryOpts{
-				Body:              optional.NewInterface(bodyJson),
+				Body:              optional.NewInterface(body),
 				OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
 				ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
 			},
@@ -137,15 +133,18 @@ func resourceRepoDelete(
 ) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	createdBy := strconv.Itoa(d.Get("created_by").(int))
-	path := d.Get("path").(string)
+	id := d.Id()
+
+	accountId := d.Get("account_id").(string)
+	orgId := d.Get("org_identifier").(string)
+	prjId := d.Get("project_identifier").(string)
 
 	resp, err := c.RepositoryApi.DeleteRepository(
 		ctx,
-		createdBy,
-		path, &code.RepositoryApiDeleteRepositoryOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+		accountId,
+		id, &code.RepositoryApiDeleteRepositoryOpts{
+			OrgIdentifier:     optional.NewString(orgId),
+			ProjectIdentifier: optional.NewString(prjId),
 		},
 	)
 	if err != nil {
@@ -159,7 +158,7 @@ func buildRepoBody(d *schema.ResourceData) *RepoBody {
 	return &RepoBody{
 		DefaultBranch: d.Get("default_branch").(string),
 		Description:   d.Get("description").(string),
-		ForkID:        d.Get("fork_id").(int),
+		ForkID:        int64(d.Get("fork_id").(int)),
 		GitIgnore:     d.Get("git_ignore").(string),
 		Identifier:    d.Get("identifier").(string),
 		IsPublic:      d.Get("is_public").(bool),
@@ -211,6 +210,12 @@ func createSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
+		"name": {
+			Description: "Name of the config.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
+
 		"created_by": {
 			Description: "ID of the user who created the repository.",
 			Type:        schema.TypeInt,

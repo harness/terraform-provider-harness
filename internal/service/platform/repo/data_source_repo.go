@@ -28,13 +28,18 @@ func DataSourceRepo() *schema.Resource {
 func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
+	accountID := d.Get("account_id").(string)
+	repoIdentifier := d.Get("identifier").(string)
+	orgId := d.Get("org_identifier").(string)
+	prjId := d.Get("project_identifier").(string)
+
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
-		d.Get("account_id").(string),
-		d.Get("identifier").(string),
+		accountID,
+		repoIdentifier,
 		&code.RepositoryApiFindRepositoryOpts{
-			OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-			ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
+			OrgIdentifier:     optional.NewString(orgId),
+			ProjectIdentifier: optional.NewString(prjId),
 		},
 	)
 	if err != nil {

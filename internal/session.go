@@ -55,7 +55,13 @@ func (s *Session) GetCodeClientWithContext(ctx context.Context) (*code.APIClient
 
 	cfg := code.NewConfiguration()
 
-	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "https://app.harness.io/gateway") + "/code"
+	key := utils.GetEnv("HARNESS_PLATFORM_API_KEY", "pat.UmPeatlmRVec3U9Ii8VgVg.65c4c63973966a2ad865e208.rgsCeFWad3jn7sM09nr7")
+
+	cfg.AddDefaultHeader("X-Api-Key", key)
+	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "https://app.harness.io/gateway") + "/code/api/v1"
+
+	// cfg.AddDefaultHeader("Cookie", fmt.Sprintf("token=%s", key))
+	// cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "https://app.harness.io/gateway") + "/api/v1"
 
 	return code.NewAPIClient(cfg), ctx
 }

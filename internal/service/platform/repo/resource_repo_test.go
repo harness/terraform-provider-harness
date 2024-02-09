@@ -90,16 +90,25 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 func testAccResourceRepo() string {
 	accountId := utils.GetEnv("HARNESS_ACCOUNT_ID", "")
 	return fmt.Sprintf(`
-
 		resource "harness_platform_repo" "test" {
-			identifier  = "example_identifier"
-			name       	= "example_name"
+			identifier  = "example_identifier_0"
+			name       	= "example_name_0"
 			description = "example_description"
 			account_id 	= "%[1]s"
 			org_identifier = "default"
 			project_identifier = "default_project"
 		}
 	`, accountId,
+	// )
+	// return fmt.Sprintf(`
+	// 	resource "harness_platform_repo" "test" {
+	// 		identifier  = "repo_qwe_0"
+	// 		name       	= "example_name"
+	// 		description = "example_description"
+	// 		parent_ref = "prj0"
+	// 		account_id 	= ""
+	// 	}
+	// `,
 	)
 }
 
