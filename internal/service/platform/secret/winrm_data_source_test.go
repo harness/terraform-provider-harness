@@ -20,7 +20,7 @@ func TestAccDataSourceWinRM(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_sshkey(name),
+				Config: testAccDataSourceSecret_winrm(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -49,7 +49,7 @@ func TestAccDataSourceWinRMProjectLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_sshkeyProjectLevel(name),
+				Config: testAccDataSourceSecret_winrmProjectLevel(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -80,7 +80,7 @@ func TestAccDataSourceWinRMOrgLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_sshkeyOrgLevel(name),
+				Config: testAccDataSourceSecret_winrmOrgLevel(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
