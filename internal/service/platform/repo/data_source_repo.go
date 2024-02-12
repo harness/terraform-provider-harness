@@ -29,14 +29,14 @@ func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interf
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
 	accountID := d.Get("account_id").(string)
-	repoIdentifier := d.Get("identifier").(string)
+	repoId := d.Get("identifier").(string)
 	orgId := d.Get("org_identifier").(string)
 	prjId := d.Get("project_identifier").(string)
 
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
 		accountID,
-		repoIdentifier,
+		repoId,
 		&code.RepositoryApiFindRepositoryOpts{
 			OrgIdentifier:     optional.NewString(orgId),
 			ProjectIdentifier: optional.NewString(prjId),

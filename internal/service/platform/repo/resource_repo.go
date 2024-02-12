@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -9,7 +10,9 @@ import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 type RepoBody struct {
@@ -22,6 +25,20 @@ type RepoBody struct {
 	Readme        bool   `json:"readme"`
 	License       string `json:"license"`
 	GitIgnore     string `json:"git_ignore"`
+}
+
+type RepoImportBody struct {
+	Description string `json:"description"`
+	Identifier  string `json:"identifier"`
+	ParentRef   string `json:"parent_ref"`
+	Pipelines   string `json:"pipelines"`
+	Provider    struct {
+		Host     string `json:"host"`
+		Password string `json:"password"`
+		Type     string `json:"type"`
+		Username string `json:"username"`
+	} `json:"provider"`
+	ProviderRepo string `json:"provider_repo"`
 }
 
 func ResourceRepo() *schema.Resource {
@@ -84,10 +101,28 @@ func resourceRepoCreateOrUpdate(
 	var resp *http.Response
 
 	accountID := d.Get("account_id").(string)
-	body := optional.NewInterface(buildRepoBody(d))
 	orgId := d.Get("org_identifier").(string)
 	prjId := d.Get("project_identifier").(string)
 
+	providerRepo := d.Get("provider_repo").(string)
+	if providerRepo != "" {
+		body := optional.NewInterface(buildRepoImportBody(d))
+		repo, resp, err = c.RepositoryApi.ImportRepository(
+			ctx, accountID, &code.RepositoryApiImportRepositoryOpts{
+				Body:              body,
+				OrgIdentifier:     optional.NewString(orgId),
+				ProjectIdentifier: optional.NewString(prjId),
+			},
+		)
+		if err != nil {
+			return helpers.HandleApiError(err, d, resp)
+		}
+
+		readRepo(d, &repo)
+		return nil
+	}
+
+	body := optional.NewInterface(buildRepoBody(d))
 	id := d.Id()
 	if id == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(
@@ -154,6 +189,19 @@ func resourceRepoDelete(
 	return nil
 }
 
+func ImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		return primary.ID, nil
+	}
+}
+
+func generateId(identifier, accId, orgId, prjId string) string {
+	return fmt.Sprintf(
+		"%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
+		identifier, accId, orgId, prjId)
+}
+
 func buildRepoBody(d *schema.ResourceData) *RepoBody {
 	return &RepoBody{
 		DefaultBranch: d.Get("default_branch").(string),
@@ -168,8 +216,35 @@ func buildRepoBody(d *schema.ResourceData) *RepoBody {
 	}
 }
 
+func buildRepoImportBody(d *schema.ResourceData) *RepoImportBody {
+	return &RepoImportBody{
+		Description: d.Get("description").(string),
+		Identifier:  d.Get("identifier").(string),
+		ParentRef:   d.Get("parent_ref").(string),
+		Pipelines:   d.Get("pipelines").(string),
+		Provider: struct {
+			Host     string `json:"host"`
+			Password string `json:"password"`
+			Type     string `json:"type"`
+			Username string `json:"username"`
+		}{
+			Host:     d.Get("host").(string),
+			Password: d.Get("password").(string),
+			Type:     d.Get("type").(string),
+			Username: d.Get("username").(string),
+		},
+		ProviderRepo: d.Get("provider_repo").(string),
+	}
+}
+
 func readRepo(d *schema.ResourceData, repo *code.TypesRepository) {
-	d.SetId(repo.Identifier)
+	id := generateId(
+		repo.Identifier,
+		d.Get("account_id").(string),
+		d.Get("org_identifier").(string),
+		d.Get("project_identifier").(string),
+	)
+	d.SetId(id)
 
 	d.Set("created", repo.Created)
 	d.Set("created_by", repo.CreatedBy)
@@ -334,6 +409,36 @@ func createSchema() map[string]*schema.Schema {
 		"readme": {
 			Description: "Whether the repository has a readme.",
 			Type:        schema.TypeBool,
+			Optional:    true,
+		},
+		"provider_repo": {
+			Description: "The provider repository to import from.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"username": {
+			Description: "The username for authentication when importing.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"password": {
+			Description: "The password for authentication when importing.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"type": {
+			Description: "The type of import (e.g., git, svn, mercurial).",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"host": {
+			Description: "The host URL for the import source.",
+			Type:        schema.TypeString,
+			Optional:    true,
+		},
+		"pipelines": {
+			Description: "The provider repo pipelines when importing.",
+			Type:        schema.TypeString,
 			Optional:    true,
 		},
 	}

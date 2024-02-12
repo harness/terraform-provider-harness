@@ -1,32 +1,21 @@
 package repo_test
 
 import (
-	"strconv"
 	"testing"
-	"time"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDataSourceProject(t *testing.T) {
-	size := int64(1024)
-	sizeUpdated := time.Now().Unix()
-	updated := sizeUpdated
-	resourceName := "harness_platform_repo.test"
-	path := t.Name()
-
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(),
+				Config: testAccResourceRepo(repoDesc, ""),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "path", path),
-					resource.TestCheckResourceAttr(resourceName, "size", strconv.FormatInt(size, 10)),
-					resource.TestCheckResourceAttr(resourceName, "size_updated", strconv.FormatInt(sizeUpdated, 10)),
-					resource.TestCheckResourceAttr(resourceName, "updated", strconv.FormatInt(updated, 10)),
+					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
 				),
 			},
 		},
