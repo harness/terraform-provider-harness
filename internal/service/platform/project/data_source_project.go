@@ -36,7 +36,7 @@ func DataSourceProject() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetOrgLevelDataSourceSchema(resource.Schema)
 
 	return resource
 }
