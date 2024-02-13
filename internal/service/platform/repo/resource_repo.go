@@ -229,13 +229,12 @@ func buildRepoImportBody(d *schema.ResourceData) *RepoImportBody {
 }
 
 func readRepo(d *schema.ResourceData, repo *code.TypesRepository) {
-	id := generateId(
+	d.SetId(generateId(
 		repo.Identifier,
 		d.Get("account_id").(string),
 		d.Get("org_identifier").(string),
 		d.Get("project_identifier").(string),
-	)
-	d.SetId(id)
+	))
 
 	d.Set("created", repo.Created)
 	d.Set("created_by", repo.CreatedBy)

@@ -8,14 +8,18 @@ import (
 )
 
 func TestAccDataSourceProject(t *testing.T) {
+	identifier := identifier(t.Name())
+
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(repoDesc, ""),
+				Config: testAccResourceRepo(identifier, description, ""),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
 				),
 			},
 		},

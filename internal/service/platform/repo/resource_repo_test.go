@@ -15,31 +15,34 @@ import (
 
 const (
 	resourceName = "harness_platform_repo.test"
-	orgId        = "example_org_123"
-	prjId        = "example_project_123"
-	repoId       = "example_identifier"
-	repoDesc     = "example_description"
+	description  = "example_description"
 	providerRepo = "octocat/hello-worId"
 )
 
 var accountId = utils.GetEnv("HARNESS_ACCOUNT_ID", "")
 
 func TestAccResourceRepo(t *testing.T) {
+	identifier := identifier(t.Name())
+
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(repoDesc, ""),
+				Config: testAccResourceRepo(identifier, description, ""),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
 				),
 			},
 			{
-				Config: testAccResourceRepo(repoDesc, ""),
+				Config: testAccResourceRepo(identifier, description, ""),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
 				),
 			},
 			{
@@ -53,21 +56,29 @@ func TestAccResourceRepo(t *testing.T) {
 }
 
 func TestAccResourceRepo_Import(t *testing.T) {
+	identifier := identifier(t.Name())
+
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(repoDesc, providerRepo),
+				Config: testAccResourceRepo(identifier, description, providerRepo),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "provider_repo", providerRepo),
 				),
 			},
 			{
-				Config: testAccResourceRepo(repoDesc, providerRepo),
+				Config: testAccResourceRepo(identifier, description, providerRepo),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "provider_repo", providerRepo),
 				),
 			},
 			{
@@ -83,15 +94,19 @@ func TestAccResourceRepo_Import(t *testing.T) {
 func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	t.Skip()
 
+	identifier := identifier(t.Name())
+
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(repoDesc, ""),
+				Config: testAccResourceRepo(identifier, description, ""),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "description", repoDesc),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
 				),
 			},
 			{
@@ -99,14 +114,14 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetCodeClientWithContext()
 					_, err := c.RepositoryApi.DeleteRepository(
-						ctx, accountId, repoId,
+						ctx, accountId, identifier,
 						&code.RepositoryApiDeleteRepositoryOpts{
-							OrgIdentifier:     optional.NewString("default"),
-							ProjectIdentifier: optional.NewString(prjId),
+							OrgIdentifier:     optional.NewString("org_" + identifier),
+							ProjectIdentifier: optional.NewString("prj_" + identifier),
 						})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceRepo(repoDesc, ""),
+				Config:             testAccResourceRepo(identifier, description, ""),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -114,33 +129,37 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-func testAccResourceRepo(description, providerRepo string) string {
+func identifier(testName string) string {
+	return fmt.Sprintf("%s_%s", testName, utils.RandStringBytes(5))
+}
+
+func testAccResourceRepo(identifier, description, providerRepo string) string {
 	accountId := utils.GetEnv("HARNESS_ACCOUNT_ID", "")
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
+			identifier = "org_%[1]s"
+			name = "org_%[1]s"
 		}	
 
 		resource "harness_platform_project" "test" {
-			identifier = "%[2]s"
-			name = "%[2]s"
+			identifier = "prj_%[1]s"
+			name = "prj_%[1]s"
 			org_id = harness_platform_organization.test.id
 		}
 		
 		resource "harness_platform_repo" "test" {
-			identifier  = "%[3]s"
-			name       	= "%[3]s"
-			org_identifier = harness_platform_organization.test.identifier
-			project_identifier = harness_platform_project.test.identifier
+			identifier  = "%[1]s"
+			name       	= "%[1]s"
+			org_identifier = harness_platform_organization.test.id
+			project_identifier = harness_platform_project.test.id
 			default_branch = "master"
-			description = "%[4]s"
-			account_id 	= "%[5]s"
-			provider_repo = "%[6]s"
+			description = "%[2]s"
+			account_id 	= "%[3]s"
+			provider_repo = "%[4]s"
 			is_public = true
 			type = "github"
 		}
-	`, orgId, prjId, repoId, description, accountId, providerRepo,
+	`, identifier, description, accountId, providerRepo,
 	)
 }
 
@@ -169,7 +188,7 @@ func testAccRepoDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		repo, _ := testAccFindRepo(resourceName, state)
 		if repo != nil {
-			return fmt.Errorf("Found repo: %s", repo.Path)
+			return fmt.Errorf("Found repo: %s", repo.Identifier)
 		}
 
 		return nil
