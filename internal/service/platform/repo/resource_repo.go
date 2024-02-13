@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -14,29 +13,27 @@ import (
 )
 
 type RepoBody struct {
-	ParentRef     string `json:"parent_ref"`
 	Identifier    string `json:"identifier"`
 	DefaultBranch string `json:"default_branch"`
 	Description   string `json:"description"`
 	IsPublic      bool   `json:"is_public"`
-	ForkID        int64  `json:"fork_id"`
 	Readme        bool   `json:"readme"`
 	License       string `json:"license"`
 	GitIgnore     string `json:"git_ignore"`
 }
 
+type Provider struct {
+	Host     string `json:"host"`
+	Password string `json:"password"`
+	Type     string `json:"type"`
+	Username string `json:"username"`
+}
+
 type RepoImportBody struct {
-	Description string `json:"description"`
-	Identifier  string `json:"identifier"`
-	ParentRef   string `json:"parent_ref"`
-	Pipelines   string `json:"pipelines"`
-	Provider    struct {
-		Host     string `json:"host"`
-		Password string `json:"password"`
-		Type     string `json:"type"`
-		Username string `json:"username"`
-	} `json:"provider"`
-	ProviderRepo string `json:"provider_repo"`
+	Description  string   `json:"description"`
+	Identifier   string   `json:"identifier"`
+	Provider     Provider `json:"provider"`
+	ProviderRepo string   `json:"provider_repo"`
 }
 
 func ResourceRepo() *schema.Resource {
@@ -65,18 +62,17 @@ func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interfac
 		d.MarkNewResource()
 		return nil
 	}
-
-	accountID := d.Get("account_id").(string)
-	orgId := d.Get("org_identifier").(string)
-	prjId := d.Get("project_identifier").(string)
+	accId := d.Get("account_id").(string)
+	orgId := d.Get("org_id").(string)
+	projId := d.Get("project_id").(string)
 
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
-		accountID,
+		accId,
 		id,
 		&code.RepositoryApiFindRepositoryOpts{
 			OrgIdentifier:     optional.NewString(orgId),
-			ProjectIdentifier: optional.NewString(prjId),
+			ProjectIdentifier: optional.NewString(projId),
 		},
 	)
 	if err != nil {
@@ -98,18 +94,24 @@ func resourceRepoCreateOrUpdate(
 	var repo code.TypesRepository
 	var resp *http.Response
 
-	accountID := d.Get("account_id").(string)
-	orgId := d.Get("org_identifier").(string)
-	prjId := d.Get("project_identifier").(string)
-	providerRepo := d.Get("provider_repo").(string)
+	accId := d.Get("account_id").(string)
+	orgId := d.Get("org_id").(string)
+	projId := d.Get("project_id").(string)
 
-	if providerRepo != "" { // Import repo
+	var sourceRepo string
+	source := source(d)
+	if source != nil {
+		sourceRepo = source["repo"].(string)
+	}
+
+	// Import repo
+	if sourceRepo != "" {
 		body := optional.NewInterface(buildRepoImportBody(d))
 		repo, resp, err = c.RepositoryApi.ImportRepository(
-			ctx, accountID, &code.RepositoryApiImportRepositoryOpts{
+			ctx, accId, &code.RepositoryApiImportRepositoryOpts{
 				Body:              body,
 				OrgIdentifier:     optional.NewString(orgId),
-				ProjectIdentifier: optional.NewString(prjId),
+				ProjectIdentifier: optional.NewString(projId),
 			},
 		)
 		if err != nil {
@@ -120,42 +122,40 @@ func resourceRepoCreateOrUpdate(
 		return nil
 	}
 
+	// Create repo
 	body := optional.NewInterface(buildRepoBody(d))
 	id := d.Id()
-	if id == "" { // Create repo
+	if id == "" {
 		repo, resp, err = c.RepositoryApi.CreateRepository(
-			ctx, accountID,
+			ctx, accId,
 			&code.RepositoryApiCreateRepositoryOpts{
 				Body:              body,
 				OrgIdentifier:     optional.NewString(orgId),
-				ProjectIdentifier: optional.NewString(prjId),
+				ProjectIdentifier: optional.NewString(projId),
 			},
 		)
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
-	} else { // Update repo
-		repo, resp, err = c.RepositoryApi.UpdateRepository(
-			ctx,
-			accountID,
-			id,
-			&code.RepositoryApiUpdateRepositoryOpts{
-				Body:              optional.NewInterface(body),
-				OrgIdentifier:     optional.NewString(d.Get("org_identifier").(string)),
-				ProjectIdentifier: optional.NewString(d.Get("project_identifier").(string)),
-			},
-		)
-		if err != nil {
-			return helpers.HandleApiError(err, d, resp)
-		}
+		readRepo(d, &repo)
+		return nil
 	}
 
+	// Update repo
+	repo, resp, err = c.RepositoryApi.UpdateRepository(
+		ctx,
+		accId,
+		d.Get("identifier").(string),
+		&code.RepositoryApiUpdateRepositoryOpts{
+			Body:              optional.NewInterface(body),
+			OrgIdentifier:     optional.NewString(orgId),
+			ProjectIdentifier: optional.NewString(projId),
+		},
+	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
-
 	readRepo(d, &repo)
-
 	return nil
 }
 
@@ -169,15 +169,15 @@ func resourceRepoDelete(
 	id := d.Id()
 
 	accountId := d.Get("account_id").(string)
-	orgId := d.Get("org_identifier").(string)
-	prjId := d.Get("project_identifier").(string)
+	orgId := d.Get("org_id").(string)
+	projId := d.Get("project_id").(string)
 
 	resp, err := c.RepositoryApi.DeleteRepository(
 		ctx,
 		accountId,
 		id, &code.RepositoryApiDeleteRepositoryOpts{
 			OrgIdentifier:     optional.NewString(orgId),
-			ProjectIdentifier: optional.NewString(prjId),
+			ProjectIdentifier: optional.NewString(projId),
 		},
 	)
 	if err != nil {
@@ -187,70 +187,65 @@ func resourceRepoDelete(
 	return nil
 }
 
-func generateId(identifier, accId, orgId, prjId string) string {
-	return fmt.Sprintf(
-		"%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-		identifier, accId, orgId, prjId)
-}
-
 func buildRepoBody(d *schema.ResourceData) *RepoBody {
 	return &RepoBody{
 		DefaultBranch: d.Get("default_branch").(string),
 		Description:   d.Get("description").(string),
-		ForkID:        int64(d.Get("fork_id").(int)),
 		GitIgnore:     d.Get("git_ignore").(string),
 		Identifier:    d.Get("identifier").(string),
 		IsPublic:      d.Get("is_public").(bool),
 		License:       d.Get("license").(string),
-		ParentRef:     d.Get("parent_ref").(string),
 		Readme:        d.Get("readme").(bool),
 	}
 }
 
+func source(d *schema.ResourceData) map[string]interface{} {
+	srcSet := d.Get("source").(*schema.Set)
+	srcList := srcSet.List()
+	if len(srcList) == 0 {
+		return nil
+	}
+	srcElem := srcList[0]
+	return srcElem.(map[string]interface{})
+}
+
 func buildRepoImportBody(d *schema.ResourceData) *RepoImportBody {
-	return &RepoImportBody{
+	importBody := &RepoImportBody{
 		Description: d.Get("description").(string),
 		Identifier:  d.Get("identifier").(string),
-		ParentRef:   d.Get("parent_ref").(string),
-		Pipelines:   d.Get("pipelines").(string),
-		Provider: struct {
-			Host     string `json:"host"`
-			Password string `json:"password"`
-			Type     string `json:"type"`
-			Username string `json:"username"`
-		}{
-			Host:     d.Get("host").(string),
-			Password: d.Get("password").(string),
-			Type:     d.Get("type").(string),
-			Username: d.Get("username").(string),
-		},
-		ProviderRepo: d.Get("provider_repo").(string),
 	}
+
+	source := source(d)
+	if source != nil {
+		importBody.Provider = Provider{
+			Host:     source["host"].(string),
+			Password: source["password"].(string),
+			Type:     source["type"].(string),
+			Username: source["username"].(string),
+		}
+		importBody.ProviderRepo = source["repo"].(string)
+	}
+
+	return importBody
 }
 
 func readRepo(d *schema.ResourceData, repo *code.TypesRepository) {
-	d.SetId(generateId(
-		repo.Identifier,
-		d.Get("account_id").(string),
-		d.Get("org_identifier").(string),
-		d.Get("project_identifier").(string),
-	))
+	d.SetId(repo.Identifier)
+	d.Set("name", repo.Identifier)
 
+	d.Set("identifier", repo.Identifier)
 	d.Set("created", repo.Created)
 	d.Set("created_by", repo.CreatedBy)
 	d.Set("default_branch", repo.DefaultBranch)
 	d.Set("description", repo.Description)
-	d.Set("fork_id", repo.ForkId)
 	d.Set("git_url", repo.GitUrl)
 	d.Set("id", repo.Id)
 	d.Set("importing", repo.Importing)
 	d.Set("is_public", repo.IsPublic)
 	d.Set("num_closed_pulls", repo.NumClosedPulls)
-	d.Set("num_forks", repo.NumForks)
 	d.Set("num_merged_pulls", repo.NumMergedPulls)
 	d.Set("num_open_pulls", repo.NumOpenPulls)
 	d.Set("num_pulls", repo.NumPulls)
-	d.Set("parent_id", repo.ParentId)
 	d.Set("path", repo.Path)
 	d.Set("size", repo.Size)
 	d.Set("size_updated", repo.SizeUpdated)
@@ -258,29 +253,17 @@ func readRepo(d *schema.ResourceData, repo *code.TypesRepository) {
 }
 
 func createSchema() map[string]*schema.Schema {
-
 	return map[string]*schema.Schema{
 		"account_id": {
 			Description: "ID of the account who created the repository.",
 			Type:        schema.TypeString,
 			Required:    true,
 		},
-		"org_identifier": {
-			Description: "Identifier of the organization.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"project_identifier": {
-			Description: "Identifier of the project.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
 		"name": {
-			Description: "Name of the config.",
+			Description: "Name of the resource.",
 			Type:        schema.TypeString,
 			Required:    true,
 		},
-
 		"created_by": {
 			Description: "ID of the user who created the repository.",
 			Type:        schema.TypeInt,
@@ -300,11 +283,6 @@ func createSchema() map[string]*schema.Schema {
 			Description: "Description of the repository.",
 			Type:        schema.TypeString,
 			Optional:    true,
-		},
-		"fork_id": {
-			Description: "ID of the forked repository.",
-			Type:        schema.TypeInt,
-			Computed:    true,
 		},
 		"git_url": {
 			Description: "Git URL of the repository.",
@@ -331,11 +309,6 @@ func createSchema() map[string]*schema.Schema {
 			Type:        schema.TypeInt,
 			Computed:    true,
 		},
-		"num_forks": {
-			Description: "Number of forks.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
 		"num_merged_pulls": {
 			Description: "Number of merged pull requests.",
 			Type:        schema.TypeInt,
@@ -348,11 +321,6 @@ func createSchema() map[string]*schema.Schema {
 		},
 		"num_pulls": {
 			Description: "Total number of pull requests.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"parent_id": {
-			Description: "ID of the parent repository.",
 			Type:        schema.TypeInt,
 			Computed:    true,
 		},
@@ -391,45 +359,44 @@ func createSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Optional:    true,
 		},
-		"parent_ref": {
-			Description: "Reference to the parent repository.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
 		"readme": {
 			Description: "Whether the repository has a readme.",
 			Type:        schema.TypeBool,
 			Optional:    true,
 		},
-		"provider_repo": {
-			Description: "The provider repository to import from.",
-			Type:        schema.TypeString,
+		"source": {
+			Description: "Provider related configurations.",
+			Type:        schema.TypeSet,
 			Optional:    true,
-		},
-		"username": {
-			Description: "The username for authentication when importing.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"password": {
-			Description: "The password for authentication when importing.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"type": {
-			Description: "The type of import (e.g., git, svn, mercurial).",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"host": {
-			Description: "The host URL for the import source.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"pipelines": {
-			Description: "The provider repo pipelines when importing.",
-			Type:        schema.TypeString,
-			Optional:    true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"username": {
+						Description: "The username for authentication when importing.",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+					"password": {
+						Description: "The password for authentication when importing.",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+					"type": {
+						Description: "The type of SCM provider (e.g., github) when importing.",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+					"host": {
+						Description: "The host URL for the import source.",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+					"repo": {
+						Description: "The provider repository to import from.",
+						Type:        schema.TypeString,
+						Optional:    true,
+					},
+				},
+			},
 		},
 	}
 }

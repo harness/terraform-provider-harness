@@ -14,12 +14,11 @@ import (
 const codePath = "/code/api/v1"
 
 type Session struct {
-	AccountId  string
-	Endpoint   string
-	CDClient   *cd.ApiClient
-	PLClient   *nextgen.APIClient
-	Client     *openapi_client_nextgen.APIClient
-	CodeClient code.APIClient
+	AccountId string
+	Endpoint  string
+	CDClient  *cd.ApiClient
+	PLClient  *nextgen.APIClient
+	Client    *openapi_client_nextgen.APIClient
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
@@ -58,8 +57,8 @@ func (s *Session) GetCodeClientWithContext(ctx context.Context) (*code.APIClient
 	cfg := code.NewConfiguration()
 
 	key := utils.GetEnv("HARNESS_PLATFORM_API_KEY", "")
-
 	cfg.AddDefaultHeader("X-Api-Key", key)
+
 	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "") + codePath
 
 	return code.NewAPIClient(cfg), ctx

@@ -142,6 +142,20 @@ func OverridesV1ResourceImportStateIdFunc(resourceName string) resource.ImportSt
 	}
 }
 
+func RepoResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+
+		repoId := primary.Attributes["identifier"]
+		accId := primary.Attributes["account_id"]
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		return fmt.Sprintf(
+			"%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
+			repoId, accId, orgId, projId), nil
+	}
+}
+
 func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary

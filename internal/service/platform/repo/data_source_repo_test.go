@@ -15,7 +15,7 @@ func TestAccDataSourceProject(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(identifier, description, ""),
+				Config: testAccResourceRepo(identifier, description),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "name", identifier),

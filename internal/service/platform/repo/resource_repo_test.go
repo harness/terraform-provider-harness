@@ -30,16 +30,18 @@ func TestAccResourceRepo(t *testing.T) {
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(identifier, description, ""),
+				Config: testAccResourceRepo(identifier, description),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "name", identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
 				),
 			},
 			{
-				Config: testAccResourceRepo(identifier, description, ""),
+				Config: testAccResourceRepo(identifier, description),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
 					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "name", identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
@@ -49,7 +51,7 @@ func TestAccResourceRepo(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: false,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.RepoResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -64,28 +66,26 @@ func TestAccResourceRepo_Import(t *testing.T) {
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(identifier, description, providerRepo),
+				Config: testAccResourceRepoImport(identifier, description, providerRepo),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "name", identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "provider_repo", providerRepo),
 				),
 			},
 			{
-				Config: testAccResourceRepo(identifier, description, providerRepo),
+				Config: testAccResourceRepoImport(identifier, description, providerRepo),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "name", identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "provider_repo", providerRepo),
 				),
 			},
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: false,
-				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.RepoResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -102,7 +102,7 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 		CheckDestroy:      testAccRepoDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceRepo(identifier, description, ""),
+				Config: testAccResourceRepo(identifier, description),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "name", identifier),
@@ -117,11 +117,11 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 						ctx, accountId, identifier,
 						&code.RepositoryApiDeleteRepositoryOpts{
 							OrgIdentifier:     optional.NewString("org_" + identifier),
-							ProjectIdentifier: optional.NewString("prj_" + identifier),
+							ProjectIdentifier: optional.NewString("proj_" + identifier),
 						})
 					require.NoError(t, err)
 				},
-				Config:             testAccResourceRepo(identifier, description, ""),
+				Config:             testAccResourceRepo(identifier, description),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -133,7 +133,7 @@ func identifier(testName string) string {
 	return fmt.Sprintf("%s_%s", testName, utils.RandStringBytes(5))
 }
 
-func testAccResourceRepo(identifier, description, providerRepo string) string {
+func testAccResourceRepo(identifier, description string) string {
 	accountId := utils.GetEnv("HARNESS_ACCOUNT_ID", "")
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
@@ -142,22 +142,53 @@ func testAccResourceRepo(identifier, description, providerRepo string) string {
 		}	
 
 		resource "harness_platform_project" "test" {
-			identifier = "prj_%[1]s"
-			name = "prj_%[1]s"
+			identifier = "proj_%[1]s"
+			name = "proj_%[1]s"
 			org_id = harness_platform_organization.test.id
 		}
 		
 		resource "harness_platform_repo" "test" {
 			identifier  = "%[1]s"
 			name       	= "%[1]s"
-			org_identifier = harness_platform_organization.test.id
-			project_identifier = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 			default_branch = "master"
 			description = "%[2]s"
 			account_id 	= "%[3]s"
-			provider_repo = "%[4]s"
 			is_public = true
-			type = "github"
+		}
+	`, identifier, description, accountId,
+	)
+}
+
+func testAccResourceRepoImport(identifier, description, providerRepo string) string {
+	accountId := utils.GetEnv("HARNESS_ACCOUNT_ID", "")
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "org_%[1]s"
+			name = "org_%[1]s"
+		}	
+
+		resource "harness_platform_project" "test" {
+			identifier = "proj_%[1]s"
+			name = "proj_%[1]s"
+			org_id = harness_platform_organization.test.id
+		}
+		
+		resource "harness_platform_repo" "test" {
+			identifier  = "%[1]s"
+			name       	= "%[1]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			default_branch = "master"
+			description = "%[2]s"
+			account_id 	= "%[3]s"
+			is_public = true
+			
+			source {
+				type = "github"
+				repo = "%[4]s"
+			}
 		}
 	`, identifier, description, accountId, providerRepo,
 	)
@@ -174,8 +205,8 @@ func testAccFindRepo(
 	repo, _, err := c.RepositoryApi.FindRepository(
 		ctx, accountId, identifier,
 		&code.RepositoryApiFindRepositoryOpts{
-			OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_identifier"]),
-			ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_identifier"]),
+			OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_id"]),
+			ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_id"]),
 		})
 	if err != nil {
 		return nil, err
