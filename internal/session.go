@@ -11,6 +11,8 @@ import (
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 )
 
+const codePath = "/code/api/v1"
+
 type Session struct {
 	AccountId  string
 	Endpoint   string
@@ -58,7 +60,7 @@ func (s *Session) GetCodeClientWithContext(ctx context.Context) (*code.APIClient
 	key := utils.GetEnv("HARNESS_PLATFORM_API_KEY", "")
 
 	cfg.AddDefaultHeader("X-Api-Key", key)
-	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "") + "/code/api/v1"
+	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "") + codePath
 
 	return code.NewAPIClient(cfg), ctx
 }

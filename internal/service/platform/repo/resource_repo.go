@@ -10,9 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 type RepoBody struct {
@@ -103,9 +101,9 @@ func resourceRepoCreateOrUpdate(
 	accountID := d.Get("account_id").(string)
 	orgId := d.Get("org_identifier").(string)
 	prjId := d.Get("project_identifier").(string)
-
 	providerRepo := d.Get("provider_repo").(string)
-	if providerRepo != "" {
+
+	if providerRepo != "" { // Import repo
 		body := optional.NewInterface(buildRepoImportBody(d))
 		repo, resp, err = c.RepositoryApi.ImportRepository(
 			ctx, accountID, &code.RepositoryApiImportRepositoryOpts{
@@ -124,7 +122,7 @@ func resourceRepoCreateOrUpdate(
 
 	body := optional.NewInterface(buildRepoBody(d))
 	id := d.Id()
-	if id == "" {
+	if id == "" { // Create repo
 		repo, resp, err = c.RepositoryApi.CreateRepository(
 			ctx, accountID,
 			&code.RepositoryApiCreateRepositoryOpts{
@@ -136,7 +134,7 @@ func resourceRepoCreateOrUpdate(
 		if err != nil {
 			return helpers.HandleApiError(err, d, resp)
 		}
-	} else {
+	} else { // Update repo
 		repo, resp, err = c.RepositoryApi.UpdateRepository(
 			ctx,
 			accountID,
@@ -187,13 +185,6 @@ func resourceRepoDelete(
 	}
 
 	return nil
-}
-
-func ImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
-	return func(s *terraform.State) (string, error) {
-		primary := s.RootModule().Resources[resourceName].Primary
-		return primary.ID, nil
-	}
 }
 
 func generateId(identifier, accId, orgId, prjId string) string {

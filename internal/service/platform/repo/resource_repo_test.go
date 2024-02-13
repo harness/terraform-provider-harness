@@ -8,20 +8,21 @@ import (
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	accountId    = utils.GetEnv("HARNESS_ACCOUNT_ID", "")
-	providerRepo = "octocat/hello-worId"
+const (
+	resourceName = "harness_platform_repo.test"
+	orgId        = "example_org_123"
+	prjId        = "example_project_123"
 	repoId       = "example_identifier"
 	repoDesc     = "example_description"
-	prjId        = "example_project_123"
-	resourceName = "harness_platform_repo.test"
+	providerRepo = "octocat/hello-worId"
 )
+
+var accountId = utils.GetEnv("HARNESS_ACCOUNT_ID", "")
 
 func TestAccResourceRepo(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
@@ -73,7 +74,7 @@ func TestAccResourceRepo_Import(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: false,
-				ImportStateIdFunc: repo.ImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -113,35 +114,33 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
-// resource "harness_platform_organization" "test" {
-// 	identifier = "default"
-// 	name = "default"
-// 	description = "test"
-// 	tags = ["foo:bar", "baz:qux"]
-// }
-
 func testAccResourceRepo(description, providerRepo string) string {
 	accountId := utils.GetEnv("HARNESS_ACCOUNT_ID", "")
 	return fmt.Sprintf(`
-		resource "harness_platform_project" "test" {
+		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
-			org_id = "default"
+		}	
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[2]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
 		}
 		
 		resource "harness_platform_repo" "test" {
-			identifier  = "example_identifier_0"
-			name       	= "example_name_0"
+			identifier  = "%[3]s"
+			name       	= "%[3]s"
+			org_identifier = harness_platform_organization.test.identifier
+			project_identifier = harness_platform_project.test.identifier
 			default_branch = "master"
-			description = "%[2]s"
-			account_id 	= "%[3]s"
-			org_identifier = "default"
-			project_identifier = "%[1]s"
-
-			provider_repo = "%[4]s"
+			description = "%[4]s"
+			account_id 	= "%[5]s"
+			provider_repo = "%[6]s"
+			is_public = true
 			type = "github"
 		}
-	`, prjId, description, accountId, providerRepo,
+	`, orgId, prjId, repoId, description, accountId, providerRepo,
 	)
 }
 
