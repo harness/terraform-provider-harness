@@ -21,13 +21,15 @@ func TestAccDataSourceGitopsCluster(t *testing.T) {
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterName := id
 	resourceName := "data.harness_platform_gitops_cluster.test"
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
+	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceGitopsCluster(id, accountId, name, agentId, clusterName),
+				Config: testAccDataSourceGitopsCluster(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
@@ -68,7 +70,7 @@ func TestAccDataSourceGitopsClusterIAM(t *testing.T) {
 	})
 }
 
-func testAccDataSourceGitopsCluster(id string, accountId string, name string, agentId string, clusterName string) string {
+func testAccDataSourceGitopsCluster(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -83,22 +85,21 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 		resource "harness_platform_gitops_cluster" "test" {
 			identifier = "%[1]s"
 			account_id = "%[2]s"
+			agent_id = "%[4]s"
 			project_id = harness_platform_project.test.id
 			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
-
  			request {
 				upsert = true
 				cluster {
-					server = "https://kubernetes.default.svc"
+					server = "%[6]s"
 					name = "%[5]s"
 					config {
+						bearer_token = "%[7]s"
 						tls_client_config {
 							insecure = true
 						}
-						cluster_connection_type = "IN_CLUSTER"
+						cluster_connection_type = "SERVICE_ACCOUNT"
 					}
-
 				}
 			}
 			lifecycle {
@@ -116,7 +117,7 @@ func testAccDataSourceGitopsCluster(id string, accountId string, name string, ag
 			agent_id = "%[4]s"
 
 		}
-		`, id, accountId, name, agentId, clusterName)
+		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
 
 }
 

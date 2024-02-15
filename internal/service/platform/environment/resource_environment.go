@@ -39,9 +39,10 @@ func ResourceEnvironment() *schema.Resource {
 				ValidateFunc: validation.StringInSlice(nextgen.EnvironmentTypeValues, false),
 			},
 			"yaml": {
-				Description: "Environment YAML." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Optional:    true,
+				Description:      "Environment YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Optional:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"force_delete": {
 				Description: "Enable this flag for force deletion of environments",

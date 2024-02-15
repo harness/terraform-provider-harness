@@ -14,7 +14,7 @@ import (
 
 func DataSourceGitopsGnupg() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a GPG public key in the server's configuration.",
+		Description: "Data source for fetching a Harness GitOps GPG public key.",
 
 		ReadContext: dataSourceGitopsGnupgRead,
 
@@ -42,12 +42,13 @@ func DataSourceGitopsGnupg() *schema.Resource {
 			"identifier": {
 				Description: "Identifier for the GnuPG Key.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"request": {
 				Description: "GnuPGPublicKey is a representation of a GnuPG public key",
 				Type:        schema.TypeList,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -87,7 +88,7 @@ func DataSourceGitopsGnupg() *schema.Resource {
 										Optional:    true,
 									},
 									"key_data": {
-										Description: "KeyData holds the raw key data, in base64 encoded format",
+										Description: "KeyData holds the raw key data, in base64 encoded format.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},

@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource/harness_platform_connector_github: added force deletion support for github connector
+```

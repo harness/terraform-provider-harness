@@ -126,18 +126,21 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 			},
 		},
 	})
+}
 
+func TestAccResourceGitopsClusterIAMProject(t *testing.T) {
 	// Project Level with IAM
-	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
 	id = strings.ReplaceAll(id, "_", "")
-	name = id
-	clusterName = id
-	resourceName = "harness_platform_gitops_cluster.test"
-	clusterServer = os.Getenv("HARNESS_TEST_AWS_CLUSTER_SERVER")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	name := id
+	clusterName := id
+	resourceName := "harness_platform_gitops_cluster.test"
+	clusterServer := os.Getenv("HARNESS_TEST_AWS_CLUSTER_SERVER")
 	roleARN := os.Getenv("HARNESS_TEST_AWS_CLUSTER_ROLE_ARN")
 	awsClusterName := os.Getenv("HARNESS_TEST_AWS_CLUSTER_NAME")
 	caData := os.Getenv("HARNESS_TEST_AWS_CLUSTER_CA_DATA")
-	agentId = os.Getenv("HARNESS_TEST_AWS_GITOPS_AGENT")
+	agentId := os.Getenv("HARNESS_TEST_AWS_GITOPS_AGENT")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -166,6 +169,7 @@ func TestAccResourceGitopsCluster(t *testing.T) {
 			},
 		},
 	})
+
 }
 
 func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Servicev1Cluster, error) {

@@ -174,6 +174,11 @@ func ResourceMonitoredService() *schema.Resource {
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
+									"type": {
+										Description: "Type of the service dependency.",
+										Type:        schema.TypeString,
+										Required:    true,
+									},
 								},
 							},
 						},
@@ -231,7 +236,6 @@ func resourceMonitoredServiceCreate(ctx context.Context, d *schema.ResourceData,
 		&nextgen.MonitoredServiceApiSaveMonitoredServiceOpts{
 			Body: optional.NewInterface(createMonitoredServiceRequest),
 		})
-
 	if errCreate != nil {
 		return helpers.HandleApiError(errCreate, d, httpRespCreate)
 	}
@@ -391,12 +395,6 @@ func buildMonitoredServiceRequest(d *schema.ResourceData) *nextgen.MonitoredServ
 			notificationRuleRefs[i] = *notificationRuleRefDto
 		}
 		monitoredService.NotificationRuleRefs = notificationRuleRefs
-
-		monitoredService.Template = &nextgen.TemplateDto{
-			TemplateRef:  request["template_ref"].(string),
-			VersionLabel: request["version_label"].(string),
-		}
-
 	}
 
 	return monitoredService

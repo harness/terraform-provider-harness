@@ -9,10 +9,9 @@ import (
 func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 	healthSourceType := hs["type"].(string)
 	healthSource := hs["spec"].(string)
-
+	spec := jsonToMap(hs["spec"].(string))
 	if healthSourceType == "AppDynamics" {
-		data := nextgen.AppDynamicsHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getAppDynamicsHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:        hs["name"].(string),
@@ -23,7 +22,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "NewRelic" {
-		data := nextgen.NewRelicHealthSource{}
+		data := getNewRelicHealthSource(spec)
 		json.Unmarshal([]byte(healthSource), &data)
 
 		return nextgen.HealthSource{
@@ -59,8 +58,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "Prometheus" {
-		data := nextgen.PrometheusHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getPrometheusHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:       hs["name"].(string),
@@ -71,8 +69,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "Stackdriver" {
-		data := nextgen.StackdriverMetricHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getStackDriverHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:        hs["name"].(string),
@@ -83,8 +80,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "DatadogMetrics" {
-		data := nextgen.DatadogMetricHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getDataDogHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:           hs["name"].(string),
@@ -107,8 +103,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "Dynatrace" {
-		data := nextgen.DynatraceHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getDynatraceHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:       hs["name"].(string),
@@ -131,8 +126,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "CustomHealthMetric" {
-		data := nextgen.CustomHealthSourceMetric{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getCustomHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:               hs["name"].(string),
@@ -155,8 +149,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "SplunkMetric" {
-		data := nextgen.SplunkMetricHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getSplunkHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:         hs["name"].(string),
@@ -179,8 +172,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "CloudWatchMetrics" {
-		data := nextgen.CloudWatchMetricsHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getCloudWatchHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:              hs["name"].(string),
@@ -191,8 +183,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "AwsPrometheus" {
-		data := nextgen.AwsPrometheusHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getAwsPrometheusHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:          hs["name"].(string),
@@ -203,8 +194,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "SumologicMetrics" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getNextGenHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:             hs["name"].(string),
@@ -215,8 +205,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "SumologicLogs" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getNextGenHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:          hs["name"].(string),
@@ -227,8 +216,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "SplunkSignalFXMetrics" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getNextGenHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:                  hs["name"].(string),
@@ -239,8 +227,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "GrafanaLokiLogs" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getNextGenHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:            hs["name"].(string),
@@ -251,8 +238,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "AzureLogs" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getNextGenHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:       hs["name"].(string),
@@ -263,8 +249,7 @@ func getHealthSourceByType(hs map[string]interface{}) nextgen.HealthSource {
 		}
 	}
 	if healthSourceType == "AzureMetrics" {
-		data := nextgen.NextGenHealthSource{}
-		json.Unmarshal([]byte(healthSource), &data)
+		data := getNextGenHealthSource(spec)
 
 		return nextgen.HealthSource{
 			Name:         hs["name"].(string),
@@ -338,7 +323,25 @@ func getChangeSourceByType(cs map[string]interface{}) nextgen.ChangeSourceDto {
 }
 
 func getServiceDependencyByType(sd map[string]interface{}) nextgen.ServiceDependencyDto {
-	return nextgen.ServiceDependencyDto{
-		MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
+	dependencyType := sd["type"].(string)
+	dependencyMetadata := sd["dependency_metadata"].(string)
+
+	if dependencyType == "KUBERNETES" {
+		data := nextgen.KubernetesDependencyMetadata{}
+		json.Unmarshal([]byte(dependencyMetadata), &data)
+
+		return nextgen.ServiceDependencyDto{
+			MonitoredServiceIdentifier: sd["monitored_service_identifier"].(string),
+			Type_:                      nextgen.DependencyMetadataType(dependencyType),
+			KUBERNETES:                 &data,
+		}
 	}
+
+	panic(fmt.Sprintf("Invalid service dependency type for monitored service"))
+}
+
+func jsonToMap(jsonStr string) map[string]interface{} {
+	result := make(map[string]interface{})
+	json.Unmarshal([]byte(jsonStr), &result)
+	return result
 }

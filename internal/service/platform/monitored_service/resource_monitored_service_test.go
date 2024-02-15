@@ -155,9 +155,6 @@ func testAccResourceMonitoredService(id string, name string) string {
 						}
 					]})
 				}
-				dependencies {
-					monitored_service_identifier = "%[1]s"
-				}
 			}
 		}
 `, id, name)

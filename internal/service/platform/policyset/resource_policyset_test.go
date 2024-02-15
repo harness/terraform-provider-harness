@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	emptyPolicyset = policymgmt.PolicySet2{}
+	emptyPolicyset = policymgmt.PolicySet{}
 )
 
 func TestAccResourcePolicyset(t *testing.T) {
@@ -102,7 +102,7 @@ func testAccPolicysetDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testAccGetPolicyset(resourceName string, state *terraform.State) (policymgmt.PolicySet2, error) {
+func testAccGetPolicyset(resourceName string, state *terraform.State) (policymgmt.PolicySet, error) {
 	r := acctest.TestAccGetApiClientFromProvider()
 	c := acctest.TestAccGetPolicyManagementClient()
 	localVarOptionals := policymgmt.PolicysetsApiPolicysetsFindOpts{

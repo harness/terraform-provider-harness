@@ -90,6 +90,43 @@ func TestAccResourceConnector_oci_helm_UsernamePassword(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnector_oci_helm_ForceDelete(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_oci_helm.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnector_oci_helm_force_delete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "admin.azurecr.io"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+			},
+		},
+	})
+}
+
 func testAccResourceConnector_oci_helm_usernamepassword(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -135,6 +172,21 @@ func testAccResourceConnector_oci_helm_anonymous(id string, name string) string 
 
 			url = "admin.azurecr.io"
 			delegate_selectors = ["harness-delegate"]
+		}
+`, id, name)
+}
+
+func testAccResourceConnector_oci_helm_force_delete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_oci_helm" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "admin.azurecr.io"
+			delegate_selectors = ["harness-delegate"]
+			force_delete = true
 		}
 `, id, name)
 }

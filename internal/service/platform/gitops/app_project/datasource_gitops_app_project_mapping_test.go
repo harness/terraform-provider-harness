@@ -2,12 +2,13 @@ package app_project_test
 
 import (
 	"fmt"
-	"github.com/harness/harness-go-sdk/harness/utils"
-	"github.com/harness/terraform-provider-harness/internal/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/terraform-provider-harness/internal/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccDatasourceGitopsAppProjectMapping(t *testing.T) {
@@ -54,6 +55,7 @@ func testAccDatasourceGitopsAppProjectMapping(agentId string, accountId string, 
 			project_id = harness_platform_project.test.id
 			name = "%[1]s"
 			type = "MANAGED_ARGO_PROVIDER"
+			operator = "ARGO"
 			metadata {
 				namespace = "%[1]s"
         		high_availability = false

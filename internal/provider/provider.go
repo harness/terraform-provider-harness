@@ -13,6 +13,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
 	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
@@ -34,12 +35,15 @@ import (
 	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	pl_account "github.com/harness/terraform-provider-harness/internal/service/platform/account"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/schedule"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ccm_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/connector"
 	pl_current_user "github.com/harness/terraform-provider-harness/internal/service/platform/current_user"
+	pl_delegatetoken "github.com/harness/terraform-provider-harness/internal/service/platform/delegate_token"
 	pl_environment "github.com/harness/terraform-provider-harness/internal/service/platform/environment"
 	pl_environment_clusters_mapping "github.com/harness/terraform-provider-harness/internal/service/platform/environment_clusters_mapping"
 	pl_environment_group "github.com/harness/terraform-provider-harness/internal/service/platform/environment_group"
@@ -110,13 +114,13 @@ func Provider(version string) func() *schema.Provider {
 				"endpoint": {
 					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.BaseUrl),
 				},
 				"account_id": {
 					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.AccountId.String()),
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.AccountId.String(), nil),
 				},
 				"api_key": {
@@ -168,6 +172,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_spot":                  connector.DatasourceConnectorSpot(),
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
+				"harness_platform_connector_pdc":                   connector.DatasourceConnectorPdc(),
+				"harness_platform_current_account":                 pl_account.DataSourceCurrentAccount(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
@@ -241,6 +247,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_gcp_proxy":                   load_balancer.DataSourceGCPProxy(),
 				"harness_autostopping_aws_alb":                     load_balancer.DataSourceAwsALB(),
 				"harness_autostopping_azure_gateway":               load_balancer.DataSourceAzureGateway(),
+				"harness_autostopping_schedule":                    schedule.DataSourceFixedSchedule(),
+				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
+				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
+				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -279,6 +289,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_spot":                  connector.ResourceConnectorSpot(),
 				"harness_platform_connector_terraform_cloud":       connector.ResourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.ResourceConnectorSumologic(),
+				"harness_platform_connector_pdc":                   connector.ResourceConnectorPdc(),
 				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
@@ -367,6 +378,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_gcp_proxy":                   load_balancer.ResourceGCPProxy(),
 				"harness_autostopping_aws_alb":                     load_balancer.ResourceAwsALB(),
 				"harness_autostopping_azure_gateway":               load_balancer.ResourceAzureGateway(),
+				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
+				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
+				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
 			},
 		}
 

@@ -111,7 +111,7 @@ func resourceFFApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 	resp, httpResp, err := c.APIKeysApi.GetAPIKey(ctx, id, qp.ProjectId, qp.EnvironmentId, c.AccountId, qp.OrganizationId)
 
 	if err != nil {
-		return helpers.HandleReadApiError(err, d, httpResp)
+		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	readFFApiKey(d, &resp, qp)
@@ -136,6 +136,10 @@ func resourceFFApiKeyCreate(ctx context.Context, d *schema.ResourceData, meta in
 	resp, httpResp, err = c.APIKeysApi.AddAPIKey(ctx, c.AccountId, qp.OrganizationId, qp.EnvironmentId, qp.ProjectId, opts)
 
 	if err != nil {
+		// handle conflict
+		if httpResp != nil && httpResp.StatusCode == 409 {
+			return diag.Errorf("An api key with identifier [%s] orgIdentifier [%s] project [%s]  and environment [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId, qp.EnvironmentId)
+		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 

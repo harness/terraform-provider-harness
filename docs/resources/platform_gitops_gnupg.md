@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_gnupg Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  GPG public key in the server's configuration.
+  Resource for managing Harness GitOps GPG public key.
 ---
 
 # harness_platform_gitops_gnupg (Resource)
 
-GPG public key in the server's configuration.
+Resource for managing Harness GitOps GPG public key.
 
 ## Example Usage
 
@@ -66,7 +66,7 @@ Optional:
 
 Required:
 
-- `key_data` (String) KeyData holds the raw key data, in base64 encoded format
+- `key_data` (String) KeyData holds the raw key data, in base64 encoded format.
 
 Read-Only:
 
@@ -81,9 +81,12 @@ Read-Only:
 Import is supported using the following syntax:
 
 ```shell
-# Import a Account level Gitops Cluster
+# Import an Account level Gitops GnuPG Key
 terraform import harness_platform_gitops_gnupg.example <agent_id>/<key_id>
 
-# Import a Project level Gitops Cluster
+# Import an Org level Gitops GnuPG Key
+terraform import harness_platform_gitops_gnupg.example <organization_id>/<agent_id>/<key_id>
+
+# Import a Project level Gitops GnuPG Key
 terraform import harness_platform_gitops_gnupg.example <organization_id>/<project_id>/<agent_id>/<key_id>
 ```

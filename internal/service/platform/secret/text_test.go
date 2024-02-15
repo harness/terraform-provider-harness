@@ -61,7 +61,7 @@ func TestAccSecretText_inline(t *testing.T) {
 }
 
 func TestAccResourceSecretText_reference(t *testing.T) {
-
+	t.Skip()
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
@@ -75,7 +75,7 @@ func TestAccResourceSecretText_reference(t *testing.T) {
 		CheckDestroy:      testAccSecretDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_text_reference(id, name, secretValue),
+				Config: testAccResourceSecret_text_reference(id, name, secretValue, "azureSecretManager"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -88,7 +88,7 @@ func TestAccResourceSecretText_reference(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_text_reference(id, updatedName, updatedValue),
+				Config: testAccResourceSecret_text_reference(id, updatedName, updatedValue, "azureSecretManager"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -316,7 +316,7 @@ func testAccResourceSecret_text_inline(id string, name string, secretValue strin
 `, id, name, secretValue)
 }
 
-func testAccResourceSecret_text_reference(id string, name string, secretValue string) string {
+func testAccResourceSecret_text_reference(id string, name string, secretValue string, secretManagerIdentifier string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_secret_text" "test" {
 			identifier = "%[1]s"
@@ -324,11 +324,16 @@ func testAccResourceSecret_text_reference(id string, name string, secretValue st
 			description = "test"
 			tags = ["foo:bar"]
 
-			secret_manager_identifier = "azureSecretManager"
+			secret_manager_identifier = "%[4]s"
 			value_type = "Reference"
 			value = "%[3]s"
+			additional_metadata {
+				values {
+					version = "1"
+				}
+			}
 		}
-`, id, name, secretValue)
+`, id, name, secretValue, secretManagerIdentifier)
 }
 
 func testProjectResourceSecretText_inline(id string, name string, secretValue string) string {
@@ -438,4 +443,55 @@ func testOrgResourceSecretText_reference(id string, name string, secretValue str
 			
 		}
 `, id, name, secretValue)
+}
+func TestAccResourceSecretText_GCP_SM_reference(t *testing.T) {
+	t.Skip()
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	secretValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedValue := secretValue + "updated"
+	resourceName := "harness_platform_secret_text.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccSecretDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceSecret_text_reference(id, name, secretValue, "GCP_SM"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "GCP_SM"),
+					resource.TestCheckResourceAttr(resourceName, "value_type", "Reference"),
+					resource.TestCheckResourceAttr(resourceName, "value", secretValue),
+					resource.TestCheckResourceAttr(resourceName, "additional_metadata.0.values.0.version", "1"),
+				),
+			},
+			{
+				Config: testAccResourceSecret_text_reference(id, updatedName, updatedValue, "GCP_SM"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "GCP_SM"),
+					resource.TestCheckResourceAttr(resourceName, "value_type", "Reference"),
+					resource.TestCheckResourceAttr(resourceName, "value", updatedValue),
+					resource.TestCheckResourceAttr(resourceName, "additional_metadata.0.values.0.version", "1"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
 }

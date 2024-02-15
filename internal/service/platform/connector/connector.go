@@ -109,7 +109,8 @@ func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta i
 
 	_, httpResp, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), &nextgen.ConnectorsApiDeleteConnectorOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
-		ProjectIdentifier: helpers.BuildField(d, "project_id")})
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		ForceDelete:       helpers.BuildFieldBool(d, "force_delete")})
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

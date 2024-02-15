@@ -25,6 +25,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "aws_region"
   }
 }
 
@@ -40,6 +41,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "aws_region"
   }
   equal_jitter_backoff_strategy {
     base_delay       = 10
@@ -60,6 +62,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "aws_region"
   }
   full_jitter_backoff_strategy {
     base_delay       = 10
@@ -80,6 +83,7 @@ resource "harness_platform_connector_aws" "aws" {
     access_key_ref     = "account.access_id"
     secret_key_ref     = "account.secret_id"
     delegate_selectors = ["harness-delegate"]
+    region             = "aws_region"
   }
   fixed_delay_backoff_strategy {
     fixed_backoff = 10
@@ -102,6 +106,7 @@ resource "harness_platform_connector_aws" "aws" {
 - `description` (String) Description of the resource.
 - `equal_jitter_backoff_strategy` (Block List, Max: 1) Equal Jitter BackOff Strategy. (see [below for nested schema](#nestedblock--equal_jitter_backoff_strategy))
 - `fixed_delay_backoff_strategy` (Block List, Max: 1) Fixed Delay BackOff Strategy. (see [below for nested schema](#nestedblock--fixed_delay_backoff_strategy))
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
 - `full_jitter_backoff_strategy` (Block List, Max: 1) Full Jitter BackOff Strategy. (see [below for nested schema](#nestedblock--full_jitter_backoff_strategy))
 - `inherit_from_delegate` (Block List, Max: 1) Inherit credentials from the delegate. (see [below for nested schema](#nestedblock--inherit_from_delegate))
 - `irsa` (Block List, Max: 1) Use IAM role for service accounts. (see [below for nested schema](#nestedblock--irsa))
@@ -162,6 +167,10 @@ Required:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
 
+Optional:
+
+- `region` (String) Test Region to perform Connection test of AWS Connector.
+
 
 <a id="nestedblock--irsa"></a>
 ### Nested Schema for `irsa`
@@ -169,6 +178,10 @@ Required:
 Required:
 
 - `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+
+Optional:
+
+- `region` (String) Test Region to perform Connection test of AWS Connector.
 
 
 <a id="nestedblock--manual"></a>
@@ -183,6 +196,7 @@ Optional:
 - `access_key` (String) AWS access key.
 - `access_key_ref` (String) Reference to the Harness secret containing the aws access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `delegate_selectors` (Set of String) Connect only use delegates with these tags.
+- `region` (String) Test Region to perform Connection test of AWS Connector.
 
 ## Import
 

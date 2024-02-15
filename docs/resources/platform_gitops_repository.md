@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repository Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating Harness Gitops Repositories.
+  Resource for managing Harness Gitops Repository.
 ---
 
 # harness_platform_gitops_repository (Resource)
 
-Resource for creating Harness Gitops Repositories.
+Resource for managing Harness Gitops Repository.
 
 ## Example Usage
 
@@ -28,6 +28,24 @@ resource "harness_platform_gitops_repository" "example" {
   }
   upsert = true
 }
+
+// Create a ssh git repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "git@github.com:yourorg"
+    name            = "repo_name"
+    insecure        = false
+    connection_type = "SSH"
+    ssh_private_key = "----- BEGIN OPENSSH PRIVATE KEY-----\nXXXXX\nXXXXX\nXXXXX\n-----END OPENSSH PRIVATE KEY -----\n"
+  }
+  upsert = true
+}
+
 
 // Create a HELM repository at project level
 resource "harness_platform_gitops_repository" "example" {
@@ -140,7 +158,7 @@ resource "harness_platform_gitops_repository" "example" {
   gen_type = "GOOGLE_GCR"
   gcr_gen {
     projectID = "projectID"
-    accessKey = "{  \"type\": \"service_account\",  \"project_id\": \"google-project-id\",  \"private_key_id\": \"5efxxxxx19dd12674be7be2312313caaab31231\",  \"private_key\": \"----.......-----\n\",  \"client_email\": \"xxxxxxxx-compute@developer.gserviceaccount.com\",  \"client_id\": \"xxxxxxxxxxx0161940\",  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",  \"token_uri\": \"https://oauth2.googleapis.com/token\",  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/5xxxxxxxx911-compute@developer.gserviceaccount.com\",  \"universe_domain\": \"googleapis.com\"}"
+    accessKey = "{  \"type\": \"service_account\",  \"project_id\": \"google-project-id\",  \"private_key_id\": \"xxxxxxx19dd12674be7be2312313caaabxxxx\",  \"private_key\": \"-----.......-----\n\",  \"client_email\": \"xxxxxxxx-compute@developer.gserviceaccount.com\",  \"client_id\": \"xxxxxxxxxxx0161940\",  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",  \"token_uri\": \"https://oauth2.googleapis.com/token\",  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/511111111911-compute@developer.gserviceaccount.com\",  \"universe_domain\": \"googleapis.com\"}"
   }
   refreshInterval = "1m"
   upsert          = false
@@ -199,9 +217,6 @@ resource "harness_platform_gitops_repository" "example" {
 Enum: "UNSET" "AWS_ECR" "GOOGLE_GCR"
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
-- `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
-- `query_project` (String) Project to query for the GitOps repo.
-- `query_repo` (String) GitOps repository to query.
 - `refresh_interval` (String) For OCI repos, this is the interval to refresh the token to access the registry.
 - `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
 - `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
@@ -215,7 +230,7 @@ Enum: "UNSET" "AWS_ECR" "GOOGLE_GCR"
 
 Required:
 
-- `connection_type` (String) Identifies the authentication method used to connect to the repository.
+- `connection_type` (String) Identifies the authentication method used to connect to the repository. Possible values: "HTTPS" "SSH" "GITHUB" "HTTPS_ANONYMOUS_CONNECTION_TYPE"
 - `repo` (String) URL to the remote repository.
 
 Optional:
@@ -226,18 +241,18 @@ Optional:
 - `github_app_id` (String) Id of the GitHub app used to access the repo.
 - `github_app_installation_id` (String) Installation id of the GitHub app used to access the repo.
 - `github_app_private_key` (String) GitHub app private key PEM data.
-- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a credential set.
+- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a repository credential.
 - `insecure` (Boolean) Indicates if the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.
-- `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos.
+- `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.
 - `name` (String) Name to be used for this repo. Only used with Helm repos.
-- `password` (String) Password or PAT used for authenticating at the remote repository.
-- `project` (String) Reference between project and repository that allow you automatically to be added as item inside SourceRepos project entity.
+- `password` (String) Password or PAT to be used for authenticating the remote repository.
+- `project` (String) The ArgoCD project name corresponding to this GitOps repository. An empty string means that the GitOps repository belongs to the default project created by Harness.
 - `proxy` (String) The HTTP/HTTPS proxy used to access the repo.
-- `ssh_private_key` (String) PEM data for authenticating at the repo server. Only used with Git repos.
-- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server.
-- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server.
+- `ssh_private_key` (String) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
+- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
+- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
 - `type_` (String) Type specifies the type of the repo. Can be either "git" or "helm. "git" is assumed if empty or absent.
-- `username` (String) Username used for authenticating at the remote repository.
+- `username` (String) Username to be used for authenticating the remote repository.
 
 
 <a id="nestedblock--ecr_gen"></a>
@@ -313,8 +328,11 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import a Account level Gitops Repository
+# Import an Account level Gitops Repository
 terraform import harness_platform_gitops_repository.example <agent_id>/<respository_id>
+
+# Import an Org level Gitops Repository
+terraform import harness_platform_gitops_repository.example <organization_id>/<agent_id>/<respository_id>
 
 # Import a Project level Gitops Repository
 terraform import harness_platform_gitops_repository.example <organization_id>/<project_id>/<agent_id>/<respository_id>

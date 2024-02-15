@@ -2,7 +2,6 @@ package agent
 
 import (
 	"context"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -14,7 +13,7 @@ import (
 
 func DataSourceGitopsAgent() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for fetching a Harness Gitops Agents.",
+		Description: "Datasource for fetching a Harness GitOps Agent.",
 
 		ReadContext: dataSourceGitopsAgentRead,
 
@@ -69,12 +68,12 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
-							Description: "The k8s namespace that this agent resides in.",
+							Description: "The kubernetes namespace where the agent should be installed.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"high_availability": {
-							Description: "Indicates if the deployment should be deployed using the deploy-ha.yaml",
+							Description: "Indicates if the agent is deployed in HA mode.",
 							Type:        schema.TypeBool,
 							Computed:    true,
 						},
@@ -111,13 +110,13 @@ func dataSourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
-	if err != nil {
+	if err != nil && httpResp.StatusCode != 404 {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil {
+	if &resp == nil || httpResp.StatusCode == 404 {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
