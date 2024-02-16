@@ -38,7 +38,7 @@ data "harness_platform_role_assignments" "example" {
 
 ### Read-Only
 
-- `disabled` (Boolean) Disabled or not.
+- `disabled` (Boolean) The `disabled` attribute in the role assignment resource controls the status of the role assignment. Setting `disabled` to `false` activates the role and its permissions, enabling the assigned entity to perform allowed actions. Conversely, setting `disabled` to `true` deactivates the role, revoking the entity's permissions and action capabilities.
 - `id` (String) The ID of this resource.
 - `managed` (Boolean) Managed or not.
 - `principal` (List of Object) Principal. (see [below for nested schema](#nestedatt--principal))
