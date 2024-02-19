@@ -63,6 +63,55 @@ func TestAccResourceConnectorGithub_HttpExecuteOnDelegateFalse(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorGithub_HttpAnonymousExecuteOnDelegateFalse(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_github.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorGithub_anonymous(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "url", "https://github.com/account"),
+					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
+					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
+					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorGithub_anonymous(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "execute_on_delegate", "false"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorGithub_HttpExecuteOnDelegateTrue(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -867,6 +916,28 @@ func testAccResourceConnectorGithub_app_credential(id string, name string) strin
 		resource "time_sleep" "wait_4_seconds" {
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorGithub_anonymous(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_github" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			url = "https://github.com/account"
+			connection_type = "Account"
+			validation_repo = "some_repo"
+			delegate_selectors = ["harness-delegate"]
+			execute_on_delegate = false
+			credentials {
+				http {
+					anonymous {}
+				}
+			}
 		}
 `, id, name)
 }

@@ -134,14 +134,14 @@ func ResourceConnectorGithub() *schema.Resource {
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username_ref"},
-										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app"},
+										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 									},
 									"username_ref": {
 										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username"},
-										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app"},
+										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 									},
 									"token_ref": {
 										Description: "Reference to a secret containing the personal access to use for authentication." + secret_ref_text,
@@ -153,7 +153,7 @@ func ResourceConnectorGithub() *schema.Resource {
 										Type:         schema.TypeList,
 										Optional:     true,
 										MaxItems:     1,
-										ExactlyOneOf: []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app"},
+										ExactlyOneOf: []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"installation_id": {
@@ -190,6 +190,15 @@ func ResourceConnectorGithub() *schema.Resource {
 													Required:    true,
 												},
 											},
+										},
+									},
+									"anonymous": {
+										Description:  "Configuration for using the github http anonymous for interacting with the github api.",
+										Type:         schema.TypeList,
+										Optional:     true,
+										ExactlyOneOf: []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
 										},
 									},
 								},
@@ -341,6 +350,12 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 			}
 
+			if attr, ok := httpConfig["anonymous"].([]interface{}); ok && len(attr) > 0 {
+				connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
+					Type_: nextgen.GithubHttpCredentialTypes.Anonymous,
+				}
+			}
+
 		}
 
 		if attr := credConfig["ssh"].([]interface{}); len(attr) > 0 {
@@ -434,6 +449,19 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 										"installation_id_ref": connector.Github.Authentication.Http.GithubApp.InstallationIdRef,
 										"application_id_ref":  connector.Github.Authentication.Http.GithubApp.ApplicationIdRef,
 									},
+								},
+							},
+						},
+					},
+				})
+				break
+			case nextgen.GithubHttpCredentialTypes.Anonymous:
+				d.Set("credentials", []map[string]interface{}{
+					{
+						"http": []map[string]interface{}{
+							{
+								"anonymous": []map[string]interface{}{
+									{},
 								},
 							},
 						},
