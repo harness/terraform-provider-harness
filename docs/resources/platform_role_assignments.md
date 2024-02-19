@@ -97,9 +97,9 @@ resource "harness_platform_role_assignments" "example2" {
 
 ### Optional
 
-- `disabled` (Boolean) The `disabled` attribute in the role assignment resource controls the status of the role assignment. Setting `disabled` to `false` activates the role and its permissions, enabling the assigned entity to perform allowed actions. Conversely, setting `disabled` to `true` deactivates the role, revoking the entity's permissions and action capabilities
+- `disabled` (Boolean) The `disabled` attribute in the role assignment resource controls the status of the role assignment. Setting `disabled` to `false` activates the role and its permissions, enabling the assigned entity to perform allowed actions. Conversely, setting `disabled` to `true` deactivates the role, revoking the entity's permissions and action capabilities. Default value should be `false`
 - `identifier` (String) Identifier for role assignment.
-- `managed` (Boolean) Managed or not.
+- `managed` (Boolean) Specifies whether the role assignment is managed by Harness. Setting managed to `true` means that Harness will manage the lifecycle of the role assignment, including its creation, updates, and deletion. Conversely, setting it to `false` indicates that the role assignment is not managed by Harness, and thus Harness will not perform actions on it. Default value should be `false`
 - `org_id` (String) Org identifier.
 - `project_id` (String) Project Identifier
 
