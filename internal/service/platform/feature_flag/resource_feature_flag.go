@@ -35,7 +35,12 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "Name of the Feature Flag",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
+				ForceNew:    false,
+			},
+			"description": {
+				Description: "Description of the Feature Flag",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"org_id": {
 				Description: "Organization Identifier",
@@ -59,13 +64,11 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "Which of the variations to use when the flag is toggled to off state",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"default_on_variation": {
 				Description: "Which of the variations to use when the flag is toggled to on state",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"git_details": {
 				Type:     schema.TypeSet,
@@ -207,7 +210,7 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "The options available for your flag",
 				Type:        schema.TypeList,
 				Required:    true,
-				ForceNew:    true,
+				ForceNew:    false,
 				MinItems:    2,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -301,6 +304,12 @@ type Serve struct {
 	Distribution *Distribution `json:"distribution,omitempty"`
 }
 
+// Tag is a tag for the feature flag
+type Tag struct {
+	Name       string `json:"name"`
+	Identifier string `json:"identifier"`
+}
+
 // Parameter ...
 type Parameter struct {
 	Variation  *string           `json:"variation,omitempty"`
@@ -334,6 +343,17 @@ type FFOpts struct {
 	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
+type FFPutOpts struct {
+	Identifier          string              `json:"identifier"`
+	Name                string              `json:"name"`
+	Description         string              `json:"description"`
+	DefaultOffVariation string              `json:"defaultOffVariation"`
+	DefaultOnVariation  string              `json:"defaultOnVariation"`
+	Permanent           bool                `json:"permanent"`
+	Variations          []nextgen.Variation `json:"variations"`
+	Tags                []Tag               `json:"tags,omitempty"`
+}
+
 // FFPatchOpts is the options for patching a feature flag
 type FFPatchOpts struct {
 	Identifier          string              `json:"identifier"`
@@ -360,10 +380,10 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	qp := buildFFQueryParameters(d)
-	opts := buildFFPatchOpts(d)
+	opts := buildFFPutOpts(d)
 
 	if opts != nil {
-		_, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+		httpResp, err := c.FeatureFlagsApi.PutFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
 
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
@@ -477,6 +497,7 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.SetId(flag.Identifier)
 	d.Set("identifier", flag.Identifier)
 	d.Set("name", flag.Name)
+	d.Set("description", flag.Description)
 	d.Set("project_id", flag.Project)
 	d.Set("default_on_variation", flag.DefaultOnVariation)
 	d.Set("default_off_variation", flag.DefaultOffVariation)
@@ -547,6 +568,58 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 	opts.Variations = variations
 
 	return &nextgen.FeatureFlagsApiCreateFeatureFlagOpts{
+		Body: optional.NewInterface(opts),
+	}
+}
+
+func buildFFPutOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPutFeatureFlagOpts {
+	opts := &FFPutOpts{
+		Identifier:          d.Get("identifier").(string),
+		Name:                d.Get("name").(string),
+		DefaultOffVariation: d.Get("default_off_variation").(string),
+		DefaultOnVariation:  d.Get("default_on_variation").(string),
+	}
+
+	var description string
+	if desc, ok := d.GetOk("description"); ok {
+		description = desc.(string)
+	}
+	opts.Description = description
+
+	if permanent, ok := d.GetOk("permanent"); ok {
+		opts.Permanent = permanent.(bool)
+	}
+
+	var variations []nextgen.Variation
+	variationsData := d.Get("variation").([]interface{})
+	for _, variationData := range variationsData {
+		vMap := variationData.(map[string]interface{})
+		variation := nextgen.Variation{
+			Identifier:  vMap["identifier"].(string),
+			Value:       vMap["value"].(string),
+			Name:        vMap["name"].(string),
+			Description: vMap["description"].(string),
+		}
+		variations = append(variations, variation)
+	}
+	opts.Variations = variations
+
+	var tags []Tag
+	if tagsData, ok := d.GetOk("tags"); ok {
+		tagsData := tagsData.([]interface{})
+
+		for _, tagData := range tagsData {
+			tMap := tagData.(map[string]interface{})
+			tag := Tag{
+				Name:       tMap["name"].(string),
+				Identifier: tMap["identifier"].(string),
+			}
+			tags = append(tags, tag)
+		}
+	}
+	opts.Tags = tags
+
+	return &nextgen.FeatureFlagsApiPutFeatureFlagOpts{
 		Body: optional.NewInterface(opts),
 	}
 }
