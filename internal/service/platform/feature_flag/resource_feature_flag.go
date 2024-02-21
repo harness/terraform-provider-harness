@@ -485,7 +485,7 @@ func resourceFeatureFlagDelete(ctx context.Context, d *schema.ResourceData, meta
 	}
 	qp := buildFFQueryParameters(d)
 
-	httpResp, err := c.FeatureFlagsApi.DeleteFeatureFlag(ctx, d.Id(), c.AccountId, qp.OrganizationId, qp.ProjectId, &nextgen.FeatureFlagsApiDeleteFeatureFlagOpts{CommitMsg: optional.EmptyString()})
+	httpResp, err := c.FeatureFlagsApi.DeleteFeatureFlag(ctx, d.Id(), c.AccountId, qp.OrganizationId, qp.ProjectId, &nextgen.FeatureFlagsApiDeleteFeatureFlagOpts{CommitMsg: optional.EmptyString(), ForceDelete: optional.NewBool(true)})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
