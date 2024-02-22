@@ -7,18 +7,18 @@ import (
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
-	"github.com/harness/harness-go-sdk/harness/utils"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 )
 
 const codePath = "/code/api/v1"
 
 type Session struct {
-	AccountId string
-	Endpoint  string
-	CDClient  *cd.ApiClient
-	PLClient  *nextgen.APIClient
-	Client    *openapi_client_nextgen.APIClient
+	AccountId  string
+	Endpoint   string
+	CDClient   *cd.ApiClient
+	PLClient   *nextgen.APIClient
+	Client     *openapi_client_nextgen.APIClient
+	CodeClient *code.APIClient
 }
 
 func (s *Session) GetPlatformClient() (*nextgen.APIClient, context.Context) {
@@ -54,12 +54,5 @@ func (s *Session) GetCodeClientWithContext(ctx context.Context) (*code.APIClient
 		ctx = context.Background()
 	}
 
-	cfg := code.NewConfiguration()
-
-	key := utils.GetEnv("HARNESS_PLATFORM_API_KEY", "")
-	cfg.AddDefaultHeader("X-Api-Key", key)
-
-	cfg.BasePath = utils.GetEnv("HARNESS_ENDPOINT", "") + codePath
-
-	return code.NewAPIClient(cfg), ctx
+	return s.CodeClient.WithAuthContext(ctx)
 }

@@ -162,6 +162,12 @@ func SetMultiLevelDatasourceSchemaIdentifierRequired(s map[string]*schema.Schema
 	s["project_id"].RequiredWith = []string{"org_id"}
 }
 
+func SetMultiLevelDatasourceSchemaWithoutCommonFields(s map[string]*schema.Schema) {
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"].RequiredWith = []string{"org_id"}
+}
+
 func BuildField(d *schema.ResourceData, field string) optional.String {
 	if arr, ok := d.GetOk(field); ok {
 		return optional.NewString(arr.(string))

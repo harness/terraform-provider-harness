@@ -18,6 +18,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -453,15 +454,30 @@ func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.A
 	return client
 }
 
+func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
+	cfg := code.NewConfiguration()
+	client := code.NewAPIClient(&code.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/code/api/v1",
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)}, // todo: this should be fixed in go sdk later
+		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return &internal.Session{
-			AccountId: d.Get("account_id").(string),
-			Endpoint:  d.Get("endpoint").(string),
-			CDClient:  getCDClient(d, version),
-			PLClient:  getPLClient(d, version),
-			Client:    getClient(d, version),
+			AccountId:  d.Get("account_id").(string),
+			Endpoint:   d.Get("endpoint").(string),
+			CDClient:   getCDClient(d, version),
+			PLClient:   getPLClient(d, version),
+			Client:     getClient(d, version),
+			CodeClient: getCodeClient(d, version),
 		}, nil
 	}
 }

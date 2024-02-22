@@ -3,7 +3,6 @@ package repo
 import (
 	"context"
 
-	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -20,7 +19,7 @@ func DataSourceRepo() *schema.Resource {
 		Schema: createSchema(),
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaWithoutCommonFields(resource.Schema)
 
 	return resource
 }
@@ -28,25 +27,24 @@ func DataSourceRepo() *schema.Resource {
 func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	accId := d.Get("account_id").(string)
-	repoId := d.Get("identifier").(string)
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
+	repoIdentifier := d.Get("identifier").(string)
+	orgID := helpers.BuildField(d, "org_id")
+	projectID := helpers.BuildField(d, "project_id")
 
 	repo, resp, err := c.RepositoryApi.FindRepository(
 		ctx,
-		accId,
-		repoId,
+		c.AccountId,
+		repoIdentifier,
 		&code.RepositoryApiFindRepositoryOpts{
-			OrgIdentifier:     optional.NewString(orgId),
-			ProjectIdentifier: optional.NewString(projId),
+			OrgIdentifier:     orgID,
+			ProjectIdentifier: projectID,
 		},
 	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
 
-	readRepo(d, &repo)
+	readRepo(d, &repo, orgID.Value(), projectID.Value())
 
 	return nil
 }
