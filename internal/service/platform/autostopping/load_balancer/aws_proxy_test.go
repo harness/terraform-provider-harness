@@ -55,6 +55,7 @@ func testAWSProxy(name string, hostName string) string {
 			host_name = "%[2]s"
             region = "us-east-1"
 			vpc = "vpc-2657db5c"
+			subnet_id = "subnet-e357d99a"
 			security_groups =["sg-01"]
 			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
 			machine_type = "t2.medium"
@@ -73,6 +74,7 @@ func testAWSProxyUpdate(name string, hostName string) string {
 			host_name = "%[2]s"
             region = "eastus2"
             vpc = "vpc-2657db5c"
+			subnet_id = "subnet-e357d99a"
 			security_groups =["sg-01","sg-02"]
 			route53_hosted_zone_id = "/hostedzone/hosted_zone_id"
             machine_type = "t2.medium"
