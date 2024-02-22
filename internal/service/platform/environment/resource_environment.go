@@ -11,7 +11,7 @@ import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
@@ -50,6 +50,108 @@ func ResourceEnvironment() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"git_details": {
+				Description: "Contains parameters related to creating an Entity for Git Experience.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch_name": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"file_path": {
+							Description: "File path of the Entity in the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"commit_message": {
+							Description: "Commit message used for the merge commit.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"is_new_branch": {
+							Description: "If a new branch creation is requested.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"base_branch": {
+							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"connector_ref": {
+							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"parent_entity_connector_ref": {
+							Description: "Identifier of the Harness Connector used for CRUD operations on the Parent Entity." + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"store_type": {
+							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
+							Computed:     true,
+						},
+						"repo_name": {
+							Description: "Name of the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"parent_entity_repo_name": {
+							Description: "Name of the repository where parent entity lies.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"last_object_id": {
+							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"last_commit_id": {
+							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"is_harnesscode_repo": {
+							Description: "If the gitProvider is HarnessCode",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"load_from_cache": {
+							Description: "If the Entity is to be fetched from cache",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"load_from_fallbackBranch": {
+							Description: "If the Entity is to be fetched from fallbackBranch",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -64,6 +166,9 @@ func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta i
 	resp, httpResp, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		ParentEntityConnectorRef: helpers.BuildField(d, "git_details.parent_entity_connector_ref"),
+		ParentEntityRepoName: helpers.BuildField(d, "git_details.parent_entity_repo_name"),
+		LoadFromFallbackBranch: helpers.BuildFieldForBoolean(d, "git_details.load_from_fallbackBranch"),
 	})
 
 	if err != nil {
@@ -87,10 +192,30 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	if id == "" {
 		resp, httpResp, err = c.EnvironmentsApi.CreateEnvironmentV2(ctx, c.AccountId, &nextgen.EnvironmentsApiCreateEnvironmentV2Opts{
 			Body: optional.NewInterface(env),
+			StoreType: helpers.BuildField(d, "git_details.store_type"),
+			ConnectorRef: helpers.BuildField(d, "git_details.connector_ref"),
+			CommitMsg: helpers.BuildField(d, "git_details.commit_message"),
+			IsHarnessCodeRepo: helpers.BuildFieldForBoolean(d, "git_details.is_harnesscode_repo"),
+			IsNewBranch: helpers.BuildFieldForBoolean(d, "git_details.is_new_branch"),
+			Branch: helpers.BuildField(d, "git_details.branch_name"),
+			RepoName:  helpers.BuildField(d, "git_details.repo_name"),
+			FilePath: helpers.BuildField(d, "git_details.file_path"),
+			BaseBranch: helpers.BuildField(d, "git_details.base_branch"),
 		})
 	} else {
 		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &nextgen.EnvironmentsApiUpdateEnvironmentV2Opts{
 			Body: optional.NewInterface(env),
+			StoreType: helpers.BuildField(d, "git_details.store_type"),
+			ConnectorRef: helpers.BuildField(d, "git_details.connector_ref"),
+			CommitMsg: helpers.BuildField(d, "git_details.commit_message"),
+			IsHarnessCodeRepo: helpers.BuildFieldForBoolean(d, "git_details.is_harnesscode_repo"),
+			IsNewBranch: helpers.BuildFieldForBoolean(d, "git_details.is_new_branch"),
+			Branch: helpers.BuildField(d, "git_details.branch_name"),
+			LastCommitId: helpers.BuildField(d, "git_details.lat_commit_id"),
+			RepoIdentifier: helpers.BuildField(d, "git_details.repo_name"),
+			FilePath: helpers.BuildField(d, "git_details.file_path"),
+			LastObjectId: helpers.BuildField(d, "git_details.last_object_id"),
+			BaseBranch: helpers.BuildField(d, "git_details.base_branch"),
 		})
 	}
 
