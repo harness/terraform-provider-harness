@@ -179,7 +179,6 @@ func testProjResourceRepo(identifier, description string) string {
 		
 		resource "harness_platform_repo" "test" {
 			identifier  = "%[1]s"
-			name       	= "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			default_branch = "master"
@@ -194,7 +193,6 @@ func testAccResourceRepo(identifier, description string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_repo" "test" {
 			identifier  = "%[1]s"
-			name       	= "%[1]s"
 			default_branch = "master"
 			description = "%[2]s"
 		}
@@ -217,7 +215,6 @@ func testAccResourceRepoImport(identifier, description, providerRepo string) str
 		
 		resource "harness_platform_repo" "test" {
 			identifier  = "%[1]s"
-			name       	= "%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			default_branch = "master"

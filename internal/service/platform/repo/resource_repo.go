@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
@@ -65,66 +66,60 @@ func resourceRepoCreateOrUpdate(
 	var repo code.TypesRepository
 	var resp *http.Response
 
+	id := d.Id()
+	orgID := helpers.BuildField(d, "org_id")
+	projectID := helpers.BuildField(d, "project_id")
+
+	// check
 	var sourceRepo string
-	source := source(d)
+	source := getSource(d)
 	if source != nil {
 		sourceRepo = source["repo"].(string)
 	}
 
-	orgID := helpers.BuildField(d, "org_id")
-	projectID := helpers.BuildField(d, "project_id")
-
-	// Import repo
-	if sourceRepo != "" {
-		body := optional.NewInterface(buildRepoImportBody(d))
+	// determine what type of write the change requires
+	switch {
+	case id != "":
+		// update repo
+		body := buildRepoBody(d)
+		body.DefaultBranch = ""
+		repo, resp, err = c.RepositoryApi.UpdateRepository(
+			ctx,
+			c.AccountId,
+			id,
+			&code.RepositoryApiUpdateRepositoryOpts{
+				Body:              optional.NewInterface(body),
+				OrgIdentifier:     orgID,
+				ProjectIdentifier: projectID,
+			},
+		)
+	case sourceRepo != "":
+		// import repo
 		repo, resp, err = c.RepositoryApi.ImportRepository(
-			ctx, c.AccountId, &code.RepositoryApiImportRepositoryOpts{
-				Body:              body,
+			ctx,
+			c.AccountId,
+			&code.RepositoryApiImportRepositoryOpts{
+				Body:              optional.NewInterface(buildRepoImportBody(d)),
 				OrgIdentifier:     orgID,
 				ProjectIdentifier: projectID,
 			},
 		)
-		if err != nil {
-			return helpers.HandleApiError(err, d, resp)
-		}
-
-		readRepo(d, &repo, orgID.Value(), projectID.Value())
-		return nil
-	}
-
-	// Create repo
-	body := optional.NewInterface(buildRepoBody(d))
-	id := d.Id()
-	if id == "" {
+	default:
+		// create repo
 		repo, resp, err = c.RepositoryApi.CreateRepository(
-			ctx, c.AccountId,
+			ctx,
+			c.AccountId,
 			&code.RepositoryApiCreateRepositoryOpts{
-				Body:              body,
+				Body:              optional.NewInterface(buildRepoBody(d)),
 				OrgIdentifier:     orgID,
 				ProjectIdentifier: projectID,
 			},
 		)
-		if err != nil {
-			return helpers.HandleApiError(err, d, resp)
-		}
-		readRepo(d, &repo, orgID.Value(), projectID.Value())
-		return nil
 	}
-
-	// Update repo
-	repo, resp, err = c.RepositoryApi.UpdateRepository(
-		ctx,
-		c.AccountId,
-		d.Get("identifier").(string),
-		&code.RepositoryApiUpdateRepositoryOpts{
-			Body:              body,
-			OrgIdentifier:     orgID,
-			ProjectIdentifier: projectID,
-		},
-	)
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
+
 	readRepo(d, &repo, orgID.Value(), projectID.Value())
 	return nil
 }
@@ -141,7 +136,8 @@ func resourceRepoDelete(
 	resp, err := c.RepositoryApi.DeleteRepository(
 		ctx,
 		c.AccountId,
-		id, &code.RepositoryApiDeleteRepositoryOpts{
+		id,
+		&code.RepositoryApiDeleteRepositoryOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		},
@@ -165,25 +161,15 @@ func buildRepoBody(d *schema.ResourceData) *code.OpenapiCreateRepositoryRequest 
 	}
 }
 
-func source(d *schema.ResourceData) map[string]interface{} {
-	srcSet := d.Get("source").(*schema.Set)
-	srcList := srcSet.List()
-	if len(srcList) == 0 {
-		return nil
-	}
-	srcElem := srcList[0]
-	return srcElem.(map[string]interface{})
-}
-
 func buildRepoImportBody(d *schema.ResourceData) *code.ReposImportBody {
 	importBody := &code.ReposImportBody{
 		Description: d.Get("description").(string),
 		Identifier:  d.Get("identifier").(string),
 	}
 
-	source := source(d)
+	source := getSource(d)
 	if source != nil {
-		providerType := source["type"].(code.ImporterProviderType)
+		providerType := code.ImporterProviderType(strings.ToLower(source["type"].(string)))
 		importBody.Provider = &code.ImporterProvider{
 			Host:     source["host"].(string),
 			Password: source["password"].(string),
@@ -194,6 +180,16 @@ func buildRepoImportBody(d *schema.ResourceData) *code.ReposImportBody {
 	}
 
 	return importBody
+}
+
+func getSource(d *schema.ResourceData) map[string]interface{} {
+	srcSet := d.Get("source").(*schema.Set)
+	srcList := srcSet.List()
+	if len(srcList) == 0 {
+		return nil
+	}
+	srcElem := srcList[0]
+	return srcElem.(map[string]interface{})
 }
 
 func readRepo(d *schema.ResourceData, repo *code.TypesRepository, orgId string, projectId string) {
@@ -209,22 +205,23 @@ func readRepo(d *schema.ResourceData, repo *code.TypesRepository, orgId string, 
 	d.Set("git_url", repo.GitUrl)
 	d.Set("importing", repo.Importing)
 	// d.Set("is_public", repo.IsPublic)
-	d.Set("num_closed_pulls", repo.NumClosedPulls)
-	d.Set("num_merged_pulls", repo.NumMergedPulls)
-	d.Set("num_open_pulls", repo.NumOpenPulls)
-	d.Set("num_pulls", repo.NumPulls)
 	d.Set("path", repo.Path)
-	d.Set("size", repo.Size)
-	d.Set("size_updated", repo.SizeUpdated)
 	d.Set("updated", repo.Updated)
 }
 
+func createOnlyFieldDiffFunc(k, oldValue, newValue string, d *schema.ResourceData) bool { return true }
+
 func createSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
+		"identifier": {
+			Description: "Identifier of the repository.",
+			Type:        schema.TypeString,
+			Required:    true,
+		},
 		"name": {
 			Description: "Name of the resource.",
 			Type:        schema.TypeString,
-			Required:    true,
+			Computed:    true,
 		},
 		"created_by": {
 			Description: "ID of the user who created the repository.",
@@ -237,9 +234,10 @@ func createSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"default_branch": {
-			Description: "Default branch of the repository.",
-			Type:        schema.TypeString,
-			Optional:    true, // handle default branch update
+			Description:      "Default branch of the repository.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			DiffSuppressFunc: createOnlyFieldDiffFunc, // handle default branch update
 		},
 		"description": {
 			Description: "Description of the repository.",
@@ -266,39 +264,9 @@ func createSchema() map[string]*schema.Schema {
 		// 	Type:        schema.TypeBool,
 		// 	Optional:    true,
 		// },
-		"num_closed_pulls": {
-			Description: "Number of closed pull requests.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"num_merged_pulls": {
-			Description: "Number of merged pull requests.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"num_open_pulls": {
-			Description: "Number of open pull requests.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"num_pulls": {
-			Description: "Total number of pull requests.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
 		"path": {
 			Description: "Path of the repository.",
 			Type:        schema.TypeString,
-			Computed:    true,
-		},
-		"size": {
-			Description: "Size of the repository.",
-			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"size_updated": {
-			Description: "Timestamp when the repository size was last updated.",
-			Type:        schema.TypeInt,
 			Computed:    true,
 		},
 		"updated": {
@@ -307,29 +275,28 @@ func createSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"git_ignore": {
-			Description: "Gitignore file for the repository.",
-			Type:        schema.TypeString,
-			Optional:    true,
-		},
-		"identifier": {
-			Description: "Identifier of the repository.",
-			Type:        schema.TypeString,
-			Required:    true,
+			Description:      "Repository should be created with specified predefined gitignore file.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			DiffSuppressFunc: createOnlyFieldDiffFunc,
 		},
 		"license": {
-			Description: "License for the repository.",
-			Type:        schema.TypeString,
-			Optional:    true,
+			Description:      "Repository should be created with specified predefined license file.",
+			Type:             schema.TypeString,
+			Optional:         true,
+			DiffSuppressFunc: createOnlyFieldDiffFunc,
 		},
 		"readme": {
-			Description: "Whether the repository has a readme.",
-			Type:        schema.TypeBool,
-			Optional:    true,
+			Description:      "Repository should be created with readme file.",
+			Type:             schema.TypeBool,
+			Optional:         true,
+			DiffSuppressFunc: createOnlyFieldDiffFunc,
 		},
 		"source": {
-			Description: "Provider related configurations.",
-			Type:        schema.TypeSet,
-			Optional:    true,
+			Description:      "Provider related configurations.",
+			Type:             schema.TypeSet,
+			Optional:         true,
+			DiffSuppressFunc: createOnlyFieldDiffFunc,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"username": {
@@ -344,7 +311,7 @@ func createSchema() map[string]*schema.Schema {
 						Sensitive:   true,
 					},
 					"type": {
-						Description: "The type of SCM provider (e.g., github) when importing.",
+						Description: "The type of SCM provider (github, gitlab, bitbucket, stash, gitea, gogs) when importing.",
 						Type:        schema.TypeString, //type enum here
 						Optional:    true,
 					},

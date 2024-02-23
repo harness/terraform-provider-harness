@@ -20,7 +20,6 @@ resource "harness_platform_repo" "test" {
   project_id     = "test_project_123"
   default_branch = "main"
   description    = "test_description_123"
-  account_id     = "account_id"
   is_public      = true
   source {
     repo = "octocat/hello-worId"
@@ -35,17 +34,16 @@ resource "harness_platform_repo" "test" {
 ### Required
 
 - `identifier` (String) Identifier of the repository.
-- `name` (String) Name of the resource.
 
 ### Optional
 
 - `default_branch` (String) Default branch of the repository.
 - `description` (String) Description of the repository.
-- `git_ignore` (String) Gitignore file for the repository.
-- `license` (String) License for the repository.
+- `git_ignore` (String) Repository should be created with specified predefined gitignore file.
+- `license` (String) Repository should be created with specified predefined license file.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `readme` (Boolean) Whether the repository has a readme.
+- `readme` (Boolean) Repository should be created with readme file.
 - `source` (Block Set) Provider related configurations. (see [below for nested schema](#nestedblock--source))
 
 ### Read-Only
@@ -55,13 +53,8 @@ resource "harness_platform_repo" "test" {
 - `git_url` (String) Git URL of the repository.
 - `id` (String) ID of the repository.
 - `importing` (Boolean) Whether the repository is being imported.
-- `num_closed_pulls` (Number) Number of closed pull requests.
-- `num_merged_pulls` (Number) Number of merged pull requests.
-- `num_open_pulls` (Number) Number of open pull requests.
-- `num_pulls` (Number) Total number of pull requests.
+- `name` (String) Name of the resource.
 - `path` (String) Path of the repository.
-- `size` (Number) Size of the repository.
-- `size_updated` (Number) Timestamp when the repository size was last updated.
 - `updated` (Number) Timestamp when the repository was last updated.
 
 <a id="nestedblock--source"></a>
@@ -72,7 +65,7 @@ Optional:
 - `host` (String) The host URL for the import source.
 - `password` (String, Sensitive) The password for authentication when importing.
 - `repo` (String) The provider repository to import from.
-- `type` (String) The type of SCM provider (e.g., github) when importing.
+- `type` (String) The type of SCM provider (github, gitlab, bitbucket, stash, gitea, gogs) when importing.
 - `username` (String) The username for authentication when importing.
 
 ## Import

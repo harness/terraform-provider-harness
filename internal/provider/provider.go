@@ -458,7 +458,7 @@ func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
 	cfg := code.NewConfiguration()
 	client := code.NewAPIClient(&code.Configuration{
 		AccountId:     d.Get("account_id").(string),
-		BasePath:      d.Get("endpoint").(string) + "/code/api/v1",
+		BasePath:      d.Get("endpoint").(string) + "/code/api/v1", // todo: this should be fixed in go sdk later
 		ApiKey:        d.Get("platform_api_key").(string),
 		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
 		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
