@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceService() *schema.Resource {
@@ -36,6 +37,104 @@ func ResourceService() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
+			"branch": {
+				Description: "Name of the branch.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"file_path": {
+				Description: "File path of the Entity in the repository.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"commit_message": {
+				Description: "Commit message used for the merge commit.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"base_branch": {
+				Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"connector_ref": {
+				Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"store_type": {
+				Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
+				Computed:     true,
+			},
+			"repo_name": {
+				Description: "Name of the repository.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"last_object_id": {
+				Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"last_commit_id": {
+				Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"is_harness_code_repo": {
+				Description: "If the repo is in harness code",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"is_new_branch": {
+				Description: "If the branch being created is new",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"fetch_resolved_yaml": {
+				Description: "to fetch resoled service yaml",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"load_from_cache": {
+				Description: "Load service yaml from catch",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"load_from_fallback_branch": {
+				Description: "Load service yaml from fallback branch",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"is_force_import": {
+				Description: "force import service from remote",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+			"import_from_git": {
+				Description: "import service from git",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
+
 		},
 	}
 
@@ -49,10 +148,8 @@ func resourceServiceRead(ctx context.Context, d *schema.ResourceData, meta inter
 
 	id := d.Id()
 
-	resp, httpResp, err := c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
-		OrgIdentifier:     helpers.BuildField(d, "org_id"),
-		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-	})
+	svcParams := getSvcParams(d)
+	resp, httpResp, err := c.ServicesApi.GetServiceV2(ctx, id, c.AccountId, svcParams)
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
@@ -68,25 +165,33 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 
 	var err error
 	var resp nextgen.ResponseDtoServiceResponse
+	var importResp nextgen.ResponseServiceImportResponseDto
 	var httpResp *http.Response
 	svc := buildService(d)
 	id := d.Id()
 
 	if id == "" {
-		resp, httpResp, err = c.ServicesApi.CreateServiceV2(ctx, c.AccountId, &nextgen.ServicesApiCreateServiceV2Opts{
-			Body: optional.NewInterface(svc),
-		})
+		if d.Get("import_from_git").(bool) {
+		svcParams := svcImportParam(svc, d)
+		importResp, httpResp, err = c.ServicesApi.ImportService(ctx, c.AccountId, &svcParams)
 	} else {
-		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &nextgen.ServicesApiUpdateServiceV2Opts{
-			Body: optional.NewInterface(svc),
-		})
+		svcParams := svcCreateParam(svc, d)
+		resp, httpResp, err = c.ServicesApi.CreateServiceV2(ctx, c.AccountId, &svcParams)
+	}
+	} else {
+		svcParams := svcUpdateParam(svc, d)
+		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &svcParams)
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readService(d, resp.Data.Service)
+	if d.Get("import_from_git").(bool) {
+		readImportRes(d, importResp.Data.Identifier)
+	} else {
+	    readService(d, resp.Data.Service)
+	}
 
 	return nil
 }
@@ -128,3 +233,70 @@ func readService(d *schema.ResourceData, project *nextgen.ServiceResponseDetails
 	d.Set("tags", helpers.FlattenTags(project.Tags))
 	d.Set("yaml", project.Yaml)
 }
+
+func readImportRes(d *schema.ResourceData, identifier string) {
+	d.SetId(identifier)
+	d.Set("identifier", identifier)
+}
+
+func getSvcParams(d *schema.ResourceData) *nextgen.ServicesApiGetServiceV2Opts {
+	svcParams := &nextgen.ServicesApiGetServiceV2Opts{
+		OrgIdentifier:                 helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:             helpers.BuildField(d, "project_id"),
+		Deleted:                       helpers.BuildFieldBool(d, "deleted"),
+		FetchResolvedYaml:             helpers.BuildFieldBool(d, "fetch_resolved_yaml"),
+		Branch:                        helpers.BuildField(d, "branch"),
+		RepoName:                      helpers.BuildField(d, "repo_name"),
+		LoadFromCache:                 helpers.BuildField(d, "load_from_cache"),
+		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "load_from_fallback_branch"),
+	}
+	return svcParams
+}
+
+func svcCreateParam(svc *nextgen.ServiceRequest, d *schema.ResourceData) nextgen.ServicesApiCreateServiceV2Opts {
+	return nextgen.ServicesApiCreateServiceV2Opts{
+		Body:              optional.NewInterface(svc),
+		Branch:            helpers.BuildField(d, "branch"),
+		FilePath:          helpers.BuildField(d, "file_path"),
+		CommitMsg:         helpers.BuildField(d, "commit_msg"),
+		IsNewBranch:       helpers.BuildFieldBool(d, "is_new_branch"),
+		BaseBranch:        helpers.BuildField(d, "base_branch"),
+		ConnectorRef:      helpers.BuildField(d, "connector_ref"),
+		StoreType:         helpers.BuildField(d, "store_type"),
+		RepoName:          helpers.BuildField(d, "repo_name"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "is_harness_code_repo"),
+	}
+}
+
+func svcUpdateParam(svc *nextgen.ServiceRequest, d *schema.ResourceData) nextgen.ServicesApiUpdateServiceV2Opts {
+	return nextgen.ServicesApiUpdateServiceV2Opts{
+		Body:              optional.NewInterface(svc),
+		Branch:            helpers.BuildField(d, "branch"),
+		FilePath:          helpers.BuildField(d, "file_path"),
+		CommitMsg:         helpers.BuildField(d, "commit_msg"),
+		IsNewBranch:       helpers.BuildFieldBool(d, "is_new_branch"),
+		BaseBranch:        helpers.BuildField(d, "base_branch"),
+		ConnectorRef:      helpers.BuildField(d, "connector_ref"),
+		StoreType:         helpers.BuildField(d, "store_type"),
+		IfMatch: helpers.BuildField(d, "if_match"),
+		LastObjectId: helpers.BuildField(d, "last_object_id"),
+		LastCommitId: helpers.BuildField(d, "last_commit_id"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "is_harness_code_repo"),
+	}
+}
+
+func svcImportParam(svc *nextgen.ServiceRequest, d *schema.ResourceData) nextgen.ServicesApiImportServiceOpts {
+	return nextgen.ServicesApiImportServiceOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
+		ServiceIdentifier:     helpers.BuildField(d, "identifier"),
+		Branch:            helpers.BuildField(d, "branch"),
+		FilePath:          helpers.BuildField(d, "file_path"),
+		ConnectorRef:      helpers.BuildField(d, "connector_ref"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "is_harness_code_repo"),
+		RepoName:          helpers.BuildField(d, "repo_name"),
+		IsForceImport: helpers.BuildFieldBool(d, "is_force_import"),
+	}
+}
+
+
