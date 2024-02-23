@@ -5,7 +5,6 @@ resource "harness_platform_repo" "test" {
   project_id     = "test_project_123"
   default_branch = "main"
   description    = "test_description_123"
-  account_id     = "account_id"
   is_public      = true
   source {
     repo = "octocat/hello-worId"
