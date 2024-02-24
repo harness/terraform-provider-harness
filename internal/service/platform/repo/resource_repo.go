@@ -219,7 +219,7 @@ func createSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"name": {
-			Description: "Name of the resource.",
+			Description: "Name of the repository.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
@@ -234,7 +234,7 @@ func createSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"default_branch": {
-			Description:      "Default branch of the repository.",
+			Description:      "Default branch of the repository (Applicate only for create).",
 			Type:             schema.TypeString,
 			Optional:         true,
 			DiffSuppressFunc: createOnlyFieldDiffFunc, // handle default branch update
@@ -250,7 +250,7 @@ func createSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"id": {
-			Description: "ID of the repository.",
+			Description: "Internal ID of the repository.",
 			Type:        schema.TypeString,
 			Computed:    true,
 		},
@@ -259,6 +259,7 @@ func createSchema() map[string]*schema.Schema {
 			Type:        schema.TypeBool,
 			Computed:    true,
 		},
+
 		// "is_public": {
 		// 	Description: "Whether the repository is public.",
 		// 	Type:        schema.TypeBool,
@@ -293,7 +294,7 @@ func createSchema() map[string]*schema.Schema {
 			DiffSuppressFunc: createOnlyFieldDiffFunc,
 		},
 		"source": {
-			Description:      "Provider related configurations.",
+			Description:      "Configuration for importing an existing repository from SCM provider.",
 			Type:             schema.TypeSet,
 			Optional:         true,
 			DiffSuppressFunc: createOnlyFieldDiffFunc,

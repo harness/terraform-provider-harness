@@ -37,23 +37,23 @@ resource "harness_platform_repo" "test" {
 
 ### Optional
 
-- `default_branch` (String) Default branch of the repository.
+- `default_branch` (String) Default branch of the repository (Applicate only for create).
 - `description` (String) Description of the repository.
 - `git_ignore` (String) Repository should be created with specified predefined gitignore file.
 - `license` (String) Repository should be created with specified predefined license file.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `readme` (Boolean) Repository should be created with readme file.
-- `source` (Block Set) Provider related configurations. (see [below for nested schema](#nestedblock--source))
+- `source` (Block Set) Configuration for importing an existing repository from SCM provider. (see [below for nested schema](#nestedblock--source))
 
 ### Read-Only
 
 - `created` (Number) Timestamp when the repository was created.
 - `created_by` (Number) ID of the user who created the repository.
 - `git_url` (String) Git URL of the repository.
-- `id` (String) ID of the repository.
+- `id` (String) Internal ID of the repository.
 - `importing` (Boolean) Whether the repository is being imported.
-- `name` (String) Name of the resource.
+- `name` (String) Name of the repository.
 - `path` (String) Path of the repository.
 - `updated` (Number) Timestamp when the repository was last updated.
 

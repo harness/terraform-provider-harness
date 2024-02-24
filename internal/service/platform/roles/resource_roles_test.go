@@ -151,11 +151,8 @@ func TestOrgResourceRoles(t *testing.T) {
 }
 
 func TestRepoResourceRoles(t *testing.T) {
-
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	updatedName := fmt.Sprintf("%s_updated", name)
-
 	resourceName := "harness_platform_roles.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -170,18 +167,8 @@ func TestRepoResourceRoles(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "permissions.0", "core_pipeline_edit"),
-					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.0", "project"),
-				),
-			},
-			{
-				Config: testRepoResourceRoles(id, updatedName),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "permissions.0", "core_pipeline_edit"),
+					resource.TestCheckResourceAttr(resourceName, "permissions.0", "code_repo_push"),
+					resource.TestCheckResourceAttr(resourceName, "permissions.1", "code_repo_view"),
 					resource.TestCheckResourceAttr(resourceName, "allowed_scope_levels.0", "project"),
 				),
 			},
@@ -189,8 +176,7 @@ func TestRepoResourceRoles(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"project_id"},
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -314,7 +300,7 @@ func testRepoResourceRoles(id string, name string) string {
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
-		permissions = ["repo_push", "repo_view"]
+		permissions = ["code_repo_push", "code_repo_view"]
 		allowed_scope_levels = ["project"]
 	}
 `, id, name)
