@@ -9,7 +9,14 @@
 package code
 
 import (
-	"net/http"
+	"fmt"
+
+	"github.com/harness/harness-go-sdk/harness"
+	"github.com/harness/harness-go-sdk/harness/helpers"
+	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-go-sdk/logging"
+	"github.com/hashicorp/go-retryablehttp"
+	log "github.com/sirupsen/logrus"
 )
 
 // contextKeys are used to identify the type of value in the context.
@@ -49,20 +56,34 @@ type APIKey struct {
 }
 
 type Configuration struct {
+	AccountId     string            `json:"accountId,omitempty"`
+	ApiKey        string            `json:"apiKey,omitempty"`
 	BasePath      string            `json:"basePath,omitempty"`
 	Host          string            `json:"host,omitempty"`
 	Scheme        string            `json:"scheme,omitempty"`
 	DefaultHeader map[string]string `json:"defaultHeader,omitempty"`
 	UserAgent     string            `json:"userAgent,omitempty"`
-	HTTPClient    *http.Client
+	HTTPClient    *retryablehttp.Client
+	Logger        *log.Logger
+	DebugLogging  bool
 }
 
 func NewConfiguration() *Configuration {
-	cfg := &Configuration{
-		BasePath:      "/api/v1",
-		DefaultHeader: make(map[string]string),
-		UserAgent:     "Swagger-Codegen/1.0.0/go",
+	logger := logging.NewLogger()
+	if helpers.EnvVars.TfLog.Get() == "DEBUG" {
+		logger.SetLevel(log.DebugLevel)
 	}
+
+	cfg := &Configuration{
+		AccountId:     helpers.EnvVars.AccountId.Get(),
+		ApiKey:        helpers.EnvVars.PlatformApiKey.Get(),
+		BasePath:      helpers.EnvVars.Endpoint.GetWithDefault(utils.BaseUrl) + "/code/api/v1",
+		DefaultHeader: make(map[string]string),
+		HTTPClient:    utils.GetDefaultHttpClient(logger),
+		Logger:        logger,
+		UserAgent:     fmt.Sprintf("%s-%s", harness.SDKName, harness.SDKVersion),
+	}
+
 	return cfg
 }
 
