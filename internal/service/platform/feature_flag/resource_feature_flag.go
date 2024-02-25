@@ -2,6 +2,8 @@ package feature_flag
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 
@@ -130,6 +132,21 @@ func ResourceFeatureFlag() *schema.Resource {
 							Description: "Identifier of the Environment",
 							Type:        schema.TypeString,
 							Required:    true,
+						},
+						"state": {
+							Description: "State of the flag in this environment. Possible values are 'on' and 'off'",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"default_on_variation": {
+							Description: "Default variation to be served when flag is 'on'",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"default_off_variation": {
+							Description: "Default variation to be served when flag is 'off'",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"add_target_group_rule": {
 							Description: "The targeting rules for the flag",
@@ -274,9 +291,8 @@ var KindMap = map[string]string{
 
 // TargetRules is the target rules for the feature flag
 type TargetRules struct {
-	Kind      *string   `json:"kind,omitempty"`
-	Variation *string   `json:"variation,omitempty"`
-	Targets   []*string `json:"targets,omitempty"`
+	Variation string   `json:"variation,omitempty"`
+	Targets   []string `json:"targets,omitempty"`
 }
 
 // Variation is the variation for the feature flag
@@ -371,6 +387,14 @@ type FFPatchOpts struct {
 	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
+type Environment struct {
+	Identifier          string        `json:"identifier"`
+	DefaultOnVariation  string        `json:"default_on_variation"`
+	DefaultOffVariation string        `json:"default_off_variation"`
+	State               string        `json:"state"`
+	TargetRules         []TargetRules `json:"add_target_rule"`
+}
+
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
@@ -390,7 +414,8 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 
-	readOpts := buildFFReadOpts(d)
+	// START READ/UPDATE LOGIC
+	readOpts := buildFFReadOpts(d, "")
 
 	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
 
@@ -399,6 +424,7 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	readFeatureFlag(d, &resp, qp)
+	// END READ/UPDATE LOGIC
 
 	return nil
 }
@@ -413,17 +439,56 @@ func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	qp := buildFFQueryParameters(d)
-	opts := buildFFReadOpts(d)
 
-	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
+	log.Printf("%v", d.State())
+	var environmentIdentifiers []string
 
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+	for _, env := range getEnvironmentData(d) {
+		log.Printf("environment added %v", env)
+		environmentIdentifiers = append(environmentIdentifiers, env.Identifier)
+	}
+	if len(environmentIdentifiers) == 0 {
+		environmentIdentifiers = []string{""}
 	}
 
-	readFeatureFlag(d, &resp, qp)
+	// get flag for each env in a loop
+	for _, env := range environmentIdentifiers {
+		opts := buildFFReadOpts(d, env)
+		resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
+
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+		readFeatureFlag(d, &resp, qp)
+	}
 
 	return nil
+}
+
+func getEnvironmentData(d *schema.ResourceData) []Environment {
+	log.Println("Getting environment data")
+	var environments []Environment
+	// get environment key
+	if envData, ok := d.GetOk("environment"); ok {
+		// marshal to bytes
+		jsonData, err := json.Marshal(envData)
+		if err != nil {
+			log.Println("Error:", err)
+			return environments
+		}
+		log.Printf("environment json string %s", string(jsonData))
+
+		// unmarshal into environment array
+		err = json.Unmarshal(jsonData, &environments)
+		if err != nil {
+			log.Println("Error:", err)
+			return environments
+		}
+		log.Printf("environment data %v", environments)
+	}
+
+	return environments
 }
 
 func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -437,7 +502,6 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	qp := buildFFQueryParameters(d)
 	opts := buildFFCreateOpts(d)
-	readOpts := buildFFReadOpts(d)
 
 	var err error
 	var resp nextgen.Feature
@@ -465,6 +529,9 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 
+	// START READ/UPDATE LOGIC
+	readOpts := buildFFReadOpts(d, "")
+
 	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
 
 	if err != nil {
@@ -472,6 +539,7 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	readFeatureFlag(d, &resp, qp)
+	// END READ/UPDATE LOGIC
 
 	return nil
 }
@@ -507,6 +575,66 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.Set("owner", strings.Join(flag.Owner, ","))
 	d.Set("org_id", qp.OrganizationId)
 	d.Set("variation", expandVariations(flag.Variations))
+	// update environment field
+	if flag.EnvProperties != nil {
+		var targetRules []TargetRules
+		for _, rule := range flag.EnvProperties.VariationMap {
+			var targets []string
+			for _, t := range rule.Targets {
+				targets = append(targets, t.Identifier)
+			}
+			targetRules = append(targetRules, TargetRules{
+				Variation: rule.Variation,
+				Targets:   targets,
+			})
+		}
+		updatedEnv := Environment{
+			Identifier:          flag.EnvProperties.Environment,
+			DefaultOnVariation:  flag.EnvProperties.DefaultServe.Variation,
+			DefaultOffVariation: flag.EnvProperties.OffVariation,
+			State:               string(*flag.EnvProperties.State),
+			TargetRules:         targetRules,
+		}
+		log.Printf("updated environment %v", updatedEnv)
+
+		// add environment data as an upsert - check array and if environment already exists replace it - if not add it to array
+		environments := getEnvironmentData(d)
+		var updated bool
+		for i, env := range environments {
+			if env.Identifier == updatedEnv.Identifier {
+				environments[i] = updatedEnv
+				updated = true
+			}
+		}
+		// if env is new then add to array
+		if !updated {
+			environments = append(environments, updatedEnv)
+		}
+		d.Set("environment", expandEnvironments(environments))
+	}
+
+}
+
+func expandEnvironments(environments []Environment) []interface{} {
+	var result []interface{}
+	for _, env := range environments {
+		var targetRules []interface{}
+		for _, rule := range env.TargetRules {
+			targetRules = append(targetRules, map[string]interface{}{
+				"variation": rule.Variation,
+				"targets":   rule.Targets,
+			})
+		}
+		result = append(result, map[string]interface{}{
+			"identifier":            env.Identifier,
+			"state":                 env.State,
+			"default_on_variation":  env.DefaultOnVariation,
+			"default_off_variation": env.DefaultOffVariation,
+			"add_target_rule":       targetRules,
+		})
+	}
+
+	return result
 }
 
 func expandVariations(variations []nextgen.Variation) []interface{} {
@@ -672,30 +800,6 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 			if envMap, ok := env.(map[string]interface{}); ok {
 				environment = envMap["identifier"].(string)
 				// get the target rules for the environment
-				if targetRulesData, ok := envMap["add_target_rule"]; ok {
-					for _, targetRuleData := range targetRulesData.([]interface{}) {
-						vMap := targetRuleData.(map[string]interface{})
-						var targets []*string = make([]*string, 0)
-						for _, target := range vMap["targets"].([]interface{}) {
-							targets = append(targets, aws.String(target.(string)))
-						}
-						targetRule := TargetRules{
-							Kind:      aws.String(AddTargetsToVariationTargetMap),
-							Variation: aws.String(vMap[VariationVar].(string)),
-							Targets:   targets,
-						}
-						instruction := &Instruction{
-							Kind: targetRule.Kind,
-							Parameters: &Parameter{
-								Variation: targetRule.Variation,
-								Targets:   targetRule.Targets,
-								Clauses:   nil,
-								Serve:     nil,
-							},
-						}
-						instructions = append(instructions, instruction)
-					}
-				}
 				// get the target group rules for the environment
 				if targetGroupRulesData, ok := envMap["add_target_group_rule"]; ok {
 					for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
@@ -774,10 +878,10 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 }
 
-func buildFFReadOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiGetFeatureFlagOpts {
+func buildFFReadOpts(d *schema.ResourceData, env string) *nextgen.FeatureFlagsApiGetFeatureFlagOpts {
 
 	return &nextgen.FeatureFlagsApiGetFeatureFlagOpts{
-		EnvironmentIdentifier: optional.EmptyString(),
+		EnvironmentIdentifier: optional.NewString(env),
 	}
 
 }
