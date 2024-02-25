@@ -368,6 +368,7 @@ type FFPutOpts struct {
 	Permanent           bool                `json:"permanent"`
 	Variations          []nextgen.Variation `json:"variations"`
 	Tags                []Tag               `json:"tags,omitempty"`
+	Environments        []Environment       `json:"environments,omitempty"`
 }
 
 // FFPatchOpts is the options for patching a feature flag
@@ -388,6 +389,14 @@ type FFPatchOpts struct {
 }
 
 type Environment struct {
+	Identifier          string        `json:"identifier"`
+	DefaultOnVariation  string        `json:"defaultOnVariation"`
+	DefaultOffVariation string        `json:"defaultOffVariation"`
+	State               string        `json:"state"`
+	TargetRules         []TargetRules `json:"rules"`
+}
+
+type TFEnvironment struct {
 	Identifier          string        `json:"identifier"`
 	DefaultOnVariation  string        `json:"default_on_variation"`
 	DefaultOffVariation string        `json:"default_off_variation"`
@@ -414,17 +423,7 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 
-	// START READ/UPDATE LOGIC
-	readOpts := buildFFReadOpts(d, "")
-
-	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
-
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	readFeatureFlag(d, &resp, qp)
-	// END READ/UPDATE LOGIC
+	resourceFeatureFlagRead(ctx, d, meta)
 
 	return nil
 }
@@ -432,6 +431,7 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
+	log.Printf("%v", d.State())
 	id := d.Id()
 	if id == "" {
 		d.MarkNewResource()
@@ -440,7 +440,6 @@ func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta i
 
 	qp := buildFFQueryParameters(d)
 
-	log.Printf("%v", d.State())
 	var environmentIdentifiers []string
 
 	for _, env := range getEnvironmentData(d) {
@@ -460,35 +459,10 @@ func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta i
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
-		readFeatureFlag(d, &resp, qp)
+		readFeatureFlag(d, &resp, qp, env)
 	}
 
 	return nil
-}
-
-func getEnvironmentData(d *schema.ResourceData) []Environment {
-	log.Println("Getting environment data")
-	var environments []Environment
-	// get environment key
-	if envData, ok := d.GetOk("environment"); ok {
-		// marshal to bytes
-		jsonData, err := json.Marshal(envData)
-		if err != nil {
-			log.Println("Error:", err)
-			return environments
-		}
-		log.Printf("environment json string %s", string(jsonData))
-
-		// unmarshal into environment array
-		err = json.Unmarshal(jsonData, &environments)
-		if err != nil {
-			log.Println("Error:", err)
-			return environments
-		}
-		log.Printf("environment data %v", environments)
-	}
-
-	return environments
 }
 
 func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -500,11 +474,11 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		d.MarkNewResource()
 	}
 
+	log.Printf("%v", d.State())
 	qp := buildFFQueryParameters(d)
 	opts := buildFFCreateOpts(d)
 
 	var err error
-	var resp nextgen.Feature
 	var httpResp *http.Response
 
 	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
@@ -516,30 +490,32 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		}
 		return helpers.HandleApiError(err, d, httpResp)
 	}
+	log.Printf("%v", d.State())
 
-	patchOpts := buildFFPatchOpts(d)
+	// make updates for anything that can't be configured with initial create request
+	putOpts := buildFFPutOpts(d)
 
-	// skip patch if no updates needed
-	if patchOpts != nil {
-		// update the feature flag with any fields that can't be created via initial post via patch requests
-		_, httpResp, err = c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
+	if opts != nil {
+		httpResp, err = c.FeatureFlagsApi.PutFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, putOpts)
 
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 	}
 
-	// START READ/UPDATE LOGIC
 	readOpts := buildFFReadOpts(d, "")
 
-	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
+	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readFeatureFlag(d, &resp, qp)
-	// END READ/UPDATE LOGIC
+	readFeatureFlag(d, &resp, qp, "")
+
+	log.Printf("%v", d.State())
+	log.Println("reading flag")
+	resourceFeatureFlagRead(ctx, d, meta)
 
 	return nil
 }
@@ -561,7 +537,7 @@ func resourceFeatureFlagDelete(ctx context.Context, d *schema.ResourceData, meta
 	return nil
 }
 
-func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryParameters) {
+func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryParameters, env string) {
 	d.SetId(flag.Identifier)
 	d.Set("identifier", flag.Identifier)
 	d.Set("name", flag.Name)
@@ -576,7 +552,7 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.Set("org_id", qp.OrganizationId)
 	d.Set("variation", expandVariations(flag.Variations))
 	// update environment field
-	if flag.EnvProperties != nil {
+	if flag.EnvProperties != nil && env != "" {
 		var targetRules []TargetRules
 		for _, rule := range flag.EnvProperties.VariationMap {
 			var targets []string
@@ -613,6 +589,42 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 		d.Set("environment", expandEnvironments(environments))
 	}
 
+}
+
+func getEnvironmentData(d *schema.ResourceData) []Environment {
+	log.Println("Getting environment data")
+	var tfEnvironments []TFEnvironment
+	var environments []Environment
+	// get environment key
+	if envData, ok := d.Get("environment").([]interface{}); ok {
+		// marshal to bytes
+		jsonData, err := json.Marshal(envData)
+		if err != nil {
+			log.Println("Error:", err)
+			return environments
+		}
+		log.Printf("environment json string %s", string(jsonData))
+
+		// unmarshal into environment array
+		err = json.Unmarshal(jsonData, &tfEnvironments)
+		if err != nil {
+			log.Println("Error:", err)
+			return environments
+		}
+		log.Printf("environment data %v", environments)
+	}
+
+	for _, tfEnv := range tfEnvironments {
+		environments = append(environments, Environment{
+			Identifier:          tfEnv.Identifier,
+			DefaultOnVariation:  tfEnv.DefaultOnVariation,
+			DefaultOffVariation: tfEnv.DefaultOffVariation,
+			State:               tfEnv.State,
+			TargetRules:         tfEnv.TargetRules,
+		})
+	}
+
+	return environments
 }
 
 func expandEnvironments(environments []Environment) []interface{} {
@@ -747,6 +759,12 @@ func buildFFPutOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPutFeatureFl
 	}
 	opts.Tags = tags
 
+	// add environment level attributes
+	opts.Environments = getEnvironmentData(d)
+
+	log.Println("flag update body")
+	jsonData, _ := json.Marshal(opts)
+	log.Println(string(jsonData))
 	return &nextgen.FeatureFlagsApiPutFeatureFlagOpts{
 		Body: optional.NewInterface(opts),
 	}
