@@ -219,8 +219,8 @@ type FFQueryParameters struct {
 
 // TargetRules is the target rules for the feature flag
 type TargetRules struct {
-	Variation string   `json:"variation,omitempty"`
-	Targets   []string `json:"targets,omitempty"`
+	Variation string   `json:"variation"`
+	Targets   []string `json:"targets"`
 }
 
 // Tag is a tag for the feature flag
