@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/antihax/optional"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -148,54 +147,6 @@ func ResourceFeatureFlag() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
-						"add_target_group_rule": {
-							Description: "The targeting rules for the flag",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Computed:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"group_name": {
-										Description: "The name of the target group",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"variation": {
-										Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"distribution": {
-										Description: "The distribution of the rule",
-										Type:        schema.TypeList,
-										Optional:    true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"variations": {
-													Description: "The variations of the rule",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"variation": {
-																Description: "The identifier of the variation",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"weight": {
-																Description: "The weight of the variation",
-																Type:        schema.TypeInt,
-																Optional:    true,
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 						"add_target_rule": {
 							Description: "The targeting rules for the flag",
 							Type:        schema.TypeList,
@@ -260,33 +211,10 @@ func ResourceFeatureFlag() *schema.Resource {
 	return resource
 }
 
-const (
-	VariationVar                   = "variation"
-	Weight                         = "weight"
-	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
-	AddRule                        = "addRule"
-	AddTag                         = "addTag"
-	RemoveTag                      = "removeTag"
-	RemoveRule                     = "removeRule"
-	RemoveTarget                   = "removeTargetsToVariationTargetMap"
-	GroupName                      = "group_name"
-	DistributionVar                = "distribution"
-	SegmentMatch                   = "segmentMatch"
-	BuckedBy                       = "identifier"
-)
-
 type FFQueryParameters struct {
 	Identifier     string
 	OrganizationId string
 	ProjectId      string
-}
-
-// KindMap is a map of the kind to the actual kind
-var KindMap = map[string]string{
-	"removeTargets": "removeTargetsToVariationTargetMap",
-	"removeRule":    "removeRule",
-	"addRule":       "addRule",
-	"addTargets":    "addTargetsToVariationTargetMap",
 }
 
 // TargetRules is the target rules for the feature flag
@@ -295,68 +223,24 @@ type TargetRules struct {
 	Targets   []string `json:"targets,omitempty"`
 }
 
-// Variation is the variation for the feature flag
-type Variation struct {
-	Variation *string `json:"variation,omitempty"`
-	Weight    *int    `json:"weight,omitempty"`
-}
-
-// Distribution is the distribution for the feature flag
-type Distribution struct {
-	BuckedBy   *string      `json:"buckedBy,omitempty"`
-	Variations []*Variation `json:"variations,omitempty"`
-}
-
-// TargetGroupRules is the target group rules for the feature flag
-type TargetGroupRules struct {
-	Kind      *string `json:"kind,omitempty"`
-	GroupName *string `json:"groupName,omitempty"`
-	Variation *string `json:"variation,omitempty"`
-}
-
-// Serve ...
-type Serve struct {
-	Variation    *string       `json:"variation,omitempty"`
-	Distribution *Distribution `json:"distribution,omitempty"`
-}
-
 // Tag is a tag for the feature flag
 type Tag struct {
 	Name       string `json:"name"`
 	Identifier string `json:"identifier"`
 }
 
-// Parameter ...
-type Parameter struct {
-	Variation  *string           `json:"variation,omitempty"`
-	Targets    []*string         `json:"targets,omitempty"`
-	Priority   *string           `json:"priority,omitempty"`
-	Clauses    []*nextgen.Clause `json:"clauses,omitempty"`
-	Serve      *Serve            `json:"serve,omitempty"`
-	Name       *string           `json:"name,omitempty"`
-	Identifier *string           `json:"identifier,omitempty"`
-}
-
-// Instruction defines the instruction for the feature flag
-type Instruction struct {
-	Kind       *string    `json:"kind,omitempty"`
-	Parameters *Parameter `json:"parameters,omitempty"`
-}
-
-type FFOpts struct {
+type FFCreateOpts struct {
 	Identifier          string              `json:"identifier"`
 	Name                string              `json:"name"`
 	Description         string              `json:"description,omitempty"`
 	Archived            bool                `json:"archived,omitempty"`
 	DefaultOffVariation string              `json:"defaultOffVariation"`
 	DefaultOnVariation  string              `json:"defaultOnVariation"`
-	GitDetails          nextgen.GitDetails  `json:"gitDetails,omitempty"`
 	Kind                string              `json:"kind"`
 	Owner               string              `json:"owner,omitempty"`
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
 type FFPutOpts struct {
@@ -369,23 +253,6 @@ type FFPutOpts struct {
 	Variations          []nextgen.Variation `json:"variations"`
 	Tags                []Tag               `json:"tags,omitempty"`
 	Environments        []Environment       `json:"environments,omitempty"`
-}
-
-// FFPatchOpts is the options for patching a feature flag
-type FFPatchOpts struct {
-	Identifier          string              `json:"identifier"`
-	Name                string              `json:"name"`
-	Description         string              `json:"description,omitempty"`
-	Archived            bool                `json:"archived,omitempty"`
-	DefaultOffVariation string              `json:"defaultOffVariation"`
-	DefaultOnVariation  string              `json:"defaultOnVariation"`
-	GitDetails          nextgen.GitDetails  `json:"gitDetails,omitempty"`
-	Kind                string              `json:"kind"`
-	Owner               string              `json:"owner,omitempty"`
-	Permanent           bool                `json:"permanent"`
-	Project             string              `json:"project"`
-	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
 type Environment struct {
@@ -503,18 +370,7 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		}
 	}
 
-	readOpts := buildFFReadOpts(d, "")
-
-	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
-
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	readFeatureFlag(d, &resp, qp, "")
-
-	log.Printf("%v", d.State())
-	log.Println("reading flag")
+	d.SetId(id)
 	resourceFeatureFlagRead(ctx, d, meta)
 
 	return nil
@@ -672,7 +528,7 @@ func buildFFQueryParameters(d *schema.ResourceData) *FFQueryParameters {
 }
 
 func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFeatureFlagOpts {
-	opts := &FFOpts{
+	opts := &FFCreateOpts{
 		Identifier:          d.Get("identifier").(string),
 		Name:                d.Get("name").(string),
 		DefaultOffVariation: d.Get("default_off_variation").(string),
@@ -767,132 +623,6 @@ func buildFFPutOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPutFeatureFl
 	log.Println(string(jsonData))
 	return &nextgen.FeatureFlagsApiPutFeatureFlagOpts{
 		Body: optional.NewInterface(opts),
-	}
-}
-
-func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatureOpts {
-	opts := &FFPatchOpts{
-		Identifier:          d.Get("identifier").(string),
-		Name:                d.Get("name").(string),
-		DefaultOffVariation: d.Get("default_off_variation").(string),
-		DefaultOnVariation:  d.Get("default_on_variation").(string),
-		Project:             d.Get("project_id").(string),
-		Kind:                d.Get("kind").(string),
-	}
-
-	if desc, ok := d.GetOk("description"); ok {
-		opts.Description = desc.(string)
-	}
-
-	if owner, ok := d.GetOk("owner"); ok {
-		opts.Owner = owner.(string)
-	}
-
-	if archived, ok := d.GetOk("archived"); ok {
-		opts.Archived = archived.(bool)
-	}
-
-	var variations []nextgen.Variation
-	variationsData := d.Get("variation").([]interface{})
-	for _, variationData := range variationsData {
-		vMap := variationData.(map[string]interface{})
-		variation := nextgen.Variation{
-			Identifier:  vMap["identifier"].(string),
-			Value:       vMap["value"].(string),
-			Name:        vMap["name"].(string),
-			Description: vMap["description"].(string),
-		}
-		variations = append(variations, variation)
-	}
-	opts.Variations = variations
-
-	var environment string
-	var instructions []*Instruction
-
-	// if the environment is set, then we need to add the instructions
-	// so we moved the entire block of code to here
-	if envData, ok := d.GetOk("environment"); ok {
-		// for each environment in the list...
-		for _, env := range envData.([]interface{}) {
-			// get the current objects for the environment
-			if envMap, ok := env.(map[string]interface{}); ok {
-				environment = envMap["identifier"].(string)
-				// get the target rules for the environment
-				// get the target group rules for the environment
-				if targetGroupRulesData, ok := envMap["add_target_group_rule"]; ok {
-					for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
-						vMap := targetGroupRuleData.(map[string]interface{})
-						targetGroupRule := TargetGroupRules{
-							Kind:      aws.String(AddRule),
-							GroupName: aws.String(vMap[GroupName].(string)),
-							Variation: aws.String(vMap[VariationVar].(string)),
-						}
-
-						var distribution *Distribution = nil
-						if distrib, ok := vMap[DistributionVar]; ok {
-							for _, distributionData := range distrib.([]interface{}) {
-								vMap := distributionData.(map[string]interface{})
-								distribution = &Distribution{
-									BuckedBy: aws.String(BuckedBy),
-								}
-								var variations []*Variation
-								for _, variationData := range vMap["variations"].([]interface{}) {
-									vMap := variationData.(map[string]interface{})
-									variation := &Variation{
-										Variation: aws.String(vMap[VariationVar].(string)),
-										Weight:    aws.Int(vMap[Weight].(int)),
-									}
-									variations = append(variations, variation)
-								}
-								distribution.Variations = variations
-							}
-						}
-						instruction := &Instruction{
-							Kind: targetGroupRule.Kind,
-							Parameters: &Parameter{
-								Serve: &Serve{
-									Variation:    targetGroupRule.Variation,
-									Distribution: distribution,
-								},
-								Clauses: []*nextgen.Clause{
-									{
-										Op:     SegmentMatch,
-										Values: []string{aws.StringValue(targetGroupRule.GroupName)},
-									},
-								},
-							},
-						}
-						instructions = append(instructions, instruction)
-					}
-				}
-			}
-		}
-	}
-
-	// add the tags to the instructions
-	if tagData, ok := d.GetOk("tags"); ok {
-		for _, tag := range tagData.([]interface{}) {
-			if tagMap, ok := tag.(map[string]interface{}); ok {
-				instruction := &Instruction{
-					Kind: aws.String(AddTag),
-					Parameters: &Parameter{
-						Name:       aws.String(tagMap["name"].(string)),
-						Identifier: aws.String(tagMap["identifier"].(string)),
-					},
-				}
-				instructions = append(instructions, instruction)
-			}
-		}
-	}
-
-	opts.Instructions = instructions
-	if len(instructions) == 0 {
-		return nil
-	}
-
-	return &nextgen.FeatureFlagsApiPatchFeatureOpts{
-		Body:                  optional.NewInterface(opts),
-		EnvironmentIdentifier: optional.NewString(environment),
 	}
 }
 
