@@ -384,6 +384,7 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	if attr, ok := d.GetOk("oidc_authentication"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.OidcAuthentication
+		connector.Aws.Credential.OidcConfig = &nextgen.AwsOidcConfigSpec{}
 
 		if attr := config["iam_role_arn"].(string); attr != "" {
 			connector.Aws.Credential.OidcConfig.IamRoleArn = attr
