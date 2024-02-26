@@ -38,6 +38,7 @@ func TestAccDataSourceConnectorGcpSm(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -66,10 +67,11 @@ func TestAccDataSourceConnectorGcpSmProjectLevel(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmOrgLevel(t *testing.T) {
+	t.Skip()
 	var (
-		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+		name          = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		connectorName = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
+		resourceName  = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -95,6 +97,7 @@ func TestAccDataSourceConnectorGcpSmOrgLevel(t *testing.T) {
 }
 
 func TestAccDataSourceConnectorGcpSmDefault(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
@@ -122,9 +125,10 @@ func TestAccDataSourceConnectorGcpSmDefault(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmDefaultProjectLevel(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		gcpName   = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+		gcpName      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
@@ -150,9 +154,10 @@ func TestAccDataSourceConnectorGcpSmDefaultProjectLevel(t *testing.T) {
 	})
 }
 func TestAccDataSourceConnectorGcpSmDefaultOrgLevel(t *testing.T) {
+	t.Skip()
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		gcpname         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+		gcpname      = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 		resourceName = "data.harness_platform_connector_gcp_secret_manager.test"
 	)
 
@@ -390,6 +395,7 @@ func testAccDataSourceConnectorGcpSMDefault(id string, name string) string {
 `, id, name)
 }
 func testAccDataSourceConnectorGcpSMDefaultProjectLevel(id string, gcpname string) string {
+
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"

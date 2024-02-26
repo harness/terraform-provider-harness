@@ -35,6 +35,7 @@ import (
 	cd_trigger "github.com/harness/terraform-provider-harness/internal/service/cd/trigger"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/user"
 	"github.com/harness/terraform-provider-harness/internal/service/cd/yamlconfig"
+	pl_account "github.com/harness/terraform-provider-harness/internal/service/platform/account"
 	pl_apikey "github.com/harness/terraform-provider-harness/internal/service/platform/api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/load_balancer"
 	as_rule "github.com/harness/terraform-provider-harness/internal/service/platform/autostopping/rule"
@@ -113,13 +114,13 @@ func Provider(version string) func() *schema.Provider {
 				"endpoint": {
 					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.BaseUrl),
 				},
 				"account_id": {
 					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.AccountId.String()),
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.AccountId.String(), nil),
 				},
 				"api_key": {
@@ -172,6 +173,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_connector_pdc":                   connector.DatasourceConnectorPdc(),
+				"harness_platform_current_account":                 pl_account.DataSourceCurrentAccount(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),

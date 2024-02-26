@@ -20,7 +20,7 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 		}
 		if httpResp != nil && httpResp.StatusCode == 403 {
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n"+
+				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
 		return diag.Errorf(erro.Error())
@@ -36,7 +36,7 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 
 		if httpResp != nil && httpResp.StatusCode == 403 {
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n"+
+				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
 		var jsonMap map[string]interface{}
@@ -60,15 +60,13 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 		}
 		if httpResp != nil && httpResp.StatusCode == 403 {
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n"+
+				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
-		if erro.Model() != nil {
-			if erro.Code() == nextgen.ErrorCodes.ResourceNotFound {
-				d.SetId("")
-				d.MarkNewResource()
-				return nil
-			}
+		if erro.Model() != nil && (erro.Code() == nextgen.ErrorCodes.ResourceNotFound || erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
 		}
 		return diag.Errorf(erro.Error())
 	}
@@ -82,7 +80,7 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 		}
 		if httpResp != nil && httpResp.StatusCode == 403 {
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
-				"1) Please check if the token has required permission for this operation.\n"+
+				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
 

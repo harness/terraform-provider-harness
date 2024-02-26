@@ -9,8 +9,85 @@ description: |-
 # harness_platform_manual_freeze (Resource)
 
 Resource for Manual Deployment Freeze Window.
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand more about Deployment Freeze, please see  [Documentation](https://developer.harness.io/docs/continuous-delivery/manage-deployments/deployment-freeze/)
 
-## Example Usage
+## Example to create Manual Freeze at different levels (Org, Project, Account)
+### Account Level
+
+```terraform
+resource "harness_platform_manual_freeze" "example" {
+  identifier = "identifier"
+  org_id     = "orgIdentifier"
+  project_id = "projectIdentifier"
+  account_id = "accountIdentifier"
+  yaml       = <<-EOT
+      freeze:
+        name: freezeName
+        identifier: identifier
+        entityConfigs:
+          - name: r1
+            entities:
+              - filterType: All
+                type: Org
+              - filterType: All
+                type: Project
+              - filterType: All
+                type: Service
+              - filterType: All
+                type: EnvType
+        status: Disabled
+        description: hi
+        windows:
+        - timeZone: Asia/Calcutta
+          startTime: 2023-05-03 04:16 PM
+          duration: 30m
+          recurrence:
+            type: Daily
+        notificationRules: []
+        tags: {}
+      EOT
+}
+```
+
+### Org Level
+
+```terraform
+resource "harness_platform_manual_freeze" "example" {
+  identifier = "identifier"
+  org_id     = "orgIdentifier"
+  account_id = "accountIdentifier"
+  yaml       = <<-EOT
+      freeze:
+        name: freezeName
+        identifier: identifier
+        entityConfigs:
+          - name: r1
+            entities:
+              - filterType: All
+                type: Org
+              - filterType: All
+                type: Project
+              - filterType: All
+                type: Service
+              - filterType: All
+                type: EnvType
+        status: Disabled
+        description: hi
+        windows:
+        - timeZone: Asia/Calcutta
+          startTime: 2023-05-03 04:16 PM
+          duration: 30m
+          recurrence:
+            type: Daily
+        notificationRules: []
+        tags: {}
+      EOT
+}
+```
+
+### Project Level
 
 ```terraform
 resource "harness_platform_manual_freeze" "example" {
