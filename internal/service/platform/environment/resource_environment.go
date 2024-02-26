@@ -11,7 +11,7 @@ import (
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
@@ -143,8 +143,20 @@ func ResourceEnvironment() *schema.Resource {
 							Optional:    true,
 							Computed:    true,
 						},
-						"load_from_fallbackBranch": {
+						"load_from_fallback_branch": {
 							Description: "If the Entity is to be fetched from fallbackBranch",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"is_force_import": {
+							Description: "force import environment from remote even if same file path already exist",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"import_from_git": {
+							Description: "import environment from git",
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
@@ -163,13 +175,8 @@ func ResourceEnvironment() *schema.Resource {
 func resourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	resp, httpResp, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
-		OrgIdentifier:     helpers.BuildField(d, "org_id"),
-		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		ParentEntityConnectorRef: helpers.BuildField(d, "git_details.parent_entity_connector_ref"),
-		ParentEntityRepoName: helpers.BuildField(d, "git_details.parent_entity_repo_name"),
-		LoadFromFallbackBranch: helpers.BuildFieldForBoolean(d, "git_details.load_from_fallbackBranch"),
-	})
+	envParams := getEnvParams(d)
+	resp, httpResp, err := c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Id(), c.AccountId, envParams)
 
 	if err != nil {
 		return helpers.HandleReadApiError(err, d, httpResp)
@@ -185,45 +192,33 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 
 	var err error
 	var resp nextgen.ResponseDtoEnvironmentResponse
+	var importResp nextgen.EnvironmentImportResponseDto
 	var httpResp *http.Response
 	id := d.Id()
 	env := buildEnvironment(d)
 
 	if id == "" {
-		resp, httpResp, err = c.EnvironmentsApi.CreateEnvironmentV2(ctx, c.AccountId, &nextgen.EnvironmentsApiCreateEnvironmentV2Opts{
-			Body: optional.NewInterface(env),
-			StoreType: helpers.BuildField(d, "git_details.store_type"),
-			ConnectorRef: helpers.BuildField(d, "git_details.connector_ref"),
-			CommitMsg: helpers.BuildField(d, "git_details.commit_message"),
-			IsHarnessCodeRepo: helpers.BuildFieldForBoolean(d, "git_details.is_harnesscode_repo"),
-			IsNewBranch: helpers.BuildFieldForBoolean(d, "git_details.is_new_branch"),
-			Branch: helpers.BuildField(d, "git_details.branch_name"),
-			RepoName:  helpers.BuildField(d, "git_details.repo_name"),
-			FilePath: helpers.BuildField(d, "git_details.file_path"),
-			BaseBranch: helpers.BuildField(d, "git_details.base_branch"),
-		})
+		if d.Get("import_from_git").(bool) {
+			envParams := envImportParam(env, d)
+			importResp, httpResp, err = c.EnvironmentsApi.ImportEnvironment(ctx, c.AccountId, &envParams)
+		} else {
+			envParams := envCreateParam(env, d)
+			resp, httpResp, err = c.EnvironmentsApi.CreateEnvironmentV2(ctx, c.AccountId, &envParams)
+		}
 	} else {
-		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &nextgen.EnvironmentsApiUpdateEnvironmentV2Opts{
-			Body: optional.NewInterface(env),
-			StoreType: helpers.BuildField(d, "git_details.store_type"),
-			ConnectorRef: helpers.BuildField(d, "git_details.connector_ref"),
-			CommitMsg: helpers.BuildField(d, "git_details.commit_message"),
-			IsHarnessCodeRepo: helpers.BuildFieldForBoolean(d, "git_details.is_harnesscode_repo"),
-			IsNewBranch: helpers.BuildFieldForBoolean(d, "git_details.is_new_branch"),
-			Branch: helpers.BuildField(d, "git_details.branch_name"),
-			LastCommitId: helpers.BuildField(d, "git_details.lat_commit_id"),
-			RepoIdentifier: helpers.BuildField(d, "git_details.repo_name"),
-			FilePath: helpers.BuildField(d, "git_details.file_path"),
-			LastObjectId: helpers.BuildField(d, "git_details.last_object_id"),
-			BaseBranch: helpers.BuildField(d, "git_details.base_branch"),
-		})
+		envParams := envUpdateParam(env, d)
+		resp, httpResp, err = c.EnvironmentsApi.UpdateEnvironmentV2(ctx, c.AccountId, &envParams)
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	readEnvironment(d, resp.Data.Environment)
+	if d.Get("import_from_git").(bool) {
+		readImportRes(d, importResp.EnvIdentifier)
+	} else {
+	    readEnvironment(d, resp.Data.Environment)
+	}
 
 	return nil
 }
@@ -271,4 +266,67 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 	if d.Get("yaml").(string) != "" {
 		d.Set("yaml", env.Yaml)
 	}
+}
+
+func getEnvParams(d *schema.ResourceData) *nextgen.EnvironmentsApiGetEnvironmentV2Opts {
+	svcParams := &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+		OrgIdentifier:                 helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:             helpers.BuildField(d, "project_id"),
+		Deleted:                       helpers.BuildFieldBool(d, "deleted"),
+		Branch:                        helpers.BuildField(d, "git_details.0.branch"),
+		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
+		LoadFromCache:                 helpers.BuildField(d, "git_details.0.load_from_cache"),
+		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+	}
+	return svcParams
+}
+
+func envCreateParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiCreateEnvironmentV2Opts {
+	return nextgen.EnvironmentsApiCreateEnvironmentV2Opts{
+		Body:              optional.NewInterface(svc),
+		Branch:            helpers.BuildField(d, "git_details.0.branch"),
+		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
+		CommitMsg:         helpers.BuildField(d, "git_details.0.commit_message"),
+		IsNewBranch:       helpers.BuildFieldBool(d, "git_details.0.is_new_branch"),
+		BaseBranch:        helpers.BuildField(d, "git_details.0.base_branch"),
+		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
+		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
+		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+	}
+}
+
+func envUpdateParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiUpdateEnvironmentV2Opts {
+	return nextgen.EnvironmentsApiUpdateEnvironmentV2Opts{
+		Body:              optional.NewInterface(svc),
+		Branch:            helpers.BuildField(d, "git_details.0.branch"),
+		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
+		CommitMsg:         helpers.BuildField(d, "git_details.0.commit_message"),
+		IsNewBranch:       helpers.BuildFieldBool(d, "git_details.0.is_new_branch"),
+		BaseBranch:        helpers.BuildField(d, "git_details.0.base_branch"),
+		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
+		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
+		IfMatch: helpers.BuildField(d, "if_match"),
+		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
+		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+	}
+}
+
+func envImportParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsV2ApiImportEnvironmentOpts {
+	return nextgen.EnvironmentsV2ApiImportEnvironmentOpts{
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
+		Branch:            helpers.BuildField(d, "git_details.0.branch"),
+		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
+		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
+		IsForceImport: helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
+	}
+}
+
+func readImportRes(d *schema.ResourceData, identifier string) {
+	d.SetId(identifier)
+	d.Set("identifier", identifier)
 }
