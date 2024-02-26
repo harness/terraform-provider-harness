@@ -48,7 +48,7 @@ func TestOidcDataSourceConnectorAws(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceConnectorAws(name),
+				Config: testOidcDataSourceConnectorAws(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
