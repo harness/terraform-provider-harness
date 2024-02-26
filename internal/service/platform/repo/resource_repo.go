@@ -322,7 +322,7 @@ func createSchema() map[string]*schema.Schema {
 						Optional:    true,
 					},
 					"repo": {
-						Description: "The provider repository to import from.",
+						Description: "The full identifier of the repository on the SCM provider's platform.",
 						Type:        schema.TypeString,
 						Optional:    true,
 					},
