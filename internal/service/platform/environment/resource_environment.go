@@ -269,7 +269,7 @@ func readEnvironment(d *schema.ResourceData, env *nextgen.EnvironmentResponseDet
 }
 
 func getEnvParams(d *schema.ResourceData) *nextgen.EnvironmentsApiGetEnvironmentV2Opts {
-	svcParams := &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
+	return &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 		OrgIdentifier:                 helpers.BuildField(d, "org_id"),
 		ProjectIdentifier:             helpers.BuildField(d, "project_id"),
 		Deleted:                       helpers.BuildFieldBool(d, "deleted"),
@@ -277,8 +277,8 @@ func getEnvParams(d *schema.ResourceData) *nextgen.EnvironmentsApiGetEnvironment
 		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
 		LoadFromCache:                 helpers.BuildField(d, "git_details.0.load_from_cache"),
 		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+		
 	}
-	return svcParams
 }
 
 func envCreateParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiCreateEnvironmentV2Opts {
