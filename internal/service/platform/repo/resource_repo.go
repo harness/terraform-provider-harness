@@ -38,11 +38,11 @@ func resourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
 
-	repo, resp, err := c.RepositoryApi.FindRepository(
+	repo, resp, err := c.RepositoryApi.GetRepository(
 		ctx,
 		c.AccountId,
 		id,
-		&code.RepositoryApiFindRepositoryOpts{
+		&code.RepositoryApiGetRepositoryOpts{
 			OrgIdentifier:     orgID,
 			ProjectIdentifier: projectID,
 		},
