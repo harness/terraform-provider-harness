@@ -58,7 +58,7 @@ func ResourceEnvironment() *schema.Resource {
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"branch_name": {
+						"branch": {
 							Description: "Name of the branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
@@ -198,7 +198,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	env := buildEnvironment(d)
 
 	if id == "" {
-		if d.Get("import_from_git").(bool) {
+		if d.Get("git_details.0.import_from_git").(bool) {
 			envParams := envImportParam(env, d)
 			importResp, httpResp, err = c.EnvironmentsApi.ImportEnvironment(ctx, c.AccountId, &envParams)
 		} else {
@@ -214,7 +214,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	if d.Get("import_from_git").(bool) {
+	if d.Get("git_details.0.import_from_git").(bool) {
 		readImportRes(d, importResp.EnvIdentifier)
 	} else {
 	    readEnvironment(d, resp.Data.Environment)
@@ -277,13 +277,12 @@ func getEnvParams(d *schema.ResourceData) *nextgen.EnvironmentsApiGetEnvironment
 		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
 		LoadFromCache:                 helpers.BuildField(d, "git_details.0.load_from_cache"),
 		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
-		
 	}
 }
 
-func envCreateParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiCreateEnvironmentV2Opts {
+func envCreateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiCreateEnvironmentV2Opts {
 	return nextgen.EnvironmentsApiCreateEnvironmentV2Opts{
-		Body:              optional.NewInterface(svc),
+		Body:              optional.NewInterface(env),
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		CommitMsg:         helpers.BuildField(d, "git_details.0.commit_message"),
