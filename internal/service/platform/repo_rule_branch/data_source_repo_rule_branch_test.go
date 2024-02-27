@@ -1,4 +1,4 @@
-package repo_test
+package repo_rule_branch_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceProject(t *testing.T) {
+func TestAccDataSourceProjectRepoRule(t *testing.T) {
 	identifier := identifier(t.Name())
 
 	resource.UnitTest(t, resource.TestCase{
@@ -15,10 +15,9 @@ func TestAccDataSourceProject(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testProjResourceRepo(identifier, description),
+				Config: testProjResourceRepoRule(identifier, description),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
-					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
 				),
 			},

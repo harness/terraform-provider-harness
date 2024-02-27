@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -254,6 +255,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
 				"harness_platform_repo":                            repo.DataSourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoRuleBranch(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -385,6 +387,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
 				"harness_platform_repo":                            repo.ResourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoRuleBranch(),
 			},
 		}
 

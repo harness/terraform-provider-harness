@@ -1,4 +1,4 @@
-package repo
+package repo_rule_branch
 
 import (
 	"context"
@@ -10,13 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceRepo() *schema.Resource {
+func DataSourceRepoRuleBranch() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness repo.",
-
-		ReadContext: dataSourceRepoRead,
-
-		Schema: createSchema(),
+		ReadContext: dataSourceRepoRuleRead,
+		Schema:      createSchema(),
 	}
 
 	helpers.SetMultiLevelDatasourceSchemaWithoutCommonFields(resource.Schema)
@@ -24,27 +22,34 @@ func DataSourceRepo() *schema.Resource {
 	return resource
 }
 
-func dataSourceRepoRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceRepoRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
 	repoIdentifier := d.Get("identifier").(string)
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
 
-	repo, resp, err := c.RepositoryApi.GetRepository(
+	rule, resp, err := c.RepositoryApi.RuleGet(
 		ctx,
 		c.AccountId,
 		repoIdentifier,
-		&code.RepositoryApiGetRepositoryOpts{
+		d.Id(),
+		&code.RepositoryApiRuleGetOpts{
 			OrgIdentifier:     orgID,
 			ProjectIdentifier: projectID,
 		},
 	)
+	if resp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, resp)
 	}
 
-	readRepo(d, &repo, orgID.Value(), projectID.Value())
+	readRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
 
 	return nil
 }

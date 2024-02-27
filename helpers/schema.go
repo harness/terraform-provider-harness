@@ -366,6 +366,38 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+// The id used for the import should be in the format <org_id>/<project_id>/<repoIdentifier>/<identifier>
+var RepoRuleResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		if len(parts) == 2 { //Account level
+			d.Set("repo_identifier", parts[0])
+			d.Set("identifier", parts[1])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("repo_identifier", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("repo_identifier", parts[2])
+			d.Set("identifier", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
 var GitopsRepoCertResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
