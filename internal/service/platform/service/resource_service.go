@@ -38,7 +38,7 @@ func ResourceService() *schema.Resource {
 				Computed:    true,
 			},
 			"git_details": {
-				Description: "Contains parameters related to creating an Entity for Git Experience.",
+				Description: "Contains parameters related to Git Experience for remote entities",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
@@ -145,7 +145,6 @@ func ResourceService() *schema.Resource {
 				Optional:    true,
 				Computed:    true,
 			},
-
 		},
 	}
 
@@ -183,12 +182,12 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
-		svcParams := svcImportParam(svc, d)
-		importResp, httpResp, err = c.ServicesApi.ImportService(ctx, c.AccountId, &svcParams)
-	} else {
-		svcParams := svcCreateParam(svc, d)
-		resp, httpResp, err = c.ServicesApi.CreateServiceV2(ctx, c.AccountId, &svcParams)
-	}
+			svcParams := svcImportParam(svc, d)
+			importResp, httpResp, err = c.ServicesApi.ImportService(ctx, c.AccountId, &svcParams)
+		} else {
+			svcParams := svcCreateParam(svc, d)
+			resp, httpResp, err = c.ServicesApi.CreateServiceV2(ctx, c.AccountId, &svcParams)
+		}
 	} else {
 		svcParams := svcUpdateParam(svc, d)
 		resp, httpResp, err = c.ServicesApi.UpdateServiceV2(ctx, c.AccountId, &svcParams)
@@ -201,7 +200,7 @@ func resourceServiceCreateOrUpdate(ctx context.Context, d *schema.ResourceData, 
 	if d.Get("import_from_git").(bool) {
 		readImportRes(d, importResp.Data.Identifier)
 	} else {
-	    readService(d, resp.Data.Service)
+		readService(d, resp.Data.Service)
 	}
 
 	return nil
@@ -252,14 +251,14 @@ func readImportRes(d *schema.ResourceData, identifier string) {
 
 func getSvcParams(d *schema.ResourceData) *nextgen.ServicesApiGetServiceV2Opts {
 	svcParams := &nextgen.ServicesApiGetServiceV2Opts{
-		OrgIdentifier:                 helpers.BuildField(d, "org_id"),
-		ProjectIdentifier:             helpers.BuildField(d, "project_id"),
-		Deleted:                       helpers.BuildFieldBool(d, "deleted"),
-		FetchResolvedYaml:             helpers.BuildFieldBool(d, "fetch_resolved_yaml"),
-		Branch:                        helpers.BuildField(d, "git_details.0.branch"),
-		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
-		LoadFromCache:                 helpers.BuildField(d, "git_details.0.load_from_cache"),
-		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+		OrgIdentifier:          helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:      helpers.BuildField(d, "project_id"),
+		Deleted:                helpers.BuildFieldBool(d, "deleted"),
+		FetchResolvedYaml:      helpers.BuildFieldBool(d, "fetch_resolved_yaml"),
+		Branch:                 helpers.BuildField(d, "git_details.0.branch"),
+		RepoName:               helpers.BuildField(d, "git_details.0.repo_name"),
+		LoadFromCache:          helpers.BuildField(d, "git_details.0.load_from_cache"),
+		LoadFromFallbackBranch: helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
 	}
 	return svcParams
 }
@@ -289,9 +288,9 @@ func svcUpdateParam(svc *nextgen.ServiceRequest, d *schema.ResourceData) nextgen
 		BaseBranch:        helpers.BuildField(d, "git_details.0.base_branch"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
-		IfMatch: helpers.BuildField(d, "if_match"),
-		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
-		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
+		IfMatch:           helpers.BuildField(d, "if_match"),
+		LastObjectId:      helpers.BuildField(d, "git_details.0.last_object_id"),
+		LastCommitId:      helpers.BuildField(d, "git_details.0.last_commit_id"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
 	}
 }
@@ -299,15 +298,13 @@ func svcUpdateParam(svc *nextgen.ServiceRequest, d *schema.ResourceData) nextgen
 func svcImportParam(svc *nextgen.ServiceRequest, d *schema.ResourceData) nextgen.ServicesApiImportServiceOpts {
 	return nextgen.ServicesApiImportServiceOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
-		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
-		ServiceIdentifier:     helpers.BuildField(d, "identifier"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
+		ServiceIdentifier: helpers.BuildField(d, "identifier"),
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
 		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
-		IsForceImport: helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
+		IsForceImport:     helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
 	}
 }
-
-
