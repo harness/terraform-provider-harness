@@ -23,6 +23,8 @@ func (a *AwsCredential) UnmarshalJSON(data []byte) error {
 	switch a.Type_ {
 	case AwsAuthTypes.ManualConfig:
 		err = json.Unmarshal(aux.Spec, &a.ManualConfig)
+	case AwsAuthTypes.OidcAuthentication:
+		err = json.Unmarshal(aux.Spec, &a.OidcConfig)
 	case AwsAuthTypes.InheritFromDelegate:
 	case AwsAuthTypes.Irsa:
 		// do nothing
@@ -42,6 +44,8 @@ func (a *AwsCredential) MarshalJSON() ([]byte, error) {
 	switch a.Type_ {
 	case AwsAuthTypes.ManualConfig:
 		spec, err = json.Marshal(a.ManualConfig)
+	case AwsAuthTypes.OidcAuthentication:
+		spec, err = json.Marshal(a.OidcConfig)
 	case AwsAuthTypes.InheritFromDelegate:
 	case AwsAuthTypes.Irsa:
 		// do nothing

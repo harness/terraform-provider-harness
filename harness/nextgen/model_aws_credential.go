@@ -15,7 +15,8 @@ import "encoding/json"
 type AwsCredential struct {
 	CrossAccountAccess *CrossAccountAccess  `json:"crossAccountAccess,omitempty"`
 	Type_              AwsAuthType          `json:"type"`
-	ManualConfig       *AwsManualConfigSpec `json:"-"`
+	ManualConfig       *AwsManualConfigSpec `json:"-,omitempty"`
+	OidcConfig         *AwsOidcConfigSpec   `json:"-,omitempty"`
 	Spec               json.RawMessage      `json:"spec,omitempty"`
 	Region             string               `json:"region,omitempty"`
 }
