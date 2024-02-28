@@ -1,3 +1,10 @@
+# 0.30.4 (February 28,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_applications: The Path field was required. It has been updated to optional. ([#926](https://github.com/harness/terraform-provider-harness/issues/926))
+* resource/harness_platform_connector_aws: added support for OIDC Auth in AWS connector. ([#925](https://github.com/harness/terraform-provider-harness/issues/925))
+
 # 0.30.3 (February 27,2024) 
 
 ENHANCEMENTS:
