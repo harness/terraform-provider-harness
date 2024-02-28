@@ -237,7 +237,7 @@ func waitForImportCompletion(ctx context.Context, api *code.RepositoryApiService
 			return nil
 		}
 
-		time.Sleep(5 * time.Second)
+		time.After(5 * time.Second)
 	}
 }
 
@@ -325,7 +325,7 @@ func createSchema() map[string]*schema.Schema {
 		"source": {
 			Description:      "Configuration for importing an existing repository from SCM provider.",
 			Type:             schema.TypeSet,
-			Required:         true,
+			Optional:         true,
 			DiffSuppressFunc: createOnlyFieldDiffFunc,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{

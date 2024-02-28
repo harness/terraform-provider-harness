@@ -10,8 +10,6 @@ import (
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 )
 
-const codePath = "/code/api/v1"
-
 type Session struct {
 	AccountId  string
 	Endpoint   string
