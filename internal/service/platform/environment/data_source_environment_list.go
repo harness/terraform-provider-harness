@@ -1,4 +1,4 @@
-package service
+package environment
 
 import (
 	"context"
@@ -11,14 +11,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceServiceList() *schema.Resource {
+func DataSourceEnvironmentList() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness service List.",
+		Description: "Data source for retrieving a Harness environment List.",
 
-		ReadContext: dataSourceServiceListRead,
+		ReadContext: dataSourceEnvironmentListRead,
 
 		Schema: map[string]*schema.Schema{
-			"services": {
+			"environments": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -42,40 +42,41 @@ func DataSourceServiceList() *schema.Resource {
 	return resource
 }
 
-func dataSourceServiceListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceEnvironmentListRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	var err error
 	var httpResp *http.Response
 
-	var resp nextgen.ResponseDtoPageResponseServiceResponse
-	resp, httpResp, err = c.ServicesApi.GetServiceList(ctx, c.AccountId, &nextgen.ServicesApiGetServiceListOpts{
+	var resp nextgen.ResponseDtoPageResponseEnvironmentResponse
+	resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentList(ctx, c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentListOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
-	var output []nextgen.ServiceResponse = resp.Data.Content
-	var services []map[string]interface{}
+
+	var output = resp.Data.Content
+	var environments []map[string]interface{}
 	for _, v := range output {
-		newService := map[string]interface{}{
-			"identifier": v.Service.Identifier,
-			"name":       v.Service.Name,
+		newEnvironment := map[string]interface{}{
+			"identifier": v.Environment.Identifier,
+			"name":       v.Environment.Name,
 		}
 
-		services = append(services, newService)
+		environments = append(environments, newEnvironment)
 	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
-	if services == nil {
+	if environments == nil {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
 	}
 
 	d.SetId(resp.CorrelationId)
-	d.Set("services", services)
+	d.Set("environments", environments)
 
 	return nil
 }
