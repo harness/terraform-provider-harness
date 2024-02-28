@@ -237,7 +237,13 @@ func waitForImportCompletion(ctx context.Context, api *code.RepositoryApiService
 			return nil
 		}
 
-		time.After(5 * time.Second)
+		select {
+		case <-time.After(5 * time.Second):
+			// Sleep for 5 seconds
+		case <-ctx.Done():
+			// Context canceled, return with error
+			return ctx.Err()
+		}
 	}
 }
 
