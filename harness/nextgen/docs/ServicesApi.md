@@ -12,6 +12,7 @@ Method | HTTP request | Description
 [**GetServiceV2**](ServicesApi.md#GetServiceV2) | **Get** /ng/api/servicesV2/{serviceIdentifier} | Gets a Service by identifier
 [**UpdateServiceV2**](ServicesApi.md#UpdateServiceV2) | **Put** /ng/api/servicesV2 | Update a Service by identifier
 [**UpsertServiceV2**](ServicesApi.md#UpsertServiceV2) | **Put** /ng/api/servicesV2/upsert | Upsert a Service by identifier
+[**ImportService**](ServicesApi.md#ImportService) | **Post** /servicesV2/import | Get Service YAML from Git Repository
 
 # **CreateServiceV2**
 > ResponseDtoServiceResponse CreateServiceV2(ctx, accountIdentifier, optional)
@@ -309,6 +310,48 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: application/json, application/yaml
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ImportService**
+> ResponseServiceImportResponseDto ImportService(ctx, accountIdentifier, optional)
+Get Service YAML from Git Repository
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**|  | 
+ **optional** | ***ServicesV2ApiImportServiceOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a ServicesV2ApiImportServiceOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **orgIdentifier** | **optional.String**|  | 
+ **projectIdentifier** | **optional.String**|  | 
+ **serviceIdentifier** | **optional.String**|  | 
+ **connectorRef** | **optional.String**|  | 
+ **repoName** | **optional.String**|  | 
+ **branch** | **optional.String**|  | 
+ **filePath** | **optional.String**|  | 
+ **isForceImport** | **optional.Bool**|  | [default to false]
+ **isHarnessCodeRepo** | **optional.Bool**|  | 
+
+### Return type
+
+[**ResponseServiceImportResponseDto**](ResponseServiceImportResponseDTO.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: application/json, application/yaml
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

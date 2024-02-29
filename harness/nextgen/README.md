@@ -327,6 +327,7 @@ Class | Method | HTTP request | Description
 *ServicesApi* | [**GetServiceV2**](docs/ServicesApi.md#getservicev2) | **Get** /ng/api/servicesV2/{serviceIdentifier} | Gets a Service by identifier
 *ServicesApi* | [**UpdateServiceV2**](docs/ServicesApi.md#updateservicev2) | **Put** /ng/api/servicesV2 | Update a Service by identifier
 *ServicesApi* | [**UpsertServiceV2**](docs/ServicesApi.md#upsertservicev2) | **Put** /ng/api/servicesV2/upsert | Upsert a Service by identifier
+*ServicesApi* | [**ImportService**](docs/ServicesApi.md#importservice) | **Post** /ng/api/servicesV2/import | Get Service YAML from Git Repository
 *ServiceOverridesApi* | [**CreateServiceOverrideV2**](docs/ServiceOverridesApi.md#createserviceoverridev2) | **Post** /serviceOverrides | Create an ServiceOverride Entity
 *ServiceOverridesApi* | [**DeleteServiceOverrideV2**](docs/ServiceOverridesApi.md#deleteserviceoverridev2) | **Delete** /serviceOverrides/{identifier} | Delete a Service Override entity
 *ServiceOverridesApi* | [**GetServiceOverridesV2**](docs/ServiceOverridesApi.md#getserviceoverridesv2) | **Get** /serviceOverrides/get-with-yaml/{identifier} | Gets Service Overrides by Identifier
