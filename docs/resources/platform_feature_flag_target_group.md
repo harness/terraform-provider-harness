@@ -23,10 +23,10 @@ resource "harness_platform_feature_flag_target_group" "target" {
   account_id  = "MY_ACCOUNT_ID"
   included    = ["target_id_1"]
   excluded    = ["target_id_2"]
-  rule = {
+  rule {
     attribute = "MY_ATTRIBUTE"
-    operator  = "equal"
-    value     = "MY_VALUE"
+    op        = "equal"
+    values    = ["MY_VALUE"]
   }
 }
 ```

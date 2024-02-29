@@ -2,6 +2,7 @@ package applications
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -237,7 +238,7 @@ func ResourceGitopsApplication() *schema.Resource {
 												"path": {
 													Description: "Directory path within the git repository, and is only valid for the GitOps applications sourced from git.",
 													Type:        schema.TypeString,
-													Required:    true,
+													Optional:    true,
 												},
 												"target_revision": {
 													Description: "Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.",

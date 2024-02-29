@@ -139,6 +139,11 @@ func SetProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
 }
 
+func SetOptionalOrgAndProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+}
+
 // SetOrgLevelResourceSchema sets the default schema objects used for org level resources.
 func SetOrgLevelResourceSchema(s map[string]*schema.Schema) {
 	SetCommonResourceSchema(s)

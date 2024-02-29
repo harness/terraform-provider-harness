@@ -29,11 +29,13 @@ func ResourceConnectorAws() *schema.Resource {
 				ConflictsWith: []string{
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -78,11 +80,13 @@ func ResourceConnectorAws() *schema.Resource {
 				ConflictsWith: []string{
 					"manual",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -108,11 +112,13 @@ func ResourceConnectorAws() *schema.Resource {
 				ConflictsWith: []string{
 					"irsa",
 					"manual",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -124,6 +130,43 @@ func ResourceConnectorAws() *schema.Resource {
 						},
 						"region": {
 							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"oidc_authentication": {
+				Description: "Authentication using harness oidc.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"irsa",
+					"manual",
+					"inherit_from_delegate",
+				},
+				ExactlyOneOf: []string{
+					"manual",
+					"irsa",
+					"inherit_from_delegate",
+					"oidc_authentication",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"iam_role_arn": {
+							Description: "The IAM Role to assume the credentials from.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"delegate_selectors": {
+							Description: "The delegates to inherit the credentials from.",
+							Type:        schema.TypeSet,
+							Required:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector." + secret_ref_text,
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -338,6 +381,24 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		}
 	}
 
+	if attr, ok := d.GetOk("oidc_authentication"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.OidcAuthentication
+		connector.Aws.Credential.OidcConfig = &nextgen.AwsOidcConfigSpec{}
+
+		if attr := config["iam_role_arn"].(string); attr != "" {
+			connector.Aws.Credential.OidcConfig.IamRoleArn = attr
+		}
+
+		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
+			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
+		}
+	}
+
 	if attr, ok := d.GetOk("cross_account_access"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.Aws.Credential.CrossAccountAccess = &nextgen.CrossAccountAccess{}
@@ -424,6 +485,14 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 	case nextgen.AwsAuthTypes.InheritFromDelegate:
 		d.Set("inherit_from_delegate", []map[string]interface{}{
 			{
+				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
+			},
+		})
+	case nextgen.AwsAuthTypes.OidcAuthentication:
+		d.Set("oidc_authentication", []map[string]interface{}{
+			{
+				"iam_role_arn":       connector.Aws.Credential.OidcConfig.IamRoleArn,
 				"delegate_selectors": connector.Aws.DelegateSelectors,
 				"region":             connector.Aws.Credential.Region,
 			},
