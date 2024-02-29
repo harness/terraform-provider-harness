@@ -156,12 +156,12 @@ Optional:
 
 Required:
 
-- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
 - `repo_url` (String) URL to the repository (git or helm) that contains the GitOps application manifests.
 - `target_revision` (String) Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.
 
 Optional:
 
+- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
 - `chart` (String) Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.
 - `directory` (Block List) Options for applications of type plain YAML or Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory))
 - `helm` (Block List) Holds helm specific options. (see [below for nested schema](#nestedblock--application--spec--source--helm))

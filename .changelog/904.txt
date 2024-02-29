@@ -1,0 +1,3 @@
+```release-note:new data source 
+resource/harness_platform_environment_list: to get list of environment of project, org, and account level.
+```
