@@ -24,6 +24,35 @@ func DataSourceService() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"git_details": {
+				Description: "Contains parameters related to Git Experience for remote entities",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"load_from_fallback_branch": {
+							Description: "Load service yaml from fallback branch",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"repo_name": {
+							Description: "Repo name of remote service",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -45,8 +74,11 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 	if id != "" {
 		var resp nextgen.ResponseDtoServiceResponse
 		resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
-			OrgIdentifier:     helpers.BuildField(d, "org_id"),
-			ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			OrgIdentifier:          helpers.BuildField(d, "org_id"),
+			ProjectIdentifier:      helpers.BuildField(d, "project_id"),
+			RepoName:               helpers.BuildField(d, "repo_name"),
+			Branch:                 helpers.BuildField(d, "branch"),
+			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "load_from_fallback_branch"),
 		})
 		svc = resp.Data.Service
 	} else if name != "" {
