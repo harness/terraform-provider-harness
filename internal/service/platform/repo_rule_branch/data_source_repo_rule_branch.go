@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataSourceRepoRuleBranch() *schema.Resource {
+func DataSourceRepoBranchRule() *schema.Resource {
 	resource := &schema.Resource{
 		Description: "Data source for retrieving a Harness repo.",
 		ReadContext: dataSourceRepoRuleRead,
@@ -25,7 +25,7 @@ func DataSourceRepoRuleBranch() *schema.Resource {
 func dataSourceRepoRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
-	repoIdentifier := d.Get("identifier").(string)
+	repoIdentifier := d.Get("repo_identifier").(string)
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
 
@@ -49,7 +49,7 @@ func dataSourceRepoRuleRead(ctx context.Context, d *schema.ResourceData, meta in
 		return helpers.HandleApiError(err, d, resp)
 	}
 
-	readRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
+	readRepoBranchRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
 
 	return nil
 }

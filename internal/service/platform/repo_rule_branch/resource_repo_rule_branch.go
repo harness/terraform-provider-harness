@@ -2,7 +2,9 @@ package repo_rule_branch
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
@@ -12,13 +14,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResourceRepoRuleBranch() *schema.Resource {
+func ResourceRepoBranchRule() *schema.Resource {
 	resource := &schema.Resource{
 		Description:   "Resource for creating a Harness Repo Rule.",
-		ReadContext:   resourceRepoRuleRead,
-		CreateContext: resourceRepoRuleCreateOrUpdate,
-		UpdateContext: resourceRepoRuleCreateOrUpdate,
-		DeleteContext: resourceRepoRuleDelete,
+		ReadContext:   resourceRepoBranchRuleRead,
+		CreateContext: resourceRepoBranchRuleCreateOrUpdate,
+		UpdateContext: resourceRepoBranchRuleCreateOrUpdate,
+		DeleteContext: resourceRepoBranchRuleDelete,
 		Importer:      helpers.RepoRuleResourceImporter,
 
 		Schema: createSchema(),
@@ -29,18 +31,18 @@ func ResourceRepoRuleBranch() *schema.Resource {
 	return resource
 }
 
-func resourceRepoRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceRepoBranchRuleRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
-	repoIdentifier := helpers.BuildField(d, "repo_identifier")
+	repoIdentifier := d.Get("repo_identifier").(string)
 
 	rule, resp, err := c.RepositoryApi.RuleGet(
 		ctx,
 		c.AccountId,
-		repoIdentifier.Value(),
-		d.Get("identifier").(string),
+		repoIdentifier,
+		d.Id(),
 		&code.RepositoryApiRuleGetOpts{
 			OrgIdentifier:     orgID,
 			ProjectIdentifier: projectID,
@@ -50,11 +52,11 @@ func resourceRepoRuleRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return helpers.HandleReadApiError(err, d, resp)
 	}
 
-	readRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier.Value())
+	readRepoBranchRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
 	return nil
 }
 
-func resourceRepoRuleCreateOrUpdate(
+func resourceRepoBranchRuleCreateOrUpdate(
 	ctx context.Context,
 	d *schema.ResourceData,
 	meta interface{},
@@ -68,7 +70,10 @@ func resourceRepoRuleCreateOrUpdate(
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
 	repoIdentifier := d.Get("repo_identifier").(string)
-	body := buildRuleBody(d)
+	body, err := buildRepoBranchRuleBody(d)
+	if err != nil {
+		return helpers.HandleApiError(err, d, nil)
+	}
 	// determine what type of write the change requires
 	if id != "" {
 		// update rule
@@ -100,11 +105,11 @@ func resourceRepoRuleCreateOrUpdate(
 		return helpers.HandleApiError(err, d, resp)
 	}
 
-	readRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
+	readRepoBranchRule(d, &rule, orgID.Value(), projectID.Value(), repoIdentifier)
 	return nil
 }
 
-func resourceRepoRuleDelete(
+func resourceRepoBranchRuleDelete(
 	ctx context.Context,
 	d *schema.ResourceData,
 	meta interface{},
@@ -115,7 +120,7 @@ func resourceRepoRuleDelete(
 		ctx,
 		c.AccountId,
 		d.Get("repo_identifier").(string),
-		d.Get("identifier").(string),
+		d.Id(),
 		&code.RepositoryApiRuleDeleteOpts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
@@ -128,21 +133,25 @@ func resourceRepoRuleDelete(
 	return nil
 }
 
-func buildRuleBody(d *schema.ResourceData) *code.OpenapiRule {
+func buildRepoBranchRuleBody(d *schema.ResourceData) (*code.OpenapiRule, error) {
 	ruleType := code.BRANCH_OpenapiRuleType
 	state := convertState(d.Get("state").(string))
+	ruleDef, err := buildRepoBranchRuleDef(d)
+	if err != nil {
+		return nil, err
+	}
 	return &code.OpenapiRule{
-		Definition:  buildRuleDef(d),
+		Definition:  ruleDef,
 		Description: d.Get("description").(string),
 		Identifier:  d.Get("identifier").(string),
 		Pattern:     buildPattern(d),
 		State:       &state,
 		Type_:       &ruleType,
-	}
+	}, nil
 }
 
 func buildPattern(d *schema.ResourceData) *code.ProtectionPattern {
-	patterns := extractList(d, "target_patterns")
+	patterns := extractSubSchemaSet(d, "target_patterns")
 	return &code.ProtectionPattern{
 		Default_: patterns["default_branch"].(bool),
 		Exclude:  interfaceToString(patterns["exclude"].([]interface{})),
@@ -162,16 +171,18 @@ func convertState(s string) code.EnumRuleState {
 	return code.ACTIVE_EnumRuleState
 }
 
-func buildRuleDef(d *schema.ResourceData) *code.OpenapiRuleDefinition {
-	rules := extractList(d, "rules")
-	bypass := extractList(d, "bypass_list")
+type branchRule struct {
+	Bypass    *code.ProtectionDefBypass
+	Lifecycle *code.ProtectionDefLifecycle
+	Pullreq   *code.ProtectionDefPullReq
+}
+
+func buildRepoBranchRuleDef(d *schema.ResourceData) (*code.OpenapiRuleDefinition, error) {
+	rules := extractSubSchemaSet(d, "policies")
+	bypass := extractSubSchemaSet(d, "bypass_list")
 
 	// if rules != nil {
-	rule := &code.OpenapiRuleDefinition{ProtectionBranch: code.ProtectionBranch(struct {
-		Bypass    *code.ProtectionDefBypass
-		Lifecycle *code.ProtectionDefLifecycle
-		Pullreq   *code.ProtectionDefPullReq
-	}{
+	rule := &code.OpenapiRuleDefinition{ProtectionBranch: code.ProtectionBranch(branchRule{
 		Bypass: &code.ProtectionDefBypass{
 			RepoOwners: false,
 			UserIds:    []int32{},
@@ -179,49 +190,29 @@ func buildRuleDef(d *schema.ResourceData) *code.OpenapiRuleDefinition {
 		Lifecycle: &code.ProtectionDefLifecycle{},
 		Pullreq:   &code.ProtectionDefPullReq{},
 	})}
-	// {
-	// 	Lifecycle: &code.ProtectionDefLifecycle{
-	// 		CreateForbidden: rules["block_branch_creation"].(bool),
-	// 		UpdateForbidden: rules["require_pull_request"].(bool),
-	// 		DeleteForbidden: rules["block_branch_deletion"].(bool),
-	// 	},
-	// 	Pullreq: &code.ProtectionDefPullReq{
-	// 		Approvals: &code.ProtectionDefApprovals{
-	// 			RequireCodeOwners:   rules["require_code_owner_review"].(bool),
-	// 			RequireLatestCommit: rules["require_approval_of_new_changes"].(bool),
-	// 			RequireMinimumCount: int32(rules["require_min_reviewers"].(int)),
-	// 		},
-	// 		Comments: &code.ProtectionDefComments{
-	// 			RequireResolveAll: rules["require_comment_resolution"].(bool),
-	// 		},
-	// 		Merge: &code.ProtectionDefMerge{
-	// 			DeleteBranch:      rules["auto_delete_branch_on_merge"].(bool),
-	// 			StrategiesAllowed: convertToEnumMergeMethod(rules["limit_merge_strategies"].([]interface{})),
-	// 		},
-	// 		StatusChecks: &code.ProtectionDefStatusChecks{
-	// 			RequireIdentifiers: convertToString(rules["require_status_check_to_pass"].([]interface{})),
-	// 		},
-	// 	},
-	// }),
-	// }
-	// }
+
 	rule.Lifecycle = &code.ProtectionDefLifecycle{
 		CreateForbidden: rules["block_branch_creation"].(bool),
 		UpdateForbidden: rules["require_pull_request"].(bool),
 		DeleteForbidden: rules["block_branch_deletion"].(bool),
 	}
+	mergeMethod, err := convertToEnumMergeMethod(rules["limit_merge_strategies"].([]interface{}))
+	if err != nil {
+		return nil, err
+	}
 	rule.Pullreq = &code.ProtectionDefPullReq{
 		Approvals: &code.ProtectionDefApprovals{
-			RequireCodeOwners:   rules["require_code_owner_review"].(bool),
-			RequireLatestCommit: rules["require_approval_of_new_changes"].(bool),
-			RequireMinimumCount: int32(rules["require_min_reviewers"].(int)),
+			RequireCodeOwners:      rules["require_code_owners"].(bool),
+			RequireLatestCommit:    rules["require_latest_commit"].(bool),
+			RequireMinimumCount:    int32(rules["require_minimum_count"].(int)),
+			RequireNoChangeRequest: rules["require_no_change_request"].(bool),
 		},
 		Comments: &code.ProtectionDefComments{
 			RequireResolveAll: rules["require_comment_resolution"].(bool),
 		},
 		Merge: &code.ProtectionDefMerge{
 			DeleteBranch:      rules["auto_delete_branch_on_merge"].(bool),
-			StrategiesAllowed: convertToEnumMergeMethod(rules["limit_merge_strategies"].([]interface{})),
+			StrategiesAllowed: mergeMethod,
 		},
 		StatusChecks: &code.ProtectionDefStatusChecks{
 			RequireIdentifiers: convertToString(rules["require_status_check_to_pass"].([]interface{})),
@@ -230,28 +221,30 @@ func buildRuleDef(d *schema.ResourceData) *code.OpenapiRuleDefinition {
 
 	if bypass != nil {
 		rule.Bypass.RepoOwners = bypass["repo_owners"].(bool)
-		rule.Bypass.UserIds = convertToInt32(bypass["users"].([]interface{}))
+		rule.Bypass.UserIds = convertToInt32Slice(bypass["user_ids"].([]interface{}))
 	}
-	return rule
+	return rule, nil
 }
 
-func convertToEnumMergeMethod(s []interface{}) []code.EnumMergeMethod {
+func convertToEnumMergeMethod(s []interface{}) ([]code.EnumMergeMethod, error) {
 	list := make([]code.EnumMergeMethod, len(s))
 
 	for _, v := range s {
-		switch v.(string) {
+		switch strings.ToLower(v.(string)) {
 		case "merge":
 			list = append(list, code.MERGE_EnumMergeMethod)
 		case "rebase":
 			list = append(list, code.REBASE_EnumMergeMethod)
 		case "squash":
 			list = append(list, code.SQUASH_EnumMergeMethod)
+		default:
+			return list, fmt.Errorf("invalid merge method encountered %s", v)
 		}
 	}
-	return list
+	return list, nil
 }
 
-func convertToInt32(i []interface{}) []int32 {
+func convertToInt32Slice(i []interface{}) []int32 {
 	list := make([]int32, len(i))
 
 	for _, v := range i {
@@ -271,7 +264,7 @@ func convertToString(i []interface{}) []string {
 	return list
 }
 
-func extractList(d *schema.ResourceData, key string) map[string]interface{} {
+func extractSubSchemaSet(d *schema.ResourceData, key string) map[string]interface{} {
 	set := d.Get(key).(*schema.Set)
 	list := set.List()
 	if len(list) == 0 {
@@ -281,7 +274,7 @@ func extractList(d *schema.ResourceData, key string) map[string]interface{} {
 	return elem.(map[string]interface{})
 }
 
-func readRule(d *schema.ResourceData, rule *code.OpenapiRule, orgId string, projectId string, repoIdentifier string) {
+func readRepoBranchRule(d *schema.ResourceData, rule *code.OpenapiRule, orgId string, projectId string, repoIdentifier string) {
 	d.SetId(rule.Identifier)
 	d.Set("org_id", orgId)
 	d.Set("project_id", projectId)
@@ -293,35 +286,30 @@ func readRule(d *schema.ResourceData, rule *code.OpenapiRule, orgId string, proj
 	d.Set("state", rule.State)
 	d.Set("updated", rule.Updated)
 	if rule.Pattern != nil {
-		patternList := []interface{}{}
 		pattern := map[string]interface{}{}
 		pattern["include"] = rule.Pattern.Include
 		pattern["exclude"] = rule.Pattern.Exclude
 		pattern["default_branch"] = rule.Pattern.Default_
-		patternList = append(patternList, pattern)
-		d.Set("target_patterns", patternList)
+		d.Set("target_patterns", []interface{}{pattern})
 	}
-	bypassList := []interface{}{}
 	bypass := map[string]interface{}{}
 	bypass["repo_owners"] = rule.Definition.Bypass.RepoOwners
-	bypass["users"] = rule.Definition.Bypass.UserIds
-	bypassList = append(bypassList, bypass)
-	d.Set("bypass_list", bypassList)
+	bypass["user_ids"] = rule.Definition.Bypass.UserIds
+	d.Set("bypass_list", []interface{}{bypass})
 
-	rulesList := []interface{}{}
 	rules := map[string]interface{}{}
 	rules["block_branch_creation"] = rule.Definition.Lifecycle.CreateForbidden
 	rules["block_branch_deletion"] = rule.Definition.Lifecycle.DeleteForbidden
 	rules["require_pull_request"] = rule.Definition.Lifecycle.UpdateForbidden
-	rules["require_min_reviewers"] = rule.Definition.Pullreq.Approvals.RequireMinimumCount
-	rules["require_code_owner_review"] = rule.Definition.Pullreq.Approvals.RequireCodeOwners
-	rules["require_approval_of_new_changes"] = rule.Definition.Pullreq.Approvals.RequireLatestCommit
+	rules["require_minimum_count"] = rule.Definition.Pullreq.Approvals.RequireMinimumCount
+	rules["require_code_owners"] = rule.Definition.Pullreq.Approvals.RequireCodeOwners
+	rules["require_latest_commit"] = rule.Definition.Pullreq.Approvals.RequireLatestCommit
+	rules["require_no_change_request"] = rule.Definition.Pullreq.Approvals.RequireNoChangeRequest
 	rules["require_comment_resolution"] = rule.Definition.Pullreq.Comments.RequireResolveAll
 	rules["require_status_check_to_pass"] = rule.Definition.Pullreq.StatusChecks.RequireIdentifiers
 	rules["limit_merge_strategies"] = rule.Definition.Pullreq.Merge.StrategiesAllowed
 	rules["auto_delete_branch_on_merge"] = rule.Definition.Pullreq.Merge.DeleteBranch
-	rulesList = append(rulesList, rules)
-	d.Set("rules", rulesList)
+	d.Set("policies", []interface{}{rules})
 }
 
 func interfaceToString(ds []interface{}) []string {
@@ -359,7 +347,7 @@ func createSchema() map[string]*schema.Schema {
 		"target_patterns": {
 			Description: "Pattern of branch to which rule will apply",
 			Type:        schema.TypeSet,
-			Required:    true,
+			Optional:    true,
 			//AtLeastOneOf: []string{"default_branch", "include", "exclude"},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -387,7 +375,6 @@ func createSchema() map[string]*schema.Schema {
 			Description: "List of users who can bypass this rule.",
 			Type:        schema.TypeSet,
 			Required:    true,
-			//AtLeastOneOf: []string{"repo_owners", "users"},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"repo_owners": {
@@ -395,7 +382,7 @@ func createSchema() map[string]*schema.Schema {
 						Type:        schema.TypeBool,
 						Optional:    true,
 					},
-					"users": {
+					"user_ids": {
 						Description: "List of user ids with who can bypass.",
 						Type:        schema.TypeList,
 						Optional:    true,
@@ -404,7 +391,7 @@ func createSchema() map[string]*schema.Schema {
 				},
 			},
 		},
-		"rules": {
+		"policies": {
 			Description: "Rules to be applied on the repository.",
 			Type:        schema.TypeSet,
 			Required:    true,
@@ -425,18 +412,23 @@ func createSchema() map[string]*schema.Schema {
 						Type:        schema.TypeBool,
 						Optional:    true,
 					},
-					"require_min_reviewers": {
+					"require_minimum_count": {
 						Description: "Require approval on pull requests from a minimum number of reviewers.",
 						Type:        schema.TypeInt,
 						Optional:    true,
 					},
-					"require_code_owner_review": {
+					"require_code_owners": {
 						Description: "Require approval on pull requests from one reviewer for each Code Owner rule.",
 						Type:        schema.TypeBool,
 						Optional:    true,
 					},
-					"require_approval_of_new_changes": {
+					"require_latest_commit": {
 						Description: "Require re-approval when there are new changes in the pull request.",
+						Type:        schema.TypeBool,
+						Optional:    true,
+					},
+					"require_no_change_request": {
+						Description: "Require no request changes by reviewers on pull requests.",
 						Type:        schema.TypeBool,
 						Optional:    true,
 					},
@@ -483,11 +475,6 @@ func createSchema() map[string]*schema.Schema {
 		"updated": {
 			Description: "Timestamp when the rule was updated.",
 			Type:        schema.TypeInt,
-			Computed:    true,
-		},
-		"id": {
-			Description: "Internal ID of the rule.",
-			Type:        schema.TypeString,
 			Computed:    true,
 		},
 	}

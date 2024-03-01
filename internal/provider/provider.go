@@ -255,7 +255,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
 				"harness_platform_repo":                            repo.DataSourceRepo(),
-				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoRuleBranch(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -387,7 +387,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
 				"harness_platform_repo":                            repo.ResourceRepo(),
-				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoRuleBranch(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
 			},
 		}
 

@@ -30,7 +30,7 @@ func TestProjResourceRepoRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "rules.0.require_pull_request", "true"),
+					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
 				),
 			},
 			{
@@ -79,7 +79,7 @@ func testProjResourceRepoRule(identifier, description string) string {
 			target_patterns {
 				default_branch = true
 			}
-			rules {
+			policies {
 				require_pull_request = true
 			}
 			bypass_list  {}
@@ -114,7 +114,7 @@ func testRepoRuleDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		rule, _ := testFindRepoRule(resourceName, state)
 		if rule != nil {
-			return fmt.Errorf("Found rule: %s", rule.Identifier)
+			return fmt.Errorf("found rule: %s", rule.Identifier)
 		}
 
 		return nil

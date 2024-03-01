@@ -257,25 +257,6 @@ func RepoRuleProjectLevelResourceImportStateIdFunc(resourceName string) resource
 	}
 }
 
-// func RepoRuleOrgLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
-// 	return func(s *terraform.State) (string, error) {
-// 		primary := s.RootModule().Resources[resourceName].Primary
-// 		id := primary.ID
-// 		orgId := primary.Attributes["org_id"]
-// 		repoIdentifier := primary.Attributes["repo_identifier"]
-// 		return fmt.Sprintf("%s/%s/%s", orgId, repoIdentifier, id), nil
-// 	}
-// }
-
-// func RepoRuleAccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
-// 	return func(s *terraform.State) (string, error) {
-// 		primary := s.RootModule().Resources[resourceName].Primary
-// 		id := primary.ID
-// 		repoIdentifier := primary.Attributes["repo_identifier"]
-// 		return fmt.Sprintf("%s/%s", repoIdentifier, id), nil
-// 	}
-// }
-
 func OrgResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
