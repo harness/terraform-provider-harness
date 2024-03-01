@@ -286,8 +286,6 @@ resource "harness_platform_environment" "example" {
 - `yaml` (String) Environment YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.
 connectorId.
 - `git_details` (Block List, Max: 1) Contains Git Information for remote entities from Git for Create/Update/Import (see [below for nested schema](#nestedblock--git_details))
-- `import_from_git` (Boolean) Flag to set if importing from Git
-- `is_force_import` (Boolean) Flag to set if force importing from Git
 
 ### Read-Only
 
@@ -307,6 +305,8 @@ Optional:
 - `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Service.
 - `is_harness_code_repo` (Boolean) If the repo is in harness code.
 - `commit_message` (String) message for the commit in Git Repo.
+- `import_from_git` (Boolean) Flag to set if importing from Git
+- `is_force_import` (Boolean) Flag to set if force importing from Git
 
 ## Import
 
