@@ -254,7 +254,6 @@ resource "harness_platform_environment" "example" {
 resource "harness_platform_environment" "example" {
   identifier  = "identifier"
   name        = "name"
-  import_from_git = "true"
   type = "PreProduction"
   git_details {
     store_type = "REMOTE"
@@ -262,6 +261,7 @@ resource "harness_platform_environment" "example" {
     repo_name = "repo_name"
     file_path = "file_path"
     branch = "branch"
+    import_from_git = "true"
   }
 }
 ```
