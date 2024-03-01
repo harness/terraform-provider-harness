@@ -52,7 +52,6 @@ resource "harness_platform_repo" "test" {
 - `created_by` (Number) ID of the user who created the repository.
 - `git_url` (String) Git URL of the repository.
 - `id` (String) Internal ID of the repository.
-- `importing` (Boolean) Whether the repository is being imported.
 - `name` (String) Name of the repository.
 - `path` (String) Path of the repository.
 - `updated` (Number) Timestamp when the repository was last updated.
@@ -64,7 +63,7 @@ Optional:
 
 - `host` (String) The host URL for the import source.
 - `password` (String, Sensitive) The password for authentication when importing.
-- `repo` (String) The provider repository to import from.
+- `repo` (String) The full identifier of the repository on the SCM provider's platform.
 - `type` (String) The type of SCM provider (github, gitlab, bitbucket, stash, gitea, gogs) when importing.
 - `username` (String) The username for authentication when importing.
 

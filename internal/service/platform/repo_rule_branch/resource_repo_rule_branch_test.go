@@ -30,6 +30,7 @@ func TestProjResourceRepoRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "rules.0.require_pull_request", "true"),
 				),
 			},
 			{

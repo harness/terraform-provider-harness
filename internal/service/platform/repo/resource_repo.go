@@ -219,11 +219,11 @@ func readRepo(d *schema.ResourceData, repo *code.TypesRepository, orgId string, 
 func waitForImportCompletion(ctx context.Context, api *code.RepositoryApiService, importID string, accountID string,
 	projectID optional.String, orgID optional.String) error {
 	for {
-		repo, _, err := api.FindRepository(
+		repo, _, err := api.GetRepository(
 			ctx,
 			accountID,
 			importID,
-			&code.RepositoryApiFindRepositoryOpts{
+			&code.RepositoryApiGetRepositoryOpts{
 				OrgIdentifier:     orgID,
 				ProjectIdentifier: projectID,
 			},
