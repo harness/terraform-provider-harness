@@ -236,6 +236,161 @@ func TestAccResourceEnvironment_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
+func TestResourceRemoteEnvironment(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_environment.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testResourceRemoteEnvironment(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type",
+					"git_details.#", "git_details.0.%", "git_details.0.base_branch", "git_details.0.branch", "git_details.0.file_path", "git_details.0.is_harness_code_repo", "git_details.0.is_new_branch",
+					"git_details.0.last_commit_id", "git_details.0.last_object_id", "git_details.0.load_from_cache", "git_details.0.load_from_fallback_branch", "git_details.0.repo_name"},
+			},
+		},
+	})
+}
+
+func TestResourceImportRemoteEnvironment(t *testing.T) {
+
+	resourceName := "harness_platform_environment.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccEnvironmentDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testResourceImportRemoteEnvironment(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "accSvc"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accSvc"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type",
+					"git_details.#", "git_details.0.%", "git_details.0.base_branch", "git_details.0.branch", "git_details.0.file_path", "git_details.0.is_harness_code_repo", "git_details.0.is_new_branch",
+					"git_details.0.last_commit_id", "git_details.0.last_object_id", "git_details.0.load_from_cache", "git_details.0.load_from_fallback_branch", "git_details.0.repo_name", "import_from_git"},
+			},
+		},
+	})
+}
+
+func testResourceRemoteEnvironment(id string, name string) string {
+	return fmt.Sprintf(`
+  resource "harness_platform_organization" "test" {
+    identifier = "%[1]s"
+    name = "%[2]s"
+  }
+  resource "harness_platform_project" "test" {
+    identifier = "%[1]s"
+    name = "%[2]s"
+    org_id = harness_platform_organization.test.id
+    color = "#472848"
+  }
+  resource "harness_platform_environment" "test" {
+    identifier  = "%[1]s"
+    name        = "%[2]s"
+    description = "test-updated"
+    org_id = harness_platform_project.test.org_id
+    project_id = harness_platform_project.test.id
+	type = "PreProduction"
+    git_details {
+    store_type = "REMOTE"
+    connector_ref = "account.DoNotDeleteGitX"
+    repo_name = "pcf_practice"
+    file_path = ".harness/automation/%[1]s.yaml"
+    branch = "main"
+    }
+    ## ENVIRONMENT V2 UPDATE
+    ## We now take in a YAML that can define the environment definition for a given Environment
+    ## It isn't mandatory for Environment creation 
+    ## It is mandatory for Environment use in a pipeline
+  
+    yaml = <<-EOT
+                  service:
+                    name: %[2]s
+                    identifier: %[1]s
+                    orgIdentifier: harness_platform_project.test.org_id
+                    projectIdentifier: harness_platform_project.test.id
+                    serviceDefinition:
+                      spec:
+                        manifests:
+                          - manifest:
+                              identifier: manifest1
+                              type: K8sManifest
+                              spec:
+                                  store:
+                                    type: Github
+                                    spec:
+                                      connectorRef: <+input>
+                                      gitFetchType: Branch
+                                      paths:
+                                        - files1
+                                      repoName: <+input>
+                                      branch: master
+                              skipResourceVersioning: false
+                        configFiles:
+                          - configFile:
+                              identifier: configFile1
+                              spec:
+                                store:
+                                  type: Harness
+                                  spec:
+                                    files:
+                                      - <+org.description>
+                        variables:
+                          - name: var1
+                            type: String
+                            value: val1
+                          - name: var2
+                            type: String
+                            value: val2
+                      type: Kubernetes
+                    gitOpsEnabled: false
+                EOT
+  }
+`, id, name)
+}
+
+func testResourceImportRemoteEnvironment() string {
+	return fmt.Sprintf(`
+  resource "harness_platform_environment" "test" {
+    identifier  = "accEnv"
+    name = "accEnv"
+    import_from_git = "true"
+	type = "PreProduction"
+    git_details {
+		store_type = "REMOTE"
+		connector_ref = "account.DoNotDeleteGitX"
+		repo_name = "pcf_practice"
+		file_path = ".harness/accountEnvironment.yaml"
+		branch = "main"
+    }
+  }
+`)
+}
+
 func testAccGetPlatformEnvironment(resourceName string, state *terraform.State) (*nextgen.EnvironmentResponseDetails, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
