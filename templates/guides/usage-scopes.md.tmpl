@@ -1,5 +1,5 @@
 ---
-subcategory: "Next Gen"
+subcategory: ""
 page_title: "Configuring usage scopes"
 description: |-
     An example of how to apply usage scopes to a resource.
