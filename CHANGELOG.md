@@ -1,3 +1,23 @@
+# 0.30.4 (February 28,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_applications: The Path field was required. It has been updated to optional. ([#926](https://github.com/harness/terraform-provider-harness/issues/926))
+* resource/harness_platform_connector_aws: added support for OIDC Auth in AWS connector. ([#925](https://github.com/harness/terraform-provider-harness/issues/925))
+
+# 0.30.3 (February 27,2024) 
+
+ENHANCEMENTS:
+
+* platform_connector_github.md - Added documentation for github http anonymous connector
+resource.tf - Example of github http anonymous resource for github connector
+go.mod - upgraded harness-go-sdk version to v0.3.74
+github.go - Added Schema and CRUD for github anonymous http credentials in github connector
+github_test.go - Test for schema and CRUD for github anonymous http credentials in github connector
+github_data_source.go - Added Schema for github anonymous http credentials in github connector
+github_data_source_test.go - Added  test for Schema of github anonymous http  credentials in github connector ([#886](https://github.com/harness/terraform-provider-harness/issues/886))
+* resource/harness_platform_project: where project and org is required, new resources are created on updating scope. ([#902](https://github.com/harness/terraform-provider-harness/issues/902))
+
 # 0.30.2 (January 23,2024) 
 
 ENHANCEMENTS:

@@ -57,6 +57,11 @@ func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 		Description: "Unique identifier of the project.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
@@ -66,6 +71,11 @@ func GetOrgIdSchema(flag SchemaFlagType) *schema.Schema {
 		Description: "Unique identifier of the organization.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
@@ -127,6 +137,11 @@ func SetOrgLevelDataSourceSchema(s map[string]*schema.Schema) {
 func SetProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
 	SetOrgLevelDataSourceSchema(s)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
+}
+
+func SetOptionalOrgAndProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
 }
 
 // SetOrgLevelResourceSchema sets the default schema objects used for org level resources.
