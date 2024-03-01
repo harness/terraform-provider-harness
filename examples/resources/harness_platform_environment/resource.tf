@@ -69,7 +69,6 @@ resource "harness_platform_environment" "example" {
 resource "harness_platform_environment" "test" {
     identifier  = "accEnv"
     name = "accEnv"
-    import_from_git = "true"
 	  type = "PreProduction"
     git_details {
       store_type = "REMOTE"
@@ -77,5 +76,6 @@ resource "harness_platform_environment" "test" {
       repo_name = "pcf_practice"
       file_path = ".harness/accountEnvironment.yaml"
       branch = "main"
+      import_from_git = "true"
     }
   }
