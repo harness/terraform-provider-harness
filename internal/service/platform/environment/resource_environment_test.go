@@ -279,8 +279,8 @@ func TestResourceImportRemoteEnvironment(t *testing.T) {
 			{
 				Config: testResourceImportRemoteEnvironment(),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "accSvc"),
-					resource.TestCheckResourceAttr(resourceName, "name", "accSvc"),
+					resource.TestCheckResourceAttr(resourceName, "id", "accountEnv"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accountEnv"),
 				),
 			},
 			{
@@ -298,28 +298,16 @@ func TestResourceImportRemoteEnvironment(t *testing.T) {
 
 func testResourceRemoteEnvironment(id string, name string) string {
 	return fmt.Sprintf(`
-  resource "harness_platform_organization" "test" {
-    identifier = "%[1]s"
-    name = "%[2]s"
-  }
-  resource "harness_platform_project" "test" {
-    identifier = "%[1]s"
-    name = "%[2]s"
-    org_id = harness_platform_organization.test.id
-    color = "#472848"
-  }
   resource "harness_platform_environment" "test" {
     identifier  = "%[1]s"
     name        = "%[2]s"
     description = "test-updated"
-    org_id = harness_platform_project.test.org_id
-    project_id = harness_platform_project.test.id
 	type = "PreProduction"
     git_details {
     store_type = "REMOTE"
-    connector_ref = "account.DoNotDeleteGitX"
-    repo_name = "pcf_practice"
-    file_path = ".harness/automation/%[1]s.yaml"
+    connector_ref = "account.DoNotDeleteRTerraformResource"
+    repo_name = "terraform-test"
+    file_path = ".harness/%[1]s.yaml"
     branch = "main"
     }
     ## ENVIRONMENT V2 UPDATE
@@ -328,46 +316,12 @@ func testResourceRemoteEnvironment(id string, name string) string {
     ## It is mandatory for Environment use in a pipeline
   
     yaml = <<-EOT
-                  service:
-                    name: %[2]s
-                    identifier: %[1]s
-                    orgIdentifier: harness_platform_project.test.org_id
-                    projectIdentifier: harness_platform_project.test.id
-                    serviceDefinition:
-                      spec:
-                        manifests:
-                          - manifest:
-                              identifier: manifest1
-                              type: K8sManifest
-                              spec:
-                                  store:
-                                    type: Github
-                                    spec:
-                                      connectorRef: <+input>
-                                      gitFetchType: Branch
-                                      paths:
-                                        - files1
-                                      repoName: <+input>
-                                      branch: master
-                              skipResourceVersioning: false
-                        configFiles:
-                          - configFile:
-                              identifier: configFile1
-                              spec:
-                                store:
-                                  type: Harness
-                                  spec:
-                                    files:
-                                      - <+org.description>
-                        variables:
-                          - name: var1
-                            type: String
-                            value: val1
-                          - name: var2
-                            type: String
-                            value: val2
-                      type: Kubernetes
-                    gitOpsEnabled: false
+				  environment:
+				    name: %[2]s
+				    identifier: %[1]s
+				    tags:
+				      tag1: ""
+				    type: PreProduction
                 EOT
   }
 `, id, name)
@@ -376,16 +330,17 @@ func testResourceRemoteEnvironment(id string, name string) string {
 func testResourceImportRemoteEnvironment() string {
 	return fmt.Sprintf(`
   resource "harness_platform_environment" "test" {
-    identifier  = "accEnv"
-    name = "accEnv"
-    import_from_git = "true"
+    identifier  = "accountEnv"
+    name        = "accountEnv"
 	type = "PreProduction"
     git_details {
-		store_type = "REMOTE"
-		connector_ref = "account.DoNotDeleteGitX"
-		repo_name = "pcf_practice"
-		file_path = ".harness/accountEnvironment.yaml"
+		store_type = "REMOTE" 
+		connector_ref = "account.DoNotDeleteRTerraformResource"
+		repo_name = "terraform-test"
+		file_path = ".harness/accountEnv.yaml"
 		branch = "main"
+		import_from_git = "true"
+		is_force_import = "true"
     }
   }
 `)

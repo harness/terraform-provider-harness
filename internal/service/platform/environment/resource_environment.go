@@ -192,7 +192,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 
 	var err error
 	var resp nextgen.ResponseDtoEnvironmentResponse
-	var importResp nextgen.EnvironmentImportResponseDto
+	var importResp nextgen.ResponseEnvironmentImportResponseDto
 	var httpResp *http.Response
 	id := d.Id()
 	env := buildEnvironment(d)
@@ -215,7 +215,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 	}
 
 	if d.Get("git_details.0.import_from_git").(bool) {
-		readImportRes(d, importResp.EnvIdentifier)
+		readImportRes(d, importResp.Data.EnvIdentifier)
 	} else {
 	    readEnvironment(d, resp.Data.Environment)
 	}
