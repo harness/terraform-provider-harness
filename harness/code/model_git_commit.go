@@ -9,9 +9,11 @@
 package code
 
 type GitCommit struct {
-	Author    *GitSignature `json:"author,omitempty"`
-	Committer *GitSignature `json:"committer,omitempty"`
-	Message   string        `json:"message,omitempty"`
-	Sha       string        `json:"sha,omitempty"`
-	Title     string        `json:"title,omitempty"`
+	Author     *GitSignature       `json:"author,omitempty"`
+	Committer  *GitSignature       `json:"committer,omitempty"`
+	FileStats  *GitCommitFileStats `json:"file_stats,omitempty"`
+	Message    string              `json:"message,omitempty"`
+	ParentShas []string            `json:"parent_shas,omitempty"`
+	Sha        string              `json:"sha,omitempty"`
+	Title      string              `json:"title,omitempty"`
 }

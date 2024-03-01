@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 **Author** | [***TypesSignature**](TypesSignature.md) |  | [optional] [default to null]
 **Committer** | [***TypesSignature**](TypesSignature.md) |  | [optional] [default to null]
 **Message** | **string** |  | [optional] [default to null]
+**ParentShas** | **[]string** |  | [optional] [default to null]
 **Sha** | **string** |  | [optional] [default to null]
 **Title** | **string** |  | [optional] [default to null]
 

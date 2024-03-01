@@ -11,11 +11,12 @@ package code
 import (
 	"context"
 	"fmt"
-	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,7 +27,7 @@ var (
 type RepositoryApiService service
 
 /*
-RepositoryApiService
+RepositoryApiService Get commit divergence
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -89,6 +90,19 @@ func (a *RepositoryApiService) CalculateCommitDivergence(ctx context.Context, ac
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -176,7 +190,7 @@ func (a *RepositoryApiService) CalculateCommitDivergence(ctx context.Context, ac
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Validate code owners file
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -235,6 +249,19 @@ func (a *RepositoryApiService) CodeOwnersValidate(ctx context.Context, accountId
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -314,7 +341,7 @@ func (a *RepositoryApiService) CodeOwnersValidate(ctx context.Context, accountId
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Commit files
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -377,6 +404,19 @@ func (a *RepositoryApiService) CommitFiles(ctx context.Context, accountIdentifie
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -484,7 +524,7 @@ func (a *RepositoryApiService) CommitFiles(ctx context.Context, accountIdentifie
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Create branch
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -547,6 +587,19 @@ func (a *RepositoryApiService) CreateBranch(ctx context.Context, accountIdentifi
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -644,7 +697,7 @@ func (a *RepositoryApiService) CreateBranch(ctx context.Context, accountIdentifi
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Create repository
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param optional nil or *RepositoryApiCreateRepositoryOpts - Optional Parameters:
@@ -705,6 +758,19 @@ func (a *RepositoryApiService) CreateRepository(ctx context.Context, accountIden
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -792,7 +858,7 @@ func (a *RepositoryApiService) CreateRepository(ctx context.Context, accountIden
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Create tag
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -855,6 +921,19 @@ func (a *RepositoryApiService) CreateTag(ctx context.Context, accountIdentifier 
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -962,7 +1041,7 @@ func (a *RepositoryApiService) CreateTag(ctx context.Context, accountIdentifier 
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Delete branch
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1023,6 +1102,19 @@ func (a *RepositoryApiService) DeleteBranch(ctx context.Context, accountIdentifi
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1102,7 +1194,7 @@ func (a *RepositoryApiService) DeleteBranch(ctx context.Context, accountIdentifi
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Delete repository
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1156,6 +1248,19 @@ func (a *RepositoryApiService) DeleteRepository(ctx context.Context, accountIden
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1225,7 +1330,7 @@ func (a *RepositoryApiService) DeleteRepository(ctx context.Context, accountIden
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Delete tag
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1286,6 +1391,19 @@ func (a *RepositoryApiService) DeleteTag(ctx context.Context, accountIdentifier 
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1375,7 +1493,7 @@ func (a *RepositoryApiService) DeleteTag(ctx context.Context, accountIdentifier 
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get diff stats
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1437,6 +1555,19 @@ func (a *RepositoryApiService) DiffStats(ctx context.Context, accountIdentifier 
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1514,149 +1645,7 @@ func (a *RepositoryApiService) DiffStats(ctx context.Context, accountIdentifier 
 }
 
 /*
-RepositoryApiService
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param accountIdentifier Account Identifier for the Entity..
- * @param repoIdentifier
- * @param optional nil or *RepositoryApiFindRepositoryOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
-@return TypesRepository
-*/
-
-type RepositoryApiFindRepositoryOpts struct {
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-}
-
-func (a *RepositoryApiService) FindRepository(ctx context.Context, accountIdentifier string, repoIdentifier string, localVarOptionals *RepositoryApiFindRepositoryOpts) (TypesRepository, *http.Response, error) {
-	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue TypesRepository
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/repos/{repo_identifier}"
-	localVarPath = strings.Replace(localVarPath, "{"+"repo_identifier"+"}", fmt.Sprintf("%v", repoIdentifier), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
-	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
-		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
-	}
-	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
-		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
-	}
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-		if localVarHttpResponse.StatusCode == 200 {
-			var v TypesRepository
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 401 {
-			var v UsererrorError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 403 {
-			var v UsererrorError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 404 {
-			var v UsererrorError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		if localVarHttpResponse.StatusCode == 500 {
-			var v UsererrorError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-		return localVarReturnValue, localVarHttpResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHttpResponse, nil
-}
-
-/*
-RepositoryApiService
+RepositoryApiService Get git blame
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1728,6 +1717,19 @@ func (a *RepositoryApiService) GetBlame(ctx context.Context, accountIdentifier s
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1815,7 +1817,7 @@ func (a *RepositoryApiService) GetBlame(ctx context.Context, accountIdentifier s
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get branch
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1872,6 +1874,19 @@ func (a *RepositoryApiService) GetBranch(ctx context.Context, accountIdentifier 
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1959,7 +1974,7 @@ func (a *RepositoryApiService) GetBranch(ctx context.Context, accountIdentifier 
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get commit
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2016,6 +2031,19 @@ func (a *RepositoryApiService) GetCommit(ctx context.Context, accountIdentifier 
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2103,7 +2131,7 @@ func (a *RepositoryApiService) GetCommit(ctx context.Context, accountIdentifier 
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get raw git diff of a commit
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2160,6 +2188,19 @@ func (a *RepositoryApiService) GetCommitDiff(ctx context.Context, accountIdentif
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2247,7 +2288,7 @@ func (a *RepositoryApiService) GetCommitDiff(ctx context.Context, accountIdentif
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get content of a file
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2304,6 +2345,19 @@ func (a *RepositoryApiService) GetContent(ctx context.Context, accountIdentifier
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2391,7 +2445,7 @@ func (a *RepositoryApiService) GetContent(ctx context.Context, accountIdentifier
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get raw file content
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2452,6 +2506,19 @@ func (a *RepositoryApiService) GetRaw(ctx context.Context, accountIdentifier str
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2521,7 +2588,162 @@ func (a *RepositoryApiService) GetRaw(ctx context.Context, accountIdentifier str
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get repository
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param optional nil or *RepositoryApiGetRepositoryOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
+@return TypesRepository
+*/
+
+type RepositoryApiGetRepositoryOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *RepositoryApiService) GetRepository(ctx context.Context, accountIdentifier string, repoIdentifier string, localVarOptionals *RepositoryApiGetRepositoryOpts) (TypesRepository, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue TypesRepository
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/repos/{repo_identifier}"
+	localVarPath = strings.Replace(localVarPath, "{"+"repo_identifier"+"}", fmt.Sprintf("%v", repoIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v TypesRepository
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 401 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 403 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+RepositoryApiService Import repository
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param optional nil or *RepositoryApiImportRepositoryOpts - Optional Parameters:
@@ -2582,6 +2804,19 @@ func (a *RepositoryApiService) ImportRepository(ctx context.Context, accountIden
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2669,7 +2904,7 @@ func (a *RepositoryApiService) ImportRepository(ctx context.Context, accountIden
 }
 
 /*
-RepositoryApiService
+RepositoryApiService List branches
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2754,6 +2989,19 @@ func (a *RepositoryApiService) ListBranches(ctx context.Context, accountIdentifi
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2841,7 +3089,7 @@ func (a *RepositoryApiService) ListBranches(ctx context.Context, accountIdentifi
 }
 
 /*
-RepositoryApiService
+RepositoryApiService List commits
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2937,6 +3185,19 @@ func (a *RepositoryApiService) ListCommits(ctx context.Context, accountIdentifie
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -3023,7 +3284,7 @@ func (a *RepositoryApiService) ListCommits(ctx context.Context, accountIdentifie
 }
 
 /*
-RepositoryApiService
+RepositoryApiService List repositories
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param optional nil or *RepositoryApiListReposOpts - Optional Parameters:
@@ -3101,6 +3362,19 @@ func (a *RepositoryApiService) ListRepos(ctx context.Context, accountIdentifier 
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3188,7 +3462,7 @@ func (a *RepositoryApiService) ListRepos(ctx context.Context, accountIdentifier 
 }
 
 /*
-RepositoryApiService
+RepositoryApiService List tags
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3273,6 +3547,19 @@ func (a *RepositoryApiService) ListTags(ctx context.Context, accountIdentifier s
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3360,7 +3647,7 @@ func (a *RepositoryApiService) ListTags(ctx context.Context, accountIdentifier s
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Check mergeability
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3422,6 +3709,19 @@ func (a *RepositoryApiService) MergeCheck(ctx context.Context, accountIdentifier
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3499,7 +3799,7 @@ func (a *RepositoryApiService) MergeCheck(ctx context.Context, accountIdentifier
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Move repository
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3562,6 +3862,19 @@ func (a *RepositoryApiService) MoveRepository(ctx context.Context, accountIdenti
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3649,7 +3962,7 @@ func (a *RepositoryApiService) MoveRepository(ctx context.Context, accountIdenti
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get commit details
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3717,6 +4030,19 @@ func (a *RepositoryApiService) PathDetails(ctx context.Context, accountIdentifie
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3804,7 +4130,7 @@ func (a *RepositoryApiService) PathDetails(ctx context.Context, accountIdentifie
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get raw diff
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3866,6 +4192,19 @@ func (a *RepositoryApiService) RawDiff(ctx context.Context, accountIdentifier st
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3943,7 +4282,7 @@ func (a *RepositoryApiService) RawDiff(ctx context.Context, accountIdentifier st
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Get raw diff
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -4009,6 +4348,19 @@ func (a *RepositoryApiService) RawDiffPost(ctx context.Context, accountIdentifie
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -4085,7 +4437,465 @@ func (a *RepositoryApiService) RawDiffPost(ctx context.Context, accountIdentifie
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Add protection rule
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param optional nil or *RepositoryApiRuleAddOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of RepoIdentifierRulesBody) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
+@return OpenapiRule
+*/
+
+type RepositoryApiRuleAddOpts struct {
+	Body              optional.Interface
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *RepositoryApiService) RuleAdd(ctx context.Context, accountIdentifier string, repoIdentifier string, localVarOptionals *RepositoryApiRuleAddOpts) (OpenapiRule, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue OpenapiRule
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/repos/{repo_identifier}/rules"
+	localVarPath = strings.Replace(localVarPath, "{"+"repo_identifier"+"}", fmt.Sprintf("%v", repoIdentifier), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 201 {
+			var v OpenapiRule
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 401 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 403 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+RepositoryApiService Delete protection rule
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param ruleUid
+ * @param optional nil or *RepositoryApiRuleDeleteOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
+
+*/
+
+type RepositoryApiRuleDeleteOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *RepositoryApiService) RuleDelete(ctx context.Context, accountIdentifier string, repoIdentifier string, ruleUid string, localVarOptionals *RepositoryApiRuleDeleteOpts) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Delete")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/repos/{repo_identifier}/rules/{rule_uid}"
+	localVarPath = strings.Replace(localVarPath, "{"+"repo_identifier"+"}", fmt.Sprintf("%v", repoIdentifier), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"rule_uid"+"}", fmt.Sprintf("%v", ruleUid), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 401 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 403 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarHttpResponse, newErr
+		}
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
+}
+
+/*
+RepositoryApiService Get protection rule
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param ruleUid
+ * @param optional nil or *RepositoryApiRuleGetOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
+@return OpenapiRule
+*/
+
+type RepositoryApiRuleGetOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *RepositoryApiService) RuleGet(ctx context.Context, accountIdentifier string, repoIdentifier string, ruleUid string, localVarOptionals *RepositoryApiRuleGetOpts) (OpenapiRule, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue OpenapiRule
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/repos/{repo_identifier}/rules/{rule_uid}"
+	localVarPath = strings.Replace(localVarPath, "{"+"repo_identifier"+"}", fmt.Sprintf("%v", repoIdentifier), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"rule_uid"+"}", fmt.Sprintf("%v", ruleUid), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v OpenapiRule
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 401 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 403 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+RepositoryApiService List protection rules
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -4165,6 +4975,19 @@ func (a *RepositoryApiService) RuleList(ctx context.Context, accountIdentifier s
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -4252,7 +5075,172 @@ func (a *RepositoryApiService) RuleList(ctx context.Context, accountIdentifier s
 }
 
 /*
-RepositoryApiService
+RepositoryApiService Update protection rule
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param ruleUid
+ * @param optional nil or *RepositoryApiRuleUpdateOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of RulesRuleUidBody) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
+@return OpenapiRule
+*/
+
+type RepositoryApiRuleUpdateOpts struct {
+	Body              optional.Interface
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *RepositoryApiService) RuleUpdate(ctx context.Context, accountIdentifier string, repoIdentifier string, ruleUid string, localVarOptionals *RepositoryApiRuleUpdateOpts) (OpenapiRule, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Patch")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue OpenapiRule
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/repos/{repo_identifier}/rules/{rule_uid}"
+	localVarPath = strings.Replace(localVarPath, "{"+"repo_identifier"+"}", fmt.Sprintf("%v", repoIdentifier), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"rule_uid"+"}", fmt.Sprintf("%v", ruleUid), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v OpenapiRule
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 401 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 403 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 404 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v UsererrorError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+RepositoryApiService Update repository
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -4315,6 +5303,19 @@ func (a *RepositoryApiService) UpdateRepository(ctx context.Context, accountIden
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

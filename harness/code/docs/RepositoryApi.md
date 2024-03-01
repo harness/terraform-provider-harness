@@ -1,42 +1,46 @@
-# code{{classname}}
+# {{classname}}
 
-All URIs are relative to */api/v1*
+All URIs are relative to */gateway/code/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CalculateCommitDivergence**](RepositoryApi.md#CalculateCommitDivergence) | **Post** /repos/{repo_identifier}/commits/calculate-divergence | 
-[**CodeOwnersValidate**](RepositoryApi.md#CodeOwnersValidate) | **Get** /repos/{repo_identifier}/codeowners/validate | 
-[**CommitFiles**](RepositoryApi.md#CommitFiles) | **Post** /repos/{repo_identifier}/commits | 
-[**CreateBranch**](RepositoryApi.md#CreateBranch) | **Post** /repos/{repo_identifier}/branches | 
-[**CreateRepository**](RepositoryApi.md#CreateRepository) | **Post** /repos | 
-[**CreateTag**](RepositoryApi.md#CreateTag) | **Post** /repos/{repo_identifier}/tags | 
-[**DeleteBranch**](RepositoryApi.md#DeleteBranch) | **Delete** /repos/{repo_identifier}/branches/{branch_name} | 
-[**DeleteRepository**](RepositoryApi.md#DeleteRepository) | **Delete** /repos/{repo_identifier} | 
-[**DeleteTag**](RepositoryApi.md#DeleteTag) | **Delete** /repos/{repo_identifier}/tags/{tag_name} | 
-[**DiffStats**](RepositoryApi.md#DiffStats) | **Get** /repos/{repo_identifier}/diff-stats/{range} | 
-[**FindRepository**](RepositoryApi.md#FindRepository) | **Get** /repos/{repo_identifier} | 
-[**GetBlame**](RepositoryApi.md#GetBlame) | **Get** /repos/{repo_identifier}/blame/{path} | 
-[**GetBranch**](RepositoryApi.md#GetBranch) | **Get** /repos/{repo_identifier}/branches/{branch_name} | 
-[**GetCommit**](RepositoryApi.md#GetCommit) | **Get** /repos/{repo_identifier}/commits/{commit_sha} | 
-[**GetCommitDiff**](RepositoryApi.md#GetCommitDiff) | **Get** /repos/{repo_identifier}/commits/{commit_sha}/diff | 
-[**GetContent**](RepositoryApi.md#GetContent) | **Get** /repos/{repo_identifier}/content/{path} | 
-[**GetRaw**](RepositoryApi.md#GetRaw) | **Get** /repos/{repo_identifier}/raw/{path} | 
-[**ImportRepository**](RepositoryApi.md#ImportRepository) | **Post** /repos/import | 
-[**ListBranches**](RepositoryApi.md#ListBranches) | **Get** /repos/{repo_identifier}/branches | 
-[**ListCommits**](RepositoryApi.md#ListCommits) | **Get** /repos/{repo_identifier}/commits | 
-[**ListRepos**](RepositoryApi.md#ListRepos) | **Get** /repos | 
-[**ListTags**](RepositoryApi.md#ListTags) | **Get** /repos/{repo_identifier}/tags | 
-[**MergeCheck**](RepositoryApi.md#MergeCheck) | **Post** /repos/{repo_identifier}/merge-check/{range} | 
-[**MoveRepository**](RepositoryApi.md#MoveRepository) | **Post** /repos/{repo_identifier}/move | 
-[**PathDetails**](RepositoryApi.md#PathDetails) | **Post** /repos/{repo_identifier}/path-details | 
-[**RawDiff**](RepositoryApi.md#RawDiff) | **Get** /repos/{repo_identifier}/diff/{range} | 
-[**RawDiffPost**](RepositoryApi.md#RawDiffPost) | **Post** /repos/{repo_identifier}/diff/{range} | 
-[**RuleList**](RepositoryApi.md#RuleList) | **Get** /repos/{repo_identifier}/rules | 
-[**UpdateRepository**](RepositoryApi.md#UpdateRepository) | **Patch** /repos/{repo_identifier} | 
+[**CalculateCommitDivergence**](RepositoryApi.md#CalculateCommitDivergence) | **Post** /repos/{repo_identifier}/commits/calculate-divergence | Get commit divergence
+[**CodeOwnersValidate**](RepositoryApi.md#CodeOwnersValidate) | **Get** /repos/{repo_identifier}/codeowners/validate | Validate code owners file
+[**CommitFiles**](RepositoryApi.md#CommitFiles) | **Post** /repos/{repo_identifier}/commits | Commit files
+[**CreateBranch**](RepositoryApi.md#CreateBranch) | **Post** /repos/{repo_identifier}/branches | Create branch
+[**CreateRepository**](RepositoryApi.md#CreateRepository) | **Post** /repos | Create repository
+[**CreateTag**](RepositoryApi.md#CreateTag) | **Post** /repos/{repo_identifier}/tags | Create tag
+[**DeleteBranch**](RepositoryApi.md#DeleteBranch) | **Delete** /repos/{repo_identifier}/branches/{branch_name} | Delete branch
+[**DeleteRepository**](RepositoryApi.md#DeleteRepository) | **Delete** /repos/{repo_identifier} | Delete repository
+[**DeleteTag**](RepositoryApi.md#DeleteTag) | **Delete** /repos/{repo_identifier}/tags/{tag_name} | Delete tag
+[**DiffStats**](RepositoryApi.md#DiffStats) | **Get** /repos/{repo_identifier}/diff-stats/{range} | Get diff stats
+[**GetBlame**](RepositoryApi.md#GetBlame) | **Get** /repos/{repo_identifier}/blame/{path} | Get git blame
+[**GetBranch**](RepositoryApi.md#GetBranch) | **Get** /repos/{repo_identifier}/branches/{branch_name} | Get branch
+[**GetCommit**](RepositoryApi.md#GetCommit) | **Get** /repos/{repo_identifier}/commits/{commit_sha} | Get commit
+[**GetCommitDiff**](RepositoryApi.md#GetCommitDiff) | **Get** /repos/{repo_identifier}/commits/{commit_sha}/diff | Get raw git diff of a commit
+[**GetContent**](RepositoryApi.md#GetContent) | **Get** /repos/{repo_identifier}/content/{path} | Get content of a file
+[**GetRaw**](RepositoryApi.md#GetRaw) | **Get** /repos/{repo_identifier}/raw/{path} | Get raw file content
+[**GetRepository**](RepositoryApi.md#GetRepository) | **Get** /repos/{repo_identifier} | Get repository
+[**ImportRepository**](RepositoryApi.md#ImportRepository) | **Post** /repos/import | Import repository
+[**ListBranches**](RepositoryApi.md#ListBranches) | **Get** /repos/{repo_identifier}/branches | List branches
+[**ListCommits**](RepositoryApi.md#ListCommits) | **Get** /repos/{repo_identifier}/commits | List commits
+[**ListRepos**](RepositoryApi.md#ListRepos) | **Get** /repos | List repositories
+[**ListTags**](RepositoryApi.md#ListTags) | **Get** /repos/{repo_identifier}/tags | List tags
+[**MergeCheck**](RepositoryApi.md#MergeCheck) | **Post** /repos/{repo_identifier}/merge-check/{range} | Check mergeability
+[**MoveRepository**](RepositoryApi.md#MoveRepository) | **Post** /repos/{repo_identifier}/move | Move repository
+[**PathDetails**](RepositoryApi.md#PathDetails) | **Post** /repos/{repo_identifier}/path-details | Get commit details
+[**RawDiff**](RepositoryApi.md#RawDiff) | **Get** /repos/{repo_identifier}/diff/{range} | Get raw diff
+[**RawDiffPost**](RepositoryApi.md#RawDiffPost) | **Post** /repos/{repo_identifier}/diff/{range} | Get raw diff
+[**RuleAdd**](RepositoryApi.md#RuleAdd) | **Post** /repos/{repo_identifier}/rules | Add protection rule
+[**RuleDelete**](RepositoryApi.md#RuleDelete) | **Delete** /repos/{repo_identifier}/rules/{rule_uid} | Delete protection rule
+[**RuleGet**](RepositoryApi.md#RuleGet) | **Get** /repos/{repo_identifier}/rules/{rule_uid} | Get protection rule
+[**RuleList**](RepositoryApi.md#RuleList) | **Get** /repos/{repo_identifier}/rules | List protection rules
+[**RuleUpdate**](RepositoryApi.md#RuleUpdate) | **Patch** /repos/{repo_identifier}/rules/{rule_uid} | Update protection rule
+[**UpdateRepository**](RepositoryApi.md#UpdateRepository) | **Patch** /repos/{repo_identifier} | Update repository
 
 # **CalculateCommitDivergence**
 > []RepoCommitDivergence CalculateCommitDivergence(ctx, accountIdentifier, repoIdentifier, optional)
-
+Get commit divergence
 
 ### Required Parameters
 
@@ -63,7 +67,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -74,7 +78,7 @@ Name | Type | Description  | Notes
 
 # **CodeOwnersValidate**
 > CodeOwnersValidate(ctx, accountIdentifier, repoIdentifier, optional)
-
+Validate code owners file
 
 ### Required Parameters
 
@@ -101,7 +105,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -112,7 +116,7 @@ Name | Type | Description  | Notes
 
 # **CommitFiles**
 > TypesCommitFilesResponse CommitFiles(ctx, accountIdentifier, repoIdentifier, optional)
-
+Commit files
 
 ### Required Parameters
 
@@ -139,7 +143,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -150,7 +154,7 @@ Name | Type | Description  | Notes
 
 # **CreateBranch**
 > RepoBranch CreateBranch(ctx, accountIdentifier, repoIdentifier, optional)
-
+Create branch
 
 ### Required Parameters
 
@@ -177,7 +181,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -188,7 +192,7 @@ Name | Type | Description  | Notes
 
 # **CreateRepository**
 > TypesRepository CreateRepository(ctx, accountIdentifier, optional)
-
+Create repository
 
 ### Required Parameters
 
@@ -213,7 +217,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -224,7 +228,7 @@ Name | Type | Description  | Notes
 
 # **CreateTag**
 > RepoCommitTag CreateTag(ctx, accountIdentifier, repoIdentifier, optional)
-
+Create tag
 
 ### Required Parameters
 
@@ -251,7 +255,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -262,7 +266,7 @@ Name | Type | Description  | Notes
 
 # **DeleteBranch**
 > DeleteBranch(ctx, accountIdentifier, repoIdentifier, branchName, optional)
-
+Delete branch
 
 ### Required Parameters
 
@@ -291,7 +295,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -302,7 +306,7 @@ Name | Type | Description  | Notes
 
 # **DeleteRepository**
 > DeleteRepository(ctx, accountIdentifier, repoIdentifier, optional)
-
+Delete repository
 
 ### Required Parameters
 
@@ -328,7 +332,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -339,7 +343,7 @@ Name | Type | Description  | Notes
 
 # **DeleteTag**
 > DeleteTag(ctx, accountIdentifier, repoIdentifier, tagName, optional)
-
+Delete tag
 
 ### Required Parameters
 
@@ -368,7 +372,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -379,7 +383,7 @@ Name | Type | Description  | Notes
 
 # **DiffStats**
 > TypesDiffStats DiffStats(ctx, accountIdentifier, repoIdentifier, range_, optional)
-
+Get diff stats
 
 ### Required Parameters
 
@@ -408,44 +412,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **FindRepository**
-> TypesRepository FindRepository(ctx, accountIdentifier, repoIdentifier, optional)
-
-
-### Required Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
-  **repoIdentifier** | **string**|  | 
- **optional** | ***RepositoryApiFindRepositoryOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-Optional parameters are passed through a pointer to a RepositoryApiFindRepositoryOpts struct
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
-
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity.. | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity.. | 
-
-### Return type
-
-[**TypesRepository**](TypesRepository.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -456,7 +423,7 @@ Name | Type | Description  | Notes
 
 # **GetBlame**
 > []GitBlamePart GetBlame(ctx, accountIdentifier, repoIdentifier, path, optional)
-
+Get git blame
 
 ### Required Parameters
 
@@ -487,7 +454,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -498,7 +465,7 @@ Name | Type | Description  | Notes
 
 # **GetBranch**
 > RepoBranch GetBranch(ctx, accountIdentifier, repoIdentifier, branchName, optional)
-
+Get branch
 
 ### Required Parameters
 
@@ -526,7 +493,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -537,7 +504,7 @@ Name | Type | Description  | Notes
 
 # **GetCommit**
 > TypesCommit GetCommit(ctx, accountIdentifier, repoIdentifier, commitSha, optional)
-
+Get commit
 
 ### Required Parameters
 
@@ -565,7 +532,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -576,7 +543,7 @@ Name | Type | Description  | Notes
 
 # **GetCommitDiff**
 > string GetCommitDiff(ctx, accountIdentifier, repoIdentifier, commitSha, optional)
-
+Get raw git diff of a commit
 
 ### Required Parameters
 
@@ -604,7 +571,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -615,7 +582,7 @@ Name | Type | Description  | Notes
 
 # **GetContent**
 > OpenapiGetContentOutput GetContent(ctx, accountIdentifier, repoIdentifier, path, optional)
-
+Get content of a file
 
 ### Required Parameters
 
@@ -643,7 +610,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -654,7 +621,7 @@ Name | Type | Description  | Notes
 
 # **GetRaw**
 > GetRaw(ctx, accountIdentifier, repoIdentifier, path, optional)
-
+Get raw file content
 
 ### Required Parameters
 
@@ -683,7 +650,44 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **GetRepository**
+> TypesRepository GetRepository(ctx, accountIdentifier, repoIdentifier, optional)
+Get repository
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **repoIdentifier** | **string**|  | 
+ **optional** | ***RepositoryApiGetRepositoryOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiGetRepositoryOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity.. | 
+
+### Return type
+
+[**TypesRepository**](TypesRepository.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -694,7 +698,7 @@ Name | Type | Description  | Notes
 
 # **ImportRepository**
 > TypesRepository ImportRepository(ctx, accountIdentifier, optional)
-
+Import repository
 
 ### Required Parameters
 
@@ -719,7 +723,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -730,7 +734,7 @@ Name | Type | Description  | Notes
 
 # **ListBranches**
 > []RepoBranch ListBranches(ctx, accountIdentifier, repoIdentifier, optional)
-
+List branches
 
 ### Required Parameters
 
@@ -762,7 +766,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -773,7 +777,7 @@ Name | Type | Description  | Notes
 
 # **ListCommits**
 > []TypesListCommitResponse ListCommits(ctx, accountIdentifier, repoIdentifier, optional)
-
+List commits
 
 ### Required Parameters
 
@@ -807,7 +811,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -818,7 +822,7 @@ Name | Type | Description  | Notes
 
 # **ListRepos**
 > []TypesRepository ListRepos(ctx, accountIdentifier, optional)
-
+List repositories
 
 ### Required Parameters
 
@@ -847,7 +851,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -858,7 +862,7 @@ Name | Type | Description  | Notes
 
 # **ListTags**
 > []RepoCommitTag ListTags(ctx, accountIdentifier, repoIdentifier, optional)
-
+List tags
 
 ### Required Parameters
 
@@ -890,7 +894,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -901,7 +905,7 @@ Name | Type | Description  | Notes
 
 # **MergeCheck**
 > RepoMergeCheck MergeCheck(ctx, accountIdentifier, repoIdentifier, range_, optional)
-
+Check mergeability
 
 ### Required Parameters
 
@@ -930,7 +934,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -941,7 +945,7 @@ Name | Type | Description  | Notes
 
 # **MoveRepository**
 > TypesRepository MoveRepository(ctx, accountIdentifier, repoIdentifier, optional)
-
+Move repository
 
 ### Required Parameters
 
@@ -968,7 +972,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -979,7 +983,7 @@ Name | Type | Description  | Notes
 
 # **PathDetails**
 > RepoPathsDetailsOutput PathDetails(ctx, accountIdentifier, repoIdentifier, optional)
-
+Get commit details
 
 ### Required Parameters
 
@@ -1007,7 +1011,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -1018,7 +1022,7 @@ Name | Type | Description  | Notes
 
 # **RawDiff**
 > []GitFileDiff RawDiff(ctx, accountIdentifier, repoIdentifier, range_, optional)
-
+Get raw diff
 
 ### Required Parameters
 
@@ -1047,7 +1051,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -1058,7 +1062,7 @@ Name | Type | Description  | Notes
 
 # **RawDiffPost**
 > []GitFileDiff RawDiffPost(ctx, accountIdentifier, repoIdentifier, range_, optional)
-
+Get raw diff
 
 ### Required Parameters
 
@@ -1087,7 +1091,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -1096,9 +1100,125 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **RuleAdd**
+> OpenapiRule RuleAdd(ctx, accountIdentifier, repoIdentifier, optional)
+Add protection rule
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **repoIdentifier** | **string**|  | 
+ **optional** | ***RepositoryApiRuleAddOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiRuleAddOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **body** | [**optional.Interface of RepoIdentifierRulesBody**](RepoIdentifierRulesBody.md)|  | 
+ **orgIdentifier** | **optional.**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.**| Project Identifier for the Entity.. | 
+
+### Return type
+
+[**OpenapiRule**](OpenapiRule.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **RuleDelete**
+> RuleDelete(ctx, accountIdentifier, repoIdentifier, ruleUid, optional)
+Delete protection rule
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **repoIdentifier** | **string**|  | 
+  **ruleUid** | **string**|  | 
+ **optional** | ***RepositoryApiRuleDeleteOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiRuleDeleteOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity.. | 
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **RuleGet**
+> OpenapiRule RuleGet(ctx, accountIdentifier, repoIdentifier, ruleUid, optional)
+Get protection rule
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **repoIdentifier** | **string**|  | 
+  **ruleUid** | **string**|  | 
+ **optional** | ***RepositoryApiRuleGetOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiRuleGetOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity.. | 
+
+### Return type
+
+[**OpenapiRule**](OpenapiRule.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **RuleList**
 > []OpenapiRule RuleList(ctx, accountIdentifier, repoIdentifier, optional)
-
+List protection rules
 
 ### Required Parameters
 
@@ -1129,7 +1249,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -1138,9 +1258,49 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **RuleUpdate**
+> OpenapiRule RuleUpdate(ctx, accountIdentifier, repoIdentifier, ruleUid, optional)
+Update protection rule
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **repoIdentifier** | **string**|  | 
+  **ruleUid** | **string**|  | 
+ **optional** | ***RepositoryApiRuleUpdateOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiRuleUpdateOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **body** | [**optional.Interface of RulesRuleUidBody**](RulesRuleUidBody.md)|  | 
+ **orgIdentifier** | **optional.**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.**| Project Identifier for the Entity.. | 
+
+### Return type
+
+[**OpenapiRule**](OpenapiRule.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **UpdateRepository**
 > TypesRepository UpdateRepository(ctx, accountIdentifier, repoIdentifier, optional)
-
+Update repository
 
 ### Required Parameters
 
@@ -1167,7 +1327,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 

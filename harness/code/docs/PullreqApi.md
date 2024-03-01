@@ -1,36 +1,36 @@
-# code{{classname}}
+# {{classname}}
 
-All URIs are relative to */api/v1*
+All URIs are relative to */gateway/code/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CodeownersPullReq**](PullreqApi.md#CodeownersPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/codeowners | 
-[**CommentCreatePullReq**](PullreqApi.md#CommentCreatePullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments | 
-[**CommentDeletePullReq**](PullreqApi.md#CommentDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id} | 
-[**CommentStatusPullReq**](PullreqApi.md#CommentStatusPullReq) | **Put** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id}/status | 
-[**CommentUpdatePullReq**](PullreqApi.md#CommentUpdatePullReq) | **Patch** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id} | 
-[**CreatePullReq**](PullreqApi.md#CreatePullReq) | **Post** /repos/{repo_identifier}/pullreq | 
-[**DiffPullReq**](PullreqApi.md#DiffPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/diff | 
-[**DiffPullReqPost**](PullreqApi.md#DiffPullReqPost) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/diff | 
-[**FileViewAddPullReq**](PullreqApi.md#FileViewAddPullReq) | **Put** /repos/{repo_identifier}/pullreq/{pullreq_number}/file-views | 
-[**FileViewDeletePullReq**](PullreqApi.md#FileViewDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/file-views/{file_path} | 
-[**FileViewListPullReq**](PullreqApi.md#FileViewListPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/file-views | 
-[**GetPullReq**](PullreqApi.md#GetPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number} | 
-[**ListPullReq**](PullreqApi.md#ListPullReq) | **Get** /repos/{repo_identifier}/pullreq | 
-[**ListPullReqActivities**](PullreqApi.md#ListPullReqActivities) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/activities | 
-[**ListPullReqCommits**](PullreqApi.md#ListPullReqCommits) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/commits | 
-[**MergePullReqOp**](PullreqApi.md#MergePullReqOp) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/merge | 
-[**PullReqMetaData**](PullreqApi.md#PullReqMetaData) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/metadata | 
-[**ReviewSubmitPullReq**](PullreqApi.md#ReviewSubmitPullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviews | 
-[**ReviewerAddPullReq**](PullreqApi.md#ReviewerAddPullReq) | **Put** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers | 
-[**ReviewerDeletePullReq**](PullreqApi.md#ReviewerDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers/{pullreq_reviewer_id} | 
-[**ReviewerListPullReq**](PullreqApi.md#ReviewerListPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers | 
-[**StatePullReq**](PullreqApi.md#StatePullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/state | 
-[**UpdatePullReq**](PullreqApi.md#UpdatePullReq) | **Patch** /repos/{repo_identifier}/pullreq/{pullreq_number} | 
+[**CodeownersPullReq**](PullreqApi.md#CodeownersPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/codeowners | Get code owners
+[**CommentCreatePullReq**](PullreqApi.md#CommentCreatePullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments | Create new pull request comment
+[**CommentDeletePullReq**](PullreqApi.md#CommentDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id} | Delete pull request comment
+[**CommentStatusPullReq**](PullreqApi.md#CommentStatusPullReq) | **Put** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id}/status | Update status of pull request comment
+[**CommentUpdatePullReq**](PullreqApi.md#CommentUpdatePullReq) | **Patch** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id} | Update pull request comment
+[**CreatePullReq**](PullreqApi.md#CreatePullReq) | **Post** /repos/{repo_identifier}/pullreq | Create pull request
+[**DiffPullReq**](PullreqApi.md#DiffPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/diff | Get file changes
+[**DiffPullReqPost**](PullreqApi.md#DiffPullReqPost) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/diff | Get file changes
+[**FileViewAddPullReq**](PullreqApi.md#FileViewAddPullReq) | **Put** /repos/{repo_identifier}/pullreq/{pullreq_number}/file-views | Mark file as viewed
+[**FileViewDeletePullReq**](PullreqApi.md#FileViewDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/file-views/{file_path} | Remove file view
+[**FileViewListPullReq**](PullreqApi.md#FileViewListPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/file-views | List viewed files
+[**GetPullReq**](PullreqApi.md#GetPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number} | Get pull request
+[**ListPullReq**](PullreqApi.md#ListPullReq) | **Get** /repos/{repo_identifier}/pullreq | List pull requests
+[**ListPullReqActivities**](PullreqApi.md#ListPullReqActivities) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/activities | List activities
+[**ListPullReqCommits**](PullreqApi.md#ListPullReqCommits) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/commits | List commits
+[**MergePullReqOp**](PullreqApi.md#MergePullReqOp) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/merge | Merge
+[**PullReqMetaData**](PullreqApi.md#PullReqMetaData) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/metadata | Get metadata
+[**ReviewSubmitPullReq**](PullreqApi.md#ReviewSubmitPullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviews | Submit review
+[**ReviewerAddPullReq**](PullreqApi.md#ReviewerAddPullReq) | **Put** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers | Add reviewer
+[**ReviewerDeletePullReq**](PullreqApi.md#ReviewerDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers/{pullreq_reviewer_id} | Remove reviewer
+[**ReviewerListPullReq**](PullreqApi.md#ReviewerListPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers | List reviewers
+[**StatePullReq**](PullreqApi.md#StatePullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/state | Update state of pull request
+[**UpdatePullReq**](PullreqApi.md#UpdatePullReq) | **Patch** /repos/{repo_identifier}/pullreq/{pullreq_number} | Update pull request
 
 # **CodeownersPullReq**
 > TypesCodeOwnerEvaluation CodeownersPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Get code owners
 
 ### Required Parameters
 
@@ -58,7 +58,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -69,7 +69,7 @@ Name | Type | Description  | Notes
 
 # **CommentCreatePullReq**
 > TypesPullReqActivity CommentCreatePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Create new pull request comment
 
 ### Required Parameters
 
@@ -98,7 +98,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -109,7 +109,7 @@ Name | Type | Description  | Notes
 
 # **CommentDeletePullReq**
 > CommentDeletePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, pullreqCommentId, optional)
-
+Delete pull request comment
 
 ### Required Parameters
 
@@ -139,7 +139,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -150,7 +150,7 @@ Name | Type | Description  | Notes
 
 # **CommentStatusPullReq**
 > TypesPullReqActivity CommentStatusPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, pullreqCommentId, optional)
-
+Update status of pull request comment
 
 ### Required Parameters
 
@@ -181,7 +181,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -192,7 +192,7 @@ Name | Type | Description  | Notes
 
 # **CommentUpdatePullReq**
 > TypesPullReqActivity CommentUpdatePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, pullreqCommentId, optional)
-
+Update pull request comment
 
 ### Required Parameters
 
@@ -223,7 +223,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -234,7 +234,7 @@ Name | Type | Description  | Notes
 
 # **CreatePullReq**
 > TypesPullReq CreatePullReq(ctx, accountIdentifier, repoIdentifier, optional)
-
+Create pull request
 
 ### Required Parameters
 
@@ -261,7 +261,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -272,7 +272,7 @@ Name | Type | Description  | Notes
 
 # **DiffPullReq**
 > []GitFileDiff DiffPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Get file changes
 
 ### Required Parameters
 
@@ -301,7 +301,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -312,7 +312,7 @@ Name | Type | Description  | Notes
 
 # **DiffPullReqPost**
 > []GitFileDiff DiffPullReqPost(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Get file changes
 
 ### Required Parameters
 
@@ -341,7 +341,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -352,7 +352,7 @@ Name | Type | Description  | Notes
 
 # **FileViewAddPullReq**
 > TypesPullReqFileView FileViewAddPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Mark file as viewed
 
 ### Required Parameters
 
@@ -381,7 +381,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -392,7 +392,7 @@ Name | Type | Description  | Notes
 
 # **FileViewDeletePullReq**
 > FileViewDeletePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, filePath, optional)
-
+Remove file view
 
 ### Required Parameters
 
@@ -422,7 +422,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -433,7 +433,7 @@ Name | Type | Description  | Notes
 
 # **FileViewListPullReq**
 > []TypesPullReqFileView FileViewListPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+List viewed files
 
 ### Required Parameters
 
@@ -461,7 +461,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -472,7 +472,7 @@ Name | Type | Description  | Notes
 
 # **GetPullReq**
 > TypesPullReq GetPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Get pull request
 
 ### Required Parameters
 
@@ -500,7 +500,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -511,7 +511,7 @@ Name | Type | Description  | Notes
 
 # **ListPullReq**
 > []TypesPullReq ListPullReq(ctx, accountIdentifier, repoIdentifier, optional)
-
+List pull requests
 
 ### Required Parameters
 
@@ -547,7 +547,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -558,7 +558,7 @@ Name | Type | Description  | Notes
 
 # **ListPullReqActivities**
 > []TypesPullReqActivity ListPullReqActivities(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+List activities
 
 ### Required Parameters
 
@@ -591,7 +591,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -602,7 +602,7 @@ Name | Type | Description  | Notes
 
 # **ListPullReqCommits**
 > []TypesCommit ListPullReqCommits(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+List commits
 
 ### Required Parameters
 
@@ -632,7 +632,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -643,7 +643,7 @@ Name | Type | Description  | Notes
 
 # **MergePullReqOp**
 > TypesMergeResponse MergePullReqOp(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Merge
 
 ### Required Parameters
 
@@ -672,7 +672,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -683,7 +683,7 @@ Name | Type | Description  | Notes
 
 # **PullReqMetaData**
 > TypesPullReqStats PullReqMetaData(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Get metadata
 
 ### Required Parameters
 
@@ -711,7 +711,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -722,7 +722,7 @@ Name | Type | Description  | Notes
 
 # **ReviewSubmitPullReq**
 > ReviewSubmitPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Submit review
 
 ### Required Parameters
 
@@ -751,7 +751,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -762,7 +762,7 @@ Name | Type | Description  | Notes
 
 # **ReviewerAddPullReq**
 > TypesPullReqReviewer ReviewerAddPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Add reviewer
 
 ### Required Parameters
 
@@ -791,7 +791,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -802,7 +802,7 @@ Name | Type | Description  | Notes
 
 # **ReviewerDeletePullReq**
 > ReviewerDeletePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, pullreqReviewerId, optional)
-
+Remove reviewer
 
 ### Required Parameters
 
@@ -832,7 +832,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -843,7 +843,7 @@ Name | Type | Description  | Notes
 
 # **ReviewerListPullReq**
 > []TypesPullReqReviewer ReviewerListPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+List reviewers
 
 ### Required Parameters
 
@@ -871,7 +871,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -882,7 +882,7 @@ Name | Type | Description  | Notes
 
 # **StatePullReq**
 > TypesPullReq StatePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Update state of pull request
 
 ### Required Parameters
 
@@ -911,7 +911,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -922,7 +922,7 @@ Name | Type | Description  | Notes
 
 # **UpdatePullReq**
 > TypesPullReq UpdatePullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
-
+Update pull request
 
 ### Required Parameters
 
@@ -951,7 +951,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 

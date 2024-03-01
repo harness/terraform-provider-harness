@@ -1,15 +1,15 @@
-# code{{classname}}
+# {{classname}}
 
-All URIs are relative to */api/v1*
+All URIs are relative to */gateway/code/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**RepoArtifactDownload**](UploadApi.md#RepoArtifactDownload) | **Get** /repos/{repo_identifier}/uploads/{file_ref} | 
-[**RepoArtifactUpload**](UploadApi.md#RepoArtifactUpload) | **Post** /repos/{repo_identifier}/uploads | 
+[**RepoArtifactDownload**](UploadApi.md#RepoArtifactDownload) | **Get** /repos/{repo_identifier}/uploads/{file_ref} | Repo artifact download
+[**RepoArtifactUpload**](UploadApi.md#RepoArtifactUpload) | **Post** /repos/{repo_identifier}/uploads | Repo artifact upload
 
 # **RepoArtifactDownload**
 > RepoArtifactDownload(ctx, accountIdentifier, repoIdentifier, fileRef, optional)
-
+Repo artifact download
 
 ### Required Parameters
 
@@ -37,7 +37,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -48,7 +48,7 @@ Name | Type | Description  | Notes
 
 # **RepoArtifactUpload**
 > UploadResult RepoArtifactUpload(ctx, accountIdentifier, repoIdentifier, optional)
-
+Repo artifact upload
 
 ### Required Parameters
 
@@ -74,7 +74,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 

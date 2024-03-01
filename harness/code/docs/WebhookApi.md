@@ -1,20 +1,20 @@
-# code{{classname}}
+# {{classname}}
 
-All URIs are relative to */api/v1*
+All URIs are relative to */gateway/code/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CreateWebhook**](WebhookApi.md#CreateWebhook) | **Post** /repos/{repo_identifier}/webhooks | 
-[**DeleteWebhook**](WebhookApi.md#DeleteWebhook) | **Delete** /repos/{repo_identifier}/webhooks/{webhook_identifier} | 
-[**GetWebhook**](WebhookApi.md#GetWebhook) | **Get** /repos/{repo_identifier}/webhooks/{webhook_identifier} | 
-[**GetWebhookExecution**](WebhookApi.md#GetWebhookExecution) | **Get** /repos/{repo_identifier}/webhooks/{webhook_identifier}/executions/{webhook_execution_id} | 
-[**ListWebhookExecutions**](WebhookApi.md#ListWebhookExecutions) | **Get** /repos/{repo_identifier}/webhooks/{webhook_identifier}/executions | 
-[**ListWebhooks**](WebhookApi.md#ListWebhooks) | **Get** /repos/{repo_identifier}/webhooks | 
-[**UpdateWebhook**](WebhookApi.md#UpdateWebhook) | **Patch** /repos/{repo_identifier}/webhooks/{webhook_identifier} | 
+[**CreateWebhook**](WebhookApi.md#CreateWebhook) | **Post** /repos/{repo_identifier}/webhooks | Create webhook
+[**DeleteWebhook**](WebhookApi.md#DeleteWebhook) | **Delete** /repos/{repo_identifier}/webhooks/{webhook_identifier} | Delete webhook
+[**GetWebhook**](WebhookApi.md#GetWebhook) | **Get** /repos/{repo_identifier}/webhooks/{webhook_identifier} | Get webhook
+[**GetWebhookExecution**](WebhookApi.md#GetWebhookExecution) | **Get** /repos/{repo_identifier}/webhooks/{webhook_identifier}/executions/{webhook_execution_id} | Get webhook execution
+[**ListWebhookExecutions**](WebhookApi.md#ListWebhookExecutions) | **Get** /repos/{repo_identifier}/webhooks/{webhook_identifier}/executions | List webhook executions
+[**ListWebhooks**](WebhookApi.md#ListWebhooks) | **Get** /repos/{repo_identifier}/webhooks | List webhooks
+[**UpdateWebhook**](WebhookApi.md#UpdateWebhook) | **Patch** /repos/{repo_identifier}/webhooks/{webhook_identifier} | Update webhook
 
 # **CreateWebhook**
 > OpenapiWebhookType CreateWebhook(ctx, repoIdentifier, optional)
-
+Create webhook
 
 ### Required Parameters
 
@@ -37,7 +37,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -48,7 +48,7 @@ Name | Type | Description  | Notes
 
 # **DeleteWebhook**
 > DeleteWebhook(ctx, repoIdentifier, webhookIdentifier)
-
+Delete webhook
 
 ### Required Parameters
 
@@ -64,7 +64,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -75,7 +75,7 @@ Name | Type | Description  | Notes
 
 # **GetWebhook**
 > OpenapiWebhookType GetWebhook(ctx, repoIdentifier, webhookIdentifier)
-
+Get webhook
 
 ### Required Parameters
 
@@ -91,7 +91,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -102,7 +102,7 @@ Name | Type | Description  | Notes
 
 # **GetWebhookExecution**
 > TypesWebhookExecution GetWebhookExecution(ctx, repoIdentifier, webhookIdentifier, webhookExecutionId, optional)
-
+Get webhook execution
 
 ### Required Parameters
 
@@ -130,7 +130,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -141,7 +141,7 @@ Name | Type | Description  | Notes
 
 # **ListWebhookExecutions**
 > []TypesWebhookExecution ListWebhookExecutions(ctx, repoIdentifier, webhookIdentifier, optional)
-
+List webhook executions
 
 ### Required Parameters
 
@@ -167,7 +167,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -178,7 +178,7 @@ Name | Type | Description  | Notes
 
 # **ListWebhooks**
 > []OpenapiWebhookType ListWebhooks(ctx, repoIdentifier, optional)
-
+List webhooks
 
 ### Required Parameters
 
@@ -205,7 +205,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -216,7 +216,7 @@ Name | Type | Description  | Notes
 
 # **UpdateWebhook**
 > OpenapiWebhookType UpdateWebhook(ctx, repoIdentifier, webhookIdentifier, optional)
-
+Update webhook
 
 ### Required Parameters
 
@@ -241,7 +241,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 

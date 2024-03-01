@@ -11,11 +11,12 @@ package code
 import (
 	"context"
 	"fmt"
-	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,7 +27,7 @@ var (
 type WebhookApiService service
 
 /*
-WebhookApiService
+WebhookApiService Create webhook
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repoIdentifier
  * @param optional nil or *WebhookApiCreateWebhookOpts - Optional Parameters:
@@ -77,6 +78,19 @@ func (a *WebhookApiService) CreateWebhook(ctx context.Context, repoIdentifier st
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -164,7 +178,7 @@ func (a *WebhookApiService) CreateWebhook(ctx context.Context, repoIdentifier st
 }
 
 /*
-WebhookApiService
+WebhookApiService Delete webhook
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param repoIdentifier
   - @param webhookIdentifier
@@ -202,6 +216,19 @@ func (a *WebhookApiService) DeleteWebhook(ctx context.Context, repoIdentifier st
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -271,7 +298,7 @@ func (a *WebhookApiService) DeleteWebhook(ctx context.Context, repoIdentifier st
 }
 
 /*
-WebhookApiService
+WebhookApiService Get webhook
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
   - @param repoIdentifier
   - @param webhookIdentifier
@@ -312,6 +339,19 @@ func (a *WebhookApiService) GetWebhook(ctx context.Context, repoIdentifier strin
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -399,7 +439,7 @@ func (a *WebhookApiService) GetWebhook(ctx context.Context, repoIdentifier strin
 }
 
 /*
-WebhookApiService
+WebhookApiService Get webhook execution
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repoIdentifier
  * @param webhookIdentifier
@@ -456,6 +496,19 @@ func (a *WebhookApiService) GetWebhookExecution(ctx context.Context, repoIdentif
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -543,7 +596,7 @@ func (a *WebhookApiService) GetWebhookExecution(ctx context.Context, repoIdentif
 }
 
 /*
-WebhookApiService
+WebhookApiService List webhook executions
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repoIdentifier
  * @param webhookIdentifier
@@ -598,6 +651,19 @@ func (a *WebhookApiService) ListWebhookExecutions(ctx context.Context, repoIdent
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -685,7 +751,7 @@ func (a *WebhookApiService) ListWebhookExecutions(ctx context.Context, repoIdent
 }
 
 /*
-WebhookApiService
+WebhookApiService List webhooks
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repoIdentifier
  * @param optional nil or *WebhookApiListWebhooksOpts - Optional Parameters:
@@ -753,6 +819,19 @@ func (a *WebhookApiService) ListWebhooks(ctx context.Context, repoIdentifier str
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -840,7 +919,7 @@ func (a *WebhookApiService) ListWebhooks(ctx context.Context, repoIdentifier str
 }
 
 /*
-WebhookApiService
+WebhookApiService Update webhook
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param repoIdentifier
  * @param webhookIdentifier
@@ -893,6 +972,19 @@ func (a *WebhookApiService) UpdateWebhook(ctx context.Context, repoIdentifier st
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

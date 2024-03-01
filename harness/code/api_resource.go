@@ -24,7 +24,7 @@ var (
 type ResourceApiService service
 
 /*
-ResourceApiService
+ResourceApiService List available gitignore names
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 @return []string
@@ -61,6 +61,19 @@ func (a *ResourceApiService) ListGitignore(ctx context.Context) ([]string, *http
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -138,7 +151,7 @@ func (a *ResourceApiService) ListGitignore(ctx context.Context) ([]string, *http
 }
 
 /*
-ResourceApiService
+ResourceApiService List available license names
   - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
 @return []InlineResponse200
@@ -175,6 +188,19 @@ func (a *ResourceApiService) ListLicenses(ctx context.Context) ([]InlineResponse
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

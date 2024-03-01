@@ -11,11 +11,12 @@ package code
 import (
 	"context"
 	"fmt"
-	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,7 +27,7 @@ var (
 type PullreqApiService service
 
 /*
-PullreqApiService
+PullreqApiService Get code owners
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -83,6 +84,19 @@ func (a *PullreqApiService) CodeownersPullReq(ctx context.Context, accountIdenti
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -190,7 +204,7 @@ func (a *PullreqApiService) CodeownersPullReq(ctx context.Context, accountIdenti
 }
 
 /*
-PullreqApiService
+PullreqApiService Create new pull request comment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -255,6 +269,19 @@ func (a *PullreqApiService) CommentCreatePullReq(ctx context.Context, accountIde
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -342,7 +369,7 @@ func (a *PullreqApiService) CommentCreatePullReq(ctx context.Context, accountIde
 }
 
 /*
-PullreqApiService
+PullreqApiService Delete pull request comment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -400,6 +427,19 @@ func (a *PullreqApiService) CommentDeletePullReq(ctx context.Context, accountIde
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -469,7 +509,7 @@ func (a *PullreqApiService) CommentDeletePullReq(ctx context.Context, accountIde
 }
 
 /*
-PullreqApiService
+PullreqApiService Update status of pull request comment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -537,6 +577,19 @@ func (a *PullreqApiService) CommentStatusPullReq(ctx context.Context, accountIde
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -623,7 +676,7 @@ func (a *PullreqApiService) CommentStatusPullReq(ctx context.Context, accountIde
 }
 
 /*
-PullreqApiService
+PullreqApiService Update pull request comment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -691,6 +744,19 @@ func (a *PullreqApiService) CommentUpdatePullReq(ctx context.Context, accountIde
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -777,7 +843,7 @@ func (a *PullreqApiService) CommentUpdatePullReq(ctx context.Context, accountIde
 }
 
 /*
-PullreqApiService
+PullreqApiService Create pull request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -840,6 +906,19 @@ func (a *PullreqApiService) CreatePullReq(ctx context.Context, accountIdentifier
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -927,7 +1006,7 @@ func (a *PullreqApiService) CreatePullReq(ctx context.Context, accountIdentifier
 }
 
 /*
-PullreqApiService
+PullreqApiService Get file changes
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -989,6 +1068,19 @@ func (a *PullreqApiService) DiffPullReq(ctx context.Context, accountIdentifier s
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1076,7 +1168,7 @@ func (a *PullreqApiService) DiffPullReq(ctx context.Context, accountIdentifier s
 }
 
 /*
-PullreqApiService
+PullreqApiService Get file changes
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1142,6 +1234,19 @@ func (a *PullreqApiService) DiffPullReqPost(ctx context.Context, accountIdentifi
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
 	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -1228,7 +1333,7 @@ func (a *PullreqApiService) DiffPullReqPost(ctx context.Context, accountIdentifi
 }
 
 /*
-PullreqApiService
+PullreqApiService Mark file as viewed
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1293,6 +1398,19 @@ func (a *PullreqApiService) FileViewAddPullReq(ctx context.Context, accountIdent
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1380,7 +1498,7 @@ func (a *PullreqApiService) FileViewAddPullReq(ctx context.Context, accountIdent
 }
 
 /*
-PullreqApiService
+PullreqApiService Remove file view
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1438,6 +1556,19 @@ func (a *PullreqApiService) FileViewDeletePullReq(ctx context.Context, accountId
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1507,7 +1638,7 @@ func (a *PullreqApiService) FileViewDeletePullReq(ctx context.Context, accountId
 }
 
 /*
-PullreqApiService
+PullreqApiService List viewed files
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1564,6 +1695,19 @@ func (a *PullreqApiService) FileViewListPullReq(ctx context.Context, accountIden
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1651,7 +1795,7 @@ func (a *PullreqApiService) FileViewListPullReq(ctx context.Context, accountIden
 }
 
 /*
-PullreqApiService
+PullreqApiService Get pull request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1708,6 +1852,19 @@ func (a *PullreqApiService) GetPullReq(ctx context.Context, accountIdentifier st
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -1795,7 +1952,7 @@ func (a *PullreqApiService) GetPullReq(ctx context.Context, accountIdentifier st
 }
 
 /*
-PullreqApiService
+PullreqApiService List pull requests
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -1901,6 +2058,19 @@ func (a *PullreqApiService) ListPullReq(ctx context.Context, accountIdentifier s
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -1987,7 +2157,7 @@ func (a *PullreqApiService) ListPullReq(ctx context.Context, accountIdentifier s
 }
 
 /*
-PullreqApiService
+PullreqApiService List activities
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2069,6 +2239,19 @@ func (a *PullreqApiService) ListPullReqActivities(ctx context.Context, accountId
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2156,7 +2339,7 @@ func (a *PullreqApiService) ListPullReqActivities(ctx context.Context, accountId
 }
 
 /*
-PullreqApiService
+PullreqApiService List commits
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2223,6 +2406,19 @@ func (a *PullreqApiService) ListPullReqCommits(ctx context.Context, accountIdent
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2310,7 +2506,7 @@ func (a *PullreqApiService) ListPullReqCommits(ctx context.Context, accountIdent
 }
 
 /*
-PullreqApiService
+PullreqApiService Merge
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2375,6 +2571,19 @@ func (a *PullreqApiService) MergePullReqOp(ctx context.Context, accountIdentifie
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2492,7 +2701,7 @@ func (a *PullreqApiService) MergePullReqOp(ctx context.Context, accountIdentifie
 }
 
 /*
-PullreqApiService
+PullreqApiService Get metadata
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2549,6 +2758,19 @@ func (a *PullreqApiService) PullReqMetaData(ctx context.Context, accountIdentifi
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2636,7 +2858,7 @@ func (a *PullreqApiService) PullReqMetaData(ctx context.Context, accountIdentifi
 }
 
 /*
-PullreqApiService
+PullreqApiService Submit review
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2700,6 +2922,19 @@ func (a *PullreqApiService) ReviewSubmitPullReq(ctx context.Context, accountIden
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2769,7 +3004,7 @@ func (a *PullreqApiService) ReviewSubmitPullReq(ctx context.Context, accountIden
 }
 
 /*
-PullreqApiService
+PullreqApiService Add reviewer
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2834,6 +3069,19 @@ func (a *PullreqApiService) ReviewerAddPullReq(ctx context.Context, accountIdent
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -2921,7 +3169,7 @@ func (a *PullreqApiService) ReviewerAddPullReq(ctx context.Context, accountIdent
 }
 
 /*
-PullreqApiService
+PullreqApiService Remove reviewer
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -2979,6 +3227,19 @@ func (a *PullreqApiService) ReviewerDeletePullReq(ctx context.Context, accountId
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3048,7 +3309,7 @@ func (a *PullreqApiService) ReviewerDeletePullReq(ctx context.Context, accountId
 }
 
 /*
-PullreqApiService
+PullreqApiService List reviewers
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3105,6 +3366,19 @@ func (a *PullreqApiService) ReviewerListPullReq(ctx context.Context, accountIden
 	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3192,7 +3466,7 @@ func (a *PullreqApiService) ReviewerListPullReq(ctx context.Context, accountIden
 }
 
 /*
-PullreqApiService
+PullreqApiService Update state of pull request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3257,6 +3531,19 @@ func (a *PullreqApiService) StatePullReq(ctx context.Context, accountIdentifier 
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
@@ -3344,7 +3631,7 @@ func (a *PullreqApiService) StatePullReq(ctx context.Context, accountIdentifier 
 }
 
 /*
-PullreqApiService
+PullreqApiService Update pull request
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
@@ -3409,6 +3696,19 @@ func (a *PullreqApiService) UpdatePullReq(ctx context.Context, accountIdentifier
 
 		localVarOptionalBody := localVarOptionals.Body.Value()
 		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {

@@ -1,15 +1,15 @@
-# code{{classname}}
+# {{classname}}
 
-All URIs are relative to */api/v1*
+All URIs are relative to */gateway/code/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**ListGitignore**](ResourceApi.md#ListGitignore) | **Get** /resources/gitignore | 
-[**ListLicenses**](ResourceApi.md#ListLicenses) | **Get** /resources/license | 
+[**ListGitignore**](ResourceApi.md#ListGitignore) | **Get** /resources/gitignore | List available gitignore names
+[**ListLicenses**](ResourceApi.md#ListLicenses) | **Get** /resources/license | List available license names
 
 # **ListGitignore**
 > []string ListGitignore(ctx, )
-
+List available gitignore names
 
 ### Required Parameters
 This endpoint does not need any parameter.
@@ -20,7 +20,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 
@@ -31,7 +31,7 @@ This endpoint does not need any parameter.
 
 # **ListLicenses**
 > []InlineResponse200 ListLicenses(ctx, )
-
+List available license names
 
 ### Required Parameters
 This endpoint does not need any parameter.
@@ -42,7 +42,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
 
 ### HTTP request headers
 

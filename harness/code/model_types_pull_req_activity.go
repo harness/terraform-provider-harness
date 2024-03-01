@@ -21,7 +21,7 @@ type TypesPullReqActivity struct {
 	Order    int32                  `json:"order,omitempty"`
 	ParentId int32                  `json:"parent_id,omitempty"`
 	// manually changed object to interface
-	Payload   map[string]interface{}  `json:"payload,omitempty"`
+	Payload   map[string]interface{}   `json:"payload,omitempty"`
 	PullreqId int32                    `json:"pullreq_id,omitempty"`
 	RepoId    int32                    `json:"repo_id,omitempty"`
 	Resolved  int32                    `json:"resolved,omitempty"`

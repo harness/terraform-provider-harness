@@ -9,7 +9,8 @@
 package code
 
 type ProtectionDefApprovals struct {
-	RequireCodeOwners   bool  `json:"require_code_owners,omitempty"`
-	RequireLatestCommit bool  `json:"require_latest_commit,omitempty"`
-	RequireMinimumCount int32 `json:"require_minimum_count,omitempty"`
+	RequireCodeOwners      bool  `json:"require_code_owners,omitempty"`
+	RequireLatestCommit    bool  `json:"require_latest_commit,omitempty"`
+	RequireMinimumCount    int32 `json:"require_minimum_count,omitempty"`
+	RequireNoChangeRequest bool  `json:"require_no_change_request,omitempty"`
 }

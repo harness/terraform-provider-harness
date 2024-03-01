@@ -3,14 +3,16 @@ info:
   title: API Specification
   version: 0.0.0
 servers:
-- url: /api/v1
+- url: /gateway/code/api/v1
 security:
 - bearerAuth: []
+  x-api-key: []
 paths:
   /repos:
     get:
       tags:
       - repository
+      summary: List repositories
       operationId: listRepos
       parameters:
       - name: accountIdentifier
@@ -54,11 +56,11 @@ paths:
         explode: true
         schema:
           type: string
-          default: identifier
           enum:
           - identifier
           - created
           - updated
+          default: identifier
       - name: order
         in: query
         description: The order of the output.
@@ -67,10 +69,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: asc
           enum:
           - asc
           - desc
+          default: asc
       - name: page
         in: query
         description: The page to return.
@@ -129,6 +131,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Create repository
       operationId: createRepository
       parameters:
       - name: accountIdentifier
@@ -195,7 +198,8 @@ paths:
     get:
       tags:
       - repository
-      operationId: findRepository
+      summary: Get repository
+      operationId: getRepository
       parameters:
       - name: accountIdentifier
         in: query
@@ -262,6 +266,7 @@ paths:
     delete:
       tags:
       - repository
+      summary: Delete repository
       operationId: deleteRepository
       parameters:
       - name: accountIdentifier
@@ -325,6 +330,7 @@ paths:
     patch:
       tags:
       - repository
+      summary: Update repository
       operationId: updateRepository
       parameters:
       - name: accountIdentifier
@@ -404,6 +410,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get git blame
       operationId: getBlame
       parameters:
       - name: accountIdentifier
@@ -511,6 +518,7 @@ paths:
     get:
       tags:
       - repository
+      summary: List branches
       operationId: listBranches
       parameters:
       - name: accountIdentifier
@@ -563,10 +571,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: asc
           enum:
           - asc
           - desc
+          default: asc
       - name: sort
         in: query
         description: The data by which the branches are sorted.
@@ -575,10 +583,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: name
           enum:
           - name
           - date
+          default: name
       - name: page
         in: query
         description: The page to return.
@@ -644,6 +652,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Create branch
       operationId: createBranch
       parameters:
       - name: accountIdentifier
@@ -723,6 +732,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get branch
       operationId: getBranch
       parameters:
       - name: accountIdentifier
@@ -797,6 +807,7 @@ paths:
     delete:
       tags:
       - repository
+      summary: Delete branch
       operationId: deleteBranch
       parameters:
       - name: accountIdentifier
@@ -883,6 +894,7 @@ paths:
     get:
       tags:
       - status_checks
+      summary: List status check results
       operationId: listStatusCheckResults
       parameters:
       - name: accountIdentifier
@@ -987,10 +999,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UsererrorError'
+    put:
+      tags:
+      - status_checks
+      summary: Report status check results
+      operationId: reportStatusCheckResults
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: commit_sha
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commits_commit_sha_body'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypesCheck'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
   /repos/{repo_identifier}/checks/recent:
     get:
       tags:
       - status_checks
+      summary: List recent status check
       operationId: listStatusCheckRecent
       parameters:
       - name: accountIdentifier
@@ -1080,6 +1173,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Validate code owners file
       operationId: codeOwnersValidate
       parameters:
       - name: accountIdentifier
@@ -1161,6 +1255,7 @@ paths:
     get:
       tags:
       - repository
+      summary: List commits
       operationId: listCommits
       parameters:
       - name: accountIdentifier
@@ -1305,6 +1400,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Commit files
       operationId: commitFiles
       parameters:
       - name: accountIdentifier
@@ -1390,6 +1486,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get commit
       operationId: getCommit
       parameters:
       - name: accountIdentifier
@@ -1465,6 +1562,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get raw git diff of a commit
       operationId: getCommitDiff
       parameters:
       - name: accountIdentifier
@@ -1541,6 +1639,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Get commit divergence
       operationId: calculateCommitDivergence
       parameters:
       - name: accountIdentifier
@@ -1617,6 +1716,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get content of a file
       operationId: getContent
       parameters:
       - name: accountIdentifier
@@ -1692,6 +1792,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get diff stats
       operationId: diffStats
       parameters:
       - name: accountIdentifier
@@ -1773,6 +1874,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get raw diff
       operationId: rawDiff
       parameters:
       - name: accountIdentifier
@@ -1859,6 +1961,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Get raw diff
       operationId: rawDiffPost
       parameters:
       - name: accountIdentifier
@@ -1940,6 +2043,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Check mergeability
       operationId: mergeCheck
       parameters:
       - name: accountIdentifier
@@ -2021,6 +2125,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Move repository
       operationId: moveRepository
       parameters:
       - name: accountIdentifier
@@ -2094,6 +2199,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Get commit details
       operationId: pathDetails
       parameters:
       - name: accountIdentifier
@@ -2178,6 +2284,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: List pull requests
       operationId: listPullReq
       parameters:
       - name: accountIdentifier
@@ -2214,11 +2321,11 @@ paths:
           type: array
           items:
             type: string
-            default: open
             enum:
             - closed
             - merged
             - open
+            default: open
       - name: source_repo_identifier
         in: query
         description: Source repository ref of the pull requests.
@@ -2267,10 +2374,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: asc
           enum:
           - asc
           - desc
+          default: asc
       - name: sort
         in: query
         description: The data by which the pull requests are sorted.
@@ -2279,13 +2386,13 @@ paths:
         explode: true
         schema:
           type: string
-          default: number
           enum:
           - created
           - edited
           - merged
           - number
           - updated
+          default: number
       - name: page
         in: query
         description: The page to return.
@@ -2351,6 +2458,7 @@ paths:
     post:
       tags:
       - pullreq
+      summary: Create pull request
       operationId: createPullReq
       parameters:
       - name: accountIdentifier
@@ -2424,6 +2532,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: Get pull request
       operationId: getPullReq
       parameters:
       - name: accountIdentifier
@@ -2498,6 +2607,7 @@ paths:
     patch:
       tags:
       - pullreq
+      summary: Update pull request
       operationId: updatePullReq
       parameters:
       - name: accountIdentifier
@@ -2578,6 +2688,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: List activities
       operationId: listPullReqActivities
       parameters:
       - name: accountIdentifier
@@ -2720,6 +2831,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: Get code owners
       operationId: codeownersPullReq
       parameters:
       - name: accountIdentifier
@@ -2807,6 +2919,7 @@ paths:
     post:
       tags:
       - pullreq
+      summary: Create new pull request comment
       operationId: commentCreatePullReq
       parameters:
       - name: accountIdentifier
@@ -2887,6 +3000,7 @@ paths:
     delete:
       tags:
       - pullreq
+      summary: Delete pull request comment
       operationId: commentDeletePullReq
       parameters:
       - name: accountIdentifier
@@ -2964,6 +3078,7 @@ paths:
     patch:
       tags:
       - pullreq
+      summary: Update pull request comment
       operationId: commentUpdatePullReq
       parameters:
       - name: accountIdentifier
@@ -3051,6 +3166,7 @@ paths:
     put:
       tags:
       - pullreq
+      summary: Update status of pull request comment
       operationId: commentStatusPullReq
       parameters:
       - name: accountIdentifier
@@ -3138,6 +3254,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: List commits
       operationId: listPullReqCommits
       parameters:
       - name: accountIdentifier
@@ -3237,6 +3354,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: Get file changes
       operationId: diffPullReq
       parameters:
       - name: accountIdentifier
@@ -3328,6 +3446,7 @@ paths:
     post:
       tags:
       - pullreq
+      summary: Get file changes
       operationId: diffPullReqPost
       parameters:
       - name: accountIdentifier
@@ -3414,6 +3533,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: List viewed files
       operationId: fileViewListPullReq
       parameters:
       - name: accountIdentifier
@@ -3491,6 +3611,7 @@ paths:
     put:
       tags:
       - pullreq
+      summary: Mark file as viewed
       operationId: fileViewAddPullReq
       parameters:
       - name: accountIdentifier
@@ -3571,6 +3692,7 @@ paths:
     delete:
       tags:
       - pullreq
+      summary: Remove file view
       operationId: fileViewDeletePullReq
       parameters:
       - name: accountIdentifier
@@ -3649,6 +3771,7 @@ paths:
     post:
       tags:
       - pullreq
+      summary: Merge
       operationId: mergePullReqOp
       parameters:
       - name: accountIdentifier
@@ -3747,6 +3870,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: Get metadata
       operationId: pullReqMetaData
       parameters:
       - name: accountIdentifier
@@ -3822,6 +3946,7 @@ paths:
     get:
       tags:
       - pullreq
+      summary: List reviewers
       operationId: reviewerListPullReq
       parameters:
       - name: accountIdentifier
@@ -3899,6 +4024,7 @@ paths:
     put:
       tags:
       - pullreq
+      summary: Add reviewer
       operationId: reviewerAddPullReq
       parameters:
       - name: accountIdentifier
@@ -3979,6 +4105,7 @@ paths:
     delete:
       tags:
       - pullreq
+      summary: Remove reviewer
       operationId: reviewerDeletePullReq
       parameters:
       - name: accountIdentifier
@@ -4057,6 +4184,7 @@ paths:
     post:
       tags:
       - pullreq
+      summary: Submit review
       operationId: reviewSubmitPullReq
       parameters:
       - name: accountIdentifier
@@ -4133,6 +4261,7 @@ paths:
     post:
       tags:
       - pullreq
+      summary: Update state of pull request
       operationId: statePullReq
       parameters:
       - name: accountIdentifier
@@ -4213,6 +4342,7 @@ paths:
     get:
       tags:
       - repository
+      summary: Get raw file content
       operationId: getRaw
       parameters:
       - name: accountIdentifier
@@ -4295,6 +4425,7 @@ paths:
     get:
       tags:
       - repository
+      summary: List protection rules
       operationId: ruleList
       parameters:
       - name: accountIdentifier
@@ -4337,10 +4468,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: asc
           enum:
           - asc
           - desc
+          default: asc
       - name: sort
         in: query
         description: The field by which the protection rules are sorted.
@@ -4349,12 +4480,12 @@ paths:
         explode: true
         schema:
           type: string
-          default: created_at
           enum:
           - created_at
           - identifier
           - uid
           - updated_at
+          default: created_at
       - name: page
         in: query
         description: The page to return.
@@ -4417,10 +4548,311 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UsererrorError'
+    post:
+      tags:
+      - repository
+      summary: Add protection rule
+      operationId: ruleAdd
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/repo_identifier_rules_body'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenapiRule'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+  /repos/{repo_identifier}/rules/{rule_uid}:
+    get:
+      tags:
+      - repository
+      summary: Get protection rule
+      operationId: ruleGet
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: rule_uid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenapiRule'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+    delete:
+      tags:
+      - repository
+      summary: Delete protection rule
+      operationId: ruleDelete
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: rule_uid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+    patch:
+      tags:
+      - repository
+      summary: Update protection rule
+      operationId: ruleUpdate
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: rule_uid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rules_rule_uid_body'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenapiRule'
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
   /repos/{repo_identifier}/tags:
     get:
       tags:
       - repository
+      summary: List tags
       operationId: listTags
       parameters:
       - name: accountIdentifier
@@ -4473,10 +4905,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: asc
           enum:
           - asc
           - desc
+          default: asc
       - name: sort
         in: query
         description: The data by which the tags are sorted.
@@ -4485,10 +4917,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: name
           enum:
           - name
           - date
+          default: name
       - name: page
         in: query
         description: The page to return.
@@ -4554,6 +4986,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Create tag
       operationId: createTag
       parameters:
       - name: accountIdentifier
@@ -4639,6 +5072,7 @@ paths:
     delete:
       tags:
       - repository
+      summary: Delete tag
       operationId: deleteTag
       parameters:
       - name: accountIdentifier
@@ -4731,6 +5165,7 @@ paths:
     post:
       tags:
       - upload
+      summary: Repo artifact upload
       operationId: repoArtifactUpload
       parameters:
       - name: accountIdentifier
@@ -4805,6 +5240,7 @@ paths:
     get:
       tags:
       - upload
+      summary: Repo artifact download
       operationId: repoArtifactDownload
       parameters:
       - name: accountIdentifier
@@ -4882,6 +5318,7 @@ paths:
     get:
       tags:
       - webhook
+      summary: List webhooks
       operationId: listWebhooks
       parameters:
       - name: query
@@ -4900,13 +5337,13 @@ paths:
         explode: true
         schema:
           type: string
-          default: identifier
           enum:
           - id
           - uid
           - display_name
           - created
           - updated
+          default: identifier
       - name: order
         in: query
         description: The order of the output.
@@ -4915,10 +5352,10 @@ paths:
         explode: true
         schema:
           type: string
-          default: asc
           enum:
           - asc
           - desc
+          default: asc
       - name: page
         in: query
         description: The page to return.
@@ -4984,6 +5421,7 @@ paths:
     post:
       tags:
       - webhook
+      summary: Create webhook
       operationId: createWebhook
       parameters:
       - name: repo_identifier
@@ -5033,6 +5471,7 @@ paths:
     get:
       tags:
       - webhook
+      summary: Get webhook
       operationId: getWebhook
       parameters:
       - name: repo_identifier
@@ -5083,6 +5522,7 @@ paths:
     delete:
       tags:
       - webhook
+      summary: Delete webhook
       operationId: deleteWebhook
       parameters:
       - name: repo_identifier
@@ -5129,6 +5569,7 @@ paths:
     patch:
       tags:
       - webhook
+      summary: Update webhook
       operationId: updateWebhook
       parameters:
       - name: repo_identifier
@@ -5185,6 +5626,7 @@ paths:
     get:
       tags:
       - webhook
+      summary: List webhook executions
       operationId: listWebhookExecutions
       parameters:
       - name: page
@@ -5260,6 +5702,7 @@ paths:
     get:
       tags:
       - webhook
+      summary: Get webhook execution
       operationId: getWebhookExecution
       parameters:
       - name: page
@@ -5339,6 +5782,7 @@ paths:
     post:
       tags:
       - repository
+      summary: Import repository
       operationId: importRepository
       parameters:
       - name: accountIdentifier
@@ -5405,6 +5849,7 @@ paths:
     get:
       tags:
       - resource
+      summary: List available gitignore names
       operationId: listGitignore
       responses:
         "200":
@@ -5438,6 +5883,7 @@ paths:
     get:
       tags:
       - resource
+      summary: List available license names
       operationId: listLicenses
       responses:
         "200":
@@ -5489,6 +5935,8 @@ components:
       enum:
       - base64
       - utf8
+    EnumFileDiffStatus:
+      type: string
     EnumMergeCheckStatus:
       type: string
     EnumMergeMethod:
@@ -5596,9 +6044,13 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          file_stats: {}
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
         lines:
         - lines
         - lines
@@ -5609,8 +6061,14 @@ components:
           $ref: '#/components/schemas/GitSignature'
         committer:
           $ref: '#/components/schemas/GitSignature'
+        file_stats:
+          $ref: '#/components/schemas/GitCommitFileStats'
         message:
           type: string
+        parent_shas:
+          type: array
+          items:
+            type: string
         sha:
           type: string
         title:
@@ -5622,9 +6080,17 @@ components:
             name: name
             email: email
           when: 2000-01-23T04:56:07.000+00:00
+        file_stats: {}
         message: message
         title: title
         sha: sha
+        parent_shas:
+        - parent_shas
+        - parent_shas
+    GitCommitFileStat:
+      type: object
+    GitCommitFileStats:
+      type: object
     GitFileAction:
       type: string
       enum:
@@ -5659,7 +6125,7 @@ components:
         sha:
           type: string
         status:
-          $ref: '#/components/schemas/GitFileDiffStatus'
+          $ref: '#/components/schemas/EnumFileDiffStatus'
       example:
         patch:
         - 0
@@ -5674,8 +6140,6 @@ components:
         old_path: old_path
         sha: sha
         status: status
-    GitFileDiffStatus:
-      type: string
     GitIdentity:
       type: object
       properties:
@@ -5702,9 +6166,13 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          file_stats: {}
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
     GitSignature:
       type: object
       properties:
@@ -5958,6 +6426,9 @@ components:
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
         type: file
         sha: sha
         content: ""
@@ -6203,6 +6674,8 @@ components:
           type: boolean
         require_minimum_count:
           type: integer
+        require_no_change_request:
+          type: boolean
     ProtectionDefBypass:
       type: object
       properties:
@@ -6295,6 +6768,9 @@ components:
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
         name: name
         sha: sha
     RepoCommitDivergence:
@@ -6361,6 +6837,9 @@ components:
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
         name: name
         message: message
         title: title
@@ -6424,9 +6903,13 @@ components:
                 name: name
                 email: email
               when: 2000-01-23T04:56:07.000+00:00
+            file_stats: {}
             message: message
             title: title
             sha: sha
+            parent_shas:
+            - parent_shas
+            - parent_shas
         - path: path
           last_commit:
             committer: null
@@ -6435,9 +6918,13 @@ components:
                 name: name
                 email: email
               when: 2000-01-23T04:56:07.000+00:00
+            file_stats: {}
             message: message
             title: title
             sha: sha
+            parent_shas:
+            - parent_shas
+            - parent_shas
     RepoSubmoduleContent:
       type: object
       properties:
@@ -6678,6 +7165,10 @@ components:
           $ref: '#/components/schemas/TypesSignature'
         message:
           type: string
+        parent_shas:
+          type: array
+          items:
+            type: string
         sha:
           type: string
         title:
@@ -6692,6 +7183,9 @@ components:
         message: message
         title: title
         sha: sha
+        parent_shas:
+        - parent_shas
+        - parent_shas
     TypesCommitFilesResponse:
       type: object
       properties:
@@ -6703,8 +7197,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypesRuleViolations'
+        stats:
+          $ref: '#/components/schemas/GitCommitFileStat'
       example:
         dry_run_rules: true
+        stats: {}
         rule_violations:
         - bypassable: true
           bypassed: true
@@ -6800,6 +7297,9 @@ components:
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
         - committer: null
           author:
             identity:
@@ -6809,6 +7309,9 @@ components:
           message: message
           title: title
           sha: sha
+          parent_shas:
+          - parent_shas
+          - parent_shas
         rename_details:
         - new_path: new_path
           commit_sha_before: commit_sha_before
@@ -7206,6 +7709,9 @@ components:
           type: integer
         default_branch:
           type: string
+        deleted:
+          type: integer
+          nullable: true
         description:
           type: string
         fork_id:
@@ -7241,26 +7747,27 @@ components:
         updated:
           type: integer
       example:
-        num_pulls: 3
+        num_pulls: 2
         identifier: identifier
         created: 0
-        fork_id: 1
-        num_open_pulls: 9
+        fork_id: 5
+        num_open_pulls: 3
         description: description
         created_by: 6
-        size_updated: 7
+        size_updated: 1
         importing: true
         path: path
-        size: 4
-        num_merged_pulls: 7
-        parent_id: 2
+        deleted: 1
+        size: 7
+        num_merged_pulls: 9
+        parent_id: 4
         is_public: true
         default_branch: default_branch
         id: 5
         git_url: git_url
         updated: 1
-        num_closed_pulls: 5
-        num_forks: 2
+        num_closed_pulls: 2
+        num_forks: 7
     TypesRuleInfo:
       type: object
       properties:
@@ -7461,6 +7968,65 @@ components:
         values:
           type: object
           additionalProperties: {}
+    commits_commit_sha_body:
+      type: object
+      properties:
+        check_uid:
+          type: string
+          deprecated: true
+        ended:
+          type: integer
+        identifier:
+          type: string
+        link:
+          type: string
+        payload:
+          $ref: '#/components/schemas/TypesCheckPayload'
+        started:
+          type: integer
+        status:
+          $ref: '#/components/schemas/EnumCheckStatus'
+        summary:
+          type: string
+    repo_identifier_rules_body:
+      type: object
+      properties:
+        definition:
+          $ref: '#/components/schemas/OpenapiRuleDefinition'
+        description:
+          type: string
+        identifier:
+          type: string
+        pattern:
+          $ref: '#/components/schemas/ProtectionPattern'
+        state:
+          $ref: '#/components/schemas/EnumRuleState'
+        type:
+          $ref: '#/components/schemas/OpenapiRuleType'
+        uid:
+          type: string
+          deprecated: true
+    rules_rule_uid_body:
+      type: object
+      properties:
+        definition:
+          $ref: '#/components/schemas/OpenapiRuleDefinition'
+        description:
+          type: string
+          nullable: true
+        identifier:
+          type: string
+          nullable: true
+        pattern:
+          $ref: '#/components/schemas/ProtectionPattern'
+        state:
+          $ref: '#/components/schemas/EnumRuleState'
+        type:
+          $ref: '#/components/schemas/OpenapiRuleType'
+        uid:
+          type: string
+          nullable: true
+          deprecated: true
     repos_import_body:
       type: object
       properties:
@@ -7493,3 +8059,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+    x-api-key:
+      type: apiKey
+      name: x-api-key
+      in: header

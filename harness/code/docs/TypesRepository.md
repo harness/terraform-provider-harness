@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 **Created** | **int32** |  | [optional] [default to null]
 **CreatedBy** | **int32** |  | [optional] [default to null]
 **DefaultBranch** | **string** |  | [optional] [default to null]
+**Deleted** | **int32** |  | [optional] [default to null]
 **Description** | **string** |  | [optional] [default to null]
 **ForkId** | **int32** |  | [optional] [default to null]
 **GitUrl** | **string** |  | [optional] [default to null]

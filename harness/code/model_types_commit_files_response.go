@@ -12,4 +12,5 @@ type TypesCommitFilesResponse struct {
 	CommitId       string                `json:"commit_id,omitempty"`
 	DryRunRules    bool                  `json:"dry_run_rules,omitempty"`
 	RuleViolations []TypesRuleViolations `json:"rule_violations,omitempty"`
+	Stats          *GitCommitFileStat    `json:"stats,omitempty"`
 }

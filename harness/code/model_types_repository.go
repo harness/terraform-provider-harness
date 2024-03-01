@@ -12,6 +12,7 @@ type TypesRepository struct {
 	Created        int32  `json:"created,omitempty"`
 	CreatedBy      int32  `json:"created_by,omitempty"`
 	DefaultBranch  string `json:"default_branch,omitempty"`
+	Deleted        int32  `json:"deleted,omitempty"`
 	Description    string `json:"description,omitempty"`
 	ForkId         int32  `json:"fork_id,omitempty"`
 	GitUrl         string `json:"git_url,omitempty"`
