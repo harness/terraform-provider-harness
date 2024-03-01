@@ -19,22 +19,22 @@ Data source for retrieving a Harness repo.
 
 - `bypass_list` (Block Set, Min: 1) List of users who can bypass this rule. (see [below for nested schema](#nestedblock--bypass_list))
 - `identifier` (String) Identifier of the rule.
+- `policies` (Block Set, Min: 1) Rules to be applied on the repository. (see [below for nested schema](#nestedblock--policies))
 - `repo_identifier` (String) Repo identifier of the repository.
-- `rules` (Block Set, Min: 1) Rules to be applied on the repository. (see [below for nested schema](#nestedblock--rules))
 - `state` (String) State of the rule (active, disable, monitor).
-- `target_patterns` (Block Set, Min: 1) Pattern of branch to which rule will apply (see [below for nested schema](#nestedblock--target_patterns))
 
 ### Optional
 
 - `description` (String) Description of the rule.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
+- `target_patterns` (Block Set) Pattern of branch to which rule will apply (see [below for nested schema](#nestedblock--target_patterns))
 
 ### Read-Only
 
 - `created` (Number) Timestamp when the rule was created.
 - `created_by` (Number) ID of the user who created the rule.
-- `id` (String) Internal ID of the rule.
+- `id` (String) The ID of this resource.
 - `updated` (Number) Timestamp when the rule was updated.
 - `updated_by` (Number) ID of the user who updated the rule.
 
@@ -44,11 +44,11 @@ Data source for retrieving a Harness repo.
 Optional:
 
 - `repo_owners` (Boolean) Allow users with repository edit permission to bypass.
-- `users` (List of String) List of user ids with who can bypass.
+- `user_ids` (List of String) List of user ids with who can bypass.
 
 
-<a id="nestedblock--rules"></a>
-### Nested Schema for `rules`
+<a id="nestedblock--policies"></a>
+### Nested Schema for `policies`
 
 Optional:
 
@@ -56,10 +56,11 @@ Optional:
 - `block_branch_creation` (Boolean) Only allow users with bypass permission to create matching branches.
 - `block_branch_deletion` (Boolean) Only allow users with bypass permission to delete matching branches.
 - `limit_merge_strategies` (List of String) Limit which merge strategies are available to merge a pull request(One of squash, rebase, merge).
-- `require_approval_of_new_changes` (Boolean) Require re-approval when there are new changes in the pull request.
-- `require_code_owner_review` (Boolean) Require approval on pull requests from one reviewer for each Code Owner rule.
+- `require_code_owners` (Boolean) Require approval on pull requests from one reviewer for each Code Owner rule.
 - `require_comment_resolution` (Boolean) All comments on a pull request must be resolved before it can be merged.
-- `require_min_reviewers` (Number) Require approval on pull requests from a minimum number of reviewers.
+- `require_latest_commit` (Boolean) Require re-approval when there are new changes in the pull request.
+- `require_minimum_count` (Number) Require approval on pull requests from a minimum number of reviewers.
+- `require_no_change_request` (Boolean) Require no request changes by reviewers on pull requests.
 - `require_pull_request` (Boolean) Do not allow any changes to matching branches without a pull request.
 - `require_status_check_to_pass` (List of String) Selected status checks must pass before a pull request can be merged.
 
