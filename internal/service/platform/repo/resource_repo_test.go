@@ -205,12 +205,11 @@ func testAccResourceRepoImport(identifier, description, providerRepo string) str
 		resource "harness_platform_repo" "test" {
 			identifier  = "%[1]s"
 			default_branch = "master"
-			description = "%[2]s"
-			
-			source {
+			source{
 				type = "github"
 				repo = "%[3]s"
 			}
+			description = "%[2]s"
 		}
 	`, identifier, description, providerRepo,
 	)

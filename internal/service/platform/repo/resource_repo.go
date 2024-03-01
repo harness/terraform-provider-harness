@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/code"
@@ -120,6 +121,13 @@ func resourceRepoCreateOrUpdate(
 		return helpers.HandleApiError(err, d, resp)
 	}
 
+	// If import is in progress, wait for it to complete
+	if repo.Importing {
+		if err := waitForImportCompletion(ctx, c.RepositoryApi, repo.Identifier, c.AccountId, orgID, projectID); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
 	readRepo(d, &repo, orgID.Value(), projectID.Value())
 	return nil
 }
@@ -183,13 +191,13 @@ func buildRepoImportBody(d *schema.ResourceData) *code.ReposImportBody {
 }
 
 func getSource(d *schema.ResourceData) map[string]interface{} {
-	srcSet := d.Get("source").(*schema.Set)
-	srcList := srcSet.List()
-	if len(srcList) == 0 {
-		return nil
+	var srcElem map[string]interface{}
+	if attr, ok := d.GetOk("source"); ok {
+		if attr != nil && len(attr.(*schema.Set).List()) > 0 {
+			srcElem = attr.(*schema.Set).List()[0].(map[string]interface{})
+		}
 	}
-	srcElem := srcList[0]
-	return srcElem.(map[string]interface{})
+	return srcElem
 }
 
 func readRepo(d *schema.ResourceData, repo *code.TypesRepository, orgId string, projectId string) {
@@ -203,13 +211,45 @@ func readRepo(d *schema.ResourceData, repo *code.TypesRepository, orgId string, 
 	d.Set("default_branch", repo.DefaultBranch)
 	d.Set("description", repo.Description)
 	d.Set("git_url", repo.GitUrl)
-	d.Set("importing", repo.Importing)
 	// d.Set("is_public", repo.IsPublic)
 	d.Set("path", repo.Path)
 	d.Set("updated", repo.Updated)
 }
 
-func createOnlyFieldDiffFunc(k, oldValue, newValue string, d *schema.ResourceData) bool { return true }
+func waitForImportCompletion(ctx context.Context, api *code.RepositoryApiService, importID string, accountID string,
+	projectID optional.String, orgID optional.String) error {
+	for {
+		repo, _, err := api.FindRepository(
+			ctx,
+			accountID,
+			importID,
+			&code.RepositoryApiFindRepositoryOpts{
+				OrgIdentifier:     orgID,
+				ProjectIdentifier: projectID,
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+
+		if !repo.Importing {
+			return nil
+		}
+
+		select {
+		case <-time.After(5 * time.Second):
+			// Sleep for 5 seconds
+		case <-ctx.Done():
+			// Context canceled, return with error
+			return ctx.Err()
+		}
+	}
+}
+
+func createOnlyFieldDiffFunc(k, oldValue, newValue string, d *schema.ResourceData) bool {
+	return d.Id() != ""
+}
 
 func createSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
@@ -252,11 +292,6 @@ func createSchema() map[string]*schema.Schema {
 		"id": {
 			Description: "Internal ID of the repository.",
 			Type:        schema.TypeString,
-			Computed:    true,
-		},
-		"importing": {
-			Description: "Whether the repository is being imported.",
-			Type:        schema.TypeBool,
 			Computed:    true,
 		},
 
@@ -322,7 +357,7 @@ func createSchema() map[string]*schema.Schema {
 						Optional:    true,
 					},
 					"repo": {
-						Description: "The provider repository to import from.",
+						Description: "The full identifier of the repository on the SCM provider's platform.",
 						Type:        schema.TypeString,
 						Optional:    true,
 					},

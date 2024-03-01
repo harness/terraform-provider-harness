@@ -57,6 +57,11 @@ func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 		Description: "Unique identifier of the project.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
@@ -66,6 +71,11 @@ func GetOrgIdSchema(flag SchemaFlagType) *schema.Schema {
 		Description: "Unique identifier of the organization.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
