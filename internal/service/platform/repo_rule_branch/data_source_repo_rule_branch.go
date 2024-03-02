@@ -12,7 +12,7 @@ import (
 
 func DataSourceRepoBranchRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness repo.",
+		Description: "Data source for retrieving a Harness repo branch rule.",
 		ReadContext: dataSourceRepoRuleRead,
 		Schema:      createSchema(),
 	}

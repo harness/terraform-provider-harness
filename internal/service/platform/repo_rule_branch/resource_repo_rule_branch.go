@@ -16,7 +16,7 @@ import (
 
 func ResourceRepoBranchRule() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating a Harness Repo Rule.",
+		Description:   "Resource for creating a Harness Repo Branch Rule.",
 		ReadContext:   resourceRepoBranchRuleRead,
 		CreateContext: resourceRepoBranchRuleCreateOrUpdate,
 		UpdateContext: resourceRepoBranchRuleCreateOrUpdate,
