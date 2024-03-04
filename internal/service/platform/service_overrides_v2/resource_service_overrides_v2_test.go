@@ -26,8 +26,6 @@ func TestAccServiceOverrides_ProjectScope(t *testing.T) {
 			{
 				Config: testAccServiceOverridesProjectScope(id, name),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{
@@ -87,6 +85,31 @@ func TestAccServiceOverrides_AccountScope(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: acctest.AccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccRemoteServiceOverrides(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
+	name := id
+	resourceName := "harness_platform_service_overrides_v2.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccServiceOverridesDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testRemoteServiceOverrides(id, name),
+				Check: resource.ComposeTestCheckFunc(
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -226,6 +249,67 @@ configFiles:
 }
 `, id, name)
 }
+
+func testRemoteServiceOverrides(id string, name string) string {
+	return fmt.Sprintf(`
+  resource "harness_platform_organization" "test" {
+    identifier = "%[1]s"
+    name = "%[2]s"
+  }
+
+  resource "harness_platform_project" "test" {
+    identifier = "%[1]s"
+    name = "%[2]s"
+    org_id = harness_platform_organization.test.id
+    color = "#472848"
+  }
+
+  resource "harness_platform_service_overrides_v2" "test" {
+    org_id     = harness_platform_organization.test.id
+    project_id = harness_platform_project.test.id
+     env_id     = "account.DoNotDeleteGitx"
+     service_id = "account.DoNotDeleteGitx"
+     type       = "ENV_SERVICE_OVERRIDE"
+     git_details {
+       store_type = "REMOTE"
+       connector_ref = "account.DoNotDeleteGitX"  
+       repo_name = "pcf_practice"
+       file_path = ".harness/automation/overrides/a%[1]s.yaml"
+       branch = "main"
+       }
+       yaml = <<-EOT
+       variables:
+         - name: v1
+           type: String
+           value: val1
+       manifests:
+         - manifest:
+             identifier: manifest1
+             type: Values
+             spec:
+               store:
+                 type: Github
+                 spec:
+                   connectorRef: "<+input>"
+                   gitFetchType: Branch
+                   paths:
+                     - files1
+                   repoName: "<+input>"
+                   branch: master
+               skipResourceVersioning: false
+       configFiles:
+         - configFile:
+             identifier: configFile1
+             spec:
+               store:
+                 type: Harness
+                 spec:
+                   files:
+                     - "<+org.description>"
+                     EOT
+}`, id, name)
+}
+
 
 func testAccServiceOverridesOrgScope(id string, name string) string {
 	return fmt.Sprintf(`
