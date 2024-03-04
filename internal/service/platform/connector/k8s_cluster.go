@@ -143,6 +143,11 @@ func ResourceConnectorK8s() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
+						"ca_cert_ref": {
+							Description: "Reference to the secret containing the CA certificate for the connector." + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
