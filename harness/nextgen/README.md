@@ -137,6 +137,7 @@ Class | Method | HTTP request | Description
 *EnvironmentsApi* | [**GetEnvironmentV2**](docs/EnvironmentsApi.md#getenvironmentv2) | **Get** /ng/api/environmentsV2/{environmentIdentifier} | Gets an Environment by identifier
 *EnvironmentsApi* | [**UpdateEnvironmentV2**](docs/EnvironmentsApi.md#updateenvironmentv2) | **Put** /ng/api/environmentsV2 | Update an Environment by identifier
 *EnvironmentsApi* | [**UpsertEnvironmentV2**](docs/EnvironmentsApi.md#upsertenvironmentv2) | **Put** /ng/api/environmentsV2/upsert | Upsert an Environment by identifier
+*EnvironmentsApi* | [**ImportEnvironment**](docs/EnvironmentsV2Api.md#importenvironment) | **Post** /ng/api/environmentsV2/import | Get Environment YAML from Git Repository
 *ExecuteApi* | [**GetPreFlightCheckResponse**](docs/ExecuteApi.md#getpreflightcheckresponse) | **Get** /pipeline/api/pipeline/execute/getPreflightCheckResponse | Get Preflight Checks Response for a Preflight Id
 *ExecuteApi* | [**GetRetryStages**](docs/ExecuteApi.md#getretrystages) | **Get** /pipeline/api/pipeline/execute/{planExecutionId}/retryStages | Get retry stages for failed pipeline
 *ExecuteApi* | [**GetStagesExecutionList**](docs/ExecuteApi.md#getstagesexecutionlist) | **Get** /pipeline/api/pipeline/execute/stagesExecutionList | Get list of Stages to select for Stage executions
@@ -671,6 +672,7 @@ Class | Method | HTTP request | Description
  - [EnvironmentRequest](docs/EnvironmentRequest.md)
  - [EnvironmentResponse](docs/EnvironmentResponse.md)
  - [EnvironmentResponseDetails](docs/EnvironmentResponseDetails.md)
+ - [EnvironmentImportResponseDto](docs/EnvironmentImportResponseDto.md)
  - [ErrorDetail](docs/ErrorDetail.md)
  - [ErrorMetadata](docs/ErrorMetadata.md)
  - [ErrorTrackingConnectorDto](docs/ErrorTrackingConnectorDto.md)

@@ -14,6 +14,7 @@ Method | HTTP request | Description
 [**UpdateEnvironmentV2**](EnvironmentsApi.md#UpdateEnvironmentV2) | **Put** /ng/api/environmentsV2 | Update an Environment by identifier
 [**UpsertEnvironmentV2**](EnvironmentsApi.md#UpsertEnvironmentV2) | **Put** /ng/api/environmentsV2/upsert | Upsert an Environment by identifier
 [**UpsertServiceOverride**](EnvironmentsApi.md#UpsertServiceOverride) | **Post** /ng/api/environmentsV2/serviceOverrides | Upsert
+[**ImportEnvironment**](EnvironmentsApi.md#ImportEnvironment) | **Post** ng/api/environmentV2/import | Get Environment YAML from Git Repository
 
 # **CreateEnvironmentV2**
 > ResponseDtoEnvironmentResponse CreateEnvironmentV2(ctx, accountIdentifier, optional)
@@ -391,3 +392,44 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **ImportEnvironment**
+> ResponseEnvironmentImportResponseDto ImportEnvironment(ctx, accountIdentifier, optional)
+Get Environment YAML from Git Repository
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**|  | 
+ **optional** | ***EnvironmentsV2ApiImportEnvironmentOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a EnvironmentsV2ApiImportEnvironmentOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **orgIdentifier** | **optional.String**|  | 
+ **projectIdentifier** | **optional.String**|  | 
+ **environmentIdentifier** | **optional.String**|  | 
+ **connectorRef** | **optional.String**|  | 
+ **repoName** | **optional.String**|  | 
+ **branch** | **optional.String**|  | 
+ **filePath** | **optional.String**|  | 
+ **isForceImport** | **optional.Bool**|  | [default to false]
+ **isHarnessCodeRepo** | **optional.Bool**|  | 
+
+### Return type
+
+[**ResponseEnvironmentImportResponseDto**](ResponseEnvironmentImportResponseDto.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
