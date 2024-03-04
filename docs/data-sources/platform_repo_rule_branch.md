@@ -3,12 +3,12 @@
 page_title: "harness_platform_repo_rule_branch Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness repo.
+  Data source for retrieving a Harness repo branch rule.
 ---
 
 # harness_platform_repo_rule_branch (Data Source)
 
-Data source for retrieving a Harness repo.
+Data source for retrieving a Harness repo branch rule.
 
 
 
@@ -17,9 +17,9 @@ Data source for retrieving a Harness repo.
 
 ### Required
 
-- `bypass_list` (Block Set, Min: 1) List of users who can bypass this rule. (see [below for nested schema](#nestedblock--bypass_list))
+- `bypass` (Block Set, Min: 1) List of users who can bypass this rule. (see [below for nested schema](#nestedblock--bypass))
 - `identifier` (String) Identifier of the rule.
-- `policies` (Block Set, Min: 1) Rules to be applied on the repository. (see [below for nested schema](#nestedblock--policies))
+- `policies` (Block Set, Min: 1) Policies to be applied for this rule. (see [below for nested schema](#nestedblock--policies))
 - `repo_identifier` (String) Repo identifier of the repository.
 - `state` (String) State of the rule (active, disable, monitor).
 
@@ -27,8 +27,8 @@ Data source for retrieving a Harness repo.
 
 - `description` (String) Description of the rule.
 - `org_id` (String) Unique identifier of the organization.
+- `pattern` (Block Set) Pattern of branch to which rule will apply. (see [below for nested schema](#nestedblock--pattern))
 - `project_id` (String) Unique identifier of the project.
-- `target_patterns` (Block Set) Pattern of branch to which rule will apply (see [below for nested schema](#nestedblock--target_patterns))
 
 ### Read-Only
 
@@ -38,8 +38,8 @@ Data source for retrieving a Harness repo.
 - `updated` (Number) Timestamp when the rule was updated.
 - `updated_by` (Number) ID of the user who updated the rule.
 
-<a id="nestedblock--bypass_list"></a>
-### Nested Schema for `bypass_list`
+<a id="nestedblock--bypass"></a>
+### Nested Schema for `bypass`
 
 Optional:
 
@@ -52,24 +52,24 @@ Optional:
 
 Optional:
 
-- `auto_delete_branch_on_merge` (Boolean) Automatically delete the source branch of a pull request after it is merged.
+- `allow_merge_strategies` (List of String) Limit which merge strategies are available to merge a pull request(Any of squash, rebase, merge).
 - `block_branch_creation` (Boolean) Only allow users with bypass permission to create matching branches.
 - `block_branch_deletion` (Boolean) Only allow users with bypass permission to delete matching branches.
-- `limit_merge_strategies` (List of String) Limit which merge strategies are available to merge a pull request(One of squash, rebase, merge).
-- `require_code_owners` (Boolean) Require approval on pull requests from one reviewer for each Code Owner rule.
-- `require_comment_resolution` (Boolean) All comments on a pull request must be resolved before it can be merged.
-- `require_latest_commit` (Boolean) Require re-approval when there are new changes in the pull request.
-- `require_minimum_count` (Number) Require approval on pull requests from a minimum number of reviewers.
-- `require_no_change_request` (Boolean) Require no request changes by reviewers on pull requests.
+- `delete_branch_on_merge` (Boolean) Automatically delete the source branch of a pull request after it is merged.
+- `require_code_owners` (Boolean) Require approval on pull requests from one reviewer for each codeowner rule.
+- `require_latest_commit_approval` (Boolean) Require re-approval when there are new changes in the pull request.
+- `require_minimum_approval_count` (Number) Require approval on pull requests from a minimum number of reviewers.
+- `require_no_change_request` (Boolean) Require all request for changes have been resolved.
 - `require_pull_request` (Boolean) Do not allow any changes to matching branches without a pull request.
-- `require_status_check_to_pass` (List of String) Selected status checks must pass before a pull request can be merged.
+- `require_resolve_all_comments` (Boolean) All comments on a pull request must be resolved before it can be merged.
+- `require_status_checks` (List of String) Selected status checks must pass before a pull request can be merged.
 
 
-<a id="nestedblock--target_patterns"></a>
-### Nested Schema for `target_patterns`
+<a id="nestedblock--pattern"></a>
+### Nested Schema for `pattern`
 
 Optional:
 
-- `default_branch` (Boolean) Should rule apply to default branch of the repository
-- `exclude` (List of String) Globstar branch patterns on which rules will NOT be applied
-- `include` (List of String) Globstar branch patterns on which rules will be applied
+- `default_branch` (Boolean) Should rule apply to default branch of the repository.
+- `exclude` (List of String) Globstar branch patterns on which rules will NOT be applied.
+- `include` (List of String) Globstar branch patterns on which rules will be applied.
