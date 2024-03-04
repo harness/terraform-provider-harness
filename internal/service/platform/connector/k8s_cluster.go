@@ -428,24 +428,6 @@ func buildConnectorK8s(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			}
 		}
 
-		if attr, ok := d.GetOk("service_account"); ok {
-			config := attr.([]interface{})[0].(map[string]interface{})
-			saConfig := &nextgen.KubernetesServiceAccount{}
-			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.ServiceAccount
-			connector.K8sCluster.Credential.ManualConfig.Auth.ServiceAccount = saConfig
-
-			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
-			}
-
-			if attr := config["service_account_token_ref"].(string); attr != "" {
-				saConfig.ServiceAccountTokenRef = attr
-			}
-			if attr := config["ca_cert_ref"].(string); attr != "" {
-				saConfig.CaCertRef = attr
-			}
-		}
-
 		if attr, ok := d.GetOk("openid_connect"); ok {
 			config := attr.([]interface{})[0].(map[string]interface{})
 			oidcConfig := &nextgen.KubernetesOpenIdConnect{}
