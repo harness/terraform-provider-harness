@@ -423,6 +423,9 @@ func buildConnectorK8s(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			if attr := config["service_account_token_ref"].(string); attr != "" {
 				saConfig.ServiceAccountTokenRef = attr
 			}
+			if attr := config["ca_cert_ref"].(string); attr != "" {
+				saConfig.CaCertRef = attr
+			}
 		}
 
 		if attr, ok := d.GetOk("service_account"); ok {
@@ -437,6 +440,9 @@ func buildConnectorK8s(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 			if attr := config["service_account_token_ref"].(string); attr != "" {
 				saConfig.ServiceAccountTokenRef = attr
+			}
+			if attr := config["ca_cert_ref"].(string); attr != "" {
+				saConfig.CaCertRef = attr
 			}
 		}
 
@@ -522,6 +528,7 @@ func readConnectorK8s(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 				{
 					"master_url":                connector.K8sCluster.Credential.ManualConfig.MasterUrl,
 					"service_account_token_ref": auth.ServiceAccount.ServiceAccountTokenRef,
+					"ca_cert_ref":               auth.ServiceAccount.CaCertRef,
 				},
 			})
 			d.Set("delegate_selectors", connector.K8sCluster.DelegateSelectors)
