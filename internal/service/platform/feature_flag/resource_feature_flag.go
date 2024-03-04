@@ -42,7 +42,7 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "Description of the Feature Flag",
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed:    true,
+				Default:     "",
 			},
 			"org_id": {
 				Description: "Organization Identifier",
