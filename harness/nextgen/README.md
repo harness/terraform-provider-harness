@@ -333,6 +333,7 @@ Class | Method | HTTP request | Description
 *ServiceOverridesApi* | [**DeleteServiceOverrideV2**](docs/ServiceOverridesApi.md#deleteserviceoverridev2) | **Delete** /serviceOverrides/{identifier} | Delete a Service Override entity
 *ServiceOverridesApi* | [**GetServiceOverridesV2**](docs/ServiceOverridesApi.md#getserviceoverridesv2) | **Get** /serviceOverrides/get-with-yaml/{identifier} | Gets Service Overrides by Identifier
 *ServiceOverridesApi* | [**UpdateServiceOverrideV2**](docs/ServiceOverridesApi.md#updateserviceoverridev2) | **Put** /serviceOverrides | Update an ServiceOverride Entity
+*ServiceOverridesApi* | [**ImportServiceOverrides**](docs/ServiceOverridesApi.md#importserviceoverrides) | **Post** /serviceOverrides/import | import Service Overrides from remote
 *SloApi* | [**DeleteSLODataNg**](docs/SloApi.md#deleteslodatang) | **Delete** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | delete slo data
 *SloApi* | [**GetServiceLevelObjectiveNg**](docs/SloApi.md#getservicelevelobjectiveng) | **Get** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2/identifier/{identifier} | get service level objective data
 *SloApi* | [**SaveSLODataNg**](docs/SloApi.md#saveslodatang) | **Post** /account/{accountIdentifier}/org/{orgIdentifier}/project/{projectIdentifier}/slo/v2 | saves slo data
