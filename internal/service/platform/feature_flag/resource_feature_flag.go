@@ -2,11 +2,12 @@ package feature_flag
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/antihax/optional"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -35,7 +36,13 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "Name of the Feature Flag",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
+				ForceNew:    false,
+			},
+			"description": {
+				Description: "Description of the Feature Flag",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "",
 			},
 			"org_id": {
 				Description: "Organization Identifier",
@@ -49,38 +56,15 @@ func ResourceFeatureFlag() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
-			"archived": {
-				Description: "Whether or not the flag is archived",
-				Type:        schema.TypeBool,
-				Optional:    true,
-				ForceNew:    true,
-			},
 			"default_off_variation": {
 				Description: "Which of the variations to use when the flag is toggled to off state",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 			},
 			"default_on_variation": {
 				Description: "Which of the variations to use when the flag is toggled to on state",
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
-			},
-			"git_details": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				ForceNew: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"commit_msg": {
-							Description: "The commit message to use as part of a gitsync operation",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-					},
-				},
 			},
 			"kind": {
 				Description: "The type of data the flag represents. Valid values are `boolean`, `int`, `string`, `json`",
@@ -104,11 +88,6 @@ func ResourceFeatureFlag() *schema.Resource {
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": {
-							Description: "The name of the tag",
-							Type:        schema.TypeString,
-							Required:    true,
-						},
 						"identifier": {
 							Description: "The identifier of the tag",
 							Type:        schema.TypeString,
@@ -128,53 +107,23 @@ func ResourceFeatureFlag() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
-						"add_target_group_rule": {
-							Description: "The targeting rules for the flag",
-							Type:        schema.TypeList,
+						"state": {
+							Description: "State of the flag in this environment. Possible values are 'on' and 'off'",
+							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"group_name": {
-										Description: "The name of the target group",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"variation": {
-										Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"distribution": {
-										Description: "The distribution of the rule",
-										Type:        schema.TypeList,
-										Optional:    true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"variations": {
-													Description: "The variations of the rule",
-													Type:        schema.TypeList,
-													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"variation": {
-																Description: "The identifier of the variation",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"weight": {
-																Description: "The weight of the variation",
-																Type:        schema.TypeInt,
-																Optional:    true,
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
+						},
+						"default_on_variation": {
+							Description: "Default variation to be served when flag is 'on'",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"default_off_variation": {
+							Description: "Default variation to be served when flag is 'off'",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
 						},
 						"add_target_rule": {
 							Description: "The targeting rules for the flag",
@@ -207,7 +156,7 @@ func ResourceFeatureFlag() *schema.Resource {
 				Description: "The options available for your flag",
 				Type:        schema.TypeList,
 				Required:    true,
-				ForceNew:    true,
+				ForceNew:    false,
 				MinItems:    2,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -240,115 +189,63 @@ func ResourceFeatureFlag() *schema.Resource {
 	return resource
 }
 
-const (
-	VariationVar                   = "variation"
-	Weight                         = "weight"
-	AddTargetsToVariationTargetMap = "addTargetsToVariationTargetMap"
-	AddRule                        = "addRule"
-	AddTag                         = "addTag"
-	RemoveTag                      = "removeTag"
-	RemoveRule                     = "removeRule"
-	RemoveTarget                   = "removeTargetsToVariationTargetMap"
-	GroupName                      = "group_name"
-	DistributionVar                = "distribution"
-	SegmentMatch                   = "segmentMatch"
-	BuckedBy                       = "identifier"
-)
-
 type FFQueryParameters struct {
 	Identifier     string
 	OrganizationId string
 	ProjectId      string
 }
 
-// KindMap is a map of the kind to the actual kind
-var KindMap = map[string]string{
-	"removeTargets": "removeTargetsToVariationTargetMap",
-	"removeRule":    "removeRule",
-	"addRule":       "addRule",
-	"addTargets":    "addTargetsToVariationTargetMap",
-}
-
 // TargetRules is the target rules for the feature flag
 type TargetRules struct {
-	Kind      *string   `json:"kind,omitempty"`
-	Variation *string   `json:"variation,omitempty"`
-	Targets   []*string `json:"targets,omitempty"`
+	Variation string   `json:"variation"`
+	Targets   []string `json:"targets"`
 }
 
-// Variation is the variation for the feature flag
-type Variation struct {
-	Variation *string `json:"variation,omitempty"`
-	Weight    *int    `json:"weight,omitempty"`
+// Tag is a tag for the feature flag
+type Tag struct {
+	Name       string `json:"name"`
+	Identifier string `json:"identifier"`
 }
 
-// Distribution is the distribution for the feature flag
-type Distribution struct {
-	BuckedBy   *string      `json:"buckedBy,omitempty"`
-	Variations []*Variation `json:"variations,omitempty"`
-}
-
-// TargetGroupRules is the target group rules for the feature flag
-type TargetGroupRules struct {
-	Kind      *string `json:"kind,omitempty"`
-	GroupName *string `json:"groupName,omitempty"`
-	Variation *string `json:"variation,omitempty"`
-}
-
-// Serve ...
-type Serve struct {
-	Variation    *string       `json:"variation,omitempty"`
-	Distribution *Distribution `json:"distribution,omitempty"`
-}
-
-// Parameter ...
-type Parameter struct {
-	Variation  *string           `json:"variation,omitempty"`
-	Targets    []*string         `json:"targets,omitempty"`
-	Priority   *string           `json:"priority,omitempty"`
-	Clauses    []*nextgen.Clause `json:"clauses,omitempty"`
-	Serve      *Serve            `json:"serve,omitempty"`
-	Name       *string           `json:"name,omitempty"`
-	Identifier *string           `json:"identifier,omitempty"`
-}
-
-// Instruction defines the instruction for the feature flag
-type Instruction struct {
-	Kind       *string    `json:"kind,omitempty"`
-	Parameters *Parameter `json:"parameters,omitempty"`
-}
-
-type FFOpts struct {
+type FFCreateOpts struct {
 	Identifier          string              `json:"identifier"`
 	Name                string              `json:"name"`
 	Description         string              `json:"description,omitempty"`
-	Archived            bool                `json:"archived,omitempty"`
 	DefaultOffVariation string              `json:"defaultOffVariation"`
 	DefaultOnVariation  string              `json:"defaultOnVariation"`
-	GitDetails          nextgen.GitDetails  `json:"gitDetails,omitempty"`
 	Kind                string              `json:"kind"`
 	Owner               string              `json:"owner,omitempty"`
 	Permanent           bool                `json:"permanent"`
 	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []*Instruction      `json:"instructions,omitempty"`
 }
 
-// FFPatchOpts is the options for patching a feature flag
-type FFPatchOpts struct {
+type FFPutOpts struct {
 	Identifier          string              `json:"identifier"`
 	Name                string              `json:"name"`
-	Description         string              `json:"description,omitempty"`
-	Archived            bool                `json:"archived,omitempty"`
+	Description         string              `json:"description"`
 	DefaultOffVariation string              `json:"defaultOffVariation"`
 	DefaultOnVariation  string              `json:"defaultOnVariation"`
-	GitDetails          nextgen.GitDetails  `json:"gitDetails,omitempty"`
-	Kind                string              `json:"kind"`
-	Owner               string              `json:"owner,omitempty"`
 	Permanent           bool                `json:"permanent"`
-	Project             string              `json:"project"`
 	Variations          []nextgen.Variation `json:"variations"`
-	Instructions        []*Instruction      `json:"instructions,omitempty"`
+	Tags                []Tag               `json:"tags"`
+	Environments        []Environment       `json:"environments,omitempty"`
+}
+
+type Environment struct {
+	Identifier          string        `json:"identifier"`
+	DefaultOnVariation  string        `json:"defaultOnVariation"`
+	DefaultOffVariation string        `json:"defaultOffVariation"`
+	State               string        `json:"state"`
+	TargetRules         []TargetRules `json:"rules"`
+}
+
+type TFEnvironment struct {
+	Identifier          string        `json:"identifier"`
+	DefaultOnVariation  string        `json:"default_on_variation"`
+	DefaultOffVariation string        `json:"default_off_variation"`
+	State               string        `json:"state"`
+	TargetRules         []TargetRules `json:"add_target_rule"`
 }
 
 func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -360,27 +257,18 @@ func resourceFeatureFlagUpdate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	qp := buildFFQueryParameters(d)
-	opts := buildFFPatchOpts(d)
+	opts := buildFFPutOpts(d)
 
 	if opts != nil {
-		_, httpResp, err := c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, opts)
+		httpResp, err := c.FeatureFlagsApi.PutFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
 
 		if err != nil {
-			return helpers.HandleApiError(err, d, httpResp)
+			return HandleCFApiError(err, d, httpResp)
 		}
 	}
 
-	readOpts := buildFFReadOpts(d)
+	return resourceFeatureFlagRead(ctx, d, meta)
 
-	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
-
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	readFeatureFlag(d, &resp, qp)
-
-	return nil
 }
 
 func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -393,15 +281,27 @@ func resourceFeatureFlagRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	qp := buildFFQueryParameters(d)
-	opts := buildFFReadOpts(d)
 
-	resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
+	var environmentIdentifiers []string
 
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+	for _, env := range getEnvironmentData(d) {
+		environmentIdentifiers = append(environmentIdentifiers, env.Identifier)
+	}
+	if len(environmentIdentifiers) == 0 {
+		environmentIdentifiers = []string{""}
 	}
 
-	readFeatureFlag(d, &resp, qp)
+	// get flag for each env in a loop
+	for _, env := range environmentIdentifiers {
+		opts := buildFFReadOpts(d, env)
+		resp, httpResp, err := c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, opts)
+
+		if err != nil {
+			return HandleCFApiError(err, d, httpResp)
+		}
+
+		readFeatureFlag(d, &resp, qp, env)
+	}
 
 	return nil
 }
@@ -417,10 +317,8 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	qp := buildFFQueryParameters(d)
 	opts := buildFFCreateOpts(d)
-	readOpts := buildFFReadOpts(d)
 
 	var err error
-	var resp nextgen.Feature
 	var httpResp *http.Response
 
 	httpResp, err = c.FeatureFlagsApi.CreateFeatureFlag(ctx, c.AccountId, qp.OrganizationId, opts)
@@ -430,30 +328,23 @@ func resourceFeatureFlagCreate(ctx context.Context, d *schema.ResourceData, meta
 		if httpResp != nil && httpResp.StatusCode == 409 {
 			return diag.Errorf("A feature flag with identifier [%s] orgIdentifier [%s] project [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId)
 		}
-		return helpers.HandleApiError(err, d, httpResp)
+		return HandleCFApiError(err, d, httpResp)
 	}
 
-	patchOpts := buildFFPatchOpts(d)
+	// make updates for anything that can't be configured with initial create request
+	putOpts := buildFFPutOpts(d)
 
-	// skip patch if no updates needed
-	if patchOpts != nil {
-		// update the feature flag with any fields that can't be created via initial post via patch requests
-		_, httpResp, err = c.FeatureFlagsApi.PatchFeature(ctx, c.AccountId, qp.OrganizationId, qp.ProjectId, id, patchOpts)
+	if opts != nil {
+		httpResp, err = c.FeatureFlagsApi.PutFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, putOpts)
 
 		if err != nil {
-			return helpers.HandleApiError(err, d, httpResp)
+			return HandleCFApiError(err, d, httpResp)
 		}
 	}
 
-	resp, httpResp, err = c.FeatureFlagsApi.GetFeatureFlag(ctx, id, c.AccountId, qp.OrganizationId, qp.ProjectId, readOpts)
+	d.SetId(id)
 
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	readFeatureFlag(d, &resp, qp)
-
-	return nil
+	return resourceFeatureFlagRead(ctx, d, meta)
 }
 
 func resourceFeatureFlagDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -465,18 +356,19 @@ func resourceFeatureFlagDelete(ctx context.Context, d *schema.ResourceData, meta
 	}
 	qp := buildFFQueryParameters(d)
 
-	httpResp, err := c.FeatureFlagsApi.DeleteFeatureFlag(ctx, d.Id(), c.AccountId, qp.OrganizationId, qp.ProjectId, &nextgen.FeatureFlagsApiDeleteFeatureFlagOpts{CommitMsg: optional.EmptyString()})
+	httpResp, err := c.FeatureFlagsApi.DeleteFeatureFlag(ctx, d.Id(), c.AccountId, qp.OrganizationId, qp.ProjectId, &nextgen.FeatureFlagsApiDeleteFeatureFlagOpts{CommitMsg: optional.EmptyString(), ForceDelete: optional.NewBool(true)})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return HandleCFApiError(err, d, httpResp)
 	}
 
 	return nil
 }
 
-func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryParameters) {
+func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryParameters, env string) {
 	d.SetId(flag.Identifier)
 	d.Set("identifier", flag.Identifier)
 	d.Set("name", flag.Name)
+	d.Set("description", flag.Description)
 	d.Set("project_id", flag.Project)
 	d.Set("default_on_variation", flag.DefaultOnVariation)
 	d.Set("default_off_variation", flag.DefaultOffVariation)
@@ -485,7 +377,100 @@ func readFeatureFlag(d *schema.ResourceData, flag *nextgen.Feature, qp *FFQueryP
 	d.Set("permanent", flag.Permanent)
 	d.Set("owner", strings.Join(flag.Owner, ","))
 	d.Set("org_id", qp.OrganizationId)
+	d.Set("tags", expandTags(flag.Tags))
 	d.Set("variation", expandVariations(flag.Variations))
+	// update environment field
+	if flag.EnvProperties != nil && env != "" {
+		var targetRules []TargetRules
+		for _, rule := range flag.EnvProperties.VariationMap {
+			var targets []string
+			for _, t := range rule.Targets {
+				targets = append(targets, t.Identifier)
+			}
+			targetRules = append(targetRules, TargetRules{
+				Variation: rule.Variation,
+				Targets:   targets,
+			})
+		}
+		updatedEnv := Environment{
+			Identifier:          flag.EnvProperties.Environment,
+			DefaultOnVariation:  flag.EnvProperties.DefaultServe.Variation,
+			DefaultOffVariation: flag.EnvProperties.OffVariation,
+			State:               string(*flag.EnvProperties.State),
+			TargetRules:         targetRules,
+		}
+
+		// add environment data as an upsert - check array and if environment already exists replace it - if not add it to array
+		environments := getEnvironmentData(d)
+		var updated bool
+		for i, env := range environments {
+			if env.Identifier == updatedEnv.Identifier {
+				environments[i] = updatedEnv
+				updated = true
+			}
+		}
+		// if env is new then add to array
+		if !updated {
+			environments = append(environments, updatedEnv)
+		}
+		d.Set("environment", expandEnvironments(environments))
+	}
+
+}
+
+func getEnvironmentData(d *schema.ResourceData) []Environment {
+	var tfEnvironments []TFEnvironment
+	var environments []Environment
+	// get environment key
+	if envData, ok := d.Get("environment").([]interface{}); ok {
+		// marshal to bytes
+		jsonData, err := json.Marshal(envData)
+		if err != nil {
+			log.Printf("Error marshalling environment data: %s", err)
+			return environments
+		}
+
+		// unmarshal into environment array
+		err = json.Unmarshal(jsonData, &tfEnvironments)
+		if err != nil {
+			log.Printf("Error unmarshalling environment data: %s", err)
+			return environments
+		}
+	}
+
+	for _, tfEnv := range tfEnvironments {
+		environments = append(environments, Environment{
+			Identifier:          tfEnv.Identifier,
+			DefaultOnVariation:  tfEnv.DefaultOnVariation,
+			DefaultOffVariation: tfEnv.DefaultOffVariation,
+			State:               tfEnv.State,
+			TargetRules:         tfEnv.TargetRules,
+		})
+	}
+
+	return environments
+}
+
+func expandEnvironments(environments []Environment) []interface{} {
+	var result []interface{}
+	for _, env := range environments {
+		var targetRules []interface{}
+		for _, rule := range env.TargetRules {
+			targetRules = append(targetRules, map[string]interface{}{
+				"variation": rule.Variation,
+				"targets":   rule.Targets,
+			})
+		}
+		result = append(result, map[string]interface{}{
+			"identifier":            env.Identifier,
+			"state":                 env.State,
+			"default_on_variation":  env.DefaultOnVariation,
+			"default_off_variation": env.DefaultOffVariation,
+			"add_target_rule":       targetRules,
+		})
+	}
+
+	return result
 }
 
 func expandVariations(variations []nextgen.Variation) []interface{} {
@@ -502,6 +487,17 @@ func expandVariations(variations []nextgen.Variation) []interface{} {
 	return result
 }
 
+func expandTags(tags []nextgen.Tag) []interface{} {
+	var result []interface{}
+	for _, tag := range tags {
+		result = append(result, map[string]interface{}{
+			"identifier": tag.Name,
+		})
+	}
+
+	return result
+}
+
 func buildFFQueryParameters(d *schema.ResourceData) *FFQueryParameters {
 	return &FFQueryParameters{
 		Identifier:     d.Get("identifier").(string),
@@ -511,7 +507,7 @@ func buildFFQueryParameters(d *schema.ResourceData) *FFQueryParameters {
 }
 
 func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFeatureFlagOpts {
-	opts := &FFOpts{
+	opts := &FFCreateOpts{
 		Identifier:          d.Get("identifier").(string),
 		Name:                d.Get("name").(string),
 		DefaultOffVariation: d.Get("default_off_variation").(string),
@@ -526,10 +522,6 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 
 	if owner, ok := d.GetOk("owner"); ok {
 		opts.Owner = owner.(string)
-	}
-
-	if archived, ok := d.GetOk("archived"); ok {
-		opts.Archived = archived.(bool)
 	}
 
 	var variations []nextgen.Variation
@@ -551,26 +543,22 @@ func buildFFCreateOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiCreateFea
 	}
 }
 
-func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatureOpts {
-	opts := &FFPatchOpts{
+func buildFFPutOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPutFeatureFlagOpts {
+	opts := &FFPutOpts{
 		Identifier:          d.Get("identifier").(string),
 		Name:                d.Get("name").(string),
 		DefaultOffVariation: d.Get("default_off_variation").(string),
 		DefaultOnVariation:  d.Get("default_on_variation").(string),
-		Project:             d.Get("project_id").(string),
-		Kind:                d.Get("kind").(string),
 	}
 
+	var description string
 	if desc, ok := d.GetOk("description"); ok {
-		opts.Description = desc.(string)
+		description = desc.(string)
 	}
+	opts.Description = description
 
-	if owner, ok := d.GetOk("owner"); ok {
-		opts.Owner = owner.(string)
-	}
-
-	if archived, ok := d.GetOk("archived"); ok {
-		opts.Archived = archived.(bool)
+	if permanent, ok := d.GetOk("permanent"); ok {
+		opts.Permanent = permanent.(bool)
 	}
 
 	var variations []nextgen.Variation
@@ -587,124 +575,49 @@ func buildFFPatchOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiPatchFeatu
 	}
 	opts.Variations = variations
 
-	var environment string
-	var instructions []*Instruction
+	tags := []Tag{}
+	if tagsData, ok := d.GetOk("tags"); ok {
+		tagsData := tagsData.([]interface{})
 
-	// if the environment is set, then we need to add the instructions
-	// so we moved the entire block of code to here
-	if envData, ok := d.GetOk("environment"); ok {
-		// for each environment in the list...
-		for _, env := range envData.([]interface{}) {
-			// get the current objects for the environment
-			if envMap, ok := env.(map[string]interface{}); ok {
-				environment = envMap["identifier"].(string)
-				// get the target rules for the environment
-				if targetRulesData, ok := envMap["add_target_rule"]; ok {
-					for _, targetRuleData := range targetRulesData.([]interface{}) {
-						vMap := targetRuleData.(map[string]interface{})
-						var targets []*string = make([]*string, 0)
-						for _, target := range vMap["targets"].([]interface{}) {
-							targets = append(targets, aws.String(target.(string)))
-						}
-						targetRule := TargetRules{
-							Kind:      aws.String(AddTargetsToVariationTargetMap),
-							Variation: aws.String(vMap[VariationVar].(string)),
-							Targets:   targets,
-						}
-						instruction := &Instruction{
-							Kind: targetRule.Kind,
-							Parameters: &Parameter{
-								Variation: targetRule.Variation,
-								Targets:   targetRule.Targets,
-								Clauses:   nil,
-								Serve:     nil,
-							},
-						}
-						instructions = append(instructions, instruction)
-					}
-				}
-				// get the target group rules for the environment
-				if targetGroupRulesData, ok := envMap["add_target_group_rule"]; ok {
-					for _, targetGroupRuleData := range targetGroupRulesData.([]interface{}) {
-						vMap := targetGroupRuleData.(map[string]interface{})
-						targetGroupRule := TargetGroupRules{
-							Kind:      aws.String(AddRule),
-							GroupName: aws.String(vMap[GroupName].(string)),
-							Variation: aws.String(vMap[VariationVar].(string)),
-						}
-
-						var distribution *Distribution = nil
-						if distrib, ok := vMap[DistributionVar]; ok {
-							for _, distributionData := range distrib.([]interface{}) {
-								vMap := distributionData.(map[string]interface{})
-								distribution = &Distribution{
-									BuckedBy: aws.String(BuckedBy),
-								}
-								var variations []*Variation
-								for _, variationData := range vMap["variations"].([]interface{}) {
-									vMap := variationData.(map[string]interface{})
-									variation := &Variation{
-										Variation: aws.String(vMap[VariationVar].(string)),
-										Weight:    aws.Int(vMap[Weight].(int)),
-									}
-									variations = append(variations, variation)
-								}
-								distribution.Variations = variations
-							}
-						}
-						instruction := &Instruction{
-							Kind: targetGroupRule.Kind,
-							Parameters: &Parameter{
-								Serve: &Serve{
-									Variation:    targetGroupRule.Variation,
-									Distribution: distribution,
-								},
-								Clauses: []*nextgen.Clause{
-									{
-										Op:     SegmentMatch,
-										Values: []string{aws.StringValue(targetGroupRule.GroupName)},
-									},
-								},
-							},
-						}
-						instructions = append(instructions, instruction)
-					}
-				}
+		for _, tagData := range tagsData {
+			tMap := tagData.(map[string]interface{})
+			tag := Tag{
+				Name:       tMap["identifier"].(string),
+				Identifier: tMap["identifier"].(string),
 			}
+			tags = append(tags, tag)
 		}
 	}
+	opts.Tags = tags
 
-	// add the tags to the instructions
-	if tagData, ok := d.GetOk("tags"); ok {
-		for _, tag := range tagData.([]interface{}) {
-			if tagMap, ok := tag.(map[string]interface{}); ok {
-				instruction := &Instruction{
-					Kind: aws.String(AddTag),
-					Parameters: &Parameter{
-						Name:       aws.String(tagMap["name"].(string)),
-						Identifier: aws.String(tagMap["identifier"].(string)),
-					},
-				}
-				instructions = append(instructions, instruction)
-			}
-		}
-	}
+	// add environment level attributes
+	opts.Environments = getEnvironmentData(d)
 
-	opts.Instructions = instructions
-	if len(instructions) == 0 {
-		return nil
-	}
-
-	return &nextgen.FeatureFlagsApiPatchFeatureOpts{
-		Body:                  optional.NewInterface(opts),
-		EnvironmentIdentifier: optional.NewString(environment),
+	log.Println("flag update request body")
+	jsonData, _ := json.Marshal(opts)
+	log.Println(string(jsonData))
+	return &nextgen.FeatureFlagsApiPutFeatureFlagOpts{
+		Body: optional.NewInterface(opts),
 	}
 }
 
-func buildFFReadOpts(d *schema.ResourceData) *nextgen.FeatureFlagsApiGetFeatureFlagOpts {
+func buildFFReadOpts(d *schema.ResourceData, env string) *nextgen.FeatureFlagsApiGetFeatureFlagOpts {
 
 	return &nextgen.FeatureFlagsApiGetFeatureFlagOpts{
-		EnvironmentIdentifier: optional.EmptyString(),
+		EnvironmentIdentifier: optional.NewString(env),
 	}
 
+}
+
+// HandleCFApiError - parses the error as type cfError and returns the error message
+// if it can't parse as cf error it falls back to the generic error handling helper
+func HandleCFApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	erro, ok := err.(nextgen.GenericSwaggerError)
+	if ok {
+		cfError, ok := erro.Model().(nextgen.CfError)
+		if ok {
+			return diag.Errorf(cfError.Message)
+		}
+	}
+	return helpers.HandleApiError(err, d, httpResp)
 }
