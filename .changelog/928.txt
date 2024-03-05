@@ -1,0 +1,3 @@
+```release-note:enhancement
+harness_platform_connector_kubernetes: Added support for ca_cert_ref in kubernetes connector cluster.
+```
