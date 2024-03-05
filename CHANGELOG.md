@@ -1,6 +1,6 @@
 
-<a name="0.3.76"></a>
-## 0.3.76 (2024-02-29)
+<a name="0.3.77"></a>
+## 0.3.77 (2024-03-04)
 
 ### API
 
@@ -15,10 +15,6 @@
 
 * added GitHubApp in credentials
 
-### Adding
-
-* adding panic recovering
-
 ### Correction
 
 * Correction on optional end time of static schedule of fixed schedule
@@ -28,9 +24,9 @@
 * fix : [CCM-14434] API key based authentication for fixed schedule
 * fix : API key based authentication for fixed schedule
 
-### Model
+### GitX
 
-* Model containing fetch response of fixed schedule of AutoStopping rule
+* GitX Support For Env CRUD operations , Import ([#487](https://github.com/harness/harness-go-sdk/issues/487))
 
 ### Refactored
 
@@ -38,6 +34,8 @@
 
 ### Release
 
+* Release version 0.3.76 02-29-2024
+* Release v0.3.76
 * Release version 0.3.75 02-27-2024
 * Release v0.3.75
 * Release version 0.3.74 02-01-2024
@@ -82,23 +80,10 @@
 * Release v0.3.55
 * Release version 0.3.54 10-19-2023
 * Release v0.3.54
-* Release version 0.3.53 10-10-2023
-* Release v0.3.53
 * Release version 0.3.52 09-28-2023
 * Release v0.3.52
 * Release version 0.3.51 09-13-2023
 * Release v0.3.51
-* Release version 0.3.50 09-13-2023
-* Release v0.3.50
-* Release version 0.3.49 09-08-2023
-* Release v0.3.49
-* Release version 0.3.48 09-05-2023
-* Release v0.3.48
-* Release version 0.3.37 07-13-2023
-
-### Removing
-
-* removing panic
 
 ### Unmarshal
 
@@ -132,7 +117,4 @@
 * Merge pull request [#412](https://github.com/harness/harness-go-sdk/issues/412) from harness/CI-9639
 * Merge pull request [#409](https://github.com/harness/harness-go-sdk/issues/409) from harness/SRM-15418-1
 * Merge pull request [#396](https://github.com/harness/harness-go-sdk/issues/396) from harness/cds-77798
-* Merge pull request [#406](https://github.com/harness/harness-go-sdk/issues/406) from harness/SRM-15418
-* Merge pull request [#404](https://github.com/harness/harness-go-sdk/issues/404) from harness/OIP-880
-* Merge pull request [#400](https://github.com/harness/harness-go-sdk/issues/400) from harness/SRM-15032-1
 
