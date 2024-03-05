@@ -2,6 +2,7 @@ package featureflagtargetgroup
 
 import (
 	"context"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"io"
 	"net/http"
 	"time"
@@ -173,7 +174,7 @@ func resourceFeatureFlagTargetGroupRead(ctx context.Context, d *schema.ResourceD
 
 	segment, httpResp, err := c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -198,7 +199,11 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 	httpResp, err = c.TargetGroupsApi.CreateSegment(ctx, segmentRequest, c.AccountId, qp.OrgID)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		// handle conflict
+		if httpResp != nil && httpResp.StatusCode == 409 {
+			return diag.Errorf("A target group with identifier [%s] orgIdentifier [%s] project [%s] environment [%s] already exists", segmentRequest.Identifier, qp.OrgID, qp.Project, segmentRequest.Environment)
+		}
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	if httpResp.StatusCode != http.StatusCreated {
@@ -207,7 +212,7 @@ func resourceFeatureFlagTargetCreate(ctx context.Context, d *schema.ResourceData
 
 	segment, httpResp, err = c.TargetGroupsApi.GetSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTargetGroup(d, &segment, qp)
@@ -232,7 +237,7 @@ func resourceFeatureFlagTargetGroupUpdate(ctx context.Context, d *schema.Resourc
 
 	segment, httpResp, err = c.TargetGroupsApi.PatchSegment(ctx, c.AccountId, qp.OrgID, qp.Project, qp.Environment, id, opts)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	time.Sleep(1 * time.Second)
@@ -260,7 +265,7 @@ func resourceFeatureFlagTargetGroupDelete(ctx context.Context, d *schema.Resourc
 
 	httpResp, err := c.TargetGroupsApi.DeleteSegment(ctx, c.AccountId, qp.OrgID, id, qp.Project, qp.Environment)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	return nil
