@@ -1,13 +1,6 @@
 ```release-note:new-resource
-docs/resources/platform_repo.md
-examples/data-sources/harness_platform_repo/data-source.tf
-examples/resources/harness_platform_repo/import.sh
-examples/resources/harness_platform_repo/resource.tf
-internal/acctest/acctest.go
-internal/provider/provider.go
-internal/service/platform/repo/data_source_repo.go
-internal/service/platform/repo/data_source_repo_test.go
-internal/service/platform/repo/resource_repo.go
-internal/service/platform/repo/resource_repo_test.go
-internal/session.go
+platform_repo_rule_branch
+```
+```release-note:new-resource
+platform_repo
 ```
