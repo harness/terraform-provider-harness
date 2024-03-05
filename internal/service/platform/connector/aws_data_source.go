@@ -86,6 +86,31 @@ func DatasourceConnectorAws() *schema.Resource {
 					},
 				},
 			},
+			"oidc_authentication": {
+				Description: "Authentication using harness oidc.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"iam_role_arn": {
+							Description: "The IAM Role to assume the credentials from.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"delegate_selectors": {
+							Description: "The delegates to inherit the credentials from.",
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 			"cross_account_access": {
 				Description: "Select this option if you want to use one AWS account for the connection, but you want to deploy or build in a different AWS account. In this scenario, the AWS account used for AWS access in Credentials will assume the IAM role you specify in Cross-account role ARN setting. This option uses the AWS Security Token Service (STS) feature.",
 				Type:        schema.TypeList,
