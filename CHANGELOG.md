@@ -1,19 +1,11 @@
 
-<a name="0.3.77"></a>
-## 0.3.77 (2024-03-04)
-
-### API
-
-* API for fetching fixed schedule of AutoStopping rule
+<a name="0.3.78"></a>
+## 0.3.78 (2024-03-05)
 
 ### Added
 
 * Added Field Execute on Delegate ([#454](https://github.com/harness/harness-go-sdk/issues/454))
 * Added AdditionalMetadata struct
-
-### Added
-
-* added GitHubApp in credentials
 
 ### Correction
 
@@ -34,6 +26,8 @@
 
 ### Release
 
+* Release version 0.3.77 03-05-2024
+* Release v0.3.77
 * Release version 0.3.76 02-29-2024
 * Release v0.3.76
 * Release version 0.3.75 02-27-2024
@@ -79,11 +73,9 @@
 * Release version 0.3.55 10-20-2023
 * Release v0.3.55
 * Release version 0.3.54 10-19-2023
-* Release v0.3.54
 * Release version 0.3.52 09-28-2023
 * Release v0.3.52
 * Release version 0.3.51 09-13-2023
-* Release v0.3.51
 
 ### Unmarshal
 
@@ -110,11 +102,9 @@
 * Merge pull request [#426](https://github.com/harness/harness-go-sdk/issues/426) from harness/IAC-1130
 * Merge pull request [#428](https://github.com/harness/harness-go-sdk/issues/428) from harness/PL-39175
 * Merge pull request [#420](https://github.com/harness/harness-go-sdk/issues/420) from harness/cds-82128
-* Merge pull request [#418](https://github.com/harness/harness-go-sdk/issues/418) from harness/cds-81697-gitops-app-project-name-fix
 * Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
 * Merge pull request [#411](https://github.com/harness/harness-go-sdk/issues/411) from harness/SRM-15418-2
 * Merge pull request [#413](https://github.com/harness/harness-go-sdk/issues/413) from harness/CDS-76236
 * Merge pull request [#412](https://github.com/harness/harness-go-sdk/issues/412) from harness/CI-9639
 * Merge pull request [#409](https://github.com/harness/harness-go-sdk/issues/409) from harness/SRM-15418-1
-* Merge pull request [#396](https://github.com/harness/harness-go-sdk/issues/396) from harness/cds-77798
 
