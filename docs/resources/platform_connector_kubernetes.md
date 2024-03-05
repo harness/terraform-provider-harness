@@ -169,6 +169,10 @@ Required:
 - `master_url` (String) The URL of the Kubernetes cluster.
 - `service_account_token_ref` (String) Reference to the secret containing the service account token for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
 
+Optional:
+
+- `ca_cert_ref` (String) Reference to the secret containing the CA certificate for the connector. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
 
 <a id="nestedblock--username_password"></a>
 ### Nested Schema for `username_password`

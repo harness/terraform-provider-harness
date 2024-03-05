@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -67,6 +69,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
@@ -253,6 +256,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
+				"harness_platform_repo":                            repo.DataSourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -383,6 +388,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
+				"harness_platform_repo":                            repo.ResourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
 			},
 		}
 
@@ -452,15 +459,30 @@ func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.A
 	return client
 }
 
+func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
+	cfg := code.NewConfiguration()
+	client := code.NewAPIClient(&code.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/code/api/v1", // todo: this should be fixed in go sdk later
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)}, // todo: this should be fixed in go sdk later
+		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return &internal.Session{
-			AccountId: d.Get("account_id").(string),
-			Endpoint:  d.Get("endpoint").(string),
-			CDClient:  getCDClient(d, version),
-			PLClient:  getPLClient(d, version),
-			Client:    getClient(d, version),
+			AccountId:  d.Get("account_id").(string),
+			Endpoint:   d.Get("endpoint").(string),
+			CDClient:   getCDClient(d, version),
+			PLClient:   getPLClient(d, version),
+			Client:     getClient(d, version),
+			CodeClient: getCodeClient(d, version),
 		}, nil
 	}
 }

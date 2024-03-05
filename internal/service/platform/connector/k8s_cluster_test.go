@@ -397,6 +397,7 @@ func testAccResourceConnectorK8s_ServiceAccount(id string, name string) string {
 			service_account {
 				master_url = "https://kubernetes.example.com"
 				service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
+				ca_cert_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			delegate_selectors = ["harness-delegate"]
 
