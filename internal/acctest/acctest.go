@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
@@ -69,6 +70,10 @@ func TestAccGetClientWithContext() (*openapi_client_nextgen.APIClient, context.C
 
 func TestAccGetPolicyManagementClient() *policymgmt.APIClient {
 	return TestAccProvider.Meta().(*internal.Session).GetPolicyManagementClient()
+}
+
+func TestAccGetCodeClientWithContext() (*code.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetCodeClientWithContext(context.Background())
 }
 
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
@@ -134,6 +139,16 @@ func OverridesV1ResourceImportStateIdFunc(resourceName string) resource.ImportSt
 		}
 
 		return fmt.Sprintf("%s/%s/%s", orgId, projId, envId), nil
+	}
+}
+
+func RepoResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		return fmt.Sprintf("%s/%s/%s", orgId, projId, id), nil
 	}
 }
 
@@ -228,6 +243,17 @@ func GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName string) resou
 		id := primary.ID
 		agentId := primary.Attributes["agent_id"]
 		return fmt.Sprintf("%s/%s", agentId, id), nil
+	}
+}
+
+func RepoRuleProjectLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		repoIdentifier := primary.Attributes["repo_identifier"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, repoIdentifier, id), nil
 	}
 }
 
