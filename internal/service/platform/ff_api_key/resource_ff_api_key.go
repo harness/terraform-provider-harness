@@ -2,11 +2,11 @@ package ff_api_key
 
 import (
 	"context"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"net/http"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -111,7 +111,7 @@ func resourceFFApiKeyRead(ctx context.Context, d *schema.ResourceData, meta inte
 	resp, httpResp, err := c.APIKeysApi.GetAPIKey(ctx, id, qp.ProjectId, qp.EnvironmentId, c.AccountId, qp.OrganizationId)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	readFFApiKey(d, &resp, qp)
@@ -140,7 +140,7 @@ func resourceFFApiKeyCreate(ctx context.Context, d *schema.ResourceData, meta in
 		if httpResp != nil && httpResp.StatusCode == 409 {
 			return diag.Errorf("An api key with identifier [%s] orgIdentifier [%s] project [%s]  and environment [%s] already exists", d.Get("identifier").(string), qp.OrganizationId, qp.ProjectId, qp.EnvironmentId)
 		}
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	readFFApiKey(d, &resp, qp)
@@ -159,7 +159,7 @@ func resourceFFApiKeyDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 	httpResp, err := c.APIKeysApi.DeleteAPIKey(ctx, d.Id(), qp.ProjectId, qp.EnvironmentId, c.AccountId, qp.OrganizationId)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	return nil
