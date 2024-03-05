@@ -76,13 +76,13 @@ func testProjResourceRepoRule(identifier, description string) string {
 			project_id = harness_platform_project.test.id
 			description = "%[2]s"
 			state = "active"
-			target_patterns {
+			pattern {
 				default_branch = true
 			}
 			policies {
 				require_pull_request = true
 			}
-			bypass_list  {}
+			bypass  {}
 		}
 	`, identifier, description,
 	)
