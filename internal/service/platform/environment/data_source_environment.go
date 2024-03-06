@@ -34,6 +34,35 @@ func DataSourceEnvironment() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"git_details": {
+				Description: "Contains parameters related to Git Experience for remote entities",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+						"load_from_fallback_branch": {
+							Description: "Load environment yaml from fallback branch",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
+						"repo_name": {
+							Description: "Repo name of remote environment",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -57,6 +86,9 @@ func dataSourceEnvironmentRead(ctx context.Context, d *schema.ResourceData, meta
 		resp, httpResp, err = c.EnvironmentsApi.GetEnvironmentV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentsApiGetEnvironmentV2Opts{
 			OrgIdentifier:     helpers.BuildField(d, "org_id"),
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			RepoName:               helpers.BuildField(d, "repo_name"),
+			Branch:                 helpers.BuildField(d, "branch"),
+			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "load_from_fallback_branch"),
 		})
 		env = resp.Data.Environment
 	} else if name != "" {

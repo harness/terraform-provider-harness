@@ -2,7 +2,7 @@ package feature_flag_target
 
 import (
 	"context"
-	"io"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"net/http"
 	"time"
 
@@ -106,7 +106,7 @@ func resourceFeatureFlagTargetRead(ctx context.Context, d *schema.ResourceData, 
 	resp, httpResp, err := c.TargetsApi.GetTarget(ctx, id, c.AccountId, qp.OrganizationID, qp.ProjectID, qp.Environment)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTarget(d, &resp, *qp)
@@ -127,7 +127,7 @@ func resourceFeatureFlagTargetDelete(ctx context.Context, d *schema.ResourceData
 
 	httpResp, err := c.TargetsApi.DeleteTarget(ctx, id, c.AccountId, qp.OrganizationID, qp.ProjectID, qp.Environment)
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 	return nil
 }
@@ -149,35 +149,11 @@ func resourceFeatureFlagTargetCreateOrUpdate(ctx context.Context, d *schema.Reso
 	}
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	readFeatureFlagTarget(d, &target, *qp)
-
-	return nil
-}
-
-// resourceFeatureFlagTargetUpdate is the update function for the feature flag target
-func resourceFeatureFlagTargetUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-
-	id := d.Id()
-	if id == "" {
-		id = d.Get("identifier").(string)
-		d.MarkNewResource()
-	}
-
-	qp := buildFFTargetQueryParameters(d)
-	opts := buildFFTargetPatchOpts(d)
-
-	var err error
-	var target nextgen.Target
-	var httpResp *http.Response
-
-	target, httpResp, err = c.TargetsApi.PatchTarget(ctx, c.AccountId, qp.OrganizationID, qp.ProjectID, qp.Environment, id, opts)
-	if err != nil {
-		body, _ := io.ReadAll(httpResp.Body)
-		return diag.Errorf("readstatus: %s, \nBody:%s", httpResp.Status, body)
+		// handle conflict
+		if httpResp != nil && httpResp.StatusCode == 409 {
+			return diag.Errorf("A target with identifier [%s] orgIdentifier [%s] project [%s] environment [%s] already exists", target.Identifier, qp.OrganizationID, qp.ProjectID, target.Environment)
+		}
+		return feature_flag.HandleCFApiError(err, d, httpResp)
 	}
 
 	readFeatureFlagTarget(d, &target, *qp)

@@ -206,9 +206,8 @@ resource "harness_platform_feature_flag" "mymultivariateflag" {
 
 ### Optional
 
-- `archived` (Boolean) Whether or not the flag is archived
+- `description` (String) Description of the Feature Flag
 - `environment` (Block List) Environment Identifier (see [below for nested schema](#nestedblock--environment))
-- `git_details` (Block Set, Max: 1) (see [below for nested schema](#nestedblock--git_details))
 - `owner` (String) The owner of the flag
 - `tags` (Block List) The tags for the flag (see [below for nested schema](#nestedblock--tags))
 
@@ -236,35 +235,10 @@ Required:
 
 Optional:
 
-- `add_target_group_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--environment--add_target_group_rule))
 - `add_target_rule` (Block List) The targeting rules for the flag (see [below for nested schema](#nestedblock--environment--add_target_rule))
-
-<a id="nestedblock--environment--add_target_group_rule"></a>
-### Nested Schema for `environment.add_target_group_rule`
-
-Optional:
-
-- `distribution` (Block List) The distribution of the rule (see [below for nested schema](#nestedblock--environment--add_target_group_rule--distribution))
-- `group_name` (String) The name of the target group
-- `variation` (String) The identifier of the variation. Valid values are `enabled`, `disabled`
-
-<a id="nestedblock--environment--add_target_group_rule--distribution"></a>
-### Nested Schema for `environment.add_target_group_rule.distribution`
-
-Optional:
-
-- `variations` (Block List) The variations of the rule (see [below for nested schema](#nestedblock--environment--add_target_group_rule--distribution--variations))
-
-<a id="nestedblock--environment--add_target_group_rule--distribution--variations"></a>
-### Nested Schema for `environment.add_target_group_rule.distribution.variations`
-
-Optional:
-
-- `variation` (String) The identifier of the variation
-- `weight` (Number) The weight of the variation
-
-
-
+- `default_off_variation` (String) Default variation to be served when flag is 'off'
+- `default_on_variation` (String) Default variation to be served when flag is 'on'
+- `state` (String) State of the flag in this environment. Possible values are 'on' and 'off'
 
 <a id="nestedblock--environment--add_target_rule"></a>
 ### Nested Schema for `environment.add_target_rule`
@@ -276,18 +250,9 @@ Optional:
 
 
 
-<a id="nestedblock--git_details"></a>
-### Nested Schema for `git_details`
-
-Required:
-
-- `commit_msg` (String) The commit message to use as part of a gitsync operation
-
-
 <a id="nestedblock--tags"></a>
 ### Nested Schema for `tags`
 
 Required:
 
 - `identifier` (String) The identifier of the tag
-- `name` (String) The name of the tag
