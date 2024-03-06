@@ -54,7 +54,7 @@ func DataSourceServiceOverrides() *schema.Resource {
 				Required:    true,
 			},
 			"git_details": {
-				Description: "Contains parameters related to Git Experience for remote entities",
+				Description: "Contains parameters related to Git Experience for remote overrides",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
@@ -67,6 +67,12 @@ func DataSourceServiceOverrides() *schema.Resource {
 							Optional:    true,
 							Computed:    true,
 						},
+						"load_from_cache": {
+							Description: "Load service yaml from fallback branch",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Computed:    true,
+						},
 						"load_from_fallback_branch": {
 							Description: "Load service yaml from fallback branch",
 							Type:        schema.TypeBool,
@@ -74,7 +80,7 @@ func DataSourceServiceOverrides() *schema.Resource {
 							Computed:    true,
 						},
 						"repo_name": {
-							Description: "Repo name of remote service",
+							Description: "Repo name of remote service override",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
@@ -101,6 +107,7 @@ func dataSourceServiceOverridesRead(ctx context.Context, d *schema.ResourceData,
 			RepoName:               helpers.BuildField(d, "repo_name"),
 			Branch:                 helpers.BuildField(d, "branch"),
 			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "load_from_fallback_branch"),
+			LoadFromCache:          helpers.BuildField(d, "load_from_cache"),
 		})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

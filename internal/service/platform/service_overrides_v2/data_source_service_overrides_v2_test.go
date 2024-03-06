@@ -155,8 +155,6 @@ configFiles:
                     identifier = harness_platform_service_overrides_v2.test.id
                     org_id = harness_platform_service_overrides_v2.test.org_id
                     project_id = harness_platform_service_overrides_v2.test.project_id
-					repo_name = "pcf_practice"
-					branch = "main"
 				}
 
 				resource "harness_platform_service_overrides_v2" "test2" {

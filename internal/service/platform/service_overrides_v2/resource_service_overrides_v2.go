@@ -65,13 +65,13 @@ func ResourceServiceOverrides() *schema.Resource {
 				Computed:    true,
 			},
 			"is_force_import": {
-				Description: "force import service from remote even if same file path already exist",
+				Description: "force import override from remote even if same file path already exist",
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
 			},
 			"import_from_git": {
-				Description: "import service from git",
+				Description: "import override from git",
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Computed:    true,
@@ -128,13 +128,13 @@ func ResourceServiceOverrides() *schema.Resource {
 							Computed:    true,
 						},
 						"last_object_id": {
-							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
+							Description: "Last object identifier (for Github). To be provided only when updating override.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
 						},
 						"last_commit_id": {
-							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating Pipeline.",
+							Description: "Last commit identifier (for Git Repositories other than Github). To be provided only when updating override.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,

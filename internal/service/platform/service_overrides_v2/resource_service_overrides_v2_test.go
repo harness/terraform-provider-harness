@@ -26,6 +26,8 @@ func TestAccServiceOverrides_ProjectScope(t *testing.T) {
 			{
 				Config: testAccServiceOverridesProjectScope(id, name),
 				Check: resource.ComposeTestCheckFunc(
+          resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
 			{

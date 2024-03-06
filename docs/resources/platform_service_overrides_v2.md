@@ -151,10 +151,14 @@ Optional:
 - `branch_name` (String) Name of the branch.
 - `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `file_path` (String) File path of the Entity in the repository.
-- `repo_name` (String) Name of the repository.
+- `repo_name` (String) Name of the repository. It should be same as the repo name of corresponding service or Environment.
+    For svc-env override it should be same as svc repo 
+    For svc-infra override it should be same as svc repo 
+    For env override it should be same as env repo 
+    For env-infra override it should be same as env repo 
 - `store_type` (String) store type of the entity.
-- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Service.
-- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Service.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Service override.
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Service override.
 - `is_harness_code_repo` (Boolean) If the repo is in harness code.
 - `commit_message` (String) message for the commit in Git Repo.
 
