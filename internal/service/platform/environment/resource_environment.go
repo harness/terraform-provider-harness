@@ -199,7 +199,7 @@ func resourceEnvironmentCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 
 	if id == "" {
 		if d.Get("git_details.0.import_from_git").(bool) {
-			envParams := envImportParam(env, d)
+			envParams := envImportParam(d)
 			importResp, httpResp, err = c.EnvironmentsApi.ImportEnvironment(ctx, c.AccountId, &envParams)
 		} else {
 			envParams := envCreateParam(env, d)
@@ -295,9 +295,9 @@ func envCreateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nex
 	}
 }
 
-func envUpdateParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiUpdateEnvironmentV2Opts {
+func envUpdateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsApiUpdateEnvironmentV2Opts {
 	return nextgen.EnvironmentsApiUpdateEnvironmentV2Opts{
-		Body:              optional.NewInterface(svc),
+		Body:              optional.NewInterface(env),
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		CommitMsg:         helpers.BuildField(d, "git_details.0.commit_message"),
@@ -312,7 +312,7 @@ func envUpdateParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nex
 	}
 }
 
-func envImportParam(svc *nextgen.EnvironmentRequest, d *schema.ResourceData) nextgen.EnvironmentsV2ApiImportEnvironmentOpts {
+func envImportParam(d *schema.ResourceData) nextgen.EnvironmentsV2ApiImportEnvironmentOpts {
 	return nextgen.EnvironmentsV2ApiImportEnvironmentOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
