@@ -2,6 +2,7 @@ package secret
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -11,7 +12,7 @@ import (
 
 func ResourceSecretWinRM() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating an ssh key type secret.",
+		Description:   "Resource for creating a WinRM secret.",
 		ReadContext:   resourceSecretWinRMRead,
 		CreateContext: resourceSecretWinRMCreateOrUpdate,
 		UpdateContext: resourceSecretWinRMCreateOrUpdate,
@@ -20,56 +21,55 @@ func ResourceSecretWinRM() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"port": {
-				Description: "SSH port",
+				Description: "WinRM port",
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Default:     5985,
 			},
 			"kerberos": {
-				Description:   "Kerberos authentication scheme",
-				Type:          schema.TypeList,
-				MaxItems:      1,
-				Optional:      true,
-				ConflictsWith: []string{"ssh"},
-				ExactlyOneOf:  []string{"kerberos", "ssh"},
+				Description: "Kerberos authentication configuration",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"principal": {
-							Description: "Username to use for authentication.",
+							Description: "Username to use for Kerberos authentication.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"realm": {
-							Description: "Reference to a secret containing the password to use for authentication.",
+							Description: "Kerberos realm to use for authentication.",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"tgt_generation_method": {
-							Description: "Method to generate tgt",
-							Type:        schema.TypeString,
-							Optional:    true,
+							Description:  "Method for generating TGT (Ticket Granting Ticket)",
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "auto",
+							ValidateFunc: validation.StringInSlice([]string{"auto", "manual"}, false),
 						},
 						"tgt_key_tab_file_path_spec": {
-							Description:  "Authenticate to App Dynamics using username and password.",
-							Type:         schema.TypeList,
-							MaxItems:     1,
-							Optional:     true,
-							ExactlyOneOf: []string{"kerberos.0.tgt_key_tab_file_path_spec", "kerberos.0.tgt_password_spec"},
+							Description: "Keytab file path used for Kerberos TGT generation",
+							Type:        schema.TypeList,
+							MaxItems:    1,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"key_path": {
-										Description: "key path",
+										Description: "Path to the keytab file.",
 										Type:        schema.TypeString,
-										Optional:    true,
+										Required:    true,
 									},
 								},
 							},
 						},
 						"tgt_password_spec": {
-							Description:  "Authenticate to App Dynamics using username and password.",
-							Type:         schema.TypeList,
-							MaxItems:     1,
-							Optional:     true,
-							ExactlyOneOf: []string{"kerberos.0.tgt_key_tab_file_path_spec", "kerberos.0.tgt_password_spec"},
+							Description: "Authenticate to App Dynamics using username and password.",
+							Type:        schema.TypeList,
+							MaxItems:    1,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"password": {
@@ -83,92 +83,38 @@ func ResourceSecretWinRM() *schema.Resource {
 					},
 				},
 			},
-			"ssh": {
-				Description:   "Kerberos authentication scheme",
-				Type:          schema.TypeList,
-				MaxItems:      1,
-				Optional:      true,
-				ConflictsWith: []string{"kerberos"},
-				ExactlyOneOf:  []string{"kerberos", "ssh"},
+			"ntlm": {
+				Description: "NTLM authentication configuration",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"credential_type": {
-							Description: "This specifies SSH credential type as Password, KeyPath or KeyReference",
+						"authentication": {
+							Description: "NTLM authentication type",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
-						"sshkey_path_credential": {
-							Description:  "SSH credential of type keyPath",
-							Type:         schema.TypeList,
-							MaxItems:     1,
-							Optional:     true,
-							ExactlyOneOf: []string{"ssh.0.ssh_password_credential", "ssh.0.sshkey_reference_credential", "ssh.0.sshkey_path_credential"},
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"user_name": {
-										Description: "SSH Username.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"key_path": {
-										Description: "Path of the key file.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"encrypted_passphrase": {
-										Description: "Encrypted Passphrase . To reference a encryptedPassphrase at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a encryptedPassPhrase at the account scope, prefix 'account` to the expression: account.{identifier}",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-								},
-							},
+						"domain": {
+							Description: "Domain for NTLM authentication.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
-						"sshkey_reference_credential": {
-							Description:  "SSH credential of type keyReference",
-							Type:         schema.TypeList,
-							MaxItems:     1,
-							Optional:     true,
-							ExactlyOneOf: []string{"ssh.0.ssh_password_credential", "ssh.0.sshkey_reference_credential", "ssh.0.sshkey_path_credential"},
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"user_name": {
-										Description: "SSH Username.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"key": {
-										Description: "SSH key. To reference a key at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a key at the account scope, prefix 'account` to the expression: account.{identifier}",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"encrypted_passphrase": {
-										Description: "Encrypted Passphrase. To reference a encryptedPassphrase at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a encryptedPassPhrase at the account scope, prefix 'account` to the expression: account.{identifier}",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-								},
-							},
+						"username": {
+							Description: "Username for NTLM authentication.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
-						"ssh_password_credential": {
-							Description:  "SSH credential of type keyReference",
-							Type:         schema.TypeList,
-							MaxItems:     1,
-							Optional:     true,
-							ExactlyOneOf: []string{"ssh.0.ssh_password_credential", "ssh.0.sshkey_reference_credential", "ssh.0.sshkey_path_credential"},
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"user_name": {
-										Description: "SSH Username.",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-									"password": {
-										Description: "SSH Password. To reference a password at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a password at the account scope, prefix 'account` to the expression: account.{identifier}",
-										Type:        schema.TypeString,
-										Required:    true,
-									},
-								},
-							},
+						"password": {
+							Description: "Password for NTLM authentication.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"use_ssl_cert": {
+							Description: "Whether to use SSL certificate for NTLM authentication.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
 						},
 					},
 				},
@@ -181,7 +127,7 @@ func ResourceSecretWinRM() *schema.Resource {
 }
 
 func resourceSecretWinRMRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	secret, err := resourceSecretReadBase(ctx, d, meta, nextgen.SecretTypes.SSHKey)
+	secret, err := resourceSecretReadBase(ctx, d, meta, nextgen.SecretTypes.WinRmCredentials)
 	if err != nil {
 		return err
 	}
@@ -210,12 +156,12 @@ func resourceSecretWinRMCreateOrUpdate(ctx context.Context, d *schema.ResourceDa
 
 func buildSecretWinRM(d *schema.ResourceData) *nextgen.Secret {
 	secret := &nextgen.Secret{
-		Type_:  nextgen.SecretTypes.SSHKey,
-		SSHKey: &nextgen.SshKeySpec{},
+		Type_:            nextgen.SecretTypes.WinRmCredentials,
+		WinRmCredentials: &nextgen.WinRmCredentialsSpec{},
 	}
 
 	if attr, ok := d.GetOk("port"); ok {
-		secret.SSHKey.Port = int32(attr.(int))
+		secret.WinRmCredentials.Port = int32(attr.(int))
 	}
 
 	if attr, ok := d.GetOk("kerberos"); ok {
@@ -333,7 +279,7 @@ func buildSecretWinRM(d *schema.ResourceData) *nextgen.Secret {
 }
 
 func readSecretWinRM(d *schema.ResourceData, secret *nextgen.Secret) error {
-	switch secret.SSHKey.Auth.Type_ {
+	switch secret.WinRmCredentials.Auth.Type_ {
 	case "SSH":
 		d.Set("ssh", []map[string]interface{}{
 			{

@@ -12,7 +12,7 @@ func DataSourceSecretWinRM() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"port": {
-				Description: "SSH port",
+				Description: "WinRM port",
 				Type:        schema.TypeInt,
 				Computed:    true,
 			},
@@ -70,7 +70,7 @@ func DataSourceSecretWinRM() *schema.Resource {
 					},
 				},
 			},
-			"ssh": {
+			"ssh": { // TODO: This is a copy of the SSH schema. It should be updated to reflect WinRM
 				Description: "Kerberos authentication scheme",
 				Type:        schema.TypeList,
 				Computed:    true,

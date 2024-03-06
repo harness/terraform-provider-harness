@@ -22,7 +22,7 @@ func TestAccSecretWinRM_kerberos_keyFilePath(t *testing.T) {
 		CheckDestroy:      testAccSecretDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_keyFilePath(id, name),
+				Config: testAccResourceSecret_WinRM_kerberos_keyFilePath(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -36,7 +36,7 @@ func TestAccSecretWinRM_kerberos_keyFilePath(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_keyFilePath(id, updatedName),
+				Config: testAccResourceSecret_WinRM_kerberos_keyFilePath(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -66,7 +66,7 @@ func TestAccSecretWinRM_kerberos_keyFilePathProject(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -91,7 +91,7 @@ func TestAccSecretWinRM_kerberos_keyFilePathProject(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_keyFilePathProject(id, updatedName),
+				Config: testAccResourceSecret_WinRM_kerberos_keyFilePathProject(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -122,7 +122,7 @@ func TestAccSecretWinRM_kerberos_keyFilePathOrg(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -133,7 +133,7 @@ func TestAccSecretWinRM_kerberos_keyFilePathOrg(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_keyFilePathOrg(id, name),
+				Config: testAccResourceSecret_WinRM_kerberos_keyFilePathOrg(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -147,7 +147,7 @@ func TestAccSecretWinRM_kerberos_keyFilePathOrg(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_keyFilePathOrg(id, updatedName),
+				Config: testAccResourceSecret_WinRM_kerberos_keyFilePathOrg(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -177,7 +177,7 @@ func TestAccSecretWinRM_kerberos_password(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -185,7 +185,7 @@ func TestAccSecretWinRM_kerberos_password(t *testing.T) {
 		CheckDestroy:      testAccSecretDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_password(id, name),
+				Config: testAccResourceSecret_WinRM_kerberos_password(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -198,7 +198,7 @@ func TestAccSecretWinRM_kerberos_password(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_password(id, updatedName),
+				Config: testAccResourceSecret_WinRM_kerberos_password(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -227,7 +227,7 @@ func TestAccSecretWinRM_kerberos_passwordProject(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -238,7 +238,7 @@ func TestAccSecretWinRM_kerberos_passwordProject(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_passwordProject(id, name),
+				Config: testAccResourceSecret_WinRM_kerberos_passwordProject(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -251,7 +251,7 @@ func TestAccSecretWinRM_kerberos_passwordProject(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_passwordProject(id, updatedName),
+				Config: testAccResourceSecret_WinRM_kerberos_passwordProject(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -280,7 +280,7 @@ func TestAccSecretWinRM_kerberos_passwordOrg(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -291,7 +291,7 @@ func TestAccSecretWinRM_kerberos_passwordOrg(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_passwordOrg(id, name),
+				Config: testAccResourceSecret_WinRM_kerberos_passwordOrg(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -304,7 +304,7 @@ func TestAccSecretWinRM_kerberos_passwordOrg(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_kerberos_passwordOrg(id, updatedName),
+				Config: testAccResourceSecret_WinRM_kerberos_passwordOrg(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -329,12 +329,12 @@ func TestAccSecretWinRM_kerberos_passwordOrg(t *testing.T) {
 	})
 }
 
-func TestAccSecretWinRM_sshkey_sshReferenceCredential(t *testing.T) {
+func TestAccSecretWinRM_WinRM_sshReferenceCredential(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", "TestsshReferenceCredential", utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -342,7 +342,7 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredential(t *testing.T) {
 		CheckDestroy:      testAccSecretDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_sshReferenceCredential(id, name),
+				Config: testAccResourceSecret_WinRM_sshReferenceCredential(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -350,11 +350,11 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_reference_credential.0.user_name", "user_name"),
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_sshReferenceCredential(id, updatedName),
+				Config: testAccResourceSecret_WinRM_sshReferenceCredential(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -362,7 +362,7 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_reference_credential.0.user_name", "user_name"),
 				),
 			},
 			{
@@ -377,12 +377,12 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredential(t *testing.T) {
 	})
 }
 
-func TestAccSecretWinRM_sshkey_sshReferenceCredentialProject(t *testing.T) {
+func TestAccSecretWinRM_WinRM_sshReferenceCredentialProject(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", "TestsshReferenceCredential", utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -393,7 +393,7 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialProject(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_sshReferenceCredentialProject(id, name),
+				Config: testAccResourceSecret_WinRM_sshReferenceCredentialProject(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -401,11 +401,11 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialProject(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_reference_credential.0.user_name", "user_name"),
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_sshReferenceCredentialProject(id, updatedName),
+				Config: testAccResourceSecret_WinRM_sshReferenceCredentialProject(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -413,7 +413,7 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialProject(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_reference_credential.0.user_name", "user_name"),
 				),
 			},
 			{
@@ -429,12 +429,12 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialProject(t *testing.T) {
 	})
 }
 
-func TestAccSecretWinRM_sshkey_sshReferenceCredentialOrg(t *testing.T) {
+func TestAccSecretWinRM_WinRM_sshReferenceCredentialOrg(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", "TestsshReferenceCredential", utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -445,7 +445,7 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialOrg(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceSecret_sshkey_sshReferenceCredentialOrg(id, name),
+				Config: testAccResourceSecret_WinRM_sshReferenceCredentialOrg(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -453,11 +453,11 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialOrg(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_reference_credential.0.user_name", "user_name"),
 				),
 			},
 			{
-				Config: testAccResourceSecret_sshkey_sshReferenceCredentialOrg(id, updatedName),
+				Config: testAccResourceSecret_WinRM_sshReferenceCredentialOrg(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
@@ -465,7 +465,7 @@ func TestAccSecretWinRM_sshkey_sshReferenceCredentialOrg(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyReference"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_reference_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_reference_credential.0.user_name", "user_name"),
 				),
 			},
 			{
@@ -486,7 +486,7 @@ func TestAccSecretSSHKey_WinRM_sshPathCredential(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
-	resourceName := "harness_platform_secret_sshkey.test"
+	resourceName := "harness_platform_secret_WinRM.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -502,9 +502,9 @@ func TestAccSecretSSHKey_WinRM_sshPathCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "account."+id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "account."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.key_path", "account."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.encrypted_passphrase", "account."+id+"_a"),
 				),
 			},
 			{
@@ -516,9 +516,9 @@ func TestAccSecretSSHKey_WinRM_sshPathCredential(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "account."+id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "account."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.key_path", "account."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.encrypted_passphrase", "account."+id+"_a"),
 				),
 			},
 			{
@@ -557,9 +557,9 @@ func TestAccSecretSSHKey_WinRM_sshPathCredentialProject(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.key_path", id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.encrypted_passphrase", id+"_a"),
 				),
 			},
 			{
@@ -571,9 +571,9 @@ func TestAccSecretSSHKey_WinRM_sshPathCredentialProject(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.key_path", id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.encrypted_passphrase", id+"_a"),
 				),
 			},
 			{
@@ -613,9 +613,9 @@ func TestAccSecretSSHKey_WinRM_sshPathCredentialOrg(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "org."+id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "org."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.key_path", "org."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.encrypted_passphrase", "org."+id+"_a"),
 				),
 			},
 			{
@@ -627,9 +627,9 @@ func TestAccSecretSSHKey_WinRM_sshPathCredentialOrg(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ssh.0.credential_type", "KeyPath"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.user_name", "user_name"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.key_path", "org."+id+"_a"),
-					resource.TestCheckResourceAttr(resourceName, "ssh.0.sshkey_path_credential.0.encrypted_passphrase", "org."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.user_name", "user_name"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.key_path", "org."+id+"_a"),
+					resource.TestCheckResourceAttr(resourceName, "ssh.0.WinRM_path_credential.0.encrypted_passphrase", "org."+id+"_a"),
 				),
 			},
 			{
@@ -799,7 +799,7 @@ func TestAccSecretSSHKey_WinRM_sshPasswordOrg(t *testing.T) {
 
 func testAccResourceSecret_WinRM_kerberos_keyFilePath(id string, name string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -829,7 +829,7 @@ func testAccResourceSecret_WinRM_kerberos_keyFilePathProject(id string, name str
     color = "#472848"
 	}
 
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -861,7 +861,7 @@ func testAccResourceSecret_WinRM_kerberos_keyFilePathOrg(id string, name string)
     name = "%[2]s"
   }
 
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -896,7 +896,7 @@ func testAccResourceSecret_WinRM_kerberos_password(id string, name string) strin
 		file_path = "%[3]s"
 		secret_manager_identifier = "harnessSecretManager"
 	}
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -942,7 +942,7 @@ func testAccResourceSecret_WinRM_kerberos_passwordProject(id string, name string
 			
 		}
 
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -990,7 +990,7 @@ func testAccResourceSecret_WinRM_kerberos_passwordOrg(id string, name string) st
 			depends_on = [harness_platform_organization.test]
 			
 		}
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -1026,14 +1026,14 @@ func testAccResourceSecret_WinRM_sshReferenceCredential(id string, name string) 
 		secret_manager_identifier = "harnessSecretManager"
 	}
 
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
 			tags = ["foo:bar"]
 			port = 22
 			ssh {
-				sshkey_reference_credential {
+				WinRM_reference_credential {
 					user_name = "user_name"
 					key = "account.${harness_platform_secret_file.test.id}"
 					encrypted_passphrase = "account.${harness_platform_secret_file.test.id}"
@@ -1073,7 +1073,7 @@ func testAccResourceSecret_WinRM_sshReferenceCredentialProject(id string, name s
 			
 		}
 
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			description = "test"
@@ -1082,7 +1082,7 @@ func testAccResourceSecret_WinRM_sshReferenceCredentialProject(id string, name s
 			tags = ["foo:bar"]
 			port = 22
 			ssh {
-				sshkey_reference_credential {
+				WinRM_reference_credential {
 					user_name = "user_name"
 					key = harness_platform_secret_file.test.id
 					encrypted_passphrase = harness_platform_secret_file.test.id
@@ -1121,7 +1121,7 @@ func testAccResourceSecret_WinRM_sshReferenceCredentialOrg(id string, name strin
 			depends_on = [harness_platform_organization.test]	
 		}
 
-		resource "harness_platform_secret_sshkey" "test" {
+		resource "harness_platform_secret_WinRM" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
@@ -1129,7 +1129,7 @@ func testAccResourceSecret_WinRM_sshReferenceCredentialOrg(id string, name strin
 			tags = ["foo:bar"]
 			port = 22
 			ssh {
-				sshkey_reference_credential {
+				WinRM_reference_credential {
 					user_name = "user_name"
 					key = "org.${harness_platform_secret_file.test.id}"
 					encrypted_passphrase = "org.${harness_platform_secret_file.test.id}"
@@ -1157,14 +1157,14 @@ func testAccResourceSecret_WinRM_sshPathCredential(id string, name string) strin
 		
 	}
 
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
 		tags = ["foo:bar"]
 		port = 22
 		ssh {
-			sshkey_path_credential {
+			WinRM_path_credential {
 				user_name = "user_name"
 				key_path = "account.${harness_platform_secret_file.test.id}"
 				encrypted_passphrase = "account.${harness_platform_secret_file.test.id}"
@@ -1203,7 +1203,7 @@ func testAccResourceSecret_WinRM_sshPathCredentialProject(id string, name string
 			depends_on = [harness_platform_project.test]
 			
 		}
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
@@ -1212,7 +1212,7 @@ func testAccResourceSecret_WinRM_sshPathCredentialProject(id string, name string
 		tags = ["foo:bar"]
 		port = 22
 		ssh {
-			sshkey_path_credential {
+			WinRM_path_credential {
 				user_name = "user_name"
 				key_path = "${harness_platform_secret_file.test.id}"
 				encrypted_passphrase = "${harness_platform_secret_file.test.id}"
@@ -1250,7 +1250,7 @@ func testAccResourceSecret_WinRM_sshPathCredentialOrg(id string, name string) st
 			depends_on = [harness_platform_organization.test]
 			
 		}
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
@@ -1258,7 +1258,7 @@ func testAccResourceSecret_WinRM_sshPathCredentialOrg(id string, name string) st
 		tags = ["foo:bar"]
 		port = 22
 		ssh {
-			sshkey_path_credential {
+			WinRM_path_credential {
 				user_name = "user_name"
 				key_path = "org.${harness_platform_secret_file.test.id}"
 				encrypted_passphrase = "org.${harness_platform_secret_file.test.id}"
@@ -1285,7 +1285,7 @@ func testAccResourceSecret_WinRM_sshPassword(id string, name string) string {
 		file_path = "%[3]s"
 		secret_manager_identifier = "harnessSecretManager"
 	}
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
@@ -1330,7 +1330,7 @@ func testAccResourceSecret_WinRM_sshPasswordProject(id string, name string) stri
 			depends_on = [harness_platform_project.test]
 			
 		}
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"
@@ -1376,7 +1376,7 @@ func testAccResourceSecret_WinRM_sshPasswordOrg(id string, name string) string {
 			depends_on = [harness_platform_organization.test]
 			
 		}
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[2]s"
 		description = "test"

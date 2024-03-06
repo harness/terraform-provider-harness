@@ -12,7 +12,7 @@ import (
 func TestAccDataSourceWinRM(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		resourceName = "data.harness_platform_secret_sshkey.test"
+		resourceName = "data.harness_platform_secret_WinRM.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -20,7 +20,7 @@ func TestAccDataSourceWinRM(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_winrm(name),
+				Config: testAccDataSourceSecret_WinRM(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -38,7 +38,7 @@ func TestAccDataSourceWinRM(t *testing.T) {
 func TestAccDataSourceWinRMProjectLevel(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		resourceName = "data.harness_platform_secret_sshkey.test"
+		resourceName = "data.harness_platform_secret_WinRM.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -49,7 +49,7 @@ func TestAccDataSourceWinRMProjectLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_winrmProjectLevel(name),
+				Config: testAccDataSourceSecret_WinRMProjectLevel(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -69,7 +69,7 @@ func TestAccDataSourceWinRMProjectLevel(t *testing.T) {
 func TestAccDataSourceWinRMOrgLevel(t *testing.T) {
 	var (
 		name         = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
-		resourceName = "data.harness_platform_secret_sshkey.test"
+		resourceName = "data.harness_platform_secret_WinRM.test"
 	)
 
 	resource.UnitTest(t, resource.TestCase{
@@ -80,7 +80,7 @@ func TestAccDataSourceWinRMOrgLevel(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceSecret_winrmOrgLevel(name),
+				Config: testAccDataSourceSecret_WinRMOrgLevel(name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", name),
 					resource.TestCheckResourceAttr(resourceName, "identifier", name),
@@ -96,9 +96,9 @@ func TestAccDataSourceWinRMOrgLevel(t *testing.T) {
 	})
 }
 
-func testAccDataSourceSecret_winrm(name string) string {
+func testAccDataSourceSecret_WinRM(name string) string {
 	return fmt.Sprintf(`
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[1]s"
 		description = "test"
@@ -113,14 +113,14 @@ func testAccDataSourceSecret_winrm(name string) string {
 			tgt_generation_method = "KeyTabFilePath"
 		}
 	}
-	data "harness_platform_secret_sshkey" "test"{
-		identifier = harness_platform_secret_sshkey.test.identifier
+	data "harness_platform_secret_WinRM" "test"{
+		identifier = harness_platform_secret_WinRM.test.identifier
 		
 	}
 	`, name)
 }
 
-func testAccDataSourceSecret_winrmProjectLevel(name string) string {
+func testAccDataSourceSecret_WinRMProjectLevel(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
@@ -134,7 +134,7 @@ func testAccDataSourceSecret_winrmProjectLevel(name string) string {
 		org_id = harness_platform_organization.test.id
 	}
 
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[1]s"
 		description = "test"
@@ -157,8 +157,8 @@ func testAccDataSourceSecret_winrmProjectLevel(name string) string {
 		depends_on = [harness_platform_project.test]
 		create_duration = "4s"
 	}
-	data "harness_platform_secret_sshkey" "test"{
-		identifier = harness_platform_secret_sshkey.test.identifier
+	data "harness_platform_secret_WinRM" "test"{
+		identifier = harness_platform_secret_WinRM.test.identifier
 		
 		org_id= "%[1]s"
  		project_id= "%[1]s"
@@ -166,13 +166,13 @@ func testAccDataSourceSecret_winrmProjectLevel(name string) string {
 	`, name)
 }
 
-func testAccDataSourceSecret_winrmOrgLevel(name string) string {
+func testAccDataSourceSecret_WinRMOrgLevel(name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"
 		name = "%[1]s"
 	}
-	resource "harness_platform_secret_sshkey" "test" {
+	resource "harness_platform_secret_WinRM" "test" {
 		identifier = "%[1]s"
 		name = "%[1]s"
 		description = "test"
@@ -194,8 +194,8 @@ func testAccDataSourceSecret_winrmOrgLevel(name string) string {
 		depends_on = [harness_platform_organization.test]
 		create_duration = "4s"
 	}
-	data "harness_platform_secret_sshkey" "test"{
-		identifier = harness_platform_secret_sshkey.test.identifier
+	data "harness_platform_secret_WinRM" "test"{
+		identifier = harness_platform_secret_WinRM.test.identifier
 		
 		org_id = "%[1]s"
 	}
