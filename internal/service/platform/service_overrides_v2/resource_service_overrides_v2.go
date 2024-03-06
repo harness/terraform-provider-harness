@@ -177,7 +177,7 @@ func ResourceServiceOverrides() *schema.Resource {
 func resourceServiceOverridesV2Read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	identifier := d.Id()
-	svcGetParams := getSvcOverrideParams(d);
+	svcGetParams := getSvcOverrideParams(d)
 
 	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId, svcGetParams)
 	if err != nil {
@@ -209,14 +209,14 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	id := d.Id()
 
 	if id == "" {
-		if d.Get("import_from_git").(bool) { 
-		importReq := buildServiceOverrideImportRequest(d)
-        svcImportParam := getSvcOverrideImportParams(importReq, d)
-		importResp, httpResp, err = c.ServiceOverridesApi.ImportServiceOverrides(ctx, c.AccountId, svcImportParam)
+		if d.Get("import_from_git").(bool) {
+			importReq := buildServiceOverrideImportRequest(d)
+			svcImportParam := getSvcOverrideImportParams(importReq, d)
+			importResp, httpResp, err = c.ServiceOverridesApi.ImportServiceOverrides(ctx, c.AccountId, svcImportParam)
 		} else {
-	    svcCreateParam := svcOverrideCreateParam(env, d)
-		resp, httpResp, err = c.ServiceOverridesApi.CreateServiceOverrideV2(ctx, c.AccountId, svcCreateParam)
-	}
+			svcCreateParam := svcOverrideCreateParam(env, d)
+			resp, httpResp, err = c.ServiceOverridesApi.CreateServiceOverrideV2(ctx, c.AccountId, svcCreateParam)
+		}
 	} else {
 		svcUpdateParam := svcOverrideUpdateParam(env, d)
 		resp, httpResp, err = c.ServiceOverridesApi.UpdateServiceOverrideV2(ctx, c.AccountId, svcUpdateParam)
@@ -237,7 +237,7 @@ func resourceServiceOverridesV2CreateOrUpdate(ctx context.Context, d *schema.Res
 	if d.Get("import_from_git").(bool) {
 		readImportServiceOverridesV2(d, importResp.Data)
 	} else {
-	readServiceOverridesV2(d, resp.Data)
+		readServiceOverridesV2(d, resp.Data)
 	}
 
 	return nil
@@ -311,12 +311,12 @@ func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
 
 func getSvcOverrideParams(d *schema.ResourceData) *nextgen.ServiceOverridesApiGetServiceOverridesV2Opts {
 	svcOverrideParams := &nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
-		OrgIdentifier:                 helpers.BuildField(d, "org_id"),
-		ProjectIdentifier:             helpers.BuildField(d, "project_id"),
-		Branch:                        helpers.BuildField(d, "git_details.0.branch"),
-		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
-		LoadFromCache:                 helpers.BuildField(d, "git_details.0.load_from_cache"),
-		LoadFromFallbackBranch:        helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+		OrgIdentifier:          helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:      helpers.BuildField(d, "project_id"),
+		Branch:                 helpers.BuildField(d, "git_details.0.branch"),
+		RepoName:               helpers.BuildField(d, "git_details.0.repo_name"),
+		LoadFromCache:          helpers.BuildField(d, "git_details.0.load_from_cache"),
+		LoadFromFallbackBranch: helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
 	}
 	return svcOverrideParams
 }
@@ -346,8 +346,8 @@ func svcOverrideUpdateParam(svcOverride *nextgen.ServiceOverrideRequestDtov2, d 
 		BaseBranch:        helpers.BuildField(d, "git_details.0.base_branch"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
-		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
-		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
+		LastObjectId:      helpers.BuildField(d, "git_details.0.last_object_id"),
+		LastCommitId:      helpers.BuildField(d, "git_details.0.last_commit_id"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
 	}
 }
@@ -355,12 +355,12 @@ func svcOverrideUpdateParam(svcOverride *nextgen.ServiceOverrideRequestDtov2, d 
 func getSvcOverrideImportParams(svcOverride *nextgen.ServiceOverrideImportRequestDto, d *schema.ResourceData) *nextgen.ServiceOverridesApiImportServiceOverridesOpts {
 	svcOverrideParams := &nextgen.ServiceOverridesApiImportServiceOverridesOpts{
 		Body:              optional.NewInterface(svcOverride),
-		Branch:                        helpers.BuildField(d, "git_details.0.branch"),
-		RepoName:                      helpers.BuildField(d, "git_details.0.repo_name"),
+		Branch:            helpers.BuildField(d, "git_details.0.branch"),
+		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
-		IsForceImport:    helpers.BuildFieldBool(d, "is_force_import"),
+		IsForceImport:     helpers.BuildFieldBool(d, "is_force_import"),
 	}
 	return svcOverrideParams
 }
