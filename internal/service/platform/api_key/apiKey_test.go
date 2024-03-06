@@ -48,6 +48,76 @@ func TestAccResourceApiKey(t *testing.T) {
 
 }
 
+func TestAccResourceApiKeyOrgLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+
+	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedName := apiKeyName + "updated"
+
+	resourceName := "harness_platform_apikey.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccApiKeyDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceApiKey(id, apiKeyName, parent_id, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", apiKeyName),
+				),
+			},
+			{
+				Config: testOrgResourceApiKey(id, updatedName, parent_id, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+		},
+	})
+
+}
+
+func TestAccResourceApiKeyProjectLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	account_id := os.Getenv("HARNESS_ACCOUNT_ID")
+	parent_id := os.Getenv("HARNESS_PAT_KEY_PARENT_IDENTIFIER")
+
+	apiKeyName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedName := apiKeyName + "updated"
+
+	resourceName := "harness_platform_apikey.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccApiKeyDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceApiKey(id, apiKeyName, parent_id, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", apiKeyName),
+				),
+			},
+			{
+				Config: testProjectResourceApiKey(id, updatedName, parent_id, account_id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+		},
+	})
+
+}
+
 func testAccGetResourceApiKey(resourceName string, state *terraform.State) (*nextgen.ApiKey, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -77,6 +147,54 @@ func testAccResourceApiKey(id string, name string, parentId string, accountId st
 			description="Test Description"
 			parent_id = "%[3]s"
 			account_id = "%[4]s"
+			apikey_type = "USER"
+			default_time_to_expire_token = 1000
+		}
+	`, id, name, parentId, accountId)
+}
+
+func testOrgResourceApiKey(id string, name string, parentId string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_apikey" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description="Test Description"
+			parent_id = "%[3]s"
+			account_id = "%[4]s"
+			org_id = harness_platform_organization.test.id
+			apikey_type = "USER"
+			default_time_to_expire_token = 1000
+		}
+	`, id, name, parentId, accountId)
+}
+
+func testProjectResourceApiKey(id string, name string, parentId string, accountId string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_apikey" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description="Test Description"
+			parent_id = "%[3]s"
+			account_id = "%[4]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
 			apikey_type = "USER"
 			default_time_to_expire_token = 1000
 		}
