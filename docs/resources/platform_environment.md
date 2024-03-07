@@ -307,6 +307,8 @@ Optional:
 - `commit_message` (String) message for the commit in Git Repo.
 - `import_from_git` (Boolean) Flag to set if importing from Git
 - `is_force_import` (Boolean) Flag to set if force importing from Git
+- `load_from_fallback_branch` Whether the file has to be get from fallback_branch.
+- `load_from_cache` Whether the file has to be loaded from cache.
 
 ## Import
 
