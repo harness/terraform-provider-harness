@@ -50,6 +50,12 @@ func DataSourceService() *schema.Resource {
 							Optional:    true,
 							Computed:    true,
 						},
+						"load_from_cache": {
+							Description: "If the Entity is to be fetched from cache",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Computed:    true,
+						},
 					},
 				},
 			},
@@ -76,9 +82,10 @@ func dataSourceServiceRead(ctx context.Context, d *schema.ResourceData, meta int
 		resp, httpResp, err = c.ServicesApi.GetServiceV2(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.ServicesApiGetServiceV2Opts{
 			OrgIdentifier:          helpers.BuildField(d, "org_id"),
 			ProjectIdentifier:      helpers.BuildField(d, "project_id"),
-			RepoName:               helpers.BuildField(d, "repo_name"),
-			Branch:                 helpers.BuildField(d, "branch"),
-			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "load_from_fallback_branch"),
+			RepoName:               helpers.BuildField(d, "git_details.0.repo_name"),
+			Branch:                 helpers.BuildField(d, "git_details.0.branch"),
+			LoadFromFallbackBranch: helpers.BuildFieldBool(d, "git_details.0.load_from_fallback_branch"),
+			LoadFromCache:          helpers.BuildField(d, "git_details.0.load_from_cache"),
 		})
 		svc = resp.Data.Service
 	} else if name != "" {

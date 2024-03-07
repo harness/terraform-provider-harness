@@ -12,6 +12,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceInfrastructure() *schema.Resource {
@@ -38,12 +39,12 @@ func ResourceInfrastructure() *schema.Resource {
 			"type": {
 				Description: fmt.Sprintf("Type of Infrastructure. Valid values are %s.", strings.Join(nextgen.InfrastructureTypeValues, ", ")),
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:         true,
 			},
 			"yaml": {
 				Description:      "Infrastructure YAML." + helpers.Descriptions.YamlText.String(),
 				Type:             schema.TypeString,
-				Required:         true,
+				Optional:         true,
 				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"deployment_type": {
@@ -171,7 +172,7 @@ func ResourceInfrastructure() *schema.Resource {
 						},
 					},
 				},
-			}
+			},
 		},
 	}
 	helpers.SetMultiLevelResourceSchema(resource.Schema)
@@ -212,11 +213,12 @@ func resourceInfrastructureCreateOrUpdate(ctx context.Context, d *schema.Resourc
 
 	if id == "" {
 		if d.Get("git_details.0.import_from_git").(bool) {
+			env_id := d.Get("env_id").(string)
 			infraParams := infraImportParam(d)
-			importResp, httpResp, err = c.InfrastructuresApi.ImportInfrastructure(ctx, c.AccountId, &infraParams)
+			importResp, httpResp, err = c.InfrastructuresApi.ImportInfrastructure(ctx, c.AccountId, env_id, &infraParams)
 		} else {
 			infraParams := infraCreateParam(infra, d)
-			resp, httpResp, err = c.InfrastructuresApi.CreateInfrastructure(ctx, c.AccountId, infraParams)
+			resp, httpResp, err = c.InfrastructuresApi.CreateInfrastructure(ctx, c.AccountId, &infraParams)
 		}
 	} else {
 		infraParams := infraUpdateParam(infra, d)
@@ -318,7 +320,6 @@ func infraUpdateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceDa
 		BaseBranch:        helpers.BuildField(d, "git_details.0.base_branch"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
-		IfMatch: helpers.BuildField(d, "if_match"),
 		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
 		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
 		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
