@@ -373,7 +373,7 @@ func testResourceImportRemoteInfrastructure() string {
 	resource "harness_platform_infrastructure" "test" {
 		identifier  = "accountInfra"
 		name        = "accountInfra"
-		env_id = "env1"
+		env_id = "DoNotDeleteTerraformResourceEnv"
 		git_details { 
 			connector_ref = "account.DoNotDeleteRTerraformResource"
 			repo_name = "terraform-test"
