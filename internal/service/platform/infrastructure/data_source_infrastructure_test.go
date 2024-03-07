@@ -140,7 +140,7 @@ func testAccDataSourceInfrastructure(id string, name string) string {
           connectorRef: account.gfgf
           namespace: asdasdsa
           releaseName: release-<+INFRA_KEY>
-          allowSimultaneousDeployments: false
+         allowSimultaneousDeployments: false
       EOT
 		}
 
@@ -186,10 +186,9 @@ func testSourceRemoteInfrastructure(id string, name string) string {
          deploymentType: Kubernetes
          type: KubernetesDirect
          spec:
-          connectorRef: account.gfgf
-          namespace: asdasdsa
-          releaseName: release-<+INFRA_KEY>
-          allowSimultaneousDeployments: false
+          connectorRef: "<+input>"
+          namespace: "<+input>"
+          releaseName: "<+input>"
       EOT
 		}
 
