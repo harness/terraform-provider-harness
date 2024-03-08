@@ -299,7 +299,6 @@ Optional:
 - `is_harness_code_repo` (Boolean) If the repo is in harness code.
 - `commit_message` (String) message for the commit in Git Repo.
 - `load_from_fallback_branch` Whether the file has to be get from fallback_branch.
-- `load_from_cache` Whether the file has to be loaded from cache.
 
 
 ## Import
