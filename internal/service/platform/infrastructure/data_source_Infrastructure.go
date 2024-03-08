@@ -59,13 +59,13 @@ func DataSourceInfrastructure() *schema.Resource {
 							Computed:    true,
 						},
 						"load_from_fallback_branch": {
-							Description: "Load environment yaml from fallback branch",
+							Description: "Load Infrastructure yaml from fallback branch",
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Computed:    true,
 						},
 						"repo_name": {
-							Description: "Repo name of remote environment",
+							Description: "Repo name of remote Infrastructure",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
