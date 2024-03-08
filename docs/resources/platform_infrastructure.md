@@ -185,8 +185,8 @@ Optional:
 - `file_path` (String) File path of the Entity in the repository.
 - `repo_name` (String) Name of the repository.
 - `store_type` (String) store type of the entity.
-- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Service.
-- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Service.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Infrastructures.
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Infrastructures.
 - `is_harness_code_repo` (Boolean) If the repo is in harness code.
 - `commit_message` (String) message for the commit in Git Repo.
 - `import_from_git` (Boolean) Flag to set if importing from Git
