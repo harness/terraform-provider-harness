@@ -32,12 +32,30 @@ InfrastructuresApiService Create an Infrastructure in an Environment
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *InfrastructuresApiCreateInfrastructureOpts - Optional Parameters:
-     * @param "Body" (optional.Interface of InfrastructureRequest) -  Details of the Infrastructure to be created
+	 * @param "Body" (optional.Interface of InfrastructureRequest) - Details of the Infrastructure to be created
+     * @param "Branch" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "IsNewBranch" (optional.Bool) -
+     * @param "BaseBranch" (optional.String) -
+     * @param "ConnectorRef" (optional.String) -
+     * @param "StoreType" (optional.String) -
+     * @param "RepoName" (optional.String) -
+     * @param "IsHarnessCodeRepo" (optional.Bool) -
 @return ResponseDtoInfrastructureResponse
 */
 
 type InfrastructuresApiCreateInfrastructureOpts struct {
-	Body optional.Interface
+	Body              optional.Interface
+	Branch            optional.String
+	FilePath          optional.String
+	CommitMsg         optional.String
+	IsNewBranch       optional.Bool
+	BaseBranch        optional.String
+	ConnectorRef      optional.String
+	StoreType         optional.String
+	RepoName          optional.String
+	IsHarnessCodeRepo optional.Bool
 }
 
 func (a *InfrastructuresApiService) CreateInfrastructure(ctx context.Context, accountIdentifier string, localVarOptionals *InfrastructuresApiCreateInfrastructureOpts) (ResponseDtoInfrastructureResponse, *http.Response, error) {
@@ -57,6 +75,33 @@ func (a *InfrastructuresApiService) CreateInfrastructure(ctx context.Context, ac
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
+		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FilePath.IsSet() {
+		localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.FilePath.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.CommitMsg.IsSet() {
+		localVarQueryParams.Add("commitMsg", parameterToString(localVarOptionals.CommitMsg.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsNewBranch.IsSet() {
+		localVarQueryParams.Add("isNewBranch", parameterToString(localVarOptionals.IsNewBranch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.BaseBranch.IsSet() {
+		localVarQueryParams.Add("baseBranch", parameterToString(localVarOptionals.BaseBranch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
+		localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.StoreType.IsSet() {
+		localVarQueryParams.Add("storeType", parameterToString(localVarOptionals.StoreType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RepoName.IsSet() {
+		localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.RepoName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsHarnessCodeRepo.IsSet() {
+		localVarQueryParams.Add("isHarnessCodeRepo", parameterToString(localVarOptionals.IsHarnessCodeRepo.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
@@ -174,7 +219,7 @@ InfrastructuresApiService Delete an Infrastructure by identifier
 type InfrastructuresApiDeleteInfrastructureOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
-	ForceDelete optional.Bool
+	ForceDelete       optional.Bool
 }
 
 func (a *InfrastructuresApiService) DeleteInfrastructure(ctx context.Context, infraIdentifier string, accountIdentifier string, environmentIdentifier string, localVarOptionals *InfrastructuresApiDeleteInfrastructureOpts) (ResponseDtoBoolean, *http.Response, error) {
@@ -202,8 +247,8 @@ func (a *InfrastructuresApiService) DeleteInfrastructure(ctx context.Context, in
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
-    		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
-    }
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+	}
 	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -307,16 +352,32 @@ InfrastructuresApiService Gets an Infrastructure by identifier
  * @param accountIdentifier Account Identifier for the Entity.
  * @param environmentIdentifier envId
  * @param optional nil or *InfrastructuresApiGetInfrastructureOpts - Optional Parameters:
-     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
-     * @param "Deleted" (optional.Bool) -  Specify whether Infrastructure is deleted or not
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "Deleted" (optional.Bool) -
+     * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "GetDefaultFromOtherRepo" (optional.Bool) -
+     * @param "ParentEntityConnectorRef" (optional.String) -
+     * @param "ParentEntityRepoName" (optional.String) -
+     * @param "ParentEntityAccountIdentifier" (optional.String) -
+     * @param "ParentEntityOrgIdentifier" (optional.String) -
+     * @param "ParentEntityProjectIdentifier" (optional.String) -
+     * @param "RepoName" (optional.String) -
+     * @param "LoadFromCache" (optional.String) -
+     * @param "LoadFromFallbackBranch" (optional.Bool) -
 @return ResponseDtoInfrastructureResponse
 */
 
 type InfrastructuresApiGetInfrastructureOpts struct {
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-	Deleted           optional.Bool
+	OrgIdentifier           optional.String
+	ProjectIdentifier       optional.String
+	Deleted                 optional.Bool
+	Branch                  optional.String
+	GetDefaultFromOtherRepo optional.Bool
+	RepoName                optional.String
+	LoadFromCache           optional.String
+	LoadFromFallbackBranch  optional.Bool
 }
 
 func (a *InfrastructuresApiService) GetInfrastructure(ctx context.Context, infraIdentifier string, accountIdentifier string, environmentIdentifier string, localVarOptionals *InfrastructuresApiGetInfrastructureOpts) (ResponseDtoInfrastructureResponse, *http.Response, error) {
@@ -346,6 +407,15 @@ func (a *InfrastructuresApiService) GetInfrastructure(ctx context.Context, infra
 	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
 	if localVarOptionals != nil && localVarOptionals.Deleted.IsSet() {
 		localVarQueryParams.Add("deleted", parameterToString(localVarOptionals.Deleted.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
+		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RepoName.IsSet() {
+		localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.RepoName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LoadFromFallbackBranch.IsSet() {
+		localVarQueryParams.Add("loadFromFallbackBranch", parameterToString(localVarOptionals.LoadFromFallbackBranch.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -618,16 +688,211 @@ func (a *InfrastructuresApiService) GetInfrastructureList(ctx context.Context, a
 }
 
 /*
+InfrastructuresApiService Get Infrastructure YAML from Git Repository
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier
+ * @param environmentIdentifier
+ * @param optional nil or *InfrastructuresApiImportInfrastructureOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -
+     * @param "ProjectIdentifier" (optional.String) -
+     * @param "InfraIdentifier" (optional.String) -
+     * @param "ConnectorRef" (optional.String) -
+     * @param "RepoName" (optional.String) -
+     * @param "Branch" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "IsForceImport" (optional.Bool) -
+     * @param "IsHarnessCodeRepo" (optional.Bool) -
+@return ResponseInfrastructureImportResponse
+*/
+
+type InfrastructuresApiImportInfrastructureOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	InfraIdentifier   optional.String
+	ConnectorRef      optional.String
+	RepoName          optional.String
+	Branch            optional.String
+	FilePath          optional.String
+	IsForceImport     optional.Bool
+	IsHarnessCodeRepo optional.Bool
+}
+
+func (a *InfrastructuresApiService) ImportInfrastructure(ctx context.Context, accountIdentifier string, environmentIdentifier string, localVarOptionals *InfrastructuresApiImportInfrastructureOpts) (ResponseInfrastructureImportResponse, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseInfrastructureImportResponse
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/ng/api/infrastructures/import"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
+	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.InfraIdentifier.IsSet() {
+		localVarQueryParams.Add("infraIdentifier", parameterToString(localVarOptionals.InfraIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
+		localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.RepoName.IsSet() {
+		localVarQueryParams.Add("repoName", parameterToString(localVarOptionals.RepoName.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
+		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FilePath.IsSet() {
+		localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.FilePath.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsForceImport.IsSet() {
+		localVarQueryParams.Add("isForceImport", parameterToString(localVarOptionals.IsForceImport.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsHarnessCodeRepo.IsSet() {
+		localVarQueryParams.Add("isHarnessCodeRepo", parameterToString(localVarOptionals.IsHarnessCodeRepo.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 200 {
+			var v ResponseInfrastructureImportResponse
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
 InfrastructuresApiService Update an Infrastructure by identifier
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *InfrastructuresApiUpdateInfrastructureOpts - Optional Parameters:
      * @param "Body" (optional.Interface of InfrastructureRequest) -  Details of the Infrastructure to be updated
+	 * @param "Branch" (optional.String) -
+     * @param "RepoIdentifier" (optional.String) -
+     * @param "RootFolder" (optional.String) -
+     * @param "FilePath" (optional.String) -
+     * @param "CommitMsg" (optional.String) -
+     * @param "LastObjectId" (optional.String) -
+     * @param "ResolvedConflictCommitId" (optional.String) -
+     * @param "BaseBranch" (optional.String) -
+     * @param "ConnectorRef" (optional.String) -
+     * @param "StoreType" (optional.String) -
+     * @param "LastCommitId" (optional.String) -
+     * @param "IsNewBranch" (optional.Bool) -
+     * @param "IsHarnessCodeRepo" (optional.Bool) -
 @return ResponseDtoInfrastructureResponse
 */
 
 type InfrastructuresApiUpdateInfrastructureOpts struct {
-	Body optional.Interface
+	Body                     optional.Interface
+	Branch                   optional.String
+	FilePath                 optional.String
+	CommitMsg                optional.String
+	LastObjectId             optional.String
+	ResolvedConflictCommitId optional.String
+	BaseBranch               optional.String
+	ConnectorRef             optional.String
+	StoreType                optional.String
+	LastCommitId             optional.String
+	IsNewBranch              optional.Bool
+	IsHarnessCodeRepo        optional.Bool
 }
 
 func (a *InfrastructuresApiService) UpdateInfrastructure(ctx context.Context, accountIdentifier string, localVarOptionals *InfrastructuresApiUpdateInfrastructureOpts) (ResponseDtoInfrastructureResponse, *http.Response, error) {
@@ -647,6 +912,39 @@ func (a *InfrastructuresApiService) UpdateInfrastructure(ctx context.Context, ac
 	localVarFormParams := url.Values{}
 
 	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.Branch.IsSet() {
+		localVarQueryParams.Add("branch", parameterToString(localVarOptionals.Branch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.FilePath.IsSet() {
+		localVarQueryParams.Add("filePath", parameterToString(localVarOptionals.FilePath.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.CommitMsg.IsSet() {
+		localVarQueryParams.Add("commitMsg", parameterToString(localVarOptionals.CommitMsg.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastObjectId.IsSet() {
+		localVarQueryParams.Add("lastObjectId", parameterToString(localVarOptionals.LastObjectId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ResolvedConflictCommitId.IsSet() {
+		localVarQueryParams.Add("resolvedConflictCommitId", parameterToString(localVarOptionals.ResolvedConflictCommitId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.BaseBranch.IsSet() {
+		localVarQueryParams.Add("baseBranch", parameterToString(localVarOptionals.BaseBranch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ConnectorRef.IsSet() {
+		localVarQueryParams.Add("connectorRef", parameterToString(localVarOptionals.ConnectorRef.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.StoreType.IsSet() {
+		localVarQueryParams.Add("storeType", parameterToString(localVarOptionals.StoreType.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastCommitId.IsSet() {
+		localVarQueryParams.Add("lastCommitId", parameterToString(localVarOptionals.LastCommitId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsNewBranch.IsSet() {
+		localVarQueryParams.Add("isNewBranch", parameterToString(localVarOptionals.IsNewBranch.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.IsHarnessCodeRepo.IsSet() {
+		localVarQueryParams.Add("isHarnessCodeRepo", parameterToString(localVarOptionals.IsHarnessCodeRepo.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json", "application/yaml"}
 
