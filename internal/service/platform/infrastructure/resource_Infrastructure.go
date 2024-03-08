@@ -306,7 +306,7 @@ func infraCreateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceDa
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
 		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
-		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 	}
 }
 
@@ -322,7 +322,7 @@ func infraUpdateParam(infra *nextgen.InfrastructureRequest, d *schema.ResourceDa
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
 		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
 		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
-		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 	}
 }
 
@@ -333,7 +333,7 @@ func infraImportParam(d *schema.ResourceData) nextgen.InfrastructuresApiImportIn
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
-		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
 		IsForceImport: helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
 	}

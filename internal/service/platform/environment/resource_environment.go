@@ -291,7 +291,7 @@ func envCreateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nex
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
 		StoreType:         helpers.BuildField(d, "git_details.0.store_type"),
 		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
-		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 	}
 }
 
@@ -308,7 +308,7 @@ func envUpdateParam(env *nextgen.EnvironmentRequest, d *schema.ResourceData) nex
 		IfMatch: helpers.BuildField(d, "if_match"),
 		LastObjectId: helpers.BuildField(d, "git_details.0.last_object_id"),
 		LastCommitId: helpers.BuildField(d, "git_details.0.last_commit_id"),
-		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 	}
 }
 
@@ -319,7 +319,7 @@ func envImportParam(d *schema.ResourceData) nextgen.EnvironmentsV2ApiImportEnvir
 		Branch:            helpers.BuildField(d, "git_details.0.branch"),
 		FilePath:          helpers.BuildField(d, "git_details.0.file_path"),
 		ConnectorRef:      helpers.BuildField(d, "git_details.0.connector_ref"),
-		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harness_code_repo"),
+		IsHarnessCodeRepo: helpers.BuildFieldBool(d, "git_details.0.is_harnesscode_repo"),
 		RepoName:          helpers.BuildField(d, "git_details.0.repo_name"),
 		IsForceImport: helpers.BuildFieldBool(d, "git_details.0.is_force_import"),
 	}
