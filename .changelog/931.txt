@@ -1,0 +1,3 @@
+```release-note:enhancement
+harness_platform_infrastructures: Added supprt for creating/Updating remote Infrastructures and import from git for Infrastructures.
+```
