@@ -1,3 +1,17 @@
+# 0.30.5 (March 07,2024) 
+
+FEATURES:
+
+* **New Resource:** `platform_repo` ([#879](https://github.com/harness/terraform-provider-harness/issues/879))
+* **New Resource:** `platform_repo_rule_branch` ([#879](https://github.com/harness/terraform-provider-harness/issues/879))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_kubernetes: Added support for ca_cert_ref in kubernetes connector cluster. ([#928](https://github.com/harness/terraform-provider-harness/issues/928))
+* harness_platform_environment: Added supprt for creating/Updating remote Environment and import from git for Environment. ([#929](https://github.com/harness/terraform-provider-harness/issues/929))
+* harness_platform_service: Added supprt for creating/Updating remote services and import from git for service. ([#927](https://github.com/harness/terraform-provider-harness/issues/927))
+* harness_platform_service_overrides_v2: Added supprt for creating/Updating remote Overrides and import from git for Overrides. ([#930](https://github.com/harness/terraform-provider-harness/issues/930))
+
 # 0.30.4 (February 28,2024) 
 
 ENHANCEMENTS:

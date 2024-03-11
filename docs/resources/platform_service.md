@@ -298,6 +298,7 @@ Optional:
 - `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Service.
 - `is_harness_code_repo` (Boolean) If the repo is in harness code.
 - `commit_message` (String) message for the commit in Git Repo.
+- `load_from_fallback_branch` Whether the file has to be get from fallback_branch.
 
 
 ## Import
