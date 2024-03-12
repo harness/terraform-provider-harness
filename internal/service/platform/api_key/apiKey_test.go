@@ -94,7 +94,7 @@ func testAccApiKeyDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		apiKey, _ := testAccGetResourceApiKey(resourceName, state)
 		if apiKey != nil {
-			return fmt.Errorf("Found apikey: %s", apiKey.Identifier)
+			return fmt.Errorf("found apikey: %s", apiKey.Identifier)
 		}
 
 		return nil
