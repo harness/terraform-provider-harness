@@ -1,4 +1,4 @@
-package repo_rule_branch_test
+package repo_webhook_test
 
 import (
 	"fmt"
@@ -13,33 +13,32 @@ import (
 )
 
 const (
-	resourceName       = "harness_platform_repo_rule_branch.test"
+	resourceName       = "harness_platform_repo_webhook.test"
 	description        = "example_description"
 	updatedDescription = "example_description_updated"
 )
 
-func TestProjResourceRepoRule(t *testing.T) {
+func TestProjResourceRepoWebhook(t *testing.T) {
 	identifier := identifier(t.Name())
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testRepoRuleDestroy(resourceName),
+		CheckDestroy:      testWebhookDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testProjResourceRepoRule(identifier, description),
+				Config: testProjResourceRepoWebhook(identifier, description),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 				),
 			},
 			{
-				Config: testProjResourceRepoRule(identifier, updatedDescription),
+				Config: testProjResourceRepoWebhook(identifier, updatedDescription),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", updatedDescription),
-					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
 				),
 			},
 			{
@@ -56,7 +55,7 @@ func identifier(testName string) string {
 	return fmt.Sprintf("%s_%s", testName, utils.RandStringBytes(5))
 }
 
-func testProjResourceRepoRule(identifier, description string) string {
+func testProjResourceRepoWebhook(identifier string, description string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "org_%[1]s"
@@ -70,45 +69,40 @@ func testProjResourceRepoRule(identifier, description string) string {
 		}
 		
 		resource "harness_platform_repo" "test" {
-			identifier  = "%[1]s"
+			identifier  = "repo_%[1]s"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
 			default_branch = "master"
-			description = "%[2]s"
-			readme   = true
+			readme = true
 		}
 
-		resource "harness_platform_repo_rule_branch" "test" {
-			identifier  = "rule_%[1]s"
+		resource "harness_platform_repo_webhook" "test" {
+			identifier  = "%[1]s"
 			repo_identifier = harness_platform_repo.test.identifier
+			description = "%[2]s"
+			url = "http://harness.io"
 			org_id = harness_platform_organization.test.id
 			project_id = harness_platform_project.test.id
-			description = "%[2]s"
-			state = "active"
-			pattern {
-				default_branch = true
-			}
-			policies {
-				require_pull_request = true
-			}
-			bypass  {}
+			enabled = true
+			insecure = true
+			triggers = ["branch_deleted"]
 		}
 	`, identifier, description,
 	)
 }
 
-func testFindRepoRule(
+func testFindRepoWebhook(
 	resourceName string,
 	state *terraform.State,
-) (*code.OpenapiRule, error) {
+) (*code.OpenapiWebhookType, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetCodeClientWithContext()
 	repoIdentifier := r.Primary.Attributes["repo_identifier"]
-	ruleId := r.Primary.Attributes["identifier"]
+	webhookId := r.Primary.Attributes["identifier"]
 
-	rule, _, err := c.RepositoryApi.RuleGet(
-		ctx, c.AccountId, repoIdentifier, ruleId,
-		&code.RepositoryApiRuleGetOpts{
+	webhook, _, err := c.WebhookApi.GetWebhook(
+		ctx, c.AccountId, repoIdentifier, webhookId,
+		&code.WebhookApiGetWebhookOpts{
 			OrgIdentifier:     optional.NewString(r.Primary.Attributes["org_id"]),
 			ProjectIdentifier: optional.NewString(r.Primary.Attributes["project_id"]),
 		})
@@ -116,14 +110,14 @@ func testFindRepoRule(
 		return nil, err
 	}
 
-	return &rule, nil
+	return &webhook, nil
 }
 
-func testRepoRuleDestroy(resourceName string) resource.TestCheckFunc {
+func testWebhookDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-		rule, _ := testFindRepoRule(resourceName, state)
-		if rule != nil {
-			return fmt.Errorf("found rule: %s", rule.Identifier)
+		webhook, _ := testFindRepoWebhook(resourceName, state)
+		if webhook != nil {
+			return fmt.Errorf("found webhook: %s", webhook.Identifier)
 		}
 
 		return nil
