@@ -3,12 +3,12 @@
 page_title: "harness_platform_repo_webhook Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness repo webhook.
+  Data source for retrieving a Harness Repo Webhook.
 ---
 
 # harness_platform_repo_webhook (Data Source)
 
-Data source for retrieving a Harness repo webhook.
+Data source for retrieving a Harness Repo Webhook.
 
 
 
@@ -19,17 +19,17 @@ Data source for retrieving a Harness repo webhook.
 
 - `enabled` (Boolean) Webhook enabled.
 - `identifier` (String) Identifier of the webhook.
-- `insecure` (Boolean) Allow insecure connections for webhook.
-- `repo_identifier` (String) Repo identifier of the repository.
-- `url` (String) Payload URL for webhook.
+- `insecure` (Boolean) Allow insecure connections for provided webhook URL.
+- `repo_identifier` (String) Identifier of the repository.
+- `url` (String) URL that's called by the webhook.
 
 ### Optional
 
 - `description` (String) Description of the webhook.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `secret` (String, Sensitive) Webhook secret.
-- `triggers` (List of String) Webhook trigger, where empty is all triggers.
+- `secret` (String, Sensitive) Webhook secret which will be used to sign the webhook payload.
+- `triggers` (List of String) List of triggers of the webhook (keep empty for all triggers).
 
 ### Read-Only
 
