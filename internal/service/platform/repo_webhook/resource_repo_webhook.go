@@ -68,10 +68,7 @@ func resourceRepoWebhookCreateOrUpdate(
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
 	repoIdentifier := d.Get("repo_identifier").(string)
-	if err != nil {
-		return helpers.HandleApiError(err, d, nil)
-	}
-	// determine what type of write the change requires
+
 	if id != "" {
 		// update webhook
 		body := buildRepoWebhookBodyForUpdate(d)
@@ -115,14 +112,16 @@ func resourceRepoWebhookDelete(
 ) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetCodeClientWithContext(ctx)
 
+	orgID := helpers.BuildField(d, "org_id")
+	projectID := helpers.BuildField(d, "project_id")
 	resp, err := c.WebhookApi.DeleteWebhook(
 		ctx,
 		c.AccountId,
 		d.Get("repo_identifier").(string),
 		d.Id(),
 		&code.WebhookApiDeleteWebhookOpts{
-			OrgIdentifier:     helpers.BuildField(d, "org_id"),
-			ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			OrgIdentifier:     orgID,
+			ProjectIdentifier: projectID,
 		},
 	)
 	if err != nil {
@@ -172,11 +171,11 @@ func readRepoWebhook(d *schema.ResourceData, webhook *code.OpenapiWebhookType, o
 	d.Set("insecure", webhook.Insecure)
 }
 
-func convertToTrigger(i []interface{}) []code.EnumWebhookTrigger {
-	list := make([]code.EnumWebhookTrigger, len(i))
+func convertToTrigger(in []interface{}) []code.EnumWebhookTrigger {
+	list := make([]code.EnumWebhookTrigger, len(in))
 
-	for j, v := range i {
-		list[j] = code.EnumWebhookTrigger(v.(string))
+	for i, v := range in {
+		list[i] = code.EnumWebhookTrigger(v.(string))
 	}
 
 	return list
@@ -185,7 +184,7 @@ func convertToTrigger(i []interface{}) []code.EnumWebhookTrigger {
 func createSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"repo_identifier": {
-			Description: "Repo identifier of the repository.",
+			Description: "Identifier of the repository.",
 			Type:        schema.TypeString,
 			Required:    true,
 		},
@@ -200,18 +199,18 @@ func createSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"url": {
-			Description: "Payload URL for webhook.",
+			Description: "URL that's called by the webhook.",
 			Type:        schema.TypeString,
 			Required:    true,
 		},
 		"secret": {
-			Description: "Webhook secret.",
+			Description: "Webhook secret which will be used to sign the webhook payload.",
 			Type:        schema.TypeString,
 			Optional:    true,
 			Sensitive:   true,
 		},
 		"triggers": {
-			Description: "Webhook trigger, where empty is all triggers.",
+			Description: "List of triggers of the webhook (keep empty for all triggers).",
 			Type:        schema.TypeList,
 			Optional:    true,
 			Elem:        &schema.Schema{Type: schema.TypeString},
@@ -222,7 +221,7 @@ func createSchema() map[string]*schema.Schema {
 			Required:    true,
 		},
 		"insecure": {
-			Description: "Allow insecure connections for webhook.",
+			Description: "Allow insecure connections for provided webhook URL.",
 			Type:        schema.TypeBool,
 			Required:    true,
 		},

@@ -51,6 +51,39 @@ func TestProjResourceRepoWebhook(t *testing.T) {
 	})
 }
 
+func TestProjResourceRepoWebhookWithSecret(t *testing.T) {
+	identifier := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testWebhookDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjResourceRepoWebhookWithSecret(identifier, description),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
+			},
+			{
+				Config: testProjResourceRepoWebhookWithSecret(identifier, updatedDescription),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", updatedDescription),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				ImportStateIdFunc: acctest.RepoRuleProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func identifier(testName string) string {
 	return fmt.Sprintf("%s_%s", testName, utils.RandStringBytes(5))
 }
@@ -86,6 +119,43 @@ func testProjResourceRepoWebhook(identifier string, description string) string {
 			enabled = true
 			insecure = true
 			triggers = ["branch_deleted"]
+		}
+	`, identifier, description,
+	)
+}
+
+func testProjResourceRepoWebhookWithSecret(identifier string, description string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "org_%[1]s"
+			name = "org_%[1]s"
+		}	
+
+		resource "harness_platform_project" "test" {
+			identifier = "proj_%[1]s"
+			name = "proj_%[1]s"
+			org_id = harness_platform_organization.test.id
+		}
+		
+		resource "harness_platform_repo" "test" {
+			identifier  = "repo_%[1]s"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			default_branch = "master"
+			readme = true
+		}
+
+		resource "harness_platform_repo_webhook" "test" {
+			identifier  = "%[1]s"
+			repo_identifier = harness_platform_repo.test.identifier
+			description = "%[2]s"
+			url = "http://harness.io"
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			enabled = true
+			insecure = true
+			triggers = ["branch_deleted"]
+			secret = "asd"
 		}
 	`, identifier, description,
 	)

@@ -12,7 +12,7 @@ import (
 
 func DataSourceRepoWebhook() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness repo webhook.",
+		Description: "Data source for retrieving a Harness Repo Webhook.",
 		ReadContext: dataSourceRepoWebhookRead,
 		Schema:      createSchema(),
 	}
