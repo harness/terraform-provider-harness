@@ -114,10 +114,11 @@ func resourceRepoWebhookDelete(
 
 	orgID := helpers.BuildField(d, "org_id")
 	projectID := helpers.BuildField(d, "project_id")
+	repoIdentifier := d.Get("repo_identifier").(string)
 	resp, err := c.WebhookApi.DeleteWebhook(
 		ctx,
 		c.AccountId,
-		d.Get("repo_identifier").(string),
+		repoIdentifier,
 		d.Id(),
 		&code.WebhookApiDeleteWebhookOpts{
 			OrgIdentifier:     orgID,
