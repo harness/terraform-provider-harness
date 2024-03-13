@@ -144,7 +144,7 @@ func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccGetCodeClientWithContext()
-					_, err := c.RepositoryApi.DeleteRepository(
+					_, _, err := c.RepositoryApi.DeleteRepository(
 						ctx, c.AccountId, identifier,
 						&code.RepositoryApiDeleteRepositoryOpts{
 							OrgIdentifier:     optional.NewString("org_" + identifier),
