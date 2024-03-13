@@ -1,11 +1,10 @@
 
-<a name="0.3.80"></a>
-## 0.3.80 (2024-03-13)
+<a name="0.3.81"></a>
+## 0.3.81 (2024-03-13)
 
 ### Added
 
 * Added Field Execute on Delegate ([#454](https://github.com/harness/harness-go-sdk/issues/454))
-* Added AdditionalMetadata struct
 
 ### Fix
 
@@ -18,6 +17,8 @@
 
 ### Release
 
+* Release version 0.3.80 03-13-2024
+* Release v0.3.80
 * Release version 0.3.79 03-08-2024
 * Release v0.3.79
 * Release version 0.3.78 03-05-2024
@@ -57,23 +58,13 @@
 * Release version 0.3.61 11-16-2023
 * Release v0.3.61
 * Release version 0.3.60 11-15-2023
-* Release v0.3.60
-* Release version 0.3.59 11-08-2023
-* Release v0.3.59
 * Release version 0.3.58 10-26-2023
 * Release v0.3.58
 * Release version 0.3.57 10-25-2023
-* Release v0.3.57
-* Release version 0.3.56 10-25-2023
 
 ### Pull Requests
 
 * Merge pull request [#441](https://github.com/harness/harness-go-sdk/issues/441) from harness/SRM-16226
 * Merge pull request [#435](https://github.com/harness/harness-go-sdk/issues/435) from harness/CDS-83545
-* Merge pull request [#437](https://github.com/harness/harness-go-sdk/issues/437) from harness/additional-metadata-ref-secrets
-* Merge pull request [#432](https://github.com/harness/harness-go-sdk/issues/432) from harness/cds-82953-go-sdk-conn-force
 * Merge pull request [#426](https://github.com/harness/harness-go-sdk/issues/426) from harness/IAC-1130
-* Merge pull request [#428](https://github.com/harness/harness-go-sdk/issues/428) from harness/PL-39175
-* Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
-* Merge pull request [#411](https://github.com/harness/harness-go-sdk/issues/411) from harness/SRM-15418-2
 
