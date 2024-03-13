@@ -1155,6 +1155,7 @@ ClustersApiService Delete a Cluster by identifier
  * @param optional nil or *ClustersApiDeleteClusterOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "AgentIdentifier" (optional.String) -  agentIdentifier
      * @param "Scope" (optional.String) -  Scope for the gitops cluster
 @return ResponseDtoBoolean
 */
@@ -1162,6 +1163,7 @@ ClustersApiService Delete a Cluster by identifier
 type ClustersApiDeleteClusterOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
+	AgentIdentifier   optional.String
 	Scope             optional.String
 }
 
@@ -1190,6 +1192,9 @@ func (a *ClustersApiService) DeleteCluster(ctx context.Context, identifier strin
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.AgentIdentifier.IsSet() {
+		localVarQueryParams.Add("agentIdentifier", parameterToString(localVarOptionals.AgentIdentifier.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.Scope.IsSet() {
 		localVarQueryParams.Add("scope", parameterToString(localVarOptionals.Scope.Value(), ""))
 	}
@@ -1297,6 +1302,7 @@ ClustersApiService Gets a Cluster by identifier
  * @param optional nil or *ClustersApiGetClusterOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
+     * @param "AgentIdentifier" (optional.String) -  agentIdentifier
      * @param "Deleted" (optional.Bool) -  Specify whether cluster is deleted or not
 @return ResponseDtoClusterResponse
 */
@@ -1304,6 +1310,7 @@ ClustersApiService Gets a Cluster by identifier
 type ClustersApiGetClusterOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
+	AgentIdentifier   optional.String
 	Deleted           optional.Bool
 }
 
@@ -1332,6 +1339,9 @@ func (a *ClustersApiService) GetCluster(ctx context.Context, identifier string, 
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	localVarQueryParams.Add("environmentIdentifier", parameterToString(environmentIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.AgentIdentifier.IsSet() {
+		localVarQueryParams.Add("agentIdentifier", parameterToString(localVarOptionals.AgentIdentifier.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.Deleted.IsSet() {
 		localVarQueryParams.Add("deleted", parameterToString(localVarOptionals.Deleted.Value(), ""))
 	}

@@ -13,6 +13,8 @@ package nextgen
 type ClusterBasicDto struct {
 	// identifier of the cluster
 	Identifier string `json:"identifier,omitempty"`
+	// agent identifier of the cluster
+	AgentIdentifier string `json:"agentIdentifier,omitempty"`
 	// name of the cluster
 	Name string `json:"name,omitempty"`
 	// scope at which the cluster exists in harness gitops, project vs org vs account

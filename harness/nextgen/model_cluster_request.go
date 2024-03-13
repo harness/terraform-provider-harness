@@ -15,6 +15,8 @@ type ClusterRequest struct {
 	Identifier string `json:"identifier,omitempty"`
 	// organization identifier of the cluster
 	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	// agent identifier of the cluster
+	AgentIdentifier string `json:"agentIdentifier,omitempty"`
 	// project identifier of the cluster
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
 	// environment identifier of the cluster

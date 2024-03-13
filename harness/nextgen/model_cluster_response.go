@@ -17,6 +17,8 @@ type ClusterResponse struct {
 	OrgIdentifier string `json:"orgIdentifier,omitempty"`
 	// project identifier of the cluster
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
+	// agent identifier of the cluster
+	AgentIdentifier string `json:"agentIdentifier,omitempty"`
 	// account identifier of the cluster
 	AccountIdentifier string `json:"accountIdentifier,omitempty"`
 	// environment identifier of the cluster
@@ -27,4 +29,6 @@ type ClusterResponse struct {
 	Scope string `json:"scope,omitempty"`
 	// name of the gitops cluster
 	Name string `json:"name,omitempty"`
+	// name of the gitops cluster
+	Tags map[string]string `json:"tags,omitempty"`
 }

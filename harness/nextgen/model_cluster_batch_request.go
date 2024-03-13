@@ -19,6 +19,8 @@ type ClusterBatchRequest struct {
 	EnvRef string `json:"envRef"`
 	// link all clusters
 	LinkAllClusters bool `json:"linkAllClusters,omitempty"`
+	// unlink all clusters
+	UnlinkAllClusters bool `json:"unlinkAllClusters,omitempty"`
 	// search term if applicable. only valid if linking all clusters
 	SearchTerm string `json:"searchTerm,omitempty"`
 	// list of cluster identifiers and names

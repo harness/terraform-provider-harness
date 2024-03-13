@@ -368,6 +368,7 @@ Name | Type | Description  | Notes
 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **agentIdentifier** | **optional.String**| agentIdentifier | 
  **scope** | **optional.String**| Scope for the gitops cluster | 
 
 ### Return type
@@ -408,6 +409,7 @@ Name | Type | Description  | Notes
 
  **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **agentIdentifier** | **optional.String**| agentIdentifier | 
  **deleted** | **optional.Bool**| Specify whether cluster is deleted or not | [default to false]
 
 ### Return type

@@ -13,4 +13,6 @@ package nextgen
 type ClusterBatchResponse struct {
 	// number of clusters linked
 	Linked int64 `json:"linked,omitempty"`
+	// number of clusters unlinked
+	Unlinked int64 `json:"unlinked,omitempty"`
 }
