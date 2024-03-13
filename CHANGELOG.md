@@ -1,15 +1,11 @@
 
-<a name="0.3.79"></a>
-## 0.3.79 (2024-03-08)
+<a name="0.3.80"></a>
+## 0.3.80 (2024-03-13)
 
 ### Added
 
 * Added Field Execute on Delegate ([#454](https://github.com/harness/harness-go-sdk/issues/454))
 * Added AdditionalMetadata struct
-
-### Correction
-
-* Correction on optional end time of static schedule of fixed schedule
 
 ### Fix
 
@@ -22,6 +18,8 @@
 
 ### Release
 
+* Release version 0.3.79 03-08-2024
+* Release v0.3.79
 * Release version 0.3.78 03-05-2024
 * Release v0.3.78
 * Release version 0.3.77 03-05-2024
@@ -67,10 +65,6 @@
 * Release version 0.3.57 10-25-2023
 * Release v0.3.57
 * Release version 0.3.56 10-25-2023
-* Release v0.3.56
-* Release version 0.3.55 10-20-2023
-* Release version 0.3.52 09-28-2023
-* Release v0.3.52
 
 ### Pull Requests
 
@@ -82,5 +76,4 @@
 * Merge pull request [#428](https://github.com/harness/harness-go-sdk/issues/428) from harness/PL-39175
 * Merge pull request [#415](https://github.com/harness/harness-go-sdk/issues/415) from harness/go-sdk-update-opa
 * Merge pull request [#411](https://github.com/harness/harness-go-sdk/issues/411) from harness/SRM-15418-2
-* Merge pull request [#413](https://github.com/harness/harness-go-sdk/issues/413) from harness/CDS-76236
 
