@@ -4,6 +4,7 @@ All URIs are relative to */gateway/code/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**ChecksPullReq**](PullreqApi.md#ChecksPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/checks | Get status checks
 [**CodeownersPullReq**](PullreqApi.md#CodeownersPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/codeowners | Get code owners
 [**CommentCreatePullReq**](PullreqApi.md#CommentCreatePullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments | Create new pull request comment
 [**CommentDeletePullReq**](PullreqApi.md#CommentDeletePullReq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id} | Delete pull request comment
@@ -27,6 +28,45 @@ Method | HTTP request | Description
 [**ReviewerListPullReq**](PullreqApi.md#ReviewerListPullReq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/reviewers | List reviewers
 [**StatePullReq**](PullreqApi.md#StatePullReq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/state | Update state of pull request
 [**UpdatePullReq**](PullreqApi.md#UpdatePullReq) | **Patch** /repos/{repo_identifier}/pullreq/{pullreq_number} | Update pull request
+
+# **ChecksPullReq**
+> []TypesPullReqChecks ChecksPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)
+Get status checks
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **repoIdentifier** | **string**|  | 
+  **pullreqNumber** | **int32**|  | 
+ **optional** | ***PullreqApiChecksPullReqOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a PullreqApiChecksPullReqOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity.. | 
+
+### Return type
+
+[**[]TypesPullReqChecks**](TypesPullReqChecks.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **CodeownersPullReq**
 > TypesCodeOwnerEvaluation CodeownersPullReq(ctx, accountIdentifier, repoIdentifier, pullreqNumber, optional)

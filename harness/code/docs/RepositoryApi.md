@@ -11,7 +11,7 @@ Method | HTTP request | Description
 [**CreateRepository**](RepositoryApi.md#CreateRepository) | **Post** /repos | Create repository
 [**CreateTag**](RepositoryApi.md#CreateTag) | **Post** /repos/{repo_identifier}/tags | Create tag
 [**DeleteBranch**](RepositoryApi.md#DeleteBranch) | **Delete** /repos/{repo_identifier}/branches/{branch_name} | Delete branch
-[**DeleteRepository**](RepositoryApi.md#DeleteRepository) | **Delete** /repos/{repo_identifier} | Delete repository
+[**DeleteRepository**](RepositoryApi.md#DeleteRepository) | **Delete** /repos/{repo_identifier} | Soft delete repository
 [**DeleteTag**](RepositoryApi.md#DeleteTag) | **Delete** /repos/{repo_identifier}/tags/{tag_name} | Delete tag
 [**DiffStats**](RepositoryApi.md#DiffStats) | **Get** /repos/{repo_identifier}/diff-stats/{range} | Get diff stats
 [**GetBlame**](RepositoryApi.md#GetBlame) | **Get** /repos/{repo_identifier}/blame/{path} | Get git blame
@@ -29,8 +29,10 @@ Method | HTTP request | Description
 [**MergeCheck**](RepositoryApi.md#MergeCheck) | **Post** /repos/{repo_identifier}/merge-check/{range} | Check mergeability
 [**MoveRepository**](RepositoryApi.md#MoveRepository) | **Post** /repos/{repo_identifier}/move | Move repository
 [**PathDetails**](RepositoryApi.md#PathDetails) | **Post** /repos/{repo_identifier}/path-details | Get commit details
+[**PurgeRepository**](RepositoryApi.md#PurgeRepository) | **Post** /repos/{repo_identifier}/purge | Purge repository
 [**RawDiff**](RepositoryApi.md#RawDiff) | **Get** /repos/{repo_identifier}/diff/{range} | Get raw diff
 [**RawDiffPost**](RepositoryApi.md#RawDiffPost) | **Post** /repos/{repo_identifier}/diff/{range} | Get raw diff
+[**RestoreRepository**](RepositoryApi.md#RestoreRepository) | **Post** /repos/{repo_identifier}/restore | Restore repository
 [**RuleAdd**](RepositoryApi.md#RuleAdd) | **Post** /repos/{repo_identifier}/rules | Add protection rule
 [**RuleDelete**](RepositoryApi.md#RuleDelete) | **Delete** /repos/{repo_identifier}/rules/{rule_uid} | Delete protection rule
 [**RuleGet**](RepositoryApi.md#RuleGet) | **Get** /repos/{repo_identifier}/rules/{rule_uid} | Get protection rule
@@ -305,8 +307,8 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **DeleteRepository**
-> DeleteRepository(ctx, accountIdentifier, repoIdentifier, optional)
-Delete repository
+> RepoSoftDeleteResponse DeleteRepository(ctx, accountIdentifier, repoIdentifier, optional)
+Soft delete repository
 
 ### Required Parameters
 
@@ -328,7 +330,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
- (empty response body)
+[**RepoSoftDeleteResponse**](RepoSoftDeleteResponse.md)
 
 ### Authorization
 
@@ -1020,6 +1022,45 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **PurgeRepository**
+> PurgeRepository(ctx, accountIdentifier, deletedAt, repoIdentifier, optional)
+Purge repository
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **deletedAt** | **int32**| The exact time the resource was delete at in epoch format. | 
+  **repoIdentifier** | **string**|  | 
+ **optional** | ***RepositoryApiPurgeRepositoryOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiPurgeRepositoryOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity.. | 
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **RawDiff**
 > []GitFileDiff RawDiff(ctx, accountIdentifier, repoIdentifier, range_, optional)
 Get raw diff
@@ -1097,6 +1138,46 @@ Name | Type | Description  | Notes
 
  - **Content-Type**: application/json
  - **Accept**: application/json, text/plain
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **RestoreRepository**
+> TypesRepository RestoreRepository(ctx, accountIdentifier, deletedAt, repoIdentifier, optional)
+Restore repository
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity.. | 
+  **deletedAt** | **int32**| The exact time the resource was delete at in epoch format. | 
+  **repoIdentifier** | **string**|  | 
+ **optional** | ***RepositoryApiRestoreRepositoryOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a RepositoryApiRestoreRepositoryOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+ **body** | [**optional.Interface of OpenapiRestoreRequest**](OpenapiRestoreRequest.md)|  | 
+ **orgIdentifier** | **optional.**| Organization Identifier for the Entity.. | 
+ **projectIdentifier** | **optional.**| Project Identifier for the Entity.. | 
+
+### Return type
+
+[**TypesRepository**](TypesRepository.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth), [x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

@@ -8,8 +8,6 @@
  */
 package code
 
-type TypesCommitFilesResponse struct {
-	CommitId       string                `json:"commit_id,omitempty"`
-	DryRunRules    bool                  `json:"dry_run_rules,omitempty"`
-	RuleViolations []TypesRuleViolations `json:"rule_violations,omitempty"`
+type OpenapiRestoreRequest struct {
+	NewIdentifier string `json:"new_identifier,omitempty"`
 }

@@ -5,6 +5,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Author** | [***GitSignature**](GitSignature.md) |  | [optional] [default to null]
 **Committer** | [***GitSignature**](GitSignature.md) |  | [optional] [default to null]
+**DiffStats** | [***GitCommitDiffStats**](GitCommitDiffStats.md) |  | [optional] [default to null]
 **FileStats** | [***GitCommitFileStats**](GitCommitFileStats.md) |  | [optional] [default to null]
 **Message** | **string** |  | [optional] [default to null]
 **ParentShas** | **[]string** |  | [optional] [default to null]

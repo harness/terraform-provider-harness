@@ -11,12 +11,11 @@ package code
 import (
 	"context"
 	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -29,17 +28,22 @@ type WebhookApiService service
 /*
 WebhookApiService Create webhook
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
  * @param optional nil or *WebhookApiCreateWebhookOpts - Optional Parameters:
      * @param "Body" (optional.Interface of OpenapiCreateWebhookRequest) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
 @return OpenapiWebhookType
 */
 
 type WebhookApiCreateWebhookOpts struct {
-	Body optional.Interface
+	Body              optional.Interface
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
 }
 
-func (a *WebhookApiService) CreateWebhook(ctx context.Context, repoIdentifier string, localVarOptionals *WebhookApiCreateWebhookOpts) (OpenapiWebhookType, *http.Response, error) {
+func (a *WebhookApiService) CreateWebhook(ctx context.Context, accountIdentifier string, repoIdentifier string, localVarOptionals *WebhookApiCreateWebhookOpts) (OpenapiWebhookType, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Post")
 		localVarPostBody    interface{}
@@ -56,6 +60,13 @@ func (a *WebhookApiService) CreateWebhook(ctx context.Context, repoIdentifier st
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 
@@ -179,11 +190,22 @@ func (a *WebhookApiService) CreateWebhook(ctx context.Context, repoIdentifier st
 
 /*
 WebhookApiService Delete webhook
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param repoIdentifier
-  - @param webhookIdentifier
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param webhookIdentifier
+ * @param optional nil or *WebhookApiDeleteWebhookOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
+
 */
-func (a *WebhookApiService) DeleteWebhook(ctx context.Context, repoIdentifier string, webhookIdentifier int32) (*http.Response, error) {
+
+type WebhookApiDeleteWebhookOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *WebhookApiService) DeleteWebhook(ctx context.Context, accountIdentifier string, repoIdentifier string, webhookIdentifier string, localVarOptionals *WebhookApiDeleteWebhookOpts) (*http.Response, error) {
 	var (
 		localVarHttpMethod = strings.ToUpper("Delete")
 		localVarPostBody   interface{}
@@ -200,6 +222,13 @@ func (a *WebhookApiService) DeleteWebhook(ctx context.Context, repoIdentifier st
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -299,13 +328,22 @@ func (a *WebhookApiService) DeleteWebhook(ctx context.Context, repoIdentifier st
 
 /*
 WebhookApiService Get webhook
-  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  - @param repoIdentifier
-  - @param webhookIdentifier
-
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
+ * @param repoIdentifier
+ * @param webhookIdentifier
+ * @param optional nil or *WebhookApiGetWebhookOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
 @return OpenapiWebhookType
 */
-func (a *WebhookApiService) GetWebhook(ctx context.Context, repoIdentifier string, webhookIdentifier int32) (OpenapiWebhookType, *http.Response, error) {
+
+type WebhookApiGetWebhookOpts struct {
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+}
+
+func (a *WebhookApiService) GetWebhook(ctx context.Context, accountIdentifier string, repoIdentifier string, webhookIdentifier string, localVarOptionals *WebhookApiGetWebhookOpts) (OpenapiWebhookType, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -323,6 +361,13 @@ func (a *WebhookApiService) GetWebhook(ctx context.Context, repoIdentifier strin
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 
@@ -441,21 +486,26 @@ func (a *WebhookApiService) GetWebhook(ctx context.Context, repoIdentifier strin
 /*
 WebhookApiService Get webhook execution
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
  * @param webhookIdentifier
  * @param webhookExecutionId
  * @param optional nil or *WebhookApiGetWebhookExecutionOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
      * @param "Page" (optional.Int32) -  The page to return.
      * @param "Limit" (optional.Int32) -  The maximum number of results to return.
 @return TypesWebhookExecution
 */
 
 type WebhookApiGetWebhookExecutionOpts struct {
-	Page  optional.Int32
-	Limit optional.Int32
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Page              optional.Int32
+	Limit             optional.Int32
 }
 
-func (a *WebhookApiService) GetWebhookExecution(ctx context.Context, repoIdentifier string, webhookIdentifier int32, webhookExecutionId int32, localVarOptionals *WebhookApiGetWebhookExecutionOpts) (TypesWebhookExecution, *http.Response, error) {
+func (a *WebhookApiService) GetWebhookExecution(ctx context.Context, accountIdentifier string, repoIdentifier string, webhookIdentifier string, webhookExecutionId int32, localVarOptionals *WebhookApiGetWebhookExecutionOpts) (TypesWebhookExecution, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -474,6 +524,13 @@ func (a *WebhookApiService) GetWebhookExecution(ctx context.Context, repoIdentif
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.Page.IsSet() {
 		localVarQueryParams.Add("page", parameterToString(localVarOptionals.Page.Value(), ""))
 	}
@@ -598,20 +655,25 @@ func (a *WebhookApiService) GetWebhookExecution(ctx context.Context, repoIdentif
 /*
 WebhookApiService List webhook executions
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
  * @param webhookIdentifier
  * @param optional nil or *WebhookApiListWebhookExecutionsOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
      * @param "Page" (optional.Int32) -  The page to return.
      * @param "Limit" (optional.Int32) -  The maximum number of results to return.
 @return []TypesWebhookExecution
 */
 
 type WebhookApiListWebhookExecutionsOpts struct {
-	Page  optional.Int32
-	Limit optional.Int32
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Page              optional.Int32
+	Limit             optional.Int32
 }
 
-func (a *WebhookApiService) ListWebhookExecutions(ctx context.Context, repoIdentifier string, webhookIdentifier int32, localVarOptionals *WebhookApiListWebhookExecutionsOpts) ([]TypesWebhookExecution, *http.Response, error) {
+func (a *WebhookApiService) ListWebhookExecutions(ctx context.Context, accountIdentifier string, repoIdentifier string, webhookIdentifier string, localVarOptionals *WebhookApiListWebhookExecutionsOpts) ([]TypesWebhookExecution, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -629,6 +691,13 @@ func (a *WebhookApiService) ListWebhookExecutions(ctx context.Context, repoIdent
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.Page.IsSet() {
 		localVarQueryParams.Add("page", parameterToString(localVarOptionals.Page.Value(), ""))
 	}
@@ -753,8 +822,11 @@ func (a *WebhookApiService) ListWebhookExecutions(ctx context.Context, repoIdent
 /*
 WebhookApiService List webhooks
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
  * @param optional nil or *WebhookApiListWebhooksOpts - Optional Parameters:
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
      * @param "Query" (optional.String) -  The substring which is used to filter the webhooks by their identifier.
      * @param "Sort" (optional.String) -  The data by which the webhooks are sorted.
      * @param "Order" (optional.String) -  The order of the output.
@@ -764,14 +836,16 @@ WebhookApiService List webhooks
 */
 
 type WebhookApiListWebhooksOpts struct {
-	Query optional.String
-	Sort  optional.String
-	Order optional.String
-	Page  optional.Int32
-	Limit optional.Int32
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
+	Query             optional.String
+	Sort              optional.String
+	Order             optional.String
+	Page              optional.Int32
+	Limit             optional.Int32
 }
 
-func (a *WebhookApiService) ListWebhooks(ctx context.Context, repoIdentifier string, localVarOptionals *WebhookApiListWebhooksOpts) ([]OpenapiWebhookType, *http.Response, error) {
+func (a *WebhookApiService) ListWebhooks(ctx context.Context, accountIdentifier string, repoIdentifier string, localVarOptionals *WebhookApiListWebhooksOpts) ([]OpenapiWebhookType, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -788,6 +862,13 @@ func (a *WebhookApiService) ListWebhooks(ctx context.Context, repoIdentifier str
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	if localVarOptionals != nil && localVarOptionals.Query.IsSet() {
 		localVarQueryParams.Add("query", parameterToString(localVarOptionals.Query.Value(), ""))
 	}
@@ -921,18 +1002,23 @@ func (a *WebhookApiService) ListWebhooks(ctx context.Context, repoIdentifier str
 /*
 WebhookApiService Update webhook
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity..
  * @param repoIdentifier
  * @param webhookIdentifier
  * @param optional nil or *WebhookApiUpdateWebhookOpts - Optional Parameters:
      * @param "Body" (optional.Interface of OpenapiUpdateWebhookRequest) -
+     * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity..
+     * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity..
 @return OpenapiWebhookType
 */
 
 type WebhookApiUpdateWebhookOpts struct {
-	Body optional.Interface
+	Body              optional.Interface
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
 }
 
-func (a *WebhookApiService) UpdateWebhook(ctx context.Context, repoIdentifier string, webhookIdentifier int32, localVarOptionals *WebhookApiUpdateWebhookOpts) (OpenapiWebhookType, *http.Response, error) {
+func (a *WebhookApiService) UpdateWebhook(ctx context.Context, accountIdentifier string, repoIdentifier string, webhookIdentifier string, localVarOptionals *WebhookApiUpdateWebhookOpts) (OpenapiWebhookType, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Patch")
 		localVarPostBody    interface{}
@@ -950,6 +1036,13 @@ func (a *WebhookApiService) UpdateWebhook(ctx context.Context, repoIdentifier st
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.OrgIdentifier.IsSet() {
+		localVarQueryParams.Add("orgIdentifier", parameterToString(localVarOptionals.OrgIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.ProjectIdentifier.IsSet() {
+		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
+	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 

@@ -9,10 +9,11 @@
 package code
 
 type TypesCommit struct {
-	Author     *TypesSignature `json:"author,omitempty"`
-	Committer  *TypesSignature `json:"committer,omitempty"`
-	Message    string          `json:"message,omitempty"`
-	ParentShas []string        `json:"parent_shas,omitempty"`
-	Sha        string          `json:"sha,omitempty"`
-	Title      string          `json:"title,omitempty"`
+	Author     *TypesSignature       `json:"author,omitempty"`
+	Committer  *TypesSignature       `json:"committer,omitempty"`
+	DiffStats  *TypesCommitDiffStats `json:"diff_stats,omitempty"`
+	Message    string                `json:"message,omitempty"`
+	ParentShas []string              `json:"parent_shas,omitempty"`
+	Sha        string                `json:"sha,omitempty"`
+	Title      string                `json:"title,omitempty"`
 }

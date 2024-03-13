@@ -21,6 +21,7 @@ All URIs are relative to */gateway/code/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*PullreqApi* | [**ChecksPullReq**](docs/PullreqApi.md#checkspullreq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/checks | Get status checks
 *PullreqApi* | [**CodeownersPullReq**](docs/PullreqApi.md#codeownerspullreq) | **Get** /repos/{repo_identifier}/pullreq/{pullreq_number}/codeowners | Get code owners
 *PullreqApi* | [**CommentCreatePullReq**](docs/PullreqApi.md#commentcreatepullreq) | **Post** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments | Create new pull request comment
 *PullreqApi* | [**CommentDeletePullReq**](docs/PullreqApi.md#commentdeletepullreq) | **Delete** /repos/{repo_identifier}/pullreq/{pullreq_number}/comments/{pullreq_comment_id} | Delete pull request comment
@@ -51,7 +52,7 @@ Class | Method | HTTP request | Description
 *RepositoryApi* | [**CreateRepository**](docs/RepositoryApi.md#createrepository) | **Post** /repos | Create repository
 *RepositoryApi* | [**CreateTag**](docs/RepositoryApi.md#createtag) | **Post** /repos/{repo_identifier}/tags | Create tag
 *RepositoryApi* | [**DeleteBranch**](docs/RepositoryApi.md#deletebranch) | **Delete** /repos/{repo_identifier}/branches/{branch_name} | Delete branch
-*RepositoryApi* | [**DeleteRepository**](docs/RepositoryApi.md#deleterepository) | **Delete** /repos/{repo_identifier} | Delete repository
+*RepositoryApi* | [**DeleteRepository**](docs/RepositoryApi.md#deleterepository) | **Delete** /repos/{repo_identifier} | Soft delete repository
 *RepositoryApi* | [**DeleteTag**](docs/RepositoryApi.md#deletetag) | **Delete** /repos/{repo_identifier}/tags/{tag_name} | Delete tag
 *RepositoryApi* | [**DiffStats**](docs/RepositoryApi.md#diffstats) | **Get** /repos/{repo_identifier}/diff-stats/{range} | Get diff stats
 *RepositoryApi* | [**GetBlame**](docs/RepositoryApi.md#getblame) | **Get** /repos/{repo_identifier}/blame/{path} | Get git blame
@@ -69,8 +70,10 @@ Class | Method | HTTP request | Description
 *RepositoryApi* | [**MergeCheck**](docs/RepositoryApi.md#mergecheck) | **Post** /repos/{repo_identifier}/merge-check/{range} | Check mergeability
 *RepositoryApi* | [**MoveRepository**](docs/RepositoryApi.md#moverepository) | **Post** /repos/{repo_identifier}/move | Move repository
 *RepositoryApi* | [**PathDetails**](docs/RepositoryApi.md#pathdetails) | **Post** /repos/{repo_identifier}/path-details | Get commit details
+*RepositoryApi* | [**PurgeRepository**](docs/RepositoryApi.md#purgerepository) | **Post** /repos/{repo_identifier}/purge | Purge repository
 *RepositoryApi* | [**RawDiff**](docs/RepositoryApi.md#rawdiff) | **Get** /repos/{repo_identifier}/diff/{range} | Get raw diff
 *RepositoryApi* | [**RawDiffPost**](docs/RepositoryApi.md#rawdiffpost) | **Post** /repos/{repo_identifier}/diff/{range} | Get raw diff
+*RepositoryApi* | [**RestoreRepository**](docs/RepositoryApi.md#restorerepository) | **Post** /repos/{repo_identifier}/restore | Restore repository
 *RepositoryApi* | [**RuleAdd**](docs/RepositoryApi.md#ruleadd) | **Post** /repos/{repo_identifier}/rules | Add protection rule
 *RepositoryApi* | [**RuleDelete**](docs/RepositoryApi.md#ruledelete) | **Delete** /repos/{repo_identifier}/rules/{rule_uid} | Delete protection rule
 *RepositoryApi* | [**RuleGet**](docs/RepositoryApi.md#ruleget) | **Get** /repos/{repo_identifier}/rules/{rule_uid} | Get protection rule
@@ -112,7 +115,7 @@ Class | Method | HTTP request | Description
  - [EnumWebhookTrigger](docs/EnumWebhookTrigger.md)
  - [GitBlamePart](docs/GitBlamePart.md)
  - [GitCommit](docs/GitCommit.md)
- - [GitCommitFileStat](docs/GitCommitFileStat.md)
+ - [GitCommitDiffStats](docs/GitCommitDiffStats.md)
  - [GitCommitFileStats](docs/GitCommitFileStats.md)
  - [GitFileAction](docs/GitFileAction.md)
  - [GitFileDiff](docs/GitFileDiff.md)
@@ -142,6 +145,7 @@ Class | Method | HTTP request | Description
  - [OpenapiMergePullReq](docs/OpenapiMergePullReq.md)
  - [OpenapiMoveRepoRequest](docs/OpenapiMoveRepoRequest.md)
  - [OpenapiPathsDetailsRequest](docs/OpenapiPathsDetailsRequest.md)
+ - [OpenapiRestoreRequest](docs/OpenapiRestoreRequest.md)
  - [OpenapiReviewSubmitPullReqRequest](docs/OpenapiReviewSubmitPullReqRequest.md)
  - [OpenapiReviewerAddPullReqRequest](docs/OpenapiReviewerAddPullReqRequest.md)
  - [OpenapiRule](docs/OpenapiRule.md)
@@ -171,6 +175,7 @@ Class | Method | HTTP request | Description
  - [RepoIdentifierRulesBody](docs/RepoIdentifierRulesBody.md)
  - [RepoMergeCheck](docs/RepoMergeCheck.md)
  - [RepoPathsDetailsOutput](docs/RepoPathsDetailsOutput.md)
+ - [RepoSoftDeleteResponse](docs/RepoSoftDeleteResponse.md)
  - [RepoSubmoduleContent](docs/RepoSubmoduleContent.md)
  - [RepoSymlinkContent](docs/RepoSymlinkContent.md)
  - [ReposImportBody](docs/ReposImportBody.md)
@@ -181,6 +186,7 @@ Class | Method | HTTP request | Description
  - [TypesCodeOwnerEvaluation](docs/TypesCodeOwnerEvaluation.md)
  - [TypesCodeOwnerEvaluationEntry](docs/TypesCodeOwnerEvaluationEntry.md)
  - [TypesCommit](docs/TypesCommit.md)
+ - [TypesCommitDiffStats](docs/TypesCommitDiffStats.md)
  - [TypesCommitFilesResponse](docs/TypesCommitFilesResponse.md)
  - [TypesDiffStats](docs/TypesDiffStats.md)
  - [TypesFileDiffRequest](docs/TypesFileDiffRequest.md)
@@ -192,6 +198,8 @@ Class | Method | HTTP request | Description
  - [TypesPrincipalInfo](docs/TypesPrincipalInfo.md)
  - [TypesPullReq](docs/TypesPullReq.md)
  - [TypesPullReqActivity](docs/TypesPullReqActivity.md)
+ - [TypesPullReqCheck](docs/TypesPullReqCheck.md)
+ - [TypesPullReqChecks](docs/TypesPullReqChecks.md)
  - [TypesPullReqFileView](docs/TypesPullReqFileView.md)
  - [TypesPullReqReviewer](docs/TypesPullReqReviewer.md)
  - [TypesPullReqStats](docs/TypesPullReqStats.md)

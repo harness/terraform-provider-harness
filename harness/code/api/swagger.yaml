@@ -266,7 +266,7 @@ paths:
     delete:
       tags:
       - repository
-      summary: Delete repository
+      summary: Soft delete repository
       operationId: deleteRepository
       parameters:
       - name: accountIdentifier
@@ -301,8 +301,12 @@ paths:
         schema:
           type: string
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RepoSoftDeleteResponse'
         "401":
           description: Unauthorized
           content:
@@ -2827,6 +2831,85 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UsererrorError'
+  /repos/{repo_identifier}/pullreq/{pullreq_number}/checks:
+    get:
+      tags:
+      - pullreq
+      summary: Get status checks
+      operationId: checksPullReq
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: pullreq_number
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypesPullReqChecks'
+                x-content-type: application/json
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
   /repos/{repo_identifier}/pullreq/{pullreq_number}/codeowners:
     get:
       tags:
@@ -4338,6 +4421,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UsererrorError'
+  /repos/{repo_identifier}/purge:
+    post:
+      tags:
+      - repository
+      summary: Purge repository
+      operationId: purgeRepository
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: deleted_at
+        in: query
+        description: The exact time the resource was delete at in epoch format.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
   /repos/{repo_identifier}/raw/{path}:
     get:
       tags:
@@ -4397,6 +4553,94 @@ paths:
       responses:
         "200":
           description: OK
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
+  /repos/{repo_identifier}/restore:
+    post:
+      tags:
+      - repository
+      summary: Restore repository
+      operationId: restoreRepository
+      parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: deleted_at
+        in: query
+        description: The exact time the resource was delete at in epoch format.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: repo_identifier
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenapiRestoreRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypesRepository'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsererrorError'
         "401":
           description: Unauthorized
           content:
@@ -5321,6 +5565,30 @@ paths:
       summary: List webhooks
       operationId: listWebhooks
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: query
         in: query
         description: The substring which is used to filter the webhooks by their identifier.
@@ -5424,6 +5692,30 @@ paths:
       summary: Create webhook
       operationId: createWebhook
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: repo_identifier
         in: path
         required: true
@@ -5474,6 +5766,30 @@ paths:
       summary: Get webhook
       operationId: getWebhook
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: repo_identifier
         in: path
         required: true
@@ -5487,7 +5803,7 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
       responses:
         "200":
           description: OK
@@ -5525,6 +5841,30 @@ paths:
       summary: Delete webhook
       operationId: deleteWebhook
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: repo_identifier
         in: path
         required: true
@@ -5538,7 +5878,7 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
       responses:
         "204":
           description: No Content
@@ -5572,6 +5912,30 @@ paths:
       summary: Update webhook
       operationId: updateWebhook
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: repo_identifier
         in: path
         required: true
@@ -5585,7 +5949,7 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
       requestBody:
         content:
           application/json:
@@ -5629,6 +5993,30 @@ paths:
       summary: List webhook executions
       operationId: listWebhookExecutions
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: page
         in: query
         description: The page to return.
@@ -5663,7 +6051,7 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
       responses:
         "200":
           description: OK
@@ -5705,6 +6093,30 @@ paths:
       summary: Get webhook execution
       operationId: getWebhookExecution
       parameters:
+      - name: accountIdentifier
+        in: query
+        description: Account Identifier for the Entity..
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orgIdentifier
+        in: query
+        description: Organization Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: projectIdentifier
+        in: query
+        description: Project Identifier for the Entity..
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       - name: page
         in: query
         description: The page to return.
@@ -5739,7 +6151,7 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
       - name: webhook_execution_id
         in: path
         required: true
@@ -6044,6 +6456,7 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats: {}
           file_stats: {}
           message: message
           title: title
@@ -6061,6 +6474,8 @@ components:
           $ref: '#/components/schemas/GitSignature'
         committer:
           $ref: '#/components/schemas/GitSignature'
+        diff_stats:
+          $ref: '#/components/schemas/GitCommitDiffStats'
         file_stats:
           $ref: '#/components/schemas/GitCommitFileStats'
         message:
@@ -6080,6 +6495,7 @@ components:
             name: name
             email: email
           when: 2000-01-23T04:56:07.000+00:00
+        diff_stats: {}
         file_stats: {}
         message: message
         title: title
@@ -6087,7 +6503,7 @@ components:
         parent_shas:
         - parent_shas
         - parent_shas
-    GitCommitFileStat:
+    GitCommitDiffStats:
       type: object
     GitCommitFileStats:
       type: object
@@ -6166,6 +6582,7 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats: {}
           file_stats: {}
           message: message
           title: title
@@ -6423,6 +6840,10 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats:
+            total: 1
+            additions: 0
+            deletions: 6
           message: message
           title: title
           sha: sha
@@ -6471,6 +6892,11 @@ components:
       nullable: true
       items:
         $ref: '#/components/schemas/TypesFileDiffRequest'
+    OpenapiRestoreRequest:
+      type: object
+      properties:
+        new_identifier:
+          type: string
     OpenapiReviewSubmitPullReqRequest:
       type: object
       properties:
@@ -6765,6 +7191,10 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats:
+            total: 1
+            additions: 0
+            deletions: 6
           message: message
           title: title
           sha: sha
@@ -6834,6 +7264,10 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats:
+            total: 1
+            additions: 0
+            deletions: 6
           message: message
           title: title
           sha: sha
@@ -6903,6 +7337,7 @@ components:
                 name: name
                 email: email
               when: 2000-01-23T04:56:07.000+00:00
+            diff_stats: {}
             file_stats: {}
             message: message
             title: title
@@ -6918,6 +7353,7 @@ components:
                 name: name
                 email: email
               when: 2000-01-23T04:56:07.000+00:00
+            diff_stats: {}
             file_stats: {}
             message: message
             title: title
@@ -6925,6 +7361,13 @@ components:
             parent_shas:
             - parent_shas
             - parent_shas
+    RepoSoftDeleteResponse:
+      type: object
+      properties:
+        deleted_at:
+          type: integer
+      example:
+        deleted_at: 0
     RepoSubmoduleContent:
       type: object
       properties:
@@ -7163,6 +7606,8 @@ components:
           $ref: '#/components/schemas/TypesSignature'
         committer:
           $ref: '#/components/schemas/TypesSignature'
+        diff_stats:
+          $ref: '#/components/schemas/TypesCommitDiffStats'
         message:
           type: string
         parent_shas:
@@ -7180,12 +7625,29 @@ components:
             name: name
             email: email
           when: 2000-01-23T04:56:07.000+00:00
+        diff_stats:
+          total: 1
+          additions: 0
+          deletions: 6
         message: message
         title: title
         sha: sha
         parent_shas:
         - parent_shas
         - parent_shas
+    TypesCommitDiffStats:
+      type: object
+      properties:
+        additions:
+          type: integer
+        deletions:
+          type: integer
+        total:
+          type: integer
+      example:
+        total: 1
+        additions: 0
+        deletions: 6
     TypesCommitFilesResponse:
       type: object
       properties:
@@ -7197,11 +7659,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypesRuleViolations'
-        stats:
-          $ref: '#/components/schemas/GitCommitFileStat'
       example:
         dry_run_rules: true
-        stats: {}
         rule_violations:
         - bypassable: true
           bypassed: true
@@ -7294,6 +7753,10 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats:
+            total: 1
+            additions: 0
+            deletions: 6
           message: message
           title: title
           sha: sha
@@ -7306,6 +7769,10 @@ components:
               name: name
               email: email
             when: 2000-01-23T04:56:07.000+00:00
+          diff_stats:
+            total: 1
+            additions: 0
+            deletions: 6
           message: message
           title: title
           sha: sha
@@ -7617,6 +8084,104 @@ components:
         updated: 1
         order: 3
         resolved: 1
+    TypesPullReqCheck:
+      type: object
+      properties:
+        bypassable:
+          type: boolean
+        check:
+          $ref: '#/components/schemas/TypesCheck'
+        required:
+          type: boolean
+      example:
+        bypassable: true
+        check:
+          summary: summary
+          identifier: identifier
+          metadata: ""
+          payload:
+            data: ""
+            kind: ""
+            version: version
+          created: 0
+          ended: 6
+          link: link
+          reported_by:
+            uid: uid
+            created: 5
+            id: 5
+            display_name: display_name
+            type: service
+            updated: 2
+            email: email
+          started: 7
+          id: 1
+          updated: 9
+          status: error
+        required: true
+    TypesPullReqChecks:
+      type: object
+      properties:
+        checks:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/TypesPullReqCheck'
+        commit_sha:
+          type: string
+      example:
+        commit_sha: commit_sha
+        checks:
+        - bypassable: true
+          check:
+            summary: summary
+            identifier: identifier
+            metadata: ""
+            payload:
+              data: ""
+              kind: ""
+              version: version
+            created: 0
+            ended: 6
+            link: link
+            reported_by:
+              uid: uid
+              created: 5
+              id: 5
+              display_name: display_name
+              type: service
+              updated: 2
+              email: email
+            started: 7
+            id: 1
+            updated: 9
+            status: error
+          required: true
+        - bypassable: true
+          check:
+            summary: summary
+            identifier: identifier
+            metadata: ""
+            payload:
+              data: ""
+              kind: ""
+              version: version
+            created: 0
+            ended: 6
+            link: link
+            reported_by:
+              uid: uid
+              created: 5
+              id: 5
+              display_name: display_name
+              type: service
+              updated: 2
+              email: email
+            started: 7
+            id: 1
+            updated: 9
+            status: error
+          required: true
     TypesPullReqFileView:
       type: object
       properties:
