@@ -13,7 +13,7 @@ import (
 
 func DataSourceServiceList() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Data source for retrieving a Harness service.",
+		Description: "Data source for retrieving a Harness service List.",
 
 		ReadContext: dataSourceServiceListRead,
 
