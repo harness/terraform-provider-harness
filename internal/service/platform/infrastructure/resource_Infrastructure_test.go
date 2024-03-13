@@ -309,6 +309,124 @@ func TestAccResourceInfrastructure_DeleteUnderlyingResource(t *testing.T) {
 	})
 }
 
+func TestResourceRemoteInfrastructure(t *testing.T) {
+
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testResourceRemoteInfrastructure(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type",
+					"git_details.#", "git_details.0.%", "git_details.0.base_branch", "git_details.0.branch", "git_details.0.file_path", "git_details.0.is_harnesscode_repo", "git_details.0.is_new_branch",
+					"git_details.0.last_commit_id", "git_details.0.last_object_id", "git_details.0.load_from_cache", "git_details.0.load_from_fallback_branch", "git_details.0.repo_name", "git_details.0.import_from_git", "git_details.0.is_force_import", "git_details.0.parent_entity_connector_ref", "git_details.0.parent_entity_repo_name", "yaml"},
+			},
+		},
+	})
+}
+
+func TestResourceImportRemoteInfrastructure(t *testing.T) {
+	resourceName := "harness_platform_infrastructure.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testResourceImportRemoteInfrastructure(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "accountInfra"),
+					resource.TestCheckResourceAttr(resourceName, "name", "accountInfra"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type",
+					"git_details.#", "git_details.0.%", "git_details.0.base_branch", "git_details.0.branch", "git_details.0.file_path", "git_details.0.is_harnesscode_repo", "git_details.0.is_new_branch",
+					"git_details.0.last_commit_id", "git_details.0.last_object_id", "git_details.0.load_from_cache", "git_details.0.load_from_fallback_branch", "git_details.0.repo_name", "git_details.0.import_from_git", "git_details.0.is_force_import", "git_details.0.parent_entity_connector_ref", "git_details.0.parent_entity_repo_name"},
+			},
+		},
+	})
+}
+
+func testResourceImportRemoteInfrastructure() string {
+	return fmt.Sprintf(`
+	resource "harness_platform_infrastructure" "test" {
+		identifier  = "accountInfra"
+		name        = "accountInfra"
+		env_id = "DoNotDeleteTerraformResourceEnv"
+		git_details { 
+			connector_ref = "account.DoNotDeleteRTerraformResource"
+			repo_name = "terraform-test"
+			file_path = ".harness/accountInfra.yaml"
+			branch = "main"
+			import_from_git = "true"
+			is_force_import = "true"
+		}
+	}
+`)
+}
+
+func testResourceRemoteInfrastructure(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_environment" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		tags = ["foo:bar", "baz"]
+		type = "PreProduction"
+	}
+
+	resource "harness_platform_infrastructure" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		env_id = harness_platform_environment.test.id
+		type = "KubernetesDirect"
+		git_details {
+			store_type = "REMOTE"
+			connector_ref = "account.DoNotDeleteRTerraformResource"
+			repo_name = "terraform-test"
+			file_path = ".harness/%[1]s.yaml"
+			branch = "main"
+		}
+		yaml = <<-EOT
+			   infrastructureDefinition:
+         name: "%[2]s"
+         identifier: "%[1]s"
+         description: ""
+         tags:
+           asda: ""
+         environmentRef: ${harness_platform_environment.test.id}
+         deploymentType: Kubernetes
+         type: KubernetesDirect
+         spec:
+          connectorRef: "<+input>"
+          namespace: "<+input>"
+          releaseName: "<+input>"
+         allowSimultaneousDeployments: false
+      EOT
+	}
+`, id, name)
+}
+
 func testAccGetPlatformInfrastructure(resourceName string, state *terraform.State) (*nextgen.InfrastructureResponse, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
@@ -366,7 +484,7 @@ func testAccResourceInfrastructure(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			tags = ["foo:bar", "baz"]
 			type = "PreProduction"
-  	}
+  		}
 
 		resource "harness_platform_infrastructure" "test" {
 			identifier = "%[1]s"
