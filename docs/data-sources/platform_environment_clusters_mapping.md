@@ -3,20 +3,47 @@
 page_title: "harness_platform_environment_clusters_mapping Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for retrieving a Harness Cluster.
+  Data source for retrieving Harness Gitops clusters mapped to Harness Environment.
 ---
 
 # harness_platform_environment_clusters_mapping (Data Source)
 
-Data source for retrieving a Harness Cluster.
+Data source for retrieving Harness Gitops clusters mapped to Harness Environment.
 
 ## Example Usage
 
 ```terraform
+# data source for gitops clusters mapped to a project level env
 data "harness_platform_environment_clusters_mapping" "example" {
-  identifier = "identifier"
-  org_id     = "org_id"
-  project_id = "project_id"
+  identifier = "mycustomidentifier"
+  org_id     = "orgIdentifer"
+  project_id = "projectIdentifier"
+  env_id     = "exampleEnvId"
+  clusters {
+    identifier       = "incluster"
+    name             = "in-cluster"
+    agent_identifier = "account.gitopsagentdev"
+    scope            = "ACCOUNT"
+  }
+}
+
+
+# data source for two gitops clusters mapped to an account level env
+data "harness_platform_environment_clusters_mapping" "example2" {
+  identifier = "mycustomidentifier"
+  env_id     = "env1"
+  clusters {
+    identifier       = "clusterA"
+    name             = "cluster-A"
+    agent_identifier = "account.gitopsagentprod"
+    scope            = "ACCOUNT"
+  }
+  clusters {
+    identifier       = "clusterB"
+    name             = "cluster-B"
+    agent_identifier = "account.gitopsagentprod"
+    scope            = "ACCOUNT"
+  }
 }
 ```
 
@@ -25,17 +52,26 @@ data "harness_platform_environment_clusters_mapping" "example" {
 
 ### Required
 
-- `env_id` (String) environment identifier of the cluster.
-- `identifier` (String) identifier of the cluster.
+- `env_id` (String) environment identifier.
+- `identifier` (String) identifier for the cluster mapping(can be given any value).
 
 ### Optional
 
-- `org_id` (String) org_id of the cluster.
-- `project_id` (String) project_id of the cluster.
+- `clusters` (Block Set) list of cluster identifiers and names (see [below for nested schema](#nestedblock--clusters))
+- `org_id` (String) org_id of the environment.
+- `project_id` (String) project_id of the environment.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `scope` (String) scope at which the cluster exists in harness gitops
+- `scope` (String) scope at which the environment exists in harness.
 
+<a id="nestedblock--clusters"></a>
+### Nested Schema for `clusters`
 
+Optional:
+
+- `agent_identifier` (String) agent identifier of the cluster (include scope prefix)
+- `identifier` (String) identifier of the cluster
+- `name` (String) name of the cluster
+- `scope` (String) scope at which the cluster exists in harness gitops, one of "ACCOUNT", "ORGANIZATION", "PROJECT". Scope of environment to which clusters are being mapped must be lower or equal to in hierarchy than the scope of the cluster

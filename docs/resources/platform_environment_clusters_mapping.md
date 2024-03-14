@@ -13,10 +13,37 @@ Resource for mapping environment with Harness Clusters.
 ## Example Usage
 
 ```terraform
+# mapping a cluster to a project level env
 resource "harness_platform_environment_clusters_mapping" "example" {
-  identifier = "identifier"
+  identifier = "mycustomidentifier"
   org_id     = "orgIdentifer"
   project_id = "projectIdentifier"
+  env_id     = "exampleEnvId"
+  clusters {
+    identifier       = "incluster"
+    name             = "in-cluster"
+    agent_identifier = "account.gitopsagentdev"
+    scope            = "ACCOUNT"
+  }
+}
+
+
+# mapping two clusters to account level env
+resource "harness_platform_environment_clusters_mapping" "example2" {
+  identifier = "mycustomidentifier"
+  env_id     = "env1"
+  clusters {
+    identifier       = "clusterA"
+    name             = "cluster-A"
+    agent_identifier = "account.gitopsagentprod"
+    scope            = "ACCOUNT"
+  }
+  clusters {
+    identifier       = "clusterB"
+    name             = "cluster-B"
+    agent_identifier = "account.gitopsagentprod"
+    scope            = "ACCOUNT"
+  }
 }
 ```
 
@@ -26,33 +53,33 @@ resource "harness_platform_environment_clusters_mapping" "example" {
 ### Required
 
 - `env_id` (String) environment identifier.
-- `identifier` (String) identifier of the cluster.
+- `identifier` (String) identifier for the cluster mapping(can be given any value).
 
 ### Optional
 
 - `clusters` (Block Set) list of cluster identifiers and names (see [below for nested schema](#nestedblock--clusters))
-- `org_id` (String) org_id of the cluster.
-- `project_id` (String) project_id of the cluster.
+- `org_id` (String) org_id of the environment.
+- `project_id` (String) project_id of the environment.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `scope` (String) scope at which the cluster exists in harness gitops
+- `scope` (String) scope at which the environment exists in harness.
 
 <a id="nestedblock--clusters"></a>
 ### Nested Schema for `clusters`
 
 Optional:
 
-- `identifier` (String) account Identifier of the account
+- `agent_identifier` (String) agent identifier of the cluster (include scope prefix)
+- `identifier` (String) identifier of the cluster
 - `name` (String) name of the cluster
-- `scope` (String) scope at which the cluster exists in harness gitops, project vs org vs account
+- `scope` (String) scope at which the cluster exists in harness gitops, one of "ACCOUNT", "ORGANIZATION", "PROJECT". Scope of environment to which clusters are being mapped must be lower or equal to in hierarchy than the scope of the cluster
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using the cluster.
-terraform import harness_platform_environment_clusters_mapping.example <cluster_id>
+#
 ```
