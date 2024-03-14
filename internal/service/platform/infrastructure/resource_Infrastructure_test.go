@@ -374,6 +374,7 @@ func testResourceImportRemoteInfrastructure() string {
 		identifier  = "accountInfra"
 		name        = "accountInfra"
 		env_id = "DoNotDeleteTerraformResourceEnv"
+		type = "KubernetesDirect"
 		git_details { 
 			connector_ref = "account.DoNotDeleteRTerraformResource"
 			repo_name = "terraform-test"
@@ -382,6 +383,19 @@ func testResourceImportRemoteInfrastructure() string {
 			import_from_git = "true"
 			is_force_import = "true"
 		}
+		yaml = <<-EOT
+		infrastructureDefinition:
+        name: accountInfra
+        identifier: accountInfra
+        environmentRef: DoNotDeleteTerraformResourceEnv
+        type: KubernetesDirect
+        deploymentType: Kubernetes
+        spec:
+         connectorRef: <+input>
+         namespace: <+input>
+         releaseName: <+input>
+        allowSimultaneousDeployments: false
+      EOT
 	}
 `)
 }
