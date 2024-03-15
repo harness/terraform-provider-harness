@@ -150,6 +150,7 @@ resource "harness_platform_infrastructure" "test" {
     repo_name = "repo_name"
     file_path = "file_path"
     branch = "branch"
+    import_from_git = "true"
   }
 }
 ```
