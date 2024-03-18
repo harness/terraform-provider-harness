@@ -14,7 +14,7 @@ type UpdateRequestBody2 struct {
 	// Description of the policy set
 	Description string `json:"description,omitempty"`
 	// Only enabled policy sets are evaluated when evaluating by type/action
-	Enabled bool `json:"enabled,omitempty"`
+	Enabled bool `json:"enabled"`
 	// A string enum value which determines which entities the policy set applies to during evaluation. This feature is not available for all accounts, Contact support if you wish to have it enabled.
 	EntitySelector string `json:"entity_selector,omitempty"`
 	// Name of the policy set
