@@ -1,6 +1,6 @@
 
-<a name="0.3.81"></a>
-## 0.3.81 (2024-03-13)
+<a name="0.3.82"></a>
+## 0.3.82 (2024-03-13)
 
 ### Added
 
@@ -9,7 +9,6 @@
 ### Fix
 
 * fix : [CCM-14434] API key based authentication for fixed schedule
-* fix : API key based authentication for fixed schedule
 
 ### GitX
 
@@ -17,6 +16,8 @@
 
 ### Release
 
+* Release version 0.3.81 03-13-2024
+* Release v0.3.81
 * Release version 0.3.80 03-13-2024
 * Release v0.3.80
 * Release version 0.3.79 03-08-2024
@@ -57,10 +58,8 @@
 * Release v0.3.62
 * Release version 0.3.61 11-16-2023
 * Release v0.3.61
-* Release version 0.3.60 11-15-2023
 * Release version 0.3.58 10-26-2023
 * Release v0.3.58
-* Release version 0.3.57 10-25-2023
 
 ### Pull Requests
 
