@@ -13,7 +13,7 @@ Data source for retrieving Harness service list.
 ## Example Usage for project level service list
 
 ```terraform
-data "harness_platform_service" "example" {
+data "harness_platform_service_list" "example" {
   org_id     = "org_id"
   project_id = "project_id"
 }
@@ -22,7 +22,7 @@ data "harness_platform_service" "example" {
 ## Example Usage for Organisation level service list
 
 ```terraform
-data "harness_platform_service" "example" {
+data "harness_platform_service_list" "example" {
   org_id     = "org_id"
 }
 ```
@@ -30,7 +30,7 @@ data "harness_platform_service" "example" {
 ## Example Usage for Account level service list
 
 ```terraform
-data "harness_platform_service" "example" {
+data "harness_platform_service_list" "example" {
 }
 ```
 
