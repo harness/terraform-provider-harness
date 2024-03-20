@@ -42,6 +42,7 @@ data "harness_platform_connector_aws" "example" {
 - `inherit_from_delegate` (List of Object) Inherit credentials from the delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `irsa` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--irsa))
 - `manual` (List of Object) Use IAM role for service accounts. (see [below for nested schema](#nestedatt--manual))
+- `oidc_authentication` (List of Object) Authentication using harness oidc. (see [below for nested schema](#nestedatt--oidc_authentication))
 - `region` AWS Region to perform Connection test of Connector.
 - `tags` (Set of String) Tags to associate with the resource.
 
@@ -113,4 +114,12 @@ Read-Only:
 - `region` AWS Region to perform Connection test of Connector.
 
 
+<a id="nestedatt--oidc_authentication"></a>
+### Nested Schema for `oidc authentication`
+
+Read-Only:
+
+- `iam_role_arn` (String) The IAM Role to assume the credentials from.
+- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+- `region` AWS Region to perform Connection test of Connector.
 
