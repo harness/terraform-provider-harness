@@ -1,14 +1,11 @@
 
-<a name="0.3.82"></a>
-## 0.3.82 (2024-03-13)
+<a name="0.3.78"></a>
+## 0.3.78 (2024-03-21)
 
 ### Added
 
+* Added API for user group update for user entity ([#513](https://github.com/harness/harness-go-sdk/issues/513))
 * Added Field Execute on Delegate ([#454](https://github.com/harness/harness-go-sdk/issues/454))
-
-### Fix
-
-* fix : [CCM-14434] API key based authentication for fixed schedule
 
 ### GitX
 
@@ -16,6 +13,8 @@
 
 ### Release
 
+* Release version 0.3.82 03-18-2024
+* Release v0.3.82
 * Release version 0.3.81 03-13-2024
 * Release v0.3.81
 * Release version 0.3.80 03-13-2024
@@ -55,15 +54,8 @@
 * Release version 0.3.63 11-24-2023
 * Release v0.3.63
 * Release version 0.3.62 11-22-2023
-* Release v0.3.62
-* Release version 0.3.61 11-16-2023
-* Release v0.3.61
-* Release version 0.3.58 10-26-2023
-* Release v0.3.58
 
 ### Pull Requests
 
 * Merge pull request [#441](https://github.com/harness/harness-go-sdk/issues/441) from harness/SRM-16226
-* Merge pull request [#435](https://github.com/harness/harness-go-sdk/issues/435) from harness/CDS-83545
-* Merge pull request [#426](https://github.com/harness/harness-go-sdk/issues/426) from harness/IAC-1130
 
