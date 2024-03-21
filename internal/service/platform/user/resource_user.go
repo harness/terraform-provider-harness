@@ -272,7 +272,6 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 }
 
 func createUpdateUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
-
 	var addUsersDto nextgen.AddUsersDto
 
 	if attr, ok := d.GetOk("user_groups"); ok {
