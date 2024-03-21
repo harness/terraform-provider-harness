@@ -146,11 +146,5 @@ func testAccDataSourcepipelineList(id string, name string) string {
             org_id = harness_platform_pipeline.test.org_id
             project_id = harness_platform_pipeline.test.project_id
         }
-
-        provider "harness" {
-            endpoint         = "https://qa.harness.io/gateway"
-            account_id       = "OgiB4-xETamKNVAz-wQRjw"
-            platform_api_key = "pat.OgiB4-xETamKNVAz-wQRjw.65dc7b25c7ea322121da3d11.Y1M4UBF87eAPDZOJ0i96"
-        }
     `, id, name)
 }
