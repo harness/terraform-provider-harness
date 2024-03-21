@@ -1,6 +1,6 @@
 
-<a name="0.3.78"></a>
-## 0.3.78 (2024-03-21)
+<a name="0.3.83"></a>
+## 0.3.83 (2024-03-21)
 
 ### Added
 
@@ -13,6 +13,8 @@
 
 ### Release
 
+* Release version 0.3.78 03-21-2024
+* Release v0.3.78
 * Release version 0.3.82 03-18-2024
 * Release v0.3.82
 * Release version 0.3.81 03-13-2024
@@ -53,7 +55,6 @@
 * Release v0.3.64
 * Release version 0.3.63 11-24-2023
 * Release v0.3.63
-* Release version 0.3.62 11-22-2023
 
 ### Pull Requests
 
