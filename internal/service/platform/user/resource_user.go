@@ -160,7 +160,15 @@ func resourceUserCreateOrUpdate(ctx context.Context, d *schema.ResourceData, met
 			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
 	} else {
-		return diag.Errorf("Update operation is not allowed for User resource.")
+		// Extract user_groups from request and call user group update API
+		updateUserBody := createUpdateUserBody(d)
+		userOpts := nextgen.UserApiAddUserToUserGroupsOpts{}
+		body := nextgen.UserAddToUserGroupDto{}
+		userOpts.OrgIdentifier = helpers.BuildField(d, "org_id")
+		userOpts.ProjectIdentifier = helpers.BuildField(d, "project_id")
+		body.UserGroupIdsToAdd = updateUserBody.UserGroups
+		userOpts.Body = body
+		_, httpResp, err = c.UserApi.AddUserToUserGroups(ctx, c.AccountId, d.Get("identifier").(string), &userOpts)
 	}
 
 	if err != nil {
@@ -258,6 +266,16 @@ func createAddUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
 		addUsersDto.RoleBindings = roleBindings
 	} else {
 		addUsersDto.RoleBindings = []nextgen.RoleBinding{}
+	}
+
+	return &addUsersDto
+}
+
+func createUpdateUserBody(d *schema.ResourceData) *nextgen.AddUsersDto {
+	var addUsersDto nextgen.AddUsersDto
+
+	if attr, ok := d.GetOk("user_groups"); ok {
+		addUsersDto.UserGroups = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
 	return &addUsersDto
