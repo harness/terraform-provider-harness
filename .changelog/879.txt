@@ -1,0 +1,6 @@
+```release-note:new-resource
+platform_repo_rule_branch
+```
+```release-note:new-resource
+platform_repo
+```

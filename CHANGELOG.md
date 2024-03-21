@@ -1,3 +1,47 @@
+# 0.30.6 (March 18,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_infrastructures: Added supprt for creating/Updating remote Infrastructures and import from git for Infrastructures. ([#931](https://github.com/harness/terraform-provider-harness/issues/931))
+
+BUG FIXES:
+
+* fix resource and data source for environment to gitops cluster mapping ([#954](https://github.com/harness/terraform-provider-harness/issues/954))
+
+# 0.30.5 (March 07,2024) 
+
+FEATURES:
+
+* **New Resource:** `platform_repo` ([#879](https://github.com/harness/terraform-provider-harness/issues/879))
+* **New Resource:** `platform_repo_rule_branch` ([#879](https://github.com/harness/terraform-provider-harness/issues/879))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_kubernetes: Added support for ca_cert_ref in kubernetes connector cluster. ([#928](https://github.com/harness/terraform-provider-harness/issues/928))
+* harness_platform_environment: Added supprt for creating/Updating remote Environment and import from git for Environment. ([#929](https://github.com/harness/terraform-provider-harness/issues/929))
+* harness_platform_service: Added supprt for creating/Updating remote services and import from git for service. ([#927](https://github.com/harness/terraform-provider-harness/issues/927))
+* harness_platform_service_overrides_v2: Added supprt for creating/Updating remote Overrides and import from git for Overrides. ([#930](https://github.com/harness/terraform-provider-harness/issues/930))
+
+# 0.30.4 (February 28,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_applications: The Path field was required. It has been updated to optional. ([#926](https://github.com/harness/terraform-provider-harness/issues/926))
+* resource/harness_platform_connector_aws: added support for OIDC Auth in AWS connector. ([#925](https://github.com/harness/terraform-provider-harness/issues/925))
+
+# 0.30.3 (February 27,2024) 
+
+ENHANCEMENTS:
+
+* platform_connector_github.md - Added documentation for github http anonymous connector
+resource.tf - Example of github http anonymous resource for github connector
+go.mod - upgraded harness-go-sdk version to v0.3.74
+github.go - Added Schema and CRUD for github anonymous http credentials in github connector
+github_test.go - Test for schema and CRUD for github anonymous http credentials in github connector
+github_data_source.go - Added Schema for github anonymous http credentials in github connector
+github_data_source_test.go - Added  test for Schema of github anonymous http  credentials in github connector ([#886](https://github.com/harness/terraform-provider-harness/issues/886))
+* resource/harness_platform_project: where project and org is required, new resources are created on updating scope. ([#902](https://github.com/harness/terraform-provider-harness/issues/902))
+
 # 0.30.2 (January 23,2024) 
 
 ENHANCEMENTS:

@@ -150,6 +150,14 @@ func DatasourceConnectorGithub() *schema.Resource {
 											},
 										},
 									},
+									"anonymous": {
+										Description: "Configuration for using the github http anonymous for interacting with the github api.",
+										Type:        schema.TypeList,
+										Computed:    true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
+										},
+									},
 								},
 							},
 						},
