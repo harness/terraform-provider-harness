@@ -1,3 +1,13 @@
+# 0.30.6 (March 18,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_infrastructures: Added supprt for creating/Updating remote Infrastructures and import from git for Infrastructures. ([#931](https://github.com/harness/terraform-provider-harness/issues/931))
+
+BUG FIXES:
+
+* fix resource and data source for environment to gitops cluster mapping ([#954](https://github.com/harness/terraform-provider-harness/issues/954))
+
 # 0.30.5 (March 07,2024) 
 
 FEATURES:
