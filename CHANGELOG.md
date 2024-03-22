@@ -1,3 +1,9 @@
+# 0.30.7 (March 22,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_user: added support for update for user groups for user entity ([#957](https://github.com/harness/terraform-provider-harness/issues/957))
+
 # 0.30.6 (March 18,2024) 
 
 ENHANCEMENTS:
