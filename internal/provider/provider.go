@@ -3,9 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
-	"log"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
@@ -200,6 +201,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_monitored_service":               monitored_service.DataSourceMonitoredService(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
+				"harness_platform_pipeline_list":                   pipeline.DataSourcePipelineList(),
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                         project.DataSourceProject(),
 				"harness_platform_project_list":                    project.DataSourceProjectList(),
