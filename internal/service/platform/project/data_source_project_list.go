@@ -35,6 +35,14 @@ func DataSourceProjectList() *schema.Resource {
 					},
 				},
 			},
+			"page": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"limit": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 		},
 	}
 
@@ -50,9 +58,27 @@ func dataSourceProjectListRead(ctx context.Context, d *schema.ResourceData, meta
 
 	var err error
 	var httpResp *http.Response
+	page := d.Get("page").(int)
+
+	var opt *nextgen.ProjectApiGetProjectListOpts
+
+	if limit, ok := d.GetOk("limit"); ok {
+		// Include the limit parameter in the API call
+		opt = &nextgen.ProjectApiGetProjectListOpts{
+			OrgIdentifier: optional.NewString(orgId),
+			PageIndex:     optional.NewInt32(int32(page)),
+			PageSize:      optional.NewInt32(int32(limit.(int))),
+		}
+	} else {
+		// Exclude the limit parameter if it's not provided
+		opt = &nextgen.ProjectApiGetProjectListOpts{
+			OrgIdentifier: optional.NewString(orgId),
+			PageIndex:     optional.NewInt32(int32(page)),
+		}
+	}
 
 	var resp nextgen.ResponseDtoPageResponseProjectResponse
-	resp, httpResp, err = c.ProjectApi.GetProjectList(ctx, c.AccountId, &nextgen.ProjectApiGetProjectListOpts{OrgIdentifier: optional.NewString(orgId)})
+	resp, httpResp, err = c.ProjectApi.GetProjectList(ctx, c.AccountId, opt)
 	var output []nextgen.ProjectResponse = resp.Data.Content
 	var projects []map[string]interface{}
 	for _, v := range output {
