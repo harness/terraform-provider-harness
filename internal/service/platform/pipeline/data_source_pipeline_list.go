@@ -35,6 +35,14 @@ func DataSourcePipelineList() *schema.Resource {
 					},
 				},
 			},
+			"page": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"limit": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 		},
 	}
 
@@ -51,11 +59,13 @@ func dataSourcePipelineListRead(ctx context.Context, d *schema.ResourceData, met
 
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
+	page := d.Get("page").(int)
+	limit := d.Get("limit").(int)
 
 	resp, httpResp, err := c.PipelinesApi.ListPipelines(ctx,
 		org_id,
 		project_id,
-		&nextgen.PipelinesApiListPipelinesOpts{HarnessAccount: optional.NewString(c.AccountId)},
+		&nextgen.PipelinesApiListPipelinesOpts{HarnessAccount: optional.NewString(c.AccountId), Page: optional.NewInt32(int32(page)), Limit: optional.NewInt32(int32(limit))},
 	)
 
 	var output = resp

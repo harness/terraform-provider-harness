@@ -12,10 +12,23 @@ Data source for retrieving a Harness pipeline list.
 
 ## Example Usage
 
+### Without the Pagination
+
 ```terraform
 data "harness_platform_pipeline_list" "example" {
   org_id     = "org_id"
   project_id = "project_id"
+}
+```
+
+### With Pagination Logic
+
+```terraform
+data "harness_platform_pipeline_list" "example" {
+  org_id     = "org_id"
+  project_id = "project_id"
+  page = 1
+  limit = 4
 }
 ```
 
@@ -26,7 +39,10 @@ data "harness_platform_pipeline_list" "example" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 
-### All fields are required, as pipeline are a part of project.
+### Optional
+
+- `page` (int) Optional pagination parameter indicating the page number when retrieving entities. 
+- `limit` (int) Optional pagination parameter indicating the maximum number of entities to retrieve per page.
 
 ### Read-Only
 
