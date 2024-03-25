@@ -60,13 +60,25 @@ func dataSourcePipelineListRead(ctx context.Context, d *schema.ResourceData, met
 	org_id := d.Get("org_id").(string)
 	project_id := d.Get("project_id").(string)
 	page := d.Get("page").(int)
-	limit := d.Get("limit").(int)
 
-	resp, httpResp, err := c.PipelinesApi.ListPipelines(ctx,
-		org_id,
-		project_id,
-		&nextgen.PipelinesApiListPipelinesOpts{HarnessAccount: optional.NewString(c.AccountId), Page: optional.NewInt32(int32(page)), Limit: optional.NewInt32(int32(limit))},
-	)
+	var opt *nextgen.PipelinesApiListPipelinesOpts
+
+	if limit, ok := d.GetOk("limit"); ok {
+		// Include the limit parameter in the API call
+		opt = &nextgen.PipelinesApiListPipelinesOpts{
+			HarnessAccount: optional.NewString(c.AccountId),
+			Page:           optional.NewInt32(int32(page)),
+			Limit:          optional.NewInt32(int32(limit.(int))),
+		}
+	} else {
+		// Exclude the limit parameter if it's not provided
+		opt = &nextgen.PipelinesApiListPipelinesOpts{
+			HarnessAccount: optional.NewString(c.AccountId),
+			Page:           optional.NewInt32(int32(page)),
+		}
+	}
+
+	resp, httpResp, err := c.PipelinesApi.ListPipelines(ctx, org_id, project_id, opt)
 
 	var output = resp
 	var pipelines []map[string]interface{}
