@@ -204,6 +204,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_pipeline_list":                   pipeline.DataSourcePipelineList(),
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                         project.DataSourceProject(),
+				"harness_platform_project_list":                    project.DataSourceProjectList(),
 				"harness_platform_service":                         pl_service.DataSourceService(),
 				"harness_platform_service_list":                    pl_service.DataSourceServiceList(),
 				"harness_platform_usergroup":                       usergroup.DataSourceUserGroup(),
