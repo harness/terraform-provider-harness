@@ -45,6 +45,12 @@ func ResourceConnectorBitbucket() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the BitBucket api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
@@ -182,6 +188,10 @@ func buildConnectorBitbucket(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.BitBucket.Url = attr.(string)
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.BitBucket.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
 		connector.BitBucket.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
@@ -258,6 +268,7 @@ func readConnectorBitbucket(d *schema.ResourceData, connector *nextgen.Connector
 	d.Set("url", connector.BitBucket.Url)
 	d.Set("connection_type", connector.BitBucket.Type_.String())
 	d.Set("delegate_selectors", connector.BitBucket.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.BitBucket.ExecuteOnDelegate)
 	d.Set("validation_repo", connector.BitBucket.ValidationRepo)
 
 	if connector.BitBucket.Authentication != nil {
