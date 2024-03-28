@@ -71,3 +71,19 @@ resource "harness_platform_connector_aws" "aws" {
     retry_count   = 3
   }
 }
+
+
+# Create Aws connector using Oidc Authentication
+
+resource "harness_platform_connector_aws" "aws" {
+  identifier  = "example_aws_connector"
+  name        = "Example aws connector"
+  description = "description of aws connector"
+  tags        = ["foo:bar"]
+
+  oidc_authentication {
+    iam_role_arn       = "test"
+    delegate_selectors = ["harness-delegate"]
+    region             = "aws_region"
+  }
+}

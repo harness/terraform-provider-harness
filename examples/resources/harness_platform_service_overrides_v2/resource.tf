@@ -5,6 +5,16 @@ resource "harness_platform_service_overrides_v2" "test" {
   service_id = "serviceIdentifier"
   infra_id   = "infraIdentifier"
   type       = "INFRA_SERVICE_OVERRIDE"
+
+  ## Git Details are required in case the overrides are remote
+    git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
   yaml       = <<-EOT
     variables:
       - name: var1
@@ -30,4 +40,23 @@ resource "harness_platform_service_overrides_v2" "test" {
                 files:
                   - account:/manifestFile1
   EOT
+}
+
+### Importing Service from Git
+  resource "harness_platform_service_overrides_v2" "test" {
+          org_id     = "orgIdentifier"
+          project_id = "projectIdentifier"
+          env_id     = "environmentIdentifier"
+          service_id = "serviceIdentifier"
+          infra_id = "infraIdentifier"
+          type       = "INFRA_SERVICE_OVERRIDE"
+          import_from_git = "true"
+          git_details {
+            store_type = "REMOTE"
+            connector_ref = "connector_ref"
+            repo_name = "repo_name"
+            file_path = "file_path"
+            branch = "branch"
+            }
+            
 }

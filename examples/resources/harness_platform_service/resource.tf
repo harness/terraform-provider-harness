@@ -4,6 +4,14 @@ resource "harness_platform_service" "example" {
   description = "test"
   org_id      = "org_id"
   project_id  = "project_id"
+  git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
 
   ## SERVICE V2 UPDATE
   ## We now take in a YAML that can define the service definition for a given Service
@@ -51,3 +59,20 @@ resource "harness_platform_service" "example" {
                   gitOpsEnabled: false
               EOT
 }
+
+### Importing Service from Git
+ resource "harness_platform_service" "test" {
+    identifier  = "id"
+    name = "name"
+    org_id = "org_id"
+    project_id = "project_id"
+    import_from_git = "true"
+    git_details {
+    store_type = "REMOTE"
+    connector_ref = "account.DoNotDeleteGitX"
+    repo_name = "pcf_practice"
+    file_path = ".harness/accountService.yaml"
+    branch = "main"
+    }
+  }
+

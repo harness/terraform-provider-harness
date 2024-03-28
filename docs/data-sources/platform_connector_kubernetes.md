@@ -86,6 +86,7 @@ Read-Only:
 
 - `master_url` (String)
 - `service_account_token_ref` (String)
+- `ca_cert_ref` (String)
 
 
 <a id="nestedatt--username_password"></a>

@@ -3,15 +3,133 @@
 page_title: "harness_platform_service Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness project.
+  Resource for creating a Harness service.
 ---
 
 # harness_platform_service (Resource)
 
-Resource for creating a Harness project.
+Resource for creating a Harness service.
 
-## Example Usage
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- To understand more about service, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/services/services-overview/)
+- To understand how to create a service, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/services/create-services/)
 
+
+## Example to create Service at different levels (Org, Project, Account)
+
+### Account Level
+```terraform
+resource "harness_platform_service" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+
+  ## SERVICE V2 UPDATE
+  ## We now take in a YAML that can define the service definition for a given Service
+  ## It isn't mandatory for Service creation 
+  ## It is mandatory for Service use in a pipeline
+
+  yaml = <<-EOT
+                service:
+                  name: name
+                  identifier: identifier
+                  serviceDefinition:
+                    spec:
+                      manifests:
+                        - manifest:
+                            identifier: manifest1
+                            type: K8sManifest
+                            spec:
+                              store:
+                                type: Github
+                                spec:
+                                  connectorRef: <+input>
+                                  gitFetchType: Branch
+                                  paths:
+                                    - files1
+                                  repoName: <+input>
+                                  branch: master
+                              skipResourceVersioning: false
+                      configFiles:
+                        - configFile:
+                            identifier: configFile1
+                            spec:
+                              store:
+                                type: Harness
+                                spec:
+                                  files:
+                                    - <+org.description>
+                      variables:
+                        - name: var1
+                          type: String
+                          value: val1
+                        - name: var2
+                          type: String
+                          value: val2
+                    type: Kubernetes
+                  gitOpsEnabled: false
+              EOT
+}
+```
+
+### Org Level
+```terraform
+resource "harness_platform_service" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  org_id      = "org_id"
+
+  ## SERVICE V2 UPDATE
+  ## We now take in a YAML that can define the service definition for a given Service
+  ## It isn't mandatory for Service creation 
+  ## It is mandatory for Service use in a pipeline
+
+  yaml = <<-EOT
+                service:
+                  name: name
+                  identifier: identifier
+                  serviceDefinition:
+                    spec:
+                      manifests:
+                        - manifest:
+                            identifier: manifest1
+                            type: K8sManifest
+                            spec:
+                              store:
+                                type: Github
+                                spec:
+                                  connectorRef: <+input>
+                                  gitFetchType: Branch
+                                  paths:
+                                    - files1
+                                  repoName: <+input>
+                                  branch: master
+                              skipResourceVersioning: false
+                      configFiles:
+                        - configFile:
+                            identifier: configFile1
+                            spec:
+                              store:
+                                type: Harness
+                                spec:
+                                  files:
+                                    - <+org.description>
+                      variables:
+                        - name: var1
+                          type: String
+                          value: val1
+                        - name: var2
+                          type: String
+                          value: val2
+                    type: Kubernetes
+                  gitOpsEnabled: false
+              EOT
+}
+```
+
+### Project Level
 ```terraform
 resource "harness_platform_service" "example" {
   identifier  = "identifier"
@@ -68,6 +186,80 @@ resource "harness_platform_service" "example" {
 }
 ```
 
+### Creating Remote Service
+```terraform
+resource "harness_platform_service" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  org_id      = "org_id"
+  project_id  = "project_id"
+  git_details {
+    store_type = "REMOTE"
+    connector_ref = "connector_ref"
+    repo_name = "repo_name"
+    file_path = "file_path"
+    branch = "branch"
+    }
+  yaml = <<-EOT
+                service:
+                  name: name
+                  identifier: identifier
+                  serviceDefinition:
+                    spec:
+                      manifests:
+                        - manifest:
+                            identifier: manifest1
+                            type: K8sManifest
+                            spec:
+                              store:
+                                type: Github
+                                spec:
+                                  connectorRef: <+input>
+                                  gitFetchType: Branch
+                                  paths:
+                                    - files1
+                                  repoName: <+input>
+                                  branch: master
+                              skipResourceVersioning: false
+                      configFiles:
+                        - configFile:
+                            identifier: configFile1
+                            spec:
+                              store:
+                                type: Harness
+                                spec:
+                                  files:
+                                    - <+org.description>
+                      variables:
+                        - name: var1
+                          type: String
+                          value: val1
+                        - name: var2
+                          type: String
+                          value: val2
+                    type: Kubernetes
+                  gitOpsEnabled: false
+              EOT
+}
+```
+
+### Importing Service From Git
+```terraform
+resource "harness_platform_service" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  import_from_git = "true"
+  git_details {
+    store_type = "REMOTE"
+    connector_ref = "connector_ref"
+    repo_name = "repo_name"
+    file_path = "file_path"
+    branch = "branch"
+  }
+}
+```
+
 <!-- schema generated by tfplugindocs -->
 ## Schema
 
@@ -84,10 +276,30 @@ resource "harness_platform_service" "example" {
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
 - `yaml` (String) Service YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
-
+- `git_details` (Block List, Max: 1) Contains Git Information for remote entities from Git for Create/Update/Import (see [below for nested schema](#nestedblock--git_details))
+- `import_from_git` (Boolean) Flag to set if importing from Git
+- `is_force_import` (Boolean) Flag to set if force importing from Git
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
+
+Optional:
+
+- `branch_name` (String) Name of the branch.
+- `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `file_path` (String) File path of the Entity in the repository.
+- `repo_name` (String) Name of the repository.
+- `store_type` (String) store type of the entity.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Service.
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Service.
+- `is_harness_code_repo` (Boolean) If the repo is in harness code.
+- `commit_message` (String) message for the commit in Git Repo.
+- `load_from_fallback_branch` Whether the file has to be get from fallback_branch.
+
 
 ## Import
 

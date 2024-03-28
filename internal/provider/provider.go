@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
@@ -18,6 +21,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -67,6 +71,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
@@ -114,13 +119,13 @@ func Provider(version string) func() *schema.Provider {
 				"endpoint": {
 					Description: fmt.Sprintf("The URL of the Harness API endpoint. The default is `https://app.harness.io/gateway`. This can also be set using the `%s` environment variable.", helpers.EnvVars.Endpoint.String()),
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.Endpoint.String(), utils.BaseUrl),
 				},
 				"account_id": {
 					Description: fmt.Sprintf("The Harness account id. This can also be set using the `%s` environment variable.", helpers.EnvVars.AccountId.String()),
 					Type:        schema.TypeString,
-					Required:    true,
+					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc(helpers.EnvVars.AccountId.String(), nil),
 				},
 				"api_key": {
@@ -177,6 +182,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
+				"harness_platform_environment_list":                pl_environment.DataSourceEnvironmentList(),
 				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
@@ -195,9 +201,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_monitored_service":               monitored_service.DataSourceMonitoredService(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
+				"harness_platform_pipeline_list":                   pipeline.DataSourcePipelineList(),
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                         project.DataSourceProject(),
+				"harness_platform_project_list":                    project.DataSourceProjectList(),
 				"harness_platform_service":                         pl_service.DataSourceService(),
+				"harness_platform_service_list":                    pl_service.DataSourceServiceList(),
 				"harness_platform_usergroup":                       usergroup.DataSourceUserGroup(),
 				"harness_platform_secret_text":                     secret.DataSourceSecretText(),
 				"harness_platform_secret_file":                     secret.DataSourceSecretFile(),
@@ -251,6 +260,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
+				"harness_platform_repo":                            repo.DataSourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
+				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -381,6 +393,9 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
+				"harness_platform_repo":                            repo.ResourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
+				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
 			},
 		}
 
@@ -450,15 +465,30 @@ func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.A
 	return client
 }
 
+func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
+	cfg := code.NewConfiguration()
+	client := code.NewAPIClient(&code.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/code/api/v1", // todo: this should be fixed in go sdk later
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)}, // todo: this should be fixed in go sdk later
+		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return &internal.Session{
-			AccountId: d.Get("account_id").(string),
-			Endpoint:  d.Get("endpoint").(string),
-			CDClient:  getCDClient(d, version),
-			PLClient:  getPLClient(d, version),
-			Client:    getClient(d, version),
+			AccountId:  d.Get("account_id").(string),
+			Endpoint:   d.Get("endpoint").(string),
+			CDClient:   getCDClient(d, version),
+			PLClient:   getPLClient(d, version),
+			Client:     getClient(d, version),
+			CodeClient: getCodeClient(d, version),
 		}, nil
 	}
 }

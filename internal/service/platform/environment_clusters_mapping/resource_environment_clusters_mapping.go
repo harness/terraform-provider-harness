@@ -3,6 +3,7 @@ package cluster
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -20,11 +21,13 @@ func ResourceEnvironmentClustersMapping() *schema.Resource {
 		DeleteContext: resourceEnvironmentClustersMappingDelete,
 		CreateContext: resourceEnvironmentClustersMappingClusterLink,
 		UpdateContext: resourceEnvironmentClustersMappingClusterLink,
-		Importer:      helpers.ProjectResourceImporter,
+		// TODO: Implement Importer
+		Importer: helpers.ProjectResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "identifier of the cluster.",
+				// this identifier is not used anywhere and has no meaning for the resource either but keeping it maintain backward compatibility
+				Description: "identifier for the cluster mapping(can be given any value).",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -34,17 +37,17 @@ func ResourceEnvironmentClustersMapping() *schema.Resource {
 				Required:    true,
 			},
 			"org_id": {
-				Description: "org_id of the cluster.",
+				Description: "org_id of the environment.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "project_id of the cluster.",
+				Description: "project_id of the environment.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"scope": {
-				Description: "scope at which the cluster exists in harness gitops",
+				Description: "scope at which the environment exists in harness.",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -55,7 +58,7 @@ func ResourceEnvironmentClustersMapping() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"identifier": {
-							Description: "account Identifier of the account",
+							Description: "identifier of the cluster",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -64,8 +67,13 @@ func ResourceEnvironmentClustersMapping() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
+						"agent_identifier": {
+							Description: "agent identifier of the cluster (include scope prefix)",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"scope": {
-							Description: "scope at which the cluster exists in harness gitops, project vs org vs account",
+							Description: "scope at which the cluster exists in harness gitops, one of \"ACCOUNT\", \"ORGANIZATION\", \"PROJECT\". Scope of environment to which clusters are being mapped must be lower or equal to in hierarchy than the scope of the cluster",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -80,10 +88,14 @@ func resourceEnvironmentClustersMappingRead(ctx context.Context, d *schema.Resou
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	envId := d.Get("env_id").(string)
-	resp, httpResp, err := c.ClustersApi.GetClusterList(ctx, c.AccountId, envId, &nextgen.ClustersApiGetClusterListOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-	})
+	clustersApiGetClusterListOpts := &nextgen.ClustersApiGetClusterListOpts{}
+	if d.Get("org_id").(string) != "" {
+		clustersApiGetClusterListOpts.OrgIdentifier = optional.NewString(d.Get("org_id").(string))
+	}
+	if d.Get("project_id").(string) != "" {
+		clustersApiGetClusterListOpts.ProjectIdentifier = optional.NewString(d.Get("project_id").(string))
+	}
+	resp, httpResp, err := c.ClustersApi.GetClusterList(ctx, c.AccountId, envId, clustersApiGetClusterListOpts)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -97,17 +109,20 @@ func resourceEnvironmentClustersMappingRead(ctx context.Context, d *schema.Resou
 		return nil
 	}
 
-	readEnvironmentClustersMappingCluster(d, &resp.Data.Content[0])
+	readEnvironmentClustersMapping(d, &resp.Data.Content)
 
 	return nil
 }
 
 func resourceEnvironmentClustersMappingDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	envId := d.Get("env_id").(string)
-	_, httpResp, err := c.ClustersApi.DeleteCluster(ctx, d.Id(), c.AccountId, envId, &nextgen.ClustersApiDeleteClusterOpts{
-		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
-		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+
+	var err error
+	var httpResp *http.Response
+	env := buildEnvironmentClustersMappingCluster(d)
+
+	_, httpResp, err = c.ClustersApi.UnlinkClustersInBatch(ctx, c.AccountId, &nextgen.ClustersApiUnlinkClustersInBatchOpts{
+		Body: optional.NewInterface(env),
 	})
 
 	if err != nil {
@@ -133,6 +148,7 @@ func resourceEnvironmentClustersMappingClusterLink(ctx context.Context, d *schem
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
+	// only resource id needs to be set since api from sdk doesn't return any other information during batch link clusters
 	readEnvironmentClustersMappingLinkedCluster(d, resp.Data)
 	return nil
 }
@@ -152,7 +168,11 @@ func ExpandEnvironmentClustersMappingCluster(clusterBasicDTO []interface{}) []ne
 		v := cluster.(map[string]interface{})
 
 		var resultcluster nextgen.ClusterBasicDto
-		resultcluster.Identifier = v["identifier"].(string)
+		// remove prefix because while deletion tf resource reads from get API
+		//which returns like (account.clusterid) but (clusterid) only needs to be sent for delete
+
+		resultcluster.Identifier = removeScopePrefix(v["identifier"].(string))
+		resultcluster.AgentIdentifier = v["agent_identifier"].(string)
 		resultcluster.Name = v["name"].(string)
 		resultcluster.Scope = v["scope"].(string)
 		result = append(result, resultcluster)
@@ -160,14 +180,35 @@ func ExpandEnvironmentClustersMappingCluster(clusterBasicDTO []interface{}) []ne
 	return result
 }
 
-func readEnvironmentClustersMappingCluster(d *schema.ResourceData, cl *nextgen.ClusterResponse) {
-	d.Set("identifier", cl.ClusterRef)
-	d.Set("org_id", cl.OrgIdentifier)
-	d.Set("project_id", cl.ProjectIdentifier)
-	d.Set("env_id", cl.EnvRef)
-	d.Set("scope", cl.Scope)
+func readEnvironmentClustersMapping(d *schema.ResourceData, clusters *[]nextgen.ClusterResponse) {
+	d.SetId(d.Get("org_id").(string) + d.Get("project_id").(string) + d.Get("env_id").(string))
+	if clusterSet := flattenClusters(*clusters); len(clusterSet) > 0 {
+		d.Set("clusters", clusterSet)
+	}
+}
+
+func flattenClusters(clusters []nextgen.ClusterResponse) []map[string]interface{} {
+	if len(clusters) == 0 {
+		return make([]map[string]interface{}, 0)
+	}
+	var results = make([]map[string]interface{}, len(clusters))
+	for i, cluster := range clusters {
+		results[i] = map[string]interface{}{
+			"identifier":       cluster.ClusterRef,
+			"name":             cluster.Name,
+			"agent_identifier": cluster.AgentIdentifier,
+			"scope":            cluster.Scope,
+		}
+	}
+
+	return results
+
 }
 
 func readEnvironmentClustersMappingLinkedCluster(d *schema.ResourceData, cl *nextgen.ClusterBatchResponse) {
-	d.SetId("123456") //temp id unitl we get gitops agent and cluster utility setup
+	d.SetId(d.Get("org_id").(string) + d.Get("project_id").(string) + d.Get("env_id").(string))
+}
+
+func removeScopePrefix(identifier string) string {
+	return identifier[strings.Index(identifier, ".")+1:]
 }

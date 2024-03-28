@@ -66,7 +66,7 @@ resource "harness_platform_user" "example" {
 ### Required
 
 - `email` (String) The email of the user.
-- `user_groups` (Set of String) The user group of the user. Cannot be updated.
+- `user_groups` (Set of String) The user group of the user.
 
 ### Optional
 

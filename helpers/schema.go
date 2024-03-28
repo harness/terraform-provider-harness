@@ -57,6 +57,11 @@ func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 		Description: "Unique identifier of the project.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
@@ -66,6 +71,11 @@ func GetOrgIdSchema(flag SchemaFlagType) *schema.Schema {
 		Description: "Unique identifier of the organization.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
@@ -129,6 +139,11 @@ func SetProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
 }
 
+func SetOptionalOrgAndProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+}
+
 // SetOrgLevelResourceSchema sets the default schema objects used for org level resources.
 func SetOrgLevelResourceSchema(s map[string]*schema.Schema) {
 	SetCommonResourceSchema(s)
@@ -157,6 +172,12 @@ func SetMultiLevelDatasourceSchema(s map[string]*schema.Schema) {
 
 func SetMultiLevelDatasourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
 	SetCommonDataSourceSchemaIdentifierRequired(s)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"].RequiredWith = []string{"org_id"}
+}
+
+func SetMultiLevelDatasourceSchemaWithoutCommonFields(s map[string]*schema.Schema) {
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
 	s["project_id"].RequiredWith = []string{"org_id"}
@@ -351,6 +372,38 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 			d.Set("org_id", parts[0])
 			d.Set("project_id", parts[1])
 			d.Set("agent_id", parts[2])
+			d.Set("identifier", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+// The id used for the import should be in the format <org_id>/<project_id>/<repoIdentifier>/<identifier>
+var RepoRuleResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		if len(parts) == 2 { //Account level
+			d.Set("repo_identifier", parts[0])
+			d.Set("identifier", parts[1])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("repo_identifier", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("repo_identifier", parts[2])
 			d.Set("identifier", parts[3])
 			d.SetId(parts[3])
 			return []*schema.ResourceData{d}, nil
