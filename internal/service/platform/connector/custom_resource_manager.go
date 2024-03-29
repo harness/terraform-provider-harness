@@ -2,10 +2,12 @@ package connector
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
+	"github.com/harness/terraform-provider-harness/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -13,9 +15,9 @@ import (
 func ResourceConnectorCSM() *schema.Resource {
 	resource := &schema.Resource{
 		Description:   "Resource for creating a Custom Secrets Manager (CSM) connector.",
-		ReadContext:   resourceConnectorCSMRead,
-		CreateContext: resourceConnectorCSMCreateOrUpdate,
-		UpdateContext: resourceConnectorCSMCreateOrUpdate,
+		ReadContext:   resourceConnectorCustomSMRead,
+		CreateContext: resourceConnectorCustomSMCreateOrUpdate,
+		UpdateContext: resourceConnectorCustomSMCreateOrUpdate,
 		DeleteContext: resourceConnectorDelete,
 		Importer:      helpers.MultiLevelResourceImporter,
 
@@ -50,13 +52,28 @@ func ResourceConnectorCSM() *schema.Resource {
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"template_script": {
+			"template_ref": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"version_label": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"target_host": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Host where the custom secrets manager is located, required if 'on_delegate' is false.",
+			},
+			"ssh_secret_ref": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "SSH secret reference for the custom secrets manager, required if 'on_delegate' is false.",
+			},
+			"working_directory": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The working directory for operations, required if 'on_delegate' is false.",
 			},
 			"template_inputs": {
 				Type:     schema.TypeList,
@@ -80,9 +97,10 @@ func ResourceConnectorCSM() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 									},
-									"useAsDefault": {
+									"default": {
 										Type:     schema.TypeBool,
-										Required: false,
+										Optional: true,
+										Default:  false,
 									},
 								},
 							},
@@ -108,8 +126,43 @@ func resourceConnectorCustomSMRead(ctx context.Context, d *schema.ResourceData, 
 		return nil
 	}
 
-	if err := readConnectorAwsSM(d, conn); err != nil {
+	if err := readConnectorCustomSM(d, conn); err != nil {
 		return diag.FromErr(err)
+	}
+
+	return nil
+}
+
+func readConnectorCustomSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
+	csm := connector.CustomSecretManager
+
+	d.Set("delegate_selectors", csm.DelegateSelectors)
+	d.Set("on_delegate", csm.OnDelegate)
+	// d.Set("template_ref", csm.Template.TemplateRef)
+	d.Set("template_ref", fmt.Sprintf("%s:%s", csm.Template.TemplateRef, csm.Template.VersionLabel)) // Include versionLabel
+	d.Set("timeout", csm.Timeout)
+
+	// Template inputs
+	if csm.Template.TemplateInputs != nil {
+		envVars := make([]interface{}, len(csm.Template.TemplateInputs["environmentVariables"]))
+		for i, v := range csm.Template.TemplateInputs["environmentVariables"] {
+			envVars[i] = map[string]interface{}{
+				"name":    v.Name,
+				"type":    v.Type_,
+				"value":   v.Value,
+				"default": v.UseAsDefault,
+			}
+		}
+		d.Set("template_inputs", map[string]interface{}{
+			"environment_variables": envVars,
+		})
+	}
+
+	// Fields when on_delegate is false
+	if !csm.OnDelegate {
+		d.Set("target_host", csm.Host)
+		d.Set("ssh_secret_ref", csm.ConnectorRef) // replaced "ssh_secret_ref" with "ConnectorRef"
+		d.Set("working_directory", csm.WorkingDirectory)
 	}
 
 	return nil
@@ -132,50 +185,79 @@ func resourceConnectorCustomSMCreateOrUpdate(ctx context.Context, d *schema.Reso
 	return nil
 }
 
-func resourceConnectorDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+// type CustomSecretManager struct {
+// 	DelegateSelectors []string                                  `json:"delegateSelectors,omitempty"`
+// 	OnDelegate        bool                                      `json:"onDelegate,omitempty"`
+// 	ConnectorRef      string                                    `json:"connectorRef,omitempty"`
+// 	Host              string                                    `json:"host,omitempty"`
+// 	WorkingDirectory  string                                    `json:"workingDirectory,omitempty"`
+// 	Template          *TemplateLinkConfigForCustomSecretManager `json:"template"`
+// 	Timeout           int64                                     `json:"timeout,omitempty"`
+// 	Default_          bool                                      `json:"default,omitempty"`
+// }
 
-	_, httpResp, err := c.ConnectorsApi.DeleteConnector(ctx, c.AccountId, d.Id(), &nextgen.ConnectorsApiDeleteConnectorOpts{
-		OrgIdentifier:     helpers.BuildField(d, "org_id"),
-		ProjectIdentifier: helpers.BuildField(d, "project_id"),
-		ForceDelete:       helpers.BuildFieldBool(d, "force_delete")})
-
-	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
+	connector := &nextgen.ConnectorInfo{
+		Type_:               nextgen.ConnectorTypes.CustomSecretManager,
+		CustomSecretManager: &nextgen.CustomSecretManager{},
 	}
 
-	return nil
-}
+	if attr, ok := d.GetOk("timeout"); ok {
+		connector.CustomSecretManager.Timeout = attr.(int64)
+	}
 
-func readConnectorCustomSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
-	csm := connector.CustomSecretManager
+	if attr, ok := d.GetOk("on_delegate"); ok {
+		connector.CustomSecretManager.OnDelegate = attr.(bool)
+	}
 
-	// Set common fields
-	d.Set("template_script", csm.TemplateScript)
-	d.Set("version_label", csm.VersionLabel)
-	d.Set("on_delegate", csm.OnDelegate)
-
-	// Template inputs
-	if csm.TemplateInputs != nil {
-		envVars := make([]interface{}, len(csm.TemplateInputs.EnvironmentVariables))
-		for i, v := range csm.TemplateInputs.EnvironmentVariables {
-			envVars[i] = map[string]interface{}{
-				"name":  v.Name,
-				"type":  v.Type,
-				"value": v.Value,
-			}
+	if attr, ok := d.GetOk("template_ref"); ok {
+		templateRef := attr.(string)
+		splitRef := strings.Split(templateRef, ":")
+		if len(splitRef) == 2 {
+			connector.CustomSecretManager.Template.TemplateRef = splitRef[0]
+			connector.CustomSecretManager.Template.VersionLabel = splitRef[1]
 		}
-		d.Set("template_inputs", map[string]interface{}{
-			"environment_variables": envVars,
-		})
 	}
 
-	// Fields when on_delegate is false
-	if !csm.OnDelegate {
-		d.Set("target_host", csm.TargetHost)
-		d.Set("ssh_secret_ref", csm.SshSecretRef)
-		d.Set("working_directory", csm.WorkingDirectory)
+	if attr, ok := d.GetOk("delegate_selectors"); ok {
+		connector.CustomSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
-	return nil
+	if attr, ok := d.GetOk("default"); ok {
+		connector.CustomSecretManager.Default_ = attr.(bool)
+	}
+
+	if attr, ok := d.GetOk("template_inputs"); ok {
+		templateInputs := attr.(map[string]interface{})
+		connector.CustomSecretManager.Template.TemplateInputs = make(map[string][]nextgen.NameValuePairWithDefault)
+
+		if envVars, ok := templateInputs["environment_variables"]; ok {
+			environmentVariables := make([]nextgen.NameValuePairWithDefault, len(envVars.([]interface{})))
+			for i, v := range envVars.([]interface{}) {
+				envVar := v.(map[string]interface{})
+				environmentVariables[i] = nextgen.NameValuePairWithDefault{
+					Name:         envVar["name"].(string),
+					Value:        envVar["value"].(string),
+					Type_:        envVar["type"].(string),
+					UseAsDefault: envVar["default"].(bool),
+				}
+			}
+			connector.CustomSecretManager.Template.TemplateInputs["environmentVariables"] = environmentVariables
+		}
+	}
+	if onDelegate, ok := d.GetOk("on_delegate"); ok && !onDelegate.(bool) {
+		if attr, ok := d.GetOk("working_directory"); ok {
+			connector.CustomSecretManager.WorkingDirectory = attr.(string)
+		}
+
+		if attr, ok := d.GetOk("ssh_secret_ref"); ok {
+			connector.CustomSecretManager.ConnectorRef = attr.(string)
+		}
+
+		if attr, ok := d.GetOk("target_host"); ok {
+			connector.CustomSecretManager.Host = attr.(string)
+		}
+	}
+
+	return connector
 }
