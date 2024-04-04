@@ -30,7 +30,6 @@ resource "harness_platform_feature_flag" "mybooleanflag" {
   }
 
   tags {
-    name       = "mytag"
     identifier = "mytag"
   }
 }
