@@ -1,3 +1,9 @@
+# 0.30.8 (April 04,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_variable: updated schema to forceNew for identifier, orgId and projectId ([#963](https://github.com/harness/terraform-provider-harness/issues/963))
+
 # 0.30.7 (March 22,2024) 
 
 ENHANCEMENTS:
