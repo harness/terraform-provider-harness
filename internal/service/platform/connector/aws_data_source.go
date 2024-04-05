@@ -32,6 +32,11 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"access_key_plain_text": {
+							Description: "The plain text AWS access key.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"delegate_selectors": {
 							Description: "Connect only use delegates with these tags.",
 							Type:        schema.TypeSet,
