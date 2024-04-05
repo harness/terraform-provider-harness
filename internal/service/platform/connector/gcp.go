@@ -2,6 +2,7 @@ package connector
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -21,15 +22,52 @@ func ResourceConnectorGcp() *schema.Resource {
 		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"oidc_configuration": {
+				Description:   "OIDC configuration for GCP connector",
+				Type:          schema.TypeList,
+				MaxItems:      1,
+				Optional:      true,
+				ConflictsWith: []string{"manual", "inherit_from_delegate"},
+				AtLeastOneOf: []string{
+					"inherit_from_delegate",
+					"manual",
+					"oidc_configuration",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"workload_pool_id": {
+							Description: "The workload pool id",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"provider_id": {
+							Description: "The provider id",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"gcp_project_id": {
+							Description: "The GCP project id",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"service_account_email": {
+							Description: "The service account email",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+					},
+				},
+			},
 			"manual": {
 				Description:   "Manual credential configuration.",
 				Type:          schema.TypeList,
 				MaxItems:      1,
 				Optional:      true,
-				ConflictsWith: []string{"inherit_from_delegate"},
+				ConflictsWith: []string{"inherit_from_delegate", "oidc_configuration"},
 				AtLeastOneOf: []string{
 					"inherit_from_delegate",
 					"manual",
+					"oidc_configuration",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -51,10 +89,11 @@ func ResourceConnectorGcp() *schema.Resource {
 				Type:          schema.TypeList,
 				Description:   "Inherit configuration from delegate.",
 				Optional:      true,
-				ConflictsWith: []string{"manual"},
+				ConflictsWith: []string{"manual", "oidc_configuration"},
 				AtLeastOneOf: []string{
 					"inherit_from_delegate",
 					"manual",
+					"oidc_configuration",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -127,6 +166,27 @@ func buildConnectorGcp(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		},
 	}
 
+	if attr, ok := d.GetOk("oidc_configuration"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Gcp.Credential.Type_ = "OidcAuthentication"
+		oidcConfig := &struct {
+			WorkloadPoolId      string `json:"workload_pool_id"`
+			ProviderId          string `json:"provider_id"`
+			GcpProjectId        string `json:"gcp_project_id"`
+			ServiceAccountEmail string `json:"service_account_email"`
+		}{
+			WorkloadPoolId:      config["workload_pool_id"].(string),
+			ProviderId:          config["provider_id"].(string),
+			GcpProjectId:        config["gcp_project_id"].(string),
+			ServiceAccountEmail: config["service_account_email"].(string),
+		}
+		b, _ := json.Marshal(oidcConfig)
+		connector.Gcp.Credential.Spec = b
+		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
+			connector.Gcp.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		}
+	}
+
 	if attr, ok := d.GetOk("manual"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.ManualConfig
@@ -161,6 +221,23 @@ func buildConnectorGcp(d *schema.ResourceData) *nextgen.ConnectorInfo {
 func readConnectorGcp(d *schema.ResourceData, connector *nextgen.ConnectorInfo) error {
 
 	switch connector.Gcp.Credential.Type_ {
+	// OIDC Type not added yet, pr here https://github.com/harness/harness-go-sdk/pull/519
+	case "OidcAuthentication":
+		oidcConfig := &struct {
+			WorkloadPoolId      string `json:"workload_pool_id"`
+			ProviderId          string `json:"provider_id"`
+			GcpProjectId        string `json:"gcp_project_id"`
+			ServiceAccountEmail string `json:"service_account_email"`
+		}{}
+		json.Unmarshal(connector.Gcp.Credential.Spec, oidcConfig)
+		d.Set("oidc_configuration", []map[string]interface{}{
+			{
+				"workload_pool_id":      oidcConfig.WorkloadPoolId,
+				"provider_id":           oidcConfig.ProviderId,
+				"gcp_project_id":        oidcConfig.GcpProjectId,
+				"service_account_email": oidcConfig.ServiceAccountEmail,
+			},
+		})
 	case nextgen.GcpAuthTypes.ManualConfig:
 		d.Set("manual", []map[string]interface{}{
 			{

@@ -40,6 +40,40 @@ func TestAccResourceConnectorGcp_Inherit(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorGcp_Oidc(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_gcp.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorGcp_oidc(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_configuration.0.workload_pool_id", "testworkloadpoolid"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_configuration.0.provider_id", "testproviderid"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_configuration.0.gcp_project_id", "testprojectid"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_configuration.0.service_account_email", "test@test.com"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorGcp_Manual(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -168,6 +202,24 @@ func testAccResourceConnectorGcp_force_delete(id string, name string) string {
 			}
 
 			force_delete = true
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorGcp_oidc(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_gcp" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			oidc_configuration {
+				workload_pool_id = "testworkloadpoolid"
+				provider_id = "testproviderid"
+				gcp_project_id = "testprojectid"
+				service_account_email = "test@test.com"
+			}
 		}
 `, id, name)
 }
