@@ -201,6 +201,68 @@ func TestAccResourceUser_DeleteUnderlyingResourceOrgLevel(t *testing.T) {
 	})
 }
 
+// New test case for user group updates
+func TestAccResourceUser_UpdateUserGroups(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	email := strings.ToLower(id) + "@harness.io"
+	resourceName := "harness_platform_user.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUserProjectLevel(id, name, email),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+				),
+			},
+			// Test case for adding user to user groups
+			{
+				Config: testAccResourceUserUpdateUserGroups(id, name, email, "demo"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "user_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_groups.0", "demo"),
+				),
+			},
+			// Test case for empty user groups list
+			{
+				Config: testAccResourceUserUpdateUserGroups(id, name, email, ""), // Empty user groups list
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "user_groups.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+func testAccResourceUserUpdateUserGroups(id string, name string, email string, userGroup string) string {
+	return fmt.Sprintf(`
+
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#0063F7"
+		}
+
+		resource "harness_platform_user" "test" {
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			email = "%[3]s"
+			user_groups = ["%[4]s"]
+		}
+	`, id, name, email, userGroup)
+}
+
 func buildField(r *terraform.ResourceState, field string) optional.String {
 	if attr, ok := r.Primary.Attributes[field]; ok {
 		return optional.NewString(attr)
