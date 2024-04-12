@@ -184,17 +184,6 @@ func resourceConnectorCustomSMCreateOrUpdate(ctx context.Context, d *schema.Reso
 	return nil
 }
 
-// type CustomSecretManager struct {
-// 	DelegateSelectors []string                                  `json:"delegateSelectors,omitempty"`
-// 	OnDelegate        bool                                      `json:"onDelegate,omitempty"`
-// 	ConnectorRef      string                                    `json:"connectorRef,omitempty"`
-// 	Host              string                                    `json:"host,omitempty"`
-// 	WorkingDirectory  string                                    `json:"workingDirectory,omitempty"`
-// 	Template          *TemplateLinkConfigForCustomSecretManager `json:"template"`
-// 	Timeout           int64                                     `json:"timeout,omitempty"`
-// 	Default_          bool                                      `json:"default,omitempty"`
-// }
-
 func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	connector := &nextgen.ConnectorInfo{
 		Type_:               nextgen.ConnectorTypes.CustomSecretManager,
@@ -217,15 +206,6 @@ func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	if attr, ok := d.GetOk("version"); ok {
 		connector.CustomSecretManager.Template.VersionLabel = attr.(string)
 	}
-
-	// if attr, ok := d.GetOk("template_ref"); ok {
-	// 	templateRef := attr.(string)
-	// 	splitRef := strings.Split(templateRef, ":")
-	// 	if len(splitRef) == 2 {
-	// 		connector.CustomSecretManager.Template.TemplateRef = splitRef[0]
-	// 		connector.CustomSecretManager.Template.VersionLabel = splitRef[1]
-	// 	}
-	// }
 
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
 		connector.CustomSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
