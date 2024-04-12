@@ -255,9 +255,9 @@ func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				}
 			}
 		}
-		name1 := make(map[string][]nextgen.NameValuePairWithDefault)
-		name1["environmentVariables"] = environmentVariables
-		connector.CustomSecretManager.Template.TemplateInputs = name1
+		template_set := make(map[string][]nextgen.NameValuePairWithDefault)
+		template_set["environmentVariables"] = environmentVariables
+		connector.CustomSecretManager.Template.TemplateInputs = template_set
 	}
 	if onDelegate, ok := d.GetOk("on_delegate"); ok && !onDelegate.(bool) {
 		if attr, ok := d.GetOk("working_directory"); ok {
