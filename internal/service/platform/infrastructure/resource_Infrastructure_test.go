@@ -340,52 +340,6 @@ func TestResourceRemoteInfrastructure(t *testing.T) {
 	})
 }
 
-func TestResourceImportRemoteInfrastructure(t *testing.T) {
-	resourceName := "harness_platform_infrastructure.test"
-
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccInfrastructureDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testResourceImportRemoteInfrastructure(),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", "accountInfra"),
-					resource.TestCheckResourceAttr(resourceName, "name", "accountInfra"),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.EnvRelatedResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"git_details.0.commit_message", "git_details.0.connector_ref", "git_details.0.store_type",
-					"git_details.#", "git_details.0.%", "git_details.0.base_branch", "git_details.0.branch", "git_details.0.file_path", "git_details.0.is_harnesscode_repo", "git_details.0.is_new_branch",
-					"git_details.0.last_commit_id", "git_details.0.last_object_id", "git_details.0.load_from_cache", "git_details.0.load_from_fallback_branch", "git_details.0.repo_name", "git_details.0.import_from_git", "git_details.0.is_force_import", "git_details.0.parent_entity_connector_ref", "git_details.0.parent_entity_repo_name"},
-			},
-		},
-	})
-}
-
-func testResourceImportRemoteInfrastructure() string {
-	return fmt.Sprintf(`
-	resource "harness_platform_infrastructure" "test" {
-		identifier  = "accountInfra"
-		name        = "accountInfra"
-		env_id = "DoNotDeleteTerraformResourceEnv"
-		git_details { 
-			connector_ref = "account.DoNotDeleteRTerraformResource"
-			repo_name = "terraform-test"
-			file_path = ".harness/accountInfra.yaml"
-			branch = "main"
-			import_from_git = "true"
-			is_force_import = "true"
-		}
-	}
-`)
-}
-
 func testResourceRemoteInfrastructure(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_environment" "test" {

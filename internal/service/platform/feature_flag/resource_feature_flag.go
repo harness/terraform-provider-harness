@@ -133,12 +133,12 @@ func ResourceFeatureFlag() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"variation": {
-										Description: "The identifier of the variation. Valid values are `enabled`, `disabled`",
+										Description: "The identifier of the variation",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
 									"targets": {
-										Description: "The targets of the rule",
+										Description: "The targets that should be served this variation",
 										Type:        schema.TypeList,
 										Optional:    true,
 										MinItems:    0,
@@ -234,10 +234,10 @@ type FFPutOpts struct {
 
 type Environment struct {
 	Identifier          string        `json:"identifier"`
-	DefaultOnVariation  string        `json:"defaultOnVariation"`
-	DefaultOffVariation string        `json:"defaultOffVariation"`
-	State               string        `json:"state"`
-	TargetRules         []TargetRules `json:"rules"`
+	DefaultOnVariation  string        `json:"defaultOnVariation,omitempty"`
+	DefaultOffVariation string        `json:"defaultOffVariation,omitempty"`
+	State               string        `json:"state,omitempty"`
+	TargetRules         []TargetRules `json:"rules,omitempty"`
 }
 
 type TFEnvironment struct {

@@ -141,7 +141,7 @@ func resourceRepoDelete(
 
 	id := d.Id()
 
-	resp, err := c.RepositoryApi.DeleteRepository(
+	_, resp, err := c.RepositoryApi.DeleteRepository(
 		ctx,
 		c.AccountId,
 		id,

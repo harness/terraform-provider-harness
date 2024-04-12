@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	resourceName = "harness_platform_repo_rule_branch.test"
-	description  = "example_description"
+	resourceName       = "harness_platform_repo_rule_branch.test"
+	description        = "example_description"
+	updatedDescription = "example_description_updated"
 )
 
 func TestProjResourceRepoRule(t *testing.T) {
@@ -30,6 +31,14 @@ func TestProjResourceRepoRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
+				),
+			},
+			{
+				Config: testProjResourceRepoRule(identifier, updatedDescription),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", "rule_"+identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", updatedDescription),
 					resource.TestCheckResourceAttr(resourceName, "policies.0.require_pull_request", "true"),
 				),
 			},

@@ -3,8 +3,10 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
 	"log"
+
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
@@ -199,8 +201,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_monitored_service":               monitored_service.DataSourceMonitoredService(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
+				"harness_platform_pipeline_list":                   pipeline.DataSourcePipelineList(),
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                         project.DataSourceProject(),
+				"harness_platform_project_list":                    project.DataSourceProjectList(),
 				"harness_platform_service":                         pl_service.DataSourceService(),
 				"harness_platform_service_list":                    pl_service.DataSourceServiceList(),
 				"harness_platform_usergroup":                       usergroup.DataSourceUserGroup(),
@@ -259,6 +263,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
 				"harness_platform_repo":                            repo.DataSourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
+				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -392,6 +397,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
 				"harness_platform_repo":                            repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
+				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
 			},
 		}
 

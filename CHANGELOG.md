@@ -1,3 +1,25 @@
+# 0.30.8 (April 04,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_variable: updated schema to forceNew for identifier, orgId and projectId ([#963](https://github.com/harness/terraform-provider-harness/issues/963))
+
+# 0.30.7 (March 22,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_user: added support for update for user groups for user entity ([#957](https://github.com/harness/terraform-provider-harness/issues/957))
+
+# 0.30.6 (March 18,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_infrastructures: Added supprt for creating/Updating remote Infrastructures and import from git for Infrastructures. ([#931](https://github.com/harness/terraform-provider-harness/issues/931))
+
+BUG FIXES:
+
+* fix resource and data source for environment to gitops cluster mapping ([#954](https://github.com/harness/terraform-provider-harness/issues/954))
+
 # 0.30.5 (March 07,2024) 
 
 FEATURES:

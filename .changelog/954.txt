@@ -1,0 +1,3 @@
+```release-note:bug
+fix resource and data source for environment to gitops cluster mapping
+```
