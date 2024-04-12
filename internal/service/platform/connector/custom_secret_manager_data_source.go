@@ -69,7 +69,7 @@ func DatasourceConnectorCustomSM() *schema.Resource {
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"environment_variables": {
+						"environment_variable": {
 							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{

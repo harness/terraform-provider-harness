@@ -2,7 +2,6 @@ package connector
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -137,8 +136,8 @@ func readConnectorCustomSM(d *schema.ResourceData, connector *nextgen.ConnectorI
 
 	d.Set("delegate_selectors", csm.DelegateSelectors)
 	d.Set("on_delegate", csm.OnDelegate)
-	// d.Set("template_ref", csm.Template.TemplateRef)
-	d.Set("template_ref", fmt.Sprintf("%s:%s", csm.Template.TemplateRef, csm.Template.VersionLabel)) // Include versionLabel
+	d.Set("template_ref", csm.Template.TemplateRef)
+	d.Set("template_ref", csm.Template.VersionLabel)
 	d.Set("timeout", csm.Timeout)
 
 	// Template inputs
@@ -157,10 +156,9 @@ func readConnectorCustomSM(d *schema.ResourceData, connector *nextgen.ConnectorI
 		})
 	}
 
-	// Fields when on_delegate is false
 	if !csm.OnDelegate {
 		d.Set("target_host", csm.Host)
-		d.Set("ssh_secret_ref", csm.ConnectorRef) // replaced "ssh_secret_ref" with "ConnectorRef"
+		d.Set("ssh_secret_ref", csm.ConnectorRef)
 		d.Set("working_directory", csm.WorkingDirectory)
 	}
 
@@ -176,7 +174,6 @@ func resourceConnectorCustomSMCreateOrUpdate(ctx context.Context, d *schema.Reso
 		return err
 	}
 
-	// Read the connector's current state and update the Terraform state accordingly
 	if err := readConnectorCustomSM(d, newConn); err != nil {
 		return diag.FromErr(err)
 	}
