@@ -254,6 +254,13 @@ func testAccResourceUserUpdateUserGroups(id string, name string, email string, u
 			color = "#0063F7"
 		}
 
+		resource "harness_platform_usergroup" "demo" {
+		    org_id     = harness_platform_organization.test.id
+		    project_id = harness_platform_project.test.id
+		    name       = "demo"
+			identifier = "demo"
+		}		
+
 		resource "harness_platform_user" "test" {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
