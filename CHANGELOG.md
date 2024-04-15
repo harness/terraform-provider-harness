@@ -1,6 +1,6 @@
 
-<a name="0.3.83"></a>
-## 0.3.83 (2024-03-21)
+<a name="0.3.84"></a>
+## 0.3.84 (2024-04-15)
 
 ### Added
 
@@ -13,6 +13,8 @@
 
 ### Release
 
+* Release version 0.3.83 03-21-2024
+* Release v0.3.83
 * Release version 0.3.78 03-21-2024
 * Release v0.3.78
 * Release version 0.3.82 03-18-2024
@@ -53,10 +55,4 @@
 * Release v0.3.65
 * Release version 0.3.64 11-27-2023
 * Release v0.3.64
-* Release version 0.3.63 11-24-2023
-* Release v0.3.63
-
-### Pull Requests
-
-* Merge pull request [#441](https://github.com/harness/harness-go-sdk/issues/441) from harness/SRM-16226
 
