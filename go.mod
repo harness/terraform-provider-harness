@@ -6,7 +6,7 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go v1.46.4
 	github.com/docker/docker v24.0.5+incompatible
-	github.com/harness/harness-go-sdk v0.3.83
+	github.com/harness/harness-go-sdk v0.3.84
 	github.com/harness/harness-openapi-go-client v0.0.19
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
@@ -15,6 +15,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.1
+	golang.org/x/oauth2 v0.18.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -74,7 +75,6 @@ require (
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/mod v0.16.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
-	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.19.0 // indirect
@@ -85,6 +85,6 @@ require (
 	gotest.tools/v3 v3.3.0 // indirect
 )
 
-// replace github.com/harness/harness-go-sdk => ../harness-go-sdk
+replace github.com/harness/harness-go-sdk => ../harness-go-sdk
 
 // replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client

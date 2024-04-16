@@ -396,6 +396,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_repo":                            repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
+				"harness_custom_secrets_manager":                   connector.ResourceConnectorCSM(),
 			},
 		}
 

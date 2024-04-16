@@ -79,66 +79,45 @@ resource "harness_platform_connector_aws_secret_manager" "test" {
 
 ### Required
 
-- `credentials` (Block List, Min: 1, Max: 1) Credentials to connect to AWS. (see [below for nested schema](#nestedblock--credentials))
-- `identifier` (String) Unique identifier of the resource.
-- `name` (String) Name of the resource.
-- `region` (String) The AWS region where the AWS Secret Manager is.
+- `identifier` (String): Unique identifier of the resource.
+- `name` (String): Name of the resource.
+- `type` (String): Type of the custom secrets manager, typically set to `CustomSecretManager`.
+- `on_delegate` (Boolean): Specifies whether the secrets manager runs on a Harness delegate.
+- `template_ref` (String): Reference to the template used for managing secrets.
 
 ### Optional
 
-- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
-- `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the organization.
-- `project_id` (String) Unique identifier of the project.
-- `secret_name_prefix` (String) A prefix to be added to all secrets.
-- `tags` (Set of String) Tags to associate with the resource.
-- `default` (Boolean) Use as Default Secrets Manager.
+- `description` (String): A brief description of what the resource does or is used for.
+- `timeout` (Number): Timeout in seconds for secrets management operations.
+- `tags` (Set of String): Tags to associate with the resource.
+- `version_label` (String): Version identifier of the secrets management template.
+- `target_host` (String): Host address where secrets will be managed. Required if `on_delegate` is set to false.
+- `ssh_secret_ref` (String): Reference to the Harness secret containing SSH credentials for the target host. Required if `on_delegate` is set to false.
+- `working_directory` (String): Directory path on the target host where secrets management tasks are performed. Required if `on_delegate` is set to false.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String): The ID of this resource.
 
-<a id="nestedblock--credentials"></a>
-### Nested Schema for `credentials`
+<a id="nestedblock--template_inputs"></a>
+### Nested Schema for `template_inputs`
 
-Optional:
-
-- `assume_role` (Block List, Max: 1) Connect using STS assume role. (see [below for nested schema](#nestedblock--credentials--assume_role))
-- `inherit_from_delegate` (Boolean) Inherit the credentials from from the delegate.
-- `manual` (Block List, Max: 1) Specify the AWS key and secret used for authenticating. (see [below for nested schema](#nestedblock--credentials--manual))
-
-<a id="nestedblock--credentials--assume_role"></a>
-### Nested Schema for `credentials.assume_role`
-
-Required:
-
-- `duration` (Number) The duration, in seconds, of the role session. The value can range from 900 seconds (15 minutes) to 3600 seconds (1 hour). By default, the value is set to 3600 seconds. An expiration can also be specified in the client request body. The minimum value is 1 hour.
-- `role_arn` (String) The ARN of the role to assume.
-
-Optional:
-
-- `external_id` (String) If the administrator of the account to which the role belongs provided you with an external ID, then enter that value.
-
-
-<a id="nestedblock--credentials--manual"></a>
-### Nested Schema for `credentials.manual`
-
-Required:
-
-- `access_key_ref` (String) The reference to the Harness secret containing the AWS access key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
-- `secret_key_ref` (String) The reference to the Harness secret containing the AWS secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `environment_variable` (Block, Repeatable): Specifies the environment variables needed for the secrets manager.
+  - `name` (String): The name of the environment variable.
+  - `value` (String): The value of the environment variable, typically set to `<+input>` to accept runtime input.
+  - `type` (String): The type of the variable (e.g., `String`, `Number`).
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import account level aws secret manager connector 
-terraform import harness_platform_connector_aws_secret_manager.example <connector_id>
+# Import account level custom secret manager connector
+terraform import harness_custom_secrets_manager.example <connector_id>
 
-# Import org level aws secret manager connector 
-terraform import harness_platform_connector_aws_secret_manager.example <ord_id>/<connector_id>
+# Import org level custom secret manager connector 
+terraform import harness_custom_secrets_manager.example <ord_id>/<connector_id>
 
-# Import project level aws secret manager connector 
-terraform import harness_platform_connector_aws_secret_manager.example <org_id>/<project_id>/<connector_id>
+# Import project level custom secret manager connector 
+terraform import harness_custom_secrets_manager.example <org_id>/<project_id>/<connector_id>
 ```
