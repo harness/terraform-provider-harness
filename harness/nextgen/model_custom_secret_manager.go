@@ -16,6 +16,6 @@ type CustomSecretManager struct {
 	Host              string                                    `json:"host,omitempty"`
 	WorkingDirectory  string                                    `json:"workingDirectory,omitempty"`
 	Template          *TemplateLinkConfigForCustomSecretManager `json:"template"`
-	Timeout           int64                                     `json:"timeout,omitempty"`
+	Timeout           int                                       `json:"timeout,omitempty"`
 	Default_          bool                                      `json:"default,omitempty"`
 }
