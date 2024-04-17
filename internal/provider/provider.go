@@ -178,6 +178,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_connector_pdc":                   connector.DatasourceConnectorPdc(),
+				"harness_platform_connector_custom_secret_manager": connector.DatasourceConnectorCustomSM(),
 				"harness_platform_current_account":                 pl_account.DataSourceCurrentAccount(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
