@@ -38,9 +38,9 @@ func ResourceConnectorAwsSM() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"default": {
-				Description:   "Use as Default Secrets Manager.",
-				Type:          schema.TypeBool,
-				Optional:      true,
+				Description: "Use as Default Secrets Manager.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"credentials": {
 				Description: "Credentials to connect to AWS.",
