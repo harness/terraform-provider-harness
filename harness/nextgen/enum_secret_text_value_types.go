@@ -3,11 +3,13 @@ package nextgen
 type SecretTextValueType string
 
 var SecretTextValueTypes = struct {
-	Inline    SecretTextValueType
-	Reference SecretTextValueType
+	Inline                    SecretTextValueType
+	Reference                 SecretTextValueType
+	CustomSecretManagerValues SecretTextValueType
 }{
-	Inline:    "Inline",
-	Reference: "Reference",
+	Inline:                    "Inline",
+	Reference:                 "Reference",
+	CustomSecretManagerValues: "CustomSecretManagerValues",
 }
 
 var SecretTextValueTypeValues = []string{
