@@ -30,13 +30,13 @@ func ResourceSecretText() *schema.Resource {
 				Description:  "This has details to specify if the secret value is Inline or Reference.",
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validation.StringInSlice([]string{"Reference", "Inline"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"Reference", "Inline", "CustomSecretManagerValues"}, false),
 			},
 			"value": {
 				Description: "Value of the Secret",
 				Sensitive:   true,
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"additional_metadata": {
 				Description: "Additional Metadata for the Secret",
