@@ -22,14 +22,18 @@ func ResourceConnectorGcp() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"manual": {
-				Description:   "Manual credential configuration.",
-				Type:          schema.TypeList,
-				MaxItems:      1,
-				Optional:      true,
-				ConflictsWith: []string{"inherit_from_delegate"},
+				Description: "Manual credential configuration.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"inherit_from_delegate",
+					"oidc_authentication",
+				},
 				AtLeastOneOf: []string{
 					"inherit_from_delegate",
 					"manual",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
@@ -52,13 +56,41 @@ func ResourceConnectorGcp() *schema.Resource {
 				},
 			},
 			"inherit_from_delegate": {
-				Type:          schema.TypeList,
-				Description:   "Inherit configuration from delegate.",
-				Optional:      true,
-				ConflictsWith: []string{"manual"},
+				Type:        schema.TypeList,
+				Description: "Inherit configuration from delegate.",
+				Optional:    true,
+				ConflictsWith: []string{
+					"manual",
+					"oidc_authentication",
+				},
 				AtLeastOneOf: []string{
 					"inherit_from_delegate",
 					"manual",
+					"oidc_authentication",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"delegate_selectors": {
+							Description: "The delegates to inherit the credentials from.",
+							Type:        schema.TypeSet,
+							Required:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
+			},
+			"oidc_authentication": {
+				Type:        schema.TypeList,
+				Description: "Authentication using harness oidc.",
+				Optional:    true,
+				ConflictsWith: []string{
+					"manual",
+					"inherit_from_delegate",
+				},
+				AtLeastOneOf: []string{
+					"inherit_from_delegate",
+					"manual",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
