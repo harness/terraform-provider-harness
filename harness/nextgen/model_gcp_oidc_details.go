@@ -9,12 +9,10 @@
  */
 package nextgen
 
-import "encoding/json"
-
-// This contains GCP connector credentials
-type GcpConnectorCredential struct {
-	Type_        GcpAuthType       `json:"type"`
-	ManualConfig *GcpManualDetails `json:"-,omitempty"`
-	OidcConfig   *GcpOidcDetails   `json:"-,omitempty"`
-	Spec         json.RawMessage   `json:"spec,omitempty"`
+// This contains GCP manual credentials details
+type GcpOidcDetails struct {
+	WorkloadPoolId      string `json:"workloadPoolId"`
+	ProviderId          string `json:"providerId"`
+	GcpProjectId        string `json:"gcpProjectId"`
+	ServiceAccountEmail string `json:"serviceAccountEmail"`
 }

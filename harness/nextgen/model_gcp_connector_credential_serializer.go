@@ -23,6 +23,8 @@ func (a *GcpConnectorCredential) UnmarshalJSON(data []byte) error {
 	switch a.Type_ {
 	case GcpAuthTypes.ManualConfig:
 		err = json.Unmarshal(aux.Spec, &a.ManualConfig)
+	case GcpAuthTypes.OidcAuthentication:
+		err = json.Unmarshal(aux.Spec, &a.OidcConfig)
 	case GcpAuthTypes.InheritFromDelegate:
 		// do nothing
 	default:
@@ -41,6 +43,8 @@ func (a *GcpConnectorCredential) MarshalJSON() ([]byte, error) {
 	switch a.Type_ {
 	case GcpAuthTypes.ManualConfig:
 		spec, err = json.Marshal(a.ManualConfig)
+	case GcpAuthTypes.OidcAuthentication:
+		spec, err = json.Marshal(&a.OidcConfig)
 	case GcpAuthTypes.InheritFromDelegate:
 		// do nothing
 	default:
