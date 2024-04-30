@@ -46,6 +46,41 @@ func DatasourceConnectorGcp() *schema.Resource {
 					},
 				},
 			},
+			"oidc_authentication": {
+				Description: "Authentication using harness oidc.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"workload_pool_id": {
+							Description: "The workload pool ID value created in GCP.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"provider_id": {
+							Description: "The OIDC provider ID value configured in GCP.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"gcp_project_id": {
+							Description: "The project number of the GCP project that is used to create the workload identity..",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"service_account_email": {
+							Description: "The service account linked to workload identity pool while setting GCP workload identity provider.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"delegate_selectors": {
+							Description: "The delegates to inherit the credentials from.",
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+					},
+				},
+			},
 		},
 	}
 
