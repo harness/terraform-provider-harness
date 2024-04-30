@@ -74,6 +74,44 @@ func TestAccResourceConnectorGcp_Manual(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorGcp_OIDC(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_connector_gcp.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorGcp_OIDC(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
+					// resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id.#", "1"),
+					// resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
+					// resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
+
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAccResourceConnectorGcp_ForceDelete(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
@@ -152,6 +190,25 @@ func testAccResourceConnectorGcp_manual(id string, name string) string {
 			depends_on = [harness_platform_secret_text.test]
 			destroy_duration = "4s"
 		}
+`, id, name)
+}
+
+func testAccResourceConnectorGcp_OIDC(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_connector_gcp" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		oidc_authentication {
+			workload_pool_id = "harness-pool-test"
+			provider_id = "harness"
+			gcp_project_id = "1234567"
+			service_account_email = "harness.sample.iam.gserviceaccount.com"
+			delegate_selectors = ["harness-delegate"]
+		}
+	}
 `, id, name)
 }
 
