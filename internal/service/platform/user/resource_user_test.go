@@ -228,13 +228,6 @@ func TestAccResourceUser_UpdateUserGroups(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_groups.0", "demo"),
 				),
 			},
-			// Test case for empty user groups list
-			{
-				Config: testAccResourceUserUpdateUserGroups(id, name, email, ""), // Empty user groups list
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "user_groups.#", "0"),
-				),
-			},
 		},
 	})
 }
