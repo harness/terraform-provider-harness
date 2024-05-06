@@ -1,11 +1,14 @@
 
-<a name="0.3.87"></a>
-## 0.3.87 (2024-04-30)
+<a name="0.3.88"></a>
+## 0.3.88 (2024-05-06)
+
+### Add
+
+* add oidc authentication as valid auth type ([#519](https://github.com/harness/harness-go-sdk/issues/519))
 
 ### Added
 
 * Added API for user group update for user entity ([#513](https://github.com/harness/harness-go-sdk/issues/513))
-* Added Field Execute on Delegate ([#454](https://github.com/harness/harness-go-sdk/issues/454))
 
 ### GitX
 
@@ -13,6 +16,8 @@
 
 ### Release
 
+* Release version 0.3.87 04-30-2024
+* Release v0.3.87
 * Release version 0.3.86 04-29-2024
 * Release v0.3.86
 * Release version 0.3.85 04-16-2024
@@ -53,7 +58,4 @@
 * Release v0.3.69
 * Release version 0.3.68 12-13-2023
 * Release v0.3.68
-* Release version 0.3.67 12-12-2023
-* Release v0.3.67
-* Release version 0.3.66 12-08-2023
 
