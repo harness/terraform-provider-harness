@@ -11,6 +11,7 @@ package nextgen
 
 // Returns secret reference access key and secret key of AWS Secret Manager.
 type AwsSmCredentialSpecManualConfig struct {
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
+	AccessKey          string `json:"accessKey,omitempty"`
+	SecretKey          string `json:"secretKey"`
+	AccessKeyPlainText string `json:"accessKeyPlainText,omitempty"`
 }
