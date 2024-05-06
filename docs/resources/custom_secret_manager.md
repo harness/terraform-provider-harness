@@ -66,7 +66,7 @@ resource "harness_custom_secrets_manager" "example" {
   working_directory = "working_directory_path"
 }
 
-# Case where multiple environment variables under template imputs are provided.
+# Case where multiple environment variables under template inputs are provided.
 
 resource "harness_custom_secrets_manager" "example" {
   name          = "Custom Secrets Manager"
