@@ -26,6 +26,7 @@ resource "harness_platform_connector_tas" "tas" {
       endpoint_url = "https://tas.example.com"
       username     = "admin"
       password_ref = "account.secret_id"
+      reference_token = "account.secret_id1"
     }
   }
 }
@@ -44,6 +45,7 @@ resource "harness_platform_connector_tas" "tas" {
       endpoint_url = "https://tas.example.com"
       username_ref = "account.username_id"
       password_ref = "account.secret_id"
+      reference_token = "account.secret_id1"
     }
   }
   delegate_selectors  = ["harness-delegate"]
@@ -68,6 +70,8 @@ resource "harness_platform_connector_tas" "tas" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `tags` (Set of String) Tags to associate with the resource.
+- `reference_token` (String) Reference of the secret for the token. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}
+
 
 ### Read-Only
 
