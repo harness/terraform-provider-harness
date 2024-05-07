@@ -27,6 +27,11 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"access_key_plain_text": {
+							Description: "The plain text AWS access key.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"secret_key_ref": {
 							Description: "Reference to the Harness secret containing the aws secret key." + secret_ref_text,
 							Type:        schema.TypeString,
