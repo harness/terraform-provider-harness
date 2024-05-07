@@ -13,7 +13,8 @@ package nextgen
 type TasManualDetails struct {
 	Username string `json:"username,omitempty"`
 	// Endpoint URL of the TAS Cluster.
-	EndpointUrl string `json:"endpointUrl"`
-	UsernameRef string `json:"usernameRef,omitempty"`
-	PasswordRef string `json:"passwordRef"`
+	EndpointUrl    string `json:"endpointUrl"`
+	UsernameRef    string `json:"usernameRef,omitempty"`
+	PasswordRef    string `json:"passwordRef"`
+	ReferenceToken string `json:"refreshTokenRef"`
 }
