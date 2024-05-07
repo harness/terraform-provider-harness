@@ -26,7 +26,7 @@ resource "harness_platform_connector_tas" "tas" {
       endpoint_url = "https://tas.example.com"
       username     = "admin"
       password_ref = "account.secret_id"
-      reference_token = "account.secret_id1"
+      reference_token = "account.secret_reference_token"
     }
   }
 }
@@ -45,7 +45,7 @@ resource "harness_platform_connector_tas" "tas" {
       endpoint_url = "https://tas.example.com"
       username_ref = "account.username_id"
       password_ref = "account.secret_id"
-      reference_token = "account.secret_id1"
+      reference_token = "account.secret_reference_token"
     }
   }
   delegate_selectors  = ["harness-delegate"]
