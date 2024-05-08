@@ -166,7 +166,7 @@ func ResourcePipeline() *schema.Resource {
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
-
+	resource.Schema["tags"].Description = resource.Schema["tags"].Description + "These should match the tag value passed in the yaml; If this parameter is null or not passed, the tags specified in yaml should also be null."
 	return resource
 }
 
