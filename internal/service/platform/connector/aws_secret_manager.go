@@ -61,12 +61,17 @@ func ResourceConnectorAwsSM() *schema.Resource {
 									"access_key_ref": {
 										Description: "The reference to the Harness secret containing the AWS access key." + secret_ref_text,
 										Type:        schema.TypeString,
-										Required:    true,
+										Optional:    true,
 									},
 									"secret_key_ref": {
 										Description: "The reference to the Harness secret containing the AWS secret key." + secret_ref_text,
 										Type:        schema.TypeString,
 										Required:    true,
+									},
+									"access_key_plain_text": {
+										Description: "The plain text AWS access key.",
+										Type:        schema.TypeString,
+										Optional:    true,
 									},
 								},
 							},
@@ -200,6 +205,9 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			if attr, ok := config["secret_key_ref"]; ok {
 				connector.AwsSecretManager.Credential.ManualConfig.SecretKey = attr.(string)
 			}
+			if attr, ok := config["access_key_plain_text"]; ok {
+				connector.AwsSecretManager.Credential.ManualConfig.AccessKeyPlainText = attr.(string)
+			}
 		}
 
 		if attr := config["assume_role"].([]interface{}); len(attr) > 0 {
@@ -242,8 +250,9 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 			map[string]interface{}{
 				"manual": []interface{}{
 					map[string]interface{}{
-						"access_key_ref": connector.AwsSecretManager.Credential.ManualConfig.AccessKey,
-						"secret_key_ref": connector.AwsSecretManager.Credential.ManualConfig.SecretKey,
+						"access_key_ref":        connector.AwsSecretManager.Credential.ManualConfig.AccessKey,
+						"secret_key_ref":        connector.AwsSecretManager.Credential.ManualConfig.SecretKey,
+						"access_key_plain_text": connector.AwsSecretManager.Credential.ManualConfig.AccessKeyPlainText,
 					},
 				},
 			},
