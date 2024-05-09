@@ -11,7 +11,7 @@ description: |-
 Datasource for looking up secert file type secret.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use Secret File, please see [Documentation](https://developer.harness.io/docs/platform/secrets/add-file-secrets)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Secrets#operation/postSecretFileV2)
 ## Example Usage

@@ -11,7 +11,7 @@ description: |-
 Resource for creating a Harness service.
 
 ### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand more about service, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/services/services-overview/)
 - To understand how to create a service, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/services/create-services/)
 

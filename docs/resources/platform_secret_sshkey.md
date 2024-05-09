@@ -11,7 +11,7 @@ description: |-
 Resource for creating an ssh key type secret.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use SSH Key type secret, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/add-use-ssh-secrets)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Secrets)
 ## Example Usage

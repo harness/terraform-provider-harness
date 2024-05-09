@@ -11,7 +11,7 @@ description: |-
 Resource for creating a Harness organization.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use Organization, please see [Documentation](https://developer.harness.io/docs/platform/organizations-and-projects/create-an-organization)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Organization)
 ## Example Usage
