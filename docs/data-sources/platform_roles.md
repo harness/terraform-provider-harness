@@ -11,7 +11,7 @@ description: |-
 Data source for retrieving roles
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use Roles, please see [Documentation](https://developer.harness.io/docs/platform/Role-Based-Access-Control/add-manage-roles)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Roles)
 ## Example Usage

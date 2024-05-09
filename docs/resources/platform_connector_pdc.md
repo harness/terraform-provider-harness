@@ -11,7 +11,7 @@ description: |-
 Resource for creating a Physical data center connector.
 
 ### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
 - To understand more about Pdc Connectors, please see [Pdc Connectors](https://developer.harness.io/docs/platform/connectors/cloud-providers/pdc-connector/)
 

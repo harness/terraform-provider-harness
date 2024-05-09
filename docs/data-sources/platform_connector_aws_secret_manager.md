@@ -11,7 +11,7 @@ description: |-
 Datasource for looking up an AWS Secret Manager connector.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use the AWS Secret Manager, please see [Documentation](https://developer.harness.io/docs/platform/Secrets/Secrets-Management/add-an-aws-secret-manager)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 

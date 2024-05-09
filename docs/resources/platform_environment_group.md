@@ -12,7 +12,7 @@ Resource for creating a Harness environment group.
 
 
 ### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to create the Environment, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/create-environments/)
 - To understand more about Group Environment, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/create-environment-groups/)
 

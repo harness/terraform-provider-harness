@@ -11,7 +11,7 @@ description: |-
 Resource for creating a Harness User. This requires your authentication mechanism to be set to SAML, LDAP, or OAuth, and the feature flag AUTO_ACCEPT_SAML_ACCOUNT_INVITES to be enabled.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand more about User, please see [Documentation](https://developer.harness.io/docs/platform/User-Management/add-users)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/User)
 ## Example Usage
