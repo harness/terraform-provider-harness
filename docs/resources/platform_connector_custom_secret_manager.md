@@ -11,7 +11,7 @@ description: |-
 Resource for creating a Custom Secret Manager connector.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use Custom Secret Manager, please see [Documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/custom-secret-manager)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 
@@ -19,7 +19,7 @@ References:
 
 ```terraform
 # Case where on_delegate is set to true.
-resource "harness_custom_secrets_manager" "example" {
+resource "harness_platform_connector_custom_secret_manager" "example" {
   name          = "Custom Secrets Manager"
   description   = ""
   identifier    = "identifier"
@@ -41,7 +41,7 @@ resource "harness_custom_secrets_manager" "example" {
 }
 
 # Case where on_delegate is set to false.
-resource "harness_custom_secrets_manager" "example" {
+resource "harness_platform_connector_custom_secret_manager" "example" {
   name          = "Custom Secrets Manager"
   description   = ""
   identifier    = "identifier"
@@ -68,7 +68,7 @@ resource "harness_custom_secrets_manager" "example" {
 
 # Case where multiple environment variables under template inputs are provided.
 
-resource "harness_custom_secrets_manager" "example" {
+resource "harness_platform_connector_custom_secret_manager" "example" {
   name          = "Custom Secrets Manager"
   description   = ""
   identifier    = "identifier"
@@ -139,11 +139,11 @@ Import is supported using the following syntax:
 
 ```shell
 # Import account level custom secret manager connector
-terraform import harness_custom_secrets_manager.example <connector_id>
+terraform import harness_platform_connector_custom_secret_manager.example <connector_id>
 
 # Import org level custom secret manager connector 
-terraform import harness_custom_secrets_manager.example <ord_id>/<connector_id>
+terraform import harness_platform_connector_custom_secret_manager.example <ord_id>/<connector_id>
 
 # Import project level custom secret manager connector 
-terraform import harness_custom_secrets_manager.example <org_id>/<project_id>/<connector_id>
+terraform import harness_platform_connector_custom_secret_manager.example <org_id>/<project_id>/<connector_id>
 ```

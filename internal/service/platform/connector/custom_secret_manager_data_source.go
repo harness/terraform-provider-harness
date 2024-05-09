@@ -12,84 +12,91 @@ func DatasourceConnectorCustomSM() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Name of the Custom Secret Manager Resource.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Description of the resource.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"identifier": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Unique identifier of the resource.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "CustomSecretManager",
+				Description: "Type of the custom secrets manager, typically set to 'CustomSecretManager'.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"on_delegate": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Specifies whether the secrets manager runs on a Harness delegate.",
+				Type:        schema.TypeBool,
+				Computed:    true,
 			},
 			"timeout": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Description: "Timeout in seconds for secrets management operations.",
+				Type:        schema.TypeInt,
+				Computed:    true,
 			},
 			"tags": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
+				Description: "Tags to associate with the resource.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"template_ref": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Reference to the template used for managing secrets.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"version_label": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Version identifier of the secrets management template.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"target_host": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Host where the custom secrets manager is located, required if 'on_delegate' is false.",
+				Computed:    true,
+				Description: "Host where the custom secrets manager is located, Computed if 'on_delegate' is false.",
 			},
 			"ssh_secret_ref": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "SSH secret reference for the custom secrets manager, required if 'on_delegate' is false.",
+				Computed:    true,
+				Description: "SSH secret reference for the custom secrets manager, Computed if 'on_delegate' is false.",
 			},
 			"working_directory": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The working directory for operations, required if 'on_delegate' is false.",
+				Computed:    true,
+				Description: "The working directory for operations, Computed if 'on_delegate' is false.",
 			},
 			"template_inputs": {
 				Type:     schema.TypeList,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"environment_variable": {
 							Type:     schema.TypeList,
-							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
 										Type:     schema.TypeString,
-										Required: true,
+										Computed: true,
 									},
 									"type": {
 										Type:     schema.TypeString,
-										Required: true,
+										Computed: true,
 									},
 									"value": {
 										Type:     schema.TypeString,
-										Required: true,
+										Computed: true,
 									},
 									"default": {
 										Type:     schema.TypeBool,
-										Optional: true,
-										Default:  false,
+										Computed: true,
 									},
 								},
 							},
