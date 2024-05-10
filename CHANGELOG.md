@@ -1,5 +1,7 @@
 # 0.31.0 (May 10,2024) 
 
+# 0.31.0 (May 10,2024) 
+
 ENHANCEMENTS:
 
 * resource/harness_pipeline: Updated the description for tags in pipeline create ([#977](https://github.com/harness/terraform-provider-harness/issues/977))
