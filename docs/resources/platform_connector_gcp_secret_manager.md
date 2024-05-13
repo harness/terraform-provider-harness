@@ -11,7 +11,7 @@ description: |-
 Resource for creating a GCP Secret Manager connector.
 
 References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use GCP Secret Manager, please see [Documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-a-google-cloud-secret-manager)
 - To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 ## Example Usage

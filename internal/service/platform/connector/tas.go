@@ -65,6 +65,11 @@ func ResourceConnectorTas() *schema.Resource {
 										Type:        schema.TypeString,
 										Required:    true,
 									},
+									"reference_token": {
+										Description: "Reference token for authentication.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
 								},
 							},
 						},
@@ -157,6 +162,9 @@ func buildConnectorTas(d *schema.ResourceData) *nextgen.ConnectorInfo {
 					if attr, ok := configCredentials["password_ref"]; ok {
 						connector.Tas.Credential.TasManualDetails.PasswordRef = attr.(string)
 					}
+					if attr, ok := configCredentials["reference_token"]; ok {
+						connector.Tas.Credential.TasManualDetails.ReferenceToken = attr.(string)
+					}
 				}
 			}
 		}
@@ -190,10 +198,11 @@ func readTasManualDetails(connector *nextgen.ConnectorInfo) []map[string]interfa
 	case nextgen.TasCredentialTypes.ManualConfig:
 		spec = []map[string]interface{}{
 			{
-				"endpoint_url": connector.Tas.Credential.TasManualDetails.EndpointUrl,
-				"username":     connector.Tas.Credential.TasManualDetails.Username,
-				"username_ref": connector.Tas.Credential.TasManualDetails.UsernameRef,
-				"password_ref": connector.Tas.Credential.TasManualDetails.PasswordRef,
+				"endpoint_url":    connector.Tas.Credential.TasManualDetails.EndpointUrl,
+				"username":        connector.Tas.Credential.TasManualDetails.Username,
+				"username_ref":    connector.Tas.Credential.TasManualDetails.UsernameRef,
+				"password_ref":    connector.Tas.Credential.TasManualDetails.PasswordRef,
+				"reference_token": connector.Tas.Credential.TasManualDetails.ReferenceToken,
 			},
 		}
 	}
