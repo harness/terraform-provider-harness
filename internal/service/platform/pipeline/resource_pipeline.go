@@ -411,6 +411,7 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("name", pipeline.Name)
 	d.Set("org_id", org_id)
 	d.Set("project_id", project_id)
+	d.Set("tags", helpers.FlattenTags(pipeline.Tags))
 	d.Set("yaml", pipeline.PipelineYaml)
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)
