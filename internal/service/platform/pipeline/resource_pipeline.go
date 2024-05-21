@@ -166,7 +166,7 @@ func ResourcePipeline() *schema.Resource {
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
-	resource.Schema["tags"].Description = resource.Schema["tags"].Description + "These should match the tag value passed in the yaml; If this parameter is null or not passed, the tags specified in yaml should also be null."
+	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
 	return resource
 }
 
@@ -411,6 +411,7 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("name", pipeline.Name)
 	d.Set("org_id", org_id)
 	d.Set("project_id", project_id)
+	d.Set("tags", helpers.FlattenTags(pipeline.Tags))
 	d.Set("yaml", pipeline.PipelineYaml)
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)
