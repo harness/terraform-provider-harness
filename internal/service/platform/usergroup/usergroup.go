@@ -65,7 +65,7 @@ func ResourceUserGroup() *schema.Resource {
 				Optional:    true,
 			},
 			"users": {
-				Description:   "List of users in the UserGroup. Either provide list of users or list of user emails.",
+				Description:   "List of users in the UserGroup. Either provide list of users or list of user emails. (Should be null for SSO managed)",
 				Type:          schema.TypeList,
 				Optional:      true,
 				ConflictsWith: []string{"user_emails"},
@@ -172,8 +172,13 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	if attr, ok := d.GetOk("user_emails"); ok {
 		d.Set("user_emails", attr)
 	}
-	if attr, ok := d.GetOk("users"); ok {
+
+	attr1 := resp.Data.SsoLinked
+
+	if attr, ok := d.GetOk("users"); ok && !attr1 {
 		d.Set("users", attr)
+	} else if attr1 {
+		d.Set("users", []string{})
 	}
 	readUserGroup(d, resp.Data)
 
