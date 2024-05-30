@@ -137,7 +137,7 @@ func readConnectorCustomSM(d *schema.ResourceData, connector *nextgen.ConnectorI
 	d.Set("delegate_selectors", csm.DelegateSelectors)
 	d.Set("on_delegate", csm.OnDelegate)
 	d.Set("template_ref", csm.Template.TemplateRef)
-	d.Set("template_ref", csm.Template.VersionLabel)
+	d.Set("version_label", csm.Template.VersionLabel)
 	d.Set("timeout", csm.Timeout)
 
 	// Template inputs
@@ -200,7 +200,7 @@ func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.CustomSecretManager.Template.TemplateRef = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("version"); ok {
+	if attr, ok := d.GetOk("version_label"); ok {
 		connector.CustomSecretManager.Template.VersionLabel = attr.(string)
 	}
 
