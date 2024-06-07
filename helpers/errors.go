@@ -23,6 +23,9 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
 		return diag.Errorf(erro.Error())
 	}
 
@@ -39,6 +42,11 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
+
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
+
 		var jsonMap map[string]interface{}
 		err := json.Unmarshal(err_openapi_client.Body(), &jsonMap)
 		if err == nil {
@@ -63,6 +71,9 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
 		if erro.Model() != nil && (erro.Code() == nextgen.ErrorCodes.ResourceNotFound || erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
 			d.SetId("")
 			d.MarkNewResource()
@@ -83,7 +94,9 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
-
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
 		var jsonMap map[string]interface{}
 		err := json.Unmarshal(err_openapi_client.Body(), &jsonMap)
 		if err == nil {
