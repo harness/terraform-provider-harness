@@ -249,7 +249,6 @@ func testAccResourceRepoImport(identifier, description, providerRepo string) str
 	)
 }
 
-<<<<<<< HEAD
 func testProjResourceRepoImport(identifier, description, providerRepo string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
