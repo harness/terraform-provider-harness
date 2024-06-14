@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceTriggers(t *testing.T) {
@@ -86,6 +87,40 @@ func testAccTriggersDestroy(resourceName string) resource.TestCheckFunc {
 	}
 }
 
+func TestAccResourceTriggers_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	project_id := id
+	org_id := id
+	target_id := id
+	resourceName := "harness_platform_triggers.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceTriggers(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.TriggersApi.DeleteTrigger(ctx, c.AccountId, org_id, project_id, target_id, id, &nextgen.TriggersApiDeleteTriggerOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceTriggers(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func testAccResourceTriggers(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
@@ -146,36 +181,37 @@ EOT
 		name = "%[2]s"
 		target_id = harness_platform_pipeline.pipeline.id
 		yaml = <<-EOT
-    ---
     trigger:
-      name: "%[2]s"
-      identifier: "%[1]s"
+      name: %[2]s
+      identifier: %[1]s
       enabled: true
       description: ""
       tags: {}
-      projectIdentifier: "${harness_platform_project.test.id}"
-      orgIdentifier: "${harness_platform_project.test.org_id}"
-      pipelineIdentifier: "${harness_platform_pipeline.pipeline.id}"
+      projectIdentifier: ${harness_platform_project.test.id}
+      orgIdentifier: ${harness_platform_project.test.org_id}
+      pipelineIdentifier: ${harness_platform_pipeline.pipeline.id}
       source:
-        type: "Webhook"
+        type: Webhook
+        pollInterval: 0
         spec:
-          type: "Github"
+          type: Github
           spec:
-            type: "Push"
+            type: Push
             spec:
-              connectorRef: "account.TestAccResourceConnectorGithub_Ssh_IZBeG"
+              connectorRef: account.Jajoo
               autoAbortPreviousExecutions: false
               payloadConditions:
-              - key: "changedFiles"
-                operator: "Equals"
-                value: "fjjfjfjf"
-              - key: "targetBranch"
-                operator: "Equals"
-                value: "fhfhfh"
+                - key: changedFiles
+                  operator: Equals
+                  value: fjjfjfjf
+                - key: targetBranch
+                  operator: Equals
+                  value: fhfhfh
               headerConditions: []
-              repoName: "gfgfgf"
+              repoName: gfgfgf
               actions: []
-      inputYaml: "pipeline: {}\n"
+      inputYaml: |
+        pipeline: {}\n
       EOT
 	}
 	`, id, name)

@@ -1,0 +1,3 @@
+```release-note:new-resource 
+resource/harness_platform_connector_service_now: Added Service Now connector resource.
+```

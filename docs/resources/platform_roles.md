@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating roles.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Roles, please see [Documentation](https://developer.harness.io/docs/platform/Role-Based-Access-Control/add-manage-roles)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Roles)
 ## Example Usage
 
 ```terraform
@@ -18,8 +22,8 @@ resource "harness_platform_roles" "example" {
   name                 = "name"
   description          = "test"
   tags                 = ["foo:bar"]
-  permissions          = ["core_pipeline_edit"]
-  allowed_scope_levels = ["project"]
+  permissions          = ["core_resourcegroup_view"]
+  allowed_scope_levels = ["account"]
 }
 ```
 
@@ -35,10 +39,10 @@ resource "harness_platform_roles" "example" {
 
 - `allowed_scope_levels` (Set of String) The scope levels at which this role can be used
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 - `permissions` (Set of String) List of the permission identifiers
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -49,6 +53,12 @@ resource "harness_platform_roles" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using roles id
+# Import account level roles
 terraform import harness_platform_roles.example <roles_id>
+
+# Import org level roles
+terraform import harness_platform_roles.example <ord_id>/<roles_id>
+
+# Import project level roles
+terraform import harness_platform_roles.example <org_id>/<project_id>/<roles_id>
 ```

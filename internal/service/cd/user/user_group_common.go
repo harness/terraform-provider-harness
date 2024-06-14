@@ -10,7 +10,7 @@ import (
 
 var actionsAll = []string{"CREATE", "READ", "UPDATE", "DELETE", "EXECUTE_WORKFLOW", "EXECUTE_PIPELINE", "ROLLBACK_WORKFLOW"}
 var standardActions = []string{"CREATE", "READ", "UPDATE", "DELETE"}
-var deploymentActions = []string{"READ", "EXECUTE_WORKFLOW", "EXECUTE_PIPELINE", "ROLLBACK_WORKFLOW"}
+var deploymentActions = []string{"READ", "EXECUTE_WORKFLOW", "EXECUTE_PIPELINE", "ROLLBACK_WORKFLOW", "ABORT_WORKFLOW"}
 
 func getUserGroupAccountPermissionsSchema() *schema.Schema {
 	return &schema.Schema{
@@ -67,8 +67,7 @@ func getUserGroupAppPermissionsSchema() *schema.Schema {
 							"filters": {
 								Description: fmt.Sprintf("The filters to apply to the action. Valid options are: %s.", strings.Join(graphql.WorkflowPermissionFiltersSlice, ", ")),
 								Type:        schema.TypeSet,
-								Required:    true,
-								MinItems:    1,
+								Optional:    true,
 								Elem:        &schema.Schema{Type: schema.TypeString},
 							},
 							"actions": {
@@ -102,8 +101,7 @@ func getUserGroupAppPermissionsSchema() *schema.Schema {
 							"filters": {
 								Description: fmt.Sprintf("The filters to apply to the action. Valid options are: %s.", strings.Join(graphql.DeploymentPermissionFiltersSlice, ", ")),
 								Type:        schema.TypeSet,
-								Required:    true,
-								MinItems:    1,
+								Optional:    true,
 								Elem:        &schema.Schema{Type: schema.TypeString},
 							},
 							"actions": {
@@ -137,8 +135,7 @@ func getUserGroupAppPermissionsSchema() *schema.Schema {
 							"filters": {
 								Description: fmt.Sprintf("The filters to apply to the action. Valid options are: %s.", strings.Join(graphql.EnvFiltersSlice, ", ")),
 								Type:        schema.TypeSet,
-								Required:    true,
-								MinItems:    1,
+								Optional:    true,
 								Elem:        &schema.Schema{Type: schema.TypeString},
 							},
 							"actions": {
@@ -172,8 +169,7 @@ func getUserGroupAppPermissionsSchema() *schema.Schema {
 							"filters": {
 								Description: fmt.Sprintf("The filters to apply to the action. Valid options are: %s.", strings.Join(graphql.PipelinePermissionFiltersSlice, ", ")),
 								Type:        schema.TypeSet,
-								Required:    true,
-								MinItems:    1,
+								Optional:    true,
 								Elem:        &schema.Schema{Type: schema.TypeString},
 							},
 							"actions": {

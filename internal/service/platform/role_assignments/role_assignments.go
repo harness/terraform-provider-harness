@@ -27,16 +27,17 @@ func ResourceRoleAssignments() *schema.Resource {
 				Description: "Identifier for role assignment.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"resource_group_identifier": {
 				Description: "Resource group identifier.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"role_identifier": {
 				Description: "Role identifier.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"principal": {
 				Description: "Principal.",
@@ -58,7 +59,7 @@ func ResourceRoleAssignments() *schema.Resource {
 						"type": {
 							Description:  "Type.",
 							Type:         schema.TypeString,
-							Optional:     true,
+							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{"USER", "USER_GROUP", "SERVICE", "API_KEY", "SERVICE_ACCOUNT"}, false),
 						},
 					},
@@ -99,7 +100,7 @@ func resourceRoleAssignmentsRead(ctx context.Context, d *schema.ResourceData, me
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if resp.Data == nil {

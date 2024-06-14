@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Gitops Agents.
+  Resource for managing a Harness GitOps Agent.
 ---
 
 # harness_platform_gitops_agent (Resource)
 
-Resource for creating a Harness Gitops Agents.
+Resource for managing a Harness GitOps Agent.
 
 ## Example Usage
 
@@ -19,7 +19,7 @@ resource "harness_platform_gitops_agent" "example" {
   project_id = "project_id"
   org_id     = "org_id"
   name       = "name"
-  type       = "CONNECTED_ARGO_PROVIDER"
+  type       = "MANAGED_ARGO_PROVIDER"
   metadata {
     namespace         = "namespace"
     high_availability = true
@@ -42,12 +42,14 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 - `description` (String) Description of the GitOps agent.
 - `metadata` (Block List) Metadata of the agent. (see [below for nested schema](#nestedblock--metadata))
+- `operator` (String) The Operator to use for the Harness GitOps agent. Enum: "ARGO" "FLAMINGO"
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
 - `tags` (Map of String) Tags for the GitOps agents. These can be used to search or filter the GitOps agents.
 
 ### Read-Only
 
+- `agent_token` (String) Agent token to be used for authentication of the agent with Harness.
 - `id` (String) The ID of this resource.
 
 <a id="nestedblock--metadata"></a>
@@ -55,16 +57,20 @@ Enum: "AGENT_TYPE_UNSET" "CONNECTED_ARGO_PROVIDER" "MANAGED_ARGO_PROVIDER"
 
 Optional:
 
-- `high_availability` (Boolean) Indicates if the deployment should be deployed using the deploy-ha.yaml
-- `namespace` (String) The k8s namespace that this agent resides in.
+- `high_availability` (Boolean) Indicates if the agent is deployed in HA mode.
+- `is_namespaced` (Boolean) Indicates if the agent is namespaced.
+- `namespace` (String) The kubernetes namespace where the agent should be installed.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import a Account level Gitops Agent
+# Import an Account level Gitops Agent
 terraform import harness_platform_gitops_agent.example <agent_id>
+
+# Import an Org level Gitops Agent
+terraform import harness_platform_gitops_agent.example <organization_id>/<agent_id>
 
 # Import a Project level Gitops Agent
 terraform import harness_platform_gitops_agent.example <organization_id>/<project_id>/<agent_id>

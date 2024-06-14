@@ -90,7 +90,7 @@ func testAccInfraDefK8s_Rename_CloudProvider(name string, cloudproviderName stri
 			name = "%[2]s"
 
 			authentication {
-				delegate_selectors = ["k8s"]
+				delegate_selectors = ["primary"]
 			}
 		}
 

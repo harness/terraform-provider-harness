@@ -10,12 +10,15 @@ description: |-
 
 Resource for creating role assignments in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Role Assignments, please see [Documentation](https://developer.harness.io/docs/platform/Role-Based-Access-Control/rbac-in-harness#role-assignment)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Role-Assignments)
 ## Example Usage
 
 ```terraform
 //To create a role binding in service account
 resource "harness_platform_role_assignments" "example1" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -30,7 +33,6 @@ resource "harness_platform_role_assignments" "example1" {
 
 //To create a role binding in user group 
 resource "harness_platform_role_assignments" "example1" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -58,7 +60,6 @@ resource "harness_platform_role_assignments" "example2" {
 }
 
 resource "harness_platform_role_assignments" "example2" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -72,7 +73,6 @@ resource "harness_platform_role_assignments" "example2" {
 }
 
 resource "harness_platform_role_assignments" "example2" {
-  identifier                = "identifier"
   org_id                    = "org_id"
   project_id                = "project_id"
   resource_group_identifier = "_all_project_level_resources"
@@ -92,16 +92,16 @@ resource "harness_platform_role_assignments" "example2" {
 ### Required
 
 - `principal` (Block List, Min: 1) Principal. (see [below for nested schema](#nestedblock--principal))
+- `resource_group_identifier` (String) Resource group identifier.
+- `role_identifier` (String) Role identifier.
 
 ### Optional
 
-- `disabled` (Boolean) Disabled or not.
+- `disabled` (Boolean) The `disabled` attribute in the role assignment resource controls the status of the role assignment. Setting `disabled` to `false` activates the role and its permissions, enabling the assigned entity to perform allowed actions. Conversely, setting `disabled` to `true` deactivates the role, revoking the entity's permissions and action capabilities. Default value should be `false`.
 - `identifier` (String) Identifier for role assignment.
-- `managed` (Boolean) Managed or not.
+- `managed` (Boolean) Specifies whether the role assignment is managed by Harness. Setting managed to `true` means that Harness will manage the lifecycle of the role assignment, including its creation, updates, and deletion. Conversely, setting it to `false` indicates that the role assignment is not managed by Harness, and thus Harness will not perform actions on it. Default value should be `false`.
 - `org_id` (String) Org identifier.
 - `project_id` (String) Project Identifier
-- `resource_group_identifier` (String) Resource group identifier.
-- `role_identifier` (String) Role identifier.
 
 ### Read-Only
 
@@ -110,17 +110,26 @@ resource "harness_platform_role_assignments" "example2" {
 <a id="nestedblock--principal"></a>
 ### Nested Schema for `principal`
 
+Required:
+
+- `type` (String) Type.
+
 Optional:
 
 - `identifier` (String) Identifier.
 - `scope_level` (String) Scope level.
-- `type` (String) Type.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using roleassignments id
+# Import account level role assignments
 terraform import harness_platform_role_assignments.example <role_assignments_id>
+
+# Import org level role assignments
+terraform import harness_platform_role_assignments.example <ord_id>/<role_assignments_id>
+
+# Import project level role assignments
+terraform import harness_platform_role_assignments.example <org_id>/<project_id>/<role_assignments_id>
 ```

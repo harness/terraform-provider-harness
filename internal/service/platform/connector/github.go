@@ -45,6 +45,12 @@ func ResourceConnectorGithub() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+			},
 			"api_authentication": {
 				Description: "Configuration for using the github api. API Access is required for using “Git Experience”, for creation of Git based triggers, Webhooks management and updating Git statuses.",
 				Type:        schema.TypeList,
@@ -62,14 +68,32 @@ func ResourceConnectorGithub() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"installation_id": {
-										Description: "Enter the Installation ID located in the URL of the installed GitHub App.",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:   "Enter the Installation ID located in the URL of the installed GitHub App.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.installation_id_ref"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.installation_id", "api_authentication.0.github_app.0.installation_id_ref"},
 									},
 									"application_id": {
-										Description: "Enter the GitHub App ID from the GitHub App General tab.",
-										Type:        schema.TypeString,
-										Required:    true,
+										Description:   "Enter the GitHub App ID from the GitHub App General tab.",
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.application_id_ref"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.application_id", "api_authentication.0.github_app.0.application_id_ref"},
+									},
+									"application_id_ref": {
+										Description:   "Reference to the secret containing application id" + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.application_id"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.application_id", "api_authentication.0.github_app.0.application_id_ref"},
+									},
+									"installation_id_ref": {
+										Description:   "Reference to the secret containing installation id." + secret_ref_text,
+										Type:          schema.TypeString,
+										Optional:      true,
+										ConflictsWith: []string{"api_authentication.0.github_app.0.installation_id"},
+										ExactlyOneOf:  []string{"api_authentication.0.github_app.0.installation_id", "api_authentication.0.github_app.0.installation_id_ref"},
 									},
 									"private_key_ref": {
 										Description: "Reference to the secret containing the private key." + secret_ref_text,
@@ -110,19 +134,72 @@ func ResourceConnectorGithub() *schema.Resource {
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username_ref"},
-										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
+										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 									},
 									"username_ref": {
 										Description:   "Reference to a secret containing the username to use for authentication." + secret_ref_text,
 										Type:          schema.TypeString,
 										Optional:      true,
 										ConflictsWith: []string{"credentials.0.http.0.username"},
-										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref"},
+										ExactlyOneOf:  []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
 									},
 									"token_ref": {
 										Description: "Reference to a secret containing the personal access to use for authentication." + secret_ref_text,
 										Type:        schema.TypeString,
-										Required:    true,
+										Optional:    true,
+									},
+									"github_app": {
+										Description:  "Configuration for using the github app for interacting with the github api.",
+										Type:         schema.TypeList,
+										Optional:     true,
+										MaxItems:     1,
+										ExactlyOneOf: []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"installation_id": {
+													Description:   "Enter the Installation ID located in the URL of the installed GitHub App.",
+													Type:          schema.TypeString,
+													Optional:      true,
+													ConflictsWith: []string{"credentials.0.http.0.github_app.0.installation_id_ref"},
+													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.installation_id", "credentials.0.http.0.github_app.0.installation_id_ref"},
+												},
+												"application_id": {
+													Description:   "Enter the GitHub App ID from the GitHub App General tab.",
+													Type:          schema.TypeString,
+													Optional:      true,
+													ConflictsWith: []string{"credentials.0.http.0.github_app.0.application_id_ref"},
+													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.application_id", "credentials.0.http.0.github_app.0.application_id_ref"},
+												},
+												"application_id_ref": {
+													Description:   "Reference to the secret containing application id" + secret_ref_text,
+													Type:          schema.TypeString,
+													Optional:      true,
+													ConflictsWith: []string{"credentials.0.http.0.github_app.0.application_id"},
+													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.application_id", "credentials.0.http.0.github_app.0.application_id_ref"},
+												},
+												"installation_id_ref": {
+													Description:   "Reference to the secret containing installation id." + secret_ref_text,
+													Type:          schema.TypeString,
+													Optional:      true,
+													ConflictsWith: []string{"credentials.0.http.0.github_app.0.installation_id"},
+													ExactlyOneOf:  []string{"credentials.0.http.0.github_app.0.installation_id", "credentials.0.http.0.github_app.0.installation_id_ref"},
+												},
+												"private_key_ref": {
+													Description: "Reference to the secret containing the private key." + secret_ref_text,
+													Type:        schema.TypeString,
+													Required:    true,
+												},
+											},
+										},
+									},
+									"anonymous": {
+										Description:  "Configuration for using the github http anonymous for interacting with the github api.",
+										Type:         schema.TypeList,
+										Optional:     true,
+										ExactlyOneOf: []string{"credentials.0.http.0.username", "credentials.0.http.0.username_ref", "credentials.0.http.0.github_app", "credentials.0.http.0.anonymous"},
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{},
+										},
 									},
 								},
 							},
@@ -147,6 +224,12 @@ func ResourceConnectorGithub() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of service",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -159,6 +242,10 @@ func resourceConnectorGithubRead(ctx context.Context, d *schema.ResourceData, me
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Github)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorGithub(d, conn); err != nil {
@@ -191,6 +278,10 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("url"); ok {
 		connector.Github.Url = attr.(string)
+	}
+
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Github.ExecuteOnDelegate = attr.(bool)
 	}
 
 	if attr, ok := d.GetOk("delegate_selectors"); ok {
@@ -228,6 +319,43 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			if attr, ok := httpConfig["token_ref"]; ok {
 				connector.Github.Authentication.Http.UsernameToken.TokenRef = attr.(string)
 			}
+
+			if attr, ok := httpConfig["github_app"].([]interface{}); ok && len(attr) > 0 {
+				httpConfig := attr[0].(map[string]interface{})
+				connector.Github.Authentication.Http.Type_ = nextgen.GithubHttpCredentialTypes.GithubApp
+				connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
+					Type_:     nextgen.GithubHttpCredentialTypes.GithubApp,
+					GithubApp: &nextgen.GithubAppSpec{},
+				}
+
+				if attr, ok := httpConfig["installation_id"]; ok {
+					connector.Github.Authentication.Http.GithubApp.InstallationId = attr.(string)
+				}
+
+				if attr, ok := httpConfig["application_id"]; ok {
+					connector.Github.Authentication.Http.GithubApp.ApplicationId = attr.(string)
+				}
+
+				if attr, ok := httpConfig["private_key_ref"]; ok {
+					connector.Github.Authentication.Http.GithubApp.PrivateKeyRef = attr.(string)
+				}
+
+				if attr, ok := httpConfig["installation_id_ref"]; ok {
+					connector.Github.Authentication.Http.GithubApp.InstallationIdRef = attr.(string)
+				}
+
+				if attr, ok := httpConfig["application_id_ref"]; ok {
+					connector.Github.Authentication.Http.GithubApp.ApplicationIdRef = attr.(string)
+				}
+
+			}
+
+			if attr, ok := httpConfig["anonymous"].([]interface{}); ok && len(attr) > 0 {
+				connector.Github.Authentication.Http = &nextgen.GithubHttpCredentials{
+					Type_: nextgen.GithubHttpCredentialTypes.Anonymous,
+				}
+			}
+
 		}
 
 		if attr := credConfig["ssh"].([]interface{}); len(attr) > 0 {
@@ -269,6 +397,14 @@ func buildConnectorGithub(d *schema.ResourceData) *nextgen.ConnectorInfo {
 				connector.Github.ApiAccess.GithubApp.PrivateKeyRef = attr.(string)
 			}
 
+			if attr, ok := config["installation_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.InstallationIdRef = attr.(string)
+			}
+
+			if attr, ok := config["application_id_ref"]; ok {
+				connector.Github.ApiAccess.GithubApp.ApplicationIdRef = attr.(string)
+			}
+
 		}
 	}
 
@@ -280,6 +416,7 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 	d.Set("url", connector.Github.Url)
 	d.Set("connection_type", connector.Github.Type_.String())
 	d.Set("delegate_selectors", connector.Github.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Github.ExecuteOnDelegate)
 	d.Set("validation_repo", connector.Github.ValidationRepo)
 
 	if connector.Github.Authentication != nil {
@@ -298,6 +435,39 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 						},
 					},
 				})
+				break
+			case nextgen.GithubHttpCredentialTypes.GithubApp:
+				d.Set("credentials", []map[string]interface{}{
+					{
+						"http": []map[string]interface{}{
+							{
+								"github_app": []map[string]interface{}{
+									{
+										"installation_id":     connector.Github.Authentication.Http.GithubApp.InstallationId,
+										"application_id":      connector.Github.Authentication.Http.GithubApp.ApplicationId,
+										"private_key_ref":     connector.Github.Authentication.Http.GithubApp.PrivateKeyRef,
+										"installation_id_ref": connector.Github.Authentication.Http.GithubApp.InstallationIdRef,
+										"application_id_ref":  connector.Github.Authentication.Http.GithubApp.ApplicationIdRef,
+									},
+								},
+							},
+						},
+					},
+				})
+				break
+			case nextgen.GithubHttpCredentialTypes.Anonymous:
+				d.Set("credentials", []map[string]interface{}{
+					{
+						"http": []map[string]interface{}{
+							{
+								"anonymous": []map[string]interface{}{
+									{},
+								},
+							},
+						},
+					},
+				})
+				break
 			default:
 				return fmt.Errorf("unsupported github http authentication type: %s", connector.Github.Authentication.Type_)
 			}
@@ -324,9 +494,11 @@ func readConnectorGithub(d *schema.ResourceData, connector *nextgen.ConnectorInf
 				{
 					"github_app": []map[string]interface{}{
 						{
-							"installation_id": connector.Github.ApiAccess.GithubApp.InstallationId,
-							"application_id":  connector.Github.ApiAccess.GithubApp.ApplicationId,
-							"private_key_ref": connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id":     connector.Github.ApiAccess.GithubApp.InstallationId,
+							"application_id":      connector.Github.ApiAccess.GithubApp.ApplicationId,
+							"private_key_ref":     connector.Github.ApiAccess.GithubApp.PrivateKeyRef,
+							"installation_id_ref": connector.Github.ApiAccess.GithubApp.InstallationIdRef,
+							"application_id_ref":  connector.Github.ApiAccess.GithubApp.ApplicationIdRef,
 						},
 					},
 				},

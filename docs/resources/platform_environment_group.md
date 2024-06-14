@@ -10,8 +10,48 @@ description: |-
 
 Resource for creating a Harness environment group.
 
-## Example Usage
 
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to create the Environment, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/create-environments/)
+- To understand more about Group Environment, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/create-environment-groups/)
+
+
+## Example to create Environment Group at different levels (Org, Project, Account)
+
+### Account Level
+```terraform
+resource "harness_platform_environment_group" "example" {
+  identifier = "identifier"
+  color      = "#0063F7"
+  yaml       = <<-EOT
+  environmentGroup:
+    name: "name"
+    identifier: "identifier"
+    description: "temp"
+    envIdentifiers: []
+    EOT
+}
+```
+
+### Org Level
+```terraform
+resource "harness_platform_environment_group" "example" {
+  identifier = "identifier"
+  org_id     = "orgIdentifer"
+  color      = "#0063F7"
+  yaml       = <<-EOT
+  environmentGroup:
+    name: "name"
+    identifier: "identifier"
+    description: "temp"
+    orgIdentifier: "orgIdentifer"
+    envIdentifiers: []
+    EOT
+}
+```
+
+### Project Level
 ```terraform
 resource "harness_platform_environment_group" "example" {
   identifier = "identifier"
@@ -36,11 +76,12 @@ resource "harness_platform_environment_group" "example" {
 ### Required
 
 - `identifier` (String) identifier of the environment group.
-- `yaml` (String) Env group YAML
-
+- `yaml` (String) Env group YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
+- `envIdentifiers` (List of String) identifier for the environment you want to include in the group (can be empty as well).
 ### Optional
 
 - `color` (String) Color of the environment group.
+- `force_delete` (String) Enable this flag for force deletion of environment group
 - `org_id` (String) org_id of the environment group.
 - `project_id` (String) project_id of the environment group.
 
@@ -53,6 +94,12 @@ resource "harness_platform_environment_group" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using the environment group id.
+# Import account level environment group.
 terraform import harness_platform_environment_group.example <environment_group_id>
+
+# Import org level environment group.
+terraform import harness_platform_environment_group.example <org_id>/<environment_group_id>
+
+# Import project level environment group.
+terraform import harness_platform_environment_group.example <org_id>/<project_id>/<environment_group_id>
 ```

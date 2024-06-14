@@ -10,12 +10,17 @@ description: |-
 
 Resource for creating a Harness project.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Project, please see [Documentation](https://developer.harness.io/docs/platform/organizations-and-projects/create-an-organization/#create-a-project)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Project)
 ## Example Usage
 
 ```terraform
 resource "harness_platform_project" "test" {
   identifier = "testproject"
   name       = "Test Project"
+  org_id     = "org_id"
   color      = "#0063F7"
 }
 ```
@@ -27,13 +32,13 @@ resource "harness_platform_project" "test" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 
 ### Optional
 
 - `color` (String) Color of the project.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 

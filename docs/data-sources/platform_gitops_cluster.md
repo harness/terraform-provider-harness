@@ -35,31 +35,11 @@ data "harness_platform_gitops_cluster" "example" {
 
 - `org_id` (String) Organization identifier of the cluster.
 - `project_id` (String) Project identifier of the GitOps cluster.
-- `query` (Block List) Query for the GitOps cluster resources. (see [below for nested schema](#nestedblock--query))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 - `request` (List of Object) Cluster create or update request. (see [below for nested schema](#nestedatt--request))
-
-<a id="nestedblock--query"></a>
-### Nested Schema for `query`
-
-Optional:
-
-- `id` (Block List) Cluster server URL or the cluster name. (see [below for nested schema](#nestedblock--query--id))
-- `name` (String) Name of the GitOps cluster.
-- `server` (String) Server of the GitOps cluster.
-
-<a id="nestedblock--query--id"></a>
-### Nested Schema for `query.id`
-
-Optional:
-
-- `type` (String) Type of the specified GitOps cluster identifier ( 'server' - default, 'name' ).
-- `value` (String) Cluster server URL or the cluster name.
-
-
 
 <a id="nestedatt--request"></a>
 ### Nested Schema for `request`
@@ -67,8 +47,7 @@ Optional:
 Read-Only:
 
 - `cluster` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster))
-- `id` (List of Object) (see [below for nested schema](#nestedobjatt--request--id))
-- `update_mask` (List of Object) (see [below for nested schema](#nestedobjatt--request--update_mask))
+- `tags` (Set of String)
 - `updated_fields` (List of String)
 - `upsert` (Boolean)
 
@@ -94,22 +73,14 @@ Read-Only:
 
 Read-Only:
 
-- `aws_auth_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--aws_auth_config))
+- `aws_cluster_name` (String)
 - `bearer_token` (String)
 - `cluster_connection_type` (String)
 - `exec_provider_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--exec_provider_config))
 - `password` (String)
+- `role_a_r_n` (String)
 - `tls_client_config` (List of Object) (see [below for nested schema](#nestedobjatt--request--cluster--config--tls_client_config))
 - `username` (String)
-
-<a id="nestedobjatt--request--cluster--config--aws_auth_config"></a>
-### Nested Schema for `request.cluster.config.username`
-
-Read-Only:
-
-- `cluster_name` (String)
-- `role_a_r_n` (String)
-
 
 <a id="nestedobjatt--request--cluster--config--exec_provider_config"></a>
 ### Nested Schema for `request.cluster.config.username`
@@ -184,23 +155,3 @@ Read-Only:
 
 - `nanos` (Number)
 - `seconds` (String)
-
-
-
-<a id="nestedobjatt--request--id"></a>
-### Nested Schema for `request.id`
-
-Read-Only:
-
-- `type` (String)
-- `value` (String)
-
-
-<a id="nestedobjatt--request--update_mask"></a>
-### Nested Schema for `request.update_mask`
-
-Read-Only:
-
-- `paths` (List of List of String)
-
-

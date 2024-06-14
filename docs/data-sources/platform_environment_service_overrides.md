@@ -3,12 +3,12 @@
 page_title: "harness_platform_environment_service_overrides Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data source for creating a Harness environment service overrides.
+  Data source for Harness environment service overrides.
 ---
 
 # harness_platform_environment_service_overrides (Data Source)
 
-Data source for creating a Harness environment service overrides.
+Data source for Harness environment service overrides.
 
 ## Example Usage
 
@@ -26,17 +26,18 @@ data "harness_platform_environment_service_overrides" "test" {
 
 ### Required
 
-- `env_id` (String) The env ID to which the overrides associated.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `env_id` (String) The env Id associated with the overrides. To reference an environment at the organization scope, prefix 'org' to the expression: org.{env_id}. To reference an environment at the account scope, prefix 'account' to the expression: account.{env_id}).
 
 ### Optional
 
-- `service_id` (String) The service ID to which the overrides applies.
+- `identifier` (String) identifier of the service overrides.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `service_id` (String) The service Id associated with the overrides. To reference a service at the organization scope, prefix 'org' to the expression: org.{service_id}. To reference a service at the account scope, prefix 'account' to the expression: account.{service_id}).
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 - `yaml` (String) Environment Service Overrides YAML
 
 

@@ -27,6 +27,7 @@ func ResourceVariables() *schema.Resource {
 				Description: "Unique identifier of the resource",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"name": {
 				Description: "Name of the Variable",
@@ -42,11 +43,13 @@ func ResourceVariables() *schema.Resource {
 				Description: "Organization Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"type": {
 				Description: "Type of Variable",
@@ -90,13 +93,7 @@ func resourceVariablesRead(ctx context.Context, d *schema.ResourceData, meta int
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
-	}
-
-	if resp.Data == nil {
-		d.SetId("")
-		d.MarkNewResource()
-		return nil
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	readVariable(d, resp.Data.Variable)

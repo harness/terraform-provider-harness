@@ -18,6 +18,9 @@ func TestAccDataSourceConnectorAwsKms(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorAwsKms(name),
@@ -37,22 +40,41 @@ func TestAccDataSourceConnectorAwsKms(t *testing.T) {
 
 func testAccDataSourceConnectorAwsKms(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_awskms" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 			description = "test"
 			tags = ["foo:bar"]
 
-			arn_ref = "account.acctest_sumo_access_id"
+			arn_ref = "account.${harness_platform_secret_text.test.id}"
 			region = "us-east-1"
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				inherit_from_delegate = true
 			}
+			
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 
 		data "harness_platform_connector_awskms" "test" {
 			identifier = harness_platform_connector_awskms.test.identifier
+
 		}
 	`, name)
 }

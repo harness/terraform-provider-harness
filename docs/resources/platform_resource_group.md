@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating a Harness Resource Group
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Resource Group, please see [Documentation](https://developer.harness.io/docs/platform/role-based-access-control/add-resource-groups)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Harness-Resource-Group)
 ## Example Usage
 
 ```terraform
@@ -31,7 +35,7 @@ resource "harness_platform_resource_group" "test" {
       resource_type = "CONNECTOR"
       attribute_filter {
         attribute_name   = "category"
-        attribute_values = ["value"]
+        attribute_values = ["CLOUD_COST"]
       }
     }
   }
@@ -52,11 +56,11 @@ resource "harness_platform_resource_group" "test" {
 - `allowed_scope_levels` (Set of String) The scope levels at which this resource group can be used
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `included_scopes` (Block Set) Included scopes (see [below for nested schema](#nestedblock--included_scopes))
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `included_scopes` (Block Set) Included scopes. The default is selected based on the resource group scope if not specified. (Go to [nested schema](#nestedblock--included_scopes) below.)
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `resource_filter` (Block List) Contains resource filter for a resource group (see [below for nested schema](#nestedblock--resource_filter))
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -101,14 +105,20 @@ Optional:
 
 Optional:
 
-- `attribute_name` (String) Name of the attribute
-- `attribute_values` (Set of String) Value of the attributes
+- `attribute_name` (String) Name of the attribute. Valid values are `category` or `type`.
+- `attribute_values` (Set of String) Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING] and for `type` are [Production,PreProduction]
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using resource group id
+# Import account level resource group
 terraform import harness_platform_resource_group.example <resource_group_id>
+
+# Import org level resource group
+terraform import harness_platform_resource_group.example <ord_id>/<resource_group_id>
+
+# Import project level resource group
+terraform import harness_platform_resource_group.example <org_id>/<project_id>/<resource_group_id>
 ```

@@ -28,21 +28,19 @@ data "harness_platform_infrastructure" "example" {
 ### Required
 
 - `env_id` (String) environment identifier.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `identifier` (String) Unique identifier of the resource.
 
 ### Optional
 
-- `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
 - `deployment_type` (String) Infrastructure deployment type. Valid values are Kubernetes, NativeHelm, Ssh, WinRm, ServerlessAwsLambda, AzureWebApp, Custom, ECS.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment.
+- `tags` (Set of String) Tags to associate with the resource.
+- `type` (String) Type of Infrastructure. Valid values are KubernetesDirect, KubernetesGcp, ServerlessAwsLambda, Pdc, KubernetesAzure, SshWinRmAzure, SshWinRmAws, AzureWebApp, ECS, GitOps, CustomDeployment, TAS, KubernetesRancher, AWS_SAM.
 - `yaml` (String) Infrastructure YAML
-
-

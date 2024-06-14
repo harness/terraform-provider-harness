@@ -15,7 +15,7 @@ import (
 
 func ResourceGitopsRepoCred() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Repositories Credentials.",
+		Description: "Resource for managing a Harness Gitops Repository Credentials.",
 
 		CreateContext: resourceGitopsRepoCredCreate,
 		ReadContext:   resourceGitopsRepoCredRead,
@@ -25,32 +25,32 @@ func ResourceGitopsRepoCred() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
-				Description: "Identifier of the Repository Credential.",
+				Description: "Identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"agent_id": {
-				Description: "Agent identifier of the Repository Credential.",
+				Description: "Agent identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the Repository Credential.",
+				Description: "Account identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "Organization identifier of the Repository Credential.",
+				Description: "Organization identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the Repository Credential.",
+				Description: "Project identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"upsert": {
-				Description: "if the Repository credential should be upserted.",
+				Description: "Indicates if the GitOps repository credential should be updated if existing and inserted if not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
@@ -62,32 +62,32 @@ func ResourceGitopsRepoCred() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"url": {
-							Description: "url representing this object.",
+							Description: "URL of the remote repository. Make sure you pass at least an org, this will not work if you just provide the host, for eg. \"https://github.com\"",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"username": {
-							Description: "Username for authenticating at the repo server.",
+							Description: "Username to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"password": {
-							Description: "Password for authenticating at the repo server.",
+							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"ssh_private_key": {
-							Description: "Contains the private key data for authenticating at the repo server using SSH (only Git repos).",
+							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_data": {
-							Description: "Specifies the TLS client cert data for authenticating at the repo server.",
+							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_key": {
-							Description: "Specifies the TLS client cert key for authenticating at the repo server.",
+							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},

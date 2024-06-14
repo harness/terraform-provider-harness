@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_feature_flag_target_group -  Fix type issue when casting between types for include and exclude rules
+```

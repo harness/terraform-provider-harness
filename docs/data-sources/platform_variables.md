@@ -10,8 +10,14 @@ description: |-
 
 Data source for retrieving a Harness Variable.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Variables, please see [Documentation](https://developer.harness.io/docs/platform/Variables-and-Expressions/add-a-variable)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Variables)
+## Example Usage
+
 ```terraform
-data "harness_platform_variable" "test" {
+data "harness_platform_variables" "example" {
   identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"

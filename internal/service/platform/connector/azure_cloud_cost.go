@@ -88,6 +88,10 @@ func resourceConnectorAzureCloudCostRead(ctx context.Context, d *schema.Resource
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAzureCloudCost(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
@@ -160,15 +164,17 @@ func readConnectorAzureCloudCost(d *schema.ResourceData, connector *nextgen.Conn
 	d.Set("features_enabled", connector.AzureCloudCost.FeaturesEnabled)
 	d.Set("tenant_id", connector.AzureCloudCost.TenantId)
 	d.Set("subscription_id", connector.AzureCloudCost.SubscriptionId)
-	d.Set("billing_export_spec", []interface{}{
-		map[string]interface{}{
-			"storage_account_name": connector.AzureCloudCost.BillingExportSpec.StorageAccountName,
-			"container_name":       connector.AzureCloudCost.BillingExportSpec.ContainerName,
-			"directory_name":       connector.AzureCloudCost.BillingExportSpec.DirectoryName,
-			"report_name":          connector.AzureCloudCost.BillingExportSpec.ReportName,
-			"subscription_id":      connector.AzureCloudCost.BillingExportSpec.SubscriptionId,
-		},
-	})
+	if isFeatureEnabled("BILLING", connector.AzureCloudCost.FeaturesEnabled) {
+		d.Set("billing_export_spec", []interface{}{
+			map[string]interface{}{
+				"storage_account_name": connector.AzureCloudCost.BillingExportSpec.StorageAccountName,
+				"container_name":       connector.AzureCloudCost.BillingExportSpec.ContainerName,
+				"directory_name":       connector.AzureCloudCost.BillingExportSpec.DirectoryName,
+				"report_name":          connector.AzureCloudCost.BillingExportSpec.ReportName,
+				"subscription_id":      connector.AzureCloudCost.BillingExportSpec.SubscriptionId,
+			},
+		})
+	}
 
 	return nil
 }

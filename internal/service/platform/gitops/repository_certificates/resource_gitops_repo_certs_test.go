@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -17,6 +18,7 @@ import (
 
 func TestAccResourceGitopsRepoCerts(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -75,16 +77,6 @@ func testAccResourceGitopsRepoCertsDestroy(resourceName string) resource.TestChe
 
 func testAccResourceGitopsRepoCerts(id string, accountId string, name string, agentId string, clusterName string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-			org_id = harness_platform_organization.test.id
-		}
 		resource "harness_platform_gitops_repo_cert" "test" {
 			account_id = "%[2]s"
 			agent_id = "%[4]s"

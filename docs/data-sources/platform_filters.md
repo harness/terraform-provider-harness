@@ -10,9 +10,14 @@ description: |-
 
 Data source for retrieving a Harness Filter. This data source allow to fetch filters of types {Connector, DelegateProfile, Delegate, EnvironmentGroup, FileStore, Environment}
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Filter)
+## Example Usage
+
 ```terraform
-data "harness_platform_variable" "test" {
-  identifier  = "identifier"
+data "harness_platform_filters" "test" {
+  identifier = "identifier"
   org_id     = "org_id"
   project_id = "project_id"
   type       = "Connector"
@@ -35,7 +40,7 @@ data "harness_platform_variable" "test" {
 ### Read-Only
 
 - `filter_properties` (List of Object) Properties of the filter entity defined in Harness. (see [below for nested schema](#nestedatt--filter_properties))
-- `filter_visibility` (String) This indicates visibility of filter, by default it is Everyone.
+- `filter_visibility` (String) This indicates visibility of filter. By default, everyone can view this filter.
 - `id` (String) The ID of this resource.
 - `name` (String) Name of the Filter
 

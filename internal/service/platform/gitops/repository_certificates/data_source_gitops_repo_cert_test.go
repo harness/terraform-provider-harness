@@ -3,6 +3,7 @@ package repository_certificates_test
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -13,6 +14,7 @@ import (
 func TestAccDataSourceGitOpsRepoCert(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -26,8 +28,14 @@ func TestAccDataSourceGitOpsRepoCert(t *testing.T) {
 			{
 				Config: testAccDataSourceRepoCert(id, accountId, name, agentId, clusterName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "org_id", id),
-					resource.TestCheckResourceAttr(resourceName, "project_id", id),
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
+				),
+			}, {
+				Config: testAccDataSourceRepoCertSSH(id, accountId, name, agentId, clusterName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "account_id", accountId),
+					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 		},
@@ -36,21 +44,8 @@ func TestAccDataSourceGitOpsRepoCert(t *testing.T) {
 
 func testAccDataSourceRepoCert(id string, accountId string, name string, agentId string, clusterName string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[3]s"
-			org_id = harness_platform_organization.test.id
-		}
-
 		resource "harness_platform_gitops_repo_cert" "test" {
 			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
 
  			request {
@@ -69,9 +64,43 @@ func testAccDataSourceRepoCert(id string, accountId string, name string, agentId
 		}
 
 		data "harness_platform_gitops_repo_cert" "test" {
+			depends_on = [harness_platform_gitops_repo_cert.test]
 			account_id = "%[2]s"
-			project_id = harness_platform_project.test.id
-			org_id = harness_platform_organization.test.id
+			agent_id = "%[4]s"
+		}
+`, id, accountId, name, agentId, clusterName)
+}
+
+// bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+// "serverName":"bitbucket.org",
+// "certType":"ssh",
+// "certSubType": "ssh-rsa",
+// "certData":"QUFBQUIzTnphQzF5YzJFQUFBQUJJd0FBQVFFQXViaU44MWVEY2FmcmdNZUx6YUZQc3cya052RWNxVEtsL1ZxTGF0L01hQjMzcFp5MHkzckpadG5xd1IycU9PdmJ3S1pZS2lFTzFPNlZxTkVCeEt2SkplbENxMGRUWFdUNXBiTzJnRFhDNmg2UURYQ2FIbzZwT0hHUFV5K1lCYUdRUkd1U3VzTUVBU1lpV3VuWU4wdkNBSThRYVhuV01YTk1kRlAzakhBSkgwZURzb2lHbkxQQmxCcDRUTm02cllJNzRuTXpnejNCOUlpa1c0V1ZLK2RjOEtaSlpXWWpBdU9SVTNqYzFjL05Qc2tEMkFTaW5mOHYzeG5mWGV1a1Uwc0o1TjZtNUU4VkxqT2JQRU8rbU4ydC9GWlRNWkxpRnFQV2MvQUxTcW5Nbm5od3JOaTJyYmZnL3JkL0lwTDhMZTNwU0JuZTgrc2VlRlZCb0dxekhNOXlYdz09","certInfo":""}]},"upsert":true}' \
+func testAccDataSourceRepoCertSSH(id string, accountId string, name string, agentId string, clusterName string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_repo_cert" "test" {
+			account_id = "%[2]s"
+			agent_id = "%[4]s"
+
+ 			request {
+				upsert = true
+				certificates {
+					metadata {
+
+					}
+					items {
+						server_name = "bitbucket.org"
+						cert_type = "ssh"
+						cert_sub_type = "ssh-rsa"
+						cert_data = "QUFBQUIzTnphQzF5YzJFQUFBQUJJd0FBQVFFQXViaU44MWVEY2FmcmdNZUx6YUZQc3cya052RWNxVEtsL1ZxTGF0L01hQjMzcFp5MHkzckpadG5xd1IycU9PdmJ3S1pZS2lFTzFPNlZxTkVCeEt2SkplbENxMGRUWFdUNXBiTzJnRFhDNmg2UURYQ2FIbzZwT0hHUFV5K1lCYUdRUkd1U3VzTUVBU1lpV3VuWU4wdkNBSThRYVhuV01YTk1kRlAzakhBSkgwZURzb2lHbkxQQmxCcDRUTm02cllJNzRuTXpnejNCOUlpa1c0V1ZLK2RjOEtaSlpXWWpBdU9SVTNqYzFjL05Qc2tEMkFTaW5mOHYzeG5mWGV1a1Uwc0o1TjZtNUU4VkxqT2JQRU8rbU4ydC9GWlRNWkxpRnFQV2MvQUxTcW5Nbm5od3JOaTJyYmZnL3JkL0lwTDhMZTNwU0JuZTgrc2VlRlZCb0dxekhNOXlYdz09"
+					}
+				}
+			}
+		}
+
+		data "harness_platform_gitops_repo_cert" "test" {
+			depends_on = [harness_platform_gitops_repo_cert.test]
+			account_id = "%[2]s"
 			agent_id = "%[4]s"
 		}
 `, id, accountId, name, agentId, clusterName)

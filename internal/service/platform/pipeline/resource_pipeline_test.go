@@ -6,10 +6,12 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/utils"
+	"github.com/harness/harness-openapi-go-client/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourcePipeline(t *testing.T) {
@@ -19,7 +21,7 @@ func TestAccResourcePipeline(t *testing.T) {
 
 	resourceName := "harness_platform_pipeline.test"
 
-	resource.UnitTest(t, resource.TestCase{
+ 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccPipelineDestroy(resourceName),
@@ -85,6 +87,68 @@ func TestAccResourcePipelineInline(t *testing.T) {
 	})
 }
 
+func TestAccResourcePipelineImportFromGit(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+
+	resourceName := "harness_platform_pipeline.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccPipelineDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineImportFromGit(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", "gitx"),
+					resource.TestCheckResourceAttr(resourceName, "name", "gitx"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path", "git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
+			},
+		},
+	})
+}
+
+func TestAccResourcePipeline_DeleteUnderlyingResource(t *testing.T) {
+	name := t.Name()
+	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
+	project_id := id
+	org_id := id
+	resourceName := "harness_platform_pipeline.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourcePipelineInline(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetClientWithContext()
+					_, err := c.PipelinesApi.DeletePipeline(ctx, org_id, project_id, id, &nextgen.PipelinesApiDeletePipelineOpts{})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourcePipelineInline(id, name),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func testAccGetPipeline(resourceName string, state *terraform.State) (*openapi_client_nextgen.PipelineGetResponseBody, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetClientWithContext()
@@ -128,6 +192,7 @@ func testAccResourcePipeline(id string, name string) string {
                         org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
                         name = "%[2]s"
+                        tags = ["foo:bar", "bar:foo"]
                         git_details {
                             branch_name = "main"
                             commit_message = "Commit"
@@ -139,11 +204,13 @@ func testAccResourcePipeline(id string, name string) string {
             yaml = <<-EOT
                 pipeline:
                     name: %[2]s
-                    identifier: %[1]s
+                    identifier: %[1]s   
                     allowStageExecutions: false
                     projectIdentifier: ${harness_platform_project.test.id}
                     orgIdentifier: ${harness_platform_project.test.org_id}
-                    tags: {}
+                    tags:
+                      foo: bar
+                      bar: foo
                     stages:
                         - stage:
                             name: dep
@@ -244,6 +311,7 @@ func testAccResourcePipelineInline(id string, name string) string {
                         org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
                         name = "%[2]s"
+                        tags = ["foo:bar", "bar:foo"]
             yaml = <<-EOT
                 pipeline:
                     name: %[2]s
@@ -251,7 +319,9 @@ func testAccResourcePipelineInline(id string, name string) string {
                     allowStageExecutions: false
                     projectIdentifier: ${harness_platform_project.test.id}
                     orgIdentifier: ${harness_platform_project.test.org_id}
-                    tags: {}
+                    tags:
+                      foo: bar
+                      bar: foo
                     stages:
                         - stage:
                             name: dep
@@ -332,5 +402,31 @@ func testAccResourcePipelineInline(id string, name string) string {
                                             type: StageRollback
             EOT
         }
+        `, id, name)
+}
+
+func testAccResourcePipelineImportFromGit(id string, name string) string {
+	return fmt.Sprintf(`
+        resource "harness_platform_organization" "test" {
+					identifier = "%[1]s"
+					name = "%[2]s"
+				}
+        resource "harness_platform_pipeline" "test" {
+                        identifier = "gitx"
+                        org_id = "default"
+						project_id = "DoNotDelete_Amit"
+                        name = "gitx"
+                        import_from_git = true
+                        git_import_info {
+                            branch_name = "main"
+                            file_path = ".harness/gitx.yaml"
+                            connector_ref = "account.DoNotDeleteGithub"
+                            repo_name = "open-repo"
+                        }
+                        pipeline_import_request {
+                            pipeline_name = "gitx"
+                            pipeline_description = "Pipeline Description"
+                        }
+                }
         `, id, name)
 }

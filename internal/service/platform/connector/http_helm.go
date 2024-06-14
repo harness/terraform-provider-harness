@@ -13,7 +13,7 @@ import (
 
 func ResourceConnectorHelm() *schema.Resource {
 	resource := &schema.Resource{
-		Description:   "Resource for creating a Helm connector.",
+		Description:   "Resource for creating a HTTP Helm connector.",
 		ReadContext:   resourceConnectorHelmRead,
 		CreateContext: resourceConnectorHelmCreateOrUpdate,
 		UpdateContext: resourceConnectorHelmCreateOrUpdate,
@@ -61,6 +61,12 @@ func ResourceConnectorHelm() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of connector",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -73,6 +79,10 @@ func resourceConnectorHelmRead(ctx context.Context, d *schema.ResourceData, meta
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.HttpHelmRepo)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorHelm(d, conn); err != nil {
@@ -115,8 +125,7 @@ func buildConnectorHelm(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		Type_: nextgen.HttpHelmAuthTypes.Anonymous,
 	}
 
-	if attr, ok := d.GetOk("credentials"); ok {
-		config := attr.([]interface{})[0].(map[string]interface{})
+	if _, ok := d.GetOk("credentials"); ok {
 		connector.HttpHelm.Auth.Type_ = nextgen.HttpHelmAuthTypes.UsernamePassword
 		connector.HttpHelm.Auth.UsernamePassword = &nextgen.HttpHelmUsernamePassword{}
 
@@ -124,7 +133,7 @@ func buildConnectorHelm(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			connector.HttpHelm.Auth.UsernamePassword.Username = attr.(string)
 		}
 
-		if attr, ok := config["credentials.0.username_ref"]; ok {
+		if attr, ok := d.GetOk("credentials.0.username_ref"); ok {
 			connector.HttpHelm.Auth.UsernamePassword.UsernameRef = attr.(string)
 		}
 

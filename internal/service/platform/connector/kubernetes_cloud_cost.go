@@ -21,7 +21,7 @@ func ResourceConnectorKubernetesCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"connector_ref": {
-				Description: "Reference of the Connector.",
+				Description: "Reference of the Connector." + helpers.Descriptions.ConnectorRefText.String(),
 				Type:        schema.TypeString,
 				Required:    true,
 			},
@@ -46,6 +46,10 @@ func resourceConnectorKubernetesCloudCostRead(ctx context.Context, d *schema.Res
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.CEK8sCluster)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorKubernetesCloudCost(d, conn); err != nil {

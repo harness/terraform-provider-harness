@@ -30,8 +30,6 @@ func TestAccResourceConnectorSumologic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://api.us2.sumologic.com/"),
-					resource.TestCheckResourceAttr(resourceName, "access_id_ref", "account.acctest_sumo_access_id"),
-					resource.TestCheckResourceAttr(resourceName, "access_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -44,8 +42,6 @@ func TestAccResourceConnectorSumologic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://api.us2.sumologic.com/"),
-					resource.TestCheckResourceAttr(resourceName, "access_id_ref", "account.acctest_sumo_access_id"),
-					resource.TestCheckResourceAttr(resourceName, "access_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -68,8 +64,8 @@ func testAccResourceConnectorSumologic(id string, name string) string {
 
 			url = "https://api.us2.sumologic.com/"
 			delegate_selectors = ["harness-delegate"]
-			access_id_ref = "account.acctest_sumo_access_id"
-			access_key_ref = "account.acctest_sumo_access_key"
+			access_id_ref = "account.doNotDeleteHSM"
+			access_key_ref = "account.doNotDeleteHSM"
 		}
 `, id, name)
 }

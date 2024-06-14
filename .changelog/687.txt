@@ -1,0 +1,3 @@
+```release-note:bug
+harness_platform_connector_aws -  Set value for cross_account_access if not nil.
+```

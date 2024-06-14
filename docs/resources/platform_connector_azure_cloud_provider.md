@@ -118,9 +118,10 @@ resource "harness_platform_connector_azure_cloud_provider" "inherit_from_delegat
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `execute_on_delegate` (Boolean) Execute on delegate or not.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `force_delete` (Boolean) Enable this flag for force deletion of connector
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -204,6 +205,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import using azure cloud provider connector id
+# Import account level azure cloud provider connector 
 terraform import harness_platform_connector_azure_cloud_provider.example <connector_id>
+
+# Import org level azure cloud provider connector 
+terraform import harness_platform_connector_azure_cloud_provider.example <ord_id>/<connector_id>
+
+# Import project level azure cloud provider connector 
+terraform import harness_platform_connector_azure_cloud_provider.example <org_id>/<project_id>/<connector_id>
 ```

@@ -51,7 +51,7 @@ func testAccDataSourceConnectorNexus(name string) string {
 			version = "3.x"
 			credentials {
 				username = "admin"
-				password_ref = "account.test"
+				password_ref = "account.doNotDeleteHSM"
 			}
 		}
 

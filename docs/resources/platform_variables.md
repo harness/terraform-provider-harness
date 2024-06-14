@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating a Harness Variables.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Variables, please see [Documentation](https://developer.harness.io/docs/platform/Variables-and-Expressions/add-a-variable)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Variables)
 ## Example Usage
 
 ```terraform
@@ -59,6 +63,12 @@ Required:
 Import is supported using the following syntax:
 
 ```shell
-# Import using user group id
+# Import account level variables
 terraform import harness_platform_variables.example <variable_id>
+
+# Import org level variables
+terraform import harness_platform_variables.example <ord_id>/<variable_id>
+
+# Import project level variables
+terraform import harness_platform_variables.example <org_id>/<project_id>/<variable_id>
 ```

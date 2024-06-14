@@ -10,6 +10,10 @@ description: |-
 
 Data source for retrieving a Harness User Group.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand more about User Group, please see [Documentation](https://developer.harness.io/docs/platform/User-Management/add-user-groups)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/User-Group)
 ## Example Usage
 
 ```terraform
@@ -33,8 +37,8 @@ data "harness_platform_usergroup" "example_by_name" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
@@ -48,7 +52,7 @@ data "harness_platform_usergroup" "example_by_name" {
 - `sso_group_id` (String) Identifier of the userGroup in SSO.
 - `sso_group_name` (String) Name of the SSO userGroup.
 - `sso_linked` (Boolean) Whether sso is linked or not.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `users` (Set of String) List of users in the UserGroup.
 
 <a id="nestedblock--notification_configs"></a>

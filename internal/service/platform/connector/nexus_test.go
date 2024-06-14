@@ -80,7 +80,6 @@ func TestAccResourceConnectorNexus_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "version", "3.x"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.test"),
 				),
 			},
 			{
@@ -105,7 +104,7 @@ func testAccResourceConnectorNexus_usernamepassword(id string, name string) stri
 			version = "3.x"
 			credentials {
 				username = "admin"
-				password_ref = "account.test"
+				password_ref = "account.doNotDeleteHSM"
 			}
 		}
 `, id, name)

@@ -143,6 +143,11 @@ func ResourceConnectorK8s() *schema.Resource {
 							Type:        schema.TypeString,
 							Required:    true,
 						},
+						"ca_cert_ref": {
+							Description: "Reference to the secret containing the CA certificate for the connector." + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -273,6 +278,12 @@ func ResourceConnectorK8s() *schema.Resource {
 					},
 				},
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of connector",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -285,6 +296,10 @@ func resourceConnectorK8sRead(ctx context.Context, d *schema.ResourceData, meta 
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.K8sCluster)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorK8s(d, conn); err != nil {
@@ -408,20 +423,8 @@ func buildConnectorK8s(d *schema.ResourceData) *nextgen.ConnectorInfo {
 			if attr := config["service_account_token_ref"].(string); attr != "" {
 				saConfig.ServiceAccountTokenRef = attr
 			}
-		}
-
-		if attr, ok := d.GetOk("service_account"); ok {
-			config := attr.([]interface{})[0].(map[string]interface{})
-			saConfig := &nextgen.KubernetesServiceAccount{}
-			connector.K8sCluster.Credential.ManualConfig.Auth.Type_ = nextgen.KubernetesAuthTypes.ServiceAccount
-			connector.K8sCluster.Credential.ManualConfig.Auth.ServiceAccount = saConfig
-
-			if attr := config["master_url"].(string); attr != "" {
-				connector.K8sCluster.Credential.ManualConfig.MasterUrl = attr
-			}
-
-			if attr := config["service_account_token_ref"].(string); attr != "" {
-				saConfig.ServiceAccountTokenRef = attr
+			if attr := config["ca_cert_ref"].(string); attr != "" {
+				saConfig.CaCertRef = attr
 			}
 		}
 
@@ -507,6 +510,7 @@ func readConnectorK8s(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 				{
 					"master_url":                connector.K8sCluster.Credential.ManualConfig.MasterUrl,
 					"service_account_token_ref": auth.ServiceAccount.ServiceAccountTokenRef,
+					"ca_cert_ref":               auth.ServiceAccount.CaCertRef,
 				},
 			})
 			d.Set("delegate_selectors", connector.K8sCluster.DelegateSelectors)

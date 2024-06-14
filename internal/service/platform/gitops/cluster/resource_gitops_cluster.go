@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -13,7 +14,7 @@ import (
 
 func ResourceGitopsCluster() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Cluster.",
+		Description: "Resource for managing a Harness Gitops Cluster.",
 
 		CreateContext: resourceGitopsClusterCreate,
 		ReadContext:   resourceGitopsClusterRead,
@@ -47,43 +48,6 @@ func ResourceGitopsCluster() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"query": {
-				Description: "Query for the GitOps cluster resources.",
-				Type:        schema.TypeList,
-				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"server": {
-							Description: "Server of the GitOps cluster.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"name": {
-							Description: "Name of the GitOps cluster.",
-							Type:        schema.TypeString,
-							Optional:    true,
-						},
-						"id": {
-							Description: "Cluster server URL or the cluster name.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"type": {
-										Description: "Type of the specified GitOps cluster identifier ( 'server' - default, 'name' ).",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"value": {
-										Description: "Cluster server URL or the cluster name.",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-								}},
-						},
-					},
-				},
-			},
 			"request": {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
@@ -104,40 +68,13 @@ func ResourceGitopsCluster() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
-						"update_mask": {
-							Description: "Update mask of the GitOps cluster.",
-							Type:        schema.TypeList,
+						"tags": {
+							Description: "Tags for the GitOps cluster. These can be used to search or filter the GitOps agents.",
+							Type:        schema.TypeSet,
 							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"paths": {
-										Description: "The set of field mask paths.",
-										Optional:    true,
-										Type:        schema.TypeList,
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
-										},
-									},
-								},
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
 							},
-						},
-						"id": {
-							Description: "Cluster server URL or the cluster name.",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"type": {
-										Description: "Type of the specified cluster identifier ( 'server' - default, 'name' ).",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-									"value": {
-										Description: "Cluster server URL or the cluster name.",
-										Type:        schema.TypeString,
-										Optional:    true,
-									},
-								}},
 						},
 						"cluster": {
 							Description: "GitOps cluster details.",
@@ -151,7 +88,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Required:    true,
 									},
 									"name": {
-										Description: "Name of the cluster. If omitted, will use the server address.",
+										Description: "Name of the cluster. If omitted, the server address will be used.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -188,46 +125,37 @@ func ResourceGitopsCluster() *schema.Resource {
 																Optional:    true,
 															},
 															"server_name": {
-																Description: "Server name for SNI in the client to check server certificates against.",
+																Description: "Server name for SNI in the client to check server certificates against. If ServerName is empty, the hostname used to contact the server is used.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"cert_data": {
-																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file).",
+																Description: "Certificate data holds PEM-encoded bytes (typically read from a client certificate file). CertData takes precedence over CertFile. Use this if you are using mTLS. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"key_data": {
-																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file).",
+																Description: "Key data holds PEM-encoded bytes (typically read from a client certificate key file). KeyData takes precedence over KeyFile. Use this if you are using mTLS. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 															"ca_data": {
-																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle).",
+																Description: "CA data holds PEM-encoded bytes (typically read from a root certificates bundle). Use this if you are using self-signed certificates. CAData takes precedence over CAFile. The value should be base64 encoded.",
 																Type:        schema.TypeString,
 																Optional:    true,
 															},
 														},
 													},
 												},
-												"aws_auth_config": {
-													Description: "IAM authentication configuration for AWS.",
-													Type:        schema.TypeList,
+												"role_a_r_n": {
+													Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
+													Type:        schema.TypeString,
 													Optional:    true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"cluster_name": {
-																Description: "AWS cluster name.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-															"role_a_r_n": {
-																Description: "Optional role ARN. If set then used for AWS IAM Authenticator.",
-																Type:        schema.TypeString,
-																Optional:    true,
-															},
-														},
-													},
+												},
+												"aws_cluster_name": {
+													Description: "AWS Cluster name. If set then AWS CLI EKS token command will be used to access cluster.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 												"exec_provider_config": {
 													Description: "Configuration for an exec provider.",
@@ -291,6 +219,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Description: "Time when cluster cache refresh has been requested.",
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"seconds": {
@@ -315,23 +244,23 @@ func ResourceGitopsCluster() *schema.Resource {
 												"connection_state": {
 													Description: "Information about the connection to the cluster.",
 													Type:        schema.TypeList,
-													Optional:    true,
+													Computed:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"status": {
 																Description: "Current status indicator of the connection.",
 																Type:        schema.TypeString,
-																Optional:    true,
+																Computed:    true,
 															},
 															"message": {
 																Description: "Information about the connection status.",
 																Type:        schema.TypeString,
-																Optional:    true,
+																Computed:    true,
 															},
 															"attempted_at": {
 																Description: "Time when cluster cache refresh has been requested.",
 																Type:        schema.TypeList,
-																Optional:    true,
+																Computed:    true,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"seconds": {
@@ -353,12 +282,12 @@ func ResourceGitopsCluster() *schema.Resource {
 												"server_version": {
 													Description: "Kubernetes version of the cluster.",
 													Type:        schema.TypeString,
-													Optional:    true,
+													Computed:    true,
 												},
 												"cache_info": {
 													Description: "Information about the cluster cache.",
 													Type:        schema.TypeList,
-													Optional:    true,
+													Computed:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"resources_count": {
@@ -397,7 +326,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										},
 									},
 									"shard": {
-										Description: "Shard number. Calculated on the fly by the application controller if not specified.",
+										Description: "Shard number to be managed by a specific application controller pod. Calculated on the fly by the application controller if not specified.",
 										Type:        schema.TypeString,
 										Optional:    true,
 									},
@@ -407,8 +336,9 @@ func ResourceGitopsCluster() *schema.Resource {
 										Optional:    true,
 									},
 									"project": {
-										Description: "Reference between project and cluster that allow you automatically to be added as item inside Destinations project entity.",
+										Description: "The ArgoCD project name corresponding to this GitOps cluster. An empty string means that the GitOps cluster belongs to the default project created by Harness.",
 										Type:        schema.TypeString,
+										Optional:    true,
 										Computed:    true,
 									},
 									"labels": {
@@ -484,17 +414,9 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
-	var queryName, queryServer string
-	if d.Get("query") != nil && len(d.Get("query").([]interface{})) > 0 {
-		query := d.Get("query").([]interface{})[0].(map[string]interface{})
-		queryServer = query["server"].(string)
-		queryName = query["name"].(string)
-	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.ClustersApiAgentClusterServiceGetOpts{
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
-		QueryServer:       optional.NewString(queryServer),
-		QueryName:         optional.NewString(queryName),
 	})
 
 	if err != nil {
@@ -596,8 +518,9 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 				awsAuthConfig["cluster_name"] = cl.Cluster.Config.AwsAuthConfig.ClusterName
 				awsAuthConfig["role_a_r_n"] = cl.Cluster.Config.AwsAuthConfig.RoleARN
 				awsAuthConfigList = append(awsAuthConfigList, awsAuthConfig)
-				config["aws_auth_config"] = awsAuthConfigList
 			}
+			config["role_a_r_n"] = cl.Cluster.Config.RoleARN
+			config["aws_cluster_name"] = cl.Cluster.Config.AwsClusterName
 			if cl.Cluster.Config.ExecProviderConfig != nil {
 				execProviderConfigList := []interface{}{}
 				execProviderConfig := map[string]interface{}{}
@@ -653,6 +576,7 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 		}
 		clusterList = append(clusterList, cluster)
 		request["cluster"] = clusterList
+		request["tags"] = helpers.FlattenTags(cl.Tags)
 		requestList = append(requestList, request)
 		d.Set("request", requestList)
 	}
@@ -660,18 +584,24 @@ func setClusterDetails(d *schema.ResourceData, cl *nextgen.Servicev1Cluster) {
 
 func buildCreateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterCreateRequest {
 	var upsert bool
+	var tags map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request := attr.([]interface{})[0].(map[string]interface{})
 		upsert = request["upsert"].(bool)
+		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+			tags = helpers.ExpandTags(tag)
+		}
 	}
 	return &nextgen.ClustersClusterCreateRequest{
 		Upsert:  upsert,
+		Tags:    tags,
 		Cluster: buildClusterDetails(d),
 	}
 }
 
 func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterUpdateRequest {
 	var request map[string]interface{}
+	var tags map[string]string
 	if attr, ok := d.GetOk("request"); ok {
 		request = attr.([]interface{})[0].(map[string]interface{})
 	}
@@ -680,26 +610,15 @@ func buildUpdateClusterRequest(d *schema.ResourceData) *nextgen.ClustersClusterU
 		for _, v := range request["updated_fields"].([]interface{}) {
 			updatedFields = append(updatedFields, v.(string))
 		}
-	}
-
-	var updateMask map[string]interface{}
-	if request["update_mask"] != nil && len(request["update_mask"].([]interface{})) > 0 {
-		updateMask = request["update_mask"].([]interface{})[0].(map[string]interface{})
-	}
-
-	var updateMaskPath []string
-	if updateMask["paths"] != nil && len(updateMask["paths"].([]interface{})) > 0 {
-		for _, v := range updateMask["paths"].([]interface{}) {
-			updateMaskPath = append(updateMaskPath, v.(string))
+		if tag := request["tags"].(*schema.Set).List(); len(tag) > 0 {
+			tags = helpers.ExpandTags(tag)
 		}
 	}
 
 	return &nextgen.ClustersClusterUpdateRequest{
 		Cluster:       buildClusterDetails(d),
 		UpdatedFields: updatedFields,
-		UpdateMask: &nextgen.ProtobufFieldMask{
-			Paths: updateMaskPath,
-		},
+		Tags:          tags,
 	}
 }
 
@@ -751,15 +670,12 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 					}
 				}
 
-				if clusterConfig["aws_auth_config"] != nil && len(clusterConfig["aws_auth_config"].([]interface{})) > 0 {
-					clusterDetails.Config.AwsAuthConfig = &nextgen.ClustersAwsAuthConfig{}
-					configAwsAuthConfig := clusterConfig["aws_auth_config"].([]interface{})[0].(map[string]interface{})
-					if configAwsAuthConfig["cluster_name"] != nil {
-						clusterDetails.Config.AwsAuthConfig.ClusterName = configAwsAuthConfig["cluster_name"].(string)
-					}
-					if configAwsAuthConfig["role_a_r_n"] != nil {
-						clusterDetails.Config.AwsAuthConfig.RoleARN = configAwsAuthConfig["role_a_r_n"].(string)
-					}
+				if clusterConfig["role_a_r_n"] != nil {
+					clusterDetails.Config.RoleARN = clusterConfig["role_a_r_n"].(string)
+				}
+
+				if clusterConfig["aws_cluster_name"] != nil {
+					clusterDetails.Config.AwsClusterName = clusterConfig["aws_cluster_name"].(string)
 				}
 
 				if clusterConfig["exec_provider_config"] != nil && len(clusterConfig["exec_provider_config"].([]interface{})) > 0 {

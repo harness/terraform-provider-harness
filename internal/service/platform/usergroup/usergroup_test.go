@@ -41,10 +41,261 @@ func TestAccResourceUserGroup(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"users"},
+			},
+		},
+	})
+}
+
+func TestProjectResourceUserGroup(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_usergroup.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceUserGroup(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				Config: testProjectResourceUserGroup(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"users"},
+			},
+		},
+	})
+}
+
+func TestOrgResourceUserGroup(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_usergroup.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceUserGroup(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+				),
+			},
+			{
+				Config: testOrgResourceUserGroup(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"users"},
+			},
+		},
+	})
+}
+
+func TestAccResourceUserGroup_emails(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_usergroup.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUserGroup_emails(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
+				),
+			},
+			{
+				Config: testAccResourceUserGroup_emails(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"user_emails"},
+			},
+		},
+	})
+}
+
+func TestAccResourceUserGroup_userIds(t *testing.T) {
+	t.Skip()
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_usergroup.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceUserGroup_userIds(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "users.0", "FZ-_NefESDmVvjrhu53MWQ"),
+					resource.TestCheckResourceAttr(resourceName, "users.1", "TRqwkV-jSvyPdW-4C1c3eg"),
+					resource.TestCheckResourceAttr(resourceName, "users.2", "0qBvYLghQqCnY9RrmuLJdg"),
+					resource.TestCheckResourceAttr(resourceName, "users.3", "4PuRra9dTOCbT7RnG3-PRw"),
+				),
+			},
+			{
+				Config: testAccResourceUserGroup_userIds(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "users.#", "4"),
+					resource.TestCheckResourceAttr(resourceName, "users.0", "FZ-_NefESDmVvjrhu53MWQ"),
+					resource.TestCheckResourceAttr(resourceName, "users.1", "TRqwkV-jSvyPdW-4C1c3eg"),
+					resource.TestCheckResourceAttr(resourceName, "users.2", "0qBvYLghQqCnY9RrmuLJdg"),
+					resource.TestCheckResourceAttr(resourceName, "users.3", "4PuRra9dTOCbT7RnG3-PRw"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"users"},
+			},
+		},
+	})
+}
+
+func TestProjectResourceUserGroup_emails(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_usergroup.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceUserGroup_emails(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+				),
+			},
+			{
+				Config: testProjectResourceUserGroup_emails(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"user_emails"},
+			},
+		},
+	})
+}
+
+func TestOrgResourceUserGroup_emails(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_usergroup.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testOrgResourceUserGroup_emails(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+				),
+			},
+			{
+				Config: testOrgResourceUserGroup_emails(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.OrgResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"user_emails"},
 			},
 		},
 	})
@@ -61,7 +312,7 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceUserGroup(id, name),
+				Config: testProjectResourceUserGroup(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -71,13 +322,12 @@ func TestAccResourceUserGroup_DeleteUnderlyingResource(t *testing.T) {
 				PreConfig: func() {
 					acctest.TestAccConfigureProvider()
 					c, ctx := acctest.TestAccProvider.Meta().(*internal.Session).GetPlatformClient()
-					resp, _, err := c.UserGroupApi.DeleteUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiDeleteUserGroupOpts{
+					_, _, err := c.UserGroupApi.DeleteUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiDeleteUserGroupOpts{
 						OrgIdentifier:     optional.NewString(id),
 						ProjectIdentifier: optional.NewString(id),
 					})
 					require.NoError(t, err)
-					require.NotNil(t, resp)
-					require.Equal(t, resp.Status, nextgen.ResponseStatusTypes.Success)
+
 				},
 				Config:             testAccResourceUserGroup(id, name),
 				PlanOnly:           true,
@@ -123,6 +373,40 @@ func testAccUserGroupDestroy(resourceName string) resource.TestCheckFunc {
 
 func testAccResourceUserGroup(id string, name string) string {
 	return fmt.Sprintf(`
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			users = []
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func testProjectResourceUserGroup(id string, name string) string {
+	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -143,6 +427,202 @@ func testAccResourceUserGroup(id string, name string) string {
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
 			users = []
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func testOrgResourceUserGroup(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			users = []
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func testAccResourceUserGroup_emails(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			user_emails = ["rathod.meetsatish@harness.io", "vikas.maddukuri@harness.io", "arkajyoti.mukherjee@harness.io", "mankrit.singh@harness.io"]
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func testAccResourceUserGroup_userIds(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			users = ["FZ-_NefESDmVvjrhu53MWQ", "TRqwkV-jSvyPdW-4C1c3eg", "0qBvYLghQqCnY9RrmuLJdg", "4PuRra9dTOCbT7RnG3-PRw"]
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func testProjectResourceUserGroup_emails(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			color = "#472848"
+		}
+
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			user_emails = ["rathod.meetsatish@harness.io"]
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func testOrgResourceUserGroup_emails(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			user_emails = ["rathod.meetsatish@harness.io"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"

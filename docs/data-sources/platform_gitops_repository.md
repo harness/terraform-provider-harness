@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repository Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Data Source for fetching a Harness GitOps Repository.
+  Data source for fetching a Harness GitOps Repository.
 ---
 
 # harness_platform_gitops_repository (Data Source)
 
-Data Source for fetching a Harness GitOps Repository.
+Data source for fetching a Harness GitOps Repository.
 
 ## Example Usage
 
@@ -33,14 +33,10 @@ data "harness_platform_gitops_repository" "example" {
 
 ### Optional
 
-- `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
+- `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
-- `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
-- `query_project` (String) Project to query for the GitOps repo.
-- `query_repo` (String) GitOps repository to query.
 - `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
-- `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
 ### Read-Only
 
@@ -80,5 +76,3 @@ Read-Only:
 - `tls_client_cert_key` (String)
 - `type_` (String)
 - `username` (String)
-
-

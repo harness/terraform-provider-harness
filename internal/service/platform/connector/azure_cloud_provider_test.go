@@ -173,6 +173,50 @@ func TestAccResourceConnectorAzure_ManualDetails_Secret(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorAzure_ForceDelete(t *testing.T) {
+
+	id := fmt.Sprintf("ConnectorAzure_ForceDelete"+"_%s", utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_azure_cloud_provider.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorAzure_force_delete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorAzure_inheritFromDelegate_sa(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorAzure_manualDetails_secret(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_secret_text" "test" {
@@ -296,6 +340,30 @@ func testAccResourceConnectorAzure_inheritFromDelegate_sa(id string, name string
 
 			azure_environment_type = "AZURE"
 			delegate_selectors = ["harness-delegate"]
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorAzure_force_delete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_azure_cloud_provider" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			credentials {
+				type = "InheritFromDelegate"
+				azure_inherit_from_delegate_details {
+					auth {
+						type = "SystemAssignedManagedIdentity"
+					}
+				}
+			}
+
+			azure_environment_type = "AZURE"
+			delegate_selectors = ["harness-delegate"]
+			force_delete = true
 		}
 `, id, name)
 }

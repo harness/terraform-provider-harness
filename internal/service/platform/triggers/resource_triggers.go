@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -32,9 +33,10 @@ func ResourceTriggers() *schema.Resource {
 				Optional:    true,
 			},
 			"yaml": {
-				Description: "trigger yaml",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "trigger yaml." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"if_match": {
 				Description: "if-Match",
@@ -57,6 +59,12 @@ func resourceTriggersRead(ctx context.Context, d *schema.ResourceData, meta inte
 		d.Get("org_id").(string),
 		d.Get("project_id").(string), d.Get("target_id").(string), id)
 
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
+
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
@@ -78,7 +86,9 @@ func resourceTriggersCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		resp, httpResp, err = c.TriggersApi.CreateTrigger(ctx, d.Get("yaml").(string), c.AccountId,
 			d.Get("org_id").(string),
 			d.Get("project_id").(string),
-			d.Get("target_id").(string))
+			d.Get("target_id").(string), &nextgen.TriggersApiCreateTriggerOpts{
+				WithServiceV2: optional.NewBool(true),
+			})
 	} else {
 		resp, httpResp, err = c.TriggersApi.UpdateTrigger(ctx, d.Get("yaml").(string), c.AccountId, d.Get("org_id").(string),
 			d.Get("project_id").(string),

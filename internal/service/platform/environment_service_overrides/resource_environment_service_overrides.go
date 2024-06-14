@@ -23,6 +23,12 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 		Importer:      helpers.ServiceOverrideResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "identifier of the service overrides.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 			"service_id": {
 				Description: "The service ID to which the overrides applies.",
 				Type:        schema.TypeString,
@@ -34,14 +40,15 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 				Required:    true,
 			},
 			"yaml": {
-				Description: "Environment Service Overrides YAML",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "Environment Service Overrides YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 		},
 	}
 
-	SetProjectLevelResourceSchemaForServiceOverride(resource.Schema)
+	SetScopedResourceSchemaForServiceOverride(resource.Schema)
 
 	return resource
 }
@@ -49,21 +56,20 @@ func ResourceEnvironmentServiceOverrides() *schema.Resource {
 func resourceEnvironmentServiceOverridesRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
 	envId := d.Get("env_id").(string)
 
-	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, orgId, projId, envId,
+	resp, httpResp, err := c.EnvironmentsApi.GetServiceOverridesList(ctx, c.AccountId, envId,
 		&nextgen.EnvironmentsApiGetServiceOverridesListOpts{
 			ServiceIdentifier: helpers.BuildField(d, "service_id"),
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
 		})
+
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil || resp.Data == nil {
+	if resp.Data == nil || len(resp.Data.Content) == 0 {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -106,12 +112,14 @@ func resourceEnvironmentServiceOverridesCreateOrUpdate(ctx context.Context, d *s
 func resourceEnvironmentServiceOverridesDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgId := d.Get("org_id").(string)
-	projId := d.Get("project_id").(string)
+	serviceRef := d.Get("service_id").(string)
+	envId := d.Get("env_id").(string)
 
-	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, orgId, projId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
-		EnvironmentIdentifier: optional.NewString(d.Get("env_id").(string)),
-		ServiceIdentifier:     optional.NewString(d.Get("service_id").(string)),
+	_, httpResp, err := c.EnvironmentsApi.DeleteServiceOverride(ctx, c.AccountId, &nextgen.EnvironmentsApiDeleteServiceOverrideOpts{
+		EnvironmentIdentifier: optional.NewString(envId),
+		ServiceIdentifier:     optional.NewString(serviceRef),
+		OrgIdentifier:         helpers.BuildField(d, "org_id"),
+		ProjectIdentifier:     helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
@@ -141,6 +149,7 @@ func readEnvironmentServiceOverridesList(d *schema.ResourceData, env *nextgen.Pa
 func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.ServiceOverrideResponse) {
 	serviceOverrideID := so.ServiceRef + "-" + so.EnvironmentRef
 	d.SetId(serviceOverrideID)
+	d.Set("identifier", serviceOverrideID)
 	d.Set("org_id", so.OrgIdentifier)
 	d.Set("project_id", so.ProjectIdentifier)
 	d.Set("env_id", so.EnvironmentRef)
@@ -148,7 +157,7 @@ func readEnvironmentServiceOverrides(d *schema.ResourceData, so *nextgen.Service
 	d.Set("yaml", so.Yaml)
 }
 
-func SetProjectLevelResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
-	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Required)
-	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Required)
+func SetScopedResourceSchemaForServiceOverride(s map[string]*schema.Schema) {
+	s["project_id"] = helpers.GetProjectIdSchema(helpers.SchemaFlagTypes.Optional)
+	s["org_id"] = helpers.GetOrgIdSchema(helpers.SchemaFlagTypes.Optional)
 }

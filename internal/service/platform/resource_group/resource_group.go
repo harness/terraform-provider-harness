@@ -9,6 +9,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func ResourceResourceGroup() *schema.Resource {
@@ -43,7 +44,7 @@ func ResourceResourceGroup() *schema.Resource {
 				},
 			},
 			"included_scopes": {
-				Description: "Included scopes",
+				Description: "Included scopes; default selected based on resource group scope if not specified.",
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Elem: &schema.Resource{
@@ -107,12 +108,13 @@ func ResourceResourceGroup() *schema.Resource {
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"attribute_name": {
-													Description: "Name of the attribute",
-													Type:        schema.TypeString,
-													Optional:    true,
+													Description:  "Name of the attribute. Valid values are `category` or `type`.",
+													Type:         schema.TypeString,
+													Optional:     true,
+													ValidateFunc: validation.StringInSlice([]string{"category", "type"}, false),
 												},
 												"attribute_values": {
-													Description: "Value of the attributes",
+													Description: "Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING] and for `type` are [Production,PreProduction]",
 													Type:        schema.TypeSet,
 													Optional:    true,
 													Elem: &schema.Schema{

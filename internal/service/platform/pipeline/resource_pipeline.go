@@ -25,31 +25,37 @@ func ResourcePipeline() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
-				Description: "YAML of the pipeline.",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:      "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Optional:         true,
+				Computed:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
 							Description: "Name of the branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"file_path": {
 							Description: "File path of the Entity in the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"commit_message": {
 							Description: "Commit message used for the merge commit.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"base_branch": {
 							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
@@ -58,20 +64,23 @@ func ResourcePipeline() *schema.Resource {
 							Computed:    true,
 						},
 						"connector_ref": {
-							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity.",
+							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"store_type": {
 							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
 							Type:         schema.TypeString,
 							Optional:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
+							Computed:     true,
 						},
 						"repo_name": {
 							Description: "Name of the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"last_object_id": {
 							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
@@ -98,11 +107,66 @@ func ResourcePipeline() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"import_from_git": {
+				Description: "Flag to set if importing from Git",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"git_import_info": {
+				Description: "Contains Git Information for importing entities from Git",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"branch_name": {
+							Description: "Name of the branch.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"file_path": {
+							Description: "File path of the Entity in the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"connector_ref": {
+							Description: "Identifier of the Harness Connector used for importing entity from Git" + helpers.Descriptions.ConnectorRefText.String(),
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"repo_name": {
+							Description: "Name of the repository.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"pipeline_import_request": {
+				Description: "Contains parameters for importing a pipeline",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"pipeline_name": {
+							Description: "Name of the pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"pipeline_description": {
+							Description: "Description of the pipeline.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
-
+	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
 	return resource
 }
 
@@ -126,6 +190,12 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, meta inte
 		id,
 		&nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: branch_name},
 	)
+
+	if httpResp.StatusCode == 404 {
+		d.SetId("")
+		d.MarkNewResource()
+		return nil
+	}
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -154,23 +224,34 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	template_applied := d.Get("template_applied").(bool)
 
 	if id == "" {
-		pipeline := buildCreatePipeline(d)
-		if pipeline.GitDetails != nil {
-			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
-			store_type = optional.NewString(pipeline.GitDetails.StoreType)
-			commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
-			connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
-			branch_name = pipeline.GitDetails.BranchName
-		}
+		if d.Get("import_from_git").(bool) {
+			pipeline_id = d.Get("identifier").(string)
 
-		pipeline_id = pipeline.Slug
-		_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
-			&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+			pipeline_import_request_body := createImportFromGitRequest(d)
+
+			_, httpResp, err = c.PipelinesApi.ImportPipelineFromGit(ctx, org_id, project_id, pipeline_id,
+				&nextgen.PipelinesApiImportPipelineFromGitOpts{
+					Body:           optional.NewInterface(pipeline_import_request_body),
+					HarnessAccount: optional.NewString(c.AccountId)})
+		} else {
+			pipeline := buildCreatePipeline(d)
+			if pipeline.GitDetails != nil {
+				base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
+				store_type = optional.NewString(pipeline.GitDetails.StoreType)
+				commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+				connector_ref = optional.NewString(pipeline.GitDetails.ConnectorRef)
+				branch_name = pipeline.GitDetails.BranchName
+			}
+
+			pipeline_id = pipeline.Identifier
+			_, httpResp, err = c.PipelinesApi.CreatePipeline(ctx, pipeline, org_id, project_id,
+				&nextgen.PipelinesApiCreatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+		}
 	} else {
 		pipeline := buildUpdatePipeline(d)
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
-		pipeline_id = pipeline.Slug
+		pipeline_id = pipeline.Identifier
 		if pipeline.GitDetails != nil {
 			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 			branch_name = pipeline.GitDetails.BranchName
@@ -196,6 +277,43 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	return nil
 }
 
+func createImportFromGitRequest(d *schema.ResourceData) *nextgen.PipelineImportRequestBody {
+
+	pipeline_git_import_info := &nextgen.GitImportInfo{}
+	if attr, ok := d.GetOk("git_import_info"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["branch_name"]; ok {
+			pipeline_git_import_info.BranchName = attr.(string)
+		}
+		if attr, ok := config["file_path"]; ok {
+			pipeline_git_import_info.FilePath = attr.(string)
+		}
+		if attr, ok := config["connector_ref"]; ok {
+			pipeline_git_import_info.ConnectorRef = attr.(string)
+		}
+		if attr, ok := config["repo_name"]; ok {
+			pipeline_git_import_info.RepoName = attr.(string)
+		}
+	}
+
+	pipeline_import_request := &nextgen.PipelineImportRequestDto{}
+	if attr, ok := d.GetOk("pipeline_import_request"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["pipeline_name"]; ok {
+			pipeline_import_request.PipelineName = attr.(string)
+		}
+		if attr, ok := config["pipeline_description"]; ok {
+			pipeline_import_request.PipelineDescription = attr.(string)
+		}
+	}
+
+	pipeline_import_request_body := &nextgen.PipelineImportRequestBody{}
+	pipeline_import_request_body.GitImportInfo = pipeline_git_import_info
+	pipeline_import_request_body.PipelineImportRequest = pipeline_import_request
+
+	return pipeline_import_request_body
+}
+
 func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetClientWithContext(ctx)
 
@@ -215,7 +333,7 @@ func resourcePipelineDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBody {
 	pipeline := nextgen.PipelineCreateRequestBody{
-		Slug:         d.Get("identifier").(string),
+		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
@@ -252,7 +370,7 @@ func buildCreatePipeline(d *schema.ResourceData) nextgen.PipelineCreateRequestBo
 
 func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBody {
 	pipeline := nextgen.PipelineUpdateRequestBody{
-		Slug:         d.Get("identifier").(string),
+		Identifier:   d.Get("identifier").(string),
 		Name:         d.Get("name").(string),
 		Description:  d.Get("description").(string),
 		Tags:         helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
@@ -288,11 +406,12 @@ func buildUpdatePipeline(d *schema.ResourceData) nextgen.PipelineUpdateRequestBo
 
 // Read response from API out to the stored identifiers
 func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBody, org_id string, project_id string, template_applied bool, store_type optional.String, base_branch optional.String, commit_message optional.String, connector_ref optional.String) {
-	d.SetId(pipeline.Slug)
-	d.Set("identifier", pipeline.Slug)
+	d.SetId(pipeline.Identifier)
+	d.Set("identifier", pipeline.Identifier)
 	d.Set("name", pipeline.Name)
 	d.Set("org_id", org_id)
 	d.Set("project_id", project_id)
+	d.Set("tags", helpers.FlattenTags(pipeline.Tags))
 	d.Set("yaml", pipeline.PipelineYaml)
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)

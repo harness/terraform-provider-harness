@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccResourceConnectorKubernetsCloudCost(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id := fmt.Sprintf("%s_%s", "KubernetsCloudCost", utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
 	resourceName := "harness_platform_connector_kubernetes_cloud_cost.test"
@@ -28,7 +28,7 @@ func TestAccResourceConnectorKubernetsCloudCost(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "connector_ref", "demo"),
+					resource.TestCheckResourceAttr(resourceName, "connector_ref", id+"s"),
 				),
 			},
 			{
@@ -39,7 +39,7 @@ func TestAccResourceConnectorKubernetsCloudCost(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "connector_ref", "demo"),
+					resource.TestCheckResourceAttr(resourceName, "connector_ref", id+"s"),
 				),
 			},
 			{
@@ -53,6 +53,17 @@ func TestAccResourceConnectorKubernetsCloudCost(t *testing.T) {
 
 func testAccResourceConnectorKubernetsCloudCost(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_connector_kubernetes" "test" {
+		identifier = "%[1]ss"
+		name = "%[2]ss"
+		description = "test"
+		tags = ["foo:bar"]
+
+		inherit_from_delegate {
+			delegate_selectors = ["harness-delegate"]
+		}
+	}
+
 		resource "harness_platform_connector_kubernetes_cloud_cost" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -60,7 +71,7 @@ func testAccResourceConnectorKubernetsCloudCost(id string, name string) string {
 			tags = ["foo:bar"]
 
 			features_enabled = ["VISIBILITY", "OPTIMIZATION"]
-			connector_ref = "demo"
+			connector_ref = harness_platform_connector_kubernetes.test.id
 		}
 `, id, name)
 }

@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating a secret of type secret file in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Secret File, please see [Documentation](https://developer.harness.io/docs/platform/secrets/add-file-secrets)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Secrets#operation/postSecretFileV2)
 ## Example Usage
 
 ```terraform
@@ -36,9 +40,9 @@ resource "harness_platform_secret_file" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -49,6 +53,12 @@ resource "harness_platform_secret_file" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using secret file id
+# Import account level secret file
 terraform import harness_platform_secret_file.example <secret_file_id>
+
+# Import org level secret file
+terraform import harness_platform_secret_file.example <ord_id>/<secret_file_id>
+
+# Import project level secret file
+terraform import harness_platform_secret_file.example <org_id>/<project_id>/<secret_file_id>
 ```

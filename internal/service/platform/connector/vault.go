@@ -142,6 +142,7 @@ func ResourceConnectorVault() *schema.Resource {
 				Description: "Boolean value to indicate if AppRole token renewal is enabled or not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Computed:    true,
 			},
 			"access_type": {
 				Description:  "Access type.",
@@ -170,6 +171,10 @@ func resourceConnectorVaultRead(ctx context.Context, d *schema.ResourceData, met
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Vault)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorVault(d, conn); err != nil {

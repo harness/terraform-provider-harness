@@ -29,7 +29,7 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 
 ### Required
 
-- `connector_ref` (String) Reference of the Connector.
+- `connector_ref` (String) Reference of the Connector. To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
 - `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
@@ -37,9 +37,9 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 ### Optional
 
 - `description` (String) Description of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -50,6 +50,12 @@ resource "harness_platform_connector_kubernetes_cloud_cost" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using kubernetes cloud cost connector id
+# Import account level kubernetes cloud cost connector 
 terraform import harness_platform_connector_kubernetes_cloud_cost.example <connector_id>
+
+# Import org level kubernetes cloud cost connector 
+terraform import harness_platform_connector_kubernetes_cloud_cost.example <ord_id>/<connector_id>
+
+# Import project level kubernetes cloud cost connector 
+terraform import harness_platform_connector_kubernetes_cloud_cost.example <org_id>/<project_id>/<connector_id>
 ```

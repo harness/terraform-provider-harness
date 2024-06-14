@@ -27,6 +27,11 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"access_key_plain_text": {
+							Description: "The plain text AWS access key.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 						"secret_key_ref": {
 							Description: "Reference to the Harness secret containing the aws secret key." + secret_ref_text,
 							Type:        schema.TypeString,
@@ -37,6 +42,11 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeSet,
 							Computed:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -53,6 +63,11 @@ func DatasourceConnectorAws() *schema.Resource {
 							Computed:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -67,6 +82,36 @@ func DatasourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeSet,
 							Computed:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"oidc_authentication": {
+				Description: "Authentication using harness oidc.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"iam_role_arn": {
+							Description: "The IAM Role to assume the credentials from.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"delegate_selectors": {
+							Description: "The delegates to inherit the credentials from.",
+							Type:        schema.TypeSet,
+							Computed:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -90,10 +135,77 @@ func DatasourceConnectorAws() *schema.Resource {
 					},
 				},
 			},
+			"equal_jitter_backoff_strategy": {
+				Description: "Equal Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"full_jitter_backoff_strategy": {
+				Description: "Full Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
+			"fixed_delay_backoff_strategy": {
+				Description: "Fixed Delay BackOff Strategy.",
+				Type:        schema.TypeList,
+				Computed:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"fixed_backoff": {
+							Description: "Fixed Backoff.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+					},
+				},
+			},
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

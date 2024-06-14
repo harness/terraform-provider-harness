@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/antihax/optional"
@@ -15,8 +16,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+func TestAccResourceGitopsCluster(t *testing.T) {
+
+	// Account Level
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
 	name := id
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
@@ -27,7 +31,7 @@ func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceGitopsClusterAccountLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
@@ -44,51 +48,128 @@ func TestAccResourceGitopsCluster_AccountLevel(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+	// Account level with Optional Tags
+	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name = id
+	clusterName = id
+	resourceName = "harness_platform_gitops_cluster.test2"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsClusterAccountLevelTags(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceGitopsClusterAccountLevelTags(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+	// Project Level
+	id = strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name = id
+	clusterName = id
+	resourceName = "harness_platform_gitops_cluster.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func TestAccResourceGitopsCluster_ProjectLevel(t *testing.T) {
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	name := id
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+func TestAccResourceGitopsClusterIAMProject(t *testing.T) {
+	// Project Level with IAM
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
-	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER")
-	clusterToken := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_TOKEN")
+	name := id
 	clusterName := id
 	resourceName := "harness_platform_gitops_cluster.test"
+	clusterServer := os.Getenv("HARNESS_TEST_AWS_CLUSTER_SERVER")
+	roleARN := os.Getenv("HARNESS_TEST_AWS_CLUSTER_ROLE_ARN")
+	awsClusterName := os.Getenv("HARNESS_TEST_AWS_CLUSTER_NAME")
+	caData := os.Getenv("HARNESS_TEST_AWS_CLUSTER_CA_DATA")
+	agentId := os.Getenv("HARNESS_TEST_AWS_GITOPS_AGENT")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		//CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
+		CheckDestroy:      testAccResourceGitopsClusterDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Config: testAccResourceGitopsClusterProjectLevelIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceGitopsClusterProjectLevel(id, accountId, name, agentId, clusterName, clusterServer, clusterToken),
+				Config: testAccResourceGitopsClusterProjectLevelIAM(id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"request.0.cluster.0.info"},
+				ImportStateIdFunc:       acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
+
 }
 
 func testAccGetCluster(resourceName string, state *terraform.State) (*nextgen.Servicev1Cluster, error) {
@@ -145,7 +226,40 @@ func testAccResourceGitopsClusterAccountLevel(id string, accountId string, name 
 			}
 			lifecycle {
 				ignore_changes = [
-					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
+				]
+			}
+		}
+		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
+}
+
+func testAccResourceGitopsClusterAccountLevelTags(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, clusterToken string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitops_cluster" "test2" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[4]s"
+
+ 			request {
+				upsert = true
+				tags = [
+        	"foo:bar",
+    		]
+				cluster {
+					server = "%[6]s"
+					name = "%[5]s"
+					config {
+						bearer_token = "%[7]s"
+						tls_client_config {
+							insecure = true
+						}
+						cluster_connection_type = "SERVICE_ACCOUNT"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
 				]
 			}
 		}
@@ -185,9 +299,51 @@ func testAccResourceGitopsClusterProjectLevel(id string, accountId string, name 
 			}
 			lifecycle {
 				ignore_changes = [
-					request.0.upsert, request.0.cluster.0.config.0.bearer_token,
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
 				]
 			}
 		}
 		`, id, accountId, name, agentId, clusterName, clusterServer, clusterToken)
+}
+
+func testAccResourceGitopsClusterProjectLevelIAM(id string, accountId string, name string, agentId string, clusterName string, clusterServer string, roleARN string, awsClusterName string, caData string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
+		resource "harness_platform_gitops_cluster" "test" {
+			identifier = "%[1]s"
+			account_id = "%[2]s"
+			agent_id = "%[4]s"
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+ 			request {
+				upsert = true
+				cluster {
+					server = "%[6]s"
+					name = "%[5]s"
+					config {
+						role_a_r_n = "%[7]s"
+						aws_cluster_name = "%[8]s"
+						tls_client_config {
+							insecure = false
+							ca_data = "%[9]s"
+						}
+						cluster_connection_type = "IRSA"
+					}
+				}
+			}
+			lifecycle {
+				ignore_changes = [
+					request.0.upsert, request.0.cluster.0.config.0.bearer_token, request.0.cluster.0.info,
+				]
+			}
+		}
+		`, id, accountId, name, agentId, clusterName, clusterServer, roleARN, awsClusterName, caData)
 }

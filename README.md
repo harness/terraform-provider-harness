@@ -13,14 +13,36 @@ If you have any questions please open a [new issue](https://github.com/harness/t
 - [Example project](https://github.com/harness/terraform-demo)
 - [Provider usage](https://registry.terraform.io/providers/harness/harness/latest/docs)
 
-
 ## Requirements
 
 -	[Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
--	[Go](https://golang.org/doc/install) >= 1.15
+-	[Go](https://golang.org/doc/install) >= 1.17
 
 ## Documentation
 
 Full, comprehensive documentation is available on the Terraform website:
 
-https://registry.terraform.io/providers/harness/harness/latest/docs
+<https://registry.terraform.io/providers/harness/harness/latest/docs>
+
+## Building and Testing Locally
+
+1. Clone the repo into your local directory. Run `git clone https://github.com/harness/terraform-provider-harness.git`
+2. Run `go mod tidy`
+3. Run `go build -o terraform-provider-harness`
+4. Create a file called `local.sh` in the root directory of the repository and copy the following script to the bash file 
+
+```SH
+#!/bin/sh
+
+version=0.40.2 #specify in this format 
+source=registry.terraform.io/harness/harnessregistry.terraform.io/harness/harness
+platform=darwin_amd64
+
+mkdir -p ~/.terraform.d/plugins/$source/$version/$platform/
+
+cp terraform-provider-harness ~/.terraform.d/plugins/$source/$version/$platform/terraform-provider-harness
+```
+
+5. Run the Bash Script `./local.sh`
+
+*Note: Please make sure the terraform provider version matches the version in the script*

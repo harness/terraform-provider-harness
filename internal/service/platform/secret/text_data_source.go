@@ -27,10 +27,33 @@ func DataSourceSecretText() *schema.Resource {
 				Sensitive:   true,
 				Computed:    true,
 			},
+			"additional_metadata": {
+				Description: "Additional Metadata for the Secret",
+				Type:        schema.TypeList,
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"values": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"version": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									// Add other fields for the inner map as needed
+								},
+							},
+						},
+						// Add other fields for the outer map as needed
+					},
+				},
+			},
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

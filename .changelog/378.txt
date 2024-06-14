@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_service: Updating the documentation.
+resource/harness_platform_environment: Updating the documentation.
+```

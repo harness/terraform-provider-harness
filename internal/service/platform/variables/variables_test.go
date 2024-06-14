@@ -10,6 +10,7 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccResourceVariables(t *testing.T) {
@@ -17,6 +18,10 @@ func TestAccResourceVariables(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
+
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedValue := variableValue + "updated"
+
 	resourceName := "harness_platform_variables.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -25,17 +30,60 @@ func TestAccResourceVariables(t *testing.T) {
 		CheckDestroy:      testAccVariablesDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVariables(id, name),
+				Config: testAccResourceVariables(id, name, variableValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
 				),
 			},
 			{
-				Config: testAccResourceVariables(id, updatedName),
+				Config: testAccResourceVariables(id, updatedName, updatedValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", updatedValue),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccResourceVariablesProjectLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedValue := variableValue + "updated"
+
+	resourceName := "harness_platform_variables.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccVariablesOrgLevelDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceVariables(id, name, variableValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
+				),
+			},
+			{
+				Config: testProjectResourceVariables(id, updatedName, updatedValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", updatedValue),
 				),
 			},
 			{
@@ -53,6 +101,10 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	updatedName := fmt.Sprintf("%s_updated", name)
+
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	updatedValue := variableValue + "updated"
+
 	resourceName := "harness_platform_variables.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -61,17 +113,19 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 		CheckDestroy:      testAccVariablesOrgLevelDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceVariablesOrgLevel(id, name),
+				Config: testOrgResourceVariables(id, name, variableValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
 				),
 			},
 			{
-				Config: testAccResourceVariablesOrgLevel(id, updatedName),
+				Config: testOrgResourceVariables(id, updatedName, updatedValue),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", updatedValue),
 				),
 			},
 			{
@@ -84,12 +138,48 @@ func TestAccResourceVariablesOrgLevel(t *testing.T) {
 	})
 }
 
+func TestAccResourceVariables_DeleteUnderlyingResource(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	resourceName := "harness_platform_variables.test"
+	variableValue := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testProjectResourceVariables(id, name, variableValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "spec.0.fixed_value", variableValue),
+				),
+			},
+			{
+				PreConfig: func() {
+					acctest.TestAccConfigureProvider()
+					c, ctx := acctest.TestAccGetPlatformClientWithContext()
+					_, _, err := c.VariablesApi.DeleteVariable(ctx, c.AccountId, id, &nextgen.VariablesApiDeleteVariableOpts{
+						OrgIdentifier:     optional.NewString(id),
+						ProjectIdentifier: optional.NewString(id),
+					})
+					require.NoError(t, err)
+				},
+				Config:             testAccResourceVariables(id, name, variableValue),
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func testAccGetResourceVariables(resourceName string, state *terraform.State) (*nextgen.VariableDto, error) {
 	r := acctest.TestAccGetResource(resourceName, state)
 	c, ctx := acctest.TestAccGetPlatformClientWithContext()
 	id := r.Primary.ID
 
-	resp, _, err := c.VariablesApi.GetVariable(ctx, c.AccountId, id, &nextgen.VariablesApiGetVariableOpts{
+	resp, _, err := c.VariablesApi.GetVariable(ctx, id, c.AccountId, &nextgen.VariablesApiGetVariableOpts{
 		OrgIdentifier:     buildField(r, "org_id"),
 		ProjectIdentifier: buildField(r, "project_id"),
 	})
@@ -134,7 +224,22 @@ func buildField(r *terraform.ResourceState, field string) optional.String {
 	return optional.EmptyString()
 }
 
-func testAccResourceVariables(id string, name string) string {
+func testAccResourceVariables(id string, name string, variableValue string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_variables" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description="Test Description"
+			type = "String"
+			spec {
+				value_type = "FIXED"
+				fixed_value = "%[3]s"
+			}
+		}
+`, id, name, variableValue)
+}
+
+func testProjectResourceVariables(id string, name string, variableValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -154,15 +259,16 @@ func testAccResourceVariables(id string, name string) string {
 			org_id = harness_platform_project.test.org_id
 			project_id = harness_platform_project.test.id
 			type = "String"
+			description="Test Description"
 			spec {
 				value_type = "FIXED"
-				fixed_value = "%[2]s"
+				fixed_value = "%[3]s"
 			}
 		}
-`, id, name)
+`, id, name, variableValue)
 }
 
-func testAccResourceVariablesOrgLevel(id string, name string) string {
+func testOrgResourceVariables(id string, name string, variableValue string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -174,10 +280,11 @@ func testAccResourceVariablesOrgLevel(id string, name string) string {
 			name = "%[2]s"
 			org_id = harness_platform_organization.test.id
 			type = "String"
+			description="Test Description"
 			spec {
 				value_type = "FIXED"
-				fixed_value = "%[2]s"
+				fixed_value = "%[3]s"
 			}
 		}
-`, id, name)
+`, id, name, variableValue)
 }

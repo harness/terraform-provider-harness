@@ -55,6 +55,10 @@ func resourceConnectorDatadogRead(ctx context.Context, d *schema.ResourceData, m
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorDatadog(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

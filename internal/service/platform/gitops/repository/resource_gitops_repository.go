@@ -13,7 +13,7 @@ import (
 
 func ResourceGitopsRepositories() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating Harness Gitops Repositories.",
+		Description: "Resource for managing Harness Gitops Repository.",
 
 		CreateContext: resourceGitOpsRepositoryCreate,
 		ReadContext:   resourceGitOpsRepositoryRead,
@@ -58,22 +58,22 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Required:    true,
 						},
 						"username": {
-							Description: "Username used for authenticating at the remote repository.",
+							Description: "Username to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"password": {
-							Description: "Password or PAT used for authenticating at the remote repository.",
+							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"ssh_private_key": {
-							Description: "PEM data for authenticating at the repo server. Only used with Git repos.",
+							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"insecure_ignore_host_key": {
-							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos.",
+							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
@@ -88,12 +88,12 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"tls_client_cert_data": {
-							Description: "Certificate in PEM format for authenticating at the repo server.",
+							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"tls_client_cert_key": {
-							Description: "Private key in PEM format for authenticating at the repo server.",
+							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -109,7 +109,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"inherited_creds": {
-							Description: "Indicates if the credentials were inherited from a credential set.",
+							Description: "Indicates if the credentials were inherited from a repository credential.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
@@ -144,13 +144,13 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"project": {
-							Description: "Reference between project and repository that allow you automatically to be added as item inside SourceRepos project entity.",
+							Description: "The ArgoCD project name corresponding to this GitOps repository. An empty string means that the GitOps repository belongs to the default project created by Harness.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
 						},
 						"connection_type": {
-							Description: "Identifies the authentication method used to connect to the repository.",
+							Description: "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS_CONNECTION_TYPE\"",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -167,20 +167,156 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
-			"query_repo": {
-				Description: "GitOps repository to query.",
+			"gen_type": {
+				Description: "Default: \"UNSET\"\nEnum: \"UNSET\" \"AWS_ECR\" \"GOOGLE_GCR\"",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"query_project": {
-				Description: "Project to query for the GitOps repo.",
+			"refresh_interval": {
+				Description: "For OCI repos, this is the interval to refresh the token to access the registry.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"query_force_refresh": {
-				Description: "Indicates to force refresh query for repository.",
-				Type:        schema.TypeBool,
+			"ecr_gen": {
+				Description: "ECR access token generator specific configuration.",
+				Type:        schema.TypeList,
 				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"region": {
+							Description: "AWS region.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"secret_ref": {
+							Description: "Secret reference to the AWS credentials.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"aws_access_key_id": {
+										Description: "AWS access key id.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"aws_secret_access_key": {
+										Description: "AWS secret access key.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"aws_session_token": {
+										Description: "AWS session token.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+								},
+							},
+						},
+						"jwt_auth": {
+							Description: "JWT authentication specific configuration.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Description: "The name of the ServiceAccount resource being referred to.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"namespace": {
+										Description: "Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"audiences": {
+										Description: "Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list",
+										Type:        schema.TypeList,
+										Optional:    true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			"gcr_gen": {
+				Description: "GCR access token generator specific configuration.",
+				Type:        schema.TypeList,
+				Optional:    true,
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"project_id": {
+							Description: "GCP project id.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"access_key": {
+							Description: "GCP access key.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"workload_identity": {
+							Description: "GCP workload identity.",
+							Type:        schema.TypeList,
+							Optional:    true,
+							MaxItems:    1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"service_account_ref": {
+										Description: "Service account reference.",
+										Type:        schema.TypeList,
+										Optional:    true,
+										MaxItems:    1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"name": {
+													Description: "The name of the ServiceAccount resource being referred to.",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
+												"namespace": {
+													Description: "Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.",
+													Type:        schema.TypeString,
+													Optional:    true,
+												},
+												"audiences": {
+													Description: "Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list",
+													Type:        schema.TypeList,
+													Optional:    true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
+									"cluster_location": {
+										Description: "Cluster location.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"cluster_name": {
+										Description: "Cluster name.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+									"cluster_project_id": {
+										Description: "Cluster project id.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			"update_mask": {
 				Description: "Update mask of the repository.",
@@ -246,8 +382,7 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 
 func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier, identifier, queryRepo, queryProject string
-	var queryForceRefresh bool
+	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -260,21 +395,9 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("query_repo"); ok {
-		queryRepo = attr.(string)
-	}
-	if attr, ok := d.GetOk("query_project"); ok {
-		queryProject = attr.(string)
-	}
-	if attr, ok := d.GetOk("query_force_refresh"); ok {
-		queryForceRefresh = attr.(bool)
-	}
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.RepositoriesApiAgentRepositoryServiceGetOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
-		QueryRepo:         optional.NewString(queryRepo),
-		QueryForceRefresh: optional.NewBool(queryForceRefresh),
-		QueryProject:      optional.NewString(queryProject),
 	})
 
 	if err != nil {
@@ -330,8 +453,7 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier, identifier, queryRepo, queryProject string
-	var queryForceRefresh bool
+	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -344,22 +466,10 @@ func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("query_repo"); ok {
-		queryRepo = attr.(string)
-	}
-	if attr, ok := d.GetOk("query_project"); ok {
-		queryProject = attr.(string)
-	}
-	if attr, ok := d.GetOk("query_force_refresh"); ok {
-		queryForceRefresh = attr.(bool)
-	}
 	_, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceDeleteRepository(ctx, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
-		QueryRepo:         optional.NewString(queryRepo),
-		QueryForceRefresh: optional.NewBool(queryForceRefresh),
-		QueryProject:      optional.NewString(queryProject),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -382,12 +492,46 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 			updateMaskPath = append(updateMaskPath, v.(string))
 		}
 	}
-	return nextgen.RepositoriesRepoUpdateRequest{
-		Repo: buildRepo(d),
+	var genType nextgen.RepositoriesEsoGeneratorType
+	if attr, ok := d.GetOk("gen_type"); ok {
+		genType = nextgen.RepositoriesEsoGeneratorType(attr.(string))
+	}
+	var refreshInterval string
+	if attr, ok := d.GetOk("refresh_interval"); ok {
+		refreshInterval = attr.(string)
+	}
+	var ecrGen *nextgen.RepositoriesEcrAuthorizationTokenGenerator
+	var gcrGen *nextgen.RepositoriesGcrAccessTokenGenerator
+	if genType == nextgen.GOOGLE_GCR_RepositoriesEsoGeneratorType {
+		if attr, ok := d.GetOk("gcr_gen"); ok {
+			gcr_gen := attr.([]interface{})
+			if gcr_gen != nil && len(gcr_gen) > 0 {
+				gcrGen = buildGcrGen(gcr_gen[0].(map[string]interface{}))
+			}
+		}
+	}
+	if genType == nextgen.AWS_ECR_RepositoriesEsoGeneratorType {
+		if attr, ok := d.GetOk("ecr_gen"); ok {
+			ecr_gen := attr.([]interface{})
+			if ecr_gen != nil && len(ecr_gen) > 0 {
+				ecrGen = buildEcrGen(ecr_gen[0].(map[string]interface{}))
+			}
+		}
+	}
+
+	request := nextgen.RepositoriesRepoUpdateRequest{
+		Repo:            buildRepo(d),
+		RefreshInterval: refreshInterval,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
 		},
 	}
+	if genType != "" {
+		request.GenType = &genType
+		request.EcrGen = ecrGen
+		request.GcrGen = gcrGen
+	}
+	return request
 }
 
 func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCreateRequest {
@@ -398,11 +542,133 @@ func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCrea
 	if attr, ok := d.GetOk("creds_only"); ok {
 		credsOnly = attr.(bool)
 	}
-	return nextgen.RepositoriesRepoCreateRequest{
+	var genType nextgen.RepositoriesEsoGeneratorType
+	if attr, ok := d.GetOk("gen_type"); ok {
+		genType = nextgen.RepositoriesEsoGeneratorType(attr.(string))
+	}
+	var refreshInterval string
+	if attr, ok := d.GetOk("refresh_interval"); ok {
+		refreshInterval = attr.(string)
+	}
+	var ecrGen *nextgen.RepositoriesEcrAuthorizationTokenGenerator
+	var gcrGen *nextgen.RepositoriesGcrAccessTokenGenerator
+	if genType == nextgen.GOOGLE_GCR_RepositoriesEsoGeneratorType {
+		if attr, ok := d.GetOk("gcr_gen"); ok {
+			gcr_gen := attr.([]interface{})
+			if gcr_gen != nil && len(gcr_gen) > 0 {
+				gcrGen = buildGcrGen(gcr_gen[0].(map[string]interface{}))
+			}
+		}
+	}
+	if genType == nextgen.AWS_ECR_RepositoriesEsoGeneratorType {
+		if attr, ok := d.GetOk("ecr_gen"); ok {
+			ecr_gen := attr.([]interface{})
+			if ecr_gen != nil && len(ecr_gen) > 0 {
+				ecrGen = buildEcrGen(ecr_gen[0].(map[string]interface{}))
+			}
+		}
+	}
+
+	request := nextgen.RepositoriesRepoCreateRequest{
 		Upsert:    upsert,
 		CredsOnly: credsOnly,
 		Repo:      buildRepo(d),
+
+		RefreshInterval: refreshInterval,
 	}
+	if genType != "" {
+		request.GenType = &genType
+		request.GcrGen = gcrGen
+		request.EcrGen = ecrGen
+	}
+	return request
+}
+
+func buildEcrGen(ecrGen map[string]interface{}) *nextgen.RepositoriesEcrAuthorizationTokenGenerator {
+	var ecrGenObj nextgen.RepositoriesEcrAuthorizationTokenGenerator
+	if ecrGen["region"] != nil {
+		ecrGenObj.Region = ecrGen["region"].(string)
+	}
+	if ecrGen["secret_ref"] != nil {
+		attr := ecrGen["secret_ref"].([]interface{})
+		if attr != nil && len(attr) > 0 {
+			var secretRef nextgen.RepositoriesAwsSecretRef
+			secretRefObj := attr[0].(map[string]interface{})
+			if secretRefObj["aws_access_key_id"] != nil {
+				secretRef.AwsAccessKeyID = secretRefObj["aws_access_key_id"].(string)
+			}
+			if secretRefObj["aws_secret_access_key"] != nil {
+				secretRef.AwsSecretAccessKey = secretRefObj["aws_secret_access_key"].(string)
+			}
+			if secretRefObj["aws_session_token"] != nil {
+				secretRef.AwsSessionToken = secretRefObj["aws_session_token"].(string)
+			}
+
+			ecrGenObj.SecretRef = &secretRef
+		}
+	}
+	if ecrGen["jwt_auth"] != nil {
+		attr := ecrGen["jwt_auth"].([]interface{})
+		if attr != nil && len(attr) > 0 {
+			var jwtAuth nextgen.RepositoriesServiceAccountSelector
+			jwtAuthObj := attr[0].(map[string]interface{})
+			if jwtAuthObj["name"] != nil {
+				jwtAuth.Name = jwtAuthObj["name"].(string)
+			}
+			if jwtAuthObj["namespace"] != nil {
+				jwtAuth.Namespace = jwtAuthObj["namespace"].(string)
+			}
+			ecrGenObj.JwtAuth = &jwtAuth
+		}
+	}
+
+	return &ecrGenObj
+
+}
+
+func buildGcrGen(gcrGen map[string]interface{}) *nextgen.RepositoriesGcrAccessTokenGenerator {
+	var gcrGenObj nextgen.RepositoriesGcrAccessTokenGenerator
+	if gcrGen["project_id"] != nil {
+		gcrGenObj.ProjectID = gcrGen["project_id"].(string)
+	}
+	if gcrGen["access_key"] != nil {
+		gcrGenObj.AccessKey = gcrGen["access_key"].(string)
+	}
+	if gcrGen["workload_identity"] != nil {
+		attr := gcrGen["workload_identity"].([]interface{})
+		if attr != nil && len(attr) > 0 {
+			workloadIdentity := attr[0].(map[string]interface{})
+			var genWorkloadIdentity nextgen.RepositoriesGcrWorkloadIdentity
+			if workloadIdentity["cluster_name"] != nil {
+				genWorkloadIdentity.ClusterName = workloadIdentity["cluster_name"].(string)
+			}
+			if workloadIdentity["cluster_project_id"] != nil {
+				genWorkloadIdentity.ClusterProjectID = workloadIdentity["cluster_project_id"].(string)
+			}
+			if workloadIdentity["cluster_location"] != nil {
+				genWorkloadIdentity.ClusterLocation = workloadIdentity["cluster_location"].(string)
+			}
+			if workloadIdentity["service_account_ref"] != nil {
+				attr := workloadIdentity["service_account_ref"].([]interface{})
+				if attr != nil && len(attr) > 0 {
+					servAccRef := attr[0].(map[string]interface{})
+					var genServiceAccountRef nextgen.RepositoriesServiceAccountSelector
+					if servAccRef["name"] != nil {
+						genServiceAccountRef.Name = servAccRef["name"].(string)
+					}
+					if servAccRef["namespace"] != nil {
+						genServiceAccountRef.Namespace = servAccRef["namespace"].(string)
+					}
+					//if servAccRef["audience"] != nil {
+					//	genServiceAccountRef.Audience = servAccRef["audience"].([]string)
+					//}
+					genWorkloadIdentity.ServiceAccountRef = &genServiceAccountRef
+				}
+			}
+			gcrGenObj.WorkloadIdentity = &genWorkloadIdentity
+		}
+	}
+	return &gcrGenObj
 }
 
 func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {

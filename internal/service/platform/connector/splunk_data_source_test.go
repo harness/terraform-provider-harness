@@ -31,7 +31,6 @@ func TestAccDataSourceConnectorSplunk(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://splunk.com/"),
 					resource.TestCheckResourceAttr(resourceName, "username", "admin"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", "splunk_account_id"),
-					resource.TestCheckResourceAttr(resourceName, "password_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -51,7 +50,7 @@ func testAccDataSourceConnectorSplunk(name string) string {
 			delegate_selectors = ["harness-delegate"]
 			account_id = "splunk_account_id"
 			username = "admin"
-			password_ref = "account.acctest_sumo_access_key"
+			password_ref = "account.doNotDeleteHSM"
 		}
 
 		data "harness_platform_connector_splunk" "test" {

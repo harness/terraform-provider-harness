@@ -12,7 +12,6 @@ import (
 func TestAccDataSourceProject(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-	orgId := "test"
 	resourceName := "data.harness_platform_project.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -20,10 +19,10 @@ func TestAccDataSourceProject(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceProject(id, orgId),
+				Config: testAccDataSourceProject(id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org_id", orgId),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
 					resource.TestCheckResourceAttr(resourceName, "name", id),
 					resource.TestCheckResourceAttr(resourceName, "description", ""),
@@ -37,7 +36,6 @@ func TestAccDataSourceProject(t *testing.T) {
 func TestAccDataSourceProjectByName(t *testing.T) {
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
-	orgId := "test"
 	resourceName := "data.harness_platform_project.test"
 
 	resource.UnitTest(t, resource.TestCase{
@@ -45,10 +43,10 @@ func TestAccDataSourceProjectByName(t *testing.T) {
 		ProviderFactories: acctest.ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceProjectByName(id, orgId),
+				Config: testAccDataSourceProjectByName(id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "org_id", orgId),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "color", "#0063F7"),
 					resource.TestCheckResourceAttr(resourceName, "name", id),
 					resource.TestCheckResourceAttr(resourceName, "description", ""),
@@ -59,34 +57,45 @@ func TestAccDataSourceProjectByName(t *testing.T) {
 	})
 }
 
-func testAccDataSourceProject(id string, orgId string) string {
+func testAccDataSourceProject(id string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+	}
+
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
-			org_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
 			name = "%[1]s"
 			color = "#0063F7"
 		}
 
 		data "harness_platform_project" "test" {
 			identifier = harness_platform_project.test.identifier
-			org_id = "%[2]s"
+			
+			org_id = harness_platform_organization.test.id
 		}
-	`, id, orgId)
+	`, id)
 }
 
-func testAccDataSourceProjectByName(id string, orgId string) string {
+func testAccDataSourceProjectByName(id string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+	}
+
 		resource "harness_platform_project" "test" {
 			identifier = "%[1]s"
-			org_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
 			name = "%[1]s"
 			color = "#0063F7"
 		}
 
 		data "harness_platform_project" "test" {
 			name = harness_platform_project.test.name
-			org_id = "%[2]s"
+			org_id = harness_platform_organization.test.id
 		}
-	`, id, orgId)
+	`, id)
 }

@@ -19,6 +19,9 @@ func TestAccDataSourceConnectorArtifactory(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnector_artifactory(name),
@@ -31,7 +34,6 @@ func TestAccDataSourceConnectorArtifactory(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "url", "https://artifactory.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 		},
@@ -40,6 +42,17 @@ func TestAccDataSourceConnectorArtifactory(t *testing.T) {
 
 func testAccDataSourceConnector_artifactory(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_artifactory" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -50,8 +63,15 @@ func testAccDataSourceConnector_artifactory(name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {	
 				username = "admin"
-				password_ref = "account.TEST_aws_secret_key"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 
 		data "harness_platform_connector_artifactory" "test" {

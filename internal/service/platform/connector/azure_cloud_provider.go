@@ -166,6 +166,12 @@ func ResourceConnectorAzureCloudProvider() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of connector",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -178,6 +184,10 @@ func resourceConnectorAzureCloudProviderRead(ctx context.Context, d *schema.Reso
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Azure)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorAzureCloudProvider(d, conn); err != nil {

@@ -45,6 +45,10 @@ func resourceConnectorPagerDutyRead(ctx context.Context, d *schema.ResourceData,
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorPagerDuty(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

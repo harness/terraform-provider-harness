@@ -72,6 +72,10 @@ func resourceConnectorGCPCloudCostRead(ctx context.Context, d *schema.ResourceDa
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorGCPCloudCost(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
@@ -132,12 +136,14 @@ func readConnectorGCPCloudCost(d *schema.ResourceData, connector *nextgen.Connec
 	d.Set("features_enabled", connector.GcpCloudCost.FeaturesEnabled)
 	d.Set("gcp_project_id", connector.GcpCloudCost.ProjectId)
 	d.Set("service_account_email", connector.GcpCloudCost.ServiceAccountEmail)
-	d.Set("billing_export_spec", []interface{}{
-		map[string]interface{}{
-			"data_set_id": connector.GcpCloudCost.BillingExportSpec.DatasetId,
-			"table_id":    connector.GcpCloudCost.BillingExportSpec.TableId,
-		},
-	})
+	if isFeatureEnabled("BILLING", connector.GcpCloudCost.FeaturesEnabled) {
+		d.Set("billing_export_spec", []interface{}{
+			map[string]interface{}{
+				"data_set_id": connector.GcpCloudCost.BillingExportSpec.DatasetId,
+				"table_id":    connector.GcpCloudCost.BillingExportSpec.TableId,
+			},
+		})
+	}
 
 	return nil
 }

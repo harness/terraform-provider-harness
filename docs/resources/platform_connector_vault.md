@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating a HashiCorp Vault Secret Manager connector.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use HashiCorp Vault, please see [Documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-hashicorp-vault)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 ## Example Usage
 
 ```terraform
@@ -160,8 +164,8 @@ resource "harness_platform_connector_vault" "token" {
 - `is_read_only` (Boolean) Read only or not.
 - `k8s_auth_endpoint` (String) The path where Kubernetes Auth is enabled in Vault.
 - `namespace` (String) Vault namespace where the Secret will be created.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `read_only` (Boolean) Read only.
 - `renew_app_role_token` (Boolean) Boolean value to indicate if AppRole token renewal is enabled or not.
 - `secret_engine_manually_configured` (Boolean) Manually entered Secret Engine.
@@ -170,7 +174,7 @@ resource "harness_platform_connector_vault" "token" {
 - `secret_id` (String) ID of the Secret.
 - `service_account_token_path` (String) The Service Account token path in the K8s pod where the token is mounted.
 - `sink_path` (String) The location from which the authentication token should be read.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `use_aws_iam` (Boolean) Boolean value to indicate if AWS IAM is used for authentication.
 - `use_k8s_auth` (Boolean) Boolean value to indicate if K8s Auth is used for authentication.
 - `use_vault_agent` (Boolean) Boolean value to indicate if Vault Agent is used for authentication.
@@ -187,6 +191,12 @@ resource "harness_platform_connector_vault" "token" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using vault connector id
+# Import account level vault connector 
 terraform import harness_platform_connector_vault.example <connector_id>
+
+# Import org level vault connector 
+terraform import harness_platform_connector_vault.example <ord_id>/<connector_id>
+
+# Import project level vault connector 
+terraform import harness_platform_connector_vault.example <org_id>/<project_id>/<connector_id>
 ```

@@ -10,6 +10,11 @@ description: |-
 
 Resource for creating triggers in Harness.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use the Triggers, please see [Documentation](https://developer.harness.io/docs/category/triggers)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Triggers)
+
 ## Example Usage
 
 ```terraform
@@ -21,34 +26,35 @@ resource "harness_platform_triggers" "example" {
   target_id  = "pipelineIdentifier"
   yaml       = <<-EOT
   trigger:
-    name: "name"
-    identifier: "identifier"
+    name: name
+    identifier: identifier
     enabled: true
     description: ""
     tags: {}
-    projectIdentifier: "projectIdentifier"
-    orgIdentifier: "orgIdentifer"
-    pipelineIdentifier: "pipelineIdentifier"
+    projectIdentifier: projectIdentifier
+    orgIdentifier: orgIdentifer
+    pipelineIdentifier: pipelineIdentifier
     source:
-      type: "Webhook"
+      type: Webhook
       spec:
-        type: "Github"
+        type: Github
         spec:
-          type: "Push"
+          type: Push
           spec:
-            connectorRef: "account.TestAccResourceConnectorGithub_Ssh_IZBeG"
+            connectorRef: account.TestAccResourceConnectorGithub_Ssh_IZBeG
             autoAbortPreviousExecutions: false
             payloadConditions:
-            - key: "changedFiles"
-              operator: "Equals"
-              value: "value"
-            - key: "targetBranch"
-              operator: "Equals"
-              value: "value"
+            - key: changedFiles
+              operator: Equals
+              value: value
+            - key: targetBranch
+              operator: Equals
+              value: value
             headerConditions: []
-            repoName: "repoName"
+            repoName: repoName
             actions: []
-    inputYaml: "pipeline: {}\n"
+    inputYaml: |
+      pipeline: {}\n
     EOT
 }
 ```
@@ -60,17 +66,17 @@ resource "harness_platform_triggers" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 - `target_id` (String) Identifier of the target pipeline
-- `yaml` (String) trigger yaml
+- `yaml` (String) trigger yaml. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 ### Optional
 
 - `description` (String) Description of the resource.
 - `if_match` (String) if-Match
 - `ignore_error` (Boolean) ignore error default false
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -81,6 +87,6 @@ resource "harness_platform_triggers" "example" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using trigger id
-terraform import harness_platform_triggers.example <triggers_id>
+# Import trigger 
+terraform import harness_platform_triggers.example <org_id>/<project_id>/<target_id>/<triggers_id>
 ```

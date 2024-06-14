@@ -10,6 +10,10 @@ description: |-
 
 Resource for creating a GCP Secret Manager connector.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use GCP Secret Manager, please see [Documentation](https://developer.harness.io/docs/platform/secrets/secrets-management/add-a-google-cloud-secret-manager)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Connectors)
 ## Example Usage
 
 ```terraform
@@ -38,9 +42,9 @@ resource "harness_platform_connector_gcp_secret_manager" "gcp_sm" {
 - `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `description` (String) Description of the resource.
 - `is_default` (Boolean) Indicative if this is default Secret manager for secrets.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
 
 ### Read-Only
 
@@ -51,6 +55,12 @@ resource "harness_platform_connector_gcp_secret_manager" "gcp_sm" {
 Import is supported using the following syntax:
 
 ```shell
-# Import using vault connector id
+# Import account level gcp secret manager connector 
 terraform import harness_platform_connector_gcp_secret_manager.example <connector_id>
+
+# Import org level gcp secret manager connector 
+terraform import harness_platform_connector_gcp_secret_manager.example <ord_id>/<connector_id>
+
+# Import project level gcp secret manager connector 
+terraform import harness_platform_connector_gcp_secret_manager.example <org_id>/<project_id>/<connector_id>
 ```

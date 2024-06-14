@@ -25,8 +25,8 @@ data "harness_platform_pipeline" "example" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Optional
 
@@ -38,7 +38,7 @@ data "harness_platform_pipeline" "example" {
 
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `template_applied` (Boolean) If true, returns Pipeline YAML with Templates applied on it.
 - `template_applied_pipeline_yaml` (String) Pipeline YAML after resolving Templates (returned as a String).
 - `yaml` (String) YAML of the pipeline.
@@ -60,5 +60,3 @@ Read-Only:
 - `file_path` (String) File path of the Entity in the repository.
 - `repo_name` (String) Name of the repository.
 - `store_type` (String) Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.
-
-

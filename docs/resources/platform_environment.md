@@ -10,26 +10,34 @@ description: |-
 
 Resource for creating a Harness environment.
 
-## Example Usage
+### References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand more about the Environment, please see [Documentation](https://developer.harness.io/docs/category/environments)
+- For details on how to create the Environment, please see [Documentation](https://developer.harness.io/docs/continuous-delivery/x-platform-cd-features/environments/create-environments/)
 
+## Example to create Environment at different levels (Org, Project, Account)
+
+### Account Level
 ```terraform
 resource "harness_platform_environment" "example" {
   identifier = "identifier"
   name       = "name"
-  org_id     = "org_id"
-  project_id = "project_id"
-  tags       = ["foo:bar", "baz"]
+  tags       = ["foo:bar", "bar:foo"]
   type       = "PreProduction"
-  yaml       = <<-EOT
-			   environment:
+  description = "env description"
+
+  ## ENVIRONMENT V2 Update
+  ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
+  ## Not Mandatory for Environment Creation nor Pipeline Usage
+
+  yaml = <<-EOT
+      environment:
          name: name
          identifier: identifier
-         orgIdentifier: org_id
-         projectIdentifier: project_id
          type: PreProduction
          tags:
            foo: bar
-           baz: ""
+           bar: foo
          variables:
            - name: envVar1
              type: String
@@ -64,7 +72,197 @@ resource "harness_platform_environment" "example" {
                        files:
                          - account:/Add-ons/svcOverrideTest
                        secretFiles: []
-      EOT
+  EOT
+}
+```
+
+### Org Level
+```terraform
+resource "harness_platform_environment" "example" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = "org_id"
+  tags       = ["foo:bar", "bar:foo"]
+  type       = "PreProduction"
+  description = "env description"
+
+  ## ENVIRONMENT V2 Update
+  ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
+  ## Not Mandatory for Environment Creation nor Pipeline Usage
+
+  yaml = <<-EOT
+      environment:
+         name: name
+         identifier: identifier
+         orgIdentifier: org_id
+         type: PreProduction
+         tags:
+           foo: bar
+           bar: foo
+         variables:
+           - name: envVar1
+             type: String
+             value: v1
+             description: ""
+           - name: envVar2
+             type: String
+             value: v2
+             description: ""
+         overrides:
+           manifests:
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
+           configFiles:
+             - configFile:
+                 identifier: configFileEnv
+                 spec:
+                   store:
+                     type: Harness
+                     spec:
+                       files:
+                         - account:/Add-ons/svcOverrideTest
+                       secretFiles: []
+  EOT
+}
+```
+
+### Project Level
+```terraform
+resource "harness_platform_environment" "example" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
+  tags       = ["foo:bar", "bar:foo"]
+  type       = "PreProduction"
+  description = "env description"
+
+  ## ENVIRONMENT V2 Update
+  ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
+  ## Not Mandatory for Environment Creation nor Pipeline Usage
+
+  yaml = <<-EOT
+      environment:
+         name: name
+         identifier: identifier
+         orgIdentifier: org_id
+         projectIdentifier: project_id
+         type: PreProduction
+         tags:
+           foo: bar
+           bar: foo
+         variables:
+           - name: envVar1
+             type: String
+             value: v1
+             description: ""
+           - name: envVar2
+             type: String
+             value: v2
+             description: ""
+         overrides:
+           manifests:
+             - manifest:
+                 identifier: manifestEnv
+                 type: Values
+                 spec:
+                   store:
+                     type: Git
+                     spec:
+                       connectorRef: <+input>
+                       gitFetchType: Branch
+                       paths:
+                         - file1
+                       repoName: <+input>
+                       branch: master
+           configFiles:
+             - configFile:
+                 identifier: configFileEnv
+                 spec:
+                   store:
+                     type: Harness
+                     spec:
+                       files:
+                         - account:/Add-ons/svcOverrideTest
+                       secretFiles: []
+  EOT
+}
+```
+
+### Creating Remote Environment
+```terraform
+resource "harness_platform_environment" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  description = "test"
+  org_id      = "org_id"
+  project_id  = "project_id"
+  git_details {
+    store_type = "REMOTE"
+    connector_ref = "connector_ref"
+    repo_name = "repo_name"
+    file_path = "file_path"
+    branch = "branch"
+    }
+  yaml = <<-EOT
+                environment:
+                  name: env
+                  identifier: env
+                  tags:
+                    test: ""
+                  type: PreProduction
+                  orgIdentifier: default
+                  projectIdentifier: proj1
+                  variables:
+                    - name: var1
+                      type: String
+                      value: abc
+                      description: ""
+                      required: false
+                  overrides:
+                    manifests:
+                      - manifest:
+                          identifier: Manifest1
+                          type: Values
+                          spec:
+                            store:
+                              type: Github
+                              spec:
+                                connectorRef: <+input>
+                                gitFetchType: Branch
+                                paths:
+                                  - .harness/
+                                repoName: <+input>
+                                branch: <+input>
+              EOT
+}
+```
+
+### Importing Environment From Git
+```terraform
+resource "harness_platform_environment" "example" {
+  identifier  = "identifier"
+  name        = "name"
+  type = "PreProduction"
+  git_details {
+    store_type = "REMOTE"
+    connector_ref = "connector_ref"
+    repo_name = "repo_name"
+    file_path = "file_path"
+    branch = "branch"
+    import_from_git = "true"
+  }
 }
 ```
 
@@ -75,26 +273,53 @@ resource "harness_platform_environment" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
 - `type` (String) The type of environment. Valid values are PreProduction, Production
 
 ### Optional
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
-- `yaml` (String) Environment YAML
+- `force_delete` (String) Enable this flag for force deletion of environments
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
+- `tags` (Set of String) Tags to associate with the resource.
+- `yaml` (String) Environment YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.
+connectorId.
+- `git_details` (Block List, Max: 1) Contains Git Information for remote entities from Git for Create/Update/Import (see [below for nested schema](#nestedblock--git_details))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+
+<a id="nestedblock--git_details"></a>
+### Nested Schema for `git_details`
+
+Optional:
+
+- `branch_name` (String) Name of the branch.
+- `connector_ref` (String) Identifier of the Harness Connector used for importing entity from Git To reference a connector at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a connector at the account scope, prefix 'account` to the expression: account.{identifier}.
+- `file_path` (String) File path of the Entity in the repository.
+- `repo_name` (String) Name of the repository.
+- `store_type` (String) store type of the entity.
+- `last_object_id` (String) Last object identifier (for Github). To be provided only when updating Environment.
+- `last_commit_id` (String) Last commit identifier (for Git Repositories other than Github). To be provided only when updating Environment.
+- `is_harness_code_repo` (Boolean) If the repo is in harness code.
+- `commit_message` (String) message for the commit in Git Repo.
+- `import_from_git` (Boolean) Flag to set if importing from Git
+- `is_force_import` (Boolean) Flag to set if force importing from Git
+- `load_from_fallback_branch` Whether the file has to be get from fallback_branch.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using environment id
+# Import account level environment id
 terraform import harness_platform_environment.example <environment_id>
+
+# Import org level environment id
+terraform import harness_platform_environment.example <org_id>/<environment_id>
+
+# Import project level environment id
+terraform import harness_platform_environment.example <org_id>/<project_id>/<environment_id>
 ```

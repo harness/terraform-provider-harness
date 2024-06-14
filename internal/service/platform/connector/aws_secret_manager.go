@@ -37,6 +37,11 @@ func ResourceConnectorAwsSM() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"default": {
+				Description: "Use as Default Secrets Manager.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
 			"credentials": {
 				Description: "Credentials to connect to AWS.",
 				Type:        schema.TypeList,
@@ -56,12 +61,17 @@ func ResourceConnectorAwsSM() *schema.Resource {
 									"access_key_ref": {
 										Description: "The reference to the Harness secret containing the AWS access key." + secret_ref_text,
 										Type:        schema.TypeString,
-										Required:    true,
+										Optional:    true,
 									},
 									"secret_key_ref": {
 										Description: "The reference to the Harness secret containing the AWS secret key." + secret_ref_text,
 										Type:        schema.TypeString,
 										Required:    true,
+									},
+									"access_key_plain_text": {
+										Description: "The plain text AWS access key.",
+										Type:        schema.TypeString,
+										Optional:    true,
 									},
 								},
 							},
@@ -126,6 +136,10 @@ func resourceConnectorAwsSMRead(ctx context.Context, d *schema.ResourceData, met
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorAwsSM(d, conn); err != nil {
 		return diag.FromErr(err)
 	}
@@ -166,6 +180,10 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.AwsSecretManager.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
+	if attr, ok := d.GetOk("default"); ok {
+		connector.AwsSecretManager.Default_ = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("credentials"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
 		connector.AwsSecretManager.Credential = &nextgen.AwsSecretManagerCredential{}
@@ -186,6 +204,9 @@ func buildConnectorAwsSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 			if attr, ok := config["secret_key_ref"]; ok {
 				connector.AwsSecretManager.Credential.ManualConfig.SecretKey = attr.(string)
+			}
+			if attr, ok := config["access_key_plain_text"]; ok {
+				connector.AwsSecretManager.Credential.ManualConfig.AccessKeyPlainText = attr.(string)
 			}
 		}
 
@@ -215,6 +236,7 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 	d.Set("secret_name_prefix", connector.AwsSecretManager.SecretNamePrefix)
 	d.Set("region", connector.AwsSecretManager.Region)
 	d.Set("delegate_selectors", connector.AwsSecretManager.DelegateSelectors)
+	d.Set("default", connector.AwsSecretManager.Default_)
 
 	switch connector.AwsSecretManager.Credential.Type_ {
 	case nextgen.AwsSecretManagerAuthTypes.AssumeIAMRole:
@@ -228,8 +250,9 @@ func readConnectorAwsSM(d *schema.ResourceData, connector *nextgen.ConnectorInfo
 			map[string]interface{}{
 				"manual": []interface{}{
 					map[string]interface{}{
-						"access_key_ref": connector.AwsSecretManager.Credential.ManualConfig.AccessKey,
-						"secret_key_ref": connector.AwsSecretManager.Credential.ManualConfig.SecretKey,
+						"access_key_ref":        connector.AwsSecretManager.Credential.ManualConfig.AccessKey,
+						"secret_key_ref":        connector.AwsSecretManager.Credential.ManualConfig.SecretKey,
+						"access_key_plain_text": connector.AwsSecretManager.Credential.ManualConfig.AccessKeyPlainText,
 					},
 				},
 			},

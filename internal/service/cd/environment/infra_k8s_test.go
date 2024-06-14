@@ -50,7 +50,7 @@ func testAccInfraDefK8s(name string) string {
 			name = "%[1]s"
 			skip_validation = true
 			authentication {
-				delegate_selectors = ["k8s"]
+				delegate_selectors = ["primary"]
 			}
 		}
 

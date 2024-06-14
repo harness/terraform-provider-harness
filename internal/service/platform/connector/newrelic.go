@@ -55,6 +55,10 @@ func resourceConnectorNewRelicRead(ctx context.Context, d *schema.ResourceData, 
 		return err
 	}
 
+	if conn == nil {
+		return nil
+	}
+
 	if err := readConnectorNewRelic(d, conn); err != nil {
 		return diag.FromErr(err)
 	}

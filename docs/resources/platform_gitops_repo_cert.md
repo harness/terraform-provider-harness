@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_repo_cert Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Gitops Repositories Certificates.
+  Resource for managing a Harness Gitops Repository Certificate. You can only create 1 instance per agent which has all the certificates of this resource.
 ---
 
 # harness_platform_gitops_repo_cert (Resource)
 
-Resource for creating a Harness Gitops Repositories Certificates.
+Resource for managing a Harness Gitops Repository Certificate. You can only create 1 instance per agent which has all the certificates of this resource.
 
 ## Example Usage
 
@@ -24,9 +24,10 @@ resource "harness_platform_gitops_repo_cert" "example" {
 
       }
       items {
-        server_name = "serverName"
-        cert_type   = "https"
-        cert_data   = "yourcertdata"
+        server_name   = "github.com"
+        cert_type     = "ssh"
+        cert_sub_type = "ecdsa-sha2-nistp256"
+        cert_data     = "QUFBQUUyVmpaSE5oTFhOb1lUSXRibWx6ZEhBeU5UWUFBQUFJYm1semRIQXlOVFlBQUFCQkJFbUtTRU5qUUVlek9teGtaTXk3b3BLZ3dGQjlua3Q1WVJyWU1qTnVHNU44N3VSZ2c2Q0xyYm81d0FkVC95NnYwbUtWMFUydzBXWjJZQi8rK1Rwb2NrZz0="
       }
     }
   }
@@ -38,14 +39,14 @@ resource "harness_platform_gitops_repo_cert" "example" {
 
 ### Required
 
-- `account_id` (String) Account identifier of the Repository Certificates.
-- `agent_id` (String) Agent identifier of the Repository Certificates.
-- `request` (Block List, Min: 1) Repository Certificates create/Update request. (see [below for nested schema](#nestedblock--request))
+- `account_id` (String) Account identifier of the GitOps repository certificate.
+- `agent_id` (String) Agent identifier of the GitOps repository certificate.
+- `request` (Block List, Min: 1) Repository Certificate create/update request. (see [below for nested schema](#nestedblock--request))
 
 ### Optional
 
-- `org_id` (String) Organization identifier of the Repository Certificates.
-- `project_id` (String) Project identifier of the Repository Certificates.
+- `org_id` (String) Organization identifier of the GitOps repository certificate.
+- `project_id` (String) Project identifier of the GitOps repository certificate.
 
 ### Read-Only
 
@@ -56,8 +57,8 @@ resource "harness_platform_gitops_repo_cert" "example" {
 
 Optional:
 
-- `certificates` (Block List) Certificates details. (see [below for nested schema](#nestedblock--request--certificates))
-- `upsert` (Boolean) Indicates if the GitOps Repository Certificates should be updated if existing and inserted if not.
+- `certificates` (Block List) certificates details. (see [below for nested schema](#nestedblock--request--certificates))
+- `upsert` (Boolean) Indicates if the GitOps repository certificate should be updated if existing and inserted if not.
 
 <a id="nestedblock--request--certificates"></a>
 ### Nested Schema for `request.certificates`
@@ -65,15 +66,15 @@ Optional:
 Optional:
 
 - `items` (Block List) List of certificates to be processed. (see [below for nested schema](#nestedblock--request--certificates--items))
-- `metadata` (Block List) Metadata details. (see [below for nested schema](#nestedblock--request--certificates--metadata))
+- `metadata` (Block List) metadata details (see [below for nested schema](#nestedblock--request--certificates--metadata))
 
 <a id="nestedblock--request--certificates--items"></a>
 ### Nested Schema for `request.certificates.items`
 
 Optional:
 
-- `cert_data` (String) CertData contains the actual certificate data, dependent on the certificate type.
-- `cert_info` (String) CertInfo will hold additional certificate info, depdendent on the certificate type .
+- `cert_data` (String) CertData contains the actual certificate data, dependent on the certificate type. The value should be base64 encoded
+- `cert_info` (String) CertInfo will hold additional certificate info, dependent on the certificate type .
 - `cert_sub_type` (String) CertSubType specifies the sub type of the cert, i.e. ssh-rsa.
 - `cert_type` (String) CertType specifies the type of the certificate - currently one of https or ssh.
 - `server_name` (String) ServerName specifies the DNS name of the server this certificate is intended.
@@ -84,16 +85,22 @@ Optional:
 
 Optional:
 
-- `continue` (String) Continue may be set if the user set a limit on the number of items returned.
-- `remaining_item_count` (String) Subsequent items in the list.
+- `continue` (String) continue may be set if the user set a limit on the number of items returned.
+- `remaining_item_count` (String) subsequent items in the list.
 - `resource_version` (String) Identifies the server's internal version.
-- `self_link` (String) SelfLink is a URL representing this object.
+- `self_link` (String) selfLink is a URL representing this object.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import a Account level Gitops Repository Certificate
+# Import an Account level Gitops Repository Certificate
 terraform import harness_platform_gitops_repo_cert.example <repocert_id>
+
+# Import an Org level Gitops Repository Certificate
+terraform import harness_platform_gitops_repo_cert.example <organization_id>/<repocert_id>
+
+# Import a Project level Gitops Repository Certificate
+terraform import harness_platform_gitops_repo_cert.example <organization_id>/<project_id>/<repocert_id>
 ```

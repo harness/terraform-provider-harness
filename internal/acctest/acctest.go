@@ -7,8 +7,10 @@ import (
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
+	"github.com/harness/harness-go-sdk/harness/code"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/policymgmt"
 	"github.com/harness/harness-go-sdk/harness/utils"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/harness/terraform-provider-harness/internal"
@@ -66,6 +68,14 @@ func TestAccGetClientWithContext() (*openapi_client_nextgen.APIClient, context.C
 	return TestAccProvider.Meta().(*internal.Session).GetClientWithContext(context.Background())
 }
 
+func TestAccGetPolicyManagementClient() *policymgmt.APIClient {
+	return TestAccProvider.Meta().(*internal.Session).GetPolicyManagementClient()
+}
+
+func TestAccGetCodeClientWithContext() (*code.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetCodeClientWithContext(context.Background())
+}
+
 func TestAccGetApplication(resourceName string, state *terraform.State) (*graphql.Application, error) {
 	r := TestAccGetResource(resourceName, state)
 	c := TestAccGetApiClientFromProvider()
@@ -101,7 +111,44 @@ func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportSta
 		if len(primary.Attributes["env_id"]) != 0 {
 			envId = primary.Attributes["env_id"]
 		}
+		if orgId == "" {
+			return fmt.Sprintf("%s/%s", envId, id), nil
+		}
+		if projId == "" {
+			return fmt.Sprintf("%s/%s/%s", orgId, envId, id), nil
+		}
+
 		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, envId, id), nil
+	}
+}
+
+func OverridesV1ResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		var envId string
+		if len(primary.Attributes["env_id"]) != 0 {
+			envId = primary.Attributes["env_id"]
+		}
+		if orgId == "" {
+			return fmt.Sprintf("%s", envId), nil
+		}
+		if projId == "" {
+			return fmt.Sprintf("%s/%s", orgId, envId), nil
+		}
+
+		return fmt.Sprintf("%s/%s/%s", orgId, projId, envId), nil
+	}
+}
+
+func RepoResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		return fmt.Sprintf("%s/%s/%s", orgId, projId, id), nil
 	}
 }
 
@@ -115,6 +162,49 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 	}
 }
 
+func UserResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		email := primary.Attributes["email"]
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		return fmt.Sprintf("%s/%s/%s", email, orgId, projId), nil
+	}
+}
+
+func UserResourceImportStateIdFuncAccountLevel(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		email := primary.Attributes["email"]
+		return fmt.Sprintf("%s", email), nil
+	}
+}
+
+func UserResourceImportStateIdFuncOrgLevel(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		email := primary.Attributes["email"]
+		orgId := primary.Attributes["org_id"]
+		return fmt.Sprintf("%s/%s", email, orgId), nil
+	}
+}
+
+func AccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		return fmt.Sprintf("%s", id), nil
+	}
+}
+
+func AccountFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		type_ := primary.Attributes["type"]
+		return fmt.Sprintf("%s/%s", id, type_), nil
+	}
+}
 func ProjectFilterImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
@@ -137,12 +227,33 @@ func GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName string) resou
 	}
 }
 
+func GitopsAgentOrgLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		agentId := primary.Attributes["agent_id"]
+		return fmt.Sprintf("%s/%s/%s", orgId, agentId, id), nil
+	}
+}
+
 func GitopsAgentAccountLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
 		id := primary.ID
 		agentId := primary.Attributes["agent_id"]
 		return fmt.Sprintf("%s/%s", agentId, id), nil
+	}
+}
+
+func RepoRuleProjectLevelResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		repoIdentifier := primary.Attributes["repo_identifier"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, repoIdentifier, id), nil
 	}
 }
 

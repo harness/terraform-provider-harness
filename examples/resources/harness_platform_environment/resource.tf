@@ -3,10 +3,23 @@ resource "harness_platform_environment" "example" {
   name       = "name"
   org_id     = "org_id"
   project_id = "project_id"
-  tags       = ["foo:bar", "baz"]
+  tags       = ["foo:bar", "bar:foo"]
   type       = "PreProduction"
-  yaml       = <<-EOT
-			   environment:
+  git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
+
+  ## ENVIRONMENT V2 Update
+  ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
+  ## Not Mandatory for Environment Creation nor Pipeline Usage
+
+  yaml = <<-EOT
+      environment:
          name: name
          identifier: identifier
          orgIdentifier: org_id
@@ -14,7 +27,7 @@ resource "harness_platform_environment" "example" {
          type: PreProduction
          tags:
            foo: bar
-           baz: ""
+           bar: foo
          variables:
            - name: envVar1
              type: String
@@ -49,5 +62,20 @@ resource "harness_platform_environment" "example" {
                        files:
                          - account:/Add-ons/svcOverrideTest
                        secretFiles: []
-      EOT
+  EOT
 }
+
+### Importing Environment from Git
+resource "harness_platform_environment" "test" {
+    identifier  = "accEnv"
+    name = "accEnv"
+	  type = "PreProduction"
+    git_details {
+      store_type = "REMOTE"
+      connector_ref = "account.DoNotDeleteGitX"
+      repo_name = "pcf_practice"
+      file_path = ".harness/accountEnvironment.yaml"
+      branch = "main"
+      import_from_git = "true"
+    }
+  }

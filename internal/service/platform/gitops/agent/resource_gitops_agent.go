@@ -15,7 +15,7 @@ import (
 
 func ResourceGitopsAgent() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Resource for creating a Harness Gitops Agents.",
+		Description: "Resource for managing a Harness GitOps Agent.",
 
 		CreateContext: resourceGitopsAgentCreate,
 		ReadContext:   resourceGitopsAgentRead,
@@ -74,16 +74,31 @@ func ResourceGitopsAgent() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {
-							Description: "The k8s namespace that this agent resides in.",
+							Description: "The kubernetes namespace where the agent should be installed.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"high_availability": {
-							Description: "Indicates if the deployment should be deployed using the deploy-ha.yaml",
+							Description: "Indicates if the agent is deployed in HA mode.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+						},
+						"is_namespaced": {
+							Description: "Indicates if the agent is namespaced.",
 							Type:        schema.TypeBool,
 							Optional:    true,
 						},
 					}},
+			},
+			"agent_token": {
+				Description: "Agent token to be used for authentication of the agent with Harness.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"operator": {
+				Description: "The Operator to use for the Harness GitOps agent. Enum: \"ARGO\" \"FLAMINGO\"",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	}
@@ -93,7 +108,7 @@ func ResourceGitopsAgent() *schema.Resource {
 func resourceGitopsAgentCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	createAgentRequest := buildCreateUpdateAgentRequest(d)
+	createAgentRequest := buildCreateAgentRequest(d)
 	createAgentRequest.AccountIdentifier = c.AccountId
 	resp, httpResp, err := c.AgentApi.AgentServiceForServerCreate(ctx, *createAgentRequest)
 
@@ -121,13 +136,16 @@ func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta i
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
 	})
 
-	if err != nil {
+	if err != nil && httpResp != nil && httpResp.StatusCode != 404 {
+		return helpers.HandleApiError(err, d, httpResp)
+	}
+	if err != nil && httpResp == nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
-	if &resp == nil {
+	if &resp == nil || (httpResp != nil && httpResp.StatusCode == 404) {
 		d.SetId("")
 		d.MarkNewResource()
 		return nil
@@ -178,6 +196,9 @@ func resourceGitopsAgentDelete(ctx context.Context, d *schema.ResourceData, meta
 
 func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 	var v1Agent nextgen.V1Agent
+	if attr, ok := d.GetOk("account_id"); ok {
+		v1Agent.AccountIdentifier = attr.(string)
+	}
 	if attr, ok := d.GetOk("project_id"); ok {
 		v1Agent.ProjectIdentifier = attr.(string)
 	}
@@ -213,11 +234,23 @@ func buildCreateUpdateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
 			if meta["namespace"] != nil {
 				v1MetaData.Namespace = meta["namespace"].(string)
 			}
+			if meta["is_namespaced"] != nil {
+				v1MetaData.IsNamespaced = meta["is_namespaced"].(bool)
+			}
 
 			v1Agent.Metadata = &v1MetaData
 		}
 	}
 	return &v1Agent
+}
+
+func buildCreateAgentRequest(d *schema.ResourceData) *nextgen.V1Agent {
+	v1Agent := buildCreateUpdateAgentRequest(d)
+	if attr, ok := d.GetOk("operator"); ok {
+		agentOperator := nextgen.V1AgentOperator(attr.(string))
+		v1Agent.Operator = &agentOperator
+	}
+	return v1Agent
 }
 
 func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
@@ -227,11 +260,17 @@ func readAgent(d *schema.ResourceData, agent *nextgen.V1Agent) {
 	d.Set("description", agent.Description)
 	d.Set("tags", agent.Tags)
 	d.Set("org_id", agent.OrgIdentifier)
+	d.Set("type", agent.Type_)
 	d.Set("project_id", agent.ProjectIdentifier)
+	d.Set("operator", agent.Operator)
 	metadata := []interface{}{}
 	metaDataMap := map[string]interface{}{}
 	metaDataMap["namespace"] = agent.Metadata.Namespace
 	metaDataMap["high_availability"] = agent.Metadata.HighAvailability
+	metaDataMap["is_namespaced"] = agent.Metadata.IsNamespaced
 	metadata = append(metadata, metaDataMap)
 	d.Set("metadata", metadata)
+	if agent.Credentials != nil && agent.Credentials.PrivateKey != "" {
+		d.Set("agent_token", agent.Credentials.PrivateKey)
+	}
 }

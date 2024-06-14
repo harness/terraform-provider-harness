@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_applications Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Gitops Application.
+  Resource for managing a Harness Gitops Application.
 ---
 
 # harness_platform_gitops_applications (Resource)
 
-Resource for creating a Harness Gitops Application.
+Resource for managing a Harness Gitops Application.
 
 ## Example Usage
 
@@ -68,31 +68,25 @@ resource "harness_platform_gitops_applications" "example" {
 - `agent_id` (String) Agent identifier of the GitOps application.
 - `application` (Block List, Min: 1) Definition of the GitOps application resource. (see [below for nested schema](#nestedblock--application))
 - `cluster_id` (String) Cluster identifier of the GitOps application.
-- `identifier` (String) Identifier of the GitOps application.
+- `name` (String) Name of the GitOps application.
 - `org_id` (String) Organization identifier of the GitOps application.
 - `project_id` (String) Project identifier of the GitOps application.
 - `repo_id` (String) Repository identifier of the GitOps application.
 
 ### Optional
 
+- `identifier` (String) Identifier of the GitOps application.
 - `kind` (String) Kind of the GitOps application.
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
-- `project` (String) Reference to the project corresponding to this GitOps application. An empty string means that the GitOps application belongs to the 'default' project.
-- `query_project` (String) Project names to filter the corresponding GitOps applications.
-- `query_refresh` (String) Forces the GitOps application to reconcile when set to true.
-- `query_repo` (String) Repo URL to restrict returned list applications.
-- `query_resource_version` (String) Shows modifications after a version that is specified with a watch call.
-- `query_selector` (String) Filters GitOps applications corresponding to the labels.
+- `project` (String) The ArgoCD project name corresponding to this GitOps application. An empty string means that the GitOps application belongs to the default project created by Harness.
 - `request_cascade` (Boolean) Request cascade to delete the GitOps application.
-- `request_name` (String) Request name to delete the GitOps application.
 - `request_propagation_policy` (String) Request propagation policy to delete the GitOps application.
 - `upsert` (Boolean) Indicates if the GitOps application should be updated if existing and inserted if not.
-- `validate` (Boolean) Indicates if the GitOps application has to be validated.
+- `validate` (Boolean) Indicates if the GitOps application yaml has to be validated.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `name` (String) Name of the GitOps application.
 
 <a id="nestedblock--application"></a>
 ### Nested Schema for `application`
@@ -116,13 +110,13 @@ Optional:
 - `generate_name` (String) An optional prefix that the server will only apply if the Name field is empty to create a unique name. The name returned to the client will differ from the name passed if this field is used. A unique suffix will be added to this value as well. The supplied value must adhere to the same validation guidelines as the Name field and may be reduced by the suffix length necessary to ensure that it is unique on the server. The server will NOT return a 409 if this field is supplied and the created name already exists; instead, it will either return 201 Created or 500 with Reason ServerTimeout, indicating that a unique name could not be found in the allotted time and the client should try again later.
 - `generation` (String) A sequence number representing a specific generation of the desired state. This is a read-only value populated by the system.
 - `labels` (Map of String) Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services.
-- `name` (String) Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Name cannot be updated.
-- `namespace` (String) Namespace of the GitOps application. An empty namespace is equivalent to the "default" namespace.
+- `name` (String) Name must be unique within a namespace. It is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Name cannot be updated.
+- `namespace` (String) Namespace of the GitOps application. An empty namespace is equivalent to the namespace of the GitOps agent.
 - `owner_references` (Block List) List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller. (see [below for nested schema](#nestedblock--application--metadata--owner_references))
 
 Read-Only:
 
-- `uid` (String) UID is the unique in time and space value for this object. It is typically generated by the server on successful creation of a resource and is not allowed to change on PUT operations.
+- `uid` (String) UID is the unique identifier in time and space value for this object. It is generated by the server on successful creation of a resource and is not allowed to change on PUT operations.
 
 <a id="nestedblock--application--metadata--owner_references"></a>
 ### Nested Schema for `application.metadata.owner_references`
@@ -144,7 +138,7 @@ Optional:
 Optional:
 
 - `destination` (Block List) Information about the GitOps application's destination. (see [below for nested schema](#nestedblock--application--spec--destination))
-- `source` (Block List) Contains all information about the source of a GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
+- `source` (Block List) Contains all information about the source of the GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
 - `sync_policy` (Block List) Controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
 
 <a id="nestedblock--application--spec--destination"></a>
@@ -154,7 +148,7 @@ Optional:
 
 - `name` (String) URL of the target cluster and must be set to the kubernetes control plane API.
 - `namespace` (String) Target namespace of the GitOps application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace.
-- `server` (String) Server of the destination of the GitOps application.
+- `server` (String) URL of the target cluster server for the GitOps application.
 
 
 <a id="nestedblock--application--spec--source"></a>
@@ -162,12 +156,12 @@ Optional:
 
 Required:
 
-- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
 - `repo_url` (String) URL to the repository (git or helm) that contains the GitOps application manifests.
 - `target_revision` (String) Revision of the source to sync the GitOps application to. In case of git, this can be commit, tag, or branch. If omitted, will equal to HEAD. In case of Helm, this is a semver tag of the chart's version.
 
 Optional:
 
+- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
 - `chart` (String) Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.
 - `directory` (Block List) Options for applications of type plain YAML or Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory))
 - `helm` (Block List) Holds helm specific options. (see [below for nested schema](#nestedblock--application--spec--source--helm))

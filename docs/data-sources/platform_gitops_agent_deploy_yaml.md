@@ -3,12 +3,12 @@
 page_title: "harness_platform_gitops_agent_deploy_yaml Data Source - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Datasource for fetching a Harness Gitops Agents.
+  Datasource for fetching a Harness Gitops Agent deployment manifest YAML.
 ---
 
 # harness_platform_gitops_agent_deploy_yaml (Data Source)
 
-Datasource for fetching a Harness Gitops Agents.
+Datasource for fetching a Harness Gitops Agent deployment manifest YAML.
 
 ## Example Usage
 
@@ -29,16 +29,26 @@ data "harness_platform_gitops_agent_deploy_yaml" "example" {
 
 - `account_id` (String) Account identifier of the GitOps agent.
 - `identifier` (String) Identifier of the GitOps agent.
-- `namespace` (String) The k8s namespace that the GitOps agent resides in.
+- `namespace` (String) The kubernetes namespace where the agent is installed.
 
 ### Optional
 
+- `ca_data` (String) CA data of the GitOps agent, base64 encoded content of ca chain.
 - `org_id` (String) Organization identifier of the GitOps agent.
 - `project_id` (String) Project identifier of the GitOps agent.
+- `proxy` (Block List) Proxy settings for the GitOps agent. (see [below for nested schema](#nestedblock--proxy))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `yaml` (String) Deployment YAML of the GitOps agent.
+- `yaml` (String) The deployment manifest YAML of the GitOps agent.
 
+<a id="nestedblock--proxy"></a>
+### Nested Schema for `proxy`
 
+Optional:
+
+- `http` (String) HTTP proxy settings for the GitOps agent.
+- `https` (String) HTTPS proxy settings for the GitOps agent.
+- `password` (String) Password for the proxy.
+- `username` (String) Username for the proxy.

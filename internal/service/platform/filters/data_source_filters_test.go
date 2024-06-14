@@ -23,6 +23,31 @@ func TestAccDataSourceFilters(t *testing.T) {
 				Config: testAccDataSourceFilters(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filter_properties.0.filter_type", "Connector"),
+					resource.TestCheckResourceAttr(resourceName, "filter_visibility", "EveryOne"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceFiltersProjectLevel(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	name := id
+	resourceName := "data.harness_platform_filters.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceFiltersProjectLevel(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
@@ -63,6 +88,26 @@ func TestAccDataSourceFiltersOrgLevel(t *testing.T) {
 }
 
 func testAccDataSourceFilters(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_filters" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		type = "Connector"
+		filter_properties {
+			 tags = ["foo:bar"]
+			 filter_type = "Connector"
+	}
+	filter_visibility = "EveryOne"
+	}
+
+	data "harness_platform_filters" "test" {
+			identifier = harness_platform_filters.test.identifier
+			type = harness_platform_filters.test.type
+		}
+`, id, name)
+}
+
+func testAccDataSourceFiltersProjectLevel(id string, name string) string {
 	return fmt.Sprintf(`
 	resource "harness_platform_organization" "test" {
 		identifier = "%[1]s"

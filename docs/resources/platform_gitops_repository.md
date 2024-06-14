@@ -3,16 +3,17 @@
 page_title: "harness_platform_gitops_repository Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating Harness Gitops Repositories.
+  Resource for managing Harness Gitops Repository.
 ---
 
 # harness_platform_gitops_repository (Resource)
 
-Resource for creating Harness Gitops Repositories.
+Resource for managing Harness Gitops Repository.
 
 ## Example Usage
 
 ```terraform
+// Create a git repository at project level
 resource "harness_platform_gitops_repository" "example" {
   identifier = "identifier"
   account_id = "account_id"
@@ -26,6 +27,174 @@ resource "harness_platform_gitops_repository" "example" {
     connection_type = "HTTPS_ANONYMOUS"
   }
   upsert = true
+}
+
+// Create a ssh git repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "git@github.com:yourorg"
+    name            = "repo_name"
+    insecure        = false
+    connection_type = "SSH"
+    ssh_private_key = "----- BEGIN OPENSSH PRIVATE KEY-----\nXXXXX\nXXXXX\nXXXXX\n-----END OPENSSH PRIVATE KEY -----\n"
+  }
+  upsert = true
+}
+
+
+// Create a HELM repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "https://charts.helm.sh/stable"
+    name            = "repo_name"
+    insecure        = true
+    connection_type = "HTTPS_ANONYMOUS"
+    type_           = "helm"
+  }
+  upsert = true
+}
+
+// Create a OCI HELM repository at project level
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "ghcr.io/test-repo"
+    name            = "repo_name"
+    insecure        = false
+    username        = "username"
+    password        = "ghp_xxxxxxxx"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  upsert = true
+}
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "111222333444.dkr.ecr.us-west-1.amazonaws.com"
+    name            = "repo_name"
+    insecure        = false
+    username        = "AWS"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "AWS_ECR"
+  ecr_gen {
+    region = "us-west-1"
+    secret_ref {
+      aws_access_key_id     = "AWS_ACCESS_KEY_ID"
+      aws_secret_access_key = "AWS_SECRET_ACCESS_KEY"
+    }
+  }
+  refreshInterval = "1m"
+  upsert          = false
+}
+
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "111222333444.dkr.ecr.us-west-1.amazonaws.com"
+    name            = "repo_name"
+    insecure        = false
+    username        = "AWS"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "AWS_ECR"
+  ecr_gen {
+    region = "us-west-1"
+    jwt_auth {
+      name      = "name"
+      namespace = "namespace"
+    }
+  }
+  refreshInterval = "1m"
+  upsert          = false
+}
+
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "us.gcr.io/projectID/repo_name"
+    name            = "repo_name"
+    insecure        = false
+    username        = "oauth2accesstoken"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "GOOGLE_GCR"
+  gcr_gen {
+    projectID = "projectID"
+    accessKey = "{  \"type\": \"service_account\",  \"project_id\": \"google-project-id\",  \"private_key_id\": \"xxxxxxx19dd12674be7be2312313caaabxxxx\",  \"private_key\": \"-----.......-----\n\",  \"client_email\": \"xxxxxxxx-compute@developer.gserviceaccount.com\",  \"client_id\": \"xxxxxxxxxxx0161940\",  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",  \"token_uri\": \"https://oauth2.googleapis.com/token\",  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/511111111911-compute@developer.gserviceaccount.com\",  \"universe_domain\": \"googleapis.com\"}"
+  }
+  refreshInterval = "1m"
+  upsert          = false
+}
+
+resource "harness_platform_gitops_repository" "example" {
+  identifier = "identifier"
+  account_id = "account_id"
+  project_id = "project_id"
+  org_id     = "org_id"
+  agent_id   = "agent_id"
+  repo {
+    repo            = "us.gcr.io/projectID/repo_name"
+    name            = "repo_name"
+    insecure        = false
+    username        = "oauth2accesstoken"
+    password        = "aws_ecr_token"
+    connection_type = "HTTPS"
+    type_           = "helm"
+    enable_oci      = true
+  }
+  gen_type = "GOOGLE_GCR"
+  gcr_gen {
+    project_id = "projectID"
+    workload_identity {
+      cluster_location   = "GCPClusterLocation"
+      cluster_name       = "GCPClusterName"
+      cluster_project_id = "GCPClusterProjectID"
+      service_account_ref {
+        name      = "name"
+        namespace = "namespace"
+      }
+    }
+  }
+  refreshInterval = "1m"
+  upsert          = false
 }
 ```
 
@@ -42,11 +211,13 @@ resource "harness_platform_gitops_repository" "example" {
 ### Optional
 
 - `creds_only` (Boolean) Indicates if to operate on credential set instead of repository.
+- `ecr_gen` (Block List, Max: 1) ECR access token generator specific configuration. (see [below for nested schema](#nestedblock--ecr_gen))
+- `gcr_gen` (Block List, Max: 1) GCR access token generator specific configuration. (see [below for nested schema](#nestedblock--gcr_gen))
+- `gen_type` (String) Default: "UNSET"
+Enum: "UNSET" "AWS_ECR" "GOOGLE_GCR"
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
-- `query_force_refresh` (Boolean) Indicates to force refresh query for repository.
-- `query_project` (String) Project to query for the GitOps repo.
-- `query_repo` (String) GitOps repository to query.
+- `refresh_interval` (String) For OCI repos, this is the interval to refresh the token to access the registry.
 - `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
 - `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
@@ -59,7 +230,7 @@ resource "harness_platform_gitops_repository" "example" {
 
 Required:
 
-- `connection_type` (String) Identifies the authentication method used to connect to the repository.
+- `connection_type` (String) Identifies the authentication method used to connect to the repository. Possible values: "HTTPS" "SSH" "GITHUB" "HTTPS_ANONYMOUS_CONNECTION_TYPE"
 - `repo` (String) URL to the remote repository.
 
 Optional:
@@ -70,18 +241,79 @@ Optional:
 - `github_app_id` (String) Id of the GitHub app used to access the repo.
 - `github_app_installation_id` (String) Installation id of the GitHub app used to access the repo.
 - `github_app_private_key` (String) GitHub app private key PEM data.
-- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a credential set.
+- `inherited_creds` (Boolean) Indicates if the credentials were inherited from a repository credential.
 - `insecure` (Boolean) Indicates if the connection to the repository ignores any errors when verifying TLS certificates or SSH host keys.
-- `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos.
+- `insecure_ignore_host_key` (Boolean) Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.
 - `name` (String) Name to be used for this repo. Only used with Helm repos.
-- `password` (String) Password or PAT used for authenticating at the remote repository.
-- `project` (String) Reference between project and repository that allow you automatically to be added as item inside SourceRepos project entity.
+- `password` (String) Password or PAT to be used for authenticating the remote repository.
+- `project` (String) The ArgoCD project name corresponding to this GitOps repository. An empty string means that the GitOps repository belongs to the default project created by Harness.
 - `proxy` (String) The HTTP/HTTPS proxy used to access the repo.
-- `ssh_private_key` (String) PEM data for authenticating at the repo server. Only used with Git repos.
-- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server.
-- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server.
+- `ssh_private_key` (String) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
+- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
+- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.
 - `type_` (String) Type specifies the type of the repo. Can be either "git" or "helm. "git" is assumed if empty or absent.
-- `username` (String) Username used for authenticating at the remote repository.
+- `username` (String) Username to be used for authenticating the remote repository.
+
+
+<a id="nestedblock--ecr_gen"></a>
+### Nested Schema for `ecr_gen`
+
+Optional:
+
+- `jwt_auth` (Block List, Max: 1) JWT authentication specific configuration. (see [below for nested schema](#nestedblock--ecr_gen--jwt_auth))
+- `region` (String) AWS region.
+- `secret_ref` (Block List, Max: 1) Secret reference to the AWS credentials. (see [below for nested schema](#nestedblock--ecr_gen--secret_ref))
+
+<a id="nestedblock--ecr_gen--jwt_auth"></a>
+### Nested Schema for `ecr_gen.jwt_auth`
+
+Optional:
+
+- `audiences` (List of String) Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list
+- `name` (String) The name of the ServiceAccount resource being referred to.
+- `namespace` (String) Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.
+
+
+<a id="nestedblock--ecr_gen--secret_ref"></a>
+### Nested Schema for `ecr_gen.secret_ref`
+
+Optional:
+
+- `aws_access_key_id` (String) AWS access key id.
+- `aws_secret_access_key` (String) AWS secret access key.
+- `aws_session_token` (String) AWS session token.
+
+
+
+<a id="nestedblock--gcr_gen"></a>
+### Nested Schema for `gcr_gen`
+
+Optional:
+
+- `access_key` (String) GCP access key.
+- `project_id` (String) GCP project id.
+- `workload_identity` (Block List, Max: 1) GCP workload identity. (see [below for nested schema](#nestedblock--gcr_gen--workload_identity))
+
+<a id="nestedblock--gcr_gen--workload_identity"></a>
+### Nested Schema for `gcr_gen.workload_identity`
+
+Optional:
+
+- `cluster_location` (String) Cluster location.
+- `cluster_name` (String) Cluster name.
+- `cluster_project_id` (String) Cluster project id.
+- `service_account_ref` (Block List, Max: 1) Service account reference. (see [below for nested schema](#nestedblock--gcr_gen--workload_identity--service_account_ref))
+
+<a id="nestedblock--gcr_gen--workload_identity--service_account_ref"></a>
+### Nested Schema for `gcr_gen.workload_identity.service_account_ref`
+
+Optional:
+
+- `audiences` (List of String) Audience specifies the `aud` claim for the service account token If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity then this audiences will be appended to the list
+- `name` (String) The name of the ServiceAccount resource being referred to.
+- `namespace` (String) Namespace of the resource being referred to. Ignored if referent is not cluster-scoped. cluster-scoped defaults to the namespace of the referent.
+
+
 
 
 <a id="nestedblock--update_mask"></a>
@@ -96,8 +328,11 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import a Account level Gitops Repository
+# Import an Account level Gitops Repository
 terraform import harness_platform_gitops_repository.example <agent_id>/<respository_id>
+
+# Import an Org level Gitops Repository
+terraform import harness_platform_gitops_repository.example <organization_id>/<agent_id>/<respository_id>
 
 # Import a Project level Gitops Repository
 terraform import harness_platform_gitops_repository.example <organization_id>/<project_id>/<agent_id>/<respository_id>

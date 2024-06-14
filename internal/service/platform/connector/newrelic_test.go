@@ -31,7 +31,6 @@ func TestAccResourceConnectorNewRelic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://newrelic.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", "nr_account_id"),
-					resource.TestCheckResourceAttr(resourceName, "api_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -45,7 +44,6 @@ func TestAccResourceConnectorNewRelic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "url", "https://newrelic.com/"),
 					resource.TestCheckResourceAttr(resourceName, "account_id", "nr_account_id"),
-					resource.TestCheckResourceAttr(resourceName, "api_key_ref", "account.acctest_sumo_access_key"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -69,7 +67,7 @@ func testAccResourceConnectorNewRelic(id string, name string) string {
 			url = "https://newrelic.com/"
 			delegate_selectors = ["harness-delegate"]
 			account_id = "nr_account_id"
-			api_key_ref = "account.acctest_sumo_access_key"
+			api_key_ref = "account.doNotDeleteHSM"
 		}
 `, id, name)
 }

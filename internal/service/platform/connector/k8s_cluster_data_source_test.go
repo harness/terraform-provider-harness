@@ -45,6 +45,9 @@ func TestAccDataSourceConnectorK8sServiceAccount(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorK8sServiceAccount(name),
@@ -82,6 +85,17 @@ func testAccDataSourceConnectorK8sInheritFromDelegate(name string) string {
 
 func testAccDataSourceConnectorK8sServiceAccount(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_kubernetes" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -90,10 +104,17 @@ func testAccDataSourceConnectorK8sServiceAccount(name string) string {
 
 			service_account {
 				master_url = "https://kubernetes.example.com"
-				service_account_token_ref = "account.TEST_k8s_client_test"
+				service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 
 		data "harness_platform_connector_kubernetes" "test" {

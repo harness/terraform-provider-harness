@@ -62,7 +62,10 @@ func TestAccResourceConnectorK8s_ClientKeyCert(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_ClientKeyCert(id, name),
@@ -73,10 +76,6 @@ func TestAccResourceConnectorK8s_ClientKeyCert(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.master_url", "https://kubernetes.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.ca_cert_ref", "account.TEST_k8ss_client_stuff"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_cert_ref", "account.test_k8s_client_cert"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_ref", "account.TEST_k8s_client_key"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_passphrase_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_algorithm", "RSA"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
@@ -90,10 +89,6 @@ func TestAccResourceConnectorK8s_ClientKeyCert(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.master_url", "https://kubernetes.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.ca_cert_ref", "account.TEST_k8ss_client_stuff"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_cert_ref", "account.test_k8s_client_cert"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_ref", "account.TEST_k8s_client_key"),
-					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_passphrase_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "client_key_cert.0.client_key_algorithm", "RSA"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
@@ -117,7 +112,10 @@ func TestAccResourceConnectorK8s_UsernamePassword(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_UsernamePassword(id, name),
@@ -129,7 +127,6 @@ func TestAccResourceConnectorK8s_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "username_password.0.password_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -143,7 +140,6 @@ func TestAccResourceConnectorK8s_UsernamePassword(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "username_password.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "username_password.0.password_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -166,7 +162,10 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_ServiceAccount(id, name),
@@ -177,7 +176,6 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "service_account.0.service_account_token_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -190,7 +188,6 @@ func TestAccResourceConnectorK8s_ServiceAccount(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "service_account.0.master_url", "https://kubernetes.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "service_account.0.service_account_token_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
 			},
@@ -213,7 +210,10 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorK8s_OpenIDConnect(id, name),
@@ -225,10 +225,6 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.issuer_url", "https://oidc.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.username_ref", "account.TEST_k8s_client_test"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.client_id_ref", "account.TEST_k8s_client_test"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.password_ref", "account.TEST_k8s_client_test"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.secret_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.scopes.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
@@ -243,10 +239,6 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.master_url", "https://kubernetes.example.com"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.issuer_url", "https://oidc.example.com"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.username_ref", "account.TEST_k8s_client_test"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.client_id_ref", "account.TEST_k8s_client_test"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.password_ref", "account.TEST_k8s_client_test"),
-					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.secret_ref", "account.TEST_k8s_client_test"),
 					resource.TestCheckResourceAttr(resourceName, "openid_connect.0.scopes.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 				),
@@ -260,8 +252,65 @@ func TestAccResourceConnectorK8s_OpenIDConnect(t *testing.T) {
 	})
 }
 
+func TestAccResourceConnectorK8s_FroceDelete(t *testing.T) {
+
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	name := id
+	updatedName := fmt.Sprintf("%s_updated", name)
+	resourceName := "harness_platform_connector_kubernetes.test"
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceConnectorK8s_force_delete(id, name),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				Config: testAccResourceConnectorK8s_force_delete(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+					resource.TestCheckResourceAttr(resourceName, "description", "test"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "inherit_from_delegate.0.delegate_selectors.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "force_delete", "true"),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"force_delete"},
+			},
+		},
+	})
+}
+
 func testAccResourceConnectorK8s_ClientKeyCert(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_kubernetes" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -270,20 +319,38 @@ func testAccResourceConnectorK8s_ClientKeyCert(id string, name string) string {
 
 			client_key_cert {
 				master_url = "https://kubernetes.example.com"
-				ca_cert_ref = "account.TEST_k8ss_client_stuff"
-				client_cert_ref = "account.test_k8s_client_cert"
-				client_key_ref = "account.TEST_k8s_client_key"
-				client_key_passphrase_ref = "account.TEST_k8s_client_test"
+				ca_cert_ref = "account.${harness_platform_secret_text.test.id}"
+				client_cert_ref = "account.${harness_platform_secret_text.test.id}"
+				client_key_ref = "account.${harness_platform_secret_text.test.id}"
+				client_key_passphrase_ref = "account.${harness_platform_secret_text.test.id}"
 				client_key_algorithm = "RSA"
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
 
 func testAccResourceConnectorK8s_UsernamePassword(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_kubernetes" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -293,16 +360,34 @@ func testAccResourceConnectorK8s_UsernamePassword(id string, name string) string
 			username_password {
 				master_url = "https://kubernetes.example.com"
 				username = "admin"
-				password_ref = "account.TEST_k8s_client_test"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
 
 func testAccResourceConnectorK8s_ServiceAccount(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_kubernetes" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -311,15 +396,34 @@ func testAccResourceConnectorK8s_ServiceAccount(id string, name string) string {
 
 			service_account {
 				master_url = "https://kubernetes.example.com"
-				service_account_token_ref = "account.TEST_k8s_client_test"
+				service_account_token_ref = "account.${harness_platform_secret_text.test.id}"
+				ca_cert_ref = "account.${harness_platform_secret_text.test.id}"
 			}
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
 
 func testAccResourceConnectorK8s_OpenIDConnect(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_kubernetes" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -329,10 +433,10 @@ func testAccResourceConnectorK8s_OpenIDConnect(id string, name string) string {
 			openid_connect {
 				master_url = "https://kubernetes.example.com"
 				issuer_url = "https://oidc.example.com"
-				username_ref = "account.TEST_k8s_client_test"
-				client_id_ref = "account.TEST_k8s_client_test"
-				password_ref = "account.TEST_k8s_client_test"
-				secret_ref = "account.TEST_k8s_client_test"
+				username_ref = "account.${harness_platform_secret_text.test.id}"
+				client_id_ref = "account.${harness_platform_secret_text.test.id}"
+				password_ref = "account.${harness_platform_secret_text.test.id}"
+				secret_ref = "account.${harness_platform_secret_text.test.id}"
 				scopes = [
 					"scope1",
 					"scope2"
@@ -340,6 +444,13 @@ func testAccResourceConnectorK8s_OpenIDConnect(id string, name string) string {
 			}
 
 			delegate_selectors = ["harness-delegate"]
+
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
@@ -355,6 +466,22 @@ func testAccResourceConnectorK8s_InheritFromDelegate(id string, name string) str
 			inherit_from_delegate {
 				delegate_selectors = ["harness-delegate"]
 			}
+		}
+`, id, name)
+}
+
+func testAccResourceConnectorK8s_force_delete(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_connector_kubernetes" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+
+			inherit_from_delegate {
+				delegate_selectors = ["harness-delegate"]
+			}
+			force_delete = true
 		}
 `, id, name)
 }

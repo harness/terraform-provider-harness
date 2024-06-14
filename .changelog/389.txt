@@ -1,0 +1,4 @@
+```release-note:enhancement
+resource/harness_platform_input_set: Added gitx support for inputSet resource.
+data-source/harness_platform_input_set: Added gitx support for inputSet resource.
+```

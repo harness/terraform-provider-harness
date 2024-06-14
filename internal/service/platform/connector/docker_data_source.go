@@ -52,13 +52,18 @@ func DatasourceConnectorDocker() *schema.Resource {
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
+						"execute_on_delegate": {
+							Description: "Execute on delegate or not.",
+							Type:        schema.TypeBool,
+							Computed:    true,
+						},
 					},
 				},
 			},
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

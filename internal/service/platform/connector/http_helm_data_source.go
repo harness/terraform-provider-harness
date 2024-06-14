@@ -7,7 +7,7 @@ import (
 
 func DatasourceConnectorHelm() *schema.Resource {
 	resource := &schema.Resource{
-		Description: "Datasource for looking up a Helm connector.",
+		Description: "Datasource for looking up a HTTP Helm connector.",
 		ReadContext: resourceConnectorHelmRead,
 
 		Schema: map[string]*schema.Schema{
@@ -49,7 +49,7 @@ func DatasourceConnectorHelm() *schema.Resource {
 		},
 	}
 
-	helpers.SetMultiLevelDatasourceSchema(resource.Schema)
+	helpers.SetMultiLevelDatasourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

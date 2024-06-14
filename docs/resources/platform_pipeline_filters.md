@@ -3,12 +3,12 @@
 page_title: "harness_platform_pipeline_filters Resource - terraform-provider-harness"
 subcategory: "Next Gen"
 description: |-
-  Resource for creating a Harness Pipeline Filters.
+  Resource for creating Harness Pipeline Filters.
 ---
 
 # harness_platform_pipeline_filters (Resource)
 
-Resource for creating a Harness Pipeline Filters.
+Resource for creating Harness Pipeline Filters.
 
 ## Example Usage
 
@@ -18,12 +18,50 @@ resource "harness_platform_pipeline_filters" "test" {
   name       = "name"
   org_id     = "org_id"
   project_id = "project_id"
-  type       = "PipelineExecution"
+  type       = "PipelineSetup"
   filter_properties {
-    tags        = ["foo:bar"]
-    filter_type = "PipelineExecution"
+    name                 = "pipeline_name"
+    description          = "pipeline_description"
+    pipeline_identifiers = ["id1", "id2"]
+    filter_type          = "PipelineSetup"
   }
   filter_visibility = "EveryOne"
+}
+
+
+# pipeline filter with tags
+resource "harness_platform_pipeline_filters" "example_with_tags" {
+  identifier = "identifier"
+  name       = "name"
+  org_id     = "org_id"
+  project_id = "project_id"
+  type       = "PipelineSetup"
+  filter_properties {
+    filter_type = "PipelineSetup"
+    pipeline_tags = [
+      {
+        "key"   = "tag1"
+        "value" = "123"
+      },
+      {
+        "key"   = "tag2"
+        "value" = "456"
+      },
+    ]
+    module_properties {
+      cd {
+        deployment_types       = "Kubernetes"
+        service_names          = ["service1", "service2"]
+        environment_names      = ["env1", "env2"]
+        artifact_display_names = ["artificatname1", "artifact2"]
+      }
+      ci {
+        build_type = "branch"
+        branch     = "branch123"
+        repo_names = "repo1234"
+      }
+    }
+  }
 }
 ```
 
@@ -39,7 +77,7 @@ resource "harness_platform_pipeline_filters" "test" {
 
 ### Optional
 
-- `filter_visibility` (String) This indicates visibility of filters, by default it is Everyone.
+- `filter_visibility` (String) This indicates visibility of filters. By default, everyone can view this filter.
 - `org_id` (String) Organization Identifier for the Entity.
 - `project_id` (String) Project Identifier for the Entity.
 
@@ -56,13 +94,70 @@ Required:
 
 Optional:
 
+- `description` (String) description of the pipline filter.
+- `module_properties` (Block List, Max: 1) module properties of the pipline filter. (see [below for nested schema](#nestedblock--filter_properties--module_properties))
+- `name` (String) Name of the pipeline filter.
+- `pipeline_identifiers` (List of String) Pipeline identifiers to filter on.
+- `pipeline_tags` (List of Map of String) Tags to associate with the pipeline. tags should be in the form of `{key:key1, value:key1value}`
 - `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+
+<a id="nestedblock--filter_properties--module_properties"></a>
+### Nested Schema for `filter_properties.module_properties`
+
+Optional:
+
+- `cd` (Block List, Max: 1) CD related properties to be filtered on. (see [below for nested schema](#nestedblock--filter_properties--module_properties--cd))
+- `ci` (Block List, Max: 1) CI related properties to be filtered on. (see [below for nested schema](#nestedblock--filter_properties--module_properties--ci))
+
+<a id="nestedblock--filter_properties--module_properties--cd"></a>
+### Nested Schema for `filter_properties.module_properties.cd`
+
+Optional:
+
+- `artifact_display_names` (Set of String) Artifact display names of the CD pipeline.
+- `deployment_types` (String) Deployment type of the CD pipeline, eg. Kubernetes
+- `environment_names` (Set of String) Environment names of the CD pipeline.
+- `service_names` (Set of String) Service names of the CD pipeline.
+
+
+<a id="nestedblock--filter_properties--module_properties--ci"></a>
+### Nested Schema for `filter_properties.module_properties.ci`
+
+Optional:
+
+- `branch` (String) Branch which was used while building.
+- `build_type` (String) Build type of the pipeline. Possible values: branch.
+- `ci_execution_info` (Block List, Max: 1) CI execution info for the pipeline. (see [below for nested schema](#nestedblock--filter_properties--module_properties--ci--ci_execution_info))
+- `repo_names` (String) name of the repository used in the pipeline.
+- `tag` (String) Tags to associate with the CI pipeline resource.
+
+<a id="nestedblock--filter_properties--module_properties--ci--ci_execution_info"></a>
+### Nested Schema for `filter_properties.module_properties.ci.ci_execution_info`
+
+Optional:
+
+- `event` (String) Event for the ci execution, Possible values: pullRequest.
+- `pull_request` (Block List, Max: 1) The pull request details of the CI pipeline. (see [below for nested schema](#nestedblock--filter_properties--module_properties--ci--ci_execution_info--pull_request))
+
+<a id="nestedblock--filter_properties--module_properties--ci--ci_execution_info--pull_request"></a>
+### Nested Schema for `filter_properties.module_properties.ci.ci_execution_info.pull_request`
+
+Optional:
+
+- `source_branch` (String) Source branch of the pull request.
+- `target_branch` (String) Target branch of the pull request.
 
 ## Import
 
 Import is supported using the following syntax:
 
 ```shell
-# Import using filter id
-terraform import harness_platform_pipeline_filters.example <filter_id>
+# Import account level pipeline filter
+terraform import harness_platform_pipeline_filters.example <filter_id>/<type>
+
+# Import org level pipeline filter
+terraform import harness_platform_pipeline_filters.example <ord_id>/<filter_id>/<type>
+
+# Import project level pipeline filter
+terraform import harness_platform_pipeline_filters.example <org_id>/<project_id>/<filter_id>/<type>
 ```

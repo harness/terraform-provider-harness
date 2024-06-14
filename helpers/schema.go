@@ -27,7 +27,7 @@ func SetSchemaFlagType(s *schema.Schema, flag SchemaFlagType) {
 
 func GetTagsSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Tags to associate with the resource. Tags should be in the form `name:value`.",
+		Description: "Tags to associate with the resource.",
 		Type:        schema.TypeSet,
 		Elem: &schema.Schema{
 			Type: schema.TypeString,
@@ -54,18 +54,28 @@ func GetIdentifierSchema(flag SchemaFlagType) *schema.Schema {
 
 func GetProjectIdSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Unique identifier of the Project.",
+		Description: "Unique identifier of the project.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
 
 func GetOrgIdSchema(flag SchemaFlagType) *schema.Schema {
 	s := &schema.Schema{
-		Description: "Unique identifier of the Organization.",
+		Description: "Unique identifier of the organization.",
 		Type:        schema.TypeString,
 	}
+
+	if flag == SchemaFlagTypes.Required {
+		s.ForceNew = true
+	}
+
 	SetSchemaFlagType(s, flag)
 	return s
 }
@@ -105,6 +115,20 @@ func SetCommonDataSourceSchema(s map[string]*schema.Schema) {
 	s["tags"] = GetTagsSchema(SchemaFlagTypes.Computed)
 }
 
+func SetCommonDataSourceSchemaWRequired(s map[string]*schema.Schema) {
+	s["identifier"] = GetIdentifierSchema(SchemaFlagTypes.Required)
+	s["description"] = GetDescriptionSchema(SchemaFlagTypes.Computed)
+	s["name"] = GetNameSchema(SchemaFlagTypes.Required)
+	s["tags"] = GetTagsSchema(SchemaFlagTypes.Computed)
+}
+
+func SetCommonDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
+	s["identifier"] = GetIdentifierSchema(SchemaFlagTypes.Required)
+	s["description"] = GetDescriptionSchema(SchemaFlagTypes.Computed)
+	s["name"] = GetNameSchema(SchemaFlagTypes.Optional)
+	s["tags"] = GetTagsSchema(SchemaFlagTypes.Computed)
+}
+
 func SetOrgLevelDataSourceSchema(s map[string]*schema.Schema) {
 	SetCommonDataSourceSchema(s)
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
@@ -113,6 +137,11 @@ func SetOrgLevelDataSourceSchema(s map[string]*schema.Schema) {
 func SetProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
 	SetOrgLevelDataSourceSchema(s)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
+}
+
+func SetOptionalOrgAndProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
 }
 
 // SetOrgLevelResourceSchema sets the default schema objects used for org level resources.
@@ -141,11 +170,40 @@ func SetMultiLevelDatasourceSchema(s map[string]*schema.Schema) {
 	s["project_id"].RequiredWith = []string{"org_id"}
 }
 
+func SetMultiLevelDatasourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
+	SetCommonDataSourceSchemaIdentifierRequired(s)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"].RequiredWith = []string{"org_id"}
+}
+
+func SetMultiLevelDatasourceSchemaWithoutCommonFields(s map[string]*schema.Schema) {
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Optional)
+	s["project_id"].RequiredWith = []string{"org_id"}
+}
+
 func BuildField(d *schema.ResourceData, field string) optional.String {
 	if arr, ok := d.GetOk(field); ok {
 		return optional.NewString(arr.(string))
 	}
 	return optional.EmptyString()
+}
+
+func BuildFieldForBoolean(d *schema.ResourceData, field string) optional.Bool {
+	if arr, ok := d.GetOk(field); ok {
+
+		return optional.NewBool(arr.(string) == "true")
+	}
+	return optional.EmptyBool()
+}
+
+func BuildFieldBool(d *schema.ResourceData, field string) optional.Bool {
+	if b, ok := d.GetOk(field); ok {
+		return optional.NewBool(b.(bool))
+	}
+
+	return optional.EmptyBool()
 }
 
 // PipelineResourceImporter defines the importer configuration for all pipeline level resources.
@@ -178,24 +236,100 @@ var TriggerResourceImporter = &schema.ResourceImporter{
 var EnvRelatedResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
-		d.Set("org_id", parts[0])
-		d.Set("project_id", parts[1])
-		d.Set("env_id", parts[2])
-		d.Set("identifier", parts[3])
-		d.SetId(parts[3])
+		partCount := len(parts)
+		isAccountEntity := partCount == 2
+		isOrgEntity := partCount == 3
+		isProjectEntity := partCount == 4
+		if isAccountEntity {
+			d.Set("env_id", parts[0])
+			d.Set("identifier", parts[1])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+		if isOrgEntity {
+			d.Set("org_id", parts[0])
+			d.Set("env_id", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+		if isProjectEntity {
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("env_id", parts[2])
+			d.Set("identifier", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
 
-		return []*schema.ResourceData{d}, nil
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
 	},
 }
 
 var ServiceOverrideResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
-		d.Set("org_id", parts[0])
-		d.Set("project_id", parts[1])
-		d.Set("env_id", parts[2])
-		d.SetId(parts[3])
+		partCount := len(parts)
+		isAccountEntity := partCount == 1
+		isOrgEntity := partCount == 2
+		isProjectEntity := partCount == 3
+		if isAccountEntity {
+			d.Set("env_id", parts[0])
+			return []*schema.ResourceData{d}, nil
+		}
+		if isOrgEntity {
+			d.Set("org_id", parts[0])
+			d.Set("env_id", parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+		if isProjectEntity {
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("env_id", parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
 
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+var ServiceOverrideV2ResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		partCount := len(parts)
+		isAccountEntity := partCount == 1
+		isOrgEntity := partCount == 2
+		isProjectEntity := partCount == 3
+		if isAccountEntity {
+			d.SetId(parts[0])
+			return []*schema.ResourceData{d}, nil
+		}
+		if isOrgEntity {
+			d.Set("org_id", parts[0])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+		if isProjectEntity {
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+var UserResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("email", parts[0])
+		if len(parts) > 1 {
+			d.Set("org_id", parts[1])
+		}
+		if len(parts) > 2 {
+			d.Set("project_id", parts[2])
+		}
 		return []*schema.ResourceData{d}, nil
 	},
 }
@@ -226,10 +360,50 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 			return []*schema.ResourceData{d}, nil
 		}
 
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("agent_id", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
 		if len(parts) == 4 { //Project level
 			d.Set("org_id", parts[0])
 			d.Set("project_id", parts[1])
 			d.Set("agent_id", parts[2])
+			d.Set("identifier", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+// The id used for the import should be in the format <org_id>/<project_id>/<repoIdentifier>/<identifier>
+var RepoRuleResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		if len(parts) == 2 { //Account level
+			d.Set("repo_identifier", parts[0])
+			d.Set("identifier", parts[1])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("repo_identifier", parts[1])
+			d.Set("identifier", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("repo_identifier", parts[2])
 			d.Set("identifier", parts[3])
 			d.SetId(parts[3])
 			return []*schema.ResourceData{d}, nil

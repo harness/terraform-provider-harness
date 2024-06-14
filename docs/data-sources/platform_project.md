@@ -10,6 +10,10 @@ description: |-
 
 Data source for retrieving a Harness project.
 
+References:
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
+- To understand how to use Project, please see [Documentation](https://developer.harness.io/docs/platform/organizations-and-projects/create-an-organization/#create-a-project)
+- To get more information about Api, please see [API documentation](https://apidocs.harness.io/tag/Project)
 ## Example Usage
 
 ```terraform
@@ -29,12 +33,12 @@ data "harness_platform_project" "example_by_name" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the Organization.
+- `org_id` (String) Unique identifier of the organization.
 
 ### Optional
 
-- `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
+- `identifier` (String) Unique identifier of the resource.
 
 ### Read-Only
 
@@ -42,6 +46,6 @@ data "harness_platform_project" "example_by_name" {
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
 - `modules` (Set of String) Modules in the project.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 
 

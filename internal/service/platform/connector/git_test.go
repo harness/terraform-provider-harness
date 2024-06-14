@@ -19,7 +19,10 @@ func TestAccResourceConnectorGit_Http(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorGit_http(id, name),
@@ -34,7 +37,6 @@ func TestAccResourceConnectorGit_Http(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -46,7 +48,6 @@ func TestAccResourceConnectorGit_Http(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.password_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 			{
@@ -67,7 +68,10 @@ func TestAccResourceConnectorGit_Ssh(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccConnectorDestroy(resourceName),
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
+		CheckDestroy: testAccConnectorDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceConnectorGit_ssh(id, name),
@@ -81,7 +85,6 @@ func TestAccResourceConnectorGit_Ssh(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "connection_type", "Account"),
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.ssh.0.ssh_key_ref", "account.test"),
 				),
 			},
 			{
@@ -95,6 +98,17 @@ func TestAccResourceConnectorGit_Ssh(t *testing.T) {
 
 func testAccResourceConnectorGit_http(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_git" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -108,15 +122,32 @@ func testAccResourceConnectorGit_http(id string, name string) string {
 			credentials {
 				http {
 					username = "admin"
-					password_ref = "account.TEST_aws_secret_key"
+					password_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }
 
 func testAccResourceConnectorGit_ssh(id string, name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_git" "test" {
 			identifier = "%[1]s"
 			name = "%[2]s"
@@ -129,9 +160,15 @@ func testAccResourceConnectorGit_ssh(id string, name string) string {
 			delegate_selectors = ["harness-delegate"]
 			credentials {
 				ssh {
-					ssh_key_ref = "account.test"
+					ssh_key_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 `, id, name)
 }

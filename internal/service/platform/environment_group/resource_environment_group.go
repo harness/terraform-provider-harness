@@ -21,7 +21,7 @@ func ResourceEnvironmentGroup() *schema.Resource {
 		UpdateContext: resourceEnvironmentGroupCreateOrUpdate,
 		DeleteContext: resourceEnvironmentGroupDelete,
 		CreateContext: resourceEnvironmentGroupCreateOrUpdate,
-		Importer:      helpers.ProjectResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"identifier": {
@@ -46,9 +46,16 @@ func ResourceEnvironmentGroup() *schema.Resource {
 				Computed:    true,
 			},
 			"yaml": {
-				Description: "Env group YAML",
+				Description:      "Env group YAML." + helpers.Descriptions.YamlText.String(),
+				Type:             schema.TypeString,
+				Required:         true,
+				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of environment group",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
@@ -61,20 +68,17 @@ func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, m
 	var err error
 	var envGroup *nextgen.EnvironmentGroupResponse
 	var httpResp *http.Response
+	var resp nextgen.ResponseDtoEnvironmentGroup
 
 	id := d.Get("identifier").(string)
 
 	if id != "" {
-		var resp nextgen.ResponseDtoEnvironmentGroup
-
-		orgIdentifier := (d.Get("org_id").(string))
-		projectIdentifier := (d.Get("project_id").(string))
-
-		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
-			Branch:         helpers.BuildField(d, "branch"),
-			RepoIdentifier: helpers.BuildField(d, "repo_id"),
+		resp, httpResp, err = c.EnvironmentGroupApi.GetEnvironmentGroup(ctx, d.Get("identifier").(string), c.AccountId, &nextgen.EnvironmentGroupApiGetEnvironmentGroupOpts{
+			OrgIdentifier:     helpers.BuildField(d, "org_id"),
+			ProjectIdentifier: helpers.BuildField(d, "project_id"),
+			Branch:            helpers.BuildField(d, "branch"),
+			RepoIdentifier:    helpers.BuildField(d, "repo_id"),
 		})
-		envGroup = resp.Data.EnvGroup
 	} else {
 		return diag.FromErr(errors.New("identifier must be specified"))
 	}
@@ -82,7 +86,7 @@ func resourceEnvironmentGroupRead(ctx context.Context, d *schema.ResourceData, m
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
 	}
-
+	envGroup = resp.Data.EnvGroup
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
 	if envGroup == nil {
@@ -126,12 +130,12 @@ func resourceEnvironmentGroupCreateOrUpdate(ctx context.Context, d *schema.Resou
 func resourceEnvironmentGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
-	orgIdentifier := (d.Get("org_id").(string))
-	projectIdentifier := (d.Get("project_id").(string))
-
-	_, httpResp, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, orgIdentifier, projectIdentifier, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
-		Branch:         helpers.BuildField(d, "branch"),
-		RepoIdentifier: helpers.BuildField(d, "repo_id"),
+	_, httpResp, err := c.EnvironmentGroupApi.DeleteEnvironmentGroup(ctx, d.Id(), c.AccountId, &nextgen.EnvironmentGroupApiDeleteEnvironmentGroupOpts{
+		Branch:            helpers.BuildField(d, "branch"),
+		RepoIdentifier:    helpers.BuildField(d, "repo_id"),
+		ForceDelete:       helpers.BuildFieldForBoolean(d, "force_delete"),
+		OrgIdentifier:     helpers.BuildField(d, "org_id"),
+		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
 
 	if err != nil {
@@ -157,4 +161,8 @@ func readEnvironmentGroup(d *schema.ResourceData, env *nextgen.EnvironmentGroupR
 	d.Set("project_id", env.ProjectIdentifier)
 	d.Set("identifier", env.Identifier)
 	d.Set("color", env.Color)
+	yaml := env.Yaml
+	if yaml != "" {
+		d.Set("yaml", yaml)
+	}
 }

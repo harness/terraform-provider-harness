@@ -29,11 +29,13 @@ func ResourceConnectorAws() *schema.Resource {
 				ConflictsWith: []string{
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -62,6 +64,11 @@ func ResourceConnectorAws() *schema.Resource {
 							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -73,11 +80,13 @@ func ResourceConnectorAws() *schema.Resource {
 				ConflictsWith: []string{
 					"manual",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -86,6 +95,11 @@ func ResourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeSet,
 							Required:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -98,11 +112,13 @@ func ResourceConnectorAws() *schema.Resource {
 				ConflictsWith: []string{
 					"irsa",
 					"manual",
+					"oidc_authentication",
 				},
 				ExactlyOneOf: []string{
 					"manual",
 					"irsa",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -111,6 +127,48 @@ func ResourceConnectorAws() *schema.Resource {
 							Type:        schema.TypeSet,
 							Required:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector" + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"oidc_authentication": {
+				Description: "Authentication using harness oidc.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"irsa",
+					"manual",
+					"inherit_from_delegate",
+				},
+				ExactlyOneOf: []string{
+					"manual",
+					"irsa",
+					"inherit_from_delegate",
+					"oidc_authentication",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"iam_role_arn": {
+							Description: "The IAM Role to assume the credentials from.",
+							Type:        schema.TypeString,
+							Required:    true,
+						},
+						"delegate_selectors": {
+							Description: "The delegates to inherit the credentials from.",
+							Type:        schema.TypeSet,
+							Required:    true,
+							Elem:        &schema.Schema{Type: schema.TypeString},
+						},
+						"region": {
+							Description: "Test Region to perform Connection test of AWS Connector." + secret_ref_text,
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
@@ -135,6 +193,94 @@ func ResourceConnectorAws() *schema.Resource {
 					},
 				},
 			},
+			"equal_jitter_backoff_strategy": {
+				Description: "Equal Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"full_jitter_backoff_strategy",
+					"fixed_delay_backoff_strategy",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"full_jitter_backoff_strategy": {
+				Description: "Full Jitter BackOff Strategy.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"equal_jitter_backoff_strategy",
+					"fixed_delay_backoff_strategy",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"base_delay": {
+							Description: "Base delay.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"max_backoff_time": {
+							Description: "Max BackOff Time.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"fixed_delay_backoff_strategy": {
+				Description: "Fixed Delay BackOff Strategy.",
+				Type:        schema.TypeList,
+				MaxItems:    1,
+				Optional:    true,
+				ConflictsWith: []string{
+					"full_jitter_backoff_strategy",
+					"equal_jitter_backoff_strategy",
+				},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"fixed_backoff": {
+							Description: "Fixed Backoff.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+						"retry_count": {
+							Description: "Retry Count.",
+							Type:        schema.TypeInt,
+							Optional:    true,
+						},
+					},
+				},
+			},
+			"force_delete": {
+				Description: "Enable this flag for force deletion of connector",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -147,6 +293,10 @@ func resourceConnectorAwsRead(ctx context.Context, d *schema.ResourceData, meta 
 	conn, err := resourceConnectorReadBase(ctx, d, meta, nextgen.ConnectorTypes.Aws)
 	if err != nil {
 		return err
+	}
+
+	if conn == nil {
+		return nil
 	}
 
 	if err := readConnectorAws(d, conn); err != nil {
@@ -199,6 +349,10 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
+		}
 	}
 
 	if attr, ok := d.GetOk("irsa"); ok {
@@ -208,6 +362,10 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
+		}
 	}
 
 	if attr, ok := d.GetOk("inherit_from_delegate"); ok {
@@ -216,6 +374,28 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
+		}
+	}
+
+	if attr, ok := d.GetOk("oidc_authentication"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.Credential.Type_ = nextgen.AwsAuthTypes.OidcAuthentication
+		connector.Aws.Credential.OidcConfig = &nextgen.AwsOidcConfigSpec{}
+
+		if attr := config["iam_role_arn"].(string); attr != "" {
+			connector.Aws.Credential.OidcConfig.IamRoleArn = attr
+		}
+
+		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
+			connector.Aws.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
+		}
+
+		if attr := config["region"].(string); attr != "" {
+			connector.Aws.Credential.Region = attr
 		}
 	}
 
@@ -232,6 +412,54 @@ func buildConnectorAws(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		}
 	}
 
+	if attr, ok := d.GetOk("equal_jitter_backoff_strategy"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.AwsSdkClientBackOffStrategyOverride = &nextgen.AwsSdkClientBackoffStrategy{}
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ = nextgen.AwsSdkClientBackOffStrategyTypes.EqualJitterBackoffStrategy
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter = &nextgen.AwsEqualJitterBackoffStrategy{}
+
+		if val, ok := config["retry_count"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.RetryCount = int32(val.(int))
+		}
+		if val, ok := config["max_backoff_time"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.MaxBackoffTime = int64(val.(int))
+		}
+		if val, ok := config["base_delay"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.BaseDelay = int64(val.(int))
+		}
+	}
+
+	if attr, okk := d.GetOk("full_jitter_backoff_strategy"); okk {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.AwsSdkClientBackOffStrategyOverride = &nextgen.AwsSdkClientBackoffStrategy{}
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ = nextgen.AwsSdkClientBackOffStrategyTypes.FullJitterBackoffStrategy
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter = &nextgen.AwsFullJitterBackoffStrategy{}
+
+		if val, ok := config["retry_count"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.RetryCount = int32(val.(int))
+		}
+		if val, ok := config["max_backoff_time"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.MaxBackoffTime = int64(val.(int))
+		}
+		if val, ok := config["base_delay"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.BaseDelay = int64(val.(int))
+		}
+	}
+
+	if attr, okk := d.GetOk("fixed_delay_backoff_strategy"); okk {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		connector.Aws.AwsSdkClientBackOffStrategyOverride = &nextgen.AwsSdkClientBackoffStrategy{}
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ = nextgen.AwsSdkClientBackOffStrategyTypes.FixedDelayBackoffStrategy
+		connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay = &nextgen.AwsFixedDelayBackoffStrategy{}
+
+		if val, ok := config["retry_count"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.RetryCount = int32(val.(int))
+		}
+		if val, ok := config["fixed_backoff"]; ok {
+			connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.FixedBackoff = int64(val.(int))
+		}
+	}
+
 	return connector
 }
 
@@ -244,23 +472,71 @@ func readConnectorAws(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 				"access_key_ref":     connector.Aws.Credential.ManualConfig.AccessKeyRef,
 				"secret_key_ref":     connector.Aws.Credential.ManualConfig.SecretKeyRef,
 				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
 			},
 		})
 	case nextgen.AwsAuthTypes.Irsa:
 		d.Set("irsa", []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
 			},
 		})
 	case nextgen.AwsAuthTypes.InheritFromDelegate:
 		d.Set("inherit_from_delegate", []map[string]interface{}{
 			{
 				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
+			},
+		})
+	case nextgen.AwsAuthTypes.OidcAuthentication:
+		d.Set("oidc_authentication", []map[string]interface{}{
+			{
+				"iam_role_arn":       connector.Aws.Credential.OidcConfig.IamRoleArn,
+				"delegate_selectors": connector.Aws.DelegateSelectors,
+				"region":             connector.Aws.Credential.Region,
 			},
 		})
 	default:
 		return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.Credential.Type_)
 	}
+	if connector.Aws.Credential.CrossAccountAccess != nil {
+		d.Set("cross_account_access", []map[string]interface{}{
+			{
+				"role_arn":    connector.Aws.Credential.CrossAccountAccess.CrossAccountRoleArn,
+				"external_id": connector.Aws.Credential.CrossAccountAccess.ExternalId,
+			},
+		})
+	}
+	if connector.Aws.AwsSdkClientBackOffStrategyOverride != nil {
+		switch connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_ {
+		case nextgen.AwsSdkClientBackOffStrategyTypes.EqualJitterBackoffStrategy:
+			d.Set("equal_jitter_backoff_strategy", []map[string]interface{}{
+				{
+					"base_delay":       connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.BaseDelay,
+					"max_backoff_time": connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.MaxBackoffTime,
+					"retry_count":      connector.Aws.AwsSdkClientBackOffStrategyOverride.EqualJitter.RetryCount,
+				},
+			})
+		case nextgen.AwsSdkClientBackOffStrategyTypes.FullJitterBackoffStrategy:
+			d.Set("full_jitter_backoff_strategy", []map[string]interface{}{
+				{
+					"base_delay":       connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.BaseDelay,
+					"max_backoff_time": connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.MaxBackoffTime,
+					"retry_count":      connector.Aws.AwsSdkClientBackOffStrategyOverride.FullJitter.RetryCount,
+				},
+			})
+		case nextgen.AwsSdkClientBackOffStrategyTypes.FixedDelayBackoffStrategy:
+			d.Set("fixed_delay_backoff_strategy", []map[string]interface{}{
+				{
+					"fixed_backoff": connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.FixedBackoff,
+					"retry_count":   connector.Aws.AwsSdkClientBackOffStrategyOverride.FixedDelay.RetryCount,
+				},
+			})
+		default:
+			return fmt.Errorf("unsupported aws credential type: %s", connector.Aws.AwsSdkClientBackOffStrategyOverride.Type_)
+		}
 
+	}
 	return nil
 }

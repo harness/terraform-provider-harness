@@ -25,21 +25,21 @@ data "harness_platform_environment" "example" {
 
 ### Required
 
-- `org_id` (String) Unique identifier of the Organization.
-- `project_id` (String) Unique identifier of the Project.
+- `identifier` (String) Unique identifier of the resource.
 
 ### Optional
 
-- `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
+- `org_id` (String) Unique identifier of the organization.
+- `project_id` (String) Unique identifier of the project.
 
 ### Read-Only
 
 - `color` (String) Color of the environment.
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
-- `tags` (Set of String) Tags to associate with the resource. Tags should be in the form `name:value`.
+- `tags` (Set of String) Tags to associate with the resource.
 - `type` (String) The type of environment.
-- `yaml` (String) Input Set YAML
+- `yaml` (String) Environment YAML. In YAML, to reference an entity at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference an entity at the account scope, prefix 'account` to the expression: account.{identifier}. For eg, to reference a connector with identifier 'connectorId' at the organization scope in a stage mention it as connectorRef: org.connectorId.
 
 

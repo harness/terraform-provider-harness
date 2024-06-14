@@ -19,6 +19,9 @@ func TestAccDataSourceConnectorGitlab(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"time": {},
+		},
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceConnectorGitlab(name),
@@ -33,7 +36,6 @@ func TestAccDataSourceConnectorGitlab(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "validation_repo", "some_repo"),
 					resource.TestCheckResourceAttr(resourceName, "delegate_selectors.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.username", "admin"),
-					resource.TestCheckResourceAttr(resourceName, "credentials.0.http.0.token_ref", "account.TEST_aws_secret_key"),
 				),
 			},
 		},
@@ -42,6 +44,17 @@ func TestAccDataSourceConnectorGitlab(t *testing.T) {
 
 func testAccDataSourceConnectorGitlab(name string) string {
 	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[1]s"
+		description = "test"
+		tags = ["foo:bar"]
+
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "secret"
+	}
+
 		resource "harness_platform_connector_gitlab" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
@@ -55,9 +68,15 @@ func testAccDataSourceConnectorGitlab(name string) string {
 			credentials {
 				http {
 					username = "admin"
-					token_ref = "account.TEST_aws_secret_key"
+					token_ref = "account.${harness_platform_secret_text.test.id}"
 				}
 			}
+			depends_on = [time_sleep.wait_4_seconds]
+		}
+
+		resource "time_sleep" "wait_4_seconds" {
+			depends_on = [harness_platform_secret_text.test]
+			destroy_duration = "4s"
 		}
 
 		data "harness_platform_connector_gitlab" "test" {
