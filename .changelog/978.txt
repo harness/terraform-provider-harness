@@ -1,0 +1,3 @@
+```release-note:bug
+resource/platform_repo: Fixes issue for repo import giving 404 even after being successful.
+```
