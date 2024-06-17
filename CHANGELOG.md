@@ -1,3 +1,9 @@
+# 0.31.5 (June 17,2024) 
+
+BUG FIXES:
+
+* resource/platform_repo: Fixes issue for repo import giving 404 even after being successful. ([#978](https://github.com/harness/terraform-provider-harness/issues/978))
+
 # 0.31.4 (June 07,2024) 
 
 # 0.31.3 (May 31,2024) 
