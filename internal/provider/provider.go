@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
-	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
-
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
 	"github.com/sirupsen/logrus"
 
@@ -261,6 +261,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
+				"harness_platform_iacm_default_pipeline":           iacm.DataSourceIacmDefaultPipeline(),
 				"harness_platform_repo":                            repo.DataSourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
@@ -394,6 +395,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
+				"harness_platform_iacm_default_pipeline":           iacm.ResourceIacmDefaultPipeline(),
 				"harness_platform_repo":                            repo.ResourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
