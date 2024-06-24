@@ -9,12 +9,16 @@
 package nextgen
 
 type IacmCreateWorkspaceRequestBody struct {
+	// define the budget for a specific workspace
+	Budget float32 `json:"budget,omitempty"`
 	// cost_breakdown_json is the identifier to the breakdown cost file from the current execution that was applied successfully
 	CostBreakdownJson string `json:"cost_breakdown_json,omitempty"`
 	// cost_diff_json is the identifier to the diff cost file between the previous and current successful executions
 	CostDiffJson string `json:"cost_diff_json,omitempty"`
 	// define if cost estimation operations will be performed in this workspace
 	CostEstimationEnabled bool `json:"cost_estimation_enabled,omitempty"`
+	// List of default pipelines associated with this workspace and any per-workspace overrrides.
+	DefaultPipelines map[string]IacmDefaultPipelineOverride `json:"default_pipelines,omitempty"`
 	// Description provides long-form text about the resource.
 	Description string `json:"description,omitempty"`
 	// list of environment variables configured on the workspace.
@@ -36,11 +40,11 @@ type IacmCreateWorkspaceRequestBody struct {
 	// Repository Commit/Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
-	RepositoryConnector string `json:"repository_connector"`
+	RepositoryConnector string `json:"repository_connector,omitempty"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
-	// terraform_plan is the identifier to the current state file.
-	TerraformPlan string `json:"terraform_plan,omitempty"`
+	// Repository SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
 	// terraform_plan_json is the identifier to the current state file onl in JSON format.
 	TerraformPlanJson string `json:"terraform_plan_json,omitempty"`
 	// terraform_state is the identifier to the plan file used to create the latest state.

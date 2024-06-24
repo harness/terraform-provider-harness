@@ -12,6 +12,10 @@ package nextgen
 type IacmShowWorkspaceResponseBody struct {
 	// Account is the internal customer account ID.
 	Account string `json:"account"`
+	// Defines if the remote backend is locked or not
+	BackendLocked bool `json:"backend_locked,omitempty"`
+	// define the budget for a specific workspace
+	Budget float32 `json:"budget,omitempty"`
 	// cost_breakdown_json is the identifier to the breakdown cost file from the current execution that was applied successfully
 	CostBreakdownJson string `json:"cost_breakdown_json,omitempty"`
 	// cost_diff_json is the identifier to the diff cost file between the previous and current successful executions
@@ -20,6 +24,8 @@ type IacmShowWorkspaceResponseBody struct {
 	CostEstimationEnabled bool `json:"cost_estimation_enabled,omitempty"`
 	// Created is the unix timestamp at which the resource was originally created in milliseconds.
 	Created int64 `json:"created"`
+	// List of default pipelines associated with this workspace and any per-workspace overrrides.
+	DefaultPipelines map[string]IacmDefaultPipelineOverride `json:"default_pipelines,omitempty"`
 	// Description provides long-form text about the resource.
 	Description string `json:"description,omitempty"`
 	// list of environment variables configured on the workspace.
@@ -49,10 +55,10 @@ type IacmShowWorkspaceResponseBody struct {
 	RepositoryConnector string `json:"repository_connector"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
+	// Repository SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
 	// The status of the workspace
-	Status string `json:"status,omitempty"`
-	// terraform_plan is the identifier to the current state file.
-	TerraformPlan string `json:"terraform_plan,omitempty"`
+	Status string `json:"status"`
 	// terraform_plan_json is the identifier to the current state file onl in JSON format.
 	TerraformPlanJson string `json:"terraform_plan_json,omitempty"`
 	// terraform_state is the identifier to the plan file used to create the latest state.

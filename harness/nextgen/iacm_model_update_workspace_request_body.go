@@ -9,8 +9,12 @@
 package nextgen
 
 type IacmUpdateWorkspaceRequestBody struct {
+	// define the budget for a specific workspace
+	Budget float32 `json:"budget,omitempty"`
 	// define if cost estimation operations will be performed in this workspace
 	CostEstimationEnabled bool `json:"cost_estimation_enabled,omitempty"`
+	// List of default pipelines associated with this workspace and any per-workspace overrrides.
+	DefaultPipelines map[string]IacmDefaultPipelineOverride `json:"default_pipelines,omitempty"`
 	// Description provides long-form text about the resource.
 	Description string `json:"description,omitempty"`
 	// list of environment variables configured on the workspace.
@@ -30,9 +34,11 @@ type IacmUpdateWorkspaceRequestBody struct {
 	// Repository Commit/Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
-	RepositoryConnector string `json:"repository_connector"`
+	RepositoryConnector string `json:"repository_connector,omitempty"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
+	// Repository SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
 	// define an array of terraform variables files that belong to a different repository
 	TerraformVariableFiles []IacmWorkspaceTerraformVariableFiles `json:"terraform_variable_files,omitempty"`
 	// list of terraform variables configured on the workspace.
