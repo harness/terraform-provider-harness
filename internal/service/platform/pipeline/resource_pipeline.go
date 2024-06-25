@@ -25,11 +25,18 @@ func ResourcePipeline() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
+<<<<<<< Updated upstream
 				Description:      "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
 				Type:             schema.TypeString,
 				Optional:         true,
 				Computed:         true,
 				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
+=======
+				Description: "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+>>>>>>> Stashed changes
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
@@ -226,8 +233,8 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
 			pipeline_id = d.Get("identifier").(string)
-
 			pipeline_import_request_body := createImportFromGitRequest(d)
+			branch_name = pipeline_import_request_body.GitImportInfo.BranchName
 
 			_, httpResp, err = c.PipelinesApi.ImportPipelineFromGit(ctx, org_id, project_id, pipeline_id,
 				&nextgen.PipelinesApiImportPipelineFromGitOpts{
