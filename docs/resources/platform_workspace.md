@@ -75,8 +75,8 @@ resource "harness_platform_workspace" "example" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `provider_connector` (String) Provider connector is the reference to the connector for the infrastructure provider
-- `provisioner_type` (String) Provisioner type defines the provisioning tool to use. Currently only terraform is supported.
-- `provisioner_version` (String) Provisioner version defines the tool version to use. Currently we support versions of terraform less than or equal 1.5.6
+- `provisioner_type` (String) Provisioner type defines the provisioning tool to use. Currently `terraform` and `opentofu` are supported values.
+- `provisioner_version` (String) Provisioner version defines the tool version to use. 
 - `repository` (String) Repository is the name of the repository to fetch the code from.
 - `repository_connector` (String) Repository connector is the reference to the connector used to fetch the code.
 - `repository_path` (String) Repository path is the path in which the code resides.
