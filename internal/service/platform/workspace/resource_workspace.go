@@ -182,6 +182,11 @@ func ResourceWorkspace() *schema.Resource {
 					},
 				},
 			},
+			"default_pipelines": {
+				Description: "Default pipelines associated with this workspace",
+				Type:        schema.TypeMap,
+				Optional:    true,
+			},
 		},
 	}
 
@@ -331,6 +336,13 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 		})
 	}
 	d.Set("terraform_variable_file", terraformVariableFiles)
+	defaultPipelines := map[string]string{}
+	for k, v := range ws.DefaultPipelines {
+		if v.WorkspacePipeline != "" {
+			defaultPipelines[k] = v.WorkspacePipeline
+		}
+	}
+	d.Set("default_pipelines", defaultPipelines)
 }
 
 func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRequestBody, error) {
@@ -374,6 +386,12 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 	ws.TerraformVariables = terraformVariables
 
 	ws.TerraformVariableFiles = buildTerraformVariableFiles(d)
+
+	defaultPipelines, err := buildDefaultPipelines(d)
+	if err != nil {
+		return nextgen.IacmUpdateWorkspaceRequestBody{}, err
+	}
+	ws.DefaultPipelines = defaultPipelines
 
 	return ws, nil
 }
@@ -421,6 +439,12 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 
 	ws.TerraformVariableFiles = buildTerraformVariableFiles(d)
 
+	defaultPipelines, err := buildDefaultPipelines(d)
+	if err != nil {
+		return nextgen.IacmCreateWorkspaceRequestBody{}, err
+	}
+	ws.DefaultPipelines = defaultPipelines
+
 	return ws, nil
 }
 
@@ -459,6 +483,20 @@ func buildVariables(d *schema.ResourceData, attribute string) (map[string]nextge
 		}
 	}
 	return variables, nil
+}
+
+func buildDefaultPipelines(d *schema.ResourceData) (map[string]nextgen.IacmDefaultPipelineOverride, error) {
+	defaultPipelines := map[string]nextgen.IacmDefaultPipelineOverride{}
+	if pipelines, ok := d.GetOk("default_pipelines"); ok {
+		if pipelinesMap, ok := pipelines.(map[string]interface{}); ok {
+			for operation, pipeline := range pipelinesMap {
+				if pipelineStr, ok := pipeline.(string); ok {
+					defaultPipelines[operation] = nextgen.IacmDefaultPipelineOverride{WorkspacePipeline: pipelineStr}
+				}
+			}
+		}
+	}
+	return defaultPipelines, nil
 }
 
 // iacm errors are in a different format from other harness services
