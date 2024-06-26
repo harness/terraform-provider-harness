@@ -25,18 +25,11 @@ func ResourcePipeline() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"yaml": {
-<<<<<<< Updated upstream
 				Description:      "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
 				Type:             schema.TypeString,
 				Optional:         true,
 				Computed:         true,
 				DiffSuppressFunc: helpers.YamlDiffSuppressFunction,
-=======
-				Description: "YAML of the pipeline." + helpers.Descriptions.YamlText.String(),
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
->>>>>>> Stashed changes
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
