@@ -55,7 +55,7 @@ func ResourceGitopsApplication() *schema.Resource {
 			"repo_id": {
 				Description: "Repository identifier of the GitOps application.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps application should be updated if existing and inserted if not.",
@@ -96,6 +96,11 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Name of the GitOps application.",
 				Type:        schema.TypeString,
 				Required:    true,
+			},
+			"skip_repo_validation": {
+				Description: "Indicates if the GitOps application should skip validate repository definition exists.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"application": {
 				Description: "Definition of the GitOps application resource.",
@@ -670,6 +675,7 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 
 	createApplicationRequest := buildCreateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier string
+	var skipRepoValidation bool
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -685,13 +691,17 @@ func resourceGitopsApplicationCreate(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("repo_id"); ok {
 		repoIdentifier = attr.(string)
 	}
+	if attr, ok := d.GetOk("skip_repo_validation"); ok {
+		skipRepoValidation = attr.(bool)
+	}
 
 	resp, httpResp, err := c.ApplicationsApiService.AgentApplicationServiceCreate(ctx, createApplicationRequest, agentIdentifier, &nextgen.ApplicationsApiAgentApplicationServiceCreateOpts{
-		AccountIdentifier: optional.NewString(c.AccountId),
-		OrgIdentifier:     optional.NewString(orgIdentifier),
-		ProjectIdentifier: optional.NewString(projectIdentifier),
-		ClusterIdentifier: optional.NewString(clusterIdentifier),
-		RepoIdentifier:    optional.NewString(repoIdentifier),
+		AccountIdentifier:  optional.NewString(c.AccountId),
+		OrgIdentifier:      optional.NewString(orgIdentifier),
+		ProjectIdentifier:  optional.NewString(projectIdentifier),
+		ClusterIdentifier:  optional.NewString(clusterIdentifier),
+		RepoIdentifier:     optional.NewString(repoIdentifier),
+		SkipRepoValidation: optional.NewBool(skipRepoValidation),
 	})
 
 	if err != nil {
@@ -749,6 +759,7 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 
 	updateApplicationRequest := buildUpdateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier, appMetaDataName string
+	var skipRepoValidation bool
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -767,10 +778,14 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("repo_id"); ok {
 		repoIdentifier = attr.(string)
 	}
+	if attr, ok := d.GetOk("skip_repo_validation"); ok {
+		skipRepoValidation = attr.(bool)
+	}
 
 	resp, httpResp, err := c.ApplicationsApiService.AgentApplicationServiceUpdate(ctx, updateApplicationRequest, c.AccountId, orgIdentifier, projectIdentifier, agentIdentifier, appMetaDataName, &nextgen.ApplicationsApiAgentApplicationServiceUpdateOpts{
-		ClusterIdentifier: optional.NewString(clusterIdentifier),
-		RepoIdentifier:    optional.NewString(repoIdentifier),
+		ClusterIdentifier:  optional.NewString(clusterIdentifier),
+		RepoIdentifier:     optional.NewString(repoIdentifier),
+		SkipRepoValidation: optional.NewBool(skipRepoValidation),
 	})
 
 	if err != nil {
@@ -838,6 +853,7 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 	d.Set("cluster_id", app.ClusterIdentifier)
 	d.Set("repo_id", app.RepoIdentifier)
 	d.Set("name", app.Name)
+	d.Set("skip_repo_validation", app.SkipRepoValidation)
 
 	if app.App != nil {
 		var applicationList = []interface{}{}
