@@ -31,6 +31,12 @@ func DatasourceConnectorCustomSM() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
+			"delegate_selectors": {
+				Description: "Tags to filter delegates for connection.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
+			},
 			"on_delegate": {
 				Description: "Specifies whether the secrets manager runs on a Harness delegate.",
 				Type:        schema.TypeBool,
