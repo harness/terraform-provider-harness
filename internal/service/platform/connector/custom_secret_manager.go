@@ -2,7 +2,6 @@ package connector
 
 import (
 	"context"
-	"log"
 
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -196,17 +195,11 @@ func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 	}
 
 	if attr, ok := d.GetOk("timeout"); ok {
-		log.Printf("timeout exists with value: %v", attr)
 		connector.CustomSecretManager.Timeout = attr.(int)
-	} else {
-		log.Printf("timeout does not exist or is nil")
 	}
 
 	if attr, ok := d.GetOk("on_delegate"); ok {
-		log.Printf("on_delegate exists with value: %v", attr)
 		connector.CustomSecretManager.OnDelegate = attr.(bool)
-	} else {
-		log.Printf("on_delegate does not exist or is nil")
 	}
 
 	connector.CustomSecretManager.Template = &nextgen.TemplateLinkConfigForCustomSecretManager{}
@@ -251,7 +244,6 @@ func buildConnectorCustomSM(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.CustomSecretManager.Template.TemplateInputs = template_set
 	}
 	if onDelegate, ok := d.GetOk("on_delegate"); ok && !onDelegate.(bool) {
-		log.Printf("on_delegate is false")
 		if attr, ok := d.GetOk("working_directory"); ok {
 			connector.CustomSecretManager.WorkingDirectory = attr.(string)
 		}
