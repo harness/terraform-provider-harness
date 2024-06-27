@@ -132,6 +132,7 @@ resource "harness_platform_connector_custom_secret_manager" "example" {
   - `name` (String): The name of the environment variable.
   - `value` (String): The value of the environment variable, typically set to `<+input>` to accept runtime input.
   - `type` (String): The type of the variable (e.g., `String`, `Number`).
+  - `default` (Boolean): If the variable is a fixed value (default `false`).
 
 ## Import
 
