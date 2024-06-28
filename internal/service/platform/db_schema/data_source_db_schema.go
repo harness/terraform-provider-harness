@@ -57,7 +57,7 @@ func DataSourceDBSchema() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelDataSourceSchema(resource.Schema)
+	helpers.SetProjectLevelDataSourceSchemaIdentifierRequired(resource.Schema)
 
 	return resource
 }

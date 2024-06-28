@@ -134,8 +134,18 @@ func SetOrgLevelDataSourceSchema(s map[string]*schema.Schema) {
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
 }
 
+func SetOrgLevelDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
+	SetCommonDataSourceSchemaIdentifierRequired(s)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
+}
+
 func SetProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
 	SetOrgLevelDataSourceSchema(s)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
+}
+
+func SetProjectLevelDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
+	SetOrgLevelDataSourceSchemaIdentifierRequired(s)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
 }
 
