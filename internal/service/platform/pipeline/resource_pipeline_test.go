@@ -155,8 +155,9 @@ func testAccGetPipeline(resourceName string, state *terraform.State) (*openapi_c
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
+	branch_name := r.Primary.Attributes["git_details.0.branch_name"]
 
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: optional.NewString(branch_name)})
 	if err != nil {
 		return nil, err
 	}
