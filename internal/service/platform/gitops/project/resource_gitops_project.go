@@ -2,50 +2,45 @@ package project
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"context"
-	"github.com/antihax/optional"
-	hh "github.com/harness/harness-go-sdk/harness/helpers"
-	"github.com/harness/harness-go-sdk/harness/nextgen"
-	"github.com/harness/terraform-provider-harness/helpers"
-	"github.com/harness/terraform-provider-harness/internal"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func resourceCreateProject() *schema.Resource {
+func ResourceProject() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceProjectCreate,
-		Read:   resourceProjectRead,
-		Update: resourceProjectUpdate,
-		Delete: resourceProjectDelete,
-
+		CreateContext: resourceProjectCreate,
+		ReadContext:   resourceProjectRead,
+		UpdateContext: resourceProjectUpdate,
+		DeleteContext: resourceProjectDelete,
 		Schema: map[string]*schema.Schema{
-			"agent_identifier": {
+			"agent_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"account_identifier": {
+			"account_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"org_identifier": {
+			"org_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
-			"project_identifier": {
+			"project_id": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"project": {
-				Type:     schema.TypeMap,
+				Type:     schema.TypeList,
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
-							Type:     schema.TypeMap,
+							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -65,11 +60,11 @@ func resourceCreateProject() *schema.Resource {
 							},
 						},
 						"spec": {
-							Type:     schema.TypeMap,
+							Type:     schema.TypeList,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
-									"clusterResourceWhitelist": {
+									"cluster_resource_whitelist": {
 										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Resource{
@@ -101,7 +96,7 @@ func resourceCreateProject() *schema.Resource {
 											},
 										},
 									},
-									"sourceRepos": {
+									"source_repos": {
 										Type:     schema.TypeList,
 										Optional: true,
 										Elem: &schema.Schema{
@@ -117,30 +112,39 @@ func resourceCreateProject() *schema.Resource {
 		},
 	}
 }
-s
-func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interface{}) error {
+
+func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Read API key from provider configuration or environment variables
-	apiKey := "YOUR_API_KEY_HERE" // Replace with your actual API key
+	apiKey := "" // Replace with your actual API key
 
 	// Construct the URL with placeholders replaced by actual values from Terraform resource data
-	url := fmt.Sprintf("https://app.harness.io/gitops/api/v1/agents/%s/projects?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-		d.Get("agent_identifier").(string),
-		d.Get("account_identifier").(string),
-		d.Get("org_identifier").(string),
-		d.Get("project_identifier").(string),
+	url := fmt.Sprintf("https://qa.harness.io/gateway/gitops/api/v1/agents/%s/projects?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
+		d.Get("agent_id").(string),
+		d.Get("account_id").(string),
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
 	)
 
 	// Prepare project data from Terraform resource data
 	projectData := d.Get("project").(map[string]interface{})
+	// Type assertion to slice of interface{}
+	if sliceData, ok := d.Get("project").([]interface{}); ok {
+		// Iterate over the slice elements
+		for _, item := range sliceData {
+			fmt.Println(item)
+		}
+	} else {
+		fmt.Println("Data is not a slice of interface{}")
+	}
 	projectJSON, err := json.Marshal(projectData)
 	if err != nil {
-		return fmt.Errorf("error marshalling project data: %s", err)
+		return nil
 	}
 
 	// Create HTTP POST request
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(projectJSON))
 	if err != nil {
-		return fmt.Errorf("error creating HTTP request: %s", err)
+		return nil
 	}
 
 	// Set headers
@@ -151,13 +155,13 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error making HTTP request: %s", err)
+		return nil
 	}
 	defer resp.Body.Close()
 
 	// Check response status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
+		return nil
 	}
 
 	// Optionally handle response data if needed
@@ -165,26 +169,26 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// Set resource ID if creation was successful
 	d.SetId("project-identifier") // Replace with a unique identifier if available
 
-	return nil
+	return diag.Diagnostics{}
 }
 
-func resourceProjectRead(d *schema.ResourceData, m interface{}) error {
+func resourceProjectRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Read API key from provider configuration or environment variables
 	apiKey := "YOUR_API_KEY_HERE" // Replace with your actual API key
 
 	// Construct the URL with placeholders replaced by actual values from Terraform resource data
 	url := fmt.Sprintf("https://app.harness.io/gitops/api/v1/agents/%s/projects/%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-		d.Get("agent_identifier").(string),
+		d.Get("agent_idr").(string),
 		d.Get("query_name").(string),
-		d.Get("account_identifier").(string),
-		d.Get("org_identifier").(string),
-		d.Get("project_identifier").(string),
+		d.Get("account_id").(string),
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
 	)
 
 	// Create HTTP GET request
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return fmt.Errorf("error creating HTTP request: %s", err)
+		return nil
 	}
 
 	// Set header
@@ -194,13 +198,13 @@ func resourceProjectRead(d *schema.ResourceData, m interface{}) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error making HTTP request: %s", err)
+		return nil
 	}
 	defer resp.Body.Close()
 
 	// Check response status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
+		return nil
 	}
 
 	// Process response body if needed
@@ -211,30 +215,30 @@ func resourceProjectRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceProjectUpdate(d *schema.ResourceData, m interface{}) error {
+func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Read API key from provider configuration or environment variables
 	apiKey := "YOUR_API_KEY_HERE" // Replace with your actual API key
 
 	// Construct the URL with placeholders replaced by actual values from Terraform resource data
 	url := fmt.Sprintf("https://app.harness.io/gitops/api/v1/agents/%s/projects/%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-		d.Get("agent_identifier").(string),
+		d.Get("agent_id").(string),
 		d.Get("project.metadata.name").(string),
-		d.Get("account_identifier").(string),
-		d.Get("org_identifier").(string),
-		d.Get("project_identifier").(string),
+		d.Get("account_id").(string),
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
 	)
 
 	// Prepare project data from Terraform resource data
 	projectData := d.Get("project").(map[string]interface{})
 	projectJSON, err := json.Marshal(projectData)
 	if err != nil {
-		return fmt.Errorf("error marshalling project data: %s", err)
+		return nil
 	}
 
 	// Create HTTP POST request
 	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(projectJSON))
 	if err != nil {
-		return fmt.Errorf("error creating HTTP request: %s", err)
+		return nil
 	}
 
 	// Set headers
@@ -245,13 +249,13 @@ func resourceProjectUpdate(d *schema.ResourceData, m interface{}) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error making HTTP request: %s", err)
+		return nil
 	}
 	defer resp.Body.Close()
 
 	// Check response status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
+		return nil
 	}
 
 	// Optionally handle response data if needed
@@ -262,23 +266,23 @@ func resourceProjectUpdate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceProjectDelete(d *schema.ResourceData, m interface{}) error {
+func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Read API key from provider configuration or environment variables
 	apiKey := "YOUR_API_KEY_HERE" // Replace with your actual API key
 
 	// Construct the URL with placeholders replaced by actual values from Terraform resource data
 	url := fmt.Sprintf("https://app.harness.io/gitops/api/v1/agents/%s/projects/%s?accountIdentifier=%s&orgIdentifier=%s&projectIdentifier=%s",
-		d.Get("agent_identifier").(string),
+		d.Get("agent_idr").(string),
 		d.Get("project.metadata.name").(string),
-		d.Get("account_identifier").(string),
-		d.Get("org_identifier").(string),
-		d.Get("project_identifier").(string),
+		d.Get("account_id").(string),
+		d.Get("org_id").(string),
+		d.Get("project_id").(string),
 	)
 
 	// Create HTTP DELETE request
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
-		return fmt.Errorf("error creating HTTP request: %s", err)
+		return nil
 	}
 
 	// Set header
@@ -288,17 +292,42 @@ func resourceProjectDelete(d *schema.ResourceData, m interface{}) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error making HTTP request: %s", err)
+		return nil
 	}
 	defer resp.Body.Close()
 
 	// Check response status
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
+		return nil
 	}
 
 	// Resource deleted successfully, so clear resource ID
 	d.SetId("")
 
 	return nil
+}
+
+type ProjectMetadata struct {
+	Generation int    `json:"generation"`
+	Name       string `json:"name"`
+	Namespace  string `json:"namespace"`
+}
+
+type ProjectSpec struct {
+	ClusterResourceWhitelist []struct {
+		Group string `json:"group"`
+		Kind  string `json:"kind"`
+	} `json:"cluster_resource_whitelist"`
+
+	Destinations []struct {
+		Namespace string `json:"namespace"`
+		Server    string `json:"server"`
+	} `json:"destinations"`
+
+	SourceRepos []string `json:"source_repos"`
+}
+
+type Project struct {
+	Metadata ProjectMetadata `json:"metadata"`
+	Spec     ProjectSpec     `json:"spec"`
 }
