@@ -38,6 +38,7 @@ Creates application in project.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "ClusterIdentifier" (optional.String) -
      * @param "RepoIdentifier" (optional.String) -
+     * @param "SkipRepoValidation" (optional.Bool) - 
 @return Servicev1Application
 */
 
@@ -46,7 +47,8 @@ type ApplicationsApiAgentApplicationServiceCreateOpts struct {
 	OrgIdentifier     optional.String
 	ProjectIdentifier optional.String
 	ClusterIdentifier optional.String
-	RepoIdentifier    optional.String
+    RepoIdentifier optional.String
+    SkipRepoValidation optional.Bool
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Context, body ApplicationsApplicationCreateRequest, agentIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceCreateOpts) (Servicev1Application, *http.Response, error) {
@@ -81,6 +83,9 @@ func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Conte
 	}
 	if localVarOptionals != nil && localVarOptionals.RepoIdentifier.IsSet() {
 		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoIdentifier.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.SkipRepoValidation.IsSet() {
+		localVarQueryParams.Add("skipRepoValidation", parameterToString(localVarOptionals.SkipRepoValidation.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
@@ -502,7 +507,7 @@ ApplicationsApiService Get returns an application by name
 */
 
 type ApplicationsApiAgentApplicationServiceGetOpts struct {
-	QueryRefresh         optional.String
+    QueryRefresh         optional.String
 	QueryProject         optional.Interface
 	QueryResourceVersion optional.String
 	QuerySelector        optional.String
@@ -3033,12 +3038,14 @@ Update updates an application.
  * @param optional nil or *ApplicationsApiAgentApplicationServiceUpdateOpts - Optional Parameters:
      * @param "ClusterIdentifier" (optional.String) -
      * @param "RepoIdentifier" (optional.String) -
+     * @param "SkipRepoValidation" (optional.Bool) - 
 @return Servicev1Application
 */
 
 type ApplicationsApiAgentApplicationServiceUpdateOpts struct {
 	ClusterIdentifier optional.String
 	RepoIdentifier    optional.String
+    SkipRepoValidation optional.Bool
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Context, body ApplicationsApplicationUpdateRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, agentIdentifier string, requestApplicationMetadataName string, localVarOptionals *ApplicationsApiAgentApplicationServiceUpdateOpts) (Servicev1Application, *http.Response, error) {
@@ -3069,7 +3076,10 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Conte
 	if localVarOptionals != nil && localVarOptionals.RepoIdentifier.IsSet() {
 		localVarQueryParams.Add("repoIdentifier", parameterToString(localVarOptionals.RepoIdentifier.Value(), ""))
 	}
-	// to determine the Content-Type header
+	if localVarOptionals != nil && localVarOptionals.SkipRepoValidation.IsSet() {
+		localVarQueryParams.Add("skipRepoValidation", parameterToString(localVarOptionals.SkipRepoValidation.Value(), ""))
+	}
+    // to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header

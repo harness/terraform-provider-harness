@@ -29,4 +29,5 @@ type Servicev1Application struct {
 	CreatedAt         time.Time                `json:"createdAt,omitempty"`
 	LastModifiedAt    time.Time                `json:"lastModifiedAt,omitempty"`
 	Stale             bool                     `json:"stale,omitempty"`
+        SkipRepoValidation bool `json:"skipRepoValidation,omitempty"`
 }

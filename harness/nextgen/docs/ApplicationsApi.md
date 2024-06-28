@@ -58,7 +58,7 @@ Name | Type | Description  | Notes
  **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
  **clusterIdentifier** | **optional.**|  | 
  **repoIdentifier** | **optional.**|  | 
-
+ **skipRepoValidation** | **optional.**|  |
 ### Return type
 
 [**Servicev1Application**](servicev1Application.md)
@@ -961,7 +961,7 @@ Name | Type | Description  | Notes
 
  **clusterIdentifier** | **optional.**|  | 
  **repoIdentifier** | **optional.**|  | 
-
+ **skipRepoValidation** | **optional.**|  |
 ### Return type
 
 [**Servicev1Application**](servicev1Application.md)
