@@ -48,7 +48,7 @@ func ResourceDBSchema() *schema.Resource {
 						"repo": {
 							Description: "Repository containing changesets",
 							Type:        schema.TypeString,
-							Optional:    true,
+							Required:    true,
 						},
 					},
 				},

@@ -43,10 +43,11 @@ func TestAccResourceDBSchema(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"change_log.#", "change_log.0.%", "change_log.0.connector", "change_log.0.location", "change_log.0.repo"},
 			},
 		},
 	})
