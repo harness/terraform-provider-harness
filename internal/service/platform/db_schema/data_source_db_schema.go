@@ -28,28 +28,23 @@ func DataSourceDBSchema() *schema.Resource {
 			"change_log": {
 				Description: "Contains changesets related info",
 				Type:        schema.TypeList,
-				MaxItems:    1,
 				Computed:    true,
-				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
 							Description: "Reference to the connector",
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 						},
 						"location": {
 							Description: "Location of changesets in repository",
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 						},
 						"repo": {
 							Description: "Repository containing changesets",
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 						},
 					},
 				},
