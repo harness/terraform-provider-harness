@@ -1,0 +1,1992 @@
+openapi: 3.0.0
+info:
+  title: Harness NextGen Software Delivery Platform API Reference
+  description: This is the Open Api Spec 3 for the DB Service
+  contact:
+    email: contact@harness.io
+  version: "1.0"
+servers:
+- url: /
+tags:
+- name: Database Schema
+  description: This contains APIs for performing CRUD operations on Database Schema
+    Entity
+  x-displayName: Database Schema
+- name: Database Instance
+  description: This contains APIs for performing CRUD operations on Database Instance
+    Entity
+  x-displayName: Database Instance
+- name: Log Ingest
+  description: This contains APIs for creating and retrieving database migration log
+    information
+  x-displayName: Log Ingest
+- name: Pipeline Step
+  description: This contains APIs for Pipeline Plugin Inputs
+  x-displayName: Pipeline Step
+paths:
+  /v1/orgs/{org}/projects/{project}/dbschema:
+    get:
+      tags:
+      - Database Schema
+      summary: List database schemas
+      description: List database Schemas
+      operationId: V1ListProjDbSchema
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: "Pagination page number strategy: Specify the page number within\
+          \ the paginated collection related to the number of items on each page."
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 0
+      - name: limit
+        in: query
+        description: "Pagination: Number of items to return."
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          type: integer
+          default: 10
+      - name: search_term
+        in: query
+        description: This would be used to filter resources having attributes matching
+          the search term.
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: Parameter on the basis of which sorting is done.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - name
+          - updated
+          - created
+      - name: order
+        in: query
+        description: Order on the basis of which sorting is done.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Response body for List Database Schema
+          headers:
+            X-Page-Number:
+              description: Page number in Paginated response.
+              style: simple
+              explode: false
+              schema:
+                type: integer
+            X-Page-Size:
+              description: Maximum page size in Paginated response.
+              style: simple
+              explode: false
+              schema:
+                type: integer
+            X-Total-Elements:
+              description: Total number of elements returned in Paginated response.
+              style: simple
+              explode: false
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Response body for List Schema
+                items:
+                  $ref: '#/components/schemas/DBSchemaOut'
+                x-content-type: application/json
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-internal: false
+      x-stoplight:
+        id: nhhnhieu7jo8u
+    post:
+      tags:
+      - Database Schema
+      summary: Create a database schema
+      description: Create a database schema
+      operationId: V1CreateProjDbSchema
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/DBSchemaCreateRequest'
+      responses:
+        "201":
+          description: Response body for Database Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBSchemaOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: 1ip5gikvmqezd
+  /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}:
+    get:
+      tags:
+      - Database Schema
+      summary: Get a database schema
+      description: Retrieves the specified database schema
+      operationId: V1GetProjDbSchema
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Response body for Database Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBSchemaOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: 78fzlqtzyti7q
+    put:
+      tags:
+      - Database Schema
+      summary: Update a database schema
+      description: Update a database schema
+      operationId: V1UpdateProjDbSchema
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/DBSchemaUpdateRequest'
+      responses:
+        "200":
+          description: Response body for Database Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBSchemaOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: ngsm9f0c6fvq5
+    delete:
+      tags:
+      - Database Schema
+      summary: Delete a database schema
+      description: Delete a database schema
+      operationId: V1DeleteProjDbSchema
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The database schema was deleted successfully
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: ek4jolzg7diy6
+  /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance:
+    get:
+      tags:
+      - Database Instance
+      summary: List database instances
+      description: Retrieves the specified database instances of the database schema
+      operationId: V1ListProjDbSchemaInstance
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: "Pagination page number strategy: Specify the page number within\
+          \ the paginated collection related to the number of items on each page."
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+          default: 0
+      - name: limit
+        in: query
+        description: "Pagination: Number of items to return."
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 100
+          type: integer
+          default: 10
+      - name: search_term
+        in: query
+        description: This would be used to filter resources having attributes matching
+          the search term.
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: Parameter on the basis of which sorting is done.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - name
+          - updated
+          - created
+      - name: order
+        in: query
+        description: Order on the basis of which sorting is done.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - ASC
+          - DESC
+      responses:
+        "200":
+          description: Response body for List Database Schema
+          headers:
+            X-Page-Number:
+              description: Page number in Paginated response.
+              style: simple
+              explode: false
+              schema:
+                type: integer
+            X-Page-Size:
+              description: Maximum page size in Paginated response.
+              style: simple
+              explode: false
+              schema:
+                type: integer
+            X-Total-Elements:
+              description: Total number of elements returned in Paginated response.
+              style: simple
+              explode: false
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Response body for List Schema
+                items:
+                  $ref: '#/components/schemas/DBInstanceOut'
+                x-content-type: application/json
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: zd2ila1mx2t7c
+    post:
+      tags:
+      - Database Instance
+      summary: Create a database instance
+      description: Create a database instance
+      operationId: V1CreateProjDbSchemaInstance
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/DBInstanceCreateRequest'
+      responses:
+        "201":
+          description: Response body for Database Instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBInstanceOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: ooxjel6o3ya8y
+  /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance/{dbinstance}:
+    get:
+      tags:
+      - Database Instance
+      summary: Get a database instance
+      description: Retrieves the specified database instance
+      operationId: V1GetProjDbSchemaInstance
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: dbinstance
+        in: path
+        description: database instance unique id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Response body for Database Instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBInstanceOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: tcua2vmx132hm
+    put:
+      tags:
+      - Database Schema
+      summary: Update a database instance
+      description: Update a database instance
+      operationId: V1UpdateProjDbSchemaInstance
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: dbinstance
+        in: path
+        description: database instance unique id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/DBInstanceUpdateRequest'
+      responses:
+        "200":
+          description: Response body for Database Instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DBInstanceOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: e17endbbc7uha
+    delete:
+      tags:
+      - Database Instance
+      summary: Delete a database instance
+      description: Delete a database instance
+      operationId: V1DeleteProjDbSchemaInstance
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: dbinstance
+        in: path
+        description: database instance unique id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The database instance was deleted successfully
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: hx4uvpfwg2w2c
+  /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance/{dbinstance}/logs:
+    post:
+      tags:
+      - Log Ingest
+      summary: Ingest database migration logs
+      description: Ingest database migration logs to update the state of the database
+      operationId: V1IngestLogs
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: dbinstance
+        in: path
+        description: database instance unique id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/LogIngestRequest'
+      responses:
+        "201":
+          description: Response body for Log Event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParsedLogOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-internal: true
+      x-stoplight:
+        id: n6q91b59w1kld
+  /v1/orgs/{org}/projects/{project}/dbschema/{dbschema}/instance/{dbinstance}/logs/{log}:
+    get:
+      tags:
+      - Log Ingest
+      description: Retrieves the specified log event
+      operationId: V1GetDbinstanceLog
+      parameters:
+      - name: org
+        in: path
+        description: Organization identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: project
+        in: path
+        description: Project identifier
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: dbschema
+        in: path
+        description: Identifier of the database schema
+        required: true
+        style: simple
+        explode: false
+        schema:
+          maxLength: 128
+          type: string
+      - name: dbinstance
+        in: path
+        description: database instance unique id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: log
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Response body for Log Event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParsedLogOut'
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-stoplight:
+        id: 9o2dqka7km06p
+  /v1/step/plugin-inputs:
+    post:
+      tags:
+      - Pipeline Step
+      summary: CreatePluginInputs
+      description: Create Plugin Inputs using Step Inputs
+      operationId: CreateV1StepPluginInputs
+      parameters:
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/PluginStepInputsRequest'
+      responses:
+        "200":
+          description: Plugin Inputs Create Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              examples:
+                Example 1:
+                  value:
+                    image: plugins/drone-liquibase:latest
+                    settings:
+                      property1: string
+                      property2: string
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-internal: true
+  /v1/step/plugin-response:
+    post:
+      tags:
+      - Pipeline Step
+      summary: ConsumePluginResponse
+      description: Consume Plugin Execution Response
+      operationId: ConsumeV1StepPluginResponse
+      parameters:
+      - name: Harness-Account
+        in: header
+        description: "Identifier field of the account the resource is scoped to. This\
+          \ is required for Authorization methods other than the x-api-key header.\
+          \ If you are using the x-api-key header, this can be skipped."
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/ConsumePluginRespRequest'
+      responses:
+        "204":
+          description: The plugin execution response was acknowledged
+        "400":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Error Response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-internal: true
+components:
+  schemas:
+    Changelog:
+      required:
+      - connector
+      - location
+      type: object
+      properties:
+        connector:
+          minLength: 1
+          type: string
+          description: identifier of the harness git connector
+          example: harness_git
+        location:
+          minLength: 1
+          type: string
+          description: path to the change log file
+          example: folder/changelog.yaml
+        repo:
+          minLength: 1
+          type: string
+          description: repo name of the git based connector when ConnectionType is
+            Account
+          example: folder/changelog.yaml
+          x-stoplight:
+            id: pw3ul0rkm8xt6
+      additionalProperties: false
+      description: |
+        location of the changelog file containing schema changes in a git repository
+      example:
+        connector: harness_git
+        repo: folder/changelog.yaml
+        location: folder/changelog.yaml
+      x-stoplight:
+        id: y6w8wjhgkcmvb
+    Command:
+      title: Command
+      minLength: 1
+      type: string
+      description: Type of the plugin command to run
+      enum:
+      - Update
+      - Validate
+      - History
+      - Tag
+      - Rollback
+      x-internal: true
+      x-stoplight:
+        id: qkhbmferrwa3c
+    CommandExecutionStatus:
+      title: CommandExecutionStatus
+      type: string
+      enum:
+      - IN_PROGRESS
+      - SUCCESS
+      - FAILURE
+    DBInstanceIn:
+      title: Database Instance Request
+      required:
+      - branch
+      - connector
+      - identifier
+      type: object
+      properties:
+        branch:
+          minLength: 1
+          type: string
+          description: |
+            branch where the instance is stored
+          example: main
+        connector:
+          minLength: 1
+          type: string
+          description: DB Connector
+          example: postgres-connector
+        context:
+          type: string
+          description: Liquibase context
+        identifier:
+          pattern: "^[a-zA-Z_][0-9a-zA-Z_$]{0,127}$"
+          type: string
+          description: identifier of the database instance
+          x-oapi-codegen-extra-tags:
+            validate: "required,max=128"
+        name:
+          type: string
+          description: name of the database instance
+          x-oapi-codegen-extra-tags:
+            validate: "required,max=128"
+        tags:
+          maxProperties: 128
+          type: object
+          additionalProperties:
+            type: string
+            x-oapi-codegen-extra-tags:
+              validate: max=128
+          description: tags attached to the database instance
+          x-go-type-skip-optional-pointer: true
+      description: Database Instance Request
+      x-stoplight:
+        id: kxem398e633y6
+    DBInstanceOut:
+      title: Database Instance Response
+      required:
+      - branch
+      - connector
+      - created
+      - identifier
+      - name
+      type: object
+      properties:
+        branch:
+          type: string
+          description: branch where the instance is stored
+        connector:
+          type: string
+          description: DB Connector
+        context:
+          type: string
+          description: Liquibase context
+        created:
+          type: integer
+          description: epoch seconds when the database instance was created
+          format: int64
+        identifier:
+          type: string
+          description: identifier of the database instance
+        lastAppliedTag:
+          type: string
+          description: Most recent tag applied to the database
+        name:
+          type: string
+          description: name of the database instance
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: tags attached to the database instance
+          x-go-type-skip-optional-pointer: true
+        updated:
+          type: integer
+          description: epoch seconds when the database instance was last updated
+          format: int64
+      description: Database Instance Response
+      example:
+        identifier: identifier
+        connector: connector
+        created: 0
+        context: context
+        name: name
+        lastAppliedTag: lastAppliedTag
+        branch: branch
+        updated: 6
+        tags:
+          key: tags
+      x-stoplight:
+        id: 5m8aehg7pes2b
+    DBSchemaIn:
+      title: Database Schema Request
+      required:
+      - changelog
+      - identifier
+      - name
+      type: object
+      properties:
+        changelog:
+          $ref: '#/components/schemas/Changelog'
+        identifier:
+          pattern: "^[a-zA-Z_][0-9a-zA-Z_$]{0,127}$"
+          type: string
+          description: identifier of the database schema
+          x-oapi-codegen-extra-tags:
+            validate: "required,max=128"
+        name:
+          type: string
+          description: name of the database schema
+          x-oapi-codegen-extra-tags:
+            validate: "required,max=128"
+        service:
+          minLength: 1
+          type: string
+          description: |
+            harness service corresponding to database schema
+          example: harness_service
+        tags:
+          maxProperties: 128
+          type: object
+          additionalProperties:
+            type: string
+            x-oapi-codegen-extra-tags:
+              validate: max=128
+          description: tags attached to the database schema
+          x-go-type-skip-optional-pointer: true
+      description: 'Database Schema Request '
+      x-examples:
+        Example 1:
+          changelog:
+            connector: harness_git
+            location: folder/changelog.yaml
+          identifier: myservice_database
+          name: my service database
+          service: harness_service
+          tags:
+            region: us-east-1
+      x-stoplight:
+        id: h7o3p1i7x70kl
+    DBSchemaOut:
+      title: Database Schema Response
+      required:
+      - changelog
+      - created
+      - identifier
+      - instanceCount
+      - name
+      type: object
+      properties:
+        changelog:
+          $ref: '#/components/schemas/Changelog'
+        created:
+          type: integer
+          description: epoch seconds when the database schema was created
+          format: int64
+        identifier:
+          type: string
+          description: identifier of the database schema
+        instanceCount:
+          type: integer
+          description: number of database instances corresponding to database schema
+          format: int64
+        name:
+          type: string
+          description: name of the database schema
+        service:
+          type: string
+          description: harness service corresponding to database schema
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: tags attached to the database schema
+          x-go-type-skip-optional-pointer: true
+        updated:
+          type: integer
+          description: epoch seconds when the database schema was last updated
+          format: int64
+      description: Database Schema Response
+      example:
+        identifier: identifier
+        created: 0
+        instanceCount: 6
+        service: service
+        name: name
+        changelog:
+          connector: harness_git
+          repo: folder/changelog.yaml
+          location: folder/changelog.yaml
+        updated: 1
+        tags:
+          key: tags
+      x-stoplight:
+        id: 1hr1r7yfnuogq
+    Error:
+      title: Error Response
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+          description: error message detail
+      description: Error Response
+      x-stoplight:
+        id: rfbq36xohx3fa
+    ParsedLogOut:
+      title: Ingest Log
+      required:
+      - command
+      - id
+      - success
+      type: object
+      properties:
+        command:
+          type: string
+        id:
+          type: string
+          description: identifier of the logIngest entity
+        success:
+          type: boolean
+      example:
+        success: true
+        id: id
+        command: command
+      x-stoplight:
+        id: mc52t3ltfxg9s
+    inline_response_200:
+      type: object
+      properties:
+        image:
+          type: string
+        instance:
+          $ref: '#/components/schemas/DBInstanceOut'
+        schema:
+          $ref: '#/components/schemas/DBSchemaOut'
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+      example:
+        schema:
+          identifier: identifier
+          created: 0
+          instanceCount: 6
+          service: service
+          name: name
+          changelog:
+            connector: harness_git
+            repo: folder/changelog.yaml
+            location: folder/changelog.yaml
+          updated: 1
+          tags:
+            key: tags
+        image: image
+        settings:
+          key: settings
+        instance:
+          identifier: identifier
+          connector: connector
+          created: 0
+          context: context
+          name: name
+          lastAppliedTag: lastAppliedTag
+          branch: branch
+          updated: 6
+          tags:
+            key: tags
+  responses:
+    DBInstanceListResponse:
+      description: Response body for List Database Schema
+      headers:
+        X-Page-Number:
+          description: Page number in Paginated response.
+          style: simple
+          explode: false
+          schema:
+            type: integer
+        X-Page-Size:
+          description: Maximum page size in Paginated response.
+          style: simple
+          explode: false
+          schema:
+            type: integer
+        X-Total-Elements:
+          description: Total number of elements returned in Paginated response.
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: array
+            description: Response body for List Schema
+            items:
+              $ref: '#/components/schemas/DBInstanceOut'
+            x-content-type: application/json
+    DBInstanceResponse:
+      description: Response body for Database Instance
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DBInstanceOut'
+    DBSchemaListResponse:
+      description: Response body for List Database Schema
+      headers:
+        X-Page-Number:
+          description: Page number in Paginated response.
+          style: simple
+          explode: false
+          schema:
+            type: integer
+        X-Page-Size:
+          description: Maximum page size in Paginated response.
+          style: simple
+          explode: false
+          schema:
+            type: integer
+        X-Total-Elements:
+          description: Total number of elements returned in Paginated response.
+          style: simple
+          explode: false
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: array
+            description: Response body for List Schema
+            items:
+              $ref: '#/components/schemas/DBSchemaOut'
+            x-content-type: application/json
+    DBSchemaResponse:
+      description: Response body for Database Schema
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DBSchemaOut'
+    ErrorResponse:
+      description: Error Response body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ParsedLogResponse:
+      description: Response body for Log Event
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ParsedLogOut'
+    PluginInputsResponse:
+      description: Plugin Inputs Create Response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_response_200'
+          examples:
+            Example 1:
+              value:
+                image: plugins/drone-liquibase:latest
+                settings:
+                  property1: string
+                  property2: string
+  parameters:
+    AccountHeader:
+      name: Harness-Account
+      in: header
+      description: "Identifier field of the account the resource is scoped to. This\
+        \ is required for Authorization methods other than the x-api-key header. If\
+        \ you are using the x-api-key header, this can be skipped."
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    DBInstanceParam:
+      name: dbinstance
+      in: path
+      description: database instance unique id
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    DBSchemaParam:
+      name: dbschema
+      in: path
+      description: Identifier of the database schema
+      required: true
+      style: simple
+      explode: false
+      schema:
+        maxLength: 128
+        type: string
+    Limit:
+      name: limit
+      in: query
+      description: "Pagination: Number of items to return."
+      required: false
+      style: form
+      explode: true
+      schema:
+        maximum: 100
+        type: integer
+        default: 10
+    LogParam:
+      name: log
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    Order:
+      name: order
+      in: query
+      description: Order on the basis of which sorting is done.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - ASC
+        - DESC
+    OrgParam:
+      name: org
+      in: path
+      description: Organization identifier
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    PageIndex:
+      name: page
+      in: query
+      description: "Pagination page number strategy: Specify the page number within\
+        \ the paginated collection related to the number of items on each page."
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int64
+        default: 0
+    ProjectParam:
+      name: project
+      in: path
+      description: Project identifier
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    SearchTerm:
+      name: search_term
+      in: query
+      description: This would be used to filter resources having attributes matching
+        the search term.
+      required: false
+      allowEmptyValue: true
+      style: form
+      explode: true
+      schema:
+        type: string
+    Sort:
+      name: sort
+      in: query
+      description: Parameter on the basis of which sorting is done.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - name
+        - updated
+        - created
+  requestBodies:
+    ConsumePluginRespRequest:
+      content:
+        application/json:
+          schema:
+            required:
+            - command
+            - data
+            - dbInstance
+            - dbSchema
+            - logs
+            - org
+            - project
+            - status
+            type: object
+            properties:
+              command:
+                $ref: '#/components/schemas/Command'
+              data:
+                type: object
+                description: Data associated with command execution
+                x-stoplight:
+                  id: x106nmejwdkgl
+              dbInstance:
+                type: string
+                x-stoplight:
+                  id: 3ddzm85isheyg
+              dbSchema:
+                type: string
+                x-stoplight:
+                  id: 9dipu2aap5uz2
+              logs:
+                type: string
+                x-stoplight:
+                  id: 8lr1r6lycw0fj
+              org:
+                type: string
+                description: Organization identifier
+              project:
+                type: string
+                description: Project identifier
+              status:
+                $ref: '#/components/schemas/CommandExecutionStatus'
+          examples:
+            Example 1:
+              value:
+                command: Update
+                data:
+                  tag: "1.0"
+                dbinstance: myinstance
+                dbschema: myschema
+                logs: Starting Liquibase at...
+                org: myorg
+                project: myproject
+                status: IN_PROGRESS
+    DBInstanceCreateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DBInstanceIn'
+      required: true
+    DBInstanceUpdateRequest:
+      description: Database instance update request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              branch:
+                type: string
+                description: branch where the instance is stored
+              connector:
+                type: string
+                description: DB Connector
+              context:
+                type: string
+                description: Liquibase context
+              name:
+                maxLength: 128
+                type: string
+                description: |
+                  name of the database instance
+              tags:
+                maxProperties: 128
+                type: object
+                additionalProperties:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    validate: max=128
+                description: Database instance tags
+              version:
+                type: string
+                description: version of the changelog applied to the database
+          examples:
+            example-1:
+              value:
+                branch: string
+                connector: string
+                context: string
+                name: string
+                tags:
+                  property1: string
+                  property2: string
+      required: true
+    DBSchemaCreateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DBSchemaIn'
+      required: true
+    DBSchemaUpdateRequest:
+      description: Database schema update request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              changelog:
+                type: object
+                properties:
+                  connector:
+                    type: string
+                    description: identifier of the harness git connector
+                    example: harness_git
+                  location:
+                    type: string
+                    description: path to the change log file
+                    example: folder/changelog.yaml
+                  repo:
+                    type: string
+                    description: repo name of the git based connector when ConnectionType
+                      is Account
+                    x-stoplight:
+                      id: jpl7puzto8jfo
+                additionalProperties: false
+                description: |
+                  location of the changelog file containing schema changes in a git repository
+              name:
+                maxLength: 128
+                type: string
+                description: |
+                  name of the database schema
+              service:
+                type: string
+                description: |
+                  harness service corresponding to database schema
+                example: harness_service
+              tags:
+                maxProperties: 128
+                type: object
+                additionalProperties:
+                  type: string
+                  x-oapi-codegen-extra-tags:
+                    validate: max=128
+                description: Database Schema tags
+      required: true
+    LogIngestRequest:
+      description: Request body for log ingestion
+      content:
+        text/plain:
+          schema:
+            type: string
+            description: raw text logs from plugin
+      required: true
+    PluginStepInputsRequest:
+      description: Inputs to create plugin inputs
+      content:
+        application/json:
+          schema:
+            required:
+            - command
+            - dbInstance
+            - dbSchema
+            type: object
+            properties:
+              Org:
+                type: string
+                description: Organization identifier
+              Project:
+                type: string
+                description: Project identifier
+              command:
+                $ref: '#/components/schemas/Command'
+              dbInstance:
+                type: string
+                description: db instance identifier
+                example: myschema/prod-1-instance
+              dbSchema:
+                type: string
+                description: dbSchema reference
+                x-stoplight:
+                  id: saiftwb6u1v5i
+              directory:
+                type: string
+              metadata:
+                type: object
+                properties:
+                  plan_execution:
+                    type: string
+                    x-stoplight:
+                      id: 2dzzmp165gswr
+                  step_identifier:
+                    type: string
+                    x-stoplight:
+                      id: 9biv5d574s7wr
+                x-stoplight:
+                  id: p0fia99dekvt4
+              settings:
+                type: object
+                additionalProperties:
+                  type: string
+                  x-stoplight:
+                    id: zqkdd4n7n4nay
+                description: Key value mapping of user input plugin settings
+                x-stoplight:
+                  id: f7g438c5t4whg
+          examples:
+            Example 1:
+              value:
+                command: Update
+                dbInstance: prod-1-instance
+                dbSchema: myschema
+                directory: myDir
+                metadata:
+                  plan_execution: 120dand330dp2
+                  step_identifier: my_apply_step
+                tag: tag1
+      required: true
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+    x-api-key:
+      type: apiKey
+      name: API Key
+      in: header
+x-stoplight:
+  id: 9tufvhvklyjrk
