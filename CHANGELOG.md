@@ -1,6 +1,6 @@
 
-<a name="0.3.92"></a>
-## 0.3.92 (2024-06-28)
+<a name="0.3.93"></a>
+## 0.3.93 (2024-07-01)
 
 ### Add
 
@@ -16,6 +16,8 @@
 
 ### Release
 
+* Release version 0.3.92 06-28-2024
+* Release v0.3.92
 * Release version 0.3.91 06-28-2024
 * Release v0.3.91
 * Release version 0.3.90 06-24-2024
@@ -58,5 +60,4 @@
 * Release v0.3.73
 * Release version 0.3.72 01-04-2024
 * Release v0.3.72
-* Release version 0.3.71 12-18-2023
 
