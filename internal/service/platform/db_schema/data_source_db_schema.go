@@ -2,7 +2,6 @@ package dbschema
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/antihax/optional"
@@ -66,14 +65,10 @@ func dataSourceDBSchemaRead(ctx context.Context, d *schema.ResourceData, meta in
 
 	id := d.Get("identifier").(string)
 
-	if id != "" {
-		localVarOptionals := dbops.DatabaseSchemaApiV1GetProjDbSchemaOpts{
-			HarnessAccount: optional.NewString(meta.(*internal.Session).AccountId),
-		}
-		dbSchema, httpResp, err = c.DatabaseSchemaApi.V1GetProjDbSchema(ctx, d.Get("org_id").(string), d.Get("project_id").(string), id, &localVarOptionals)
-	} else {
-		return diag.FromErr(errors.New("identifier of the resource must be specified"))
+	localVarOptionals := dbops.DatabaseSchemaApiV1GetProjDbSchemaOpts{
+		HarnessAccount: optional.NewString(meta.(*internal.Session).AccountId),
 	}
+	dbSchema, httpResp, err = c.DatabaseSchemaApi.V1GetProjDbSchema(ctx, d.Get("org_id").(string), d.Get("project_id").(string), id, &localVarOptionals)
 
 	if err != nil {
 		return helpers.HandleDBOpsApiError(err, d, httpResp)
