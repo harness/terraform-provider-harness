@@ -230,6 +230,19 @@ var PipelineResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+var DBInstanceResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+		d.Set("schema", parts[2])
+		d.Set("identifier", parts[3])
+		d.SetId(parts[3])
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
 var TriggerResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")

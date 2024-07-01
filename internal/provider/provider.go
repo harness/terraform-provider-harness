@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
@@ -187,6 +188,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
 				"harness_platform_db_schema":                       dbschema.DataSourceDBSchema(),
+				"harness_platform_db_instance":                     dbinstance.DataSourceDBInstance(),
 				"harness_platform_environment_list":                pl_environment.DataSourceEnvironmentList(),
 				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
@@ -310,6 +312,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_pdc":                   connector.ResourceConnectorPdc(),
 				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
 				"harness_platform_db_schema":                       dbschema.ResourceDBSchema(),
+				"harness_platform_db_instance":                     dbinstance.ResourceDBInstance(),
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
