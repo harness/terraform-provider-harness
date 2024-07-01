@@ -4,8 +4,8 @@ resource "harness_platform_db_instance" "test" {
   project_id = "project_id"
   name       = "name"
   tags       = ["foo:bar", "bar:foo"]
-  schema = "schema1"
-  branch = "main"
-  connector = "jdbcConnector"
-  context = "ctx"
+  schema     = "schema1"
+  branch     = "main"
+  connector  = "jdbcConnector"
+  context    = "ctx"
 }
