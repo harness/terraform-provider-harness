@@ -162,6 +162,17 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 	}
 }
 
+func ProjectResourceImportStateIdGitFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		branch_name := primary.Attributes["git_details.0.branch_name"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, branch_name), nil
+	}
+}
+
 func UserResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary

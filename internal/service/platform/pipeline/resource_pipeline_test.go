@@ -21,7 +21,7 @@ func TestAccResourcePipeline(t *testing.T) {
 
 	resourceName := "harness_platform_pipeline.test"
 
- 	resource.UnitTest(t, resource.TestCase{
+	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccPipelineDestroy(resourceName),
@@ -109,7 +109,7 @@ func TestAccResourcePipelineImportFromGit(t *testing.T) {
 				ResourceName:            resourceName,
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdGitFunc(resourceName),
 				ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path", "git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
 			},
 		},
@@ -155,8 +155,9 @@ func testAccGetPipeline(resourceName string, state *terraform.State) (*openapi_c
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
+	branch_name := r.Primary.Attributes["git_details.0.branch_name"]
 
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: optional.NewString(branch_name)})
 	if err != nil {
 		return nil, err
 	}

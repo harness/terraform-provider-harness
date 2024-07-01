@@ -342,7 +342,9 @@ var ProjectResourceImporter = &schema.ResourceImporter{
 		d.Set("org_id", parts[0])
 		d.Set("project_id", parts[1])
 		d.Set("identifier", parts[2])
+
 		d.SetId(parts[2])
+		d.Set("git_details", []interface{}{map[string]interface{}{"branch_name": parts[3]}})
 
 		return []*schema.ResourceData{d}, nil
 	},
