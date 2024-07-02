@@ -35,14 +35,14 @@ data "harness_platform_db_schema" "example" {
 
 ### Read-Only
 
-- `change_log` (List of Object) Contains changesets related info (see [below for nested schema](#nestedatt--change_log))
 - `description` (String) Description of the resource.
 - `id` (String) The ID of this resource.
+- `schema_source` (List of Object) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedatt--schema_source))
 - `service` (String) The service associated with schema
 - `tags` (Set of String) Tags to associate with the resource.
 
-<a id="nestedatt--change_log"></a>
-### Nested Schema for `change_log`
+<a id="nestedatt--schema_source"></a>
+### Nested Schema for `schema_source`
 
 Read-Only:
 
