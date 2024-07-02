@@ -1,0 +1,3 @@
+```release-note:enhancement
+platform_gitops_applications: Added support for skip repo validation, when set true repo doesnt have to be created before creating application.
+```
