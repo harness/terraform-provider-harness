@@ -24,24 +24,24 @@ func DataSourceDBSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"change_log": {
-				Description: "Contains changesets related info",
+			"schema_source": {
+				Description: "Provides a connector and path at which to find the database schema representation",
 				Type:        schema.TypeList,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
-							Description: "Reference to the connector",
+							Description: "Connector to repository at which to find details about the database schema",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"location": {
-							Description: "Location of changesets in repository",
+							Description: "The path within the specified repository at which to find details about the database schema",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"repo": {
-							Description: "Repository containing changesets",
+							Description: "Which repository to connect to using the connector",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -85,7 +85,7 @@ func readDataSourceDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut)
 	d.Set("name", dbSchema.Name)
 	d.Set("tags", helpers.FlattenTags(dbSchema.Tags))
 	d.Set("service", dbSchema.Service)
-	d.Set("change_log.0.location", dbSchema.Changelog.Location)
-	d.Set("change_log.0.repo", dbSchema.Changelog.Repo)
-	d.Set("change_log.0.connector", dbSchema.Changelog.Connector)
+	d.Set("schema_source.0.location", dbSchema.Changelog.Location)
+	d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
+	d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
 }
