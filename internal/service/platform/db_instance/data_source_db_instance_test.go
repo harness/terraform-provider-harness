@@ -69,7 +69,7 @@ func testAccDataSourceDBInstance(id string, name string) string {
 						name = "%[2]s"
 						service = "s1"
 						tags = ["foo:bar", "bar:foo"]
-						change_log {
+						schema_source {
 							connector = harness_platform_connector_github.test.id
 							repo = "TestRepo"
 							location = "db/example-changelog.yaml"
