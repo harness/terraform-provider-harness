@@ -28,25 +28,25 @@ func ResourceDBSchema() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
-			"change_log": {
-				Description: "Contains changesets related info",
+			"schema_source": {
+				Description: "Provides a connector and path at which to find the database schema representation",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connector": {
-							Description: "Reference to the connector",
+							Description: "Connector to repository at which to find details about the database schema",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"location": {
-							Description: "Location of changesets in repository",
+							Description: "The path within the specified repository at which to find details about the database schema",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
 						"repo": {
-							Description: "Repository containing changesets",
+							Description: "Which repository to connect to using the connector",
 							Type:        schema.TypeString,
 							Required:    true,
 						},
@@ -131,9 +131,9 @@ func buildDbSchema(d *schema.ResourceData) *dbops.DbSchemaIn {
 		Tags:       helpers.ExpandTags(d.Get("tags").(*schema.Set).List()),
 		Service:    d.Get("service").(string),
 		Changelog: &dbops.Changelog{
-			Repo:      d.Get("change_log.0.repo").(string),
-			Connector: d.Get("change_log.0.connector").(string),
-			Location:  d.Get("change_log.0.location").(string),
+			Repo:      d.Get("schema_source.0.repo").(string),
+			Connector: d.Get("schema_source.0.connector").(string),
+			Location:  d.Get("schema_source.0.location").(string),
 		},
 	}
 }
@@ -144,7 +144,7 @@ func readDBSchema(d *schema.ResourceData, dbSchema *dbops.DbSchemaOut) {
 	d.Set("name", dbSchema.Name)
 	d.Set("tags", helpers.FlattenTags(dbSchema.Tags))
 	d.Set("service", dbSchema.Service)
-	d.Set("change_log.0.location", dbSchema.Changelog.Location)
-	d.Set("change_log.0.repo", dbSchema.Changelog.Repo)
-	d.Set("change_log.0.connector", dbSchema.Changelog.Connector)
+	d.Set("schema_source.0.location", dbSchema.Changelog.Location)
+	d.Set("schema_source.0.repo", dbSchema.Changelog.Repo)
+	d.Set("schema_source.0.connector", dbSchema.Changelog.Connector)
 }

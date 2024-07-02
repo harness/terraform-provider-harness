@@ -69,7 +69,7 @@ func testAccDataSourceDBSchema(id string, name string) string {
                         name = "%[2]s"
 						service = "s1"
                         tags = ["foo:bar", "bar:foo"]
-                        change_log {
+                        schema_source {
 							connector = "%[1]s"
 							repo = "TestRepo"
 							location = "db/example-changelog.yaml"

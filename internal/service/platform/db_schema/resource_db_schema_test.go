@@ -47,7 +47,7 @@ func TestAccResourceDBSchema(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
-				ImportStateVerifyIgnore: []string{"change_log.#", "change_log.0.%", "change_log.0.connector", "change_log.0.location", "change_log.0.repo"},
+				ImportStateVerifyIgnore: []string{"schema_source.#", "schema_source.0.%", "schema_source.0.connector", "schema_source.0.location", "schema_source.0.repo"},
 			},
 		},
 	})
@@ -119,7 +119,7 @@ func testAccResourceDBSchema(id string, name string) string {
                         name = "%[2]s"
 						service = "s1"
                         tags = ["foo:bar", "bar:foo"]
-                        change_log {
+                        schema_source {
 							connector = "%[1]s"
 							repo = "TestRepo"
 							location = "db/example-changelog.yaml"
