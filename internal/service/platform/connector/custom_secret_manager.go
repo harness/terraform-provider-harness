@@ -40,10 +40,17 @@ func ResourceConnectorCSM() *schema.Resource {
 			"on_delegate": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  true,
 			},
 			"timeout": {
 				Type:     schema.TypeInt,
 				Optional: true,
+			},
+			"delegate_selectors": {
+				Description: "Tags to filter delegates for connection.",
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
 			"tags": {
 				Type:     schema.TypeList,
