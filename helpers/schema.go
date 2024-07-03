@@ -336,15 +336,18 @@ var UserResourceImporter = &schema.ResourceImporter{
 
 // ProjectResourceImporter defines the importer configuration for all project level resources.
 // The id used for the import should be in the format <org_id>/<project_id>/<identifier>
+// The id used for the import should be in the format <org_id>/<project_id>/<identifier>/<branch>
 var ProjectResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
 		d.Set("org_id", parts[0])
 		d.Set("project_id", parts[1])
 		d.Set("identifier", parts[2])
-
 		d.SetId(parts[2])
-		d.Set("git_details", []interface{}{map[string]interface{}{"branch_name": parts[3]}})
+
+		if len(parts) == 4 {
+			d.Set("git_details", []interface{}{map[string]interface{}{"branch_name": parts[3]}})
+		}
 
 		return []*schema.ResourceData{d}, nil
 	},
