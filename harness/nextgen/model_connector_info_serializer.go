@@ -49,6 +49,8 @@ func (a *ConnectorInfo) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.Datadog)
 	case ConnectorTypes.DockerRegistry:
 		err = json.Unmarshal(aux.Spec, &a.DockerRegistry)
+	case ConnectorTypes.JDBC:
+		err = json.Unmarshal(aux.Spec, &a.JDBC)
 	case ConnectorTypes.Dynatrace:
 		err = json.Unmarshal(aux.Spec, &a.Dynatrace)
 	case ConnectorTypes.Gcp:
@@ -137,6 +139,8 @@ func (a *ConnectorInfo) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.Datadog)
 	case ConnectorTypes.DockerRegistry:
 		spec, err = json.Marshal(a.DockerRegistry)
+	case ConnectorTypes.JDBC:
+		spec, err = json.Marshal(a.JDBC)
 	case ConnectorTypes.Dynatrace:
 		spec, err = json.Marshal(a.Dynatrace)
 	case ConnectorTypes.Gcp:

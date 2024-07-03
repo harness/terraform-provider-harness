@@ -43,6 +43,7 @@ type ConnectorInfo struct {
 	CustomSecretManager *CustomSecretManager            `json:"_"`
 	Datadog             *DatadogConnectorDto            `json:"-"`
 	DockerRegistry      *DockerConnector                `json:"-"`
+	JDBC                *JdbcConnector                  `json:"-"`
 	Dynatrace           *DynatraceConnectorDto          `json:"-"`
 	Gcp                 *GcpConnector                   `json:"-"`
 	GcpCloudCost        *GcpCloudCostConnectorDto       `json:"-"`

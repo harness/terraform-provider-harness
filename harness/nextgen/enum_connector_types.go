@@ -13,6 +13,7 @@ var ConnectorTypes = struct {
 	Vault               ConnectorType
 	AzureKeyVault       ConnectorType
 	DockerRegistry      ConnectorType
+	JDBC                ConnectorType
 	Local               ConnectorType
 	AwsKms              ConnectorType
 	GcpKms              ConnectorType
@@ -57,6 +58,7 @@ var ConnectorTypes = struct {
 	Vault:               "Vault",
 	AzureKeyVault:       "AzureKeyVault",
 	DockerRegistry:      "DockerRegistry",
+	JDBC:                "JDBC",
 	Local:               "Local",
 	AwsKms:              "AwsKms",
 	GcpKms:              "GcpKms",
@@ -104,6 +106,7 @@ var ConnectorTypesSlice = []string{
 	ConnectorTypes.Vault.String(),
 	ConnectorTypes.AzureKeyVault.String(),
 	ConnectorTypes.DockerRegistry.String(),
+	ConnectorTypes.JDBC.String(),
 	ConnectorTypes.Local.String(),
 	ConnectorTypes.AwsKms.String(),
 	ConnectorTypes.GcpKms.String(),
