@@ -112,11 +112,6 @@ func ResourcePipeline() *schema.Resource {
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
-			"git_meta_data": {
-				Description: "Flag to set if importing from Git",
-				Type:        schema.TypeBool,
-				Optional:    true,
-			},
 			"git_import_info": {
 				Description: "Contains Git Information for importing entities from Git",
 				Type:        schema.TypeList,
