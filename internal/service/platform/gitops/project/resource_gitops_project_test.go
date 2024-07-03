@@ -4,21 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"strings"
-
-	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceGitopsRepositoryOrgLevel(t *testing.T) {
-
-	// Org level
-	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
-	id = strings.ReplaceAll(id, "_", "")
-	name := id
+func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 	agentId := "account.rollouts"
-	resourceName := "harness_platform_gitops_repository.test"
+	resourceName := "harness_platform_gitops_project.test"
 	accountId := "1bvyLackQK-Hapk25-Ry4w"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -26,10 +18,15 @@ func TestAccResourceGitopsRepositoryOrgLevel(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsRepositoryOrgLevel(id, name, agentId, accountId),
+				Config: testAccResourceGitopsRepositoryOrgLevel(agentId, accountId, "14a3dc9eeee999", "*"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
+				),
+			},
+			{
+				Config: testAccResourceGitopsRepositoryOrgLevel(agentId, accountId, "14a3dc9eeee999", "rollouts"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 			{
@@ -37,27 +34,23 @@ func TestAccResourceGitopsRepositoryOrgLevel(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
-				ImportStateIdFunc:       acctest.GitopsAgentOrgLevelResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc:       acctest.GitopsProjectImportStateIdFunc(resourceName),
 			},
 		},
 	})
 
 }
 
-func testAccResourceGitopsRepositoryOrgLevel(id string, name string, agentId string, accountId string) string {
+func testAccResourceGitopsRepositoryOrgLevel(agentId string, accountId string, name string, namespace string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-		}
-
 		resource "harness_platform_gitops_project" "test" {
-			account_id = "%[4]s"
-			agent_id = "%[3]s"
+			account_id = "%[1]s"
+			agent_id = "%[2]s"
+			upsert = true
 			project {
 				metadata {
-					generation = 1
-					name = "14a3dc9eee"
+					generation = "1"
+					name = "%[3]s"
 					namespace = "rollouts"
 				}
 				spec {
@@ -66,14 +59,14 @@ func testAccResourceGitopsRepositoryOrgLevel(id string, name string, agentId str
 						kind = "*"
 					}
 					destinations {
-						namespace = "*"
+						namespace = "%[4]s"
 						server = "*"
 					}
 					source_repos = ["*"]
 				}
 			}
 		}
-	`, id, name, agentId, accountId)
+	`, accountId, agentId, name, namespace)
 }
 
 // func TestResourceCreate(t *testing.T) {

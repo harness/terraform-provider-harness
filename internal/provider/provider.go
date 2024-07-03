@@ -273,6 +273,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_repo":                            repo.DataSourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
+				"harness_platform_gitops_project":                  gitops_project.DataSourceGitOpsProject(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
