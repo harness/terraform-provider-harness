@@ -127,6 +127,18 @@ func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportSta
 	}
 }
 
+func DBInstanceResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		schema := primary.Attributes["schema"]
+
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, schema, id), nil
+	}
+}
+
 func OverridesV1ResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
