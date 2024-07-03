@@ -56,7 +56,10 @@ Required:
 
 - `connector` (String) Connector to repository at which to find details about the database schema
 - `location` (String) The path within the specified repository at which to find details about the database schema
-- `repo` (String) Which repository to connect to using the connector
+
+Optional:
+
+- `repo` (String) If connector url is of account, which repository to connect to using the connector
 
 ## Import
 

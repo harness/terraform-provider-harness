@@ -41,7 +41,7 @@ func DataSourceDBSchema() *schema.Resource {
 							Computed:    true,
 						},
 						"repo": {
-							Description: "Which repository to connect to using the connector",
+							Description: "If connector url is of account, which repository to connect to using the connector",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},

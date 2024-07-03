@@ -46,9 +46,9 @@ func ResourceDBSchema() *schema.Resource {
 							Required:    true,
 						},
 						"repo": {
-							Description: "Which repository to connect to using the connector",
+							Description: "If connector url is of account, which repository to connect to using the connector",
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 						},
 					},
 				},
