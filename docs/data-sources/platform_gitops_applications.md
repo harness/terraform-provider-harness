@@ -49,6 +49,7 @@ data "harness_platform_gitops_applications" "example" {
 - `repo_id` (String) Repository identifier of the GitOps application.
 - `request_cascade` (Boolean) Request cascade to delete the GitOps application.
 - `request_propagation_policy` (String) Request propagation policy to delete the GitOps application.
+- `skip_repo_validation` (Boolean) Indicates if the GitOps application should skip validate repository definition exists.
 - `upsert` (Boolean) Indicates if the GitOps application should be updated if existing and inserted if not.
 - `validate` (Boolean) Indicates if the GitOps application yaml has to be validated.
 
