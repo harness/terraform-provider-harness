@@ -24,14 +24,14 @@ func ResourceDBInstance() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"schema": {
-				Description: "The reference to schema",
+				Description: "The identifier of the parent database schema",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"branch": {
 				Description: "The branch of changeSet repository",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 			},
 			"connector": {
 				Description: "The connector to database",

@@ -20,7 +20,7 @@ func DataSourceDBInstance() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"schema": {
-				Description: "The reference to schema",
+				Description: "The identifier of the parent database schema",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
