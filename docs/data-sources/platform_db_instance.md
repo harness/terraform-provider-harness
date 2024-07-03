@@ -29,7 +29,7 @@ data "harness_platform_db_instance" "example" {
 - `identifier` (String) Unique identifier of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `schema` (String) The reference to schema
+- `schema` (String) The identifier of the parent database schema
 
 ### Optional
 

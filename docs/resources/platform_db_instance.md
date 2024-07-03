@@ -31,16 +31,16 @@ resource "harness_platform_db_instance" "test" {
 
 ### Required
 
-- `branch` (String) The branch of changeSet repository
 - `connector` (String) The connector to database
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
-- `schema` (String) The reference to schema
+- `schema` (String) The identifier of the parent database schema
 
 ### Optional
 
+- `branch` (String) The branch of changeSet repository
 - `context` (String) The liquibase context
 - `description` (String) Description of the resource.
 - `tags` (Set of String) Tags to associate with the resource.
