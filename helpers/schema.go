@@ -410,7 +410,7 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 }
 
 // GitopsAgentResourceImporter defines the importer configuration for all project level gitops agent resources.
-// The id used for the import should be in the format <org_id>/<project_id>/<identifier>/<agentId>/<queryName>
+// The id used for the import should be in the format <agent_id>/<query_name>
 var GitopsAgentProjectImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")

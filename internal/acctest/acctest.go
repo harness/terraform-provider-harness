@@ -270,7 +270,7 @@ func GitopsProjectImportStateIdFunc(resourceName string) resource.ImportStateIdF
 		primary := s.RootModule().Resources[resourceName].Primary
 		agentId := primary.Attributes["agent_id"]
 		query_name := primary.Attributes["query_name"]
-		return fmt.Sprintf("%s/%s/%s", query_name, agentId), nil
+		return fmt.Sprintf("%s/%s", agentId, query_name), nil
 	}
 }
 
