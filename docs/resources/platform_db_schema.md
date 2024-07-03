@@ -39,7 +39,6 @@ resource "harness_platform_db_schema" "test" {
 - `org_id` (String) Unique identifier of the organization.
 - `project_id` (String) Unique identifier of the project.
 - `schema_source` (Block List, Min: 1, Max: 1) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedblock--schema_source))
-- `schema_source` (Block List, Min: 1, Max: 1) Provides a connector and path at which to find the database schema representation (see [below for nested schema](#nestedblock--schema_source))
 
 ### Optional
 
