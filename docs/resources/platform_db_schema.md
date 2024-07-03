@@ -21,7 +21,6 @@ resource "harness_platform_db_schema" "test" {
   service    = "service1"
   tags       = ["foo:bar", "bar:foo"]
   schema_source {
-  schema_source {
     connector = "gitConnector"
     repo      = "TestRepo"
     location  = "db/example-changelog.yaml"
