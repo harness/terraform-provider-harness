@@ -134,8 +134,18 @@ func SetOrgLevelDataSourceSchema(s map[string]*schema.Schema) {
 	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
 }
 
+func SetOrgLevelDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
+	SetCommonDataSourceSchemaIdentifierRequired(s)
+	s["org_id"] = GetOrgIdSchema(SchemaFlagTypes.Required)
+}
+
 func SetProjectLevelDataSourceSchema(s map[string]*schema.Schema) {
 	SetOrgLevelDataSourceSchema(s)
+	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
+}
+
+func SetProjectLevelDataSourceSchemaIdentifierRequired(s map[string]*schema.Schema) {
+	SetOrgLevelDataSourceSchemaIdentifierRequired(s)
 	s["project_id"] = GetProjectIdSchema(SchemaFlagTypes.Required)
 }
 
@@ -213,6 +223,19 @@ var PipelineResourceImporter = &schema.ResourceImporter{
 		d.Set("org_id", parts[0])
 		d.Set("project_id", parts[1])
 		d.Set("pipeline_id", parts[2])
+		d.Set("identifier", parts[3])
+		d.SetId(parts[3])
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
+var DBInstanceResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("org_id", parts[0])
+		d.Set("project_id", parts[1])
+		d.Set("schema", parts[2])
 		d.Set("identifier", parts[3])
 		d.SetId(parts[3])
 

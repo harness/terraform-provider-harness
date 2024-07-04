@@ -8,6 +8,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/code"
+	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
@@ -62,6 +63,10 @@ func TestAccGetApiClientFromProvider() *internal.Session {
 
 func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context) {
 	return TestAccProvider.Meta().(*internal.Session).GetPlatformClientWithContext(context.Background())
+}
+
+func TestAccGetDBOpsClientWithContext() (*dbops.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetDBOpsClientWithContext(context.Background())
 }
 
 func TestAccGetClientWithContext() (*openapi_client_nextgen.APIClient, context.Context) {
@@ -119,6 +124,18 @@ func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportSta
 		}
 
 		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, envId, id), nil
+	}
+}
+
+func DBInstanceResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		schema := primary.Attributes["schema"]
+
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, schema, id), nil
 	}
 }
 
