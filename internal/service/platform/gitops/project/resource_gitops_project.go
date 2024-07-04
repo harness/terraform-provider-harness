@@ -260,8 +260,15 @@ func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, meta int
 		agentIdentifier = attr.(string)
 	}
 
-	if attr, ok := d.GetOk("query_name"); ok {
-		query_name = attr.(string)
+	if v, ok := d.GetOk("project"); ok {
+		for _, item := range v.([]interface{}) {
+			projectData := item.(map[string]interface{})
+
+			if md, ok := projectData["metadata"].([]interface{}); ok {
+				mdData := md[0].(map[string]interface{})
+				query_name = mdData["name"].(string)
+			}
+		}
 	}
 
 	_, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceDelete(ctx, agentIdentifier, query_name, c.AccountId, orgIdentifier, &nextgen.ProjectsApiAgentProjectServiceDeleteOpts{
