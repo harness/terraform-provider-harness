@@ -24,60 +24,61 @@ data "harness_platform_gitops_repository" "example" {
 
 ### Required
 
-- `account_id` (String)
-- `agent_id` (String)
+- `account_id` (String) Account identifier of the GitOps project.
+- `agent_id` (String) Agent identifier of the GitOps project.
+- `project` (Block List, Min: 1) App projects configuration details. (see [below for nested schema](#nestedblock--project))
 
 ### Optional
 
-- `org_id` (String)
-- `project_id` (String)
+- `org_id` (String) Org identifier of the GitOps project.
+- `project_id` (String) Project identifier of the GitOps repository.
+- `query_name` (String) Identifier for the GitOps project.
 - `upsert` (Boolean) Indicates if the GitOps repository should be updated if existing and inserted if not.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `project` (List of Object) (see [below for nested schema](#nestedatt--project))
 
-<a id="nestedatt--project"></a>
+<a id="nestedblock--project"></a>
 ### Nested Schema for `project`
 
-Read-Only:
+Optional:
 
-- `metadata` (List of Object) (see [below for nested schema](#nestedobjatt--project--metadata))
-- `spec` (List of Object) (see [below for nested schema](#nestedobjatt--project--spec))
+- `metadata` (Block List) Metadata details that all persisted resources must have. (see [below for nested schema](#nestedblock--project--metadata))
+- `spec` (Block List) Spec is the specification of an AppProject. (see [below for nested schema](#nestedblock--project--spec))
 
-<a id="nestedobjatt--project--metadata"></a>
+<a id="nestedblock--project--metadata"></a>
 ### Nested Schema for `project.metadata`
 
-Read-Only:
+Optional:
 
-- `generation` (String)
-- `name` (String)
-- `namespace` (String)
+- `generation` (String) A sequence number representing a specific generation of the desired state.
+- `name` (String) Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically.
+- `namespace` (String) The namespace where the GitOps project should be created.
 
 
-<a id="nestedobjatt--project--spec"></a>
+<a id="nestedblock--project--spec"></a>
 ### Nested Schema for `project.spec`
 
-Read-Only:
+Optional:
 
-- `cluster_resource_whitelist` (List of Object) (see [below for nested schema](#nestedobjatt--project--spec--cluster_resource_whitelist))
-- `destinations` (List of Object) (see [below for nested schema](#nestedobjatt--project--spec--destinations))
-- `source_repos` (List of String)
+- `cluster_resource_whitelist` (Block List) ClusterResourceWhitelist contains list of whitelisted cluster level resources. (see [below for nested schema](#nestedblock--project--spec--cluster_resource_whitelist))
+- `destinations` (Block List) Destinations contains list of destinations available for deployment. (see [below for nested schema](#nestedblock--project--spec--destinations))
+- `source_repos` (List of String) SourceRepos contains list of repository URLs which can be used for deployment.
 
-<a id="nestedobjatt--project--spec--cluster_resource_whitelist"></a>
+<a id="nestedblock--project--spec--cluster_resource_whitelist"></a>
 ### Nested Schema for `project.spec.cluster_resource_whitelist`
 
-Read-Only:
+Optional:
 
-- `group` (String)
-- `kind` (String)
+- `group` (String) Cluster group name.
+- `kind` (String) Cluster kind.
 
 
-<a id="nestedobjatt--project--spec--destinations"></a>
+<a id="nestedblock--project--spec--destinations"></a>
 ### Nested Schema for `project.spec.destinations`
 
-Read-Only:
+Optional:
 
-- `namespace` (String)
-- `server` (String)
+- `namespace` (String) Namespace specifies the target namespace for the application's resources.
+- `server` (String) Server specifies the URL of the target cluster and must be set to the Kubernetes control plane API.

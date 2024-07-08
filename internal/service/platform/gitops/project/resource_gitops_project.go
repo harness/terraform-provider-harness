@@ -20,24 +20,29 @@ func ResourceProject() *schema.Resource {
 		Importer:      helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Agent identifier of the GitOps project.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"account_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Account identifier of the GitOps project.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"org_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Org identifier of the GitOps project.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Project identifier of the GitOps repository.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"query_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Identifier for the GitOps project.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
@@ -45,70 +50,83 @@ func ResourceProject() *schema.Resource {
 				Optional:    true,
 			},
 			"project": {
-				Type:     schema.TypeList,
-				Required: true,
+				Description: "App projects configuration details.",
+				Type:        schema.TypeList,
+				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
-							Type:     schema.TypeList,
-							Optional: true,
+							Description: "Metadata details that all persisted resources must have.",
+							Type:        schema.TypeList,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"generation": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Description: "A sequence number representing a specific generation of the desired state.",
+										Type:        schema.TypeString,
+										Optional:    true,
 									},
 									"name": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Description: "Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically.",
+										Type:        schema.TypeString,
+										Optional:    true,
 									},
 									"namespace": {
-										Type:     schema.TypeString,
-										Optional: true,
+										Description: "The namespace where the GitOps project should be created.",
+										Type:        schema.TypeString,
+										Optional:    true,
 									},
 								},
 							},
 						},
 						"spec": {
-							Type:     schema.TypeList,
-							Optional: true,
+							Description: "Spec is the specification of an AppProject.",
+							Type:        schema.TypeList,
+							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"cluster_resource_whitelist": {
-										Type:     schema.TypeList,
-										Optional: true,
+										Description: "ClusterResourceWhitelist contains list of whitelisted cluster level resources.",
+										Type:        schema.TypeList,
+										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"group": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Description: "Cluster group name.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 												"kind": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Description: "Cluster kind.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 											},
 										},
 									},
 									"destinations": {
-										Type:     schema.TypeList,
-										Optional: true,
+										Description: "Destinations contains list of destinations available for deployment.",
+										Type:        schema.TypeList,
+										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"namespace": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Description: "Namespace specifies the target namespace for the application's resources.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 												"server": {
-													Type:     schema.TypeString,
-													Optional: true,
+													Description: "Server specifies the URL of the target cluster and must be set to the Kubernetes control plane API.",
+													Type:        schema.TypeString,
+													Optional:    true,
 												},
 											},
 										},
 									},
 									"source_repos": {
-										Type:     schema.TypeList,
-										Optional: true,
+										Description: "SourceRepos contains list of repository URLs which can be used for deployment.",
+										Type:        schema.TypeList,
+										Optional:    true,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
