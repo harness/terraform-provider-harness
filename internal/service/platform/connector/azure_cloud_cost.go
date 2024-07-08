@@ -21,12 +21,12 @@ func ResourceConnectorAzureCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"features_enabled": {
-				Description: "Indicates which feature to enable among Billing, Optimization, and Visibility.",
+				Description: "Indicates which feature to enable among Billing, Optimization, Visibility and Governance.",
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"BILLING", "OPTIMIZATION", "VISIBILITY"}, false),
+					ValidateFunc: validation.StringInSlice([]string{"BILLING", "OPTIMIZATION", "VISIBILITY", "GOVERNANCE"}, false),
 				},
 			},
 			"tenant_id": {

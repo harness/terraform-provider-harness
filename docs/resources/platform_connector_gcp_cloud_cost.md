@@ -34,7 +34,7 @@ resource "harness_platform_connector_gcp_cloud_cost" "test" {
 
 ### Required
 
-- `features_enabled` (Set of String) Indicates which features to enable among Billing, Optimization, and Visibility.
+- `features_enabled` (Set of String) Indicates which features to enable among Billing, Optimization, Visibility and Governance.
 - `gcp_project_id` (String) GCP Project Id.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
