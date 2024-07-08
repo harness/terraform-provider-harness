@@ -18,8 +18,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require github.com/harness/harness-go-sdk v0.2.16
-
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
