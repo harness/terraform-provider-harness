@@ -409,6 +409,39 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+// GitopsAgentResourceImporter defines the importer configuration for all project level gitops agent resources.
+// The id used for the import should be in the format <agent_id>/<query_name>
+var GitopsAgentProjectImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		if len(parts) == 2 { //Account level
+			d.Set("agent_id", parts[0])
+			d.Set("query_name", parts[1])
+			d.SetId(parts[1])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 3 { //Org level
+			d.Set("org_id", parts[0])
+			d.Set("agent_id", parts[1])
+			d.Set("query_name", parts[2])
+			d.SetId(parts[2])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("agent_id", parts[2])
+			d.Set("query_name", parts[3])
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
 // The id used for the import should be in the format <org_id>/<project_id>/<repoIdentifier>/<identifier>
 var RepoRuleResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
