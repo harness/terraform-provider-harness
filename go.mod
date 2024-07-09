@@ -6,7 +6,7 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/aws/aws-sdk-go v1.46.4
 	github.com/docker/docker v24.0.5+incompatible
-	github.com/harness/harness-go-sdk v0.3.91
+	github.com/harness/harness-go-sdk v0.3.95
 	github.com/harness/harness-openapi-go-client v0.0.19
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
@@ -27,7 +27,7 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/distribution v2.8.1+incompatible // indirect
+	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
@@ -87,4 +87,4 @@ require (
 
 // replace github.com/harness/harness-go-sdk => ../harness-go-sdk
 
-// replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client
+//replace github.com/harness/harness-openapi-go-client => ../harness-openapi-go-client

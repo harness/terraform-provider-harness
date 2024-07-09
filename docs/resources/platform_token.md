@@ -10,6 +10,8 @@ description: |-
 
 Resource for creating tokens.
 
+Note: Please add TF_LOG=DEBUG to your environment if you want the token value in response as Terraform state does not store this value. If this is not possible, please use the UI/API to create the token and view the token value.
+
 ## Example Usage
 
 ```terraform

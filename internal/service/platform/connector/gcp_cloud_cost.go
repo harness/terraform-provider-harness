@@ -21,12 +21,12 @@ func ResourceConnectorGCPCloudCost() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"features_enabled": {
-				Description: "Indicates which features to enable among Billing, Optimization, and Visibility.",
+				Description: "Indicates which features to enable among Billing, Optimization, Visibility and Governance.",
 				Type:        schema.TypeSet,
 				Required:    true,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"BILLING", "OPTIMIZATION", "VISIBILITY"}, false),
+					ValidateFunc: validation.StringInSlice([]string{"BILLING", "OPTIMIZATION", "VISIBILITY", "GOVERNANCE"}, false),
 				},
 			},
 			"gcp_project_id": {
