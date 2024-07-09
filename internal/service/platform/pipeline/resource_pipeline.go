@@ -226,8 +226,8 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
 			pipeline_id = d.Get("identifier").(string)
-
 			pipeline_import_request_body := createImportFromGitRequest(d)
+			branch_name = pipeline_import_request_body.GitImportInfo.BranchName
 
 			_, httpResp, err = c.PipelinesApi.ImportPipelineFromGit(ctx, org_id, project_id, pipeline_id,
 				&nextgen.PipelinesApiImportPipelineFromGitOpts{

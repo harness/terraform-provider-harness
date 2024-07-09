@@ -39,6 +39,7 @@ data "harness_platform_connector_custom_secret_manager" "example" {
 - `timeout` (Number): Timeout in seconds for secrets management operations.
 - `tags` (Set of String): Tags to associate with the resource.
 - `version_label` (String): Version identifier of the secrets management template.
+- `delegate_selectors` (Set of String) Tags to filter delegates for connection.
 - `target_host` (String): Host address where secrets will be managed. Required if `on_delegate` is set to false.
 - `ssh_secret_ref` (String): Reference to the Harness secret containing SSH credentials for the target host. Required if `on_delegate` is set to false.
 - `working_directory` (String): Directory path on the target host where secrets management tasks are performed. Required if `on_delegate` is set to false.

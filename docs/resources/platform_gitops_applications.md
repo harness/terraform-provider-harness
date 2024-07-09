@@ -71,7 +71,6 @@ resource "harness_platform_gitops_applications" "example" {
 - `name` (String) Name of the GitOps application.
 - `org_id` (String) Organization identifier of the GitOps application.
 - `project_id` (String) Project identifier of the GitOps application.
-- `repo_id` (String) Repository identifier of the GitOps application.
 
 ### Optional
 
@@ -79,8 +78,10 @@ resource "harness_platform_gitops_applications" "example" {
 - `kind` (String) Kind of the GitOps application.
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
 - `project` (String) The ArgoCD project name corresponding to this GitOps application. An empty string means that the GitOps application belongs to the default project created by Harness.
+- `repo_id` (String) Repository identifier of the GitOps application.
 - `request_cascade` (Boolean) Request cascade to delete the GitOps application.
 - `request_propagation_policy` (String) Request propagation policy to delete the GitOps application.
+- `skip_repo_validation` (Boolean) Indicates if the GitOps application should skip validate repository definition exists.
 - `upsert` (Boolean) Indicates if the GitOps application should be updated if existing and inserted if not.
 - `validate` (Boolean) Indicates if the GitOps application yaml has to be validated.
 
@@ -161,12 +162,12 @@ Required:
 
 Optional:
 
-- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
 - `chart` (String) Helm chart name, and must be specified for the GitOps applications sourced from a helm repo.
 - `directory` (Block List) Options for applications of type plain YAML or Jsonnet. (see [below for nested schema](#nestedblock--application--spec--source--directory))
 - `helm` (Block List) Holds helm specific options. (see [below for nested schema](#nestedblock--application--spec--source--helm))
 - `ksonnet` (Block List) Ksonnet specific options. (see [below for nested schema](#nestedblock--application--spec--source--ksonnet))
 - `kustomize` (Block List) Options specific to a GitOps application source specific to Kustomize. (see [below for nested schema](#nestedblock--application--spec--source--kustomize))
+- `path` (String) Directory path within the git repository, and is only valid for the GitOps applications sourced from git.
 - `plugin` (Block List) Options specific to config management plugins. (see [below for nested schema](#nestedblock--application--spec--source--plugin))
 
 <a id="nestedblock--application--spec--source--directory"></a>

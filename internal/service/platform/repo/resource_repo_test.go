@@ -122,6 +122,40 @@ func TestAccResourceRepo_Import(t *testing.T) {
 	})
 }
 
+func TestProjResourceRepo_Import(t *testing.T) {
+	identifier := identifier(t.Name())
+
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testRepoDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testProjResourceRepoImport(identifier, description, providerRepo),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+				),
+			},
+			{
+				Config: testProjResourceRepoImport(identifier, description_updated, providerRepo),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", identifier),
+					resource.TestCheckResourceAttr(resourceName, "name", identifier),
+					resource.TestCheckResourceAttr(resourceName, "description", description_updated),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				ImportStateIdFunc: acctest.RepoResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
 func TestAccResourceRepo_DeleteUnderlyingResource(t *testing.T) {
 	t.Skip()
 
@@ -205,6 +239,34 @@ func testAccResourceRepoImport(identifier, description, providerRepo string) str
 		resource "harness_platform_repo" "test" {
 			identifier  = "%[1]s"
 			default_branch = "master"
+			source{
+				type = "github"
+				repo = "%[3]s"
+			}
+			description = "%[2]s"
+		}
+	`, identifier, description, providerRepo,
+	)
+}
+
+func testProjResourceRepoImport(identifier, description, providerRepo string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_organization" "test" {
+		identifier = "org_%[1]s"
+		name = "org_%[1]s"
+	}	
+
+	resource "harness_platform_project" "test" {
+		identifier = "proj_%[1]s"
+		name = "proj_%[1]s"
+		org_id = harness_platform_organization.test.id
+	}
+	
+
+		resource "harness_platform_repo" "test" {
+			org_id = harness_platform_organization.test.id
+			project_id = harness_platform_project.test.id
+			identifier  = "%[1]s"
 			source{
 				type = "github"
 				repo = "%[3]s"

@@ -1,0 +1,3 @@
+```release-note:new-resource
+harness_platform_pipeline: Added the branch context when imported the pipeline from non main branch
+```

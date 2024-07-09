@@ -91,6 +91,11 @@ func DataSourceGitopsApplications() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"skip_repo_validation": {
+				Description: "Indicates if the GitOps application should skip validate repository definition exists.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 			"application": {
 				Description: "Definition of the GitOps application resource.",
 				Type:        schema.TypeList,

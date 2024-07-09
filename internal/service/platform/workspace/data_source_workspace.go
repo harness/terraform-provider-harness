@@ -169,6 +169,11 @@ func DataSourceWorkspace() *schema.Resource {
 					},
 				},
 			},
+			"default_pipelines": {
+				Description: "Default pipelines associated with this workspace",
+				Type:        schema.TypeMap,
+				Computed:    true,
+			},
 		},
 	}
 	return resource

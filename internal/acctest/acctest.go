@@ -8,6 +8,7 @@ import (
 
 	"github.com/harness/harness-go-sdk/harness/cd/graphql"
 	"github.com/harness/harness-go-sdk/harness/code"
+	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/policymgmt"
@@ -62,6 +63,10 @@ func TestAccGetApiClientFromProvider() *internal.Session {
 
 func TestAccGetPlatformClientWithContext() (*nextgen.APIClient, context.Context) {
 	return TestAccProvider.Meta().(*internal.Session).GetPlatformClientWithContext(context.Background())
+}
+
+func TestAccGetDBOpsClientWithContext() (*dbops.APIClient, context.Context) {
+	return TestAccProvider.Meta().(*internal.Session).GetDBOpsClientWithContext(context.Background())
 }
 
 func TestAccGetClientWithContext() (*openapi_client_nextgen.APIClient, context.Context) {
@@ -122,6 +127,18 @@ func EnvRelatedResourceImportStateIdFunc(resourceName string) resource.ImportSta
 	}
 }
 
+func DBInstanceResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		schema := primary.Attributes["schema"]
+
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, schema, id), nil
+	}
+}
+
 func OverridesV1ResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
@@ -159,6 +176,17 @@ func ProjectResourceImportStateIdFunc(resourceName string) resource.ImportStateI
 		orgId := primary.Attributes["org_id"]
 		projId := primary.Attributes["project_id"]
 		return fmt.Sprintf("%s/%s/%s", orgId, projId, id), nil
+	}
+}
+
+func ProjectResourceImportStateIdGitFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		id := primary.ID
+		orgId := primary.Attributes["org_id"]
+		projId := primary.Attributes["project_id"]
+		branch_name := primary.Attributes["git_details.0.branch_name"]
+		return fmt.Sprintf("%s/%s/%s/%s", orgId, projId, id, branch_name), nil
 	}
 }
 
@@ -234,6 +262,15 @@ func GitopsAgentOrgLevelResourceImportStateIdFunc(resourceName string) resource.
 		orgId := primary.Attributes["org_id"]
 		agentId := primary.Attributes["agent_id"]
 		return fmt.Sprintf("%s/%s/%s", orgId, agentId, id), nil
+	}
+}
+
+func GitopsProjectImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		primary := s.RootModule().Resources[resourceName].Primary
+		agentId := primary.Attributes["agent_id"]
+		query_name := primary.Attributes["query_name"]
+		return fmt.Sprintf("%s/%s", agentId, query_name), nil
 	}
 }
 
