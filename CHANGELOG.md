@@ -1,3 +1,19 @@
+# 0.31.8 (July 11,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_connector_jdbc` ([#1002](https://github.com/harness/terraform-provider-harness/issues/1002))
+* **New Resource:** `harness_platform_db_instance` ([#1001](https://github.com/harness/terraform-provider-harness/issues/1001))
+* **New Resource:** `harness_platform_db_schema` ([#998](https://github.com/harness/terraform-provider-harness/issues/998))
+* **New Resource:** `harness_platform_gitops_project: Added the terraform support for creating the gitops project` ([#1000](https://github.com/harness/terraform-provider-harness/issues/1000))
+* **New Resource:** `harness_platform_pipeline: Added the branch context when imported the pipeline from non main branch` ([#999](https://github.com/harness/terraform-provider-harness/issues/999))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_gcp_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors
+harness_platform_connector_azure_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors ([#1006](https://github.com/harness/terraform-provider-harness/issues/1006))
+* platform_gitops_applications: Added support for skip repo validation, when set true repo doesnt have to be created before creating application. ([#979](https://github.com/harness/terraform-provider-harness/issues/979))
+
 # 0.31.7 (July 02,2024) 
 
 # 0.31.6 (July 01,2024) 
