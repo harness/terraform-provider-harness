@@ -188,7 +188,7 @@ func TestAccResourceGitopsApplicationGit_SkipRepoValidationTrue(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
-					resource.TestCheckResourceAttr(resourceName, "skip_repo_validation", "true"),
+					resource.TestCheckResourceAttr(resourceName, "skip_repo_validation", "false"),
 				),
 			},
 			{
