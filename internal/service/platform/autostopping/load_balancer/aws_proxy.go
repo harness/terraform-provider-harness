@@ -57,6 +57,11 @@ func ResourceAWSProxy() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"subnet_id": {
+				Description: "Subnet to deploy the proxy into",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"allocate_static_ip": {
 				Description: "Boolean value to indicate if proxy vm needs to have static IP",
 				Type:        schema.TypeBool,
