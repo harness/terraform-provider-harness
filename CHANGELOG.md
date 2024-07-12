@@ -1,6 +1,6 @@
 
-<a name="0.3.95"></a>
-## 0.3.95 (2024-07-08)
+<a name="0.3.96"></a>
+## 0.3.96 (2024-07-12)
 
 ### Add
 
@@ -10,12 +10,18 @@
 
 * Added API for user group update for user entity ([#513](https://github.com/harness/harness-go-sdk/issues/513))
 
+### Changes
+
+* changes for execution summary outline API ([#543](https://github.com/harness/harness-go-sdk/issues/543))
+
 ### GitX
 
 * GitX Support For Env CRUD operations , Import ([#487](https://github.com/harness/harness-go-sdk/issues/487))
 
 ### Release
 
+* Release version 0.3.95 07-08-2024
+* Release v0.3.95
 * Release version 0.3.94 07-03-2024
 * Release v0.3.94
 * Release version 0.3.93 07-01-2024
@@ -58,6 +64,4 @@
 * Release v0.3.76
 * Release version 0.3.75 02-27-2024
 * Release v0.3.75
-* Release version 0.3.74 02-01-2024
-* Release v0.3.74
 
