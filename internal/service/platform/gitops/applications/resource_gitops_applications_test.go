@@ -67,7 +67,7 @@ func TestAccResourceGitopsApplication_KustomizeApp(t *testing.T) {
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
 	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
-	repoId := os.Getenv("HARNESS_TEST_GITOPS_REPO_ID")
+	repoId := id
 	clusterName := id
 	namespace := "test"
 	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
@@ -91,6 +91,104 @@ func TestAccResourceGitopsApplication_KustomizeApp(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceGitopsApplicationHelmCharts_SkipRepoValidationTrue(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
+	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	clusterName := id
+	namespace := "test"
+	repo := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_URL")
+	chart := os.Getenv("HARNESS_TEST_GITOPS_HELM_REPO_CHART")
+	namespaceUpdated := namespace + "_updated"
+	resourceName := "harness_platform_gitops_applications.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsApplicationHelmSkipRepoValidation(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, chart, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceGitopsApplicationHelmSkipRepoValidation(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, chart, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+			},
+		},
+	})
+}
+
+func TestAccResourceGitopsApplicationGit_SkipRepoValidationTrue(t *testing.T) {
+	id := strings.ToLower(fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5)))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	clusterServer := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_SERVER_APP")
+	clusterId := os.Getenv("HARNESS_TEST_GITOPS_CLUSTER_ID")
+	clusterName := id
+	repoId := id
+	namespace := "test"
+	repo := os.Getenv("HARNESS_TEST_GITOPS_REPO")
+	namespaceUpdated := namespace + "_updated"
+	resourceName := "harness_platform_gitops_applications.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceGitopsApplicationDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testAccResourceGitopsApplicationGitSkipRepoValidation(id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "skip_repo_validation", "true"),
+				),
+			},
+			{
+				Config: testAccResourceGitopsApplicationGitSkipRepoValidation(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+				),
+			},
+			{
+				Config: testAccResourceGitopsApplicationKustomize(id, accountId, name, agentId, clusterName, namespaceUpdated, clusterServer, clusterId, repo, repoId),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "application.0.spec.0.destination.0.namespace", namespaceUpdated),
+					resource.TestCheckResourceAttr(resourceName, "skip_repo_validation", "false"),
 				),
 			},
 			{
@@ -224,6 +322,63 @@ func testAccResourceGitopsApplicationHelm(id string, accountId string, name stri
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
 }
 
+func testAccResourceGitopsApplicationHelmSkipRepoValidation(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repoURL string, chart string, skipRepoValidation bool) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_gitops_applications" "test" {
+			application {
+				metadata {
+					annotations = {}
+					name = "%[1]s"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "18.0.1"
+						repo_url = "%[9]s"
+						chart = "%[10]s"
+						
+					}
+					destination {
+						namespace = "%[6]s"
+						server = "%[7]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]s"
+			cluster_id = "%[8]s"
+			agent_id = "%[4]s"
+			name = "%[3]s"
+            skip_repo_validation = %[11]t
+		}
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repoURL, chart, skipRepoValidation)
+}
+
 func testAccResourceGitopsApplicationKustomize(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repo string, repoId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
@@ -259,7 +414,7 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
 			org_id = harness_platform_organization.test.id
 			agent_id = "%[4]s"
 			repo {
-					repo = "https://github.com/harness-apps/hosted-gitops-example-apps"
+					repo = "%[9]s"
         			name = "%[1]s"
         			insecure = true
         			connection_type = "HTTPS_ANONYMOUS"
@@ -318,4 +473,85 @@ func testAccResourceGitopsApplicationKustomize(id string, accountId string, name
 			name = "%[3]s"
 		}
 		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, repoId)
+}
+
+func testAccResourceGitopsApplicationGitSkipRepoValidation(id string, accountId string, name string, agentId string, clusterName string, namespace string, clusterServer string, clusterId string, repo string, skipRepoValidation bool) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_organization.test.id
+		}
+
+		resource "harness_platform_service" "test" {
+      		identifier = "%[1]s"
+      		name = "%[3]s"
+      		org_id = harness_platform_project.test.org_id
+      		project_id = harness_platform_project.test.id
+    	}
+		resource "harness_platform_environment" "test" {
+			identifier = "%[1]s"
+			name = "%[3]s"
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			tags = ["foo:bar", "baz"]
+			type = "PreProduction"
+  		}
+		
+
+		resource "harness_platform_gitops_applications" "test" {
+			application {
+				metadata {
+					annotations = {}
+					labels = {
+						"harness.io/serviceRef" = harness_platform_service.test.id
+						"harness.io/envRef" = harness_platform_environment.test.id
+					}
+					name = "%[1]s"
+				}
+				spec {
+					sync_policy {
+						sync_options = [
+							"PrunePropagationPolicy=undefined",
+							"CreateNamespace=false",
+							"Validate=false",
+							"skipSchemaValidations=false",
+							"autoCreateNamespace=false",
+							"pruneLast=false",
+							"applyOutofSyncOnly=false",
+							"Replace=false",
+							"retry=false"
+						]
+					}
+					source {
+						target_revision = "master"
+						repo_url = "%[9]s"
+						path = "kustomize-guestbook"
+						kustomize {
+							images = [
+									"gcr.io/heptio-images/ks-guestbook-demo:0.1"
+									]
+						}
+					}
+					destination {
+						namespace = "%[6]s"
+						server = "%[7]s"
+					}
+				}
+			}
+			project_id = harness_platform_project.test.id
+			org_id = harness_platform_organization.test.id
+			account_id = "%[2]s"
+			identifier = "%[1]s"
+			cluster_id =  "%[8]s"
+			agent_id = "%[4]s"
+			name = "%[3]s"
+            skip_repo_validation = %[10]t
+		}
+		`, id, accountId, name, agentId, clusterName, namespace, clusterServer, clusterId, repo, skipRepoValidation)
 }
