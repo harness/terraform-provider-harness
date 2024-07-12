@@ -762,3 +762,154 @@ func (a *ExecutionDetailsApiService) GetListOfExecutions(ctx context.Context, ac
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
+/*
+ExecutionDetailsApiService List Executions Outline
+Returns a List of Pipeline Executions Outline with Specific Filter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param accountIdentifier Account Identifier for the Entity.
+ * @param orgIdentifier Organization Identifier for the Entity.
+ * @param projectIdentifier Project Identifier for the Entity.
+ * @param optional nil or *ExecutionDetailsApiGetListOfExecutionsOutlineOpts - Optional Parameters:
+     * @param "Body" (optional.Interface of PipelineExecutionOutlineFilterDto) -  Returns a List of Pipeline Executions outline with Specific Filters
+     * @param "LastSeenExecutionId" (optional.String) -  lastSeenExecutionId
+     * @param "LastSeenStartTime" (optional.Int64) -  lastSeenStartTime
+     * @param "Size" (optional.Int32) -  Results per page
+@return ResponseDtoCustomPagePipelineExecutionOutline
+*/
+
+type ExecutionDetailsApiGetListOfExecutionsOutlineOpts struct {
+	Body                optional.Interface
+	LastSeenExecutionId optional.String
+	LastSeenStartTime   optional.Int64
+	Size                optional.Int32
+}
+
+func (a *ExecutionDetailsApiService) GetListOfExecutionsOutline(ctx context.Context, accountIdentifier string, orgIdentifier string, projectIdentifier string, localVarOptionals *ExecutionDetailsApiGetListOfExecutionsOutlineOpts) (ResponseDtoCustomPagePipelineExecutionOutline, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue ResponseDtoCustomPagePipelineExecutionOutline
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/pipeline/api/pipelines/execution/summary/outline"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	localVarQueryParams.Add("accountIdentifier", parameterToString(accountIdentifier, ""))
+	localVarQueryParams.Add("orgIdentifier", parameterToString(orgIdentifier, ""))
+	localVarQueryParams.Add("projectIdentifier", parameterToString(projectIdentifier, ""))
+	if localVarOptionals != nil && localVarOptionals.LastSeenExecutionId.IsSet() {
+		localVarQueryParams.Add("lastSeenExecutionId", parameterToString(localVarOptionals.LastSeenExecutionId.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.LastSeenStartTime.IsSet() {
+		localVarQueryParams.Add("lastSeenStartTime", parameterToString(localVarOptionals.LastSeenStartTime.Value(), ""))
+	}
+	if localVarOptionals != nil && localVarOptionals.Size.IsSet() {
+		localVarQueryParams.Add("size", parameterToString(localVarOptionals.Size.Value(), ""))
+	}
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json", "application/yaml"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	if localVarOptionals != nil && localVarOptionals.Body.IsSet() {
+
+		localVarOptionalBody := localVarOptionals.Body.Value()
+		localVarPostBody = &localVarOptionalBody
+	}
+	if ctx != nil {
+		// API Key Authentication
+		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
+			var key string
+			if auth.Prefix != "" {
+				key = auth.Prefix + " " + auth.Key
+			} else {
+				key = auth.Key
+			}
+			localVarHeaderParams["x-api-key"] = key
+
+		}
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
+			return localVarReturnValue, localVarHttpResponse, err
+		}
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+		if localVarHttpResponse.StatusCode == 400 {
+			var v Failure
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 500 {
+			var v ModelError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		if localVarHttpResponse.StatusCode == 0 {
+			var v ResponseDtoCustomPagePipelineExecutionOutline
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}

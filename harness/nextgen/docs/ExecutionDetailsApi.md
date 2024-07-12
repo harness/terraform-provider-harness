@@ -179,3 +179,46 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+
+# **GetListOfExecutionsOutline**
+> ResponseDtoCustomPagePipelineExecutionOutline GetListOfExecutionsOutline(ctx, accountIdentifier, orgIdentifier, projectIdentifier, optional)
+List Executions Outline
+
+Returns a List of Pipeline Executions Outline with Specific Filter
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **accountIdentifier** | **string**| Account Identifier for the Entity. |
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. |
+  **projectIdentifier** | **string**| Project Identifier for the Entity. |
+ **optional** | ***ExecutionDetailsApiGetListOfExecutionsOutlineOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a ExecutionDetailsApiGetListOfExecutionsOutlineOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+**body** | [**optional.Interface of PipelineExecutionOutlineFilterDto**](PipelineExecutionOutlineFilterDto.md)| Returns a List of Pipeline Executions outline with Specific Filters |
+**lastSeenExecutionId** | **optional.**| lastSeenExecutionId |
+**lastSeenStartTime** | **optional.**| lastSeenStartTime |
+**size** | **optional.**| Results per page | [default to 10]
+
+### Return type
+
+[**ResponseDtoCustomPagePipelineExecutionOutline**](ResponseDTOCustomPagePipelineExecutionOutline.md)
+
+### Authorization
+
+[x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json, application/yaml
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
