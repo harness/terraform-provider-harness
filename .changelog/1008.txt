@@ -1,0 +1,4 @@
+```release-note:enhancement
+harness_platform_pipeline: Added update call for git metadata in pipeline update flow.
+harness_platform_template:Added update call for git metadata in template update flow.
+```
