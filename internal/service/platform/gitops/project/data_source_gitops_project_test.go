@@ -2,7 +2,6 @@ package project_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -11,8 +10,10 @@ import (
 
 func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
 	resourceName := "harness_platform_gitops_project.test"
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	// agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	// accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	agentId := "account.rollouts"
+	accountId := "1bvyLackQK-Hapk25-Ry4w"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
@@ -40,6 +41,7 @@ func testAccDataSourceGitopsRepositoryOrgLevel(agentId string, accountId string,
 					generation = "1"
 					name = "%[3]s"
 					namespace = "rollouts"
+					finalizers = ["name"]
 				}
 				spec {
 					cluster_resource_whitelist {
@@ -59,6 +61,7 @@ func testAccDataSourceGitopsRepositoryOrgLevel(agentId string, accountId string,
 			depends_on = [harness_platform_gitops_project.test]	
 			account_id = "%[1]s"
 			agent_id = harness_platform_gitops_project.test.agent_id
+			query_name = harness_platform_gitops_project.test.project[0].metadata[0].name
 		}	
 	`, accountId, agentId, name, namespace)
 }

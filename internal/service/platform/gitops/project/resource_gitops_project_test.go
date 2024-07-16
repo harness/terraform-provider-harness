@@ -13,21 +13,21 @@ import (
 
 func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 	resourceName := "harness_platform_gitops_project.test"
-	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
-	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
+	agentId := "account.rollouts"
+	accountId := "1bvyLackQK-Hapk25-Ry4w"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee999", "*"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee9990eee", "*"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee999", "rollouts"),
+				Config: testAccResourceGitopsProjectUpdateAccountLevel(agentId, accountId, "14a3dc9eeee9990eee", "roll"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
@@ -55,6 +55,9 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 					generation = "1"
 					name = "%[3]s"
 					namespace = "rollouts"
+					finalizers = ["name"]
+					annotations = {}
+					labels    =  {}
 				}
 				spec {
 					cluster_resource_whitelist {
@@ -72,6 +75,33 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 	`, accountId, agentId, name, namespace)
 }
 
+func testAccResourceGitopsProjectUpdateAccountLevel(agentId string, accountId string, name string, namespace string) string {
+	return fmt.Sprintf(`	
+		resource "harness_platform_gitops_project" "test" {
+			account_id = "%[1]s"
+			agent_id = "%[2]s"
+			upsert = true
+			project {
+				metadata {
+					generation = "1"
+					name = "%[3]s"
+					namespace = "rollouts"
+				}
+				spec {
+					cluster_resource_whitelist {
+						group = "*"
+						kind = "*"
+					}
+					destinations {
+						namespace = "%[4]s"
+						server = "*"
+					}
+					source_repos = ["*"]
+				}
+			}
+		}
+	`, accountId, agentId, name, namespace)
+}
 func TestAccResourceGitopsProjectOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
