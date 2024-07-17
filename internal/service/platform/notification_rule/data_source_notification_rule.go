@@ -51,7 +51,7 @@ func dataSourceNotificationRuleRead(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	resp, httpResp, err := c.SrmNotificationApiService.GetSrmNotification(ctx, accountIdentifier, orgIdentifier, projectIdentifier, identifier)
+	resp, httpResp, err := c.SrmNotificationApiService.GetSrmNotification(ctx, identifier, accountIdentifier, orgIdentifier, projectIdentifier)
 
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)

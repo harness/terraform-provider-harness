@@ -50,6 +50,7 @@ func testAccDataSourceNotificationRule(id string, name string) string {
 
 		resource "harness_platform_notification_rule" "test" {
 			depends_on = [
+				harness_platform_organization.test,
 				harness_platform_project.test,
 			]
 			org_id = harness_platform_organization.test.id
@@ -57,19 +58,20 @@ func testAccDataSourceNotificationRule(id string, name string) string {
 			identifier = "%[1]s"
 			request {
 				  name = "%[2]s"
-				  notification_method {
-					type                  = "Slack"
-					spec = jsonencode({
-						webhook_url = "http://myslackwebhookurl.com"
-						user_groups = ["account.dsd"]
-					})
-				  }
+
 				  type = "ServiceLevelObjective"
 				  conditions {
-					type       = "ErrorBudgetRemainingPercentage"
+					type = "ErrorBudgetRemainingPercentage"
 					spec = jsonencode({
-					threshold = 30
+					  threshold = 30
 					})
+				  }
+				  notification_method {
+					spec = jsonencode({
+					  webhook_url = "http://myslackwebhookurl.com"
+					  user_groups = ["account.dsd"]
+					})
+					type = "Slack"
 				  }
 			}
 		}
