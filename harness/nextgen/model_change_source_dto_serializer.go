@@ -29,6 +29,12 @@ func (a *ChangeSourceDto) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(aux.Spec, &a.K8sCluster)
 	case ChangeSourceTypes.HarnessCD:
 		err = json.Unmarshal(aux.Spec, &a.HarnessCD)
+	case ChangeSourceTypes.CustomDeploy:
+		err = json.Unmarshal(aux.Spec, &a.CustomDeploy)
+	case ChangeSourceTypes.CustomIncident:
+		err = json.Unmarshal(aux.Spec, &a.CustomIncident)
+	case ChangeSourceTypes.CustomFF:
+		err = json.Unmarshal(aux.Spec, &a.CustomFF)
 	default:
 		panic(fmt.Sprintf("unknown change source type %s", a.Type_))
 	}
@@ -51,6 +57,12 @@ func (a *ChangeSourceDto) MarshalJSON() ([]byte, error) {
 		spec, err = json.Marshal(a.K8sCluster)
 	case ChangeSourceTypes.HarnessCD:
 		spec, err = json.Marshal(a.HarnessCD)
+	case ChangeSourceTypes.CustomDeploy:
+		spec, err = json.Marshal(a.CustomDeploy)
+	case ChangeSourceTypes.CustomIncident:
+		spec, err = json.Marshal(a.CustomIncident)
+	case ChangeSourceTypes.CustomFF:
+		spec, err = json.Marshal(a.CustomFF)
 	default:
 		panic(fmt.Sprintf("unknown change source type %s", a.Type_))
 	}

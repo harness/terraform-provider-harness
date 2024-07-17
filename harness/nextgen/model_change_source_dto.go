@@ -19,6 +19,9 @@ type ChangeSourceDto struct {
 	PagerDuty        *PagerDutyChangeSourceSpec           `json:"-"`
 	K8sCluster       *KubernetesChangeSourceSpec          `json:"-"`
 	HarnessCD        *HarnessCdCurrentGenChangeSourceSpec `json:"-"`
+	CustomDeploy     *CustomDeployChangeSourceSpec        `json:"-"`
+	CustomIncident   *CustomIncidentChangeSourceSpec      `json:"-"`
+	CustomFF         *CustomFFChangeSourceSpec            `json:"-"`
 	Enabled          bool                                 `json:"enabled,omitempty"`
 	Spec             json.RawMessage                      `json:"spec"`
 	Category         string                               `json:"category,omitempty"`
