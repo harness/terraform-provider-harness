@@ -102,20 +102,31 @@ func testAccResourceNotificationRule(id string, name string) string {
 			identifier = "%[1]s"
 			request {
 				  name = "%[2]s"
-
 				  type = "ServiceLevelObjective"
+				  notification_method {
+					type                  = "Email"
+					spec = jsonencode({
+					  recipients = ["test@harness.io"]
+					  user_groups = ["account.test"]
+					})
+				  }
 				  conditions {
-					type = "ErrorBudgetRemainingPercentage"
+					type       = "ErrorBudgetBurnRate"
+					spec = jsonencode({
+					  threshold = 1
+					})
+				  }
+				  conditions {
+					type       = "ErrorBudgetRemainingPercentage"
 					spec = jsonencode({
 					  threshold = 30
 					})
 				  }
-				  notification_method {
+				  conditions {
+					type       = "ErrorBudgetRemainingMinutes"
 					spec = jsonencode({
-					  webhook_url = "http://myslackwebhookurl.com"
-					  user_groups = ["account.dsd"]
+					  threshold = 300
 					})
-					type = "Slack"
 				  }
 			}
 		}
