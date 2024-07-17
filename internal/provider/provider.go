@@ -7,6 +7,7 @@ import (
 
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
@@ -241,6 +242,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_secret_manager":                           secrets.DataSourceSecretManager(),
 				"harness_service":                                  service.DataSourceService(),
 				"harness_platform_slo":                             slo.DataSourceSloService(),
+				"harness_platform_notification_rule":               notification_rule.DataSourceNotificationRuleService(),
 				"harness_ssh_credential":                           secrets.DataSourceSshCredential(),
 				"harness_sso_provider":                             sso.DataSourceSSOProvider(),
 				"harness_user_group":                               user.DataSourceUserGroup(),
@@ -382,6 +384,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service_tanzu":                            service.ResourcePCFService(),
 				"harness_service_winrm":                            service.ResourceWinRMService(),
 				"harness_platform_slo":                             slo.ResourceSloService(),
+				"harness_platform_notification_rule":               notification_rule.ResourceNotificationRuleService(),
 				"harness_ssh_credential":                           secrets.ResourceSSHCredential(),
 				"harness_user_group":                               user.ResourceUserGroup(),
 				"harness_user_group_permissions":                   user.ResourceUserGroupPermissions(),
