@@ -318,6 +318,45 @@ func getChangeSourceByType(cs map[string]interface{}) nextgen.ChangeSourceDto {
 			Category:   cs["category"].(string),
 		}
 	}
+	if changeSourceType == "CustomDeploy" {
+		data := nextgen.CustomDeployChangeSourceSpec{}
+		json.Unmarshal([]byte(changeSourceSpec), &data)
+
+		return nextgen.ChangeSourceDto{
+			Name:         cs["name"].(string),
+			Identifier:   cs["identifier"].(string),
+			Type_:        nextgen.ChangeSourceType(changeSourceType),
+			CustomDeploy: &data,
+			Enabled:      cs["enabled"].(bool),
+			Category:     cs["category"].(string),
+		}
+	}
+	if changeSourceType == "CustomIncident" {
+		data := nextgen.CustomIncidentChangeSourceSpec{}
+		json.Unmarshal([]byte(changeSourceSpec), &data)
+
+		return nextgen.ChangeSourceDto{
+			Name:           cs["name"].(string),
+			Identifier:     cs["identifier"].(string),
+			Type_:          nextgen.ChangeSourceType(changeSourceType),
+			CustomIncident: &data,
+			Enabled:        cs["enabled"].(bool),
+			Category:       cs["category"].(string),
+		}
+	}
+	if changeSourceType == "CustomFF" {
+		data := nextgen.CustomFFChangeSourceSpec{}
+		json.Unmarshal([]byte(changeSourceSpec), &data)
+
+		return nextgen.ChangeSourceDto{
+			Name:       cs["name"].(string),
+			Identifier: cs["identifier"].(string),
+			Type_:      nextgen.ChangeSourceType(changeSourceType),
+			CustomFF:   &data,
+			Enabled:    cs["enabled"].(bool),
+			Category:   cs["category"].(string),
+		}
+	}
 
 	panic(fmt.Sprintf("Invalid change source type for monitored service"))
 }
