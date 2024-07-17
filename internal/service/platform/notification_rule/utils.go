@@ -44,6 +44,50 @@ func getNotificationRuleConditionByType(nrc map[string]interface{}) (nextgen.Not
 			ErrorBudgetBurnRate: &data,
 			Type_:               nextgen.NotificationRuleConditionType(notifRuleConditionType),
 		}, nil
+	} else if notifRuleConditionType == nextgen.NotificationRuleConditionTypes.ChangeImpact.String() {
+		data := nextgen.ChangeImpactConditionSpec{}
+		err = json.Unmarshal([]byte(notifRuleCondition), &data)
+		if err != nil {
+			return nextgen.NotificationRuleCondition{}, err
+		}
+
+		return nextgen.NotificationRuleCondition{
+			ChangeImpact: &data,
+			Type_:        nextgen.NotificationRuleConditionType(notifRuleConditionType),
+		}, nil
+	} else if notifRuleConditionType == nextgen.NotificationRuleConditionTypes.ChangeObserved.String() {
+		data := nextgen.ChangeObservedConditionSpec{}
+		err = json.Unmarshal([]byte(notifRuleCondition), &data)
+		if err != nil {
+			return nextgen.NotificationRuleCondition{}, err
+		}
+
+		return nextgen.NotificationRuleCondition{
+			ChangeObserved: &data,
+			Type_:          nextgen.NotificationRuleConditionType(notifRuleConditionType),
+		}, nil
+	} else if notifRuleConditionType == nextgen.NotificationRuleConditionTypes.DeploymentImpactReport.String() {
+		data := nextgen.DeploymentImpactReportConditionSpec{}
+		err = json.Unmarshal([]byte(notifRuleCondition), &data)
+		if err != nil {
+			return nextgen.NotificationRuleCondition{}, err
+		}
+
+		return nextgen.NotificationRuleCondition{
+			DeploymentImpactReport: &data,
+			Type_:                  nextgen.NotificationRuleConditionType(notifRuleConditionType),
+		}, nil
+	} else if notifRuleConditionType == nextgen.NotificationRuleConditionTypes.HealthScore.String() {
+		data := nextgen.HealthScoreConditionSpec{}
+		err = json.Unmarshal([]byte(notifRuleCondition), &data)
+		if err != nil {
+			return nextgen.NotificationRuleCondition{}, err
+		}
+
+		return nextgen.NotificationRuleCondition{
+			HealthScore: &data,
+			Type_:       nextgen.NotificationRuleConditionType(notifRuleConditionType),
+		}, nil
 	}
 
 	return nextgen.NotificationRuleCondition{}, fmt.Errorf("Notification rule condition not yet supported/invalid")
