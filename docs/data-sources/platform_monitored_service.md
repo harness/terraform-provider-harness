@@ -33,5 +33,3 @@ data "harness_platform_monitored_service" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-
-
