@@ -186,25 +186,28 @@ func ResourceProject() *schema.Resource {
 										Description: "Name of the cluster associated with the GitOps project.",
 									},
 									"managed_fields": {
-										Type:     schema.TypeList,
-										Optional: true,
-
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
 										Description: "Managed fields associated with the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"manager": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Manager responsible for the operation.",
 												},
 												"operation": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Operation type performed on the GitOps project.",
 												},
 												"api_version": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "API version of the operation performed.",
 												},
 												"time": {
@@ -219,6 +222,7 @@ func ResourceProject() *schema.Resource {
 												"fields_type": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Type of the fields in the GitOps project.",
 												},
 												"fields_v1": {
@@ -233,6 +237,7 @@ func ResourceProject() *schema.Resource {
 												"subresource": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Subresource associated with the GitOps project.",
 												},
 											},
@@ -336,6 +341,7 @@ func ResourceProject() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Description: "Groups associated with the role.",
+													Computed:    true,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -422,27 +428,32 @@ func ResourceProject() *schema.Resource {
 									"sync_windows": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "Synchronization windows for the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"kind": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Kind of synchronization window.",
 												},
 												"schedule": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Schedule of synchronization window.",
 												},
 												"duration": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Duration of synchronization window.",
 												},
 												"applications": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "Applications associated with synchronization window.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -451,6 +462,7 @@ func ResourceProject() *schema.Resource {
 												"namespaces": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "Namespaces associated with synchronization window.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -459,6 +471,7 @@ func ResourceProject() *schema.Resource {
 												"clusters": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "Clusters associated with synchronization window.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -467,11 +480,13 @@ func ResourceProject() *schema.Resource {
 												"manual_sync": {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Computed:    true,
 													Description: "Whether manual synchronization is enabled.",
 												},
 												"time_zone": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Time zone of synchronization window.",
 												},
 											},
@@ -1010,7 +1025,7 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
 				syncData := sr[0].(map[string]interface{})
 
-				if sync, ok := syncData["sync_window"].([]interface{}); ok {
+				if sync, ok := syncData["sync_windows"].([]interface{}); ok {
 					for _, r := range sync {
 						s := r.(map[string]interface{})
 						appprojectsSyncWindow = append(appprojectsSyncWindow, nextgen.AppprojectsSyncWindow{
@@ -1383,16 +1398,46 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
 				syncData := sr[0].(map[string]interface{})
 
-				if sync, ok := syncData["sync_window"].([]interface{}); ok {
+				if sync, ok := syncData["sync_windows"].([]interface{}); ok && len(sync) > 0 {
 					for _, r := range sync {
 						s := r.(map[string]interface{})
+						var applications []string
+						if a, ok := s["applications"].([]interface{}); ok && len(a) > 0 {
+							applications = make([]string, len(a))
+							if len(a) > 0 {
+								for i, v := range a {
+									applications[i] = fmt.Sprint(v)
+								}
+							}
+						}
+
+						var namespaces []string
+						if name, ok := s["namespaces"].([]interface{}); ok && len(name) > 0 {
+							namespaces = make([]string, len(name))
+							if len(name) > 0 {
+								for i, v := range name {
+									namespaces[i] = fmt.Sprint(v)
+								}
+							}
+						}
+
+						var clusters []string
+						if c, ok := s["clusters"].([]interface{}); ok && len(c) > 0 {
+							clusters = make([]string, len(c))
+							if len(c) > 0 {
+								for i, v := range c {
+									clusters[i] = fmt.Sprint(v)
+								}
+							}
+						}
+
 						appprojectsSyncWindow = append(appprojectsSyncWindow, nextgen.AppprojectsSyncWindow{
 							Kind:         s["kind"].(string),
 							Schedule:     s["schedule"].(string),
 							Duration:     s["duration"].(string),
-							Applications: s["applications"].([]string),
-							Namespaces:   s["namespaces"].([]string),
-							Clusters:     s["clusters"].([]string),
+							Applications: applications,
+							Namespaces:   namespaces,
+							Clusters:     clusters,
 							ManualSync:   s["manual_sync"].(bool),
 							TimeZone:     s["time_zone"].(string),
 						})
@@ -1545,6 +1590,66 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 		destination["name"] = projects.Spec.Destinations[0].Name
 		destinationList = append(destinationList, destination)
 		spec["destinations"] = destinationList
+		orphanList := []interface{}{}
+		orphan := map[string]interface{}{}
+		orphan["warn"] = projects.Spec.OrphanedResources.Warn
+		orphanList = append(orphanList, orphan)
+		spec["orphaned_resources"] = orphanList
+		// Convert 'namespace_resource_blacklist' field
+		if len(projects.Spec.NamespaceResourceBlacklist) > 0 {
+			nsResourceBlacklist := make([]interface{}, len(projects.Spec.NamespaceResourceBlacklist))
+			for i, item := range projects.Spec.NamespaceResourceBlacklist {
+				nsResourceBlacklist[i] = map[string]interface{}{
+					"group": item.Group,
+					"kind":  item.Kind,
+				}
+			}
+			spec["namespace_resource_blacklist"] = nsResourceBlacklist
+		}
+		if len(projects.Spec.NamespaceResourceWhitelist) > 0 {
+			nsResourceWhitelist := make([]interface{}, len(projects.Spec.NamespaceResourceWhitelist))
+			for i, item := range projects.Spec.NamespaceResourceWhitelist {
+				nsResourceWhitelist[i] = map[string]interface{}{
+					"group": item.Group,
+					"kind":  item.Kind,
+				}
+			}
+			spec["namespace_resource_whitelist"] = nsResourceWhitelist
+		}
+		if len(projects.Spec.Roles) > 0 {
+			rolesList := make([]interface{}, len(projects.Spec.Roles))
+			for i, item := range projects.Spec.Roles {
+				jwtTokensList := make([]interface{}, len(item.JwtTokens))
+				for j, token := range item.JwtTokens {
+					jwtTokensList[j] = map[string]interface{}{
+						"iat": token.Iat,
+					}
+				}
+				rolesList[i] = map[string]interface{}{
+					"description": item.Description,
+					"name":        item.Name,
+					"policies":    item.Policies,
+					"groups":      item.Groups,
+					"jwt_tokens":  jwtTokensList,
+				}
+			}
+			spec["roles"] = rolesList
+		}
+		if len(projects.Spec.SyncWindows) > 0 {
+			syncWindowsList := make([]interface{}, len(projects.Spec.SyncWindows))
+			for i, item := range projects.Spec.SyncWindows {
+				syncWindowsList[i] = map[string]interface{}{
+					"applications": item.Applications,
+					"duration":     item.Duration,
+					"kind":         item.Kind,
+					"manual_sync":  item.ManualSync,
+					"schedule":     item.Schedule,
+					"namespaces":   item.Namespaces,
+					"clusters":     item.Clusters,
+				}
+			}
+			spec["sync_windows"] = syncWindowsList
+		}
 		specdataList = append(specdataList, spec)
 		project["spec"] = specdataList
 	}

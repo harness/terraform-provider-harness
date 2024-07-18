@@ -21,13 +21,13 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee9990deeeju1", "*"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "my-project-3", "*"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee9990deeeju1", "roll"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "my-project-3", "roll"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
@@ -54,7 +54,7 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 				metadata {
 					name = "%[3]s"
 					namespace = "rollouts"
-					finalizers = ["name"]
+					finalizers = ["resources-finalizer.argocd.argoproj.io"]
 					generate_name = "%[3]s"
 					labels = {
 						v1 = "k1"
@@ -62,62 +62,72 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 					annotations = {
 						v1 = "k1"
 					}
-					owner_references {
-						name = "t1"
-						kind = "t2"
-						api_version = "v1"
-						uid = "uid"
-					}					
-					managed_fields {
-						manager = "agent"
-						operation = "Update"
-						time      = {}
-						fields_v1 = {}
-					}
 				}
 				spec {
 					cluster_resource_whitelist {
 						group = "*"
-						kind = "*"
+						kind = "Namespace"
 					}
 					destinations {
-						namespace = "rollouts"
-						server = "*"
-						name = "%[3]s"
+						namespace = "guestbook"
+						server = "https://kubernetes.default.svc"
+						name = "in-cluster"
 					}
 					roles {
 						name = "read-only"
 						description = "Read-only privileges to my-project"
-						policies = ["proj:my-project:read-only", "applications", "get", "my-project/*", "allow"]
-						jwt_tokens {
-							iat = "iat"
-							exp = "exp"
-							id = "id"
-						}
+						policies = ["p, proj:%[3]s:read-only, applications, get, %[3]s/*, allow"]
 						groups = ["my-oidc-group"]
-
+					}
+					roles {
+						name = "ci-role"
+						description = "Sync privileges for guestbook-dev"
+						policies = ["p, proj:%[3]s:ci-role, applications, sync, %[3]s/guestbook-dev, allow"]
+						jwt_tokens{
+							iat = "1535390316"
+						}
 					}
 					sync_windows{
 						kind = "allow"
 						schedule = "10 1 * * *"
 						duration = "1h"
 						applications = ["*-prod"]
-						namespaces = ["rollouts"]
-						clusters = ["in-cluster"]
 						manual_sync = "true"
-						time_zone = "time_zone"
  					}
+					 sync_windows{
+						kind = "deny"
+						schedule = "0 22 * * *"
+						duration = "1h"
+						namespaces = ["default"]
+ 					}
+					 sync_windows{
+						kind = "allow"
+						schedule = "0 23 * * *"
+						duration = "1h"
+						clusters = ["in-cluster", "cluster1"]
+ 					}
+					namespace_resource_blacklist{
+						group = "group"
+						kind = "ResourceQuota"
+					}
+					namespace_resource_blacklist{
+						group = "group2"
+						kind = "LimitRange"
+					}
+					namespace_resource_blacklist{
+						group = "group3"
+						kind = "NetworkPolicy"
+					}
 					namespace_resource_whitelist{
-						group = "*"
-						kind = "*"
+						group = "apps"
+						kind = "Deployment"
 					}
-
-					cluster_resource_blacklist{
-						group = "*"
-						kind = "*"
+					namespace_resource_whitelist{
+						group = "apps"
+						kind = "StatefulSet"
 					}
-					signature_keys {
-						key_id = "*"
+					orphaned_resources {
+						warn = "false"
 					}
 					source_repos = ["*"]
 				}
