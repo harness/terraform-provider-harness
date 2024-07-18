@@ -21,13 +21,13 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee9990eee", "*"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee9990deeeju1", "*"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
 			},
 			{
-				Config: testAccResourceGitopsProjectUpdateAccountLevel(agentId, accountId, "14a3dc9eeee9990eee", "roll"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "14a3dc9eeee9990deeeju1", "roll"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
@@ -52,12 +52,28 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 			upsert = true
 			project {
 				metadata {
-					generation = "1"
 					name = "%[3]s"
 					namespace = "rollouts"
 					finalizers = ["name"]
-					annotations = {}
-					labels    =  {}
+					generate_name = "%[3]s"
+					labels = {
+						v1 = "k1"
+					}
+					annotations = {
+						v1 = "k1"
+					}
+					owner_references {
+						name = "t1"
+						kind = "t2"
+						api_version = "v1"
+						uid = "uid"
+					}					
+					managed_fields {
+						manager = "agent"
+						operation = "Update"
+						time      = {}
+						fields_v1 = {}
+					}
 				}
 				spec {
 					cluster_resource_whitelist {
@@ -65,8 +81,43 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 						kind = "*"
 					}
 					destinations {
-						namespace = "%[4]s"
+						namespace = "rollouts"
 						server = "*"
+						name = "%[3]s"
+					}
+					roles {
+						name = "read-only"
+						description = "Read-only privileges to my-project"
+						policies = ["proj:my-project:read-only", "applications", "get", "my-project/*", "allow"]
+						jwt_tokens {
+							iat = "iat"
+							exp = "exp"
+							id = "id"
+						}
+						groups = ["my-oidc-group"]
+
+					}
+					sync_windows{
+						kind = "allow"
+						schedule = "10 1 * * *"
+						duration = "1h"
+						applications = ["*-prod"]
+						namespaces = ["rollouts"]
+						clusters = ["in-cluster"]
+						manual_sync = "true"
+						time_zone = "time_zone"
+ 					}
+					namespace_resource_whitelist{
+						group = "*"
+						kind = "*"
+					}
+
+					cluster_resource_blacklist{
+						group = "*"
+						kind = "*"
+					}
+					signature_keys {
+						key_id = "*"
 					}
 					source_repos = ["*"]
 				}

@@ -39,6 +39,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 				Description: "Identifier for the GitOps project.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
@@ -47,13 +48,13 @@ func DataSourceGitOpsProject() *schema.Resource {
 			},
 			"project": {
 				Type:        schema.TypeList,
-				Computed:    true,
+				Required:    true,
 				Description: "GitOps project configuration.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
 							Type:        schema.TypeList,
-							Computed:    true,
+							Required:    true,
 							Description: "Metadata details for the GitOps project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -65,6 +66,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 									"generate_name": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Generated name of the GitOps project.",
 									},
 									"namespace": {
@@ -75,26 +77,31 @@ func DataSourceGitOpsProject() *schema.Resource {
 									"self_link": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Self link of the GitOps project.",
 									},
 									"uid": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "UID of the GitOps project.",
 									},
 									"resource_version": {
 										Type:        schema.TypeString,
+										Computed:    true,
 										Optional:    true,
 										Description: "Resource version of the GitOps project.",
 									},
 									"generation": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Generation of the GitOps project.",
 									},
 									"deletion_grace_period_seconds": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Deletion grace period in seconds of the GitOps project.",
 									},
 									"labels": {
@@ -108,6 +115,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 									"annotations": {
 										Type:        schema.TypeMap,
 										Optional:    true,
+										Computed:    true,
 										Description: "Annotations associated with the GitOps project.",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -116,37 +124,44 @@ func DataSourceGitOpsProject() *schema.Resource {
 									"owner_references": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "Owner references associated with the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"api_version": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "API version of the owner reference.",
 												},
 												"kind": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Kind of the owner reference.",
 												},
 												"name": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Name of the owner reference.",
 												},
 												"uid": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "UID of the owner reference.",
 												},
 												"controller": {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Computed:    true,
 													Description: "Specifies whether the owner reference is a controller.",
 												},
 												"block_owner_deletion": {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Computed:    true,
 													Description: "Specifies whether to block owner deletion.",
 												},
 											},
@@ -166,8 +181,9 @@ func DataSourceGitOpsProject() *schema.Resource {
 										Description: "Name of the cluster associated with the GitOps project.",
 									},
 									"managed_fields": {
-										Type:        schema.TypeList,
-										Optional:    true,
+										Type:     schema.TypeList,
+										Optional: true,
+
 										Description: "Managed fields associated with the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -189,6 +205,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"time": {
 													Type:        schema.TypeMap,
 													Optional:    true,
+													Computed:    true,
 													Description: "Timestamp of the operation.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -202,6 +219,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"fields_v1": {
 													Type:        schema.TypeMap,
 													Optional:    true,
+													Computed:    true,
 													Description: "Raw fields associated with the GitOps project.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -220,7 +238,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 						},
 						"spec": {
 							Type:        schema.TypeList,
-							Computed:    true,
+							Required:    true,
 							Description: "Specification details for the GitOps project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -557,7 +575,6 @@ func DataSourceGitOpsProject() *schema.Resource {
 		},
 	}
 }
-
 func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, query_name string

@@ -44,6 +44,7 @@ func ResourceProject() *schema.Resource {
 				Description: "Identifier for the GitOps project.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
@@ -70,6 +71,7 @@ func ResourceProject() *schema.Resource {
 									"generate_name": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Generated name of the GitOps project.",
 									},
 									"namespace": {
@@ -80,26 +82,31 @@ func ResourceProject() *schema.Resource {
 									"self_link": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Self link of the GitOps project.",
 									},
 									"uid": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "UID of the GitOps project.",
 									},
 									"resource_version": {
 										Type:        schema.TypeString,
 										Computed:    true,
+										Optional:    true,
 										Description: "Resource version of the GitOps project.",
 									},
 									"generation": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Generation of the GitOps project.",
 									},
 									"deletion_grace_period_seconds": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Deletion grace period in seconds of the GitOps project.",
 									},
 									"labels": {
@@ -113,6 +120,7 @@ func ResourceProject() *schema.Resource {
 									"annotations": {
 										Type:        schema.TypeMap,
 										Optional:    true,
+										Computed:    true,
 										Description: "Annotations associated with the GitOps project.",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -121,37 +129,44 @@ func ResourceProject() *schema.Resource {
 									"owner_references": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "Owner references associated with the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"api_version": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "API version of the owner reference.",
 												},
 												"kind": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Kind of the owner reference.",
 												},
 												"name": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Name of the owner reference.",
 												},
 												"uid": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "UID of the owner reference.",
 												},
 												"controller": {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Computed:    true,
 													Description: "Specifies whether the owner reference is a controller.",
 												},
 												"block_owner_deletion": {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Computed:    true,
 													Description: "Specifies whether to block owner deletion.",
 												},
 											},
@@ -171,8 +186,9 @@ func ResourceProject() *schema.Resource {
 										Description: "Name of the cluster associated with the GitOps project.",
 									},
 									"managed_fields": {
-										Type:        schema.TypeList,
-										Optional:    true,
+										Type:     schema.TypeList,
+										Optional: true,
+
 										Description: "Managed fields associated with the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -194,6 +210,7 @@ func ResourceProject() *schema.Resource {
 												"time": {
 													Type:        schema.TypeMap,
 													Optional:    true,
+													Computed:    true,
 													Description: "Timestamp of the operation.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -207,6 +224,7 @@ func ResourceProject() *schema.Resource {
 												"fields_v1": {
 													Type:        schema.TypeMap,
 													Optional:    true,
+													Computed:    true,
 													Description: "Raw fields associated with the GitOps project.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -617,9 +635,9 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta inter
 		agentIdentifier = attr.(string)
 	}
 
-	// if attr, ok := d.GetOk("query_name"); ok {
-	// 	query_name = attr.(string)
-	// }
+	if attr, ok := d.GetOk("query_name"); ok {
+		query_name = attr.(string)
+	}
 
 	if v, ok := d.GetOk("project"); ok {
 		for _, item := range v.([]interface{}) {
@@ -666,7 +684,6 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	projectData := updateRequestBody(d)
-	projectData.Project.Metadata.ResourceVersion = d.Get("resource_version").(string)
 
 	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceUpdate(ctx, projectData, c.AccountId, agentIdentifier, projectData.Project.Metadata.Name, &nextgen.ProjectsApiAgentProjectServiceUpdateOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
@@ -816,6 +833,8 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 
 				var annotationsStr, labelsStr map[string]string
+				annotationsStr = make(map[string]string)
+				labelsStr = make(map[string]string)
 
 				for key, value := range annotations {
 					strKey := fmt.Sprintf("%v", key)
@@ -1008,6 +1027,34 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 			}
 
+			var appprojectsAppProjectStatus *nextgen.AppprojectsAppProjectStatus
+			if rawStatus, ok := d.GetOk("status"); ok {
+				if statusData, ok := rawStatus.([]interface{}); ok && len(statusData) > 0 {
+					statusMap := statusData[0].(map[string]interface{})
+					if jwtTokensByRole, ok := statusMap["jwtTokensByRole"]; ok {
+						if jwtTokens, ok := jwtTokensByRole.([]interface{}); ok && len(statusData) > 0 {
+							jwt := jwtTokens[0].(map[string]interface{})
+							appprojectsAppProjectStatus.JwtTokensByRole = make(map[string]nextgen.AppprojectsJwtTokens)
+							for key, value := range jwt {
+								appprojectsJwt := nextgen.AppprojectsJwtTokens{}
+								if items, ok := value.(map[string]interface{})["items"].([]interface{}); ok {
+									for _, item := range items {
+										itemMap := item.(map[string]interface{})
+										jwtToken := nextgen.AppprojectsJwtToken{
+											Iat: itemMap["iat"].(string),
+											Exp: itemMap["exp"].(string),
+											Id:  itemMap["id"].(string),
+										}
+										appprojectsJwt.Items = append(appprojectsJwt.Items, jwtToken)
+									}
+								}
+								appprojectsAppProjectStatus.JwtTokensByRole[key] = appprojectsJwt
+							}
+						}
+					}
+				}
+			}
+
 			var appprojectsSignatureKey []nextgen.AppprojectsSignatureKey
 			if crw, ok := projectData["spec"].([]interface{}); ok && len(crw) > 0 {
 				specData := crw[0].(map[string]interface{})
@@ -1038,8 +1085,8 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
 				Metadata: v1ObjectMeta,
 				Spec:     approjectsAppProjectSpec,
+				Status:   appprojectsAppProjectStatus,
 			}
-
 			projectsProjectUpdateRequest = nextgen.ProjectsProjectUpdateRequest{
 				Project: appprojectsAppProject,
 			}
@@ -1143,6 +1190,8 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 
 				var annotationsStr, labelsStr map[string]string
+				annotationsStr = make(map[string]string)
+				labelsStr = make(map[string]string)
 
 				for key, value := range annotations {
 					strKey := fmt.Sprintf("%v", key)
@@ -1268,21 +1317,37 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 					for _, r := range roles {
 						role := r.(map[string]interface{})
 						var appprojectsJwtToken []nextgen.AppprojectsJwtToken
-						if tokens, ok := role["jwt_tokens"].([]interface{}); ok {
+						if tokens, ok := role["jwt_tokens"].([]interface{}); ok && len(tokens) > 0 {
 							for _, t := range tokens {
-								token := t.(map[string]interface{})
-								appprojectsJwtToken = append(appprojectsJwtToken, nextgen.AppprojectsJwtToken{
-									Iat: token["iat"].(string),
-									Exp: token["exp"].(string),
-									Id:  token["id"].(string),
-								})
+								if t != nil {
+									token := t.(map[string]interface{})
+									appprojectsJwtToken = append(appprojectsJwtToken, nextgen.AppprojectsJwtToken{
+										Iat: token["iat"].(string),
+										Exp: token["exp"].(string),
+										Id:  token["id"].(string),
+									})
+								}
+							}
+						}
+						p := role["policies"].([]interface{})
+						policies := make([]string, len(p))
+						if len(p) > 0 {
+							for i, v := range p {
+								policies[i] = fmt.Sprint(v)
+							}
+						}
+						g := role["groups"].([]interface{})
+						groups := make([]string, len(g))
+						if len(g) > 0 {
+							for i, v := range g {
+								groups[i] = fmt.Sprint(v)
 							}
 						}
 						appprojectsProjectRole = append(appprojectsProjectRole, nextgen.AppprojectsProjectRole{
 							Name:        role["name"].(string),
 							Description: role["description"].(string),
-							Policies:    role["policies"].([]string),
-							Groups:      role["groups"].([]string),
+							Policies:    policies,
+							Groups:      groups,
 							JwtTokens:   appprojectsJwtToken,
 						})
 					}
@@ -1335,6 +1400,34 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 			}
 
+			var appprojectsAppProjectStatus *nextgen.AppprojectsAppProjectStatus
+			if rawStatus, ok := d.GetOk("status"); ok {
+				if statusData, ok := rawStatus.([]interface{}); ok && len(statusData) > 0 {
+					statusMap := statusData[0].(map[string]interface{})
+					if jwtTokensByRole, ok := statusMap["jwtTokensByRole"]; ok {
+						if jwtTokens, ok := jwtTokensByRole.([]interface{}); ok && len(statusData) > 0 {
+							jwt := jwtTokens[0].(map[string]interface{})
+							appprojectsAppProjectStatus.JwtTokensByRole = make(map[string]nextgen.AppprojectsJwtTokens)
+							for key, value := range jwt {
+								appprojectsJwt := nextgen.AppprojectsJwtTokens{}
+								if items, ok := value.(map[string]interface{})["items"].([]interface{}); ok {
+									for _, item := range items {
+										itemMap := item.(map[string]interface{})
+										jwtToken := nextgen.AppprojectsJwtToken{
+											Iat: itemMap["iat"].(string),
+											Exp: itemMap["exp"].(string),
+											Id:  itemMap["id"].(string),
+										}
+										appprojectsJwt.Items = append(appprojectsJwt.Items, jwtToken)
+									}
+								}
+								appprojectsAppProjectStatus.JwtTokensByRole[key] = appprojectsJwt
+							}
+						}
+					}
+				}
+			}
+
 			var appprojectsSignatureKey []nextgen.AppprojectsSignatureKey
 			if crw, ok := projectData["spec"].([]interface{}); ok && len(crw) > 0 {
 				specData := crw[0].(map[string]interface{})
@@ -1365,6 +1458,7 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
 				Metadata: v1ObjectMeta,
 				Spec:     approjectsAppProjectSpec,
+				Status:   appprojectsAppProjectStatus,
 			}
 
 			projectsProjectCreateRequest = nextgen.ProjectsProjectCreateRequest{
@@ -1377,76 +1471,83 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 	return projectsProjectCreateRequest
 }
 
-// // statusToMap converts Status struct to map.
-// func statusToMap(status Status) map[string]interface{} {
-// 	result := map[string]interface{}{
-// 		"jwtTokensByRole": jwttokensByRoleToMap(status.JWTTokensByRole),
-// 	}
-// 	return result
-// }
-
-// // jwttokensByRoleToMap converts map[string]struct{Items []JWToken} to map.
-// func jwttokensByRoleToMap(data map[string]struct{ Items []JWToken }) map[string]interface{} {
-// 	result := make(map[string]interface{})
-// 	for key, value := range data {
-// 		result[key] = map[string]interface{}{
-// 			"items": jwTokensToSlice(value.Items),
-// 		}
-// 	}
-// 	return result
-// }
-
-// // jwTokensFromSlice converts []interface{} to []JWToken.
-// func jwTokensFromSlice(data []interface{}) []JWToken {
-// 	result := make([]JWToken, len(data))
-// 	for i, v := range data {
-// 		item := v.(map[string]interface{})
-// 		result[i] = JWToken{
-// 			IAT: item["iat"].(string),
-// 			EXP: item["exp"].(string),
-// 			ID:  item["id"].(string),
-// 		}
-// 	}
-// 	return result
-// }
-
-// // jwTokensToSlice converts []JWToken to []interface{}.
-// func jwTokensToSlice(data []JWToken) []interface{} {
-// 	result := make([]interface{}, len(data))
-// 	for i, v := range data {
-// 		result[i] = map[string]interface{}{
-// 			"iat": v.IAT,
-// 			"exp": v.EXP,
-// 			"id":  v.ID,
-// 		}
-// 	}
-// 	return result
-// }
-
 func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppProject) {
 	d.SetId(projects.Metadata.Name)
-	d.Set("query_name", projects.Metadata.Name)
+	d.Set("account_id", "1bvyLackQK-Hapk25-Ry4w")
+	projectList := []interface{}{}
+	project := map[string]interface{}{}
 	if projects.Metadata != nil {
+		d.Set("query_name", projects.Metadata.Name)
 		metadataList := []interface{}{}
 		metadata := map[string]interface{}{}
+		var finalizers = projects.Metadata.Finalizers
+		metadata["finalizers"] = finalizers
 		metadata["name"] = projects.Metadata.Name
 		metadata["namespace"] = projects.Metadata.Namespace
 		metadata["generation"] = projects.Metadata.Generation
 		metadata["resource_version"] = projects.Metadata.ResourceVersion
 		metadata["uid"] = projects.Metadata.Uid
+		metadata["generate_name"] = projects.Metadata.GenerateName
+		metadata["deletion_grace_period_seconds"] = projects.Metadata.DeletionGracePeriodSeconds
+		annotationsStr := make(map[string]string)
+		for key, value := range projects.Metadata.Annotations {
+			strKey := fmt.Sprintf("%v", key)
+			strValue := fmt.Sprintf("%v", value)
+			annotationsStr[strKey] = strValue
+		}
+
+		labelsStr := make(map[string]string)
+		for key, value := range projects.Metadata.Labels {
+			strKey := fmt.Sprintf("%v", key)
+			strValue := fmt.Sprintf("%v", value)
+			labelsStr[strKey] = strValue
+		}
+		metadata["annotations"] = annotationsStr
+		metadata["labels"] = labelsStr
+		metadata["self_link"] = projects.Metadata.SelfLink
+		owner_referencesList := []interface{}{}
+		owner := map[string]interface{}{}
+		for _, k := range projects.Metadata.OwnerReferences {
+			owner["api_version"] = k.ApiVersion
+			owner["kind"] = k.Kind
+			owner["name"] = k.Name
+			owner["uid"] = k.Uid
+			owner_referencesList = append(owner_referencesList, owner)
+		}
+		manageFieldList := []interface{}{}
+		manageField := map[string]interface{}{}
+		for _, k := range projects.Metadata.ManagedFields {
+			manageField["manager"] = k.Manager
+			manageField["operation"] = k.Operation
+			manageFieldList = append(manageFieldList, manageField)
+		}
+		metadata["owner_references"] = owner_referencesList
+		metadata["managed_fields"] = manageFieldList
 		metadataList = append(metadataList, metadata)
+		project["metadata"] = metadataList
+	}
+
+	if projects.Spec != nil {
 		specdataList := []interface{}{}
 		spec := map[string]interface{}{}
-		spec["sourceRepos"] = projects.Spec.SourceRepos
-		spec["destinations"] = projects.Spec.Destinations
-		spec["cluster_resource_whitelist"] = projects.Spec.ClusterResourceWhitelist
+		var sourceRepoList = projects.Spec.SourceRepos
+		spec["source_repos"] = sourceRepoList
+		clusterResourceWhitelist := []interface{}{}
+		clusterResourceWhite := map[string]interface{}{}
+		clusterResourceWhite["group"] = projects.Spec.ClusterResourceWhitelist[0].Group
+		clusterResourceWhite["kind"] = projects.Spec.ClusterResourceWhitelist[0].Kind
+		clusterResourceWhitelist = append(clusterResourceWhitelist, clusterResourceWhite)
+		spec["cluster_resource_whitelist"] = clusterResourceWhitelist
+		destinationList := []interface{}{}
+		destination := map[string]interface{}{}
+		destination["namespace"] = projects.Spec.Destinations[0].Namespace
+		destination["server"] = projects.Spec.Destinations[0].Server
+		destination["name"] = projects.Spec.Destinations[0].Name
+		destinationList = append(destinationList, destination)
+		spec["destinations"] = destinationList
 		specdataList = append(specdataList, spec)
-		projectList := []interface{}{}
-		project := map[string]interface{}{}
-		project["metadata"] = metadataList
 		project["spec"] = specdataList
-		// project["status"] = projects.Status
-		projectList = append(projectList, project)
-		d.Set("project", projectList)
 	}
+	projectList = append(projectList, project)
+	d.Set("project", projectList)
 }
