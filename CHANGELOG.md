@@ -1,3 +1,13 @@
+# 0.31.9 (July 18,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_notification_rule: Added support for notification rule for SLO and MonitoredService` ([#1013](https://github.com/harness/terraform-provider-harness/issues/1013))
+
+ENHANCEMENTS:
+
+* resource_monitored_service: Add support for custom change sources in monitored service configuration. ([#1007](https://github.com/harness/terraform-provider-harness/issues/1007))
+
 # 0.31.8 (July 11,2024) 
 
 FEATURES:
