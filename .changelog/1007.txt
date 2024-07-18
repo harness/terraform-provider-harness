@@ -1,4 +1,3 @@
 ```release-note:enhancement
-harness_platform_pipeline: Added update call for git metadata in pipeline update flow.
-harness_platform_input_set: Added update call for git metadata in input_set update flow.
+resource_monitored_service: Add support for custom change sources in monitored service configuration.
 ```
