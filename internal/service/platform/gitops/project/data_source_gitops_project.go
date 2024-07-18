@@ -48,13 +48,13 @@ func DataSourceGitOpsProject() *schema.Resource {
 			},
 			"project": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "GitOps project configuration.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
 							Type:        schema.TypeList,
-							Required:    true,
+							Optional:    true,
 							Description: "Metadata details for the GitOps project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -181,25 +181,28 @@ func DataSourceGitOpsProject() *schema.Resource {
 										Description: "Name of the cluster associated with the GitOps project.",
 									},
 									"managed_fields": {
-										Type:     schema.TypeList,
-										Optional: true,
-
+										Type:        schema.TypeList,
+										Optional:    true,
+										Computed:    true,
 										Description: "Managed fields associated with the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"manager": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Manager responsible for the operation.",
 												},
 												"operation": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Operation type performed on the GitOps project.",
 												},
 												"api_version": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "API version of the operation performed.",
 												},
 												"time": {
@@ -214,6 +217,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"fields_type": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Type of the fields in the GitOps project.",
 												},
 												"fields_v1": {
@@ -228,6 +232,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"subresource": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Subresource associated with the GitOps project.",
 												},
 											},
@@ -238,7 +243,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 						},
 						"spec": {
 							Type:        schema.TypeList,
-							Required:    true,
+							Optional:    true,
 							Description: "Specification details for the GitOps project.",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -331,6 +336,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Description: "Groups associated with the role.",
+													Computed:    true,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -417,27 +423,32 @@ func DataSourceGitOpsProject() *schema.Resource {
 									"sync_windows": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "Synchronization windows for the GitOps project.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"kind": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Kind of synchronization window.",
 												},
 												"schedule": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Schedule of synchronization window.",
 												},
 												"duration": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Duration of synchronization window.",
 												},
 												"applications": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "Applications associated with synchronization window.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -446,6 +457,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"namespaces": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "Namespaces associated with synchronization window.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -454,6 +466,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"clusters": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "Clusters associated with synchronization window.",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -462,11 +475,13 @@ func DataSourceGitOpsProject() *schema.Resource {
 												"manual_sync": {
 													Type:        schema.TypeBool,
 													Optional:    true,
+													Computed:    true,
 													Description: "Whether manual synchronization is enabled.",
 												},
 												"time_zone": {
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 													Description: "Time zone of synchronization window.",
 												},
 											},
@@ -575,6 +590,7 @@ func DataSourceGitOpsProject() *schema.Resource {
 		},
 	}
 }
+
 func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, query_name string

@@ -136,33 +136,6 @@ func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, 
 	`, accountId, agentId, name, namespace)
 }
 
-func testAccResourceGitopsProjectUpdateAccountLevel(agentId string, accountId string, name string, namespace string) string {
-	return fmt.Sprintf(`	
-		resource "harness_platform_gitops_project" "test" {
-			account_id = "%[1]s"
-			agent_id = "%[2]s"
-			upsert = true
-			project {
-				metadata {
-					generation = "1"
-					name = "%[3]s"
-					namespace = "rollouts"
-				}
-				spec {
-					cluster_resource_whitelist {
-						group = "*"
-						kind = "*"
-					}
-					destinations {
-						namespace = "%[4]s"
-						server = "*"
-					}
-					source_repos = ["*"]
-				}
-			}
-		}
-	`, accountId, agentId, name, namespace)
-}
 func TestAccResourceGitopsProjectOrgLevel(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
@@ -206,28 +179,91 @@ func testAccResourceGitopsProjectOrgLevel(id string, name string, agentId string
 		    name = "%[2]s"
 	    }
 		resource "harness_platform_gitops_project" "test" {
-			account_id = "%[3]s"
-			org_id = harness_platform_organization.test.id
-			agent_id = "%[4]s"
+			account_id = "%[1]s"
+			agent_id = "%[2]s"
 			upsert = true
 			project {
 				metadata {
-					generation = "1"
-					name = "%[5]s"
+					name = "%[3]s"
 					namespace = "rollouts"
+					finalizers = ["resources-finalizer.argocd.argoproj.io"]
+					generate_name = "%[3]s"
+					labels = {
+						v1 = "k1"
+					}
+					annotations = {
+						v1 = "k1"
+					}
 				}
 				spec {
 					cluster_resource_whitelist {
 						group = "*"
-						kind = "*"
+						kind = "Namespace"
 					}
 					destinations {
-						namespace = "%[6]s"
-						server = "*"
+						namespace = "guestbook"
+						server = "https://kubernetes.default.svc"
+						name = "in-cluster"
+					}
+					roles {
+						name = "read-only"
+						description = "Read-only privileges to my-project"
+						policies = ["p, proj:%[3]s:read-only, applications, get, %[3]s/*, allow"]
+						groups = ["my-oidc-group"]
+					}
+					roles {
+						name = "ci-role"
+						description = "Sync privileges for guestbook-dev"
+						policies = ["p, proj:%[3]s:ci-role, applications, sync, %[3]s/guestbook-dev, allow"]
+						jwt_tokens{
+							iat = "1535390316"
+						}
+					}
+					sync_windows{
+						kind = "allow"
+						schedule = "10 1 * * *"
+						duration = "1h"
+						applications = ["*-prod"]
+						manual_sync = "true"
+ 					}
+					 sync_windows{
+						kind = "deny"
+						schedule = "0 22 * * *"
+						duration = "1h"
+						namespaces = ["default"]
+ 					}
+					 sync_windows{
+						kind = "allow"
+						schedule = "0 23 * * *"
+						duration = "1h"
+						clusters = ["in-cluster", "cluster1"]
+ 					}
+					namespace_resource_blacklist{
+						group = "group"
+						kind = "ResourceQuota"
+					}
+					namespace_resource_blacklist{
+						group = "group2"
+						kind = "LimitRange"
+					}
+					namespace_resource_blacklist{
+						group = "group3"
+						kind = "NetworkPolicy"
+					}
+					namespace_resource_whitelist{
+						group = "apps"
+						kind = "Deployment"
+					}
+					namespace_resource_whitelist{
+						group = "apps"
+						kind = "StatefulSet"
+					}
+					orphaned_resources {
+						warn = "false"
 					}
 					source_repos = ["*"]
 				}
 			}
 		}
-	`, id, name, accountId, agentId, metadat_name, namespace)
+	`, accountId, agentId, name, namespace)
 }
