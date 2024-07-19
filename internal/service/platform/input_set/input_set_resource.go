@@ -33,33 +33,33 @@ func ResourceInputSet() *schema.Resource {
 				Description: "Input Set YAML." + helpers.Descriptions.YamlText.String(),
 				Type:        schema.TypeString,
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 			},
 			"git_details": {
 				Description: "Contains parameters related to creating an Entity for Git Experience.",
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				Optional:    true,
-				Computed: true,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"branch_name": {
 							Description: "Name of the branch.",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed: true,
+							Computed:    true,
 						},
 						"file_path": {
 							Description: "File path of the Entity in the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed: true,
+							Computed:    true,
 						},
 						"commit_message": {
 							Description: "Commit message used for the merge commit.",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed: true,
+							Computed:    true,
 						},
 						"base_branch": {
 							Description: "Name of the default branch (this checks out a new branch titled by branch_name).",
@@ -71,20 +71,20 @@ func ResourceInputSet() *schema.Resource {
 							Description: "Identifier of the Harness Connector used for CRUD operations on the Entity." + helpers.Descriptions.ConnectorRefText.String(),
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed: true,
+							Computed:    true,
 						},
 						"store_type": {
 							Description:  "Specifies whether the Entity is to be stored in Git or not. Possible values: INLINE, REMOTE.",
 							Type:         schema.TypeString,
 							Optional:     true,
-							Computed: true,
+							Computed:     true,
 							ValidateFunc: validation.StringInSlice([]string{"INLINE", "REMOTE"}, false),
 						},
 						"repo_name": {
 							Description: "Name of the repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
-							Computed: true,
+							Computed:    true,
 						},
 						"last_object_id": {
 							Description: "Last object identifier (for Github). To be provided only when updating Pipeline.",
@@ -255,7 +255,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 					Body:           optional.NewInterface(input_set_import_request_body),
 					HarnessAccount: optional.NewString(c.AccountId)})
 
-		} else{
+		} else {
 			inputSet := buildCreateInputSet(d)
 			if inputSet.GitDetails != nil {
 				base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
@@ -274,7 +274,18 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		if inputSet.GitDetails != nil {
 			base_branch = optional.NewString(inputSet.GitDetails.BaseBranch)
 			commit_message = optional.NewString(inputSet.GitDetails.CommitMessage)
+
+			//Update the git metadata
+			_, httpResp, err = c.InputSetsApi.UpdateInputSetsGitMetadata(ctx, orgIdentifier, projectIdentifier, inputSet.Identifier, pipelineIdentifier, &nextgen.InputSetsApiUpdateInputSetGitMetadataOpts{
+				Body:           optional.NewInterface(inputSet),
+				HarnessAccount: optional.NewString(c.AccountId),
+			})
+
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
 		}
+
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 
@@ -306,7 +317,7 @@ func resourceInputSetCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
-		readInputSet(d, &resp, pipelineIdentifier, optional.NewString("REMOTE"), optional.EmptyString() , optional.EmptyString(), parent_entity_connector_ref)
+		readInputSet(d, &resp, pipelineIdentifier, optional.NewString("REMOTE"), optional.EmptyString(), optional.EmptyString(), parent_entity_connector_ref)
 
 		return nil
 	}

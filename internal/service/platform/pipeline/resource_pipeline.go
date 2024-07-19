@@ -252,10 +252,18 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 		pipeline_id = pipeline.Identifier
+
 		if pipeline.GitDetails != nil {
 			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 			branch_name = pipeline.GitDetails.BranchName
 			commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+			_, httpResp, err = c.PipelinesApi.UpdatePipelineGitMetadata(ctx, org_id, project_id, pipeline_id, &nextgen.PipelinesApiUpdatePipelineGitMetadataOpts{
+				Body:           optional.NewInterface(pipeline),
+				HarnessAccount: optional.NewString(c.AccountId),
+			})
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
 		}
 		_, httpResp, err = c.PipelinesApi.UpdatePipeline(ctx, pipeline, org_id, project_id, id,
 			&nextgen.PipelinesApiUpdatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
