@@ -12,16 +12,19 @@ import (
 )
 
 func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
-	resourceName := "harness_platform_gitops_project.test"
-	agentId := "account.rollouts"
-	accountId := "1bvyLackQK-Hapk25-Ry4w"
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
+	id = strings.ReplaceAll(id, "_", "")
+	name := id
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	resourceName := "harness_platform_gitops_repository.test"
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, "my-project-3", "*"),
+				Config: testAccResourceGitopsProjectAccountLevel(agentId, accountId, name, "*"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "agent_id", agentId),
 				),
