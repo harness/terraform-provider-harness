@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
-	resourceName := "harness_platform_gitops_project.test"
+	resourceName := "harness_platform_gitops_app_project.test"
 	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
@@ -31,7 +31,7 @@ func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
 
 func testAccDataGitopsProjectOrgLevel(agentId string, accountId string, name string, namespace string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_gitops_project" "test" {
+		resource "harness_platform_gitops_app_project" "test" {
 			account_id = "%[1]s"
 			agent_id = "%[2]s"
 			upsert = true
@@ -40,7 +40,6 @@ func testAccDataGitopsProjectOrgLevel(agentId string, accountId string, name str
 					name = "%[3]s"
 					namespace = "rollouts"
 					finalizers = ["resources-finalizer.argocd.argoproj.io"]
-					generate_name = "%[3]s"
 					labels = {
 						v1 = "k1"
 					}
@@ -118,11 +117,11 @@ func testAccDataGitopsProjectOrgLevel(agentId string, accountId string, name str
 				}
 			}
 		}
-		data "harness_platform_gitops_project" "test" {
-			depends_on = [harness_platform_gitops_project.test]	
+		data "harness_platform_gitops_app_project" "test" {
+			depends_on = [harness_platform_gitops_app_project.test]	
 			account_id = "%[1]s"
-			agent_id = harness_platform_gitops_project.test.agent_id
-			query_name = harness_platform_gitops_project.test.project[0].metadata[0].name
+			agent_id = harness_platform_gitops_app_project.test.agent_id
+			query_name = harness_platform_gitops_app_project.test.project[0].metadata[0].name
 		}
 	`, accountId, agentId, name, namespace)
 }

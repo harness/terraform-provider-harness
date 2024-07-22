@@ -68,46 +68,10 @@ func ResourceProject() *schema.Resource {
 										Optional:    true,
 										Description: "Name of the GitOps project.",
 									},
-									"generate_name": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Computed:    true,
-										Description: "Generated name of the GitOps project.",
-									},
 									"namespace": {
 										Type:        schema.TypeString,
 										Optional:    true,
 										Description: "Namespace of the GitOps project.",
-									},
-									"self_link": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Computed:    true,
-										Description: "Self link of the GitOps project.",
-									},
-									"uid": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Computed:    true,
-										Description: "UID of the GitOps project.",
-									},
-									"resource_version": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Optional:    true,
-										Description: "Resource version of the GitOps project.",
-									},
-									"generation": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Computed:    true,
-										Description: "Generation of the GitOps project.",
-									},
-									"deletion_grace_period_seconds": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Computed:    true,
-										Description: "Deletion grace period in seconds of the GitOps project.",
 									},
 									"labels": {
 										Type:        schema.TypeMap,
@@ -797,34 +761,16 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 					}
 				}
 
-				var generationName, selfLink, uid, resourceVersion, namespace, name, generation, deletionGracePeriodSeconds, clusterName string
+				var namespace, name, clusterName string
 				var finalizers []interface{}
 				var labels, annotations map[string]interface{}
-				if nil != mdData["generate_name"] {
-					generationName = mdData["generate_name"].(string)
-				}
-				if nil != mdData["generation"] {
-					generation = mdData["generation"].(string)
-				}
-				if nil != mdData["self_link"] {
-					selfLink = mdData["self_link"].(string)
-				}
-				if nil != mdData["uid"] {
-					uid = mdData["uid"].(string)
-				}
-				if nil != mdData["resource_version"] {
-					resourceVersion = mdData["resource_version"].(string)
-				}
-
 				if nil != mdData["namespace"] {
 					namespace = mdData["namespace"].(string)
 				}
 				if nil != mdData["name"] {
 					name = mdData["name"].(string)
 				}
-				if nil != mdData["deletion_grace_period_seconds"] {
-					deletionGracePeriodSeconds = mdData["deletion_grace_period_seconds"].(string)
-				}
+
 				if nil != mdData["cluster_name"] {
 					clusterName = mdData["cluster_name"].(string)
 				}
@@ -864,20 +810,14 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 
 				v1ObjectMeta = &nextgen.V1ObjectMeta{
-					Generation:                 generation,
-					Name:                       name,
-					GenerateName:               generationName,
-					Namespace:                  namespace,
-					SelfLink:                   selfLink,
-					Uid:                        uid,
-					ResourceVersion:            resourceVersion,
-					DeletionGracePeriodSeconds: deletionGracePeriodSeconds,
-					Finalizers:                 s,
-					ClusterName:                clusterName,
-					Labels:                     labelsStr,
-					Annotations:                annotationsStr,
-					OwnerReferences:            v1OwnerReference,
-					ManagedFields:              v1ManagedFieldsEntry,
+					Name:            name,
+					Namespace:       namespace,
+					Finalizers:      s,
+					ClusterName:     clusterName,
+					Labels:          labelsStr,
+					Annotations:     annotationsStr,
+					OwnerReferences: v1OwnerReference,
+					ManagedFields:   v1ManagedFieldsEntry,
 				}
 			}
 
@@ -975,21 +915,37 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 					for _, r := range roles {
 						role := r.(map[string]interface{})
 						var appprojectsJwtToken []nextgen.AppprojectsJwtToken
-						if tokens, ok := role["jwt_tokens"].([]interface{}); ok {
+						if tokens, ok := role["jwt_tokens"].([]interface{}); ok && len(tokens) > 0 {
 							for _, t := range tokens {
-								token := t.(map[string]interface{})
-								appprojectsJwtToken = append(appprojectsJwtToken, nextgen.AppprojectsJwtToken{
-									Iat: token["iat"].(string),
-									Exp: token["exp"].(string),
-									Id:  token["id"].(string),
-								})
+								if t != nil {
+									token := t.(map[string]interface{})
+									appprojectsJwtToken = append(appprojectsJwtToken, nextgen.AppprojectsJwtToken{
+										Iat: token["iat"].(string),
+										Exp: token["exp"].(string),
+										Id:  token["id"].(string),
+									})
+								}
+							}
+						}
+						p := role["policies"].([]interface{})
+						policies := make([]string, len(p))
+						if len(p) > 0 {
+							for i, v := range p {
+								policies[i] = fmt.Sprint(v)
+							}
+						}
+						g := role["groups"].([]interface{})
+						groups := make([]string, len(g))
+						if len(g) > 0 {
+							for i, v := range g {
+								groups[i] = fmt.Sprint(v)
 							}
 						}
 						appprojectsProjectRole = append(appprojectsProjectRole, nextgen.AppprojectsProjectRole{
 							Name:        role["name"].(string),
 							Description: role["description"].(string),
-							Policies:    role["policies"].([]string),
-							Groups:      role["groups"].([]string),
+							Policies:    policies,
+							Groups:      groups,
 							JwtTokens:   appprojectsJwtToken,
 						})
 					}
@@ -1025,16 +981,46 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 			if sr, ok := projectData["spec"].([]interface{}); ok && len(sr) > 0 {
 				syncData := sr[0].(map[string]interface{})
 
-				if sync, ok := syncData["sync_windows"].([]interface{}); ok {
+				if sync, ok := syncData["sync_windows"].([]interface{}); ok && len(sync) > 0 {
 					for _, r := range sync {
 						s := r.(map[string]interface{})
+						var applications []string
+						if a, ok := s["applications"].([]interface{}); ok && len(a) > 0 {
+							applications = make([]string, len(a))
+							if len(a) > 0 {
+								for i, v := range a {
+									applications[i] = fmt.Sprint(v)
+								}
+							}
+						}
+
+						var namespaces []string
+						if name, ok := s["namespaces"].([]interface{}); ok && len(name) > 0 {
+							namespaces = make([]string, len(name))
+							if len(name) > 0 {
+								for i, v := range name {
+									namespaces[i] = fmt.Sprint(v)
+								}
+							}
+						}
+
+						var clusters []string
+						if c, ok := s["clusters"].([]interface{}); ok && len(c) > 0 {
+							clusters = make([]string, len(c))
+							if len(c) > 0 {
+								for i, v := range c {
+									clusters[i] = fmt.Sprint(v)
+								}
+							}
+						}
+
 						appprojectsSyncWindow = append(appprojectsSyncWindow, nextgen.AppprojectsSyncWindow{
 							Kind:         s["kind"].(string),
 							Schedule:     s["schedule"].(string),
 							Duration:     s["duration"].(string),
-							Applications: s["applications"].([]string),
-							Namespaces:   s["namespaces"].([]string),
-							Clusters:     s["clusters"].([]string),
+							Applications: applications,
+							Namespaces:   namespaces,
+							Clusters:     clusters,
 							ManualSync:   s["manual_sync"].(bool),
 							TimeZone:     s["time_zone"].(string),
 						})
@@ -1102,6 +1088,7 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				Spec:     approjectsAppProjectSpec,
 				Status:   appprojectsAppProjectStatus,
 			}
+
 			projectsProjectUpdateRequest = nextgen.ProjectsProjectUpdateRequest{
 				Project: appprojectsAppProject,
 			}
@@ -1154,34 +1141,16 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 					}
 				}
 
-				var generationName, selfLink, uid, resourceVersion, namespace, name, generation, deletionGracePeriodSeconds, clusterName string
+				var namespace, name, clusterName string
 				var finalizers []interface{}
 				var labels, annotations map[string]interface{}
-				if nil != mdData["generate_name"] {
-					generationName = mdData["generate_name"].(string)
-				}
-				if nil != mdData["generation"] {
-					generation = mdData["generation"].(string)
-				}
-				if nil != mdData["self_link"] {
-					selfLink = mdData["self_link"].(string)
-				}
-				if nil != mdData["uid"] {
-					uid = mdData["uid"].(string)
-				}
-				if nil != mdData["resource_version"] {
-					resourceVersion = mdData["resource_version"].(string)
-				}
-
 				if nil != mdData["namespace"] {
 					namespace = mdData["namespace"].(string)
 				}
 				if nil != mdData["name"] {
 					name = mdData["name"].(string)
 				}
-				if nil != mdData["deletion_grace_period_seconds"] {
-					deletionGracePeriodSeconds = mdData["deletion_grace_period_seconds"].(string)
-				}
+
 				if nil != mdData["cluster_name"] {
 					clusterName = mdData["cluster_name"].(string)
 				}
@@ -1221,20 +1190,14 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 
 				v1ObjectMeta = &nextgen.V1ObjectMeta{
-					Generation:                 generation,
-					Name:                       name,
-					GenerateName:               generationName,
-					Namespace:                  namespace,
-					SelfLink:                   selfLink,
-					Uid:                        uid,
-					ResourceVersion:            resourceVersion,
-					DeletionGracePeriodSeconds: deletionGracePeriodSeconds,
-					Finalizers:                 s,
-					ClusterName:                clusterName,
-					Labels:                     labelsStr,
-					Annotations:                annotationsStr,
-					OwnerReferences:            v1OwnerReference,
-					ManagedFields:              v1ManagedFieldsEntry,
+					Name:            name,
+					Namespace:       namespace,
+					Finalizers:      s,
+					ClusterName:     clusterName,
+					Labels:          labelsStr,
+					Annotations:     annotationsStr,
+					OwnerReferences: v1OwnerReference,
+					ManagedFields:   v1ManagedFieldsEntry,
 				}
 			}
 
@@ -1529,11 +1492,6 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 		metadata["finalizers"] = finalizers
 		metadata["name"] = projects.Metadata.Name
 		metadata["namespace"] = projects.Metadata.Namespace
-		metadata["generation"] = projects.Metadata.Generation
-		metadata["resource_version"] = projects.Metadata.ResourceVersion
-		metadata["uid"] = projects.Metadata.Uid
-		metadata["generate_name"] = projects.Metadata.GenerateName
-		metadata["deletion_grace_period_seconds"] = projects.Metadata.DeletionGracePeriodSeconds
 		annotationsStr := make(map[string]string)
 		for key, value := range projects.Metadata.Annotations {
 			strKey := fmt.Sprintf("%v", key)
@@ -1549,7 +1507,6 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 		}
 		metadata["annotations"] = annotationsStr
 		metadata["labels"] = labelsStr
-		metadata["self_link"] = projects.Metadata.SelfLink
 		owner_referencesList := []interface{}{}
 		owner := map[string]interface{}{}
 		for _, k := range projects.Metadata.OwnerReferences {
