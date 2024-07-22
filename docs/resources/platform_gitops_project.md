@@ -13,17 +13,16 @@ description: |-
 ## Example Usage
 
 ```terraform
-// Create Account level gitOps project
-resource "harness_platform_gitops_project" "test" {
+// Create gitOps project with account level agent
+resource "harness_platform_gitops_app_project" "test" {
   account_id = "account_id"
   agent_id   = "agent_id"
   upsert     = true
   project {
     metadata {
-      name          = "name"
-      namespace     = "rollouts"
-      finalizers    = ["resources-finalizer.argocd.argoproj.io"]
-      generate_name = "generate_name"
+      name       = "name"
+      namespace  = "rollouts"
+      finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
       }
@@ -102,8 +101,8 @@ resource "harness_platform_gitops_project" "test" {
   }
 }
 
-// Create Project level gitOps project
-resource "harness_platform_gitops_project" "test" {
+// Create gitOps project with project level agent
+resource "harness_platform_gitops_app_project" "test" {
   account_id = "account_id"
   agent_id   = "agent_id"
   upsert     = true
@@ -111,10 +110,9 @@ resource "harness_platform_gitops_project" "test" {
   org_id     = "org_id"
   project {
     metadata {
-      name          = "name"
-      namespace     = "rollouts"
-      finalizers    = ["resources-finalizer.argocd.argoproj.io"]
-      generate_name = "generate_name"
+      name       = "name"
+      namespace  = "rollouts"
+      finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
       }
@@ -233,18 +231,12 @@ Optional:
 
 - `annotations` (Map of String) Annotations associated with the GitOps project.
 - `cluster_name` (String) Name of the cluster associated with the GitOps project.
-- `deletion_grace_period_seconds` (String) Deletion grace period in seconds of the GitOps project.
 - `finalizers` (List of String) Finalizers associated with the GitOps project.
-- `generate_name` (String) Generated name of the GitOps project.
-- `generation` (String) Generation of the GitOps project.
 - `labels` (Map of String) Labels associated with the GitOps project.
 - `managed_fields` (Block List) Managed fields associated with the GitOps project. (see [below for nested schema](#nestedblock--project--metadata--managed_fields))
 - `name` (String) Name of the GitOps project.
 - `namespace` (String) Namespace of the GitOps project.
 - `owner_references` (Block List) Owner references associated with the GitOps project. (see [below for nested schema](#nestedblock--project--metadata--owner_references))
-- `resource_version` (String) Resource version of the GitOps project.
-- `self_link` (String) Self link of the GitOps project.
-- `uid` (String) UID of the GitOps project.
 
 <a id="nestedblock--project--metadata--managed_fields"></a>
 ### Nested Schema for `project.metadata.managed_fields`
@@ -433,12 +425,12 @@ Optional:
 Import is supported using the following syntax:
 
 ```shell
-# Import an Account level Gitops Repository
-terraform import harness_platform_gitops_project.example <agent_id>/<query_name>
+# Import gitOps project with account level agent
+terraform import harness_platform_gitops_app_project.example <agent_id>/<query_name>
 
-# Import an Org level Gitops Repository
-terraform import harness_platform_gitops_repository.example <organization_id>/<agent_id>/<query_name>
+# Import gitOps project with org level agent
+terraform import harness_platform_gitops_app_project.example <organization_id>/<agent_id>/<query_name>
 
-# Import a Project level Gitops Repository
-terraform import harness_platform_gitops_repository.example <organization_id>/<project_id>/<agent_id>/<query_name>
+# Import gitOps project with project level agent
+terraform import harness_platform_gitops_app_project.example <organization_id>/<project_id>/<agent_id>/<query_name>
 ```

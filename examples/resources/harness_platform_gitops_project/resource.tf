@@ -1,14 +1,13 @@
-// Create Account level gitOps project
-resource "harness_platform_gitops_project" "test" {
+// Create gitOps project with account level agent
+resource "harness_platform_gitops_app_project" "test" {
   account_id = "account_id"
   agent_id   = "agent_id"
   upsert     = true
   project {
     metadata {
-      name          = "name"
-      namespace     = "rollouts"
-      finalizers    = ["resources-finalizer.argocd.argoproj.io"]
-      generate_name = "generate_name"
+      name       = "name"
+      namespace  = "rollouts"
+      finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
       }
@@ -87,8 +86,8 @@ resource "harness_platform_gitops_project" "test" {
   }
 }
 
-// Create Project level gitOps project
-resource "harness_platform_gitops_project" "test" {
+// Create gitOps project with project level agent
+resource "harness_platform_gitops_app_project" "test" {
   account_id = "account_id"
   agent_id   = "agent_id"
   upsert     = true
@@ -96,10 +95,9 @@ resource "harness_platform_gitops_project" "test" {
   org_id     = "org_id"
   project {
     metadata {
-      name          = "name"
-      namespace     = "rollouts"
-      finalizers    = ["resources-finalizer.argocd.argoproj.io"]
-      generate_name = "generate_name"
+      name       = "name"
+      namespace  = "rollouts"
+      finalizers = ["resources-finalizer.argocd.argoproj.io"]
       labels = {
         v1 = "k1"
       }
