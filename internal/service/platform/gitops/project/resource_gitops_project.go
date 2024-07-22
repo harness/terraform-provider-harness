@@ -90,52 +90,6 @@ func ResourceProject() *schema.Resource {
 											Type: schema.TypeString,
 										},
 									},
-									"owner_references": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Computed:    true,
-										Description: "Owner references associated with the GitOps project.",
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"api_version": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Computed:    true,
-													Description: "API version of the owner reference.",
-												},
-												"kind": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Computed:    true,
-													Description: "Kind of the owner reference.",
-												},
-												"name": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Computed:    true,
-													Description: "Name of the owner reference.",
-												},
-												"uid": {
-													Type:        schema.TypeString,
-													Optional:    true,
-													Computed:    true,
-													Description: "UID of the owner reference.",
-												},
-												"controller": {
-													Type:        schema.TypeBool,
-													Optional:    true,
-													Computed:    true,
-													Description: "Specifies whether the owner reference is a controller.",
-												},
-												"block_owner_deletion": {
-													Type:        schema.TypeBool,
-													Optional:    true,
-													Computed:    true,
-													Description: "Specifies whether to block owner deletion.",
-												},
-											},
-										},
-									},
 									"finalizers": {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -511,48 +465,6 @@ func ResourceProject() *schema.Resource {
 								},
 							},
 						},
-						"status": {
-							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Status details for the GitOps project.",
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"jwt_tokens_by_role": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Description: "JWT tokens by role status for the GitOps project.",
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"items": {
-													Type:        schema.TypeList,
-													Optional:    true,
-													Description: "List of JWT tokens by role.",
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-															"iat": {
-																Type:        schema.TypeString,
-																Optional:    true,
-																Description: "Issued At time of the JWT token.",
-															},
-															"exp": {
-																Type:        schema.TypeString,
-																Optional:    true,
-																Description: "Expiration time of the JWT token.",
-															},
-															"id": {
-																Type:        schema.TypeString,
-																Optional:    true,
-																Description: "ID of the JWT token.",
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
 					},
 				},
 			},
@@ -733,20 +645,6 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 
 			if md, ok := projectData["metadata"].([]interface{}); ok {
 				mdData := md[0].(map[string]interface{})
-				var v1OwnerReference []nextgen.V1OwnerReference
-				if ownerRefList, ok := mdData["owner_references"].([]interface{}); ok {
-					for _, w := range ownerRefList {
-						wData := w.(map[string]interface{})
-						v1OwnerReference = append(v1OwnerReference, nextgen.V1OwnerReference{
-							ApiVersion:         wData["api_version"].(string),
-							Kind:               wData["kind"].(string),
-							Name:               wData["name"].(string),
-							Uid:                wData["uid"].(string),
-							Controller:         wData["controller"].(bool),
-							BlockOwnerDeletion: wData["block_owner_deletion"].(bool),
-						})
-					}
-				}
 				var v1ManagedFieldsEntry []nextgen.V1ManagedFieldsEntry
 				if managerFieldsList, ok := mdData["managed_fields"].([]interface{}); ok {
 					for _, w := range managerFieldsList {
@@ -810,14 +708,13 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 
 				v1ObjectMeta = &nextgen.V1ObjectMeta{
-					Name:            name,
-					Namespace:       namespace,
-					Finalizers:      s,
-					ClusterName:     clusterName,
-					Labels:          labelsStr,
-					Annotations:     annotationsStr,
-					OwnerReferences: v1OwnerReference,
-					ManagedFields:   v1ManagedFieldsEntry,
+					Name:          name,
+					Namespace:     namespace,
+					Finalizers:    s,
+					ClusterName:   clusterName,
+					Labels:        labelsStr,
+					Annotations:   annotationsStr,
+					ManagedFields: v1ManagedFieldsEntry,
 				}
 			}
 
@@ -1113,20 +1010,6 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 
 			if md, ok := projectData["metadata"].([]interface{}); ok {
 				mdData := md[0].(map[string]interface{})
-				var v1OwnerReference []nextgen.V1OwnerReference
-				if ownerRefList, ok := mdData["owner_references"].([]interface{}); ok {
-					for _, w := range ownerRefList {
-						wData := w.(map[string]interface{})
-						v1OwnerReference = append(v1OwnerReference, nextgen.V1OwnerReference{
-							ApiVersion:         wData["api_version"].(string),
-							Kind:               wData["kind"].(string),
-							Name:               wData["name"].(string),
-							Uid:                wData["uid"].(string),
-							Controller:         wData["controller"].(bool),
-							BlockOwnerDeletion: wData["block_owner_deletion"].(bool),
-						})
-					}
-				}
 				var v1ManagedFieldsEntry []nextgen.V1ManagedFieldsEntry
 				if managerFieldsList, ok := mdData["managed_fields"].([]interface{}); ok {
 					for _, w := range managerFieldsList {
@@ -1190,14 +1073,13 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 
 				v1ObjectMeta = &nextgen.V1ObjectMeta{
-					Name:            name,
-					Namespace:       namespace,
-					Finalizers:      s,
-					ClusterName:     clusterName,
-					Labels:          labelsStr,
-					Annotations:     annotationsStr,
-					OwnerReferences: v1OwnerReference,
-					ManagedFields:   v1ManagedFieldsEntry,
+					Name:          name,
+					Namespace:     namespace,
+					Finalizers:    s,
+					ClusterName:   clusterName,
+					Labels:        labelsStr,
+					Annotations:   annotationsStr,
+					ManagedFields: v1ManagedFieldsEntry,
 				}
 			}
 
@@ -1408,34 +1290,6 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 				}
 			}
 
-			var appprojectsAppProjectStatus *nextgen.AppprojectsAppProjectStatus
-			if rawStatus, ok := d.GetOk("status"); ok {
-				if statusData, ok := rawStatus.([]interface{}); ok && len(statusData) > 0 {
-					statusMap := statusData[0].(map[string]interface{})
-					if jwtTokensByRole, ok := statusMap["jwtTokensByRole"]; ok {
-						if jwtTokens, ok := jwtTokensByRole.([]interface{}); ok && len(statusData) > 0 {
-							jwt := jwtTokens[0].(map[string]interface{})
-							appprojectsAppProjectStatus.JwtTokensByRole = make(map[string]nextgen.AppprojectsJwtTokens)
-							for key, value := range jwt {
-								appprojectsJwt := nextgen.AppprojectsJwtTokens{}
-								if items, ok := value.(map[string]interface{})["items"].([]interface{}); ok {
-									for _, item := range items {
-										itemMap := item.(map[string]interface{})
-										jwtToken := nextgen.AppprojectsJwtToken{
-											Iat: itemMap["iat"].(string),
-											Exp: itemMap["exp"].(string),
-											Id:  itemMap["id"].(string),
-										}
-										appprojectsJwt.Items = append(appprojectsJwt.Items, jwtToken)
-									}
-								}
-								appprojectsAppProjectStatus.JwtTokensByRole[key] = appprojectsJwt
-							}
-						}
-					}
-				}
-			}
-
 			var appprojectsSignatureKey []nextgen.AppprojectsSignatureKey
 			if crw, ok := projectData["spec"].([]interface{}); ok && len(crw) > 0 {
 				specData := crw[0].(map[string]interface{})
@@ -1466,7 +1320,6 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 			appprojectsAppProject = &nextgen.AppprojectsAppProject{
 				Metadata: v1ObjectMeta,
 				Spec:     approjectsAppProjectSpec,
-				Status:   appprojectsAppProjectStatus,
 			}
 
 			projectsProjectCreateRequest = nextgen.ProjectsProjectCreateRequest{
@@ -1507,15 +1360,6 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 		}
 		metadata["annotations"] = annotationsStr
 		metadata["labels"] = labelsStr
-		owner_referencesList := []interface{}{}
-		owner := map[string]interface{}{}
-		for _, k := range projects.Metadata.OwnerReferences {
-			owner["api_version"] = k.ApiVersion
-			owner["kind"] = k.Kind
-			owner["name"] = k.Name
-			owner["uid"] = k.Uid
-			owner_referencesList = append(owner_referencesList, owner)
-		}
 		manageFieldList := []interface{}{}
 		manageField := map[string]interface{}{}
 		for _, k := range projects.Metadata.ManagedFields {
@@ -1523,7 +1367,6 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 			manageField["operation"] = k.Operation
 			manageFieldList = append(manageFieldList, manageField)
 		}
-		metadata["owner_references"] = owner_referencesList
 		metadata["managed_fields"] = manageFieldList
 		metadataList = append(metadataList, metadata)
 		project["metadata"] = metadataList
