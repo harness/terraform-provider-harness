@@ -31,6 +31,10 @@ func ResourceConnectorGcp() *schema.Resource {
 					"inherit_from_delegate",
 					"manual",
 				},
+				ExactlyOneOf: []string{
+					"manual",
+					"inherit_from_delegate",
+				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"secret_key_ref": {
@@ -55,6 +59,10 @@ func ResourceConnectorGcp() *schema.Resource {
 				AtLeastOneOf: []string{
 					"inherit_from_delegate",
 					"manual",
+				},
+				ExactlyOneOf: []string{
+					"manual",
+					"inherit_from_delegate",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -164,16 +172,14 @@ func readConnectorGcp(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 	case nextgen.GcpAuthTypes.ManualConfig:
 		d.Set("manual", []map[string]interface{}{
 			{
-				"secret_key_ref":      connector.Gcp.Credential.ManualConfig.SecretKeyRef,
-				"delegate_selectors":  connector.Gcp.DelegateSelectors,
-				"execute_on_delegate": connector.Gcp.ExecuteOnDelegate,
+				"secret_key_ref":     connector.Gcp.Credential.ManualConfig.SecretKeyRef,
+				"delegate_selectors": connector.Gcp.DelegateSelectors,
 			},
 		})
 	case nextgen.GcpAuthTypes.InheritFromDelegate:
 		d.Set("inherit_from_delegate", []map[string]interface{}{
 			{
-				"delegate_selectors":  connector.Gcp.DelegateSelectors,
-				"execute_on_delegate": true,
+				"delegate_selectors": connector.Gcp.DelegateSelectors,
 			},
 		})
 	default:
