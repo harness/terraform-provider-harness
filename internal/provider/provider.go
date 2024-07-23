@@ -275,7 +275,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_repo":                            repo.DataSourceRepo(),
 				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
-				"harness_platform_gitops_project":                  gitops_project.DataSourceGitOpsProject(),
+				"harness_platform_gitops_app_project":              gitops_project.DataSourceGitOpsProject(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -333,7 +333,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.ResourceGitopsAppProjectMapping(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
-				"harness_platform_gitops_project":                  gitops_project.ResourceProject(),
+				"harness_platform_gitops_app_project":              gitops_project.ResourceProject(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.ResourceInfrastructure(),
