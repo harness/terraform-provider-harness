@@ -22,4 +22,6 @@ type ServiceOverrideRequestDtov2 struct {
 	ClusterIdentifier string `json:"clusterIdentifier,omitempty"`
 	Type_             string `json:"type,omitempty"`
 	YamlInternal      string `json:"yamlInternal,omitempty"`
+	Yaml              string `json:"yaml,omitempty"`
+	Identifier        string `json:"identifier,omitempty"`
 }

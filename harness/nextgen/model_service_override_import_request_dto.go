@@ -14,10 +14,11 @@ the breaking change with respect to the generated code stub  # Authentication  <
 package nextgen
 
 type ServiceOverrideImportRequestDto struct {
-	OrgIdentifier string `json:"orgIdentifier,omitempty"`
+	OrgIdentifier     string `json:"orgIdentifier,omitempty"`
 	ProjectIdentifier string `json:"projectIdentifier,omitempty"`
-	EnvironmentRef string `json:"environmentRef"`
-	ServiceRef string `json:"serviceRef,omitempty"`
-	InfraIdentifier string `json:"infraIdentifier,omitempty"`
-	Type_ string `json:"type"`
+	EnvironmentRef    string `json:"environmentRef"`
+	ServiceRef        string `json:"serviceRef,omitempty"`
+	InfraIdentifier   string `json:"infraIdentifier,omitempty"`
+	Type_             string `json:"type"`
+	Identifier        string `json:"identifier,omitempty"`
 }

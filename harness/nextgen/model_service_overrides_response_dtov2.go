@@ -25,4 +25,5 @@ type ServiceOverridesResponseDtov2 struct {
 	Type_             string `json:"type,omitempty"`
 	YamlInternal      string `json:"yamlInternal,omitempty"`
 	NewlyCreated      bool   `json:"newlyCreated,omitempty"`
+	Yaml              string `json:"yaml,omitempty"`
 }
