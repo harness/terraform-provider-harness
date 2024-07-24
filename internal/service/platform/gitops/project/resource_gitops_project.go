@@ -73,6 +73,12 @@ func ResourceProject() *schema.Resource {
 										Optional:    true,
 										Description: "Namespace of the GitOps project.",
 									},
+									"resource_version": {
+										Type:        schema.TypeString,
+										Computed:    true,
+										Optional:    true,
+										Description: "Resource Version for the GitOps project",
+									},
 									"labels": {
 										Type:        schema.TypeMap,
 										Optional:    true,
@@ -659,7 +665,7 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 					}
 				}
 
-				var namespace, name, clusterName string
+				var namespace, name, clusterName, resource_version string
 				var finalizers []interface{}
 				var labels, annotations map[string]interface{}
 				if nil != mdData["namespace"] {
@@ -667,6 +673,10 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 				if nil != mdData["name"] {
 					name = mdData["name"].(string)
+				}
+
+				if nil != mdData["resource_version"] {
+					resource_version = mdData["resource_version"].(string)
 				}
 
 				if nil != mdData["cluster_name"] {
@@ -708,13 +718,14 @@ func updateRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectUpdateRequ
 				}
 
 				v1ObjectMeta = &nextgen.V1ObjectMeta{
-					Name:          name,
-					Namespace:     namespace,
-					Finalizers:    s,
-					ClusterName:   clusterName,
-					Labels:        labelsStr,
-					Annotations:   annotationsStr,
-					ManagedFields: v1ManagedFieldsEntry,
+					Name:            name,
+					Namespace:       namespace,
+					Finalizers:      s,
+					ClusterName:     clusterName,
+					ResourceVersion: resource_version,
+					Labels:          labelsStr,
+					Annotations:     annotationsStr,
+					ManagedFields:   v1ManagedFieldsEntry,
 				}
 			}
 
@@ -1343,6 +1354,7 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 		metadata := map[string]interface{}{}
 		var finalizers = projects.Metadata.Finalizers
 		metadata["finalizers"] = finalizers
+		metadata["resource_version"] = projects.Metadata.ResourceVersion
 		metadata["name"] = projects.Metadata.Name
 		metadata["namespace"] = projects.Metadata.Namespace
 		annotationsStr := make(map[string]string)
