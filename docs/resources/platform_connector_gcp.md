@@ -75,8 +75,11 @@ Required:
 
 Required:
 
-- `delegate_selectors` (Set of String) The delegates to connect with.
 - `secret_key_ref` (String) Reference to the Harness secret containing the secret key. To reference a secret at the organization scope, prefix 'org' to the expression: org.{identifier}. To reference a secret at the account scope, prefix 'account` to the expression: account.{identifier}.
+
+Optional:
+
+- `delegate_selectors` (Set of String) The delegates to connect with.
 
 ## Import
 

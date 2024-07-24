@@ -45,7 +45,7 @@ func ResourceConnectorGcp() *schema.Resource {
 						"delegate_selectors": {
 							Description: "The delegates to connect with.",
 							Type:        schema.TypeSet,
-							Required:    true,
+							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
 					},
