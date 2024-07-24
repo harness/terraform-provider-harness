@@ -8,6 +8,7 @@ import (
 	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
 	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/webhook"
 
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
@@ -416,6 +417,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
 				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
 				"harness_platform_connector_custom_secret_manager": connector.ResourceConnectorCSM(),
+				"harness_platform_gitx_webhook":                    webhook.ResourceWebhook(),
 			},
 		}
 
