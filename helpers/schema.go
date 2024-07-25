@@ -376,6 +376,22 @@ var ProjectResourceImporter = &schema.ResourceImporter{
 	},
 }
 
+var GitWebhookResourceImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+		d.Set("webhook_identifier", parts[0])
+		if len(parts) > 1 {
+			d.Set("org_id", parts[1])
+		}
+		if len(parts) > 2 {
+			d.Set("project_id", parts[2])
+		}
+		d.SetId(parts[0])
+
+		return []*schema.ResourceData{d}, nil
+	},
+}
+
 // GitopsAgentResourceImporter defines the importer configuration for all project level gitops agent resources.
 // The id used for the import should be in the format <org_id>/<project_id>/<identifier>/<agentId>
 var GitopsAgentResourceImporter = &schema.ResourceImporter{

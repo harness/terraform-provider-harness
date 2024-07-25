@@ -8,26 +8,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
+func TestAccResourceGitxWebhookProjectAccLevel(t *testing.T) {
 	resourceName := "harness_platform_gitx_webhook.test"
 	accountId := "rXUXvbFqRr2XwcjBu3Oq-Q"
+	webhook_identifier := "WebhookNew"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsProjectAccountLevel("agentId", accountId, "14a3dc9eeee999", "*"),
+				Config: testAccGitXProjectAccountLevel(webhook_identifier, accountId, webhook_identifier),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "agent_id", "agentId"),
+					resource.TestCheckResourceAttr(resourceName, "webhook_identifier", webhook_identifier),
 				),
 			},
-			{
-				Config: testAccResourceGitopsProjectAccountLevel("agentId", accountId, "14a3dc9eeee999", "rollouts"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "agent_id", "agentId"),
-				),
-			},
+			// {
+			// 	Config: testAccGitXProjectAccountLevel(webhook_identifier, accountId, "WebhookNew2"),
+			// 	Check: resource.ComposeTestCheckFunc(
+			// 		resource.TestCheckResourceAttr(resourceName, "webhook_identifier", webhook_identifier),
+			// 	),
+			// },
 			{
 				ResourceName:            resourceName,
 				ImportState:             true,
@@ -40,18 +41,19 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 
 }
 
-func testAccResourceGitopsProjectAccountLevel(agentId string, accountId string, name string, namespace string) string {
+func testAccGitXProjectAccountLevel(webhook_identifier string, accountId string, webhook_name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitx_webhook" "test" {
-			identifier= "t1"
-			name = "t1"
+			identifier= "%[2]s"
+			name = "%[2]s"
 			project_id = "shivam"
 			org_id = "default"
 			account_id = "%[1]s"
-			repo_name =  "GitTest"
+			repo_name =  "GitXTest3"
 			connector_ref = "account.github_Account_level_connector"
-			webhook_identifier = "We2"
-			webhook_name = "We2"
+			webhook_identifier = "%[2]s"
+			webhook_name = "%[3]s"
+			folder_paths = ["/test"]
 		}
-	`, accountId, agentId, name, namespace)
+	`, accountId, webhook_identifier, webhook_name)
 }

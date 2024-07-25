@@ -37,7 +37,7 @@ func TestAccResourceGitopsProjectAccLevel(t *testing.T) {
 				ImportState:             true,
 				ImportStateVerify:       true,
 				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
-				ImportStateIdFunc:       acctest.GitopsProjectImportStateIdFunc(resourceName),
+				ImportStateIdFunc:       acctest.GitopsWebhookImportStateIdFunc(resourceName),
 			},
 		},
 	})

@@ -18,10 +18,20 @@ func ResourceWebhook() *schema.Resource {
 		ReadContext:   resourceWebhookRead,
 		UpdateContext: resourceWebhookUpdate,
 		DeleteContext: resourceWebhookDelete,
-		CreateContext: resourcePipelineCreateOrUpdate,
-		Importer:      helpers.ProjectResourceImporter,
+		CreateContext: resourcePipelineCreate,
+		Importer:      helpers.GitWebhookResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "Unique identifier of the resource",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"name": {
+				Description: "Name of the Variable",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"account_id": {
 				Description: "Account identifier of the GitOps project.",
 				Type:        schema.TypeString,
@@ -65,6 +75,12 @@ func ResourceWebhook() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"is_enabled": {
+				Description: "Contains parameters for importing a pipeline",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -73,7 +89,7 @@ func ResourceWebhook() *schema.Resource {
 	return resource
 }
 
-func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourcePipelineCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var repo_name, connector_ref, webhook_identifier, webhook_name, orgIdentifier, projectIdentifier, accountIdentifier string
 
@@ -145,29 +161,214 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		}
 	}
 
-	// Soft delete lookup error handling
-	// https://harness.atlassian.net/browse/PL-23765
-	// if resp == nil {
-	// 	d.SetId("")
-	// 	d.MarkNewResource()
-	// 	return nil
-	// }
-	// setProjectDetails(d, &resp)
+	setWebhookDetails(d, accountIdentifier, orgIdentifier, projectIdentifier, webhook_identifier, webhook_name, repo_name, connector_ref)
 
 	return nil
 }
 
 func resourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// Implement resource read logic if needed
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	var webhook_identifier, orgIdentifier, projectIdentifier, accountIdentifier string
+
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("account_id"); ok {
+		accountIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("webhook_identifier"); ok {
+		webhook_identifier = attr.(string)
+	}
+
+	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+		resp, httpResp, err := c.ProjectGitxWebhooksApiService.GetProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, webhook_identifier, &nextgen.ProjectGitxWebhooksApiGetProjectGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+		if len(resp.WebhookIdentifier) > 0 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+		setWebhookUpdateDetails(d, accountIdentifier, orgIdentifier, projectIdentifier, &resp)
+
+	} else if len(orgIdentifier) > 0 {
+		resp, httpResp, err := c.OrgGitxWebhooksApiService.GetOrgGitxWebhook(ctx, orgIdentifier, webhook_identifier, &nextgen.OrgGitxWebhooksApiGetOrgGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+		if len(resp.WebhookIdentifier) > 0 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+		setWebhookUpdateDetails(d, accountIdentifier, orgIdentifier, projectIdentifier, &resp)
+	} else {
+		resp, httpResp, err := c.GitXWebhooksApiService.GetGitxWebhook(ctx, webhook_identifier, &nextgen.GitXWebhooksApiGetGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+		if len(resp.WebhookIdentifier) > 0 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+		setWebhookUpdateDetails(d, accountIdentifier, orgIdentifier, projectIdentifier, &resp)
+	}
+
 	return nil
 }
 
 func resourceWebhookUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// Implement resource update logic if needed
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	var repo_name, connector_ref, webhook_identifier, webhook_name, orgIdentifier, projectIdentifier, accountIdentifier string
+
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("account_id"); ok {
+		accountIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo_name"); ok {
+		repo_name = attr.(string)
+	}
+	if attr, ok := d.GetOk("connector_ref"); ok {
+		connector_ref = attr.(string)
+	}
+	if attr, ok := d.GetOk("webhook_identifier"); ok {
+		webhook_identifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("webhook_name"); ok {
+		webhook_name = attr.(string)
+	}
+
+	var folder_paths []string
+	if sr, ok := d.GetOk("folder_paths"); ok {
+
+		if path, ok := sr.([]interface{}); ok {
+			for _, repo := range path {
+				folder_paths = append(folder_paths, repo.(string))
+			}
+		}
+	}
+
+	// Prepare JSON payload
+	payload := map[string]interface{}{
+		"repo_name":          repo_name,
+		"connector_ref":      connector_ref,
+		"webhook_identifier": webhook_identifier,
+		"webhook_name":       webhook_name,
+		"folder_paths":       folder_paths,
+	}
+
+	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+		_, httpResp, err := c.ProjectGitxWebhooksApiService.UpdateProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, webhook_identifier, &nextgen.ProjectGitxWebhooksApiUpdateProjectGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+			Body:           optional.NewInterface(payload),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+	} else if len(orgIdentifier) > 0 {
+		_, httpResp, err := c.OrgGitxWebhooksApiService.UpdateOrgGitxWebhook(ctx, orgIdentifier, webhook_identifier, &nextgen.OrgGitxWebhooksApiUpdateOrgGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+			Body:           optional.NewInterface(payload),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+	} else {
+		_, httpResp, err := c.GitXWebhooksApiService.UpdateGitxWebhook(ctx, webhook_identifier, &nextgen.GitXWebhooksApiUpdateGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+			Body:           optional.NewInterface(payload),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+	}
+
+	setWebhookDetails(d, accountIdentifier, orgIdentifier, projectIdentifier, webhook_identifier, webhook_name, repo_name, connector_ref)
+
 	return nil
 }
 
 func resourceWebhookDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	// Implement resource delete logic if needed
+	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
+	var webhook_identifier, orgIdentifier, projectIdentifier, accountIdentifier string
+
+	if attr, ok := d.GetOk("org_id"); ok {
+		orgIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("project_id"); ok {
+		projectIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("account_id"); ok {
+		accountIdentifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("webhook_identifier"); ok {
+		webhook_identifier = attr.(string)
+	}
+
+	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+		httpResp, err := c.ProjectGitxWebhooksApiService.DeleteProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, webhook_identifier, &nextgen.ProjectGitxWebhooksApiDeleteProjectGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+
+	} else if len(orgIdentifier) > 0 {
+		httpResp, err := c.OrgGitxWebhooksApiService.DeleteOrgGitxWebhook(ctx, orgIdentifier, webhook_identifier, &nextgen.OrgGitxWebhooksApiDeleteOrgGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+	} else {
+		httpResp, err := c.GitXWebhooksApiService.DeleteGitxWebhook(ctx, webhook_identifier, &nextgen.GitXWebhooksApiDeleteGitxWebhookOpts{
+			HarnessAccount: optional.NewString(accountIdentifier),
+		})
+		if err != nil {
+			return helpers.HandleApiError(err, d, httpResp)
+		}
+	}
+
 	return nil
+}
+
+func setWebhookDetails(d *schema.ResourceData, account_id string, orgIdentifier string, projectIdentifier string, webhook_identifier string, webhook_name string, repo_name string, connector_ref string) {
+	d.SetId(webhook_identifier)
+	d.Set("account_id", account_id)
+	d.Set("webhook_identifier", webhook_identifier)
+	d.Set("webhook_name", webhook_name)
+	d.Set("repo_name", repo_name)
+	d.Set("connector_ref", connector_ref)
+	// d.Set("identifier", webhook_identifier)
+	// d.Set("name", webhook_identifier)
+}
+
+func setWebhookUpdateDetails(d *schema.ResourceData, account_id string, orgIdentifier string, projectIdentifier string, resp *nextgen.GitXWebhookResponse) {
+	d.SetId(resp.WebhookIdentifier)
+	d.Set("account_id", account_id)
+	d.Set("webhook_identifier", resp.WebhookIdentifier)
+	d.Set("webhook_name", resp.WebhookName)
+	d.Set("repo_name", resp.RepoName)
+	d.Set("connector_ref", resp.ConnectorRef)
+	d.Set("is_enabled", resp.IsEnabled)
+	d.Set("folder_paths", resp.FolderPaths)
+	// d.Set("identifier", resp.WebhookIdentifier)
+	// d.Set("name", resp.WebhookIdentifier)
 }
