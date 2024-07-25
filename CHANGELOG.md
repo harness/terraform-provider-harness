@@ -1,3 +1,10 @@
+# 0.32.2 (July 25,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_app_project: Rename the file name ([#1011](https://github.com/harness/terraform-provider-harness/issues/1011))
+* harness_platform_gitops_project: Added the resource version gitops project ([#1010](https://github.com/harness/terraform-provider-harness/issues/1010))
+
 # 0.32.1 (July 23,2024) 
 
 ENHANCEMENTS:
