@@ -212,40 +212,43 @@ func testAccOverridesProjectScope(id string, name string) string {
 		}
 
         resource "harness_platform_overrides" "test" {
+          identifier = "override1"
           org_id     = harness_platform_organization.test.id
           project_id = harness_platform_project.test.id
           env_id     = harness_platform_environment.test.id
           service_id = harness_platform_service.test.id
           type       = "ENV_SERVICE_OVERRIDE"
           yaml = <<-EOT
-variables:
-  - name: v1
-    type: String
-    value: val1
-manifests:
-  - manifest:
-      identifier: manifest1
-      type: Values
-      spec:
-        store:
-          type: Github
-          spec:
-            connectorRef: "<+input>"
-            gitFetchType: Branch
-            paths:
-              - files1
-            repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
-configFiles:
-  - configFile:
-      identifier: configFile1
-      spec:
-        store:
-          type: Harness
-          spec:
-            files:
-              - "<+org.description>"
+overrides:
+  variables:
+    - name: v1
+      type: String
+      value: val1
+  manifests:
+    - manifest:
+        identifier: manifest1
+        type: Values
+        spec:
+          store:
+            type: Github
+            spec:
+              connectorRef: "<+input>"
+              gitFetchType: Branch
+              paths:
+                - files1
+              repoName: "<+input>"
+              branch: master
+          skipResourceVersioning: false
+  configFiles:
+    - configFile:
+        identifier: configFile1
+        spec:
+          store:
+            type: Harness
+            spec:
+              files:
+                - "<+org.description>"
+
               EOT
 }
 `, id, name)
@@ -266,6 +269,7 @@ func testRemoteOverrides(id string, name string) string {
   }
 
   resource "harness_platform_overrides" "test" {
+    identifier = "override1"
     org_id     = harness_platform_organization.test.id
     project_id = harness_platform_project.test.id
      env_id     = "account.DoNotDeleteGitx"
@@ -279,34 +283,35 @@ func testRemoteOverrides(id string, name string) string {
        branch = "main"
        }
        yaml = <<-EOT
-       variables:
-         - name: v1
-           type: String
-           value: val1
-       manifests:
-         - manifest:
-             identifier: manifest1
-             type: Values
-             spec:
-               store:
-                 type: Github
-                 spec:
-                   connectorRef: "<+input>"
-                   gitFetchType: Branch
-                   paths:
-                     - files1
-                   repoName: "<+input>"
-                   branch: master
-               skipResourceVersioning: false
-       configFiles:
-         - configFile:
-             identifier: configFile1
-             spec:
-               store:
-                 type: Harness
-                 spec:
-                   files:
-                     - "<+org.description>"
+overrides:
+  variables:
+    - name: v1
+      type: String
+      value: val1
+  manifests:
+    - manifest:
+        identifier: manifest1
+        type: Values
+        spec:
+          store:
+            type: Github
+            spec:
+              connectorRef: "<+input>"
+              gitFetchType: Branch
+              paths:
+                - files1
+              repoName: "<+input>"
+              branch: master
+          skipResourceVersioning: false
+  configFiles:
+    - configFile:
+        identifier: configFile1
+        spec:
+          store:
+            type: Harness
+            spec:
+              files:
+                - "<+org.description>"
                      EOT
 }`, id, name)
 }
@@ -366,40 +371,41 @@ func testAccOverridesOrgScope(id string, name string) string {
 		}
 
 		resource "harness_platform_overrides" "test" {
+            identifier = "override1"
 			org_id = harness_platform_organization.test.id
 			env_id = "org.${harness_platform_environment.test.id}"
 			service_id = "org.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
             yaml = <<-EOT
-variables:
-  - name: v1
-    type: String
-    value: val1
-manifests:
-  - manifest:
-      identifier: manifest1
-      type: Values
-      spec:
-        store:
-          type: Github
-          spec:
-            connectorRef: "<+input>"
-            gitFetchType: Branch
-            paths:
-              - files1
-            repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
-configFiles:
-  - configFile:
-      identifier: configFile1
-      spec:
-        store:
-          type: Harness
-          spec:
-            files:
-              - "<+org.description>"
-
+overrides:
+  variables:
+    - name: v1
+      type: String
+      value: val1
+  manifests:
+    - manifest:
+        identifier: manifest1
+        type: Values
+        spec:
+          store:
+            type: Github
+            spec:
+              connectorRef: "<+input>"
+              gitFetchType: Branch
+              paths:
+                - files1
+              repoName: "<+input>"
+              branch: master
+          skipResourceVersioning: false
+  configFiles:
+    - configFile:
+        identifier: configFile1
+        spec:
+          store:
+            type: Harness
+            spec:
+              files:
+                - "<+org.description>"
               EOT
 		}
 `, id, name)
@@ -453,38 +459,40 @@ func testAccOverridesAccountScope(id string, name string) string {
 		}
 
 		resource "harness_platform_overrides" "test" {
+            identifier = "override1"
             env_id = "account.${harness_platform_environment.test.id}"
 			service_id = "account.${harness_platform_service.test.id}"
             type = "ENV_SERVICE_OVERRIDE"
             yaml = <<-EOT
-variables:
-  - name: v1
-    type: String
-    value: val1
-manifests:
-  - manifest:
-      identifier: manifest1
-      type: Values
-      spec:
-        store:
-          type: Github
-          spec:
-            connectorRef: "<+input>"
-            gitFetchType: Branch
-            paths:
-              - files1
-            repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
-configFiles:
-  - configFile:
-      identifier: configFile1
-      spec:
-        store:
-          type: Harness
-          spec:
-            files:
-              - "<+org.description>"
+overrides:
+  variables:
+    - name: v1
+      type: String
+      value: val1
+  manifests:
+    - manifest:
+        identifier: manifest1
+        type: Values
+        spec:
+          store:
+            type: Github
+            spec:
+              connectorRef: "<+input>"
+              gitFetchType: Branch
+              paths:
+                - files1
+              repoName: "<+input>"
+              branch: master
+          skipResourceVersioning: false
+  configFiles:
+    - configFile:
+        identifier: configFile1
+        spec:
+          store:
+            type: Harness
+            spec:
+              files:
+                - "<+org.description>"
               EOT
 		}
 `, id, name)

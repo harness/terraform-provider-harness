@@ -21,29 +21,30 @@ resource "harness_platform_overrides" "test" {
   infra_id   = "infraIdentifier"
   type       = "INFRA_SERVICE_OVERRIDE"
   yaml       = <<-EOT
-    variables:
-      - name: var1
-        type: String
-        value: val1
-    configFiles:
-      - configFile:
-          identifier: sampleConfigFile
-          spec:
-            store:
-              type: Harness
-              spec:
-                files:
-                  - account:/configFile1
-    manifests:
-      - manifest:
-          identifier: sampleManifestFile
-          type: Values
-          spec:
-            store:
-              type: Harness
-              spec:
-                files:
-                  - account:/manifestFile1
+overrides:
+  variables:
+    - name: var1
+      type: String
+      value: val1
+  configFiles:
+    - configFile:
+        identifier: sampleConfigFile
+        spec:
+          store:
+            type: Harness
+            spec:
+              files:
+                - account:/configFile1
+  manifests:
+    - manifest:
+        identifier: sampleManifestFile
+        type: Values
+        spec:
+          store:
+            type: Harness
+            spec:
+              files:
+                - account:/manifestFile1
   EOT
 }
 ```
@@ -66,25 +67,26 @@ resource "harness_platform_overrides" "test" {
             branch = "branch"
             }
           yaml = <<-EOT
-              variables:
-                - name: v1
-                  type: String
-                  value: val1
-              manifests:
-                - manifest:
-                    identifier: manifest1
-                    type: Values
-                    spec:
-                      store:
-                        type: Github
-                        spec:
-                          connectorRef: "<+input>"
-                          gitFetchType: Branch
-                          paths:
-                            - path-updated
-                          repoName: "<+input>"
-                          branch: master
-                      skipResourceVersioning: false
+overrides:
+  variables:
+    - name: v1
+      type: String
+      value: val1
+  manifests:
+    - manifest:
+        identifier: manifest1
+        type: Values
+        spec:
+          store:
+            type: Github
+            spec:
+              connectorRef: "<+input>"
+              gitFetchType: Branch
+              paths:
+                - path-updated
+              repoName: "<+input>"
+              branch: master
+          skipResourceVersioning: false
                             EOT
 }
 ```
@@ -132,11 +134,11 @@ resource "harness_platform_overrides" "test" {
 - `git_details` (Block List, Max: 1) Contains Git Information for remote entities from Git for Create/Update/Import (see [below for nested schema](#nestedblock--git_details))
 - `import_from_git` (Boolean) Flag to set if importing from Git
 - `is_force_import` (Boolean) Flag to set if force importing from Git
+- `identifier` (String) The identifier of the override entity.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `identifier` (String) The identifier of the override entity.
 
 <a id="nestedblock--git_details"></a>
 ### Nested Schema for `git_details`
