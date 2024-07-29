@@ -16,5 +16,5 @@ type TasManualDetails struct {
 	EndpointUrl    string `json:"endpointUrl"`
 	UsernameRef    string `json:"usernameRef,omitempty"`
 	PasswordRef    string `json:"passwordRef"`
-	ReferenceToken string `json:"refreshTokenRef"`
+	ReferenceToken string `json:"refreshTokenRef,omitempty"`
 }
