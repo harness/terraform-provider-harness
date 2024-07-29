@@ -22,46 +22,46 @@ func ResourceWebhook() *schema.Resource {
 		Importer:      helpers.GitWebhookResourceImporter,
 
 		Schema: map[string]*schema.Schema{
+			"identifier": {
+				Description: "GitX webhook identifier.",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
+			"name": {
+				Description: "GitX webhook name",
+				Type:        schema.TypeString,
+				Required:    true,
+			},
 			"org_id": {
-				Description: "Org identifier of the GitOps project.",
+				Description: "Organization Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the GitOps repository.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"identifier": {
-				Description: "If true, returns Pipeline YAML with Templates applied on it.",
+				Description: "Project Identifier for the Entity",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"repo_name": {
-				Description: "If true, returns Pipeline YAML with Templates applied on it.",
+				Description: "Repo Identifier for Gitx webhook.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"connector_ref": {
-				Description: "Pipeline YAML after resolving Templates (returned as a String).",
+				Description: "ConnectorRef to be used to create Gitx webhook.",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 			"folder_paths": {
-				Description: "Flag to set if importing from Git",
+				Description: "Folder Paths",
 				Type:        schema.TypeList,
 				Optional:    true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
-			"name": {
-				Description: "Contains parameters for importing a pipeline",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"is_enabled": {
-				Description: "Contains parameters for importing a pipeline",
+				Description: "Flag to enable the webhook",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
@@ -169,7 +169,7 @@ func resourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta inter
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
-		if len(resp.WebhookIdentifier) < 0 {
+		if len(resp.WebhookIdentifier) <= 0 {
 			d.SetId("")
 			d.MarkNewResource()
 			return nil
@@ -196,7 +196,7 @@ func resourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta inter
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
-		if len(resp.WebhookIdentifier) < 0 {
+		if len(resp.WebhookIdentifier) <= 0 {
 			d.SetId("")
 			d.MarkNewResource()
 			return nil

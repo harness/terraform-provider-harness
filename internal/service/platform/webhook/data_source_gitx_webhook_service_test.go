@@ -8,8 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccResourceGitxWebhookProjectAccLevel(t *testing.T) {
-	resourceName := "harness_platform_gitx_webhook.test"
+func TestDataSourceGitxWebhookProjectLevel(t *testing.T) {
+	resourceName := "data.harness_platform_gitx_webhook.test"
 	accountId := "rXUXvbFqRr2XwcjBu3Oq-Q"
 	webhook_identifier := "WebhookTest"
 	resource.UnitTest(t, resource.TestCase{
@@ -18,30 +18,17 @@ func TestAccResourceGitxWebhookProjectAccLevel(t *testing.T) {
 		//CheckDestroy:      testAccResourceGitopsRepositoryDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccGitXProjectAccountLevel(webhook_identifier, accountId, webhook_identifier),
+				Config: testDataSourceGitXProjectLevel(webhook_identifier, accountId, webhook_identifier),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", webhook_identifier),
 				),
-			},
-			{
-				Config: testAccGitXProjectAccountLevel(webhook_identifier, accountId, "WebhookNew2"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "WebhookNew2"),
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
-				ImportStateIdFunc:       acctest.GitopsWebhookImportStateIdFunc(resourceName),
 			},
 		},
 	})
 
 }
 
-func testAccGitXProjectAccountLevel(webhook_identifier string, accountId string, webhook_name string) string {
+func testDataSourceGitXProjectLevel(webhook_identifier string, accountId string, webhook_name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitx_webhook" "test" {
 			identifier= "%[2]s"
@@ -50,6 +37,12 @@ func testAccGitXProjectAccountLevel(webhook_identifier string, accountId string,
 			org_id = "default"
 			repo_name =  "GitXTest3"
 			connector_ref = "account.github_Account_level_connector"
+		}
+		data "harness_platform_gitx_webhook" "test" {
+			identifier = harness_platform_gitx_webhook.test.identifier
+			name = harness_platform_gitx_webhook.test.name
+			project_id = harness_platform_gitx_webhook.test.project_id
+			org_id = harness_platform_gitx_webhook.test.org_id
 		}
 	`, accountId, webhook_identifier, webhook_name)
 }
