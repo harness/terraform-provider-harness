@@ -269,7 +269,7 @@ func GitopsProjectImportStateIdFunc(resourceName string) resource.ImportStateIdF
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
 		agentId := primary.Attributes["agent_id"]
-		query_name := primary.Attributes["query_name"]
+		query_name := primary.Attributes["project.0.metadata.0.name"]
 		return fmt.Sprintf("%s/%s", agentId, query_name), nil
 	}
 }
