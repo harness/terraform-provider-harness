@@ -1,3 +1,28 @@
+# 0.32.2 (July 25,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_app_project: Rename the file name ([#1011](https://github.com/harness/terraform-provider-harness/issues/1011))
+* harness_platform_gitops_project: Added the resource version gitops project ([#1010](https://github.com/harness/terraform-provider-harness/issues/1010))
+
+# 0.32.1 (July 23,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_project: Update the schema of gitops project ([#1009](https://github.com/harness/terraform-provider-harness/issues/1009))
+* harness_platform_pipeline: Added update call for git metadata in pipeline update flow.
+harness_platform_template:Added update call for git metadata in template update flow. ([#1008](https://github.com/harness/terraform-provider-harness/issues/1008))
+
+# 0.31.9 (July 18,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_notification_rule: Added support for notification rule for SLO and MonitoredService` ([#1013](https://github.com/harness/terraform-provider-harness/issues/1013))
+
+ENHANCEMENTS:
+
+* resource_monitored_service: Add support for custom change sources in monitored service configuration. ([#1007](https://github.com/harness/terraform-provider-harness/issues/1007))
+
 # 0.31.8 (July 11,2024) 
 
 FEATURES:
