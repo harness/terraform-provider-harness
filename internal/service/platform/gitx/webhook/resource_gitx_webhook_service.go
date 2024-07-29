@@ -115,7 +115,7 @@ func resourceWebhookCreate(ctx context.Context, d *schema.ResourceData, meta int
 		"folder_paths":       folder_paths,
 	}
 
-	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+	if len(projectIdentifier) > 0 {
 		_, httpResp, err := c.ProjectGitxWebhooksApiService.CreateProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, &nextgen.ProjectGitxWebhooksApiCreateProjectGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 			Body:           optional.NewInterface(payload),
@@ -124,7 +124,7 @@ func resourceWebhookCreate(ctx context.Context, d *schema.ResourceData, meta int
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
-	} else if len(orgIdentifier) > 0 {
+	} else if len(orgIdentifier) > 0 && projectIdentifier == "" {
 		_, httpResp, err := c.OrgGitxWebhooksApiService.CreateOrgGitxWebhook(ctx, orgIdentifier, &nextgen.OrgGitxWebhooksApiCreateOrgGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 			Body:           optional.NewInterface(payload),

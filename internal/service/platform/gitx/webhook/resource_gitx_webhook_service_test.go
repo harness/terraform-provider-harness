@@ -6,30 +6,64 @@ import (
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
+	"github.com/harness/harness-go-sdk/harness/utils"
 	"github.com/harness/terraform-provider-harness/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestResourceGitxWebhookProjectLevel(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	updatedName := fmt.Sprintf("%s_updated", id)
 	resourceName := "harness_platform_gitx_webhook.test"
-	accountId := "rXUXvbFqRr2XwcjBu3Oq-Q"
-	webhook_identifier := "WebhookTest"
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccResourceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testGitXProjectProjectLevel(webhook_identifier, accountId, webhook_identifier),
+				Config: testGitXProjectProjectLevel(id, id),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", webhook_identifier),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testGitXProjectProjectLevel(webhook_identifier, accountId, "WebhookNew2"),
+				Config: testGitXProjectProjectLevel(id, updatedName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "WebhookNew2"),
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
+				ImportStateIdFunc:       acctest.GitopsWebhookImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+
+func TestResourceGitxWebhookOrgLevel(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	updatedName := fmt.Sprintf("%s_updated", id)
+	resourceName := "harness_platform_gitx_webhook.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testGitXProjectOrgLevel(id, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testGitXProjectOrgLevel(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 				),
 			},
 			{
@@ -89,60 +123,27 @@ func testAccGetResourceWebhook(resourceName string, state *terraform.State) (*ne
 	}
 }
 
-func TestResourceGitxWebhookOrgLevel(t *testing.T) {
-	resourceName := "harness_platform_gitx_webhook.test2"
-	accountId := "rXUXvbFqRr2XwcjBu3Oq-Q"
-	webhook_identifier := "WebhookTestOrg"
-	resource.UnitTest(t, resource.TestCase{
-		PreCheck:          func() { acctest.TestAccPreCheck(t) },
-		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccResourceDestroy(resourceName),
-		Steps: []resource.TestStep{
-			{
-				Config: testGitXProjectOrgLevel(webhook_identifier, accountId, webhook_identifier),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "identifier", webhook_identifier),
-				),
-			},
-			{
-				Config: testGitXProjectOrgLevel(webhook_identifier, accountId, "WebhookNewOrg2"),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "WebhookNewOrg2"),
-				),
-			},
-			{
-				ResourceName:            resourceName,
-				ImportState:             true,
-				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
-				ImportStateIdFunc:       acctest.GitopsWebhookImportStateIdFunc(resourceName),
-			},
-		},
-	})
-
-}
-
-func testGitXProjectOrgLevel(webhook_identifier string, accountId string, webhook_name string) string {
+func testGitXProjectOrgLevel(webhook_identifier string, webhook_name string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_gitx_webhook" "test2" {
-			identifier= "%[2]s"
-			name = "%[3]s"
+		resource "harness_platform_gitx_webhook" "test" {
+			identifier= "%[1]s"
+			name = "%[2]s"
 			org_id = "default"
 			repo_name =  "GitXTest3"
 			connector_ref = "account.github_Account_level_connector"
 		}
-	`, accountId, webhook_identifier, webhook_name)
+	`, webhook_identifier, webhook_name)
 }
 
-func testGitXProjectProjectLevel(webhook_identifier string, accountId string, webhook_name string) string {
+func testGitXProjectProjectLevel(webhook_identifier string, webhook_name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_gitx_webhook" "test" {
-			identifier= "%[2]s"
-			name = "%[3]s"
+			identifier= "%[1]s"
+			name = "%[2]s"
 			project_id = "shivam"
 			org_id = "default"
 			repo_name =  "GitXTest3"
 			connector_ref = "account.github_Account_level_connector"
 		}
-	`, accountId, webhook_identifier, webhook_name)
+	`, webhook_identifier, webhook_name)
 }
