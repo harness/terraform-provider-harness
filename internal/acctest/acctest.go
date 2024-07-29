@@ -277,7 +277,7 @@ func GitopsProjectImportStateIdFunc(resourceName string) resource.ImportStateIdF
 func GitopsWebhookImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
-		webhook_identifier := primary.Attributes["webhook_identifier"]
+		webhook_identifier := primary.Attributes["identifier"]
 		orgId := primary.Attributes["org_id"]
 		projId := primary.Attributes["project_id"]
 		return fmt.Sprintf("%s/%s/%s", webhook_identifier, orgId, projId), nil

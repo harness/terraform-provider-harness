@@ -379,7 +379,7 @@ var ProjectResourceImporter = &schema.ResourceImporter{
 var GitWebhookResourceImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 		parts := strings.Split(d.Id(), "/")
-		d.Set("webhook_identifier", parts[0])
+		d.Set("identifier", parts[0])
 		if len(parts) > 1 {
 			d.Set("org_id", parts[1])
 		}
