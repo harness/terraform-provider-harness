@@ -21,6 +21,7 @@ resource "harness_platform_slo" "example" {
     spec = jsonencode({
       monitoredServiceRef       = "monitoredServiceRef"
       serviceLevelIndicatorType = "Availability"
+      healthSourceRef           = "healthSourceRef" 
       serviceLevelIndicators = [
         {
           name       = "name"
