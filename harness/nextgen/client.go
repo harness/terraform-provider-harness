@@ -214,7 +214,10 @@ type APIClient struct {
 
 	WebhookTriggersApi *WebhookTriggersApiService
 
-	WorkspaceApi *WorkspacesApiService
+	WorkspaceApi                  *WorkspacesApiService
+	GitXWebhooksApiService        *GitXWebhooksApiService
+	ProjectGitxWebhooksApiService *ProjectGitxWebhooksApiService
+	OrgGitxWebhooksApiService     *OrgGitxWebhooksApiService
 }
 
 type service struct {
@@ -317,6 +320,9 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.WebhookEventHandlerApi = (*WebhookEventHandlerApiService)(&c.common)
 	c.WebhookTriggersApi = (*WebhookTriggersApiService)(&c.common)
 	c.WorkspaceApi = (*WorkspacesApiService)(&c.common)
+	c.GitXWebhooksApiService = (*GitXWebhooksApiService)(&c.common)
+	c.ProjectGitxWebhooksApiService = (*ProjectGitxWebhooksApiService)(&c.common)
+	c.OrgGitxWebhooksApiService = (*OrgGitxWebhooksApiService)(&c.common)
 	return c
 }
 
