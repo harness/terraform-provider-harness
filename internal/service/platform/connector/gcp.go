@@ -38,6 +38,7 @@ func ResourceConnectorGcp() *schema.Resource {
 				ExactlyOneOf: []string{
 					"manual",
 					"inherit_from_delegate",
+                    "oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -95,6 +96,7 @@ func ResourceConnectorGcp() *schema.Resource {
 				ExactlyOneOf: []string{
 					"manual",
 					"inherit_from_delegate",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -234,7 +236,6 @@ func buildConnectorGcp(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		if attr, ok := config["gcp_project_id"]; ok {
 			connector.Gcp.Credential.OidcConfig.GcpProjectId = attr.(string)
 		}
-
 	}
 
 	if attr, ok := d.GetOk("execute_on_delegate"); ok {

@@ -23,7 +23,8 @@ resource "harness_platform_connector_gcp" "test" {
   }
 }
 
-# Credentials inherit_from_delegate
+# Create Gcp connector using Oidc Authentication
+
 resource "harness_platform_connector_gcp" "test" {
   identifier  = "identifier"
   name        = "name"
