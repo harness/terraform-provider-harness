@@ -16,16 +16,6 @@ func DataSourceWebhook() *schema.Resource {
 		Description: "Resource for creating a Harness pipeline.",
 		ReadContext: dataSourceWebhookRead,
 		Schema: map[string]*schema.Schema{
-			"org_id": {
-				Description: "Identifier field of the organization the resource is scoped to.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description: "Identifier field of the project the resource is scoped to.",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"identifier": {
 				Description: "GitX webhook identifier.",
 				Type:        schema.TypeString,
@@ -39,8 +29,7 @@ func DataSourceWebhook() *schema.Resource {
 		},
 	}
 
-	helpers.SetProjectLevelResourceSchema(resource.Schema)
-	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 	return resource
 }
 
@@ -59,7 +48,7 @@ func dataSourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta int
 		webhook_identifier = attr.(string)
 	}
 
-	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+	if len(projectIdentifier) > 0 {
 		resp, httpResp, err := c.ProjectGitxWebhooksApiService.GetProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, webhook_identifier, &nextgen.ProjectGitxWebhooksApiGetProjectGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
@@ -73,14 +62,14 @@ func dataSourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta int
 		}
 		setWebhookUpdateDetails(d, c.AccountId, orgIdentifier, projectIdentifier, &resp)
 
-	} else if len(orgIdentifier) > 0 {
+	} else if len(orgIdentifier) > 0 && projectIdentifier == "" {
 		resp, httpResp, err := c.OrgGitxWebhooksApiService.GetOrgGitxWebhook(ctx, orgIdentifier, webhook_identifier, &nextgen.OrgGitxWebhooksApiGetOrgGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
-		if len(resp.WebhookIdentifier) > 0 {
+		if len(resp.WebhookIdentifier) <= 0 {
 			d.SetId("")
 			d.MarkNewResource()
 			return nil
