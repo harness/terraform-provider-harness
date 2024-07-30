@@ -32,16 +32,6 @@ func ResourceWebhook() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
-			"org_id": {
-				Description: "Organization Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
-			"project_id": {
-				Description: "Project Identifier for the Entity",
-				Type:        schema.TypeString,
-				Optional:    true,
-			},
 			"repo_name": {
 				Description: "Repo Identifier for Gitx webhook.",
 				Type:        schema.TypeString,
@@ -67,9 +57,7 @@ func ResourceWebhook() *schema.Resource {
 			},
 		},
 	}
-
-	helpers.SetProjectLevelResourceSchema(resource.Schema)
-	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
+	helpers.SetMultiLevelResourceSchema(resource.Schema)
 	return resource
 }
 
@@ -162,7 +150,7 @@ func resourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta inter
 		webhook_identifier = attr.(string)
 	}
 
-	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+	if len(projectIdentifier) > 0 {
 		resp, httpResp, err := c.ProjectGitxWebhooksApiService.GetProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, webhook_identifier, &nextgen.ProjectGitxWebhooksApiGetProjectGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
@@ -176,14 +164,14 @@ func resourceWebhookRead(ctx context.Context, d *schema.ResourceData, meta inter
 		}
 		setWebhookUpdateDetails(d, c.AccountId, orgIdentifier, projectIdentifier, &resp)
 
-	} else if len(orgIdentifier) > 0 {
+	} else if len(orgIdentifier) > 0 && projectIdentifier == "" {
 		resp, httpResp, err := c.OrgGitxWebhooksApiService.GetOrgGitxWebhook(ctx, orgIdentifier, webhook_identifier, &nextgen.OrgGitxWebhooksApiGetOrgGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 		})
 		if err != nil {
 			return helpers.HandleApiError(err, d, httpResp)
 		}
-		if len(resp.WebhookIdentifier) > 0 {
+		if len(resp.WebhookIdentifier) <= 0 {
 			d.SetId("")
 			d.MarkNewResource()
 			return nil
@@ -252,7 +240,7 @@ func resourceWebhookUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		"folder_paths":       folder_paths,
 	}
 
-	if len(orgIdentifier) > 0 && len(projectIdentifier) > 0 {
+	if len(projectIdentifier) > 0 {
 		_, httpResp, err := c.ProjectGitxWebhooksApiService.UpdateProjectGitxWebhook(ctx, orgIdentifier, projectIdentifier, webhook_identifier, &nextgen.ProjectGitxWebhooksApiUpdateProjectGitxWebhookOpts{
 			HarnessAccount: optional.NewString(c.AccountId),
 			Body:           optional.NewInterface(payload),
@@ -261,9 +249,9 @@ func resourceWebhookUpdate(ctx context.Context, d *schema.ResourceData, meta int
 			return helpers.HandleApiError(err, d, httpResp)
 		}
 
-	} else if len(orgIdentifier) > 0 {
+	} else if len(orgIdentifier) > 0 && projectIdentifier == "" {
 		_, httpResp, err := c.OrgGitxWebhooksApiService.UpdateOrgGitxWebhook(ctx, orgIdentifier, webhook_identifier, &nextgen.OrgGitxWebhooksApiUpdateOrgGitxWebhookOpts{
-			HarnessAccount: optional.NewString(accountIdentifier),
+			HarnessAccount: optional.NewString(c.AccountId),
 			Body:           optional.NewInterface(payload),
 		})
 		if err != nil {
@@ -271,7 +259,7 @@ func resourceWebhookUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		}
 	} else {
 		_, httpResp, err := c.GitXWebhooksApiService.UpdateGitxWebhook(ctx, webhook_identifier, &nextgen.GitXWebhooksApiUpdateGitxWebhookOpts{
-			HarnessAccount: optional.NewString(accountIdentifier),
+			HarnessAccount: optional.NewString(c.AccountId),
 			Body:           optional.NewInterface(payload),
 		})
 		if err != nil {

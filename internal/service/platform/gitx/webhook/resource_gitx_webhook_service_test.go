@@ -78,6 +78,39 @@ func TestResourceGitxWebhookOrgLevel(t *testing.T) {
 
 }
 
+func TestResourceGitxWebhookAccountLevel(t *testing.T) {
+	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(6))
+	updatedName := fmt.Sprintf("%s_updated", id)
+	resourceName := "harness_platform_gitx_webhook.test"
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { acctest.TestAccPreCheck(t) },
+		ProviderFactories: acctest.ProviderFactories,
+		CheckDestroy:      testAccResourceDestroy(resourceName),
+		Steps: []resource.TestStep{
+			{
+				Config: testGitXAccountLevel(id, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testGitXAccountLevel(id, updatedName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
+				),
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"upsert", "update_mask", "repo.0.type_"},
+				ImportStateIdFunc:       acctest.GitopsWebhookImportStateIdFunc(resourceName),
+			},
+		},
+	})
+
+}
+
 func testAccResourceDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		variable, _ := testAccGetResourceWebhook(resourceName, state)
@@ -129,6 +162,17 @@ func testGitXProjectOrgLevel(webhook_identifier string, webhook_name string) str
 			identifier= "%[1]s"
 			name = "%[2]s"
 			org_id = "default"
+			repo_name =  "GitXTest3"
+			connector_ref = "account.github_Account_level_connector"
+		}
+	`, webhook_identifier, webhook_name)
+}
+
+func testGitXAccountLevel(webhook_identifier string, webhook_name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_gitx_webhook" "test" {
+			identifier= "%[1]s"
+			name = "%[2]s"
 			repo_name =  "GitXTest3"
 			connector_ref = "account.github_Account_level_connector"
 		}
