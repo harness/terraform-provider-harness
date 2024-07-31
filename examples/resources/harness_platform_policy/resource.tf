@@ -12,7 +12,7 @@ resource "harness_platform_policy" "test" {
   git_is_new_branch = false
   git_import        = false
   git_commit_msg    = harness_platform_policy.test.git_commit_msg
-  rego        = <<-REGO
+  rego              = <<-REGO
     package pipeline
 
     # Deny pipelines that don't have an approval step
