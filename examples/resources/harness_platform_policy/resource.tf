@@ -1,7 +1,17 @@
 resource "harness_platform_policy" "test" {
-  identifier  = harness_platform_policy.test.identifier
-  name        = harness_platform_policy.test.name
-  description = harness_platform_policy.test.description
+  identifier        = harness_platform_policy.test.identifier
+  name              = harness_platform_policy.test.name
+  description       = harness_platform_policy.test.description
+  org_id            = harness_platform_policy.test.org_id
+  project_id        = harness_platform_policy.test.project_id
+  git_connector_ref = harness_platform_policy.test.git_connector_ref
+  git_path          = harness_platform_policy.test.git_path
+  git_repo          = harness_platform_policy.test.git_repo
+  git_branch        = harness_platform_policy.test.git_branch
+  git_base_branch   = harness_platform_policy.test.git_base_branch
+  git_is_new_branch = false
+  git_import        = false
+  git_commit_msg    = harness_platform_policy.test.git_commit_msg
   rego        = <<-REGO
     package pipeline
 

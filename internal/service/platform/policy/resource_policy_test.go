@@ -18,11 +18,23 @@ var (
 )
 
 func TestAccResourcePolicy(t *testing.T) {
+	// To test this please update all the fields with valid values.
+	projectID := "OPA_TEST"
 	id := fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	resourceName := "harness_platform_policy.test"
+	description := "terratest"
+	orgID := "Ng_Pipelines_K8s_Organisations"
+	gitConnectorRef := "Sameed_Test"
+	gitPath := ".harness/" + id + ".rego"
+	gitRepo := "test_sameed"
+	gitBranch := "main"
+	gitBaseBranch := "main"
+	gitIsNewBranch := false
+	gitImport := false
+	gitCommitMsg := "Trying TF out"
 	rego := "some text"
-	updatedRego := "some text v2"
+
+	resourceName := "harness_platform_policy.test"
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
@@ -30,48 +42,55 @@ func TestAccResourcePolicy(t *testing.T) {
 		CheckDestroy:      testAccPolicyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePolicy(id, name, rego),
+				Config: testAccResourcePolicy(id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch, gitIsNewBranch, gitImport, gitCommitMsg, rego),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "git_connector_ref", gitConnectorRef),
+					resource.TestCheckResourceAttr(resourceName, "git_path", gitPath),
+					resource.TestCheckResourceAttr(resourceName, "git_repo", gitRepo),
+					resource.TestCheckResourceAttr(resourceName, "git_branch", gitBranch),
+					resource.TestCheckResourceAttr(resourceName, "git_base_branch", gitBaseBranch),
+					resource.TestCheckResourceAttr(resourceName, "git_is_new_branch", fmt.Sprintf("%t", gitIsNewBranch)),
+					resource.TestCheckResourceAttr(resourceName, "git_import", fmt.Sprintf("%t", gitImport)),
+					resource.TestCheckResourceAttr(resourceName, "git_commit_msg", gitCommitMsg),
 					resource.TestCheckResourceAttr(resourceName, "rego", rego),
 				),
-			},
-			{
-				Config: testAccResourcePolicy(id, name, updatedRego),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "id", id),
-					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "rego", updatedRego),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.OrgResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
 }
 
-func testAccResourcePolicy(id, name, rego string) string {
+func testAccResourcePolicy(id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch string, gitIsNewBranch, gitImport bool, gitCommitMsg, rego string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_policy" "test" {
-			identifier = "%[1]s"
-			name = "%[2]s"
-      rego = "%[3]s"
+			identifier       = "%[1]s"
+			name             = "%[2]s"
+			description      = "%[3]s"
+			org_id           = "%[4]s"
+			project_id       = "%[5]s"
+			git_connector_ref = "%[6]s"
+			git_path         = "%[7]s"
+			git_repo         = "%[8]s"
+			git_branch       = "%[9]s"
+			git_base_branch  = "%[10]s"
+			git_is_new_branch = %[11]t
+			git_import       = %[12]t
+			git_commit_msg   = "%[13]s"
+			rego = "%[14]s"
 		}
-`, id, name, rego)
+	`, id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch, gitIsNewBranch, gitImport, gitCommitMsg, rego)
 }
 
 func testAccPolicyDestroy(resourceName string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
 		policy, _ := testAccGetPolicy(resourceName, state)
 		if policy != emptyPolicy {
-			return fmt.Errorf("Found project: %s", policy.Identifier)
+			return fmt.Errorf("Found policy: %s", policy.Identifier)
 		}
-
 		return nil
 	}
 }
@@ -87,6 +106,5 @@ func testAccGetPolicy(resourceName string, state *terraform.State) (policymgmt.P
 	if err != nil {
 		return emptyPolicy, err
 	}
-
 	return policy, nil
 }

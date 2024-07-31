@@ -81,6 +81,18 @@ func ResourcePolicy() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
+			"git_commit_sha": {
+				Description: "The existing commit sha of the file being updated",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"git_file_id": {
+				Description: "The existing file id of the file being updated, not required for bitbucket files",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
