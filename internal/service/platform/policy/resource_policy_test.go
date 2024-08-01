@@ -33,6 +33,7 @@ func TestAccResourcePolicy(t *testing.T) {
 	gitImport := false
 	gitCommitMsg := "Trying TF out"
 	rego := "some text"
+	updatedRego := "some text v2"
 
 	resourceName := "harness_platform_policy.test"
 
@@ -58,6 +59,25 @@ func TestAccResourcePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "git_import", fmt.Sprintf("%t", gitImport)),
 					resource.TestCheckResourceAttr(resourceName, "git_commit_msg", gitCommitMsg),
 					resource.TestCheckResourceAttr(resourceName, "rego", rego),
+				),
+			},
+			{
+				Config: testAccResourcePolicy(id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch, gitIsNewBranch, gitImport, gitCommitMsg, updatedRego),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+					resource.TestCheckResourceAttr(resourceName, "name", name),
+					resource.TestCheckResourceAttr(resourceName, "description", description),
+					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
+					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
+					resource.TestCheckResourceAttr(resourceName, "git_connector_ref", gitConnectorRef),
+					resource.TestCheckResourceAttr(resourceName, "git_path", gitPath),
+					resource.TestCheckResourceAttr(resourceName, "git_repo", gitRepo),
+					resource.TestCheckResourceAttr(resourceName, "git_branch", gitBranch),
+					resource.TestCheckResourceAttr(resourceName, "git_base_branch", gitBaseBranch),
+					resource.TestCheckResourceAttr(resourceName, "git_is_new_branch", fmt.Sprintf("%t", gitIsNewBranch)),
+					resource.TestCheckResourceAttr(resourceName, "git_import", fmt.Sprintf("%t", gitImport)),
+					resource.TestCheckResourceAttr(resourceName, "git_commit_msg", gitCommitMsg),
+					resource.TestCheckResourceAttr(resourceName, "rego", updatedRego),
 				),
 			},
 		},
