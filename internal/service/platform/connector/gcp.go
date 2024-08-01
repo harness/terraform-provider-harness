@@ -38,7 +38,7 @@ func ResourceConnectorGcp() *schema.Resource {
 				ExactlyOneOf: []string{
 					"manual",
 					"inherit_from_delegate",
-                    "oidc_authentication",
+					"oidc_authentication",
 				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -215,26 +215,27 @@ func buildConnectorGcp(d *schema.ResourceData) *nextgen.ConnectorInfo {
 
 	if attr, ok := d.GetOk("oidc_authentication"); ok {
 		config := attr.([]interface{})[0].(map[string]interface{})
-		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.InheritFromDelegate
+		connector.Gcp.Credential.Type_ = nextgen.GcpAuthTypes.OidcAuthentication
+		connector.Gcp.Credential.OidcConfig = &nextgen.GcpOidcDetails{}
 
 		if attr := config["delegate_selectors"].(*schema.Set).List(); len(attr) > 0 {
 			connector.Gcp.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr)
 		}
 
-		if attr, ok := config["workload_pool_id"]; ok {
-			connector.Gcp.Credential.OidcConfig.WorkloadPoolId = attr.(string)
+		if attr := config["workload_pool_id"].(string); attr != "" {
+			connector.Gcp.Credential.OidcConfig.WorkloadPoolId = attr
 		}
 
-		if attr, ok := config["provider_id"]; ok {
-			connector.Gcp.Credential.OidcConfig.ProviderId = attr.(string)
+		if attr := config["provider_id"].(string); attr != "" {
+			connector.Gcp.Credential.OidcConfig.ProviderId = attr
 		}
 
-		if attr, ok := config["service_account_email"]; ok {
-			connector.Gcp.Credential.OidcConfig.ServiceAccountEmail = attr.(string)
+		if attr := config["service_account_email"].(string); attr != "" {
+			connector.Gcp.Credential.OidcConfig.ServiceAccountEmail = attr
 		}
 
-		if attr, ok := config["gcp_project_id"]; ok {
-			connector.Gcp.Credential.OidcConfig.GcpProjectId = attr.(string)
+		if attr := config["gcp_project_id"].(string); attr != "" {
+			connector.Gcp.Credential.OidcConfig.GcpProjectId = attr
 		}
 	}
 

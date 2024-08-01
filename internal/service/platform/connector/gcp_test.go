@@ -97,10 +97,10 @@ func TestAccResourceConnectorGcp_OIDC(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "test"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					// resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id.#", "1"),
-					// resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-					// resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.delegate_selectors.#", "1"),
-
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.workload_pool_id", "harness-pool-test"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.provider_id", "harness"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.gcp_project_id", "1234567"),
+					resource.TestCheckResourceAttr(resourceName, "oidc_authentication.0.service_account_email", "harness.sample.iam.gserviceaccount.com"),
 				),
 			},
 			{
