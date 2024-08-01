@@ -66,5 +66,5 @@ Read-Only:
 - `provider_id` (String) The OIDC provider ID value configured in GCP.
 - `gcp_project_id` (String) The project number of the GCP project that is used to create the workload identity federation.
 - `service_account_email` (String) The service account linked to workload identity pool while setting GCP workload identity provider.
-- `delegate_selectors` (Set of String) The delegates to inherit the credentials from.
+- `delegate_selectors` (Set of String)
 
