@@ -238,4 +238,20 @@ func readPolicy(d *schema.ResourceData, policy policymgmt.Policy) {
 	_ = d.Set("project_id", policy.ProjectId)
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("rego", policy.Rego)
+
+	if policy.GitCommitSha != "" {
+		_ = d.Set("git_commit_sha", policy.GitCommitSha)
+	}
+	if policy.GitConnectorRef != "" {
+		_ = d.Set("git_connector_ref", policy.GitConnectorRef)
+	}
+	if policy.GitFileId != "" {
+		_ = d.Set("git_file_id", policy.GitFileId)
+	}
+	if policy.GitPath != "" {
+		_ = d.Set("git_path", policy.GitPath)
+	}
+	if policy.GitRepo != "" {
+		_ = d.Set("git_repo", policy.GitRepo)
+	}
 }
