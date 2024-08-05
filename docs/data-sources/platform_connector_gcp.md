@@ -37,6 +37,7 @@ data "harness_platform_connector_gcp" "example" {
 - `id` (String) The ID of this resource.
 - `inherit_from_delegate` (List of Object) Inherit configuration from delegate. (see [below for nested schema](#nestedatt--inherit_from_delegate))
 - `manual` (List of Object) Manual credential configuration. (see [below for nested schema](#nestedatt--manual))
+- `oidc_authentication` (List of Object) Authentication using harness oidc. (see [below for nested schema](#nestedatt--oidc_authentication))
 - `tags` (Set of String) Tags to associate with the resource.
 
 <a id="nestedatt--inherit_from_delegate"></a>
@@ -55,4 +56,15 @@ Read-Only:
 - `delegate_selectors` (Set of String)
 - `secret_key_ref` (String)
 
+
+<a id="nestedatt--oidc_authentication"></a>
+### Nested Schema for `oidc authentication`
+
+Read-Only:
+
+- `workload_pool_id` (String) The workload pool ID value created in GCP.
+- `provider_id` (String) The OIDC provider ID value configured in GCP.
+- `gcp_project_id` (String) The project number of the GCP project that is used to create the workload identity federation.
+- `service_account_email` (String) The service account linked to workload identity pool while setting GCP workload identity provider.
+- `delegate_selectors` (Set of String)
 
