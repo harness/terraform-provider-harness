@@ -13,6 +13,7 @@ type V1AgentOperator string
 
 // List of v1AgentOperator
 const (
+	UNKNOWN_V1AgentOperator V1AgentOperator = "UNKNOWN"
 	ARGO_V1AgentOperator     V1AgentOperator = "ARGO"
 	FLAMINGO_V1AgentOperator V1AgentOperator = "FLAMINGO"
 )

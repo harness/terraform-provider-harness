@@ -9,9 +9,8 @@
  */
 package nextgen
 
-type ApplicationsComparedTo struct {
-	Source      *ApplicationsApplicationSource      `json:"source,omitempty"`
-	Destination *ApplicationsApplicationDestination `json:"destination,omitempty"`
-	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
-	IgnoreDifferences []ApplicationsResourceIgnoreDifferences `json:"ignoreDifferences,omitempty"`
+type ApplicationsApplicationDeleteRequest struct {
+	Name string `json:"name,omitempty"`
+	Cascade bool `json:"cascade,omitempty"`
+	PropagationPolicy string `json:"propagationPolicy,omitempty"`
 }

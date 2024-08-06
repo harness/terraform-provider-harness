@@ -17,7 +17,6 @@ Name | Type | Description | Notes
 **Annotations** | **map[string]string** |  | [optional] [default to null]
 **OwnerReferences** | [**[]V1OwnerReference**](v1OwnerReference.md) |  | [optional] [default to null]
 **Finalizers** | **[]string** |  | [optional] [default to null]
-**ClusterName** | **string** |  | [optional] [default to null]
 **ManagedFields** | [**[]V1ManagedFieldsEntry**](v1ManagedFieldsEntry.md) | ManagedFields maps workflow-id and version to the set of fields that are managed by that workflow. This is mostly for internal housekeeping, and users typically shouldn&#x27;t need to set or understand this field. A workflow can be the user&#x27;s name, a controller&#x27;s name, or the name of a specific apply path like \&quot;ci-cd\&quot;. The set of fields is always in the version that the workflow used when modifying the object.  +optional | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

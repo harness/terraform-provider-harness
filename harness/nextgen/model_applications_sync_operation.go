@@ -20,4 +20,7 @@ type ApplicationsSyncOperation struct {
 	Source       *ApplicationsApplicationSource      `json:"source,omitempty"`
 	Manifests    []string                            `json:"manifests,omitempty"`
 	SyncOptions  []string                            `json:"syncOptions,omitempty"`
+	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
+	// Revisions is the list of revision (Git) or chart version (Helm) which to sync each source in sources field for the application to If omitted, will use the revision specified in app spec.
+	Revisions []string `json:"revisions,omitempty"`
 }

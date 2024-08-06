@@ -22,4 +22,6 @@ type ApplicationsApplicationSource struct {
 	Plugin         *ApplicationsApplicationSourcePlugin    `json:"plugin,omitempty"`
 	// Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo.
 	Chart string `json:"chart,omitempty"`
+	// Ref is reference to another source within sources field. This field will not be used if used with a `source` tag.
+	Ref string `json:"ref,omitempty"`
 }

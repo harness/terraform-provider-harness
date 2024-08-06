@@ -26,4 +26,5 @@ type ClustersCluster struct {
 	Project          string            `json:"project,omitempty"`
 	Labels           map[string]string `json:"labels,omitempty"`
 	Annotations      map[string]string `json:"annotations,omitempty"`
+	Type_ *ClustersClusterType `json:"type,omitempty"`
 }

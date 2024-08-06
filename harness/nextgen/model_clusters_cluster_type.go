@@ -9,9 +9,11 @@
  */
 package nextgen
 
-type ApplicationsComparedTo struct {
-	Source      *ApplicationsApplicationSource      `json:"source,omitempty"`
-	Destination *ApplicationsApplicationDestination `json:"destination,omitempty"`
-	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
-	IgnoreDifferences []ApplicationsResourceIgnoreDifferences `json:"ignoreDifferences,omitempty"`
-}
+
+type ClustersClusterType string
+
+// List of clustersClusterType
+const (
+	CUSTOMER_PROVIDED_ClustersClusterType ClustersClusterType = "CUSTOMER_PROVIDED"
+	HARNESS_HOSTED_ClustersClusterType ClustersClusterType = "HARNESS_HOSTED"
+)

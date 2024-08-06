@@ -26,4 +26,6 @@ type RepositoriesRepoAccessQuery struct {
 	GithubAppEnterpriseBaseUrl string `json:"githubAppEnterpriseBaseUrl,omitempty"`
 	Proxy                      string `json:"proxy,omitempty"`
 	Project                    string `json:"project,omitempty"`
+	ConnectionType string `json:"connectionType,omitempty"`
+	UpdateMask *ProtobufFieldMask `json:"updateMask,omitempty"`
 }

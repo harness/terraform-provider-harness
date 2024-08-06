@@ -20,4 +20,5 @@ type V1AgentHealth struct {
 	ArgoRedisServer    *V1AgentComponentHealth `json:"argoRedisServer,omitempty"`
 	HarnessGitopsAgent *V1AgentComponentHealth `json:"harnessGitopsAgent,omitempty"`
 	ConnectionStatus   *V1ConnectedStatus      `json:"connectionStatus,omitempty"`
+	ArgoAppSetController *V1AgentComponentHealth `json:"argoAppSetController,omitempty"`
 }

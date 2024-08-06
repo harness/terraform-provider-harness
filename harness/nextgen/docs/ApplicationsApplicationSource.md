@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **Directory** | [***ApplicationsApplicationSourceDirectory**](applicationsApplicationSourceDirectory.md) |  | [optional] [default to null]
 **Plugin** | [***ApplicationsApplicationSourcePlugin**](applicationsApplicationSourcePlugin.md) |  | [optional] [default to null]
 **Chart** | **string** | Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo. | [optional] [default to null]
+**Ref** | **string** | Ref is reference to another source within sources field. This field will not be used if used with a &#x60;source&#x60; tag. | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

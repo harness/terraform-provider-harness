@@ -20,4 +20,7 @@ type ApplicationsApplicationStatus struct {
 	ObservedAt     *V1Time                            `json:"observedAt,omitempty"`
 	SourceType     string                             `json:"sourceType,omitempty"`
 	Summary        *ApplicationsApplicationSummary    `json:"summary,omitempty"`
+	ResourceHealthSource string `json:"resourceHealthSource,omitempty"`
+	SourceTypes []string `json:"sourceTypes,omitempty"`
+	ControllerNamespace string `json:"controllerNamespace,omitempty"`
 }

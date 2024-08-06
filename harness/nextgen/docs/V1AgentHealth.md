@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **ArgoRedisServer** | [***V1AgentComponentHealth**](v1AgentComponentHealth.md) |  | [optional] [default to null]
 **HarnessGitopsAgent** | [***V1AgentComponentHealth**](v1AgentComponentHealth.md) |  | [optional] [default to null]
 **ConnectionStatus** | [***V1ConnectedStatus**](v1ConnectedStatus.md) |  | [optional] [default to null]
+**ArgoAppSetController** | [***V1AgentComponentHealth**](v1AgentComponentHealth.md) |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

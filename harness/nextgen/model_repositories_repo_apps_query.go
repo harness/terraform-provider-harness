@@ -9,9 +9,9 @@
  */
 package nextgen
 
-type ApplicationsComparedTo struct {
-	Source      *ApplicationsApplicationSource      `json:"source,omitempty"`
-	Destination *ApplicationsApplicationDestination `json:"destination,omitempty"`
-	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
-	IgnoreDifferences []ApplicationsResourceIgnoreDifferences `json:"ignoreDifferences,omitempty"`
+type RepositoriesRepoAppsQuery struct {
+	Repo string `json:"repo,omitempty"`
+	Revision string `json:"revision,omitempty"`
+	AppName string `json:"appName,omitempty"`
+	AppProject string `json:"appProject,omitempty"`
 }

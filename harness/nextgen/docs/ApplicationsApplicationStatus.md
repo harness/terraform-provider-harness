@@ -13,6 +13,9 @@ Name | Type | Description | Notes
 **ObservedAt** | [***V1Time**](v1Time.md) |  | [optional] [default to null]
 **SourceType** | **string** |  | [optional] [default to null]
 **Summary** | [***ApplicationsApplicationSummary**](applicationsApplicationSummary.md) |  | [optional] [default to null]
+**ResourceHealthSource** | **string** |  | [optional] [default to null]
+**SourceTypes** | **[]string** |  | [optional] [default to null]
+**ControllerNamespace** | **string** |  | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

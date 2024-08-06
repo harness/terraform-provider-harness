@@ -15,4 +15,7 @@ type ApplicationsRevisionHistory struct {
 	Id              string                         `json:"id,omitempty"`
 	Source          *ApplicationsApplicationSource `json:"source,omitempty"`
 	DeployStartedAt *V1Time                        `json:"deployStartedAt,omitempty"`
+	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
+	Revisions []string `json:"revisions,omitempty"`
+	InitiatedBy *ApplicationsOperationInitiator `json:"initiatedBy,omitempty"`
 }

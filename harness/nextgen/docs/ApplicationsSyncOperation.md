@@ -11,6 +11,8 @@ Name | Type | Description | Notes
 **Source** | [***ApplicationsApplicationSource**](applicationsApplicationSource.md) |  | [optional] [default to null]
 **Manifests** | **[]string** |  | [optional] [default to null]
 **SyncOptions** | **[]string** |  | [optional] [default to null]
+**Sources** | [**[]ApplicationsApplicationSource**](applicationsApplicationSource.md) |  | [optional] [default to null]
+**Revisions** | **[]string** | Revisions is the list of revision (Git) or chart version (Helm) which to sync each source in sources field for the application to If omitted, will use the revision specified in app spec. | [optional] [default to null]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -9,9 +9,10 @@
  */
 package nextgen
 
-type ApplicationsComparedTo struct {
-	Source      *ApplicationsApplicationSource      `json:"source,omitempty"`
-	Destination *ApplicationsApplicationDestination `json:"destination,omitempty"`
-	Sources []ApplicationsApplicationSource `json:"sources,omitempty"`
-	IgnoreDifferences []ApplicationsResourceIgnoreDifferences `json:"ignoreDifferences,omitempty"`
-}
+type V1SortOrderOptions string
+// List of v1SortOrderOptions
+const (
+	SORT_ORDER_NOT_SET_V1SortOrderOptions V1SortOrderOptions = "SORT_ORDER_NOT_SET"
+	ASC_V1SortOrderOptions V1SortOrderOptions = "ASC"
+	DESC_V1SortOrderOptions V1SortOrderOptions = "DESC"
+)

@@ -18,4 +18,6 @@ type ApplicationsApplicationSourceKustomize struct {
 	CommonAnnotations      map[string]string `json:"commonAnnotations,omitempty"`
 	ForceCommonLabels      bool              `json:"forceCommonLabels,omitempty"`
 	ForceCommonAnnotations bool              `json:"forceCommonAnnotations,omitempty"`
+	Namespace string `json:"namespace,omitempty"`
+	Replicas []ApplicationsKustomizeReplicas `json:"replicas,omitempty"`
 }
