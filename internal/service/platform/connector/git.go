@@ -45,6 +45,11 @@ func ResourceConnectorGit() *schema.Resource {
 				Optional:    true,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
+			"execute_on_delegate": {
+				Description: "Execute on delegate or not.",
+				Type:        schema.TypeBool,
+				Optional:    true,				
+			},
 			"credentials": {
 				Description: "Credentials to use for the connection.",
 				Type:        schema.TypeList,
@@ -157,6 +162,10 @@ func buildConnectorGit(d *schema.ResourceData) *nextgen.ConnectorInfo {
 		connector.Git.DelegateSelectors = utils.InterfaceSliceToStringSlice(attr.(*schema.Set).List())
 	}
 
+	if attr, ok := d.GetOk("execute_on_delegate"); ok {
+		connector.Git.ExecuteOnDelegate = attr.(bool)
+	}
+
 	if attr, ok := d.GetOk("validation_repo"); ok {
 		connector.Git.ValidationRepo = attr.(string)
 	}
@@ -205,6 +214,7 @@ func readConnectorGit(d *schema.ResourceData, connector *nextgen.ConnectorInfo) 
 	d.Set("url", connector.Git.Url)
 	d.Set("connection_type", connector.Git.ConnectionType)
 	d.Set("delegate_selectors", connector.Git.DelegateSelectors)
+	d.Set("execute_on_delegate", connector.Git.ExecuteOnDelegate)
 	d.Set("validation_repo", connector.Git.ValidationRepo)
 
 	switch connector.Git.Type_ {
