@@ -862,7 +862,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ArgoProjectName.IsSet() {
-		localVarQueryParams.Add("argoProjectIdentifier", parameterToString(localVarOptionals.ArgoProjectName.Value(), ""))
+		localVarQueryParams.Add("argoProjectName", parameterToString(localVarOptionals.ArgoProjectName.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
@@ -1004,7 +1004,7 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 		localVarQueryParams.Add("projectIdentifier", parameterToString(localVarOptionals.ProjectIdentifier.Value(), ""))
 	}
 	if localVarOptionals != nil && localVarOptionals.ArgoProjectName.IsSet() {
-		localVarQueryParams.Add("argoProjectIdentifier", parameterToString(localVarOptionals.ArgoProjectName.Value(), ""))
+		localVarQueryParams.Add("argoProjectName", parameterToString(localVarOptionals.ArgoProjectName.Value(), ""))
 	}
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
