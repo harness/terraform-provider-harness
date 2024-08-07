@@ -103,9 +103,9 @@ func testAccResourceGitopsAppProjectMapping(id string, accountId string, argoPro
     		}
 		}
 		resource "harness_platform_gitops_app_project_mapping" "test" {
-			//depends_on = [harness_platform_gitops_agent.test]
+			depends_on = [harness_platform_gitops_agent.test]
 			account_id = "%[2]s"
-			org_id = "default"
+			org_id = "%[1]s"
 			project_id = "%[4]s"
 			agent_id = "%[1]s"
 			argo_project_name = "%[3]s"
