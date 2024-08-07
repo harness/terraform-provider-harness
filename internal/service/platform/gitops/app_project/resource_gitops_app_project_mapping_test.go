@@ -19,6 +19,7 @@ import (
 func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	id = strings.ReplaceAll(id, "_", "")
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
 	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resourceName := "harness_platform_gitops_app_project_mapping.test"
 	argoProject := "test123"
@@ -29,13 +30,13 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 		// CheckDestroy:      testAccResourceGitopsAppProjectMappingDestroy(resourceName, agentId), //commenting this since app project mapping cannot exist without an agent.
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProject),
+				Config: testAccResourceGitopsAppProjectMapping(agentId, accountId, argoProject, "mirko"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
 				),
 			},
 			{
-				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProjectUpdated),
+				Config: testAccResourceGitopsAppProjectMapping(agentId, accountId, argoProjectUpdated, "ashintest"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProjectUpdated),
 				),
@@ -77,38 +78,38 @@ func testAccResourceGitopsAppProjectMappingDestroy(resourceName string, agentId 
 	}
 }
 
-func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, argoProject string) string {
+func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, argoProject string, projectId string) string {
 	return fmt.Sprintf(`
-		resource "harness_platform_organization" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
-		}
-
-		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
-			org_id = harness_platform_organization.test.id
-		}
-		resource "harness_platform_gitops_agent" "test" {
-			identifier = "%[1]s"
-			account_id = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
-			name = "%[1]s"
-			type = "MANAGED_ARGO_PROVIDER"
-			operator = "ARGO"
-			metadata {
-				namespace = "%[1]s"
-        		high_availability = false
-    		}
-		}
+		//resource "harness_platform_organization" "test" {
+		//	identifier = "%[1]s"
+		//	name = "%[1]s"
+		//}
+		//
+		//resource "harness_platform_project" "test" {
+		//	identifier = "%[1]s"
+		//	name = "%[1]s"
+		//	org_id = harness_platform_organization.test.id
+		//}
+		//resource "harness_platform_gitops_agent" "test" {
+		//	identifier = "%[1]s"
+		//	account_id = "%[2]s"
+		//	org_id = harness_platform_organization.test.id
+		//	project_id = harness_platform_project.test.id
+		//	name = "%[1]s"
+		//	type = "MANAGED_ARGO_PROVIDER"
+		//	operator = "ARGO"
+		//	metadata {
+		//		namespace = "%[1]s"
+        //		high_availability = false
+    	//	}
+		//}
 		resource "harness_platform_gitops_app_project_mapping" "test" {
-			depends_on = [harness_platform_gitops_agent.test]
+			//depends_on = [harness_platform_gitops_agent.test]
 			account_id = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
+			org_id = "default"
+			project_id = "%[4]s"
 			agent_id = "%[1]s"
 			argo_project_name = "%[3]s"
 		}
-		`, agentId, accountId, argoProject)
+		`, agentId, accountId, argoProject, projectId)
 }
