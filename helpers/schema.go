@@ -410,6 +410,28 @@ var GitopsAgentResourceImporter = &schema.ResourceImporter{
 }
 
 // GitopsAgentResourceImporter defines the importer configuration for all project level gitops agent resources.
+// The id used for the import should be in the format <org_id>/<project_id>/<identifier>/<agentId>
+var GitopsAppProjectMappingImporter = &schema.ResourceImporter{
+	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+		parts := strings.Split(d.Id(), "/")
+
+		// Approject mapping always has 4 parts
+		if len(parts) == 4 { //Project level
+			d.Set("org_id", parts[0])
+			d.Set("project_id", parts[1])
+			d.Set("agent_id", parts[2])
+			d.Set("argo_project_name", parts[3])
+			// During import we are using argo_project_name as identifier not the actual identifier
+			// So we are not fetching mapping by mongo id but by argo_project_name, agent_id, account_id, org_id and project_id.
+			d.SetId(parts[3])
+			return []*schema.ResourceData{d}, nil
+		}
+
+		return nil, fmt.Errorf("invalid identifier: %s", d.Id())
+	},
+}
+
+// GitopsAgentResourceImporter defines the importer configuration for all project level gitops agent resources.
 // The id used for the import should be in the format <agent_id>/<query_name>
 var GitopsAgentProjectImporter = &schema.ResourceImporter{
 	State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
