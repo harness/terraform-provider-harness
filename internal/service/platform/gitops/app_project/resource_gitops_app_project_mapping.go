@@ -2,8 +2,6 @@ package app_project
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -85,10 +83,10 @@ func resourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resource
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	argo_proj_name := d.Get("argo_project_name").(string)
-	// During import we are using argo_project_name as identifier not the actual identifier
+	// During import we are using argo_project_name as identifier not the actual identifier which is mongo id
 	// So we are not fetching mapping by mongo id but by argo_project_name, agent_id, account_id, org_id and project_id.
+	// argo_project_name, agent_id, account_id, org_id and project_id uniquely identify mapping.
 	if identifier == argo_proj_name {
-		fmt.Println("identifier and argo_project_name are same")
 		identifier = ""
 	}
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceGetAppProjectMappingV2(ctx, agentIdentifier, identifier, &nextgen.ProjectMappingsApiAppProjectMappingServiceGetAppProjectMappingV2Opts{

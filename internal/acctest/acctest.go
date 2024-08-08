@@ -256,6 +256,8 @@ func GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName string) resou
 	}
 }
 
+// Import of GitopsAppProjectMapping resource is always on project level
+// terraform import  harness_platform_gitops_app_project_mapping.example org_id/projec_id/scope_prefixed_agent_id/argo_proj_name
 func GitopsAppProjectMappingResourceImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {
 		primary := s.RootModule().Resources[resourceName].Primary
