@@ -1,6 +1,6 @@
 
-<a name="0.4.0"></a>
-## 0.4.0 (2024-07-30)
+<a name="0.4.1"></a>
+## 0.4.1 (2024-08-07)
 
 ### Add
 
@@ -14,12 +14,10 @@
 
 * changes for execution summary outline API ([#543](https://github.com/harness/harness-go-sdk/issues/543))
 
-### GitX
-
-* GitX Support For Env CRUD operations , Import ([#487](https://github.com/harness/harness-go-sdk/issues/487))
-
 ### Release
 
+* Release version 0.4.0 07-30-2024
+* Release v0.4.0
 * Release version 0.3.99 07-29-2024
 * Release v0.3.99
 * Release version 0.3.98 07-24-2024
@@ -67,5 +65,4 @@
 * Release version 0.3.78 03-05-2024
 * Release v0.3.78
 * Release version 0.3.77 03-05-2024
-* Release v0.3.77
 
