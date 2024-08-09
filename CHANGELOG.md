@@ -1,3 +1,15 @@
+# 0.32.3 (August 09,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitx_webhook: Added support for Gitx Webhook endpoints` ([#1014](https://github.com/harness/terraform-provider-harness/issues/1014))
+
+ENHANCEMENTS:
+
+* harness_platform_policy: - Have added support for remote policies, now users can create remote policies using terraform by providing git references in the script.
+                         - Updated the Data Source for policy as rego should not be a mandatory field for GET call. ([#1015](https://github.com/harness/terraform-provider-harness/issues/1015))
+* resource/harness_platform_connector_gcp: added support for OIDC Auth in GCP connector. ([#1019](https://github.com/harness/terraform-provider-harness/issues/1019))
+
 # 0.32.2 (July 25,2024) 
 
 ENHANCEMENTS:
