@@ -1,0 +1,3 @@
+```release-note:fix
+resource/harness_platform_gitops_app_project_mapping change identifier in data for project mapping as computed
+```
