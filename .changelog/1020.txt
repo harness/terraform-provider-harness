@@ -1,3 +1,0 @@
-```release-note:fix
-resource/harness_platform_gitops_app_project_mapping  fix import flow
-```
