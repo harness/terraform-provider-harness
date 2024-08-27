@@ -42,12 +42,12 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 			"identifier": {
 				Description: "Identifier of the GitOps Application Project.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"argo_project_name": {
 				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 		},
 	}
