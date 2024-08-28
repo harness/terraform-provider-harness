@@ -124,30 +124,33 @@ variables:
   - name: v1
     type: String
     value: val1
+    required: false
 manifests:
   - manifest:
       identifier: manifest1
       type: Values
       spec:
         store:
-          type: Github
           spec:
-            connectorRef: "<+input>"
+            connectorRef: <+input>
             gitFetchType: Branch
+            branch: master
+            commitId: null
             paths:
               - files1
-            repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
+            folderPath: null
+            repoName: <+input>
+          type: Github
 configFiles:
   - configFile:
       identifier: configFile1
       spec:
         store:
-          type: Harness
           spec:
             files:
-              - "<+org.description>"
+              - <+org.description>
+            secretFiles: null
+          type: Harness
               EOT
                 }
 
@@ -167,6 +170,7 @@ variables:
   - name: v2
     type: String
     value: val2
+    required: false
               EOT
                 }
 		`, id, name)

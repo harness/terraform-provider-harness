@@ -26,7 +26,7 @@ func TestAccServiceOverrides_ProjectScope(t *testing.T) {
 			{
 				Config: testAccServiceOverridesProjectScope(id, name),
 				Check: resource.ComposeTestCheckFunc(
-          resource.TestCheckResourceAttr(resourceName, "org_id", id),
+					resource.TestCheckResourceAttr(resourceName, "org_id", id),
 					resource.TestCheckResourceAttr(resourceName, "project_id", id),
 				),
 			},
@@ -104,8 +104,7 @@ func TestAccRemoteServiceOverrides(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testRemoteServiceOverrides(id, name),
-				Check: resource.ComposeTestCheckFunc(
-				),
+				Check:  resource.ComposeTestCheckFunc(),
 			},
 			{
 				ResourceName:      resourceName,
@@ -223,30 +222,33 @@ variables:
   - name: v1
     type: String
     value: val1
+    required: false
 manifests:
   - manifest:
       identifier: manifest1
       type: Values
       spec:
         store:
-          type: Github
           spec:
-            connectorRef: "<+input>"
+            connectorRef: <+input>
             gitFetchType: Branch
+            branch: master
+            commitId: null
             paths:
               - files1
+            folderPath: null
             repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
+          type: Github
 configFiles:
   - configFile:
       identifier: configFile1
       spec:
         store:
-          type: Harness
           spec:
             files:
-              - "<+org.description>"
+              - <+org.description>
+            secretFiles: null
+          type: Harness
               EOT
 }
 `, id, name)
@@ -312,7 +314,6 @@ func testRemoteServiceOverrides(id string, name string) string {
 }`, id, name)
 }
 
-
 func testAccServiceOverridesOrgScope(id string, name string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
@@ -377,31 +378,33 @@ variables:
   - name: v1
     type: String
     value: val1
+    required: false
 manifests:
   - manifest:
       identifier: manifest1
       type: Values
       spec:
         store:
-          type: Github
           spec:
-            connectorRef: "<+input>"
+            connectorRef: <+input>
             gitFetchType: Branch
+            branch: master
+            commitId: null
             paths:
               - files1
-            repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
+            folderPath: null
+            repoName: <+input>
+          type: Github
 configFiles:
   - configFile:
       identifier: configFile1
       spec:
         store:
-          type: Harness
           spec:
             files:
-              - "<+org.description>"
-
+              - <+org.description>
+            secretFiles: null
+          type: Harness
               EOT
 		}
 `, id, name)
@@ -463,30 +466,33 @@ variables:
   - name: v1
     type: String
     value: val1
+    required: false
 manifests:
   - manifest:
       identifier: manifest1
       type: Values
       spec:
         store:
-          type: Github
           spec:
-            connectorRef: "<+input>"
+            connectorRef: <+input>
             gitFetchType: Branch
+            branch: master
+            commitId: null
             paths:
               - files1
-            repoName: "<+input>"
-            branch: master
-        skipResourceVersioning: false
+            folderPath: null
+            repoName: <+input>
+          type: Github
 configFiles:
   - configFile:
       identifier: configFile1
       spec:
         store:
-          type: Harness
           spec:
             files:
-              - "<+org.description>"
+              - <+org.description>
+            secretFiles: null
+          type: Harness
               EOT
 		}
 `, id, name)
