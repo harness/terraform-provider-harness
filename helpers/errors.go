@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"google.golang.org/grpc/codes"
