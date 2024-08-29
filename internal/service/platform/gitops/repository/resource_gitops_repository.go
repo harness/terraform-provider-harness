@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
@@ -99,10 +100,11 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"type_": {
-							Description: "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
+							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							Computed:     true,
+							ValidateFunc: validation.StringInSlice([]string{"git", "helm"}, false),
 						},
 						"name": {
 							Description: "Name to be used for this repo. Only used with Helm repos.",
@@ -402,7 +404,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
