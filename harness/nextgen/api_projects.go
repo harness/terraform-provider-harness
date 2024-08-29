@@ -130,6 +130,18 @@ func (a *ProjectsApiService) AgentProjectServiceCreate(ctx context.Context, body
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v AppprojectsAppProject
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -255,6 +267,18 @@ func (a *ProjectsApiService) AgentProjectServiceDelete(ctx context.Context, agen
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v ProjectsEmptyResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -383,6 +407,18 @@ func (a *ProjectsApiService) AgentProjectServiceGet(ctx context.Context, agentId
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v AppprojectsAppProject
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -514,6 +550,18 @@ func (a *ProjectsApiService) AgentProjectServiceList(ctx context.Context, agentI
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v AppprojectsAppProjectList
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -645,6 +693,18 @@ func (a *ProjectsApiService) AgentProjectServiceUpdate(ctx context.Context, body
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v AppprojectsAppProject
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))

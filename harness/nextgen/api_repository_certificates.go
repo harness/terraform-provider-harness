@@ -1,4 +1,3 @@
-
 /*
  * Harness NextGen Software Delivery Platform API Reference
  *
@@ -12,12 +11,12 @@ package nextgen
 
 import (
 	"context"
+	"fmt"
+	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
-	"github.com/antihax/optional"
 )
 
 // Linger please
@@ -26,6 +25,7 @@ var (
 )
 
 type RepositoryCertificatesApiService service
+
 /*
 RepositoryCertificatesApiService Creates repository certificates on the server
 Create repository certificates.
@@ -40,17 +40,17 @@ Create repository certificates.
 */
 
 type RepositoryCertificatesApiAgentCertificateServiceCreateOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
+	AccountIdentifier optional.String
+	OrgIdentifier     optional.String
+	ProjectIdentifier optional.String
 }
 
 func (a *RepositoryCertificatesApiService) AgentCertificateServiceCreate(ctx context.Context, body CertificateRepositoryCertificateCreateRequest, agentIdentifier string, localVarOptionals *RepositoryCertificatesApiAgentCertificateServiceCreateOpts) (CertificatesRepositoryCertificateList, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Post")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Post")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue CertificatesRepositoryCertificateList
 	)
 
@@ -100,7 +100,7 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceCreate(ctx con
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -121,42 +121,55 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceCreate(ctx con
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v CertificatesRepositoryCertificateList
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v GatewayruntimeError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 RepositoryCertificatesApiService Delete the certificates that match the RepositoryCertificateQuery
 Delete repository certificates.
@@ -165,7 +178,7 @@ Delete repository certificates.
  * @param optional nil or *RepositoryCertificatesApiAgentCertificateServiceDeleteOpts - Optional Parameters:
      * @param "AccountIdentifier" (optional.String) -  Account Identifier for the Entity.
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) - 
+     * @param "ProjectIdentifier" (optional.String) -
      * @param "QueryHostNamePattern" (optional.String) -  A file-glob pattern (not regular expression) the host name has to match.
      * @param "QueryCertType" (optional.String) -  The type of the certificate to match (ssh or https).
      * @param "QueryCertSubType" (optional.String) -  The sub type of the certificate to match (protocol dependent, usually only used for ssh certs).
@@ -173,20 +186,20 @@ Delete repository certificates.
 */
 
 type RepositoryCertificatesApiAgentCertificateServiceDeleteOpts struct {
-    AccountIdentifier optional.String
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    QueryHostNamePattern optional.String
-    QueryCertType optional.String
-    QueryCertSubType optional.String
+	AccountIdentifier    optional.String
+	OrgIdentifier        optional.String
+	ProjectIdentifier    optional.String
+	QueryHostNamePattern optional.String
+	QueryCertType        optional.String
+	QueryCertSubType     optional.String
 }
 
 func (a *RepositoryCertificatesApiService) AgentCertificateServiceDelete(ctx context.Context, agentIdentifier string, localVarOptionals *RepositoryCertificatesApiAgentCertificateServiceDeleteOpts) (CertificatesRepositoryCertificateList, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Delete")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Delete")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue CertificatesRepositoryCertificateList
 	)
 
@@ -243,7 +256,7 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceDelete(ctx con
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -264,42 +277,55 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceDelete(ctx con
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v CertificatesRepositoryCertificateList
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v GatewayruntimeError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
 	return localVarReturnValue, localVarHttpResponse, nil
 }
+
 /*
 RepositoryCertificatesApiService List all available repository certificates
 List repository certificates.
@@ -308,7 +334,7 @@ List repository certificates.
  * @param accountIdentifier Account Identifier for the Entity.
  * @param optional nil or *RepositoryCertificatesApiAgentCertificateServiceListOpts - Optional Parameters:
      * @param "OrgIdentifier" (optional.String) -  Organization Identifier for the Entity.
-     * @param "ProjectIdentifier" (optional.String) - 
+     * @param "ProjectIdentifier" (optional.String) -
      * @param "QueryHostNamePattern" (optional.String) -  A file-glob pattern (not regular expression) the host name has to match.
      * @param "QueryCertType" (optional.String) -  The type of the certificate to match (ssh or https).
      * @param "QueryCertSubType" (optional.String) -  The sub type of the certificate to match (protocol dependent, usually only used for ssh certs).
@@ -316,19 +342,19 @@ List repository certificates.
 */
 
 type RepositoryCertificatesApiAgentCertificateServiceListOpts struct {
-    OrgIdentifier optional.String
-    ProjectIdentifier optional.String
-    QueryHostNamePattern optional.String
-    QueryCertType optional.String
-    QueryCertSubType optional.String
+	OrgIdentifier        optional.String
+	ProjectIdentifier    optional.String
+	QueryHostNamePattern optional.String
+	QueryCertType        optional.String
+	QueryCertSubType     optional.String
 }
 
 func (a *RepositoryCertificatesApiService) AgentCertificateServiceList(ctx context.Context, agentIdentifier string, accountIdentifier string, localVarOptionals *RepositoryCertificatesApiAgentCertificateServiceListOpts) (CertificatesRepositoryCertificateList, *http.Response, error) {
 	var (
-		localVarHttpMethod = strings.ToUpper("Get")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
 		localVarReturnValue CertificatesRepositoryCertificateList
 	)
 
@@ -383,7 +409,7 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceList(ctx conte
 				key = auth.Key
 			}
 			localVarHeaderParams["x-api-key"] = key
-			
+
 		}
 	}
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
@@ -404,36 +430,37 @@ func (a *RepositoryCertificatesApiService) AgentCertificateServiceList(ctx conte
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-		if err == nil { 
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		if err == nil {
 			return localVarReturnValue, localVarHttpResponse, err
 		}
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body: localVarBody,
+			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v CertificatesRepositoryCertificateList
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		if localVarHttpResponse.StatusCode == 0 {
 			var v GatewayruntimeError
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
-				if err != nil {
-					newErr.error = err.Error()
-					return localVarReturnValue, localVarHttpResponse, newErr
-				}
-				newErr.model = v
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
 				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
 		}
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}

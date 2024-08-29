@@ -38,17 +38,17 @@ Creates application in project.
      * @param "ProjectIdentifier" (optional.String) -  Project Identifier for the Entity.
      * @param "ClusterIdentifier" (optional.String) -
      * @param "RepoIdentifier" (optional.String) -
-     * @param "SkipRepoValidation" (optional.Bool) - 
+     * @param "SkipRepoValidation" (optional.Bool) -
 @return Servicev1Application
 */
 
 type ApplicationsApiAgentApplicationServiceCreateOpts struct {
-	AccountIdentifier optional.String
-	OrgIdentifier     optional.String
-	ProjectIdentifier optional.String
-	ClusterIdentifier optional.String
-    RepoIdentifier optional.String
-    SkipRepoValidation optional.Bool
+	AccountIdentifier  optional.String
+	OrgIdentifier      optional.String
+	ProjectIdentifier  optional.String
+	ClusterIdentifier  optional.String
+	RepoIdentifier     optional.String
+	SkipRepoValidation optional.Bool
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Context, body ApplicationsApplicationCreateRequest, agentIdentifier string, localVarOptionals *ApplicationsApiAgentApplicationServiceCreateOpts) (Servicev1Application, *http.Response, error) {
@@ -148,6 +148,18 @@ func (a *ApplicationsApiService) AgentApplicationServiceCreate(ctx context.Conte
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v Servicev1Application
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -295,6 +307,18 @@ func (a *ApplicationsApiService) AgentApplicationServiceDelete(ctx context.Conte
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v ApplicationsApplicationResponse
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -507,7 +531,7 @@ ApplicationsApiService Get returns an application by name
 */
 
 type ApplicationsApiAgentApplicationServiceGetOpts struct {
-    QueryRefresh         optional.String
+	QueryRefresh         optional.String
 	QueryProject         optional.Interface
 	QueryResourceVersion optional.String
 	QuerySelector        optional.String
@@ -3038,14 +3062,14 @@ Update updates an application.
  * @param optional nil or *ApplicationsApiAgentApplicationServiceUpdateOpts - Optional Parameters:
      * @param "ClusterIdentifier" (optional.String) -
      * @param "RepoIdentifier" (optional.String) -
-     * @param "SkipRepoValidation" (optional.Bool) - 
+     * @param "SkipRepoValidation" (optional.Bool) -
 @return Servicev1Application
 */
 
 type ApplicationsApiAgentApplicationServiceUpdateOpts struct {
-	ClusterIdentifier optional.String
-	RepoIdentifier    optional.String
-    SkipRepoValidation optional.Bool
+	ClusterIdentifier  optional.String
+	RepoIdentifier     optional.String
+	SkipRepoValidation optional.Bool
 }
 
 func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Context, body ApplicationsApplicationUpdateRequest, accountIdentifier string, orgIdentifier string, projectIdentifier string, agentIdentifier string, requestApplicationMetadataName string, localVarOptionals *ApplicationsApiAgentApplicationServiceUpdateOpts) (Servicev1Application, *http.Response, error) {
@@ -3079,7 +3103,7 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Conte
 	if localVarOptionals != nil && localVarOptionals.SkipRepoValidation.IsSet() {
 		localVarQueryParams.Add("skipRepoValidation", parameterToString(localVarOptionals.SkipRepoValidation.Value(), ""))
 	}
-    // to determine the Content-Type header
+	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}
 
 	// set Content-Type header
@@ -3140,6 +3164,18 @@ func (a *ApplicationsApiService) AgentApplicationServiceUpdate(ctx context.Conte
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v Servicev1Application
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
