@@ -65,7 +65,7 @@ func resourceGitopsAppProjectMappingCreate(ctx context.Context, d *schema.Resour
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceCreateV2(ctx, *createAppProjectMappingRequest, agentIdentifier)
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if &resp == nil {

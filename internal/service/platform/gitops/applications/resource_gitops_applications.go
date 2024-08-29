@@ -740,7 +740,7 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 		QueryRepo: optional.NewString(repoIdentifier),
 	})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
