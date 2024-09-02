@@ -67,7 +67,7 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 			}
 			return diag.Errorf("resource with ID %s not found: %v", d.Id(), errMessage)
 		}
-		if read {
+		if read && !gitopsErrOk {
 			if erro.Model() != nil && (erro.Code() == nextgen.ErrorCodes.ResourceNotFound || erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
 				d.SetId("")
 				d.MarkNewResource()
