@@ -26,17 +26,20 @@ func ResourceGitopsCluster() *schema.Resource {
 			"account_id": {
 				Description: "Account identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps cluster.",
@@ -111,6 +114,7 @@ func ResourceGitopsCluster() *schema.Resource {
 												"bearer_token": {
 													Description: "Bearer authentication token the cluster.",
 													Type:        schema.TypeString,
+													Sensitive:   true,
 													Optional:    true,
 												},
 												"tls_client_config": {
@@ -435,9 +439,29 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	if d.HasChange("agent_id") {
+		return diag.Errorf("%s", "Field 'agent_id' cannot be updated after creation.")
+	}
+
+	if d.HasChange("account_id") {
+		return diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")
+	}
+
+	if d.HasChange("account_id") {
+		return diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")
+	}
+
+	if d.HasChange("org_id") {
+		return diag.Errorf("%s", "Field 'org_id' cannot be updated after creation.")
+	}
+
+	if d.HasChange("project_id") {
+		return diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")
+	}
+
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
