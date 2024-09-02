@@ -760,6 +760,22 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	updateApplicationRequest := buildUpdateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier, appMetaDataName string
 	var skipRepoValidation bool
+
+	if d.HasChange("agent_id") {
+		return diag.Errorf("%s", "Field 'agent_id' cannot be updated after creation.")
+	}
+	if d.HasChange("account_id") {
+		return diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")
+	}
+	if d.HasChange("account_id") {
+		return diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")
+	}
+	if d.HasChange("org_id") {
+		return diag.Errorf("%s", "Field 'org_id' cannot be updated after creation.")
+	}
+	if d.HasChange("project_id") {
+		return diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")
+	}
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
