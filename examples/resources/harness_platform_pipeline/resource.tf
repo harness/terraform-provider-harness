@@ -11,7 +11,7 @@ resource "harness_platform_pipeline" "example" {
     store_type     = "REMOTE"
     repo_name      = "repoName"
   }
-
+  tags = {}
   yaml = <<-EOT
       pipeline:
           name: name

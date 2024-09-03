@@ -106,11 +106,11 @@ func TestAccResourcePipelineImportFromGit(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.ProjectResourceImportStateIdFunc(resourceName),
-                ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path","git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdGitFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"git_import_info.0.branch_name", "git_import_info.0.connector_ref", "git_import_info.0.file_path", "git_import_info.0.repo_name", "import_from_git", "pipeline_import_request.0.pipeline_description", "pipeline_import_request.0.pipeline_name", "git_import_info.#", "git_import_info.0.%", "pipeline_import_request.#", "pipeline_import_request.0.%"},
 			},
 		},
 	})
@@ -155,8 +155,9 @@ func testAccGetPipeline(resourceName string, state *terraform.State) (*openapi_c
 	id := r.Primary.ID
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
+	branch_name := r.Primary.Attributes["git_details.0.branch_name"]
 
-	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
+	resp, _, err := c.PipelinesApi.GetPipeline(ctx, orgId, projId, id, &openapi_client_nextgen.PipelinesApiGetPipelineOpts{HarnessAccount: optional.NewString(c.AccountId), BranchName: optional.NewString(branch_name)})
 	if err != nil {
 		return nil, err
 	}
@@ -192,6 +193,7 @@ func testAccResourcePipeline(id string, name string) string {
                         org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
                         name = "%[2]s"
+                        tags = ["foo:bar", "bar:foo"]
                         git_details {
                             branch_name = "main"
                             commit_message = "Commit"
@@ -203,11 +205,13 @@ func testAccResourcePipeline(id string, name string) string {
             yaml = <<-EOT
                 pipeline:
                     name: %[2]s
-                    identifier: %[1]s
+                    identifier: %[1]s   
                     allowStageExecutions: false
                     projectIdentifier: ${harness_platform_project.test.id}
                     orgIdentifier: ${harness_platform_project.test.org_id}
-                    tags: {}
+                    tags:
+                      foo: bar
+                      bar: foo
                     stages:
                         - stage:
                             name: dep
@@ -308,6 +312,7 @@ func testAccResourcePipelineInline(id string, name string) string {
                         org_id = harness_platform_project.test.org_id
 						project_id = harness_platform_project.test.id
                         name = "%[2]s"
+                        tags = ["foo:bar", "bar:foo"]
             yaml = <<-EOT
                 pipeline:
                     name: %[2]s
@@ -315,7 +320,9 @@ func testAccResourcePipelineInline(id string, name string) string {
                     allowStageExecutions: false
                     projectIdentifier: ${harness_platform_project.test.id}
                     orgIdentifier: ${harness_platform_project.test.org_id}
-                    tags: {}
+                    tags:
+                      foo: bar
+                      bar: foo
                     stages:
                         - stage:
                             name: dep
@@ -408,7 +415,7 @@ func testAccResourcePipelineImportFromGit(id string, name string) string {
         resource "harness_platform_pipeline" "test" {
                         identifier = "gitx"
                         org_id = "default"
-						project_id = "V"
+						project_id = "DoNotDelete_Amit"
                         name = "gitx"
                         import_from_git = true
                         git_import_info {

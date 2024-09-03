@@ -10,7 +10,7 @@ description: |-
 
 Resource for creating a Jira connector.
 ### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand how to use the Connectors, please see [Documentation](https://developer.harness.io/docs/category/connectors)
 - To understand more about Jira Connectors, please see  [Jira Connectors](https://developer.harness.io/docs/platform/connectors/ticketing-systems/connect-to-jira)
 

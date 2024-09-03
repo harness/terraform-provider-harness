@@ -37,7 +37,7 @@ resource "harness_platform_connector_azure_cloud_cost" "example" {
 
 ### Required
 
-- `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, and Visibility.
+- `features_enabled` (Set of String) Indicates which feature to enable among Billing, Optimization, Visibility and Governance.
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
 - `subscription_id` (String) Subsription id.

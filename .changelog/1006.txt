@@ -1,0 +1,4 @@
+```release-note:enhancement
+harness_platform_connector_gcp_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors
+harness_platform_connector_azure_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors
+```

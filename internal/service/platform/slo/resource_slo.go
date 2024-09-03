@@ -3,6 +3,8 @@ package slo
 import (
 	"context"
 	"encoding/json"
+	"strings"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -10,7 +12,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"strings"
 )
 
 func ResourceSloService() *schema.Resource {
@@ -290,9 +291,9 @@ func buildSloRequest(d *schema.ResourceData, identifier string) *nextgen.Service
 			json.Unmarshal([]byte(sloTargetSpec), &data)
 
 			sloTargetDto := nextgen.SloTargetDto{
-				Type_: nextgen.SLOTargetType(sloTargetType),
+				Type_:               nextgen.SLOTargetType(sloTargetType),
 				SloTargetPercentage: sloTargetPercentage,
-				Rolling: &data,
+				Rolling:             &data,
 			}
 
 			serviceLevelObjectiveV2Dto.SloTarget = &sloTargetDto
@@ -302,9 +303,9 @@ func buildSloRequest(d *schema.ResourceData, identifier string) *nextgen.Service
 			json.Unmarshal([]byte(sloTargetSpec), &data)
 
 			sloTargetDto := nextgen.SloTargetDto{
-				Type_: nextgen.SLOTargetType(sloTargetType),
+				Type_:               nextgen.SLOTargetType(sloTargetType),
 				SloTargetPercentage: sloTargetPercentage,
-				Calender: &data,
+				Calender:            &data,
 			}
 
 			serviceLevelObjectiveV2Dto.SloTarget = &sloTargetDto
@@ -333,7 +334,7 @@ func buildSloRequest(d *schema.ResourceData, identifier string) *nextgen.Service
 			test := notificationRuleRef.(map[string]interface{})
 			notificationRuleRefDto := &nextgen.NotificationRuleRefDto{
 				NotificationRuleRef: test["notification_rule_ref"].(string),
-				Enabled: test["enabled"].(bool),
+				Enabled:             test["enabled"].(bool),
 			}
 			notificationRuleRefs[i] = *notificationRuleRefDto
 		}

@@ -166,7 +166,7 @@ func ResourcePipeline() *schema.Resource {
 	}
 
 	helpers.SetProjectLevelResourceSchema(resource.Schema)
-
+	resource.Schema["tags"].Description = resource.Schema["tags"].Description + " These should match the tag value passed in the YAML; if this parameter is null or not passed, the tags specified in YAML should also be null."
 	return resource
 }
 
@@ -226,8 +226,8 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	if id == "" {
 		if d.Get("import_from_git").(bool) {
 			pipeline_id = d.Get("identifier").(string)
-
 			pipeline_import_request_body := createImportFromGitRequest(d)
+			branch_name = pipeline_import_request_body.GitImportInfo.BranchName
 
 			_, httpResp, err = c.PipelinesApi.ImportPipelineFromGit(ctx, org_id, project_id, pipeline_id,
 				&nextgen.PipelinesApiImportPipelineFromGitOpts{
@@ -252,10 +252,18 @@ func resourcePipelineCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 		store_type = helpers.BuildField(d, "git_details.0.store_type")
 		connector_ref = helpers.BuildField(d, "git_details.0.connector_ref")
 		pipeline_id = pipeline.Identifier
+
 		if pipeline.GitDetails != nil {
 			base_branch = optional.NewString(pipeline.GitDetails.BaseBranch)
 			branch_name = pipeline.GitDetails.BranchName
 			commit_message = optional.NewString(pipeline.GitDetails.CommitMessage)
+			_, httpResp, err = c.PipelinesApi.UpdatePipelineGitMetadata(ctx, org_id, project_id, pipeline_id, &nextgen.PipelinesApiUpdatePipelineGitMetadataOpts{
+				Body:           optional.NewInterface(pipeline),
+				HarnessAccount: optional.NewString(c.AccountId),
+			})
+			if err != nil {
+				return helpers.HandleApiError(err, d, httpResp)
+			}
 		}
 		_, httpResp, err = c.PipelinesApi.UpdatePipeline(ctx, pipeline, org_id, project_id, id,
 			&nextgen.PipelinesApiUpdatePipelineOpts{HarnessAccount: optional.NewString(c.AccountId)})
@@ -411,6 +419,7 @@ func readPipeline(d *schema.ResourceData, pipeline nextgen.PipelineGetResponseBo
 	d.Set("name", pipeline.Name)
 	d.Set("org_id", org_id)
 	d.Set("project_id", project_id)
+	d.Set("tags", helpers.FlattenTags(pipeline.Tags))
 	d.Set("yaml", pipeline.PipelineYaml)
 	d.Set("description", pipeline.Description)
 	d.Set("template_applied_pipeline_yaml", pipeline.TemplateAppliedPipelineYaml)

@@ -41,6 +41,58 @@ func ResourcePolicy() *schema.Resource {
 				Required:    true,
 				Computed:    false,
 			},
+			"git_connector_ref": {
+				Description: "Git connector reference for the policy.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"git_path": {
+				Description: "Git path for the policy.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"git_repo": {
+				Description: "Git repository for the policy.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"git_commit_msg": {
+				Description: "Git commit message for the policy.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"git_import": {
+				Description: "Flag to import the policy from git.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"git_branch": {
+				Description: "Git branch for the policy.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"git_is_new_branch": {
+				Description: "Flag to create a new branch for the policy.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+			},
+			"git_base_branch": {
+				Description: "Base branch for the new git branch.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"git_commit_sha": {
+				Description: "The existing commit sha of the file being updated",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
+			"git_file_id": {
+				Description: "The existing file id of the file being updated, not required for bitbucket files",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+			},
 		},
 	}
 
@@ -86,14 +138,21 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	if id == "" {
 		body := policymgmt.CreateRequestBody{
-			Name:       d.Get("name").(string),
-			Rego:       d.Get("rego").(string),
-			Identifier: d.Get("identifier").(string),
+			Name:            d.Get("name").(string),
+			Rego:            d.Get("rego").(string),
+			Identifier:      d.Get("identifier").(string),
+			GitConnectorRef: d.Get("git_connector_ref").(string),
+			GitPath:         d.Get("git_path").(string),
+			GitRepo:         d.Get("git_repo").(string),
 		}
 		localVarOptionals := policymgmt.PoliciesApiPoliciesCreateOpts{
 			AccountIdentifier: optional.NewString(meta.(*internal.Session).AccountId),
-
-			XApiKey: optional.NewString(meta.(*internal.Session).PLClient.ApiKey),
+			XApiKey:           optional.NewString(meta.(*internal.Session).PLClient.ApiKey),
+			GitCommitMsg:      optional.NewString(d.Get("git_commit_msg").(string)),
+			GitImport:         optional.NewBool(d.Get("git_import").(bool)),
+			GitBranch:         optional.NewString(d.Get("git_branch").(string)),
+			GitIsNewBranch:    optional.NewBool(d.Get("git_is_new_branch").(bool)),
+			GitBaseBranch:     optional.NewString(d.Get("git_base_branch").(string)),
 		}
 		// check for project and org
 		if d.Get("project_id").(string) != "" {
@@ -111,6 +170,12 @@ func resourcePolicyCreateOrUpdate(ctx context.Context, d *schema.ResourceData, m
 		localVarOptionals := policymgmt.PoliciesApiPoliciesUpdateOpts{
 			AccountIdentifier: optional.NewString(meta.(*internal.Session).AccountId),
 			XApiKey:           optional.NewString(meta.(*internal.Session).PLClient.ApiKey),
+			GitCommitMsg:      optional.NewString(d.Get("git_commit_msg").(string)),
+			GitBranch:         optional.NewString(d.Get("git_branch").(string)),
+			GitIsNewBranch:    optional.NewBool(d.Get("git_is_new_branch").(bool)),
+			GitBaseBranch:     optional.NewString(d.Get("git_base_branch").(string)),
+			GitCommitSha:      optional.NewString(d.Get("git_commit_sha").(string)),
+			GitFileId:         optional.NewString(d.Get("git_file_id").(string)),
 		}
 		if d.Get("project_id").(string) != "" {
 			localVarOptionals.ProjectIdentifier = helpers.BuildField(d, "project_id")
@@ -173,4 +238,20 @@ func readPolicy(d *schema.ResourceData, policy policymgmt.Policy) {
 	_ = d.Set("project_id", policy.ProjectId)
 	_ = d.Set("name", policy.Name)
 	_ = d.Set("rego", policy.Rego)
+
+	if policy.GitCommitSha != "" {
+		_ = d.Set("git_commit_sha", policy.GitCommitSha)
+	}
+	if policy.GitConnectorRef != "" {
+		_ = d.Set("git_connector_ref", policy.GitConnectorRef)
+	}
+	if policy.GitFileId != "" {
+		_ = d.Set("git_file_id", policy.GitFileId)
+	}
+	if policy.GitPath != "" {
+		_ = d.Set("git_path", policy.GitPath)
+	}
+	if policy.GitRepo != "" {
+		_ = d.Set("git_repo", policy.GitRepo)
+	}
 }

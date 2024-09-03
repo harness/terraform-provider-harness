@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	openapi_client_nextgen "github.com/harness/harness-openapi-go-client/nextgen"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,6 +24,9 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
 		return diag.Errorf(erro.Error())
 	}
 
@@ -39,12 +43,38 @@ func HandleApiError(err error, d *schema.ResourceData, httpResp *http.Response) 
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
+
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
+
 		var jsonMap map[string]interface{}
 		err := json.Unmarshal(err_openapi_client.Body(), &jsonMap)
 		if err == nil {
 			return diag.Errorf(jsonMap["message"].(string))
 		}
 		return diag.Errorf(err_openapi_client.Error())
+	}
+
+	return diag.Errorf(err.Error())
+}
+
+func HandleDBOpsApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	erro, ok := err.(dbops.GenericSwaggerError)
+	if ok && httpResp != nil {
+		if httpResp.StatusCode == 401 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+				"1) Please check if token has expired or is wrong.\n" +
+				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+		}
+		if httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+				"1) Please check if the token has required permission for this operation.\n" +
+				"2) Please check if the token has expired or is wrong.")
+		}
+		if httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
 	}
 
 	return diag.Errorf(err.Error())
@@ -62,6 +92,9 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
+		}
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
 		}
 		if erro.Model() != nil && (erro.Code() == nextgen.ErrorCodes.ResourceNotFound || erro.Code() == nextgen.ErrorCodes.EntityNotFound) {
 			d.SetId("")
@@ -83,7 +116,9 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 				"1) Please check if the token has required permission for this operation.\n" +
 				"2) Please check if the token has expired or is wrong.")
 		}
-
+		if httpResp != nil && httpResp.StatusCode == 404 {
+			return diag.Errorf("resource with ID %s not found: %v", d.Id(), erro.Error())
+		}
 		var jsonMap map[string]interface{}
 		err := json.Unmarshal(err_openapi_client.Body(), &jsonMap)
 		if err == nil {
@@ -92,5 +127,27 @@ func HandleReadApiError(err error, d *schema.ResourceData, httpResp *http.Respon
 		return diag.Errorf(err_openapi_client.Error())
 	}
 
+	return diag.Errorf(err.Error())
+}
+
+func HandleDBOpsReadApiError(err error, d *schema.ResourceData, httpResp *http.Response) diag.Diagnostics {
+	_, ok := err.(dbops.GenericSwaggerError)
+	if ok && httpResp != nil {
+		if httpResp.StatusCode == 401 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+				"1) Please check if token has expired or is wrong.\n" +
+				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
+		}
+		if httpResp.StatusCode == 403 {
+			return diag.Errorf(httpResp.Status + "\n" + "Hint:\n" +
+				"1) Please check if the token has required permission for this operation.\n" +
+				"2) Please check if the token has expired or is wrong.")
+		}
+		if httpResp.StatusCode == 404 {
+			d.SetId("")
+			d.MarkNewResource()
+			return nil
+		}
+	}
 	return diag.Errorf(err.Error())
 }

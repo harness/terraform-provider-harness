@@ -1,3 +1,126 @@
+# 0.32.6 (August 29,2024) 
+
+# 0.32.5 (August 27,2024) 
+
+# 0.32.4 (August 27,2024) 
+
+# 0.32.3 (August 09,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitx_webhook: Added support for Gitx Webhook endpoints` ([#1014](https://github.com/harness/terraform-provider-harness/issues/1014))
+
+ENHANCEMENTS:
+
+* harness_platform_policy: - Have added support for remote policies, now users can create remote policies using terraform by providing git references in the script.
+                         - Updated the Data Source for policy as rego should not be a mandatory field for GET call. ([#1015](https://github.com/harness/terraform-provider-harness/issues/1015))
+* resource/harness_platform_connector_gcp: added support for OIDC Auth in GCP connector. ([#1019](https://github.com/harness/terraform-provider-harness/issues/1019))
+
+# 0.32.2 (July 25,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_app_project: Rename the file name ([#1011](https://github.com/harness/terraform-provider-harness/issues/1011))
+* harness_platform_gitops_project: Added the resource version gitops project ([#1010](https://github.com/harness/terraform-provider-harness/issues/1010))
+
+# 0.32.1 (July 23,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_project: Update the schema of gitops project ([#1009](https://github.com/harness/terraform-provider-harness/issues/1009))
+* harness_platform_pipeline: Added update call for git metadata in pipeline update flow.
+harness_platform_template:Added update call for git metadata in template update flow. ([#1008](https://github.com/harness/terraform-provider-harness/issues/1008))
+
+# 0.31.9 (July 18,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_notification_rule: Added support for notification rule for SLO and MonitoredService` ([#1013](https://github.com/harness/terraform-provider-harness/issues/1013))
+
+ENHANCEMENTS:
+
+* resource_monitored_service: Add support for custom change sources in monitored service configuration. ([#1007](https://github.com/harness/terraform-provider-harness/issues/1007))
+
+# 0.31.8 (July 11,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_connector_jdbc` ([#1002](https://github.com/harness/terraform-provider-harness/issues/1002))
+* **New Resource:** `harness_platform_db_instance` ([#1001](https://github.com/harness/terraform-provider-harness/issues/1001))
+* **New Resource:** `harness_platform_db_schema` ([#998](https://github.com/harness/terraform-provider-harness/issues/998))
+* **New Resource:** `harness_platform_gitops_project: Added the terraform support for creating the gitops project` ([#1000](https://github.com/harness/terraform-provider-harness/issues/1000))
+* **New Resource:** `harness_platform_pipeline: Added the branch context when imported the pipeline from non main branch` ([#999](https://github.com/harness/terraform-provider-harness/issues/999))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_gcp_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors
+harness_platform_connector_azure_cloud_cost: Added support for governance in feature_enabled field in gcp and azure cloud cost connectors ([#1006](https://github.com/harness/terraform-provider-harness/issues/1006))
+* platform_gitops_applications: Added support for skip repo validation, when set true repo doesnt have to be created before creating application. ([#979](https://github.com/harness/terraform-provider-harness/issues/979))
+
+# 0.31.7 (July 02,2024) 
+
+# 0.31.6 (July 01,2024) 
+
+# 0.31.5 (June 17,2024) 
+
+BUG FIXES:
+
+* resource/platform_repo: Fixes issue for repo import giving 404 even after being successful. ([#978](https://github.com/harness/terraform-provider-harness/issues/978))
+
+# 0.31.4 (June 07,2024) 
+
+# 0.31.3 (May 31,2024) 
+
+# 0.31.2 (May 21,2024) 
+
+# 0.31.1 (May 10,2024) 
+
+# 0.31.0 (May 10,2024) 
+
+# 0.31.0 (May 10,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_pipeline: Updated the description for tags in pipeline create ([#977](https://github.com/harness/terraform-provider-harness/issues/977))
+
+# 0.30.9 (May 03,2024) 
+
+# 0.30.8 (April 04,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_variable: updated schema to forceNew for identifier, orgId and projectId ([#963](https://github.com/harness/terraform-provider-harness/issues/963))
+
+# 0.30.7 (March 22,2024) 
+
+ENHANCEMENTS:
+
+* resource/harness_platform_user: added support for update for user groups for user entity ([#957](https://github.com/harness/terraform-provider-harness/issues/957))
+
+# 0.30.6 (March 18,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_infrastructures: Added supprt for creating/Updating remote Infrastructures and import from git for Infrastructures. ([#931](https://github.com/harness/terraform-provider-harness/issues/931))
+
+BUG FIXES:
+
+* fix resource and data source for environment to gitops cluster mapping ([#954](https://github.com/harness/terraform-provider-harness/issues/954))
+
+# 0.30.5 (March 07,2024) 
+
+FEATURES:
+
+* **New Resource:** `platform_repo` ([#879](https://github.com/harness/terraform-provider-harness/issues/879))
+* **New Resource:** `platform_repo_rule_branch` ([#879](https://github.com/harness/terraform-provider-harness/issues/879))
+
+ENHANCEMENTS:
+
+* harness_platform_connector_kubernetes: Added support for ca_cert_ref in kubernetes connector cluster. ([#928](https://github.com/harness/terraform-provider-harness/issues/928))
+* harness_platform_environment: Added supprt for creating/Updating remote Environment and import from git for Environment. ([#929](https://github.com/harness/terraform-provider-harness/issues/929))
+* harness_platform_service: Added supprt for creating/Updating remote services and import from git for service. ([#927](https://github.com/harness/terraform-provider-harness/issues/927))
+* harness_platform_service_overrides_v2: Added supprt for creating/Updating remote Overrides and import from git for Overrides. ([#930](https://github.com/harness/terraform-provider-harness/issues/930))
+
 # 0.30.4 (February 28,2024) 
 
 ENHANCEMENTS:

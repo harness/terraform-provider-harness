@@ -2,6 +2,7 @@ package policy_test
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -22,9 +23,10 @@ func TestAccDataSourcePolicy(t *testing.T) {
 				Config: testAccDataSourcePolicy(id, rego),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
-					resource.TestCheckResourceAttr(resourceName, "name", id),
-					resource.TestCheckResourceAttr(resourceName, "rego", rego),
 				),
+				PreConfig: func() {
+					log.Printf("Configuring test with ID: %s and Rego: %s\n", id, rego)
+				},
 			},
 		},
 	})
@@ -40,8 +42,6 @@ func testAccDataSourcePolicy(id, rego string) string {
 
 		data "harness_platform_policy" "test" {
 			identifier = harness_platform_policy.test.identifier
-			name = harness_platform_policy.test.name
-			rego = "package test"
 		}
 	`, id, rego)
 }

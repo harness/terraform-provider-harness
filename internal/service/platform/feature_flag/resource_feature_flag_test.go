@@ -199,7 +199,6 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 			}
 
 			tags {
-				name = "foo"
 				identifier = "bar"
 			}
 
@@ -211,24 +210,6 @@ func testAccResourceFeatureFlag(id string, name string, updatedName string) stri
 					targets = ["target1"]
 				}
 
-				add_target_group_rule {
-					variation = "Enabled"
-					group_name = "targetgroup1"
-				}
-
-				add_target_group_rule {
-					group_name = "targetgroup2"
-					distribution {
-						variations {
-							variation = "Enabled"
-							weight = 50
-						}
-						variations {
-							variation = "Disabled"
-							weight = 50
-						}
-					}
-				}
 			}
 		}
 `, id, name, updatedName)

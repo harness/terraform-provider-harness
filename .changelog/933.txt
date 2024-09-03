@@ -1,0 +1,3 @@
+```release-note:new data source 
+resource/harness_platform_pipeline_list: to get list of pipeline .
+```

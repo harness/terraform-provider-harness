@@ -10,7 +10,7 @@ description: |-
 
 Resource for Manual Deployment Freeze Window.
 ### References:
-- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/terraform/harness-terraform-provider-overview/)
+- For details on how to onboard with Terraform, please see [Harness Terraform Provider Overview](https://developer.harness.io/docs/platform/automation/terraform/harness-terraform-provider-overview/)
 - To understand more about Deployment Freeze, please see  [Documentation](https://developer.harness.io/docs/continuous-delivery/manage-deployments/deployment-freeze/)
 
 ## Example to create Manual Freeze at different levels (Org, Project, Account)

@@ -1409,7 +1409,7 @@ func testAccResourceTemplateProjectScopeImportFromGit(id string, name string) st
         resource "harness_platform_template" "test" {
                         identifier = "%[1]s"
                         org_id = "default"
-						project_id = "V"
+						project_id = "DoNotDelete_Amit"
                         name = "%[2]s"
 						version = "v2"
                         import_from_git = true

@@ -5,6 +5,14 @@ resource "harness_platform_environment" "example" {
   project_id = "project_id"
   tags       = ["foo:bar", "bar:foo"]
   type       = "PreProduction"
+  git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
 
   ## ENVIRONMENT V2 Update
   ## The YAML is needed if you want to define the Environment Variables and Overrides for the environment
@@ -56,3 +64,18 @@ resource "harness_platform_environment" "example" {
                        secretFiles: []
   EOT
 }
+
+### Importing Environment from Git
+resource "harness_platform_environment" "test" {
+    identifier  = "accEnv"
+    name = "accEnv"
+	  type = "PreProduction"
+    git_details {
+      store_type = "REMOTE"
+      connector_ref = "account.DoNotDeleteGitX"
+      repo_name = "pcf_practice"
+      file_path = ".harness/accountEnvironment.yaml"
+      branch = "main"
+      import_from_git = "true"
+    }
+  }

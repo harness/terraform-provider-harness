@@ -5,19 +5,29 @@ import (
 	"fmt"
 	"log"
 
+	dbinstance "github.com/harness/terraform-provider-harness/internal/service/platform/db_instance"
+	dbschema "github.com/harness/terraform-provider-harness/internal/service/platform/db_schema"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/gitx/webhook"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/notification_rule"
+
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target"
 	feature_flag_target_group "github.com/harness/terraform-provider-harness/internal/service/platform/feature_flag_target_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/ff_api_key"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/gitops/agent_yaml"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/iacm"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/manual_freeze"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policy"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/policyset"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_rule_branch"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo_webhook"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/workspace"
 	"github.com/sirupsen/logrus"
 
 	"github.com/harness/harness-go-sdk/harness"
 	"github.com/harness/harness-go-sdk/harness/cd"
+	"github.com/harness/harness-go-sdk/harness/code"
+	"github.com/harness/harness-go-sdk/harness/dbops"
 	"github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/harness-go-sdk/harness/utils"
@@ -55,6 +65,7 @@ import (
 	gitops_applications "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/applications"
 	gitops_cluster "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/cluster"
 	gitops_gnupg "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/gnupg"
+	gitops_project "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/project"
 	gitops_repository "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository"
 	gitops_repo_cert "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_certificates"
 	gitops_repo_cred "github.com/harness/terraform-provider-harness/internal/service/platform/gitops/repository_credentials"
@@ -63,10 +74,12 @@ import (
 	"github.com/harness/terraform-provider-harness/internal/service/platform/input_set"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/monitored_service"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/organization"
+	pl_overrides "github.com/harness/terraform-provider-harness/internal/service/platform/overrides"
 	pl_permissions "github.com/harness/terraform-provider-harness/internal/service/platform/permissions"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/pipeline_filters"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/project"
+	"github.com/harness/terraform-provider-harness/internal/service/platform/repo"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/resource_group"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/role_assignments"
 	"github.com/harness/terraform-provider-harness/internal/service/platform/roles"
@@ -153,6 +166,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_customhealthsource":    connector.DatasourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.DatasourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.DatasourceConnectorDocker(),
+				"harness_platform_connector_jdbc":                  connector.DatasourceConnectorJDBC(),
 				"harness_platform_connector_dynatrace":             connector.DatasourceConnectorDynatrace(),
 				"harness_platform_connector_gcp":                   connector.DatasourceConnectorGcp(),
 				"harness_platform_connector_gcp_secret_manager":    connector.DatasourceConnectorGcpSM(),
@@ -173,15 +187,19 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_terraform_cloud":       connector.DatasourceConnectorTerraformCloud(),
 				"harness_platform_connector_sumologic":             connector.DatasourceConnectorSumologic(),
 				"harness_platform_connector_pdc":                   connector.DatasourceConnectorPdc(),
+				"harness_platform_connector_custom_secret_manager": connector.DatasourceConnectorCustomSM(),
 				"harness_platform_current_account":                 pl_account.DataSourceCurrentAccount(),
 				"harness_platform_current_user":                    pl_current_user.DataSourceCurrentUser(),
 				"harness_platform_user":                            pl_user.DataSourceUser(),
 				"harness_platform_environment":                     pl_environment.DataSourceEnvironment(),
+				"harness_platform_db_schema":                       dbschema.DataSourceDBSchema(),
+				"harness_platform_db_instance":                     dbinstance.DataSourceDBInstance(),
 				"harness_platform_environment_list":                pl_environment.DataSourceEnvironmentList(),
 				"harness_platform_environment_group":               pl_environment_group.DataSourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.DataSourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.DataSourceEnvironmentServiceOverrides(),
 				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.DataSourceServiceOverrides(),
+				"harness_platform_overrides":                       pl_overrides.DataSourceOverrides(),
 				"harness_platform_gitops_agent":                    gitops_agent.DataSourceGitopsAgent(),
 				"harness_platform_gitops_agent_deploy_yaml":        agent_yaml.DataSourceGitopsAgentDeployYaml(),
 				"harness_platform_gitops_applications":             gitops_applications.DataSourceGitopsApplications(),
@@ -196,8 +214,10 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_monitored_service":               monitored_service.DataSourceMonitoredService(),
 				"harness_platform_organization":                    organization.DataSourceOrganization(),
 				"harness_platform_pipeline":                        pipeline.DataSourcePipeline(),
+				"harness_platform_pipeline_list":                   pipeline.DataSourcePipelineList(),
 				"harness_platform_permissions":                     pl_permissions.DataSourcePermissions(),
 				"harness_platform_project":                         project.DataSourceProject(),
+				"harness_platform_project_list":                    project.DataSourceProjectList(),
 				"harness_platform_service":                         pl_service.DataSourceService(),
 				"harness_platform_service_list":                    pl_service.DataSourceServiceList(),
 				"harness_platform_usergroup":                       usergroup.DataSourceUserGroup(),
@@ -225,6 +245,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_secret_manager":                           secrets.DataSourceSecretManager(),
 				"harness_service":                                  service.DataSourceService(),
 				"harness_platform_slo":                             slo.DataSourceSloService(),
+				"harness_platform_notification_rule":               notification_rule.DataSourceNotificationRuleService(),
 				"harness_ssh_credential":                           secrets.DataSourceSshCredential(),
 				"harness_sso_provider":                             sso.DataSourceSSOProvider(),
 				"harness_user_group":                               user.DataSourceUserGroup(),
@@ -253,6 +274,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_delegatetoken":                   pl_delegatetoken.DataSourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.DataSourceWorkspace(),
 				"harness_platform_workspace_output":                workspace.DataSourceWorkspaceOutput(),
+				"harness_platform_iacm_default_pipeline":           iacm.DataSourceIacmDefaultPipeline(),
+				"harness_platform_repo":                            repo.DataSourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.DataSourceRepoBranchRule(),
+				"harness_platform_repo_webhook":                    repo_webhook.DataSourceRepoWebhook(),
+				"harness_platform_gitops_app_project":              gitops_project.DataSourceGitOpsProject(),
+				"harness_platform_gitx_webhook":                    webhook.DataSourceWebhook(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
 				"harness_platform_template":                        pl_template.ResourceTemplate(),
@@ -271,6 +298,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_customhealthsource":    connector.ResourceConnectorCustomHealthSource(),
 				"harness_platform_connector_datadog":               connector.ResourceConnectorDatadog(),
 				"harness_platform_connector_docker":                connector.ResourceConnectorDocker(),
+				"harness_platform_connector_jdbc":                  connector.ResourceConnectorJDBC(),
 				"harness_platform_connector_dynatrace":             connector.ResourceConnectorDynatrace(),
 				"harness_platform_connector_gcp":                   connector.ResourceConnectorGcp(),
 				"harness_platform_connector_gcp_secret_manager":    connector.ResourceConnectorGCPSecretManager(),
@@ -293,6 +321,8 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_connector_sumologic":             connector.ResourceConnectorSumologic(),
 				"harness_platform_connector_pdc":                   connector.ResourceConnectorPdc(),
 				"harness_platform_environment":                     pl_environment.ResourceEnvironment(),
+				"harness_platform_db_schema":                       dbschema.ResourceDBSchema(),
+				"harness_platform_db_instance":                     dbinstance.ResourceDBInstance(),
 				"harness_platform_environment_group":               pl_environment_group.ResourceEnvironmentGroup(),
 				"harness_platform_environment_clusters_mapping":    pl_environment_clusters_mapping.ResourceEnvironmentClustersMapping(),
 				"harness_platform_environment_service_overrides":   pl_environment_service_overrides.ResourceEnvironmentServiceOverrides(),
@@ -300,6 +330,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_feature_flag_target_group":       feature_flag_target_group.ResourceFeatureFlagTargetGroup(),
 				"harness_platform_feature_flag_target":             feature_flag_target.ResourceFeatureFlagTarget(),
 				"harness_platform_service_overrides_v2":            pl_service_overrides_v2.ResourceServiceOverrides(),
+				"harness_platform_overrides":                       pl_overrides.ResourceOverrides(),
 				"harness_platform_ff_api_key":                      ff_api_key.ResourceFFApiKey(),
 				"harness_platform_gitops_agent":                    gitops_agent.ResourceGitopsAgent(),
 				"harness_platform_gitops_applications":             gitops_applications.ResourceGitopsApplication(),
@@ -307,6 +338,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_platform_gitops_gnupg":                    gitops_gnupg.ResourceGitopsGnupg(),
 				"harness_platform_gitops_app_project_mapping":      gitops_project_mapping.ResourceGitopsAppProjectMapping(),
 				"harness_platform_gitops_repository":               gitops_repository.ResourceGitopsRepositories(),
+				"harness_platform_gitops_app_project":              gitops_project.ResourceProject(),
 				"harness_platform_gitops_repo_cert":                gitops_repo_cert.ResourceGitopsRepoCerts(),
 				"harness_platform_gitops_repo_cred":                gitops_repo_cred.ResourceGitopsRepoCred(),
 				"harness_platform_infrastructure":                  pl_infrastructure.ResourceInfrastructure(),
@@ -357,6 +389,7 @@ func Provider(version string) func() *schema.Provider {
 				"harness_service_tanzu":                            service.ResourcePCFService(),
 				"harness_service_winrm":                            service.ResourceWinRMService(),
 				"harness_platform_slo":                             slo.ResourceSloService(),
+				"harness_platform_notification_rule":               notification_rule.ResourceNotificationRuleService(),
 				"harness_ssh_credential":                           secrets.ResourceSSHCredential(),
 				"harness_user_group":                               user.ResourceUserGroup(),
 				"harness_user_group_permissions":                   user.ResourceUserGroupPermissions(),
@@ -383,6 +416,12 @@ func Provider(version string) func() *schema.Provider {
 				"harness_autostopping_schedule":                    schedule.ResourceVMRule(),
 				"harness_platform_delegatetoken":                   pl_delegatetoken.ResourceDelegateToken(),
 				"harness_platform_workspace":                       workspace.ResourceWorkspace(),
+				"harness_platform_iacm_default_pipeline":           iacm.ResourceIacmDefaultPipeline(),
+				"harness_platform_repo":                            repo.ResourceRepo(),
+				"harness_platform_repo_rule_branch":                repo_rule_branch.ResourceRepoBranchRule(),
+				"harness_platform_repo_webhook":                    repo_webhook.ResourceRepoWebhook(),
+				"harness_platform_connector_custom_secret_manager": connector.ResourceConnectorCSM(),
+				"harness_platform_gitx_webhook":                    webhook.ResourceWebhook(),
 			},
 		}
 
@@ -438,6 +477,17 @@ func getPLClient(d *schema.ResourceData, version string) *nextgen.APIClient {
 	return client
 }
 
+func getDBOpsClient(d *schema.ResourceData, version string) *dbops.APIClient {
+	client := dbops.NewAPIClient(&dbops.Configuration{
+		AccountId: d.Get("account_id").(string),
+		BasePath:  d.Get("endpoint").(string),
+		ApiKey:    d.Get("platform_api_key").(string),
+		UserAgent: fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+	})
+
+	return client
+}
+
 func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.APIClient {
 	cfg := openapi_client_nextgen.NewConfiguration()
 	client := openapi_client_nextgen.NewAPIClient(&openapi_client_nextgen.Configuration{
@@ -452,15 +502,31 @@ func getClient(d *schema.ResourceData, version string) *openapi_client_nextgen.A
 	return client
 }
 
+func getCodeClient(d *schema.ResourceData, version string) *code.APIClient {
+	cfg := code.NewConfiguration()
+	client := code.NewAPIClient(&code.Configuration{
+		AccountId:     d.Get("account_id").(string),
+		BasePath:      d.Get("endpoint").(string) + "/code/api/v1", // todo: this should be fixed in go sdk later
+		ApiKey:        d.Get("platform_api_key").(string),
+		UserAgent:     fmt.Sprintf("terraform-provider-harness-platform-%s", version),
+		HTTPClient:    getOpenApiHttpClient(cfg.Logger),
+		DefaultHeader: map[string]string{"X-Api-Key": d.Get("platform_api_key").(string)}, // todo: this should be fixed in go sdk later
+		DebugLogging:  openapi_client_logging.IsDebugOrHigher(cfg.Logger),
+	})
+	return client
+}
+
 // Setup the client for interacting with the Harness API
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		return &internal.Session{
-			AccountId: d.Get("account_id").(string),
-			Endpoint:  d.Get("endpoint").(string),
-			CDClient:  getCDClient(d, version),
-			PLClient:  getPLClient(d, version),
-			Client:    getClient(d, version),
+			AccountId:   d.Get("account_id").(string),
+			Endpoint:    d.Get("endpoint").(string),
+			CDClient:    getCDClient(d, version),
+			PLClient:    getPLClient(d, version),
+			Client:      getClient(d, version),
+			CodeClient:  getCodeClient(d, version),
+			DBOpsClient: getDBOpsClient(d, version),
 		}, nil
 	}
 }

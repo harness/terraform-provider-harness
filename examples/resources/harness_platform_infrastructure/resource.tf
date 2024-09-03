@@ -6,6 +6,14 @@ resource "harness_platform_infrastructure" "example" {
   env_id          = "environmentIdentifier"
   type            = "KubernetesDirect"
   deployment_type = "Kubernetes"
+  git_details {
+    branch_name    = "branchName"
+    commit_message = "commitMessage"
+    file_path      = "filePath"
+    connector_ref  = "connectorRef"
+    store_type     = "REMOTE"
+    repo_name      = "repoName"
+  }
   yaml            = <<-EOT
         infrastructureDefinition:
          name: name

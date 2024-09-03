@@ -16,7 +16,7 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 		Description: "Resource for managing the Harness GitOps Application Project Mappings.",
 
 		ReadContext: datasourceGitopsAppProjectMappingRead,
-		Importer:    helpers.ProjectResourceImporter,
+		Importer:    helpers.GitopsAppProjectMappingImporter,
 
 		Schema: map[string]*schema.Schema{
 			"account_id": {
@@ -42,12 +42,12 @@ func DatasourceGitopsAppProjectMapping() *schema.Resource {
 			"identifier": {
 				Description: "Identifier of the GitOps Application Project.",
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 			},
 			"argo_project_name": {
 				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 			},
 		},
 	}
@@ -59,10 +59,15 @@ func datasourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resour
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
+	argo_proj_name := d.Get("argo_project_name").(string)
+	if identifier == argo_proj_name {
+		identifier = ""
+	}
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceGetAppProjectMappingV2(ctx, agentIdentifier, identifier, &nextgen.ProjectMappingsApiAppProjectMappingServiceGetAppProjectMappingV2Opts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(d.Get("org_id").(string)),
 		ProjectIdentifier: optional.NewString(d.Get("project_id").(string)),
+		ArgoProjectName:   optional.NewString(argo_proj_name),
 	})
 
 	if err != nil {
