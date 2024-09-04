@@ -51,6 +51,14 @@ func handleApiError(err error, d *schema.ResourceData, httpResp *http.Response, 
 				"1) Please check if token has expired or is wrong.\n"+
 				"2) Harness Provider is misconfigured. For firstgen resources please give the correct api_key and for nextgen resources please give the correct platform_api_key.")
 		}
+		if gitopsErrOk && httpResp != nil && httpResp.StatusCode == 403 {
+			if len(errMessage) > 0 {
+				return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
+					"1) Please check if the token has required permission for this operation.\n"+
+					"2) Please check if the token has expired or is wrong.\n"+
+					"3) "+errMessage)
+			}
+		}
 		if httpResp != nil && httpResp.StatusCode == 403 {
 			return diag.Errorf("%s", httpResp.Status+"\n"+"Hint:\n"+
 				"1) Please check if the token has required permission for this operation.\n"+
