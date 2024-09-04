@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
@@ -26,26 +27,31 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Description: "Account identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"repo": {
 				Description: "Repo details holding application configurations.",
@@ -99,10 +105,11 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"type_": {
-							Description: "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
-							Type:        schema.TypeString,
-							Optional:    true,
-							Computed:    true,
+							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
+							Type:         schema.TypeString,
+							Optional:     true,
+							Computed:     true,
+							ValidateFunc: validation.StringInSlice([]string{"git", "helm"}, false),
 						},
 						"name": {
 							Description: "Name to be used for this repo. Only used with Helm repos.",
@@ -402,7 +409,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
@@ -419,6 +426,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -431,6 +439,7 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
+
 	updateRepoRequest := buildUpdateRepoRequest(d)
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceUpdateRepository(ctx, updateRepoRequest, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceUpdateRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
