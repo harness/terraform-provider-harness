@@ -1,6 +1,6 @@
 
-<a name="0.4.2"></a>
-## 0.4.2 (2024-08-29)
+<a name="0.4.3"></a>
+## 0.4.3 (2024-09-03)
 
 ### Add
 
@@ -14,8 +14,14 @@
 
 * changes for execution summary outline API ([#543](https://github.com/harness/harness-go-sdk/issues/543))
 
+### Improve
+
+* improve error handling for gitops and recreate gitops resources if they are deleted ([#561](https://github.com/harness/harness-go-sdk/issues/561))
+
 ### Release
 
+* Release version 0.4.2 08-29-2024
+* Release v0.4.2
 * Release version 0.4.1 08-09-2024
 * Release v0.4.1
 * Release version 0.4.0 07-30-2024
@@ -62,6 +68,4 @@
 * Release v0.3.81
 * Release version 0.3.80 03-13-2024
 * Release v0.3.80
-* Release version 0.3.79 03-08-2024
-* Release v0.3.79
 
