@@ -155,9 +155,54 @@ func resourceGitopsAgentRead(ctx context.Context, d *schema.ResourceData, meta i
 }
 
 func resourceGitopsAgentUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
+	var e diag.Diagnostics
+	if d.HasChange("identifier") {
+		oldValue, newValue := d.GetChange("identifier")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'identifier' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("identifier", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("account_id") {
+		oldValue, newValue := d.GetChange("account_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("account_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("org_id") {
+		oldValue, newValue := d.GetChange("org_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'org_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("org_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("project_id") {
+		oldValue, newValue := d.GetChange("project_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("project_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if len(e) > 0 {
+		return e
+	}
+
 	agentIdentifier := d.Get("identifier").(string)
 	updateAgentRequest := buildCreateUpdateAgentRequest(d)
 	updateAgentRequest.AccountIdentifier = c.AccountId

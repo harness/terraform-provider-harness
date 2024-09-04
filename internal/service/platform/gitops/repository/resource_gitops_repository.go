@@ -27,32 +27,31 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Description: "Account identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps repository.",
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: func() (interface{}, error) {
-					return "", nil
-				},
+				Optional:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps repository.",
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: func() (interface{}, error) {
-					return "", nil
-				},
+				Optional:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
+				Description: "Identifier of the GitOps repository.",
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Identifier of the GitOps repository.",
+				ForceNew:    true,
 			},
 			"repo": {
 				Description: "Repo details holding application configurations.",
@@ -427,68 +426,6 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
-
-	var e diag.Diagnostics
-	if d.HasChange("identifier") {
-		oldValue, newValue := d.GetChange("identifier")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'identifier' cannot be updated after creation.")[0])
-		}
-
-		if err := d.Set("identifier", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if d.HasChange("agent_id") {
-		oldValue, newValue := d.GetChange("agent_id")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'agent_id' cannot be updated after creation.")[0])
-		}
-
-		if err := d.Set("agent_id", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if d.HasChange("account_id") {
-		oldValue, newValue := d.GetChange("account_id")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")[0])
-		}
-
-		if err := d.Set("account_id", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-
-	}
-
-	if d.HasChange("org_id") {
-		oldValue, newValue := d.GetChange("org_id")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'org_id' cannot be updated after creation.")[0])
-		}
-
-		if err := d.Set("org_id", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-
-	}
-
-	if d.HasChange("project_id") {
-		oldValue, newValue := d.GetChange("project_id")
-		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")[0])
-		}
-
-		if err := d.Set("project_id", oldValue); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	if len(e) > 0 {
-		return e
-	}
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)

@@ -776,6 +776,7 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	if d.HasChange("project_id") {
 		return diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")
 	}
+
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}

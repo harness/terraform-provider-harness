@@ -26,6 +26,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "Account identifier of the GitOps agent's Application Project.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps agent's Application Project.",
@@ -41,6 +42,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "Agent identifier for which the ArgoCD and Harness project mapping is to be created.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps Application Project.",
@@ -51,6 +53,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 				Description: "ArgoCD Project name which is to be mapped to the Harness project.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 		},
 	}
