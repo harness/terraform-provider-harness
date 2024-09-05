@@ -27,26 +27,31 @@ func ResourceGitopsCluster() *schema.Resource {
 				Description: "Account identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"request": {
 				Description: "Cluster create or update request.",
@@ -111,6 +116,7 @@ func ResourceGitopsCluster() *schema.Resource {
 												"bearer_token": {
 													Description: "Bearer authentication token the cluster.",
 													Type:        schema.TypeString,
+													Sensitive:   true,
 													Optional:    true,
 												},
 												"tls_client_config": {
@@ -420,7 +426,7 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -435,9 +441,9 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)

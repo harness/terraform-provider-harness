@@ -21,24 +21,28 @@ func ResourceProject() *schema.Resource {
 		Importer:      helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "Agent identifier of the GitOps project.",
+				Description: "Agent identifier of the GitOps project. Project is created on agent scope.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the GitOps project.",
+				Description: "Account identifier of the GitOps project/agent.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
-				Description: "Org identifier of the GitOps project.",
+				Description: "Org identifier of the GitOps agent for which project is created.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the GitOps repository.",
+				Description: "Project identifier of the GitOps agent for which project is created.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"query_name": {
 				Description: "Identifier for the GitOps project.",
@@ -47,7 +51,7 @@ func ResourceProject() *schema.Resource {
 				Computed:    true,
 			},
 			"upsert": {
-				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
+				Description: "Indicates if the GitOps project should be updated if existing and inserted if not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
@@ -71,7 +75,7 @@ func ResourceProject() *schema.Resource {
 									"namespace": {
 										Type:        schema.TypeString,
 										Optional:    true,
-										Description: "Namespace of the GitOps project.",
+										Description: "Namespace of the GitOps project. This must match agent namespace.",
 									},
 									"resource_version": {
 										Type:        schema.TypeString,
@@ -588,7 +592,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta int
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
