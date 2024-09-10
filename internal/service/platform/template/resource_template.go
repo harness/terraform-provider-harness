@@ -313,6 +313,12 @@ func resourceTemplateCreateOrUpdate(ctx context.Context, d *schema.ResourceData,
 	version := d.Get("version").(string)
 	template_yaml := d.Get("template_yaml").(string)
 	is_stable := d.Get("is_stable").(bool)
+	if attr, ok := d.GetOk("git_import_details"); ok {
+		config := attr.([]interface{})[0].(map[string]interface{})
+		if attr, ok := config["branch_name"]; ok {
+			branch_name = attr.(string)
+		}
+	}
 
 	if id == "" {
 
