@@ -64,7 +64,13 @@ func DataSourceWorkspace() *schema.Resource {
 				Optional:    true,
 			},
 			"repository_commit": {
-				Description: "Repository Commit/Tag in which the code should be accessed",
+				Description: "Repository Tag in which the code should be accessed",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+			},
+			"repository_sha": {
+				Description: "Repository Commit SHA in which the code should be accessed",
 				Type:        schema.TypeString,
 				Computed:    true,
 				Optional:    true,
@@ -147,12 +153,17 @@ func DataSourceWorkspace() *schema.Resource {
 							Computed:    true,
 						},
 						"repository_branch": {
-							Description: "Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit is set",
+							Description: "Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
 						"repository_commit": {
-							Description: "Repository commit is commit or tag to fetch the variables from. This cannot be set if repository branch is set.",
+							Description: "Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.",
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+						"repository_sha": {
+							Description: "Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.",
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
