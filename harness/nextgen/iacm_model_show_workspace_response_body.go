@@ -49,14 +49,14 @@ type IacmShowWorkspaceResponseBody struct {
 	Repository string `json:"repository,omitempty"`
 	// Repository Branch in which the code should be accessed.
 	RepositoryBranch string `json:"repository_branch,omitempty"`
-	// Repository Commit/Tag in which the code should be accessed.
+	// Repository Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
+	// Repository Commit SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
 	RepositoryConnector string `json:"repository_connector"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
-	// Repository SHA in which the code should be accessed.
-	RepositorySha string `json:"repository_sha,omitempty"`
 	// The status of the workspace
 	Status string `json:"status"`
 	// terraform_plan_json is the identifier to the current state file onl in JSON format.

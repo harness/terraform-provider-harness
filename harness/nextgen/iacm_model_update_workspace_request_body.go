@@ -31,14 +31,14 @@ type IacmUpdateWorkspaceRequestBody struct {
 	Repository string `json:"repository,omitempty"`
 	// Repository Branch in which the code should be accessed.
 	RepositoryBranch string `json:"repository_branch,omitempty"`
-	// Repository Commit/Tag in which the code should be accessed.
+	// Repository Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
+	// Repository Commit SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
 	RepositoryConnector string `json:"repository_connector,omitempty"`
 	// Repository Path is the path in which the infra code resides.
 	RepositoryPath string `json:"repository_path,omitempty"`
-	// Repository SHA in which the code should be accessed.
-	RepositorySha string `json:"repository_sha,omitempty"`
 	// define an array of terraform variables files that belong to a different repository
 	TerraformVariableFiles []IacmWorkspaceTerraformVariableFiles `json:"terraform_variable_files,omitempty"`
 	// list of terraform variables configured on the workspace.

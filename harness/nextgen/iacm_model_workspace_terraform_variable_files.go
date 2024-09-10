@@ -14,8 +14,10 @@ type IacmWorkspaceTerraformVariableFiles struct {
 	Repository string `json:"repository,omitempty"`
 	// Repository Branch in which the code should be accessed.
 	RepositoryBranch string `json:"repository_branch,omitempty"`
-	// Repository Commit/Tag in which the code should be accessed.
+	// Repository Tag in which the code should be accessed.
 	RepositoryCommit string `json:"repository_commit,omitempty"`
+	// Repository Commit SHA in which the code should be accessed.
+	RepositorySha string `json:"repository_sha,omitempty"`
 	// Repository Connector is the reference to the connector to use for this code.
 	RepositoryConnector string `json:"repository_connector,omitempty"`
 	// Repository Path is the path in which the infra code resides.
