@@ -1,0 +1,3 @@
+```release-note:fix
+If there are multiple argocd projects being mapped to one harness project we must specify argocd project for application otherwise we get ambigous project mapping error.
+```
