@@ -168,6 +168,8 @@ type APIClient struct {
 
 	RolesApi *RolesApiService
 
+	RuleEnforcementApi *RuleEnforcementApiService
+
 	SCIMApi *SCIMApiService
 
 	SCMApi *SCMApiService
@@ -296,6 +298,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.RepositoryCredentialsApi = (*RepositoryCredentialsApiService)(&c.common)
 	c.RoleAssignmentsApi = (*RoleAssignmentsApiService)(&c.common)
 	c.RolesApi = (*RolesApiService)(&c.common)
+	c.RuleEnforcementApi = (*RuleEnforcementApiService)(&c.common)
 	c.SCIMApi = (*SCIMApiService)(&c.common)
 	c.SCMApi = (*SCMApiService)(&c.common)
 	c.SMTPApi = (*SMTPApiService)(&c.common)
