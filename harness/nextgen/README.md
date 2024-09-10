@@ -399,6 +399,7 @@ Class | Method | HTTP request | Description
 *UserGroupApi* | [**GetMember**](docs/UserGroupApi.md#getmember) | **Get** /ng/api/user-groups/{identifier}/member/{userIdentifier} | Check if the user is part of the user group in an account/org/project
 *UserGroupApi* | [**GetUserGroup**](docs/UserGroupApi.md#getusergroup) | **Get** /ng/api/user-groups/{identifier} | Get a User Group in an account/org/project
 *UserGroupApi* | [**GetUserGroupList**](docs/UserGroupApi.md#getusergrouplist) | **Get** /ng/api/user-groups | List the User Groups in an account/org/project
+*UserGroupApi* | [**GetUserGroupV2**](docs/UserGroupApi.md#getusergroupv2) | **Get** /ng/api/v2/user-groups/{identifier} | Get User Group
 *UserGroupApi* | [**GetUserListInUserGroup**](docs/UserGroupApi.md#getuserlistinusergroup) | **Post** /ng/api/user-groups/{identifier}/users | List the users in a User Group in an account/org/project
 *UserGroupApi* | [**LinkUserGroupToSAML**](docs/UserGroupApi.md#linkusergrouptosaml) | **Put** /ng/api/user-groups/{userGroupId}/link/saml/{samlId} | Link SAML Group to the User Group in an account/org/project
 *UserGroupApi* | [**PostUserGroup**](docs/UserGroupApi.md#postusergroup) | **Post** /ng/api/user-groups | Create User Group

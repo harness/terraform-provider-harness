@@ -11,6 +11,7 @@ Method | HTTP request | Description
 [**GetMember**](UserGroupApi.md#GetMember) | **Get** /ng/api/user-groups/{identifier}/member/{userIdentifier} | Check if the user is part of the user group in an account/org/project
 [**GetUserGroup**](UserGroupApi.md#GetUserGroup) | **Get** /ng/api/user-groups/{identifier} | Get a User Group in an account/org/project
 [**GetUserGroupList**](UserGroupApi.md#GetUserGroupList) | **Get** /ng/api/user-groups | List the User Groups in an account/org/project
+[**GetUserGroupV2**](UserGroupApi.md#GetUserGroupV2) | **Get** /ng/api/v2/user-groups/{identifier} | Get User Group
 [**GetUserListInUserGroup**](UserGroupApi.md#GetUserListInUserGroup) | **Post** /ng/api/user-groups/{identifier}/users | List the users in a User Group in an account/org/project
 [**LinkUserGroupToSAML**](UserGroupApi.md#LinkUserGroupToSAML) | **Put** /ng/api/user-groups/{userGroupId}/link/saml/{samlId} | Link SAML Group to the User Group in an account/org/project
 [**PostUserGroup**](UserGroupApi.md#PostUserGroup) | **Post** /ng/api/user-groups | Create a User Group in an account/org/project
