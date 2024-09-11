@@ -73,17 +73,23 @@ func ResourceWorkspace() *schema.Resource {
 				Required:    true,
 			},
 			"repository_branch": {
-				Description:  "Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit is set.",
+				Description:  "Repository branch is the name of the branch to fetch the code from. This cannot be set if repository commit or sha is set.",
 				Type:         schema.TypeString,
 				Optional:     true,
-				ExactlyOneOf: []string{"repository_commit", "repository_branch"},
+				ExactlyOneOf: []string{"repository_commit", "repository_branch", "repository_sha"},
 			},
 
 			"repository_commit": {
-				Description:  "Repository commit is commit or tag to fetch the code from. This cannot be set if repository branch is set.",
+				Description:  "Repository commit is tag to fetch the code from. This cannot be set if repository branch or sha is set.",
 				Type:         schema.TypeString,
 				Optional:     true,
-				ExactlyOneOf: []string{"repository_commit", "repository_branch"},
+				ExactlyOneOf: []string{"repository_commit", "repository_branch", "repository_sha"},
+			},
+			"repository_sha": {
+				Description:  "Repository commit is commit SHA to fetch the code from. This cannot be set if repository branch or commit is set.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{"repository_commit", "repository_branch", "repository_sha"},
 			},
 			"repository_connector": {
 				Description: "Repository connector is the reference to the connector used to fetch the code.",
@@ -160,12 +166,17 @@ func ResourceWorkspace() *schema.Resource {
 							Required:    true,
 						},
 						"repository_branch": {
-							Description: "Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit is set",
+							Description: "Repository branch is the name of the branch to fetch the variables from. This cannot be set if repository commit or sha is set",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
 						"repository_commit": {
-							Description: "Repository commit is commit or tag to fetch the variables from. This cannot be set if repository branch is set.",
+							Description: "Repository commit is tag to fetch the variables from. This cannot be set if repository branch or sha is set.",
+							Type:        schema.TypeString,
+							Optional:    true,
+						},
+						"repository_sha": {
+							Description: "Repository commit is SHA to fetch the variables from. This cannot be set if repository branch or commit is set.",
 							Type:        schema.TypeString,
 							Optional:    true,
 						},
@@ -304,6 +315,7 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 	d.Set("repository", ws.Repository)
 	d.Set("repository_branch", ws.RepositoryBranch)
 	d.Set("repository_commit", ws.RepositoryCommit)
+	d.Set("repository_sha", ws.RepositorySha)
 	d.Set("repository_path", ws.RepositoryPath)
 	d.Set("repository_connector", ws.RepositoryConnector)
 	d.Set("cost_estimation_enabled", ws.CostEstimationEnabled)
@@ -331,6 +343,7 @@ func readWorkspace(d *schema.ResourceData, ws *nextgen.IacmShowWorkspaceResponse
 			"repository":           v.Repository,
 			"repository_branch":    v.RepositoryBranch,
 			"repository_commit":    v.RepositoryCommit,
+			"repository_sha":       v.RepositorySha,
 			"repository_path":      v.RepositoryPath,
 			"repository_connector": v.RepositoryConnector,
 		})
@@ -367,6 +380,10 @@ func buildUpdateWorkspace(d *schema.ResourceData) (nextgen.IacmUpdateWorkspaceRe
 
 	if desc, ok := d.GetOk("repository_commit"); ok {
 		ws.RepositoryCommit = desc.(string)
+	}
+
+	if desc, ok := d.GetOk("repository_sha"); ok {
+		ws.RepositorySha = desc.(string)
 	}
 
 	if desc, ok := d.GetOk("repository_path"); ok {
@@ -421,6 +438,10 @@ func buildCreateWorkspace(d *schema.ResourceData) (nextgen.IacmCreateWorkspaceRe
 		ws.RepositoryCommit = desc.(string)
 	}
 
+	if desc, ok := d.GetOk("repository_sha"); ok {
+		ws.RepositorySha = desc.(string)
+	}
+
 	if desc, ok := d.GetOk("repository_path"); ok {
 		ws.RepositoryPath = desc.(string)
 	}
@@ -458,6 +479,7 @@ func buildTerraformVariableFiles(d *schema.ResourceData) []nextgen.IacmWorkspace
 					RepositoryConnector: tfv["repository_connector"].(string),
 					RepositoryBranch:    tfv["repository_branch"].(string),
 					RepositoryCommit:    tfv["repository_commit"].(string),
+					RepositorySha:       tfv["repository_sha"].(string),
 					RepositoryPath:      tfv["repository_path"].(string),
 				})
 			}

@@ -42,7 +42,13 @@ resource "harness_platform_workspace" "example" {
   }
   terraform_variable_file {
     repository           = "https://github.com/org/repo"
-    repository_commit    = "349d90bb9c90f4a3482981c259080de31609e6f6"
+    repository_commit    = "v1.0.0"
+    repository_path      = "tf/aws/basic"
+    repository_connector = harness_platform_connector_github.test.id
+  }
+  terraform_variable_file {
+    repository           = "https://github.com/org/repo"
+    repository_sha    = "349d90bb9c90f4a3482981c259080de31609e6f6"
     repository_path      = "tf/aws/basic"
     repository_connector = harness_platform_connector_github.test.id
   }

@@ -12,25 +12,55 @@ import (
 )
 
 func TestAccResourceWorkspace(t *testing.T) {
+	resourceName := "harness_platform_workspace.test"
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
-	resourceName := "harness_platform_workspace.test"
 	updatedName := fmt.Sprintf("%s_updated", name)
+	name2 := t.Name()
+	id2 := fmt.Sprintf("%s_%s", name2, utils.RandStringBytes(5))
+	updatedName2 := fmt.Sprintf("%s_updated", name2)
+	name3 := t.Name()
+	id3 := fmt.Sprintf("%s_%s", name3, utils.RandStringBytes(5))
+	updatedName3 := fmt.Sprintf("%s_updated", name3)
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccResourceWorkspaceDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceWorkspace(id, name),
+				Config: testAccResourceWorkspace(id, name, "branch"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 				),
 			},
 			{
-				Config: testAccResourceWorkspace(id, updatedName),
+				Config: testAccResourceWorkspace(id, updatedName, "branch"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
+				),
+			},
+			{
+				Config: testAccResourceWorkspace(id2, name2, "commit"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id2),
+				),
+			},
+			{
+				Config: testAccResourceWorkspace(id2, updatedName2, "commit"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id2),
+				),
+			},
+			{
+				Config: testAccResourceWorkspace(id3, name3, "sha"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id3),
+				),
+			},
+			{
+				Config: testAccResourceWorkspace(id3, updatedName3, "sha"),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "identifier", id3),
 				),
 			},
 			{
@@ -72,7 +102,17 @@ func testAccGetPlatformWorkspace(resourceName string, state *terraform.State) (*
 	return &workspace, nil
 }
 
-func testAccResourceWorkspace(id string, name string) string {
+func testAccResourceWorkspace(id string, name string, repositoryType string) string {
+
+	var repositoryX = ""
+	if repositoryType == "branch" {
+		repositoryX = `repository_branch        = "main"`
+	} else if repositoryType == "commit" {
+		repositoryX = `repository_commit        = "tag1"`
+	} else {
+		repositoryX = `repository_sha        = "abcdef12345"`
+	}
+
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
@@ -123,7 +163,7 @@ func testAccResourceWorkspace(id string, name string) string {
 			provisioner_type        = "terraform"
 			provisioner_version     = "1.5.6"
 			repository              = "https://github.com/org/repo"
-			repository_branch       = "main"
+			%[3]s
 			repository_path         = "tf/aws/basic"
 			cost_estimation_enabled = true
 			provider_connector      = "account.${harness_platform_connector_github.test.id}"
@@ -150,10 +190,10 @@ func testAccResourceWorkspace(id string, name string) string {
 			}
 			terraform_variable_file {
 				repository              = "https://github.com/org/repo"
-				repository_branch       = "main"
+				%[3]s
 				repository_path         = "tf/aws/basic"
 				repository_connector    = "account.${harness_platform_connector_github.test.id}"
 			}			
   		}
-`, id, name)
+`, id, name, repositoryX)
 }
