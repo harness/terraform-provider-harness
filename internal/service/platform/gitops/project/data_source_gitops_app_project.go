@@ -47,7 +47,10 @@ func DataSourceGitOpsProject() *schema.Resource {
 
 func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
-	var orgIdentifier, projectIdentifier, agentIdentifier, query_name string
+	var orgIdentifier, projectIdentifier, agentIdentifier, query_name, accountIdentifier string
+	if attr, ok := d.GetOk("account_id"); ok {
+		accountIdentifier = attr.(string)
+	}
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -62,13 +65,13 @@ func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta int
 		query_name = attr.(string)
 	}
 
-	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceGet(ctx, agentIdentifier, query_name, c.AccountId, &nextgen.ProjectsApiAgentProjectServiceGetOpts{
+	resp, httpResp, err := c.ProjectGitOpsApi.AgentProjectServiceGet(ctx, agentIdentifier, query_name, accountIdentifier, &nextgen.ProjectsApiAgentProjectServiceGetOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 	// Soft delete lookup error handling
 	// https://harness.atlassian.net/browse/PL-23765
@@ -77,7 +80,7 @@ func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta int
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, accountIdentifier, &resp)
 
 	return nil
 }
