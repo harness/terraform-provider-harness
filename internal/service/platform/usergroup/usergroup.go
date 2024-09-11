@@ -160,7 +160,8 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
-	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
+	ug := buildUserGroupV2(d)
+	resp, httpResp, err := c.UserGroupApi.GetUserGroupV2(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupV2Opts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -180,7 +181,7 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	} else if attr1 {
 		d.Set("users", []string{})
 	}
-	readUserGroup(d, resp.Data)
+	readUserGroupV2(d, resp.Data, ug.Users)
 
 	return nil
 }
