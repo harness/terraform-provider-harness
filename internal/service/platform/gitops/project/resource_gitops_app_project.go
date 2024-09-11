@@ -1349,7 +1349,6 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 
 func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppProject) {
 	d.SetId(projects.Metadata.Name)
-	d.Set("account_id", "1bvyLackQK-Hapk25-Ry4w")
 	projectList := []interface{}{}
 	project := map[string]interface{}{}
 	if projects.Metadata != nil {
