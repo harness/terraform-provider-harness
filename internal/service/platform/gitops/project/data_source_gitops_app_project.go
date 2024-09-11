@@ -80,7 +80,7 @@ func dataSourceProjectRead(ctx context.Context, d *schema.ResourceData, meta int
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, c.AccountId, &resp)
+	setProjectDetails(d, accountIdentifier, &resp)
 
 	return nil
 }
