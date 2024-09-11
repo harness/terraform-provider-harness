@@ -1,3 +1,9 @@
+# 0.33.0 (September 11,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_governance_rule_enforcement - Added Governance Enforcement resource in Harness terraform provider` ([#1052](https://github.com/harness/terraform-provider-harness/issues/1052))
+
 # 0.32.9 (September 10,2024) 
 
 # 0.32.9 (September 10,2024) 
