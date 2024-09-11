@@ -2,6 +2,7 @@ package project_test
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/harness/terraform-provider-harness/internal/acctest"
@@ -10,8 +11,8 @@ import (
 
 func TestAccDataSourceGitopsProjectAccLevel(t *testing.T) {
 	resourceName := "harness_platform_gitops_app_project.test"
-	agentId := "rollouts"
-	accountId := "1bvyLackQK-Hapk25-Ry4w"
+	agentId := os.Getenv("HARNESS_TEST_GITOPS_AGENT_ID")
+	accountId := os.Getenv("HARNESS_ACCOUNT_ID")
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
