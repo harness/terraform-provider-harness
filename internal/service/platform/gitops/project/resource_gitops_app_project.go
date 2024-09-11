@@ -518,7 +518,7 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, meta int
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, c.AccountId, &resp)
 
 	return nil
 }
@@ -566,7 +566,7 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta inter
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, c.AccountId, &resp)
 
 	return nil
 }
@@ -601,7 +601,7 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta int
 		d.MarkNewResource()
 		return nil
 	}
-	setProjectDetails(d, &resp)
+	setProjectDetails(d, c.AccountId, &resp)
 
 	return nil
 }
@@ -1347,8 +1347,9 @@ func createRequestBody(d *schema.ResourceData) nextgen.ProjectsProjectCreateRequ
 	return projectsProjectCreateRequest
 }
 
-func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppProject) {
+func setProjectDetails(d *schema.ResourceData, account_id string, projects *nextgen.AppprojectsAppProject) {
 	d.SetId(projects.Metadata.Name)
+	d.Set("account_id", account_id)
 	projectList := []interface{}{}
 	project := map[string]interface{}{}
 	if projects.Metadata != nil {
