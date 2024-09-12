@@ -973,6 +973,18 @@ func (a *ProjectMappingsApiService) AppProjectMappingServiceGetAppProjectMapping
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v V1AppProjectMappingV2
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
