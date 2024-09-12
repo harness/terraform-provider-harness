@@ -430,7 +430,9 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, u
 	d.Set("name", env.Name)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
+	if _, ok := d.GetOk("users"); !ok {
+		d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
+	}
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
