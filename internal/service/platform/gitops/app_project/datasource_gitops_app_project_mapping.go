@@ -60,6 +60,7 @@ func datasourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resour
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	argo_proj_name := d.Get("argo_project_name").(string)
+
 	if identifier == argo_proj_name {
 		identifier = ""
 	}

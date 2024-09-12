@@ -2,7 +2,6 @@ package cluster
 
 import (
 	"context"
-
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -761,6 +760,10 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 						clusterDetails.Info.ServerVersion = clusterInfo["server_version"].(string)
 					}
 				}
+			}
+
+			if requestCluster["project"] != nil {
+				clusterDetails.Project = requestCluster["project"].(string)
 			}
 
 			if requestCluster["shard"] != nil {

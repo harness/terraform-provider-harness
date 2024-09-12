@@ -63,7 +63,7 @@ func ResourceGitopsAppProjectMapping() *schema.Resource {
 func resourceGitopsAppProjectMappingCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	createAppProjectMappingRequest := buildCreateAppProjectMappingRequest(d)
+	createAppProjectMappingRequest := buildCreateAppProjectMappingRequest(c.AccountId, d)
 	agentIdentifier := d.Get("agent_id").(string)
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceCreateV2(ctx, *createAppProjectMappingRequest, agentIdentifier)
 
@@ -100,7 +100,7 @@ func resourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resource
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	if &resp == nil {
@@ -115,7 +115,7 @@ func resourceGitopsAppProjectMappingRead(ctx context.Context, d *schema.Resource
 func resourceGitopsAppProjectMappingUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
-	updateAppProjectMappingRequest := buildUpdateAppProjectMappingRequest(d)
+	updateAppProjectMappingRequest := buildUpdateAppProjectMappingRequest(c.AccountId, d)
 	agentIdentifier := d.Get("agent_id").(string)
 	identifier := d.Get("identifier").(string)
 	resp, httpResp, err := c.ProjectMappingsApi.AppProjectMappingServiceUpdateV2(ctx, *updateAppProjectMappingRequest, agentIdentifier, identifier)
@@ -150,12 +150,10 @@ func resourceGitopsAppProjectMappingDelete(ctx context.Context, d *schema.Resour
 	return nil
 }
 
-func buildCreateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppProjectMappingCreateRequestV2 {
+func buildCreateAppProjectMappingRequest(accountId string, d *schema.ResourceData) *nextgen.V1AppProjectMappingCreateRequestV2 {
 	var appProjectMappingRequest nextgen.V1AppProjectMappingCreateRequestV2
 
-	if attr, ok := d.GetOk("account_id"); ok {
-		appProjectMappingRequest.AccountIdentifier = attr.(string)
-	}
+	appProjectMappingRequest.AccountIdentifier = accountId
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		appProjectMappingRequest.OrgIdentifier = attr.(string)
@@ -176,12 +174,10 @@ func buildCreateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppP
 	return &appProjectMappingRequest
 }
 
-func buildUpdateAppProjectMappingRequest(d *schema.ResourceData) *nextgen.V1AppProjectMappingQueryV2 {
+func buildUpdateAppProjectMappingRequest(accountId string, d *schema.ResourceData) *nextgen.V1AppProjectMappingQueryV2 {
 	var appProjectMappingRequest nextgen.V1AppProjectMappingQueryV2
 
-	if attr, ok := d.GetOk("account_id"); ok {
-		appProjectMappingRequest.AccountIdentifier = attr.(string)
-	}
+	appProjectMappingRequest.AccountIdentifier = accountId
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		appProjectMappingRequest.OrgIdentifier = attr.(string)

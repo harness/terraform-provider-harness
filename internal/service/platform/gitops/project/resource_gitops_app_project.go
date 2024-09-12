@@ -486,9 +486,9 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, accountIdentifier string
 	var upsert bool
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -529,9 +529,9 @@ func resourceProjectCreate(ctx context.Context, d *schema.ResourceData, meta int
 func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, query_name, accountIdentifier string
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -579,6 +579,9 @@ func resourceProjectRead(ctx context.Context, d *schema.ResourceData, meta inter
 func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, accountIdentifier string
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("account_id"); ok {
 		accountIdentifier = attr.(string)
 	}
@@ -617,9 +620,9 @@ func resourceProjectUpdate(ctx context.Context, d *schema.ResourceData, meta int
 func resourceProjectDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, query_name, accountIdentifier string
-	if attr, ok := d.GetOk("account_id"); ok {
-		accountIdentifier = attr.(string)
-	}
+
+	accountIdentifier = c.AccountId
+
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
