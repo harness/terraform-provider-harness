@@ -1,0 +1,5 @@
+```release-note:fix
+harness_platform_gitops_app_project: Fix the import 
+harness_platform_gitops_app_project_mapping: fix account  identifier
+harness_platform_gitops_cluster: fix ambigous project error
+```
