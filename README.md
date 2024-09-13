@@ -45,4 +45,15 @@ cp terraform-provider-harness ~/.terraform.d/plugins/$source/$version/$platform/
 
 5. Run the Bash Script `./local.sh`
 
+## Point terraform script to local terraform-provider-harness build
+1. Update the .terraform.rc file
+```
+provider_installation {
+  dev_overrides {
+    "registry.terraform.io/harness/harness" = "{path}/terraform-provider-harness"
+  }
+  direct {}
+}
+```
+2. Create build - `go build`
 *Note: Please make sure the terraform provider version matches the version in the script*
