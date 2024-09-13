@@ -160,8 +160,8 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
-	ug := buildUserGroupV2(d)
-	resp, httpResp, err := c.UserGroupApi.GetUserGroupV2(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupV2Opts{
+	// Migrate to GetUserGroupv2 once it is available in all environments including SMP customers
+	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),
 	})
@@ -181,7 +181,7 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	} else if attr1 {
 		d.Set("users", []string{})
 	}
-	readUserGroupV2(d, resp.Data, ug.Users)
+	readUserGroup(d, resp.Data)
 
 	return nil
 }
@@ -430,9 +430,7 @@ func readUserGroupV2(d *schema.ResourceData, env *nextgen.UserGroupResponseV2, u
 	d.Set("name", env.Name)
 	d.Set("description", env.Description)
 	d.Set("tags", helpers.FlattenTags(env.Tags))
-	if _, ok := d.GetOk("users"); !ok {
-		d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
-	}
+	d.Set("user_emails", ignoreOrderIfAllElementsMatch(user_emails, flattenUserInfo(env.Users)))
 	d.Set("notification_configs", flattenNotificationConfig(env.NotificationConfigs))
 	d.Set("linked_sso_id", env.LinkedSsoId)
 	d.Set("linked_sso_display_name", env.LinkedSsoDisplayName)
