@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
@@ -63,6 +64,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "URL to the remote repository.",
 							Type:        schema.TypeString,
 							Required:    true,
+							ForceNew:    true,
 						},
 						"username": {
 							Description: "Username to be used for authenticating the remote repository.",
@@ -78,6 +80,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Computed:    true,
 						},
 						"insecure_ignore_host_key": {
 							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
@@ -93,6 +96,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Indicates if git-lfs support must be enabled for this repo. This is valid only for Git repositories.",
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Default:     false,
 						},
 						"tls_client_cert_data": {
 							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
@@ -119,7 +123,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 						"inherited_creds": {
 							Description: "Indicates if the credentials were inherited from a repository credential.",
 							Type:        schema.TypeBool,
-							Optional:    true,
+							Computed:    true,
 						},
 						"enable_oci": {
 							Description: "Indicates if helm-oci support must be enabled for this repo.",
@@ -158,9 +162,10 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Computed:    true,
 						},
 						"connection_type": {
-							Description: "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS_CONNECTION_TYPE\"",
-							Type:        schema.TypeString,
-							Required:    true,
+							Description:  "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS\"",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"HTTPS", "SSH", "GITHUB", "HTTPS_ANONYMOUS"}, false),
 						},
 					},
 				},
@@ -367,6 +372,10 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	createRepoRequest := buildCreateRepoRequest(d)
+	if projectIdentifier == "" && createRepoRequest.Repo.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
+	}
+
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceCreateRepository(ctx, createRepoRequest, agentIdentifier, &nextgen.RepositoriesApiAgentRepositoryServiceCreateRepositoryOpts{
 		AccountIdentifier: optional.NewString(accountIdentifier),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
@@ -441,6 +450,9 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	updateRepoRequest := buildUpdateRepoRequest(d)
+	if projectIdentifier == "" && updateRepoRequest.Repo.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
+	}
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceUpdateRepository(ctx, updateRepoRequest, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceUpdateRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
@@ -529,8 +541,9 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 		}
 	}
 
+	r := buildRepo(d)
 	request := nextgen.RepositoriesRepoUpdateRequest{
-		Repo:            buildRepo(d),
+		Repo:            r,
 		RefreshInterval: refreshInterval,
 		UpdateMask: &nextgen.ProtobufFieldMask{
 			Paths: updateMaskPath,
@@ -545,6 +558,7 @@ func buildUpdateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoUpda
 }
 
 func buildCreateRepoRequest(d *schema.ResourceData) nextgen.RepositoriesRepoCreateRequest {
+
 	var upsert, credsOnly bool
 	if attr, ok := d.GetOk("upsert"); ok {
 		upsert = attr.(bool)
@@ -707,6 +721,7 @@ func buildRepo(d *schema.ResourceData) *nextgen.RepositoriesRepository {
 			if repo["enable_lfs"] != nil {
 				repoObj.EnableLfs = repo["enable_lfs"].(bool)
 			}
+
 			if repo["tls_client_cert_data"] != nil {
 				repoObj.TlsClientCertData = repo["tls_client_cert_data"].(string)
 			}
