@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -392,6 +393,9 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	createClusterRequest := buildCreateClusterRequest(d)
+	if projectIdentifier == "" && createClusterRequest.Cluster.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when creating cluster in project, cannot set arogcd project for account level cluster"))
+	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceCreate(ctx, *createClusterRequest, agentIdentifier,
 		&nextgen.ClustersApiAgentClusterServiceCreateOpts{
 			AccountIdentifier: optional.NewString(accountIdentifier),
@@ -444,8 +448,12 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 
 	agentIdentifier := d.Get("agent_id").(string)
+	projectIdentifier := d.Get("project_id").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
+	if projectIdentifier == "" && updateClusterRequest.Cluster.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when update cluster in project, cannot set arogcd project for account level cluster"))
+	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceUpdate(ctx, *updateClusterRequest, agentIdentifier, identifier,
 		&nextgen.ClustersApiAgentClusterServiceUpdateOpts{
 			AccountIdentifier: optional.NewString(c.AccountId),
