@@ -394,7 +394,7 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 
 	createClusterRequest := buildCreateClusterRequest(d)
 	if projectIdentifier == "" && createClusterRequest.Cluster.Project != "" {
-		return diag.FromErr(fmt.Errorf("project_id is required when creating cluster in project, cannot set arogcd project for account level cluster"))
+		return diag.FromErr(fmt.Errorf("project_id is required when creating cluster in project, cannot set argocd project for account level cluster"))
 	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceCreate(ctx, *createClusterRequest, agentIdentifier,
 		&nextgen.ClustersApiAgentClusterServiceCreateOpts{
@@ -452,7 +452,7 @@ func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, me
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
 	if projectIdentifier == "" && updateClusterRequest.Cluster.Project != "" {
-		return diag.FromErr(fmt.Errorf("project_id is required when update cluster in project, cannot set arogcd project for account level cluster"))
+		return diag.FromErr(fmt.Errorf("project_id is required when update cluster in project, cannot set argocd project for account level cluster"))
 	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceUpdate(ctx, *updateClusterRequest, agentIdentifier, identifier,
 		&nextgen.ClustersApiAgentClusterServiceUpdateOpts{
