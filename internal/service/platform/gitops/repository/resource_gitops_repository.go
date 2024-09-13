@@ -373,7 +373,7 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 
 	createRepoRequest := buildCreateRepoRequest(d)
 	if projectIdentifier == "" && createRepoRequest.Repo.Project != "" {
-		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set arogcd project for account level repo"))
+		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
 	}
 
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceCreateRepository(ctx, createRepoRequest, agentIdentifier, &nextgen.RepositoriesApiAgentRepositoryServiceCreateRepositoryOpts{
@@ -451,7 +451,7 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 
 	updateRepoRequest := buildUpdateRepoRequest(d)
 	if projectIdentifier == "" && updateRepoRequest.Repo.Project != "" {
-		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set arogcd project for account level repo"))
+		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
 	}
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceUpdateRepository(ctx, updateRepoRequest, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceUpdateRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
