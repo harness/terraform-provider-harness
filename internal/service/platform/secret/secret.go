@@ -133,6 +133,7 @@ func readCommonSecretData(d *schema.ResourceData, secret *nextgen.Secret) {
 	d.Set("identifier", secret.Identifier)
 	d.Set("description", secret.Description)
 	d.Set("name", secret.Name)
+	d.Set("value", secret.Value)
 	d.Set("org_id", secret.OrgIdentifier)
 	d.Set("project_id", secret.ProjectIdentifier)
 	d.Set("tags", helpers.FlattenTags(secret.Tags))
