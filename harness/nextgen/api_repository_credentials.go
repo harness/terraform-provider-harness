@@ -433,6 +433,18 @@ func (a *RepositoryCredentialsApiService) AgentRepositoryCredentialsServiceGetCr
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v Servicev1RepositoryCredentials
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -571,6 +583,18 @@ func (a *RepositoryCredentialsApiService) AgentRepositoryCredentialsServiceGetRe
 			body:  localVarBody,
 			error: localVarHttpResponse.Status,
 		}
+
+		if localVarHttpResponse.StatusCode >= 400 {
+			var v GatewayruntimeError
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
 		if localVarHttpResponse.StatusCode == 200 {
 			var v Servicev1RepositoryCredentials
 			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
@@ -600,8 +624,9 @@ func (a *RepositoryCredentialsApiService) AgentRepositoryCredentialsServiceGetRe
 /*
 RepositoryCredentialsApiService List repository credentials
 List repository credentials.
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param body
+  - @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  - @param body
+
 @return Servicev1RepositoryCredentialsList
 */
 func (a *RepositoryCredentialsApiService) AgentRepositoryCredentialsServiceListRepositoryCredentials(ctx context.Context, body V1RepositoryCredentialsQuery) (Servicev1RepositoryCredentialsList, *http.Response, error) {
