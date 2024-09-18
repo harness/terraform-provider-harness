@@ -33,28 +33,28 @@ data "harness_platform_gitops_repo_cred" "test" {
 
 ### Optional
 
-- `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
 - `org_id` (String) Organization identifier of the Repository Credentials.
 - `project_id` (String) Project identifier of the Repository Credentials.
 
 ### Read-Only
 
+- `creds` (List of Object) credential details. (see [below for nested schema](#nestedatt--creds))
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--creds"></a>
+<a id="nestedatt--creds"></a>
 ### Nested Schema for `creds`
 
-Optional:
+Read-Only:
 
-- `enable_oci` (Boolean) Specifies whether helm-oci support should be enabled for this repo.
-- `github_app_enterprise_base_url` (String) Specifies the GitHub API URL for GitHub app authentication.
-- `github_app_id` (String) Specifies the Github App ID of the app used to access the repo for GitHub app authentication.
-- `github_app_installation_id` (String) Specifies the ID of the installed GitHub App for GitHub app authentication.
-- `github_app_private_key` (String) github_app_private_key specifies the private key PEM data for authentication via GitHub app.
-- `password` (String) Password or PAT to be used for authenticating the remote repository.
-- `ssh_private_key` (String) SSH Key in PEM format for authenticating the repository. Used only for Git repository.
-- `tls_client_cert_data` (String) Certificate in PEM format for authenticating at the repo server. This is used for mTLS.
-- `tls_client_cert_key` (String) Private key in PEM format for authenticating at the repo server. This is used for mTLS.
-- `type` (String) Type specifies the type of the repoCreds.Can be either 'git' or 'helm. 'git' is assumed if empty or absent
-- `url` (String) URL of the remote repository. Make sure you pass at least an org, this will not work if you just provide the host, for eg. "https://github.com"
-- `username` (String) Username to be used for authenticating the remote repository.
+- `enable_oci` (Boolean)
+- `github_app_enterprise_base_url` (String)
+- `github_app_id` (String)
+- `github_app_installation_id` (String)
+- `github_app_private_key` (String)
+- `password` (String)
+- `ssh_private_key` (String)
+- `tls_client_cert_data` (String)
+- `tls_client_cert_key` (String)
+- `type` (String)
+- `url` (String)
+- `username` (String)
