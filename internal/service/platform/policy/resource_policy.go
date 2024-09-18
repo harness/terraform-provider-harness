@@ -20,7 +20,7 @@ func ResourcePolicy() *schema.Resource {
 		UpdateContext: resourcePolicyCreateOrUpdate,
 		DeleteContext: resourcePolicyDelete,
 		CreateContext: resourcePolicyCreateOrUpdate,
-		Importer:      helpers.OrgResourceImporter,
+		Importer:      helpers.MultiLevelResourceImporter,
 
 		Schema: map[string]*schema.Schema{
 			"name": {
