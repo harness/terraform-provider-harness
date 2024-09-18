@@ -28,26 +28,31 @@ func ResourceGitopsRepoCred() *schema.Resource {
 				Description: "Identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"account_id": {
 				Description: "Account identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the Repository Credentials.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"upsert": {
 				Description: "Indicates if the GitOps repository credential should be updated if existing and inserted if not.",
@@ -65,6 +70,7 @@ func ResourceGitopsRepoCred() *schema.Resource {
 							Description: "URL of the remote repository. Make sure you pass at least an org, this will not work if you just provide the host, for eg. \"https://github.com\"",
 							Type:        schema.TypeString,
 							Optional:    true,
+							ForceNew:    true,
 						},
 						"username": {
 							Description: "Username to be used for authenticating the remote repository.",
@@ -75,26 +81,31 @@ func ResourceGitopsRepoCred() *schema.Resource {
 							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"ssh_private_key": {
 							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"tls_client_cert_data": {
 							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"tls_client_cert_key": {
 							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"github_app_private_key": {
 							Description: "github_app_private_key specifies the private key PEM data for authentication via GitHub app.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"github_app_id": {
 							Description: "Specifies the Github App ID of the app used to access the repo for GitHub app authentication.",

@@ -162,10 +162,10 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Computed:    true,
 						},
 						"connection_type": {
-							Description:  "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS\"",
+							Description:  "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS\", \"GITHUB_ENTERPRISE\".",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"HTTPS", "SSH", "GITHUB", "HTTPS_ANONYMOUS"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"HTTPS", "SSH", "GITHUB", "HTTPS_ANONYMOUS", "GITHUB_ENTERPRISE"}, false),
 						},
 					},
 				},
