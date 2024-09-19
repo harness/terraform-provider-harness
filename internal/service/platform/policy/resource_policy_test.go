@@ -80,6 +80,13 @@ func TestAccResourcePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "rego", updatedRego),
 				),
 			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
+				ImportStateVerifyIgnore: []string{"description", "git_base_branch", "git_branch", "git_commit_msg", "git_import", "git_is_new_branch"},
+			},
 		},
 	})
 }
