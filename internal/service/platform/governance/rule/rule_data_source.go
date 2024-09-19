@@ -41,11 +41,6 @@ func DatasourceRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"is_ootb": {
-				Description: "Is the rule OOTB",
-				Type:        schema.TypeBool,
-				Computed:    true,
-			},
 		},
 	}
 }

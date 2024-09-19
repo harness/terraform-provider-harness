@@ -47,12 +47,6 @@ func ResourceRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
-			"is_ootb": {
-				Description: "Is the rule OOTB",
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-			},
 		},
 	}
 
@@ -94,7 +88,6 @@ func readRuleResponse(d *schema.ResourceData, ruleList *nextgen.RuleList) error 
 	d.Set("cloud_provider", rule.CloudProvider)
 	d.Set("description", rule.Description)
 	d.Set("rules_yaml", rule.RulesYaml)
-	d.Set("is_ootb", rule.IsOOTB)
 
 	return nil
 }
@@ -131,7 +124,7 @@ func buildRule(d *schema.ResourceData, update bool) nextgen.CreateRuleDto {
 		CloudProvider: d.Get("cloud_provider").(string),
 		Description:   d.Get("description").(string),
 		RulesYaml:     d.Get("rules_yaml").(string),
-		IsOOTB:        d.Get("is_ootb").(bool),
+		IsOOTB:        false,
 	}
 
 	if update {
@@ -150,7 +143,6 @@ func createOrUpdateRuleResponse(d *schema.ResourceData, rule *nextgen.CcmRule) e
 	d.Set("cloud_provider", rule.CloudProvider)
 	d.Set("description", rule.Description)
 	d.Set("rules_yaml", rule.RulesYaml)
-	d.Set("is_ootb", rule.IsOOTB)
 
 	return nil
 }
