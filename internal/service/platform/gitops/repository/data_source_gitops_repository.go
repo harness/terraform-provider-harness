@@ -8,7 +8,6 @@ import (
 	"github.com/harness/terraform-provider-harness/internal"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func DataSourceGitopsRepository() *schema.Resource {
@@ -100,10 +99,9 @@ func DataSourceGitopsRepository() *schema.Resource {
 							Computed:    true,
 						},
 						"type_": {
-							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
-							Type:         schema.TypeString,
-							Computed:     true,
-							ValidateFunc: validation.StringInSlice([]string{"git", "helm"}, false),
+							Description: "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 						"name": {
 							Description: "Name to be used for this repo. Only used with Helm repos.",
