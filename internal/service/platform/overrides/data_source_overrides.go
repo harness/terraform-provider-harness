@@ -100,7 +100,7 @@ func dataSourceOverridesRead(ctx context.Context, d *schema.ResourceData, meta i
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	identifier := d.Get("identifier").(string)
 
-	resp, httpResp, err := c.ServiceOverridesApi.GetServiceOverrides(ctx, identifier, c.AccountId,
+	resp, httpResp, err := c.OverridesApi.GetOverrides(ctx, identifier, c.AccountId,
 		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
 			OrgIdentifier:          helpers.BuildField(d, "org_id"),
 			ProjectIdentifier:      helpers.BuildField(d, "project_id"),
