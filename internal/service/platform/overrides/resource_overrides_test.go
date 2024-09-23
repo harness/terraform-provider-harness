@@ -124,7 +124,7 @@ func testAccGetPlatformOverrides(resourceName string, state *terraform.State) (*
 	orgId := r.Primary.Attributes["org_id"]
 	projId := r.Primary.Attributes["project_id"]
 
-	resp, _, err := c.ServiceOverridesApi.GetServiceOverridesV2(ctx, identifier, c.AccountId,
+	resp, _, err := c.OverridesApi.GetOverrides(ctx, identifier, c.AccountId,
 		&nextgen.ServiceOverridesApiGetServiceOverridesV2Opts{
 			OrgIdentifier:     optional.NewString(orgId),
 			ProjectIdentifier: optional.NewString(projId),
