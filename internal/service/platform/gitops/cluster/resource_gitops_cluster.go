@@ -129,6 +129,7 @@ func ResourceGitopsCluster() *schema.Resource {
 																Description: "Indicates if the TLS connection to the cluster should be insecure.",
 																Type:        schema.TypeBool,
 																Optional:    true,
+																Computed:    true,
 															},
 															"server_name": {
 																Description: "Server name for SNI in the client to check server certificates against. If ServerName is empty, the hostname used to contact the server is used.",

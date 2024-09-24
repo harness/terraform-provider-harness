@@ -35,6 +35,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 				Description: "Identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps application.",
@@ -750,7 +751,7 @@ func datasourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+	if attr, ok := d.GetOk("name"); ok {
 		queryName = attr.(string)
 	}
 	if attr, ok := d.GetOk("repo_id"); ok {
