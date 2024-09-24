@@ -74,7 +74,7 @@ resource "harness_platform_gitops_applications" "example" {
 
 ### Optional
 
-- `identifier` (String) Identifier of the GitOps application.
+- `identifier` (String, Deprecated) Identifier of the GitOps application.
 - `kind` (String) Kind of the GitOps application.
 - `options_remove_existing_finalizers` (Boolean) Options to remove existing finalizers to delete the GitOps application.
 - `project` (String) The ArgoCD project name corresponding to this GitOps application. An empty string means that the GitOps application belongs to the default project created by Harness.
@@ -139,6 +139,7 @@ Optional:
 Optional:
 
 - `destination` (Block List) Information about the GitOps application's destination. (see [below for nested schema](#nestedblock--application--spec--destination))
+- `project` (String) The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.
 - `source` (Block List) Contains all information about the source of the GitOps application. (see [below for nested schema](#nestedblock--application--spec--source))
 - `sync_policy` (Block List) Controls when a sync will be performed in response to updates in git. (see [below for nested schema](#nestedblock--application--spec--sync_policy))
 

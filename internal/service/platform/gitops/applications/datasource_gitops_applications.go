@@ -762,6 +762,7 @@ func datasourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData
 		QueryRepo: optional.NewString(repoIdentifier),
 	})
 	if err != nil {
+		identifier
 		return helpers.HandleApiError(err, d, httpResp)
 	}
 
