@@ -1,0 +1,3 @@
+```release-note:enhancement
+resource_monitored_service: Add support for custom change sources in monitored service configuration.
+```

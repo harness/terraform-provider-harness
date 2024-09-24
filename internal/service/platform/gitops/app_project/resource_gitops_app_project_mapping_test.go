@@ -29,13 +29,13 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 		// CheckDestroy:      testAccResourceGitopsAppProjectMappingDestroy(resourceName, agentId), //commenting this since app project mapping cannot exist without an agent.
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProject),
+				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProject, id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProject),
 				),
 			},
 			{
-				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProjectUpdated),
+				Config: testAccResourceGitopsAppProjectMapping(id, accountId, argoProjectUpdated, id),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "argo_project_name", argoProjectUpdated),
 				),
@@ -44,7 +44,7 @@ func TestAccResourceGitopsAppProjectMapping(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateIdFunc: acctest.GitopsAgentProjectLevelResourceImportStateIdFunc(resourceName),
+				ImportStateIdFunc: acctest.GitopsAppProjectMappingResourceImportStateIdFunc(resourceName),
 			},
 		},
 	})
@@ -77,16 +77,16 @@ func testAccResourceGitopsAppProjectMappingDestroy(resourceName string, agentId 
 	}
 }
 
-func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, argoProject string) string {
+func testAccResourceGitopsAppProjectMapping(id string, accountId string, argoProject string, projectId string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_organization" "test" {
 			identifier = "%[1]s"
 			name = "%[1]s"
 		}
-
+		
 		resource "harness_platform_project" "test" {
-			identifier = "%[1]s"
-			name = "%[1]s"
+			identifier = "%[4]s"
+			name = "%[4]s"
 			org_id = harness_platform_organization.test.id
 		}
 		resource "harness_platform_gitops_agent" "test" {
@@ -105,10 +105,10 @@ func testAccResourceGitopsAppProjectMapping(agentId string, accountId string, ar
 		resource "harness_platform_gitops_app_project_mapping" "test" {
 			depends_on = [harness_platform_gitops_agent.test]
 			account_id = "%[2]s"
-			org_id = harness_platform_organization.test.id
-			project_id = harness_platform_project.test.id
+			org_id = "%[1]s"
+			project_id = "%[4]s"
 			agent_id = "%[1]s"
 			argo_project_name = "%[3]s"
 		}
-		`, agentId, accountId, argoProject)
+		`, id, accountId, argoProject, projectId)
 }

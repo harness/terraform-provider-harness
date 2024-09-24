@@ -1,0 +1,3 @@
+```release-note:fix
+Improve error handling for gitops, recreate resource if exists in terraform state but deleted outside of terraform flow.
+```

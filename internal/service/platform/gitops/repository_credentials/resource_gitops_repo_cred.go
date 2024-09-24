@@ -235,7 +235,7 @@ func resourceGitopsRepoCredRead(ctx context.Context, d *schema.ResourceData, met
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling

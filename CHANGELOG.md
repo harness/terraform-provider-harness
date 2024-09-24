@@ -1,3 +1,66 @@
+# 0.33.3 (September 13,2024) 
+
+# 0.33.2 (September 12,2024) 
+
+# 0.33.1 (September 11,2024) 
+
+# 0.33.0 (September 11,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_governance_rule_enforcement - Added Governance Enforcement resource in Harness terraform provider` ([#1052](https://github.com/harness/terraform-provider-harness/issues/1052))
+
+# 0.32.9 (September 10,2024) 
+
+# 0.32.9 (September 10,2024) 
+
+# 0.32.8 (September 05,2024) 
+
+# 0.32.7 (September 03,2024) 
+
+# 0.32.6 (August 29,2024) 
+
+# 0.32.5 (August 27,2024) 
+
+# 0.32.4 (August 27,2024) 
+
+# 0.32.3 (August 09,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_gitx_webhook: Added support for Gitx Webhook endpoints` ([#1014](https://github.com/harness/terraform-provider-harness/issues/1014))
+
+ENHANCEMENTS:
+
+* harness_platform_policy: - Have added support for remote policies, now users can create remote policies using terraform by providing git references in the script.
+                         - Updated the Data Source for policy as rego should not be a mandatory field for GET call. ([#1015](https://github.com/harness/terraform-provider-harness/issues/1015))
+* resource/harness_platform_connector_gcp: added support for OIDC Auth in GCP connector. ([#1019](https://github.com/harness/terraform-provider-harness/issues/1019))
+
+# 0.32.2 (July 25,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_app_project: Rename the file name ([#1011](https://github.com/harness/terraform-provider-harness/issues/1011))
+* harness_platform_gitops_project: Added the resource version gitops project ([#1010](https://github.com/harness/terraform-provider-harness/issues/1010))
+
+# 0.32.1 (July 23,2024) 
+
+ENHANCEMENTS:
+
+* harness_platform_gitops_project: Update the schema of gitops project ([#1009](https://github.com/harness/terraform-provider-harness/issues/1009))
+* harness_platform_pipeline: Added update call for git metadata in pipeline update flow.
+harness_platform_template:Added update call for git metadata in template update flow. ([#1008](https://github.com/harness/terraform-provider-harness/issues/1008))
+
+# 0.31.9 (July 18,2024) 
+
+FEATURES:
+
+* **New Resource:** `harness_platform_notification_rule: Added support for notification rule for SLO and MonitoredService` ([#1013](https://github.com/harness/terraform-provider-harness/issues/1013))
+
+ENHANCEMENTS:
+
+* resource_monitored_service: Add support for custom change sources in monitored service configuration. ([#1007](https://github.com/harness/terraform-provider-harness/issues/1007))
+
 # 0.31.8 (July 11,2024) 
 
 FEATURES:

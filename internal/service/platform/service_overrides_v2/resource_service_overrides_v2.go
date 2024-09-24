@@ -62,6 +62,7 @@ func ResourceServiceOverrides() *schema.Resource {
 			"identifier": {
 				Description: "The identifier of the override entity.",
 				Type:        schema.TypeString,
+				Optional:    true,
 				Computed:    true,
 			},
 			"is_force_import": {
@@ -268,6 +269,7 @@ func buildServiceOverrideV2(d *schema.ResourceData) *nextgen.ServiceOverrideRequ
 		ClusterIdentifier: d.Get("cluster_id").(string),
 		Type_:             d.Get("type").(string),
 		YamlInternal:      d.Get("yaml").(string),
+		Identifier:        d.Get("identifier").(string),
 	}
 }
 
@@ -279,6 +281,7 @@ func buildServiceOverrideImportRequest(d *schema.ResourceData) *nextgen.ServiceO
 		ServiceRef:        d.Get("service_id").(string),
 		InfraIdentifier:   d.Get("infra_id").(string),
 		Type_:             d.Get("type").(string),
+		Identifier:        d.Get("identifier").(string),
 	}
 }
 

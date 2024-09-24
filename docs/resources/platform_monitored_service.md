@@ -88,6 +88,37 @@ resource "harness_platform_monitored_service" "example" {
       })
       category = "Alert"
     }
+    change_sources {
+      name       = "customff"
+      identifier = "customff"
+      type       = "CustomFF"
+      enabled    = true
+      category   = "FeatureFlag"
+      spec = jsonencode({
+        type = "FeatureFlag"
+      })
+    }
+    change_sources {
+      name       = "customdeploy"
+      identifier = "customdeploy"
+      type       = "CustomDeploy"
+      enabled    = true
+      category   = "Deployment"
+      spec = jsonencode({
+        type = "Deployment"
+      })
+    }
+    change_sources {
+      name       = "customincident"
+      identifier = "customincident"
+      type       = "CustomIncident"
+      enabled    = true
+      category   = "Alert"
+      spec = jsonencode({
+        type               = "Alert"
+        authorizationToken = "abc"
+      })
+    }
     notification_rule_refs {
       notification_rule_ref = "notification_rule_ref"
       enabled               = true

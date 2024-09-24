@@ -72,12 +72,12 @@ func testAccDatasourceGitopsAppProjectMapping(agentId string, accountId string, 
 
 		data "harness_platform_gitops_app_project_mapping" test1 {
 			depends_on = [harness_platform_gitops_app_project_mapping.test]
-			identifier = harness_platform_gitops_app_project_mapping.test.identifier
 			
 			org_id = harness_platform_organization.test.id
 			account_id = "%[2]s"
 			project_id = harness_platform_project.test.id
 			agent_id = "%[1]s"
+            argo_project_name = "%[3]s"
 		}
 		`, agentId, accountId, argoProject)
 }

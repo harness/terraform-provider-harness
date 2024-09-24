@@ -1,0 +1,3 @@
+```release-note:fix
+harness_platform_gitops_app_project: Fix the accountIdentifier context
+```

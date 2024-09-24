@@ -226,6 +226,11 @@ func DataSourceGitopsApplications() *schema.Resource {
 							Computed:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"project": {
+										Description: "The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
 									"source": {
 										Description: "Contains all information about the source of a GitOps application.",
 										Type:        schema.TypeList,

@@ -2,7 +2,7 @@ package cluster
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -27,26 +27,31 @@ func ResourceGitopsCluster() *schema.Resource {
 				Description: "Account identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the cluster.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew:    true,
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps cluster.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"request": {
 				Description: "Cluster create or update request.",
@@ -111,6 +116,7 @@ func ResourceGitopsCluster() *schema.Resource {
 												"bearer_token": {
 													Description: "Bearer authentication token the cluster.",
 													Type:        schema.TypeString,
+													Sensitive:   true,
 													Optional:    true,
 												},
 												"tls_client_config": {
@@ -387,6 +393,9 @@ func resourceGitopsClusterCreate(ctx context.Context, d *schema.ResourceData, me
 	}
 
 	createClusterRequest := buildCreateClusterRequest(d)
+	if projectIdentifier == "" && createClusterRequest.Cluster.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when creating cluster in project, cannot set argocd project for account level cluster"))
+	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceCreate(ctx, *createClusterRequest, agentIdentifier,
 		&nextgen.ClustersApiAgentClusterServiceCreateOpts{
 			AccountIdentifier: optional.NewString(accountIdentifier),
@@ -420,7 +429,7 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 	})
 
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -435,12 +444,16 @@ func resourceGitopsClusterRead(ctx context.Context, d *schema.ResourceData, meta
 }
 
 func resourceGitopsClusterUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
+
 	agentIdentifier := d.Get("agent_id").(string)
+	projectIdentifier := d.Get("project_id").(string)
 	identifier := d.Get("identifier").(string)
 	updateClusterRequest := buildUpdateClusterRequest(d)
+	if projectIdentifier == "" && updateClusterRequest.Cluster.Project != "" {
+		return diag.FromErr(fmt.Errorf("project_id is required when update cluster in project, cannot set argocd project for account level cluster"))
+	}
 	resp, httpResp, err := c.ClustersApi.AgentClusterServiceUpdate(ctx, *updateClusterRequest, agentIdentifier, identifier,
 		&nextgen.ClustersApiAgentClusterServiceUpdateOpts{
 			AccountIdentifier: optional.NewString(c.AccountId),
@@ -755,6 +768,10 @@ func buildClusterDetails(d *schema.ResourceData) *nextgen.ClustersCluster {
 						clusterDetails.Info.ServerVersion = clusterInfo["server_version"].(string)
 					}
 				}
+			}
+
+			if requestCluster["project"] != nil {
+				clusterDetails.Project = requestCluster["project"].(string)
 			}
 
 			if requestCluster["shard"] != nil {

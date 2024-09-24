@@ -160,6 +160,7 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 
 	id := d.Id()
+	// Migrate to GetUserGroupv2 once it is available in all environments including SMP customers
 	resp, httpResp, err := c.UserGroupApi.GetUserGroup(ctx, c.AccountId, id, &nextgen.UserGroupApiGetUserGroupOpts{
 		OrgIdentifier:     helpers.BuildField(d, "org_id"),
 		ProjectIdentifier: helpers.BuildField(d, "project_id"),

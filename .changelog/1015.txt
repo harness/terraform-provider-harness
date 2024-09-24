@@ -1,0 +1,4 @@
+```release-note: enhancement
+harness_platform_policy: - Have added support for remote policies, now users can create remote policies using terraform by providing git references in the script.
+                         - Updated the Data Source for policy as rego should not be a mandatory field for GET call.
+```

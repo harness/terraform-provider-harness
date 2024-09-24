@@ -20,12 +20,6 @@ func DataSourcePolicy() *schema.Resource {
 		ReadContext: dataSourceProjectRead,
 
 		Schema: map[string]*schema.Schema{
-			"name": {
-				Description: "Name of the policy.",
-				Type:        schema.TypeString,
-				Required:    true,
-				Computed:    false,
-			},
 			"identifier": {
 				Description: "Identifier of the policy.",
 				Type:        schema.TypeString,
@@ -35,9 +29,8 @@ func DataSourcePolicy() *schema.Resource {
 			"rego": {
 				Description: "Rego code for the policy.",
 				Type:        schema.TypeString,
-				Optional:    false,
-				Required:    true,
-				Computed:    false,
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}

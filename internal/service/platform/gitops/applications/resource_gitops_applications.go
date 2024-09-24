@@ -229,6 +229,11 @@ func ResourceGitopsApplication() *schema.Resource {
 							Optional:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"project": {
+										Description: "The ArgoCD project name corresponding to this GitOps application. Value must match mappings of ArgoCD projects to harness project.",
+										Type:        schema.TypeString,
+										Optional:    true,
+									},
 									"source": {
 										Description: "Contains all information about the source of the GitOps application.",
 										Type:        schema.TypeList,
@@ -740,7 +745,7 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 		QueryRepo: optional.NewString(repoIdentifier),
 	})
 	if err != nil {
-		return helpers.HandleApiError(err, d, httpResp)
+		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
 	// Soft delete lookup error handling
@@ -760,6 +765,62 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	updateApplicationRequest := buildUpdateApplicationRequest(d)
 	var agentIdentifier, orgIdentifier, projectIdentifier, clusterIdentifier, repoIdentifier, appMetaDataName string
 	var skipRepoValidation bool
+
+	var e diag.Diagnostics
+	if d.HasChange("identifier") {
+		oldValue, newValue := d.GetChange("identifier")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'identifier' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("identifier", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("account_id") {
+		oldValue, newValue := d.GetChange("account_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'account_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("account_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("org_id") {
+		oldValue, newValue := d.GetChange("org_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'org_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("org_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("project_id") {
+		oldValue, newValue := d.GetChange("project_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'project_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("project_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if d.HasChange("agent_id") {
+		oldValue, newValue := d.GetChange("agent_id")
+		if oldValue != "" && oldValue != newValue {
+			e = append(e, diag.Errorf("%s", "Field 'agent_id' cannot be updated after creation.")[0])
+		}
+		if err := d.Set("agent_id", oldValue); err != nil {
+			return diag.FromErr(err)
+		}
+	}
+
+	if len(e) > 0 {
+		return e
+	}
+
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
@@ -875,9 +936,13 @@ func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 			metadataList = append(metadataList, metadata)
 			application["metadata"] = metadataList
 		}
+
 		if app.App.Spec != nil {
 			var specList = []interface{}{}
 			var spec = map[string]interface{}{}
+			if app.App.Spec.Project != "" {
+				spec["project"] = app.App.Spec.Project
+			}
 			if app.App.Spec.Source != nil {
 				var sourceList = []interface{}{}
 				var source = map[string]interface{}{}
@@ -1163,6 +1228,8 @@ func buildApplicationRequest(d *schema.ResourceData) *nextgen.ApplicationsApplic
 				var specData map[string]interface{}
 				specData = application["spec"].([]interface{})[0].(map[string]interface{})
 				//Spec Source
+				project := specData["project"].(string)
+				spec.Project = project
 				if specData["source"] != nil && len(specData["source"].([]interface{})) > 0 {
 					var specSource nextgen.ApplicationsApplicationSource
 					var source = specData["source"].([]interface{})[0].(map[string]interface{})
