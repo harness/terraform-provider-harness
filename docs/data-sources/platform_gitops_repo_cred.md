@@ -33,18 +33,18 @@ data "harness_platform_gitops_repo_cred" "test" {
 
 ### Optional
 
-- `creds` (Block List) credential details. (see [below for nested schema](#nestedblock--creds))
 - `org_id` (String) Organization identifier of the Repository Credentials.
 - `project_id` (String) Project identifier of the Repository Credentials.
 
 ### Read-Only
 
+- `creds` (List of Object) credential details. (see [below for nested schema](#nestedatt--creds))
 - `id` (String) The ID of this resource.
 
-<a id="nestedblock--creds"></a>
+<a id="nestedatt--creds"></a>
 ### Nested Schema for `creds`
 
-Optional:
+Read-Only:
 
 - `enable_oci` (Boolean) Specifies whether helm-oci support should be enabled for this repo.
 - `github_app_enterprise_base_url` (String) Specifies the GitHub API URL for GitHub app authentication.

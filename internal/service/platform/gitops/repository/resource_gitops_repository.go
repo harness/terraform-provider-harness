@@ -75,12 +75,14 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Password or PAT to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"ssh_private_key": {
 							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
 							Type:        schema.TypeString,
 							Optional:    true,
 							Computed:    true,
+							Sensitive:   true,
 						},
 						"insecure_ignore_host_key": {
 							Description: "Indicates if InsecureIgnoreHostKey should be used. Insecure is favored used only for git repos. Deprecated.",
@@ -102,11 +104,13 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "Certificate in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"tls_client_cert_key": {
 							Description: "Private key in PEM format for authenticating at the repo server. This is used for mTLS. The value should be base64 encoded.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"type_": {
 							Description:  "Type specifies the type of the repo. Can be either \"git\" or \"helm. \"git\" is assumed if empty or absent.",
@@ -134,6 +138,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "GitHub app private key PEM data.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"github_app_id": {
 							Description: "Id of the GitHub app used to access the repo.",
@@ -162,10 +167,10 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Computed:    true,
 						},
 						"connection_type": {
-							Description:  "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS\"",
+							Description:  "Identifies the authentication method used to connect to the repository. Possible values: \"HTTPS\" \"SSH\" \"GITHUB\" \"HTTPS_ANONYMOUS\", \"GITHUB_ENTERPRISE\".",
 							Type:         schema.TypeString,
 							Required:     true,
-							ValidateFunc: validation.StringInSlice([]string{"HTTPS", "SSH", "GITHUB", "HTTPS_ANONYMOUS"}, false),
+							ValidateFunc: validation.StringInSlice([]string{"HTTPS", "SSH", "GITHUB", "HTTPS_ANONYMOUS", "GITHUB_ENTERPRISE"}, false),
 						},
 					},
 				},
@@ -218,11 +223,13 @@ func ResourceGitopsRepositories() *schema.Resource {
 										Description: "AWS secret access key.",
 										Type:        schema.TypeString,
 										Optional:    true,
+										Sensitive:   true,
 									},
 									"aws_session_token": {
 										Description: "AWS session token.",
 										Type:        schema.TypeString,
 										Optional:    true,
+										Sensitive:   true,
 									},
 								},
 							},
@@ -274,6 +281,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Description: "GCP access key.",
 							Type:        schema.TypeString,
 							Optional:    true,
+							Sensitive:   true,
 						},
 						"workload_identity": {
 							Description: "GCP workload identity.",
