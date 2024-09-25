@@ -33,23 +33,14 @@ data "harness_platform_gitops_repository" "example" {
 
 ### Optional
 
-- `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
 - `org_id` (String) Organization identifier of the GitOps repository.
 - `project_id` (String) Project identifier of the GitOps repository.
-- `update_mask` (Block List) Update mask of the repository. (see [below for nested schema](#nestedblock--update_mask))
 
 ### Read-Only
 
+- `enable_oci` (Boolean) Indicates if helm-oci support must be enabled for this repo.
 - `id` (String) The ID of this resource.
 - `repo` (List of Object) Repo details holding application configurations. (see [below for nested schema](#nestedatt--repo))
-
-<a id="nestedblock--update_mask"></a>
-### Nested Schema for `update_mask`
-
-Optional:
-
-- `paths` (List of String) The set of field mask paths.
-
 
 <a id="nestedatt--repo"></a>
 ### Nested Schema for `repo`
