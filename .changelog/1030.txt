@@ -1,0 +1,3 @@
+```relese-note:fix
+harness_platform_gitops_applications: make identifier deprecated, using name instead which is already required
+```
