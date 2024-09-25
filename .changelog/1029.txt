@@ -1,6 +1,0 @@
-```release-note:fix
-harness_platform_gitops_repository: make fields computed, add sensitive for credentials
-harness_platform_gitops_repository: add sensitive for credentials, fix validation add missing value GITHUB_ENTERPRISE
-harness_platform_gitops_repo_cred: add sensitive for credentials, modify fields to computed
-resource_gitops_repo_cred.go: add sensitive for credentials, add ForceNew for harness identifiers and for url.
-```
