@@ -41,6 +41,11 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				Deprecated:  "This field is deprecated and will be removed in a future release.",
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					// Implement logic to suppress the diff here
+					return true
+				},
 			},
 			"agent_id": {
 				Description: "Agent identifier of the GitOps application.",
@@ -735,9 +740,12 @@ func resourceGitopsApplicationRead(ctx context.Context, d *schema.ResourceData, 
 	if attr, ok := d.GetOk("project_id"); ok {
 		projectIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+
+	// name is required, so must exist
+	if attr, ok := d.GetOk("name"); ok {
 		queryName = attr.(string)
 	}
+
 	if attr, ok := d.GetOk("repo_id"); ok {
 		repoIdentifier = attr.(string)
 	}
@@ -767,12 +775,12 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	var skipRepoValidation bool
 
 	var e diag.Diagnostics
-	if d.HasChange("identifier") {
-		oldValue, newValue := d.GetChange("identifier")
+	if d.HasChange("name") {
+		oldValue, newValue := d.GetChange("name")
 		if oldValue != "" && oldValue != newValue {
-			e = append(e, diag.Errorf("%s", "Field 'identifier' cannot be updated after creation.")[0])
+			e = append(e, diag.Errorf("%s", "Field 'name' cannot be updated after creation.")[0])
 		}
-		if err := d.Set("identifier", oldValue); err != nil {
+		if err := d.Set("name", oldValue); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -824,7 +832,7 @@ func resourceGitopsApplicationUpdate(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+	if attr, ok := d.GetOk("name"); ok {
 		appMetaDataName = attr.(string)
 	}
 	if attr, ok := d.GetOk("org_id"); ok {
@@ -885,7 +893,7 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 	if attr, ok := d.GetOk("options_remove_existing_finalizers"); ok {
 		optionsRemoveExistingFinalizers = attr.(bool)
 	}
-	if attr, ok := d.GetOk("identifier"); ok {
+	if attr, ok := d.GetOk("name"); ok {
 		requestName = attr.(string)
 	}
 
@@ -906,7 +914,6 @@ func resourceGitopsApplicationDelete(ctx context.Context, d *schema.ResourceData
 
 func setApplication(d *schema.ResourceData, app *nextgen.Servicev1Application) {
 	d.SetId(app.Name)
-	d.Set("identifier", app.Name)
 	d.Set("org_id", app.OrgIdentifier)
 	d.Set("project_id", app.ProjectIdentifier)
 	d.Set("agent_id", app.AgentIdentifier)
