@@ -35,7 +35,8 @@ resource "harness_platform_file_store_file" "example" {
 
 - `identifier` (String) Unique identifier of the resource.
 - `name` (String) Name of the resource.
-- `parent_identifier` (String) File parent identifier on Harness File Store
+- `parent_identifier` (String) File parent identifier on Harness File Store. If the folder is at the root level, the parent_identifier will be `Root`.
+
 
 ### Optional
 
