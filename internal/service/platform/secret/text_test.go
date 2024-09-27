@@ -216,6 +216,7 @@ func TestOrgSecretText_inline(t *testing.T) {
 }
 
 func TestOrgResourceSecretText_reference(t *testing.T) {
+	t.Skip("Skipping the TestOrgResourceSecretText_reference for SMP env")
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	name := id
@@ -268,7 +269,6 @@ func TestOrgResourceSecretText_reference(t *testing.T) {
 		},
 	})
 }
-
 func TestAccSecretText_DeleteUnderLyingResource(t *testing.T) {
 	name := t.Name()
 	id := fmt.Sprintf("%s_%s", name, utils.RandStringBytes(5))
