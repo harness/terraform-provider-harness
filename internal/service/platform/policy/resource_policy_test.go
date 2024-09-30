@@ -18,13 +18,11 @@ var (
 )
 
 func TestAccResourcePolicy(t *testing.T) {
-	projectID := "OPA_TEST"
 	id := fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5))
 	name := id
 	description := "TF-testing"
-	orgID := "default"
 	rego := "#Testing Policy Creation Using TF"
-	updatedRego := "#Testing Policy Updation Using TF@"
+	updatedRego := "#Testing Policy Updation Using TF"
 
 	resourceName := "harness_platform_policy.test"
 
@@ -34,24 +32,20 @@ func TestAccResourcePolicy(t *testing.T) {
 		CheckDestroy:      testAccPolicyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePolicy(id, name, description, orgID, projectID, rego),
+				Config: testAccResourcePolicy(id, name, description, rego),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
-					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
 					resource.TestCheckResourceAttr(resourceName, "rego", rego),
 				),
 			},
 			{
-				Config: testAccResourcePolicy(id, name, description, orgID, projectID, updatedRego),
+				Config: testAccResourcePolicy(id, name, description, updatedRego),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
-					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
-					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
 					resource.TestCheckResourceAttr(resourceName, "rego", updatedRego),
 				),
 			},
@@ -66,17 +60,15 @@ func TestAccResourcePolicy(t *testing.T) {
 	})
 }
 
-func testAccResourcePolicy(id, name, description, orgID, projectID, rego string) string {
+func testAccResourcePolicy(id, name, description, rego string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_policy" "test" {
 			identifier       = "%[1]s"
 			name             = "%[2]s"
 			description      = "%[3]s"
-			org_id           = "%[4]s"
-			project_id       = "%[5]s"
-			rego = "%[6]s"
+			rego = "%[4]s"
 		}
-	`, id, name, description, orgID, projectID, rego)
+	`, id, name, description, rego)
 }
 
 func testAccPolicyDestroy(resourceName string) resource.TestCheckFunc {
