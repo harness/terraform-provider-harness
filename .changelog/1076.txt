@@ -1,0 +1,3 @@
+```relese-note:fix
+harness_platform_gitops_agent: fix provider crashes when reading agent timeouts
+```
