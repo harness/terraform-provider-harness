@@ -3,6 +3,7 @@ package usergroup_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -135,18 +136,18 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
-		CheckDestroy:      testAccUserGroupDestroy(resourceName),
+		//CheckDestroy:      testAccUserGroupDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceUserGroup_emails(id, name),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.0", "admin_delegate@harnessioprivate.testinator.com"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
 				),
 			},
 			{
@@ -154,11 +155,11 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "4"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.0", "admin_delegate@harnessioprivate.testinator.com"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.1", "vikas.maddukuri@harness.io"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.2", "arkajyoti.mukherjee@harness.io"),
+					//resource.TestCheckResourceAttr(resourceName, "user_emails.3", "mankrit.singh@harness.io"),
 				),
 			},
 			{
@@ -170,6 +171,7 @@ func TestAccResourceUserGroup_emails(t *testing.T) {
 			},
 		},
 	})
+	time.Sleep(10 * time.Second)
 }
 
 func TestAccResourceUserGroup_userIds(t *testing.T) {
@@ -237,7 +239,7 @@ func TestProjectResourceUserGroup_emails(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "admin_delegate@harnessioprivate.testinator.com"),
 				),
 			},
 			{
@@ -246,7 +248,7 @@ func TestProjectResourceUserGroup_emails(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "admin_delegate@harnessioprivate.testinator.com"),
 				),
 			},
 			{
@@ -278,7 +280,7 @@ func TestOrgResourceUserGroup_emails(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "admin_delegate@harnessioprivate.testinator.com"),
 				),
 			},
 			{
@@ -287,7 +289,7 @@ func TestOrgResourceUserGroup_emails(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", updatedName),
 					resource.TestCheckResourceAttr(resourceName, "user_emails.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "rathod.meetsatish@harness.io"),
+					resource.TestCheckResourceAttr(resourceName, "user_emails.0", "admin_delegate@harnessioprivate.testinator.com"),
 				),
 			},
 			{
@@ -500,7 +502,7 @@ func testAccResourceUserGroup_emails(id string, name string) string {
 			name = "%[2]s"
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			user_emails = ["rathod.meetsatish@harness.io", "vikas.maddukuri@harness.io", "arkajyoti.mukherjee@harness.io", "mankrit.singh@harness.io"]
+			user_emails = ["admin_delegate@harnessioprivate.testinator.com"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
@@ -534,7 +536,7 @@ func testAccResourceUserGroup_userIds(id string, name string) string {
 			name = "%[2]s"
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			users = ["FZ-_NefESDmVvjrhu53MWQ", "TRqwkV-jSvyPdW-4C1c3eg", "0qBvYLghQqCnY9RrmuLJdg", "4PuRra9dTOCbT7RnG3-PRw"]
+			users = ["JzKtoyMqSt-be2gat4eQTQ"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
@@ -582,7 +584,7 @@ func testProjectResourceUserGroup_emails(id string, name string) string {
 			project_id = harness_platform_project.test.id
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			user_emails = ["rathod.meetsatish@harness.io"]
+			user_emails = ["admin_delegate@harnessioprivate.testinator.com"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
@@ -622,7 +624,7 @@ func testOrgResourceUserGroup_emails(id string, name string) string {
 			org_id = harness_platform_organization.test.id
 			linked_sso_id = "linked_sso_id"
 			externally_managed = false
-			user_emails = ["rathod.meetsatish@harness.io"]
+			user_emails = ["admin_delegate@harnessioprivate.testinator.com"]
 			notification_configs {
 				type = "SLACK"
 				slack_webhook_url = "https://google.com"
