@@ -24,13 +24,16 @@ func TestAccResourcePolicyset(t *testing.T) {
 	policyType := "pipeline"
 	action := "onrun"
 
+	policyFirstIdentifier := fmt.Sprintf("policyFirst%s", utils.RandStringBytes(5))
+	policySecondIdentifier := fmt.Sprintf("policySecond%s", utils.RandStringBytes(5))
+
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { acctest.TestAccPreCheck(t) },
 		ProviderFactories: acctest.ProviderFactories,
 		CheckDestroy:      testAccPolicysetDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePolicyset(id, name, action, policyType, false),
+				Config: testAccResourcePolicyset(id, name, action, policyType, policyFirstIdentifier, policySecondIdentifier, false),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -40,7 +43,7 @@ func TestAccResourcePolicyset(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccResourcePolicyset(id, name, action, policyType, true),
+				Config: testAccResourcePolicyset(id, name, action, policyType, policyFirstIdentifier, policySecondIdentifier, true),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "id", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
@@ -59,17 +62,17 @@ func TestAccResourcePolicyset(t *testing.T) {
 	})
 }
 
-func testAccResourcePolicyset(id, name, action, policyType string, enabled bool) string {
+func testAccResourcePolicyset(id, name, action, policyType string, policyFirstIdentifier, policySecondIdentifier string, enabled bool) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_policy" "first" {
-			identifier = "policyFirst"
-			name = "policyFirst"
+			identifier = "%[6]s"
+			name = "%[6]s"
 			rego = "some text"
 		}
 
 		resource "harness_platform_policy" "second" {
-			identifier = "policySecond"
-			name = "policySecond"
+			identifier = "%[7]s"
+			name = "%[7]s"
 			rego = "some text"
 		}
 		resource "harness_platform_policyset" "test" {
@@ -88,7 +91,7 @@ func testAccResourcePolicyset(id, name, action, policyType string, enabled bool)
 			  severity = "warning"
 			}
 		}
-`, id, name, action, policyType, enabled)
+`, id, name, action, policyType, enabled, policyFirstIdentifier, policySecondIdentifier)
 }
 
 func testAccPolicysetDestroy(resourceName string) resource.TestCheckFunc {
