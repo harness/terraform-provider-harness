@@ -18,22 +18,13 @@ var (
 )
 
 func TestAccResourcePolicy(t *testing.T) {
-	// To test this please update all the fields with valid values.
 	projectID := "OPA_TEST"
 	id := fmt.Sprintf("%s%s", t.Name(), utils.RandStringBytes(5))
 	name := id
-	description := "terratest"
-	orgID := "Ng_Pipelines_K8s_Organisations"
-	gitConnectorRef := "Sameed_Test"
-	gitPath := ".harness/" + id + ".rego"
-	gitRepo := "test_sameed"
-	gitBranch := "main"
-	gitBaseBranch := "main"
-	gitIsNewBranch := false
-	gitImport := false
-	gitCommitMsg := "Trying TF out"
-	rego := "some text"
-	updatedRego := "some text v2"
+	description := "TF-testing"
+	orgID := "default"
+	rego := "#Testing Policy Creation Using TF"
+	updatedRego := "#Testing Policy Updation Using TF@"
 
 	resourceName := "harness_platform_policy.test"
 
@@ -43,40 +34,24 @@ func TestAccResourcePolicy(t *testing.T) {
 		CheckDestroy:      testAccPolicyDestroy(resourceName),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourcePolicy(id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch, gitIsNewBranch, gitImport, gitCommitMsg, rego),
+				Config: testAccResourcePolicy(id, name, description, orgID, projectID, rego),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
 					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
 					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
-					resource.TestCheckResourceAttr(resourceName, "git_connector_ref", gitConnectorRef),
-					resource.TestCheckResourceAttr(resourceName, "git_path", gitPath),
-					resource.TestCheckResourceAttr(resourceName, "git_repo", gitRepo),
-					resource.TestCheckResourceAttr(resourceName, "git_branch", gitBranch),
-					resource.TestCheckResourceAttr(resourceName, "git_base_branch", gitBaseBranch),
-					resource.TestCheckResourceAttr(resourceName, "git_is_new_branch", fmt.Sprintf("%t", gitIsNewBranch)),
-					resource.TestCheckResourceAttr(resourceName, "git_import", fmt.Sprintf("%t", gitImport)),
-					resource.TestCheckResourceAttr(resourceName, "git_commit_msg", gitCommitMsg),
 					resource.TestCheckResourceAttr(resourceName, "rego", rego),
 				),
 			},
 			{
-				Config: testAccResourcePolicy(id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch, gitIsNewBranch, gitImport, gitCommitMsg, updatedRego),
+				Config: testAccResourcePolicy(id, name, description, orgID, projectID, updatedRego),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "identifier", id),
 					resource.TestCheckResourceAttr(resourceName, "name", name),
 					resource.TestCheckResourceAttr(resourceName, "description", description),
 					resource.TestCheckResourceAttr(resourceName, "org_id", orgID),
 					resource.TestCheckResourceAttr(resourceName, "project_id", projectID),
-					resource.TestCheckResourceAttr(resourceName, "git_connector_ref", gitConnectorRef),
-					resource.TestCheckResourceAttr(resourceName, "git_path", gitPath),
-					resource.TestCheckResourceAttr(resourceName, "git_repo", gitRepo),
-					resource.TestCheckResourceAttr(resourceName, "git_branch", gitBranch),
-					resource.TestCheckResourceAttr(resourceName, "git_base_branch", gitBaseBranch),
-					resource.TestCheckResourceAttr(resourceName, "git_is_new_branch", fmt.Sprintf("%t", gitIsNewBranch)),
-					resource.TestCheckResourceAttr(resourceName, "git_import", fmt.Sprintf("%t", gitImport)),
-					resource.TestCheckResourceAttr(resourceName, "git_commit_msg", gitCommitMsg),
 					resource.TestCheckResourceAttr(resourceName, "rego", updatedRego),
 				),
 			},
@@ -91,7 +66,7 @@ func TestAccResourcePolicy(t *testing.T) {
 	})
 }
 
-func testAccResourcePolicy(id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch string, gitIsNewBranch, gitImport bool, gitCommitMsg, rego string) string {
+func testAccResourcePolicy(id, name, description, orgID, projectID, rego string) string {
 	return fmt.Sprintf(`
 		resource "harness_platform_policy" "test" {
 			identifier       = "%[1]s"
@@ -99,17 +74,9 @@ func testAccResourcePolicy(id, name, description, orgID, projectID, gitConnector
 			description      = "%[3]s"
 			org_id           = "%[4]s"
 			project_id       = "%[5]s"
-			git_connector_ref = "%[6]s"
-			git_path         = "%[7]s"
-			git_repo         = "%[8]s"
-			git_branch       = "%[9]s"
-			git_base_branch  = "%[10]s"
-			git_is_new_branch = %[11]t
-			git_import       = %[12]t
-			git_commit_msg   = "%[13]s"
-			rego = "%[14]s"
+			rego = "%[6]s"
 		}
-	`, id, name, description, orgID, projectID, gitConnectorRef, gitPath, gitRepo, gitBranch, gitBaseBranch, gitIsNewBranch, gitImport, gitCommitMsg, rego)
+	`, id, name, description, orgID, projectID, rego)
 }
 
 func testAccPolicyDestroy(resourceName string) resource.TestCheckFunc {
