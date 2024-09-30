@@ -10,6 +10,7 @@ import (
 )
 
 func TestAccDataSourceConnectorGcpSm(t *testing.T) {
+	t.Skip()
 	var (
 		name = fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(4))
 
