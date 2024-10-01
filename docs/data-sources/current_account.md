@@ -17,7 +17,7 @@ Data source for retrieving information about the current Harness account
 
 ### Optional
 
-- `id` (String) Id of the git connector.
+- `id` (String) Account Identifier of the current account.
 
 ### Read-Only
 
