@@ -679,11 +679,12 @@ func testOrgResourceResourceGroupTagsAttributeFilter(id string, name string, acc
 			tags = ["foo:bar"]
 
 			account_id = "%[3]s"
-			allowed_scope_levels =["account"]
+			org_id = harness_platform_organization.test.identifier
+			allowed_scope_levels =["organization"]
 			included_scopes {
 				filter = "INCLUDING_CHILD_SCOPES"
 				account_id = "%[3]s"
-				
+				org_id = harness_platform_organization.test.identifier
 			}
 			resource_filter {
 				include_all_resources = false
@@ -718,11 +719,14 @@ func testProjectResourceResourceGroupTagsAttributeFilter(id string, name string,
 			tags = ["foo:bar"]
 
 			account_id = "%[3]s"
-			allowed_scope_levels =["account"]
+			org_id = harness_platform_project.test.org_id
+			project_id = harness_platform_project.test.id
+			allowed_scope_levels =["project"]
 			included_scopes {
-				filter = "INCLUDING_CHILD_SCOPES"
+				filter = "EXCLUDING_CHILD_SCOPES"
 				account_id = "%[3]s"
-				
+				org_id = harness_platform_project.test.org_id
+				project_id = harness_platform_project.test.id
 			}
 			resource_filter {
 				include_all_resources = false
