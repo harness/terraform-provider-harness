@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" errors="0" time="7.984523">
+	<testsuite tests="1" failures="1" time="1.875000" name="github.com/harness/terraform-provider-harness/internal/service/platform/connector" timestamp="2024-10-01T19:44:30+05:30">
+		<properties>
+			<property name="go.version" value="go1.21.5 darwin/arm64"></property>
+		</properties>
+		<testcase classname="github.com/harness/terraform-provider-harness/internal/service/platform/connector" name="TestAccDataSourceConnectorAppDynamics" time="-0.000000">
+			<failure message="Failed" type="">=== RUN   TestAccDataSourceConnectorAppDynamics&#xA;signal: interrupt&#xA;</failure>
+		</testcase>
+	</testsuite>
+</testsuites>

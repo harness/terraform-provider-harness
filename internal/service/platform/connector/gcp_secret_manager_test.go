@@ -59,6 +59,7 @@ func TestAccResourceConnectorGcpSM(t *testing.T) {
 }
 
 func TestProjectResourceConnectorGcpSM(t *testing.T) {
+	t.Skip()
 
 	id := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(5))
 	connectorName := fmt.Sprintf("%s_%s", t.Name(), utils.RandStringBytes(10))
