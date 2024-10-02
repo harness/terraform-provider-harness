@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -65,6 +66,7 @@ func DataSourceGitopsAgent() *schema.Resource {
 				Description: "Metadata of the agent.",
 				Type:        schema.TypeList,
 				Computed:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"namespace": {

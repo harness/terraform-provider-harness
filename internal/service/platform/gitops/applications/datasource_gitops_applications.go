@@ -100,6 +100,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 			"application": {
 				Description: "Definition of the GitOps application resource.",
 				Type:        schema.TypeList,
+				MaxItems:    1,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -107,6 +108,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 							Description: "Metadata corresponding to the resources. This includes all the objects a user must create.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -225,6 +227,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							Computed:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"project": {
@@ -266,6 +269,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Description: "Holds helm specific options.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"value_files": {
@@ -359,6 +363,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"name_prefix": {
@@ -426,6 +431,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"environment": {
@@ -470,6 +476,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"recurse": {
@@ -642,6 +649,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										Computed:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"sync_options": {
@@ -649,6 +657,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -658,6 +667,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"prune": {
@@ -686,6 +696,7 @@ func DataSourceGitopsApplications() *schema.Resource {
 													Type:        schema.TypeList,
 													Optional:    true,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"limit": {

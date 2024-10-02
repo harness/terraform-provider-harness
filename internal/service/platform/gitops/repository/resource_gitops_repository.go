@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/antihax/optional"
@@ -58,6 +59,7 @@ func ResourceGitopsRepositories() *schema.Resource {
 				Description: "Repo details holding application configurations.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"repo": {

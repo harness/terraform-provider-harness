@@ -3,6 +3,7 @@ package cluster
 import (
 	"context"
 	"fmt"
+
 	"github.com/antihax/optional"
 	hh "github.com/harness/harness-go-sdk/harness/helpers"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
@@ -57,6 +58,7 @@ func ResourceGitopsCluster() *schema.Resource {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
 				Optional:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -85,6 +87,7 @@ func ResourceGitopsCluster() *schema.Resource {
 							Description: "GitOps cluster details.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"server": {
@@ -101,6 +104,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Description: "GitOps cluster config.",
 										Type:        schema.TypeList,
 										Required:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"username": {
@@ -122,6 +126,7 @@ func ResourceGitopsCluster() *schema.Resource {
 												"tls_client_config": {
 													Description: "Settings to enable transport layer security.",
 													Type:        schema.TypeList,
+													MaxItems:    1,
 													Optional:    true,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
@@ -226,6 +231,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										Computed:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"seconds": {
@@ -245,6 +251,7 @@ func ResourceGitopsCluster() *schema.Resource {
 										Description: "Information about cluster cache and state.",
 										Type:        schema.TypeList,
 										Computed:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {

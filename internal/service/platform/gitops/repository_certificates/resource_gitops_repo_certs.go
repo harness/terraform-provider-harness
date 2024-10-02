@@ -47,6 +47,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 				Description: "Repository Certificate create/update request.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -65,6 +66,7 @@ func ResourceGitopsRepoCerts() *schema.Resource {
 										Description: "metadata details",
 										Type:        schema.TypeList,
 										Optional:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"self_link": {

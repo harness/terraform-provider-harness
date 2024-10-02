@@ -47,6 +47,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
 				Computed:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -74,6 +75,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 							Description: "GitOps cluster details.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"server": {
@@ -90,6 +92,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 										Description: "GitOps cluster config.",
 										Type:        schema.TypeList,
 										Optional:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"username": {
@@ -111,6 +114,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 													Description: "Settings to enable transport layer security.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"insecure": {
@@ -210,6 +214,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 									"refresh_requested_at": {
 										Description: "Time when cluster cache refresh has been requested.",
 										Type:        schema.TypeList,
+										MaxItems:    1,
 										Optional:    true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -230,12 +235,14 @@ func DataSourceGitopsCluster() *schema.Resource {
 										Description: "Information about cluster cache and state.",
 										Type:        schema.TypeList,
 										Computed:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {
 													Description: "Information about the connection to the cluster.",
 													Type:        schema.TypeList,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"status": {
@@ -279,6 +286,7 @@ func DataSourceGitopsCluster() *schema.Resource {
 													Description: "Information about the cluster cache.",
 													Type:        schema.TypeList,
 													Computed:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"resources_count": {

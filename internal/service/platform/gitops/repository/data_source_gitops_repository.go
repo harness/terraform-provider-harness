@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/antihax/optional"
 	"github.com/harness/harness-go-sdk/harness/nextgen"
 	"github.com/harness/terraform-provider-harness/helpers"
@@ -46,6 +47,7 @@ func DataSourceGitopsRepository() *schema.Resource {
 				Description: "Repo details holding application configurations.",
 				Type:        schema.TypeList,
 				Computed:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"repo": {

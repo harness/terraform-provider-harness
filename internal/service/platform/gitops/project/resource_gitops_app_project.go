@@ -59,12 +59,14 @@ func ResourceProject() *schema.Resource {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: "GitOps project configuration.",
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
 							Type:        schema.TypeList,
 							Required:    true,
 							Description: "Metadata details for the GitOps project.",
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -178,6 +180,7 @@ func ResourceProject() *schema.Resource {
 							Type:        schema.TypeList,
 							Required:    true,
 							Description: "Specification details for the GitOps project.",
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"source_repos": {
