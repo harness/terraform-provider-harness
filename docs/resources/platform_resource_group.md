@@ -105,8 +105,8 @@ Optional:
 
 Optional:
 
-- `attribute_name` (String) Name of the attribute. Valid values are `category`, `type` or `labels`.
-- `attribute_values` (Set of String) Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING], for `type` are [Production,PreProduction] and for `labels`, it can be using the syntax 'label:value'
+- `attribute_name` (String) Name of the attribute. Valid values are `category`, `type`, `labels`, `tag` or `tags`.
+- `attribute_values` (Set of String) Value of the attributes.Valid values for `category` are [ARTIFACTORY,CLOUD_COST,CLOUD_PROVIDER,CODE_REPO,MONITORING,SECRET_MANAGER,TICKETING], for `type` are [Production,PreProduction], for `labels`, it can be using the syntax 'label:value', for `tag` or `tags` it can be any string.
 
 ## Import
 
