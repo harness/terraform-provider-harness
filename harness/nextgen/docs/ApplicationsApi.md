@@ -4,36 +4,39 @@ All URIs are relative to *https://app.harness.io/gateway*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**AgentApplicationServiceCreate**](ApplicationsApi.md#AgentApplicationServiceCreate) | **Post** /gitops/api/v1/agents/{agentIdentifier}/applications | Create creates an application
-[**AgentApplicationServiceDelete**](ApplicationsApi.md#AgentApplicationServiceDelete) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name} | Delete deletes an application
-[**AgentApplicationServiceDeleteResource**](ApplicationsApi.md#AgentApplicationServiceDeleteResource) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | DeleteResource deletes a single application resource
-[**AgentApplicationServiceGet**](ApplicationsApi.md#AgentApplicationServiceGet) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name} | Get returns an application by name
-[**AgentApplicationServiceGetApplicationSyncWindows**](ApplicationsApi.md#AgentApplicationServiceGetApplicationSyncWindows) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/syncwindows | Get returns sync windows of the application
-[**AgentApplicationServiceGetManifests**](ApplicationsApi.md#AgentApplicationServiceGetManifests) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/manifests | GetManifests returns application manifests
-[**AgentApplicationServiceGetResource**](ApplicationsApi.md#AgentApplicationServiceGetResource) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | GetResource returns single application resource
-[**AgentApplicationServiceList**](ApplicationsApi.md#AgentApplicationServiceList) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications | List returns list of applications for a specific agent
-[**AgentApplicationServiceListResourceActions**](ApplicationsApi.md#AgentApplicationServiceListResourceActions) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | ListResourceActions returns list of resource actions
-[**AgentApplicationServiceListResourceEvents**](ApplicationsApi.md#AgentApplicationServiceListResourceEvents) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/events | ListResourceEvents returns a list of event resources
-[**AgentApplicationServiceManagedResources**](ApplicationsApi.md#AgentApplicationServiceManagedResources) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/managed-resources | ManagedResources returns list of managed resources
-[**AgentApplicationServicePatch**](ApplicationsApi.md#AgentApplicationServicePatch) | **Patch** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name} | Patch patch an application
-[**AgentApplicationServicePatchResource**](ApplicationsApi.md#AgentApplicationServicePatchResource) | **Post** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | PatchResource patch single application resource
-[**AgentApplicationServicePodLogs**](ApplicationsApi.md#AgentApplicationServicePodLogs) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/pods/{query.podName}/logs | PodLogs returns stream of log entries for the specified pod(s).
-[**AgentApplicationServicePodLogs2**](ApplicationsApi.md#AgentApplicationServicePodLogs2) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/logs | PodLogs returns stream of log entries for the specified pod(s).
-[**AgentApplicationServiceResourceTree**](ApplicationsApi.md#AgentApplicationServiceResourceTree) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/resource-tree | ResourceTree returns resource tree
-[**AgentApplicationServiceRevisionMetadata**](ApplicationsApi.md#AgentApplicationServiceRevisionMetadata) | **Get** /gitops/api/v1/agents/{agentIdentifier}/applications/{query.name}/revisions/{query.revision}/metadata | Get the meta-data (author, date, tags, message) for a specific revision of the application
-[**AgentApplicationServiceRollback**](ApplicationsApi.md#AgentApplicationServiceRollback) | **Post** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/rollback | Rollback syncs an application to its target state Harness Event type (rollback)
-[**AgentApplicationServiceRunResourceAction**](ApplicationsApi.md#AgentApplicationServiceRunResourceAction) | **Post** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | RunResourceAction run resource action
-[**AgentApplicationServiceSync**](ApplicationsApi.md#AgentApplicationServiceSync) | **Post** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/sync | Sync syncs an application to its target state Harness Event type (deploy)
-[**AgentApplicationServiceTerminateOperation**](ApplicationsApi.md#AgentApplicationServiceTerminateOperation) | **Delete** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/operation | TerminateOperation terminates the currently running operation
-[**AgentApplicationServiceUpdate**](ApplicationsApi.md#AgentApplicationServiceUpdate) | **Put** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.application.metadata.name} | Update updates an application
-[**AgentApplicationServiceUpdateSpec**](ApplicationsApi.md#AgentApplicationServiceUpdateSpec) | **Put** /gitops/api/v1/agents/{agentIdentifier}/applications/{request.name}/spec | UpdateSpec updates an application spec
-[**AgentApplicationServiceWatch**](ApplicationsApi.md#AgentApplicationServiceWatch) | **Get** /gitops/api/v1/agents/{agentIdentifier}/stream/applications | Watch returns stream of application change events
-[**AgentApplicationServiceWatchResourceTree**](ApplicationsApi.md#AgentApplicationServiceWatchResourceTree) | **Get** /gitops/api/v1/agents/{agentIdentifier}/stream/applications/{query.applicationName}/resource-tree | WatchResourceTree returns stream of application resource tree
-[**ApplicationServiceExists**](ApplicationsApi.md#ApplicationServiceExists) | **Get** /gitops/api/v1/applications/{name}/exists | Checks whether an app with the given name exists
-[**ApplicationServiceListAppSync**](ApplicationsApi.md#ApplicationServiceListAppSync) | **Post** /gitops/api/v1/applications/sync | List returns list of application sync status
+[**AgentApplicationServiceCreate**](ApplicationsApi.md#AgentApplicationServiceCreate) | **Post** /api/v1/agents/{agentIdentifier}/applications | Create creates an application
+[**AgentApplicationServiceDelete**](ApplicationsApi.md#AgentApplicationServiceDelete) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name} | Delete deletes an application
+[**AgentApplicationServiceDeleteResource**](ApplicationsApi.md#AgentApplicationServiceDeleteResource) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | DeleteResource deletes a single application resource
+[**AgentApplicationServiceGet**](ApplicationsApi.md#AgentApplicationServiceGet) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name} | Get returns an application by name
+[**AgentApplicationServiceGetApplicationSyncWindows**](ApplicationsApi.md#AgentApplicationServiceGetApplicationSyncWindows) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/syncwindows | Get returns sync windows of the application
+[**AgentApplicationServiceGetManifests**](ApplicationsApi.md#AgentApplicationServiceGetManifests) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/manifests | GetManifests returns application manifests
+[**AgentApplicationServiceGetResource**](ApplicationsApi.md#AgentApplicationServiceGetResource) | **Get** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | GetResource returns single application resource
+[**AgentApplicationServiceList**](ApplicationsApi.md#AgentApplicationServiceList) | **Get** /api/v1/agents/{agentIdentifier}/applications | List returns list of applications for a specific agent
+[**AgentApplicationServiceListResourceActions**](ApplicationsApi.md#AgentApplicationServiceListResourceActions) | **Get** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | ListResourceActions returns list of resource actions
+[**AgentApplicationServiceListResourceEvents**](ApplicationsApi.md#AgentApplicationServiceListResourceEvents) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/events | ListResourceEvents returns a list of event resources
+[**AgentApplicationServiceManagedResources**](ApplicationsApi.md#AgentApplicationServiceManagedResources) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.applicationName}/managed-resources | ManagedResources returns list of managed resources
+[**AgentApplicationServiceParent**](ApplicationsApi.md#AgentApplicationServiceParent) | **Get** /api/v1/agents/{agentIdentifier}/applications/parent/{query.name} | Get returns an application by name
+[**AgentApplicationServicePatch**](ApplicationsApi.md#AgentApplicationServicePatch) | **Patch** /api/v1/agents/{agentIdentifier}/applications/{request.name} | Patch patch an application
+[**AgentApplicationServicePatchResource**](ApplicationsApi.md#AgentApplicationServicePatchResource) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource | PatchResource patch single application resource
+[**AgentApplicationServicePodLogs**](ApplicationsApi.md#AgentApplicationServicePodLogs) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/pods/{query.podName}/logs | PodLogs returns stream of log entries for the specified pod(s).
+[**AgentApplicationServicePodLogs2**](ApplicationsApi.md#AgentApplicationServicePodLogs2) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/logs | PodLogs returns stream of log entries for the specified pod(s).
+[**AgentApplicationServiceResourceTree**](ApplicationsApi.md#AgentApplicationServiceResourceTree) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/resource-tree | ResourceTree returns resource tree
+[**AgentApplicationServiceRevisionMetadata**](ApplicationsApi.md#AgentApplicationServiceRevisionMetadata) | **Get** /api/v1/agents/{agentIdentifier}/applications/{query.name}/revisions/{query.revision}/metadata | Get the meta-data (author, date, tags, message) for a specific revision of the application
+[**AgentApplicationServiceRollback**](ApplicationsApi.md#AgentApplicationServiceRollback) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/rollback | Rollback syncs an application to its target state Harness Event type (rollback)
+[**AgentApplicationServiceRunResourceAction**](ApplicationsApi.md#AgentApplicationServiceRunResourceAction) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/resource/actions | RunResourceAction run resource action
+[**AgentApplicationServiceSync**](ApplicationsApi.md#AgentApplicationServiceSync) | **Post** /api/v1/agents/{agentIdentifier}/applications/{request.name}/sync | Sync syncs an application to its target state Harness Event type (deploy)
+[**AgentApplicationServiceTerminateOperation**](ApplicationsApi.md#AgentApplicationServiceTerminateOperation) | **Delete** /api/v1/agents/{agentIdentifier}/applications/{request.name}/operation | TerminateOperation terminates the currently running operation
+[**AgentApplicationServiceUpdate**](ApplicationsApi.md#AgentApplicationServiceUpdate) | **Put** /api/v1/agents/{agentIdentifier}/applications/{request.application.metadata.name} | Update updates an application
+[**AgentApplicationServiceUpdateSpec**](ApplicationsApi.md#AgentApplicationServiceUpdateSpec) | **Put** /api/v1/agents/{agentIdentifier}/applications/{request.name}/spec | UpdateSpec updates an application spec
+[**AgentApplicationServiceWatch**](ApplicationsApi.md#AgentApplicationServiceWatch) | **Get** /api/v1/agents/{agentIdentifier}/stream/applications | Watch returns stream of application change events
+[**AgentApplicationServiceWatchResourceTree**](ApplicationsApi.md#AgentApplicationServiceWatchResourceTree) | **Get** /api/v1/agents/{agentIdentifier}/stream/applications/{query.applicationName}/resource-tree | WatchResourceTree returns stream of application resource tree
+[**ApplicationServiceExists**](ApplicationsApi.md#ApplicationServiceExists) | **Get** /api/v1/applications/{name}/exists | Checks whether an app with the given name exists
+[**ApplicationServiceListAppSync**](ApplicationsApi.md#ApplicationServiceListAppSync) | **Post** /api/v1/applications/sync | List returns list of application sync status
+[**ApplicationServiceListAttributes**](ApplicationsApi.md#ApplicationServiceListAttributes) | **Get** /api/v1/applications/attributes | 
+[**ApplicationServiceListNs**](ApplicationsApi.md#ApplicationServiceListNs) | **Post** /api/v1/applications/ns | ListNs returns list of namespaces for a query.
 
 # **AgentApplicationServiceCreate**
-> Servicev1Application AgentApplicationServiceCreate(ctx, body, agentIdentifier, optional)
+> Servicev1Application AgentApplicationServiceCreate(ctx, body, agentIdentifier, accountIdentifier, optional)
 Create creates an application
 
 Creates application in project.
@@ -45,6 +48,7 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **body** | [**ApplicationsApplicationCreateRequest**](ApplicationsApplicationCreateRequest.md)|  | 
   **agentIdentifier** | **string**| Agent identifier for entity. | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
  **optional** | ***ApplicationsApiAgentApplicationServiceCreateOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -53,12 +57,14 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
- **accountIdentifier** | **optional.**| Account Identifier for the Entity. | 
+
  **orgIdentifier** | **optional.**| Organization Identifier for the Entity. | 
  **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
  **clusterIdentifier** | **optional.**|  | 
  **repoIdentifier** | **optional.**|  | 
- **skipRepoValidation** | **optional.**|  |
+ **skipRepoValidation** | **optional.**|  | 
+ **repoIdentifiers** | [**optional.Interface of []string**](string.md)|  | 
+
 ### Return type
 
 [**Servicev1Application**](servicev1Application.md)
@@ -75,7 +81,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServiceDelete**
-> ApplicationsApplicationResponse AgentApplicationServiceDelete(ctx, agentIdentifier, requestName, optional)
+> ApplicationsApplicationResponse AgentApplicationServiceDelete(ctx, agentIdentifier, requestName, accountIdentifier, orgIdentifier, projectIdentifier, optional)
 Delete deletes an application
 
 Delete deletes an application.
@@ -87,6 +93,9 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **requestName** | **string**|  | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
  **optional** | ***ApplicationsApiAgentApplicationServiceDeleteOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -95,9 +104,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
- **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+
+
+
  **requestCascade** | **optional.Bool**|  | 
  **requestPropagationPolicy** | **optional.String**|  | 
  **optionsRemoveExistingFinalizers** | **optional.Bool**|  | 
@@ -118,7 +127,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServiceDeleteResource**
-> ApplicationsApplicationResponse AgentApplicationServiceDeleteResource(ctx, agentIdentifier, requestName, optional)
+> ApplicationsApplicationResponse AgentApplicationServiceDeleteResource(ctx, agentIdentifier, requestName, accountIdentifier, orgIdentifier, projectIdentifier, optional)
 DeleteResource deletes a single application resource
 
 DeleteResource deletes a single application resource.
@@ -130,6 +139,9 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **requestName** | **string**|  | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
  **optional** | ***ApplicationsApiAgentApplicationServiceDeleteResourceOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -138,9 +150,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
- **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+
+
+
  **requestNamespace** | **optional.String**|  | 
  **requestResourceName** | **optional.String**|  | 
  **requestVersion** | **optional.String**|  | 
@@ -289,7 +301,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServiceGetResource**
-> ApplicationsApplicationResourceResponse AgentApplicationServiceGetResource(ctx, agentIdentifier, requestName, optional)
+> ApplicationsApplicationResourceResponse AgentApplicationServiceGetResource(ctx, agentIdentifier, requestName, accountIdentifier, orgIdentifier, projectIdentifier, optional)
 GetResource returns single application resource
 
 GetResource returns single application resource.
@@ -301,6 +313,9 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **requestName** | **string**|  | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
  **optional** | ***ApplicationsApiAgentApplicationServiceGetResourceOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -309,9 +324,9 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
- **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
- **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
- **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+
+
+
  **requestNamespace** | **optional.String**|  | 
  **requestResourceName** | **optional.String**|  | 
  **requestVersion** | **optional.String**|  | 
@@ -429,7 +444,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServiceListResourceEvents**
-> V1EventList AgentApplicationServiceListResourceEvents(ctx, agentIdentifier, queryName, accountIdentifier, orgIdentifier, projectIdentifier, optional)
+> ApplicationsEventList AgentApplicationServiceListResourceEvents(ctx, agentIdentifier, queryName, accountIdentifier, orgIdentifier, projectIdentifier, optional)
 ListResourceEvents returns a list of event resources
 
 ListResourceEvents returns list of event resources.
@@ -461,7 +476,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**V1EventList**](v1EventList.md)
+[**ApplicationsEventList**](applicationsEventList.md)
 
 ### Authorization
 
@@ -522,6 +537,51 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **AgentApplicationServiceParent**
+> Servicev1Application AgentApplicationServiceParent(ctx, agentIdentifier, queryName, optional)
+Get returns an application by name
+
+ Parent returns a parent application ( app of apps or  appset) by child name
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **agentIdentifier** | **string**| Agent identifier for entity. | 
+  **queryName** | **string**| the application&#x27;s name | 
+ **optional** | ***ApplicationsApiAgentApplicationServiceParentOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a ApplicationsApiAgentApplicationServiceParentOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **queryRefresh** | **optional.String**| forces application reconciliation if set to true. | 
+ **queryProject** | [**optional.Interface of []string**](string.md)| the project names to restrict returned list applications. | 
+ **queryResourceVersion** | **optional.String**| when specified with a watch call, shows changes that occur after that particular version of a resource. | 
+ **querySelector** | **optional.String**| the selector to to restrict returned list to applications only with matched labels. | 
+ **queryRepo** | **optional.String**| the repoURL to restrict returned list applications. | 
+
+### Return type
+
+[**Servicev1Application**](servicev1Application.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **AgentApplicationServicePatch**
 > Servicev1Application AgentApplicationServicePatch(ctx, body, agentIdentifier, requestName)
 Patch patch an application
@@ -553,7 +613,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServicePatchResource**
-> ApplicationsApplicationResourceResponse AgentApplicationServicePatchResource(ctx, body, agentIdentifier, requestName, optional)
+> ApplicationsApplicationResourceResponse AgentApplicationServicePatchResource(ctx, body, agentIdentifier, requestName, accountIdentifier, orgIdentifier, projectIdentifier)
 PatchResource patch single application resource
 
 PatchResource patch single application resource.
@@ -566,18 +626,9 @@ Name | Type | Description  | Notes
   **body** | [**ApplicationsApplicationResourcePatchRequest**](ApplicationsApplicationResourcePatchRequest.md)|  | 
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **requestName** | **string**|  | 
- **optional** | ***ApplicationsApiAgentApplicationServicePatchResourceOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-Optional parameters are passed through a pointer to a ApplicationsApiAgentApplicationServicePatchResourceOpts struct
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
-
-
- **accountIdentifier** | **optional.**| Account Identifier for the Entity. | 
- **orgIdentifier** | **optional.**| Organization Identifier for the Entity. | 
- **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
 
 ### Return type
 
@@ -824,7 +875,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServiceRunResourceAction**
-> ApplicationsApplicationResponse AgentApplicationServiceRunResourceAction(ctx, body, agentIdentifier, requestName, optional)
+> ApplicationsApplicationResponse AgentApplicationServiceRunResourceAction(ctx, body, agentIdentifier, requestName, accountIdentifier, orgIdentifier, projectIdentifier)
 RunResourceAction run resource action
 
 RunResourceAction run resource action.
@@ -837,18 +888,9 @@ Name | Type | Description  | Notes
   **body** | [**ApplicationsResourceActionRunRequest**](ApplicationsResourceActionRunRequest.md)|  | 
   **agentIdentifier** | **string**| Agent identifier for entity. | 
   **requestName** | **string**|  | 
- **optional** | ***ApplicationsApiAgentApplicationServiceRunResourceActionOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-Optional parameters are passed through a pointer to a ApplicationsApiAgentApplicationServiceRunResourceActionOpts struct
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
-
-
- **accountIdentifier** | **optional.**| Account Identifier for the Entity. | 
- **orgIdentifier** | **optional.**| Organization Identifier for the Entity. | 
- **projectIdentifier** | **optional.**| Project Identifier for the Entity. | 
+  **accountIdentifier** | **string**| Account Identifier for the Entity. | 
+  **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
+  **projectIdentifier** | **string**| Project Identifier for the Entity. | 
 
 ### Return type
 
@@ -961,7 +1003,9 @@ Name | Type | Description  | Notes
 
  **clusterIdentifier** | **optional.**|  | 
  **repoIdentifier** | **optional.**|  | 
- **skipRepoValidation** | **optional.**|  |
+ **skipRepoValidation** | **optional.**|  | 
+ **repoIdentifiers** | [**optional.Interface of []string**](string.md)|  | 
+
 ### Return type
 
 [**Servicev1Application**](servicev1Application.md)
@@ -1011,7 +1055,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AgentApplicationServiceWatch**
-> StreamResultOfApplicationsApplicationWatchEvent AgentApplicationServiceWatch(ctx, agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier, queryName, optional)
+> StreamResultOfApplicationsApplicationWatchEvent AgentApplicationServiceWatch(ctx, agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier, optional)
 Watch returns stream of application change events
 
 Watch returns stream of application change events.
@@ -1025,7 +1069,6 @@ Name | Type | Description  | Notes
   **accountIdentifier** | **string**| Account Identifier for the Entity. | 
   **orgIdentifier** | **string**| Organization Identifier for the Entity. | 
   **projectIdentifier** | **string**| Project Identifier for the Entity. | 
-  **queryName** | **string**| the application&#x27;s name. | 
  **optional** | ***ApplicationsApiAgentApplicationServiceWatchOpts** | optional parameters | nil if no parameters
 
 ### Optional Parameters
@@ -1036,7 +1079,7 @@ Name | Type | Description  | Notes
 
 
 
-
+ **queryName** | **optional.String**| the application&#x27;s name. | 
  **queryRefresh** | **optional.String**| forces application reconciliation if set to true. | 
  **queryProject** | [**optional.Interface of []string**](string.md)| the project names to restrict returned list applications. | 
  **queryResourceVersion** | **optional.String**| when specified with a watch call, shows changes that occur after that particular version of a resource. | 
@@ -1164,6 +1207,71 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**V1ApplicationSyncStatuslist**](v1ApplicationSyncStatuslist.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ApplicationServiceListAttributes**
+> V1ApplicationAttributesList ApplicationServiceListAttributes(ctx, optional)
+
+
+Returns list of attributes for applications
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+ **optional** | ***ApplicationsApiApplicationServiceListAttributesOpts** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a pointer to a ApplicationsApiApplicationServiceListAttributesOpts struct
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **accountIdentifier** | **optional.String**| Account Identifier for the Entity. | 
+ **orgIdentifier** | **optional.String**| Organization Identifier for the Entity. | 
+ **projectIdentifier** | **optional.String**| Project Identifier for the Entity. | 
+ **applicationIdentifiers** | [**optional.Interface of []string**](string.md)| List of application identifiers | 
+
+### Return type
+
+[**V1ApplicationAttributesList**](v1ApplicationAttributesList.md)
+
+### Authorization
+
+[ApiKey](../README.md#ApiKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **ApplicationServiceListNs**
+> Gitopsservicev1NamespaceList ApplicationServiceListNs(ctx, body)
+ListNs returns list of namespaces for a query.
+
+List returns list of namespaces for a specific agent.
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+  **body** | [**Servicev1ApplicationQuery**](Servicev1ApplicationQuery.md)|  | 
+
+### Return type
+
+[**Gitopsservicev1NamespaceList**](gitopsservicev1NamespaceList.md)
 
 ### Authorization
 

@@ -194,6 +194,7 @@ DeleteRepository deletes a repository from the configuration.
      * @param "QueryRepo" (optional.String) -  Repo URL for query.
      * @param "QueryForceRefresh" (optional.Bool) -  Whether to force a cache refresh on repo&#x27;s connection state.
      * @param "QueryProject" (optional.String) -  The associated project project.
+     * @param "ForceDelete" (optional.Bool) - 
 @return RepositoriesRepoResponse
 */
 
@@ -204,6 +205,7 @@ type RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts struct {
 	QueryRepo         optional.String
 	QueryForceRefresh optional.Bool
 	QueryProject      optional.String
+        ForceDelete optional.Bool
 }
 
 func (a *RepositoriesApiService) AgentRepositoryServiceDeleteRepository(ctx context.Context, agentIdentifier string, identifier string, localVarOptionals *RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts) (RepositoriesRepoResponse, *http.Response, error) {
@@ -243,6 +245,10 @@ func (a *RepositoriesApiService) AgentRepositoryServiceDeleteRepository(ctx cont
 	if localVarOptionals != nil && localVarOptionals.QueryProject.IsSet() {
 		localVarQueryParams.Add("query.project", parameterToString(localVarOptionals.QueryProject.Value(), ""))
 	}
+	if localVarOptionals != nil && localVarOptionals.ForceDelete.IsSet() {
+		localVarQueryParams.Add("forceDelete", parameterToString(localVarOptionals.ForceDelete.Value(), ""))
+	}
+
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{}
 

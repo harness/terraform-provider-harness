@@ -30,4 +30,5 @@ type Servicev1Application struct {
 	LastModifiedAt    time.Time                `json:"lastModifiedAt,omitempty"`
 	Stale             bool                     `json:"stale,omitempty"`
         SkipRepoValidation bool `json:"skipRepoValidation,omitempty"`
+	RepoIdentifiers []string `json:"repoIdentifiers,omitempty"`
 }
