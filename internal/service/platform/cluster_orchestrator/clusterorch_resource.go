@@ -34,7 +34,7 @@ func ResourceClusterOrchestrator() *schema.Resource {
 			"k8s_connector_id": {
 				Description: "ID of the Harness Kubernetes Connector Being used",
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 			},
 		},
 	}
