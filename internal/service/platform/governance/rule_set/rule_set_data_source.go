@@ -37,9 +37,12 @@ func DatasourceRuleSet() *schema.Resource {
 				Computed:    true,
 			},
 			"rule_ids": {
-				Description: "List of rule IDs.",
-				Type:        schema.TypeMap,
+				Description: "List of target regions.",
+				Type:        schema.TypeList,
 				Computed:    true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 		},
 	}

@@ -38,11 +38,11 @@ func testAccDataSourceRuleSet(name string) string {
 		name               = "%[1]s"
 		cloud_provider     = "AWS"
 		description        = "Dummy"
-		rule_ids 		   = ["nsnsasjnajksn"]
+		rule_ids 		   = ["1NBh8oKjQ4KmzvgkUqN5sQ"]
 	}
 
 	data "harness_governance_rule_set" "test" {
-		rule_id     = harness_governance_rule_set.test.rule_id
+		rule_set_id     = harness_governance_rule_set.test.rule_set_id
 	}
 	`, name)
 }
