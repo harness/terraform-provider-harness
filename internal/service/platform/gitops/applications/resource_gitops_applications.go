@@ -26,16 +26,19 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Account identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"org_id": {
 				Description: "Organization identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"project_id": {
 				Description: "Project identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"identifier": {
 				Description: "Identifier of the GitOps application.",
@@ -51,6 +54,7 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Agent identifier of the GitOps application.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"cluster_id": {
 				Description: "Cluster identifier of the GitOps application.",
@@ -101,6 +105,7 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Name of the GitOps application.",
 				Type:        schema.TypeString,
 				Required:    true,
+				ForceNew:    true,
 			},
 			"skip_repo_validation": {
 				Description: "Indicates if the GitOps application should skip validate repository definition exists.",
