@@ -56,7 +56,7 @@ func testAccResourceRule(name string) string {
 			name               = "%[1]s"
 			cloud_provider     = "AWS"
 			description        = "Dummy"
-			rule_ids 		   = ["1NBh8oKjQ4KmzvgkUqN5sQ"]
+			rule_ids		   = ["1NBh8oKjQ4KmzvgkUqN5sQ"]
 		}
 	`, name)
 }
