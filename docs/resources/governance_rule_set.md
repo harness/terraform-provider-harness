@@ -19,11 +19,11 @@ Resource for creating, updating, and managing rule.
 
 - `cloud_provider` (String) The cloud provider for the rule set. It should be either AWS, AZURE or GCP.
 - `name` (String) Name of the rule set.
+- `rule_ids` (List of String) List of rule IDs
 
 ### Optional
 
 - `description` (String) Description for rule set.
-- `rule_ids` (List of String) List of rule IDs
 
 ### Read-Only
 

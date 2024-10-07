@@ -25,4 +25,4 @@ Datasource for looking up a rule.
 - `description` (String) Description for rule set.
 - `id` (String) The ID of this resource.
 - `name` (String) Name of the rule set.
-- `rule_ids` (Map of String) List of rule IDs.
+- `rule_ids` (List of String) List of target regions.
