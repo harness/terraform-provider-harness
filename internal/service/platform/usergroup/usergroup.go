@@ -176,7 +176,8 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 
 	attr1 := resp.Data.SsoLinked
 
-	if attr, ok := d.GetOk("users"); ok && !attr1 {
+	attr := resp.Data.Users
+	if attr != nil && !attr1 {
 		d.Set("users", attr)
 	} else if attr1 {
 		d.Set("users", []string{})
