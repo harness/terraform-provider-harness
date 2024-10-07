@@ -1,14 +1,10 @@
 
-<a name="0.4.9"></a>
-## 0.4.9 (2024-09-23)
+<a name="0.4.10"></a>
+## 0.4.10 (2024-10-07)
 
 ### Add
 
 * Add Support for Execute on Delegate in Git Connector ([#571](https://github.com/harness/harness-go-sdk/issues/571))
-
-### Add
-
-* add oidc authentication as valid auth type ([#519](https://github.com/harness/harness-go-sdk/issues/519))
 
 ### Changes
 
@@ -20,6 +16,8 @@
 
 ### Release
 
+* Release version 0.4.9 09-23-2024
+* Release v0.4.9
 * Release version 0.4.8 09-19-2024
 * Release v0.4.8
 * Release version 0.4.7 09-17-2024
@@ -63,7 +61,4 @@
 * Release version 0.3.89 05-08-2024
 * Release v0.3.89
 * Release version 0.3.88 05-06-2024
-* Release v0.3.88
-* Release version 0.3.87 04-30-2024
-* Release v0.3.87
 
