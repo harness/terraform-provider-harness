@@ -26,11 +26,8 @@ resource "harness_cluster_orchestrator" "test" {
 ### Required
 
 - `cluster_endpoint` (String) Endpoint of the k8s cluster being onboarded under the orchestrator
-- `name` (String) Name of the Orchestrator
-
-### Optional
-
 - `k8s_connector_id` (String) ID of the Harness Kubernetes Connector Being used
+- `name` (String) Name of the Orchestrator
 
 ### Read-Only
 
