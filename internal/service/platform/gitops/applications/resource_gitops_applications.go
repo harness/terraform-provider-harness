@@ -111,12 +111,14 @@ func ResourceGitopsApplication() *schema.Resource {
 				Description: "Definition of the GitOps application resource.",
 				Type:        schema.TypeList,
 				Required:    true,
+				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"metadata": {
 							Description: "Metadata corresponding to the resources. This includes all the objects a user must create.",
 							Type:        schema.TypeList,
 							Required:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -232,6 +234,7 @@ func ResourceGitopsApplication() *schema.Resource {
 							Description: "Specifications of the GitOps application. This includes the repository URL, application definition, source, destination and sync policy.",
 							Type:        schema.TypeList,
 							Optional:    true,
+							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"project": {
@@ -594,6 +597,7 @@ func ResourceGitopsApplication() *schema.Resource {
 										Description: "Controls when a sync will be performed in response to updates in git.",
 										Type:        schema.TypeList,
 										Optional:    true,
+										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"sync_options": {
@@ -608,6 +612,7 @@ func ResourceGitopsApplication() *schema.Resource {
 													Description: "Controls the behavior of an automated sync.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"prune": {
@@ -632,6 +637,7 @@ func ResourceGitopsApplication() *schema.Resource {
 													Description: "Contains information about the strategy to apply when a sync failed.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"limit": {
@@ -643,6 +649,7 @@ func ResourceGitopsApplication() *schema.Resource {
 																Description: "Backoff strategy to use on subsequent retries for failing syncs.",
 																Type:        schema.TypeList,
 																Optional:    true,
+																MaxItems:    1,
 																Elem: &schema.Resource{
 																	Schema: map[string]*schema.Schema{
 																		"duration": {

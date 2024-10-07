@@ -172,6 +172,7 @@ func ResourceGitopsCluster() *schema.Resource {
 													Description: "Configuration for an exec provider.",
 													Type:        schema.TypeList,
 													Optional:    true,
+													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"command": {
@@ -251,7 +252,6 @@ func ResourceGitopsCluster() *schema.Resource {
 										Description: "Information about cluster cache and state.",
 										Type:        schema.TypeList,
 										Computed:    true,
-										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {

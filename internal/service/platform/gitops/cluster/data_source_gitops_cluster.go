@@ -47,7 +47,6 @@ func DataSourceGitopsCluster() *schema.Resource {
 				Description: "Cluster create or update request.",
 				Type:        schema.TypeList,
 				Computed:    true,
-				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"upsert": {
@@ -235,14 +234,12 @@ func DataSourceGitopsCluster() *schema.Resource {
 										Description: "Information about cluster cache and state.",
 										Type:        schema.TypeList,
 										Computed:    true,
-										MaxItems:    1,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"connection_state": {
 													Description: "Information about the connection to the cluster.",
 													Type:        schema.TypeList,
 													Computed:    true,
-													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"status": {
@@ -286,7 +283,6 @@ func DataSourceGitopsCluster() *schema.Resource {
 													Description: "Information about the cluster cache.",
 													Type:        schema.TypeList,
 													Computed:    true,
-													MaxItems:    1,
 													Elem: &schema.Resource{
 														Schema: map[string]*schema.Schema{
 															"resources_count": {

@@ -33,7 +33,7 @@ data "harness_platform_gitops_gnupg" "example" {
 
 - `org_id` (String) Organization Identifier for the GnuPG Key.
 - `project_id` (String) Project Identifier for the GnuPG Key.
-- `request` (Block List, Max: 1) GnuPGPublicKey is a representation of a GnuPG public key (see [below for nested schema](#nestedblock--request))
+- `request` (Block List) GnuPGPublicKey is a representation of a GnuPG public key (see [below for nested schema](#nestedblock--request))
 
 ### Read-Only
 
