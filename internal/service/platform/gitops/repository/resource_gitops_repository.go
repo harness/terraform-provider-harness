@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
@@ -72,10 +73,37 @@ func ResourceGitopsRepositories() *schema.Resource {
 							Optional:    true,
 						},
 						"password": {
-							Description: "Password or PAT to be used for authenticating the remote repository.",
+							Type:                  schema.TypeString,
+							ConfigMode:            0,
+							Required:              false,
+							Optional:              true,
+							Computed:              true,
+							ForceNew:              false,
+							DiffSuppressFunc:      nil,
+							DiffSuppressOnRefresh: false,
+							Default:               nil,
+							DefaultFunc:           nil,
+							Description:           "Password or PAT to be used for authenticating the remote repository.",
+							InputDefault:          "",
+							StateFunc:             nil,
+							Elem:                  nil,
+							MaxItems:              0,
+							MinItems:              0,
+							Set:                   nil,
+							ComputedWhen:          nil,
+							ConflictsWith:         nil,
+							ExactlyOneOf:          nil,
+							AtLeastOneOf:          nil,
+							RequiredWith:          nil,
+							Deprecated:            "",
+							ValidateFunc:          nil,
+							ValidateDiagFunc:      nil,
+							Sensitive:             false,
+						},
+						"password_hash": {
+							Description: "Password hash to be used for authenticating the remote repository.",
 							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
+							Computed:    true,
 						},
 						"ssh_private_key": {
 							Description: "SSH Key in PEM format for authenticating the repository. Used only for Git repository.",
@@ -193,6 +221,11 @@ func ResourceGitopsRepositories() *schema.Resource {
 			"refresh_interval": {
 				Description: "For OCI repos, this is the interval to refresh the token to access the registry.",
 				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"force_delete": {
+				Description: "Indicates if the repository should be deleted forcefully, regardless of existing applications using that repo.",
+				Type:        schema.TypeBool,
 				Optional:    true,
 			},
 			"ecr_gen": {
@@ -365,6 +398,7 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	ctx = context.WithValue(ctx, nextgen.ContextAccessToken, hh.EnvVars.BearerToken.Get())
 	var agentIdentifier, accountIdentifier, orgIdentifier, projectIdentifier, identifier string
+	var password *string
 	accountIdentifier = c.AccountId
 	if attr, ok := d.GetOk("agent_id"); ok {
 		agentIdentifier = attr.(string)
@@ -378,11 +412,18 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
+	if attr, ok := d.GetOk("repo.0.password"); ok {
+		val := attr.(string)
+		password = &val
+	}
 
+	fmt.Println("CREATE-PASSWORD:", password)
 	createRepoRequest := buildCreateRepoRequest(d)
 	if projectIdentifier == "" && createRepoRequest.Repo.Project != "" {
 		return diag.FromErr(fmt.Errorf("project_id is required when creating repo in project, cannot set argocd project for account level repo"))
 	}
+
+	fmt.Println("PASSWORD:%s", password)
 
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceCreateRepository(ctx, createRepoRequest, agentIdentifier, &nextgen.RepositoriesApiAgentRepositoryServiceCreateRepositoryOpts{
 		AccountIdentifier: optional.NewString(accountIdentifier),
@@ -401,6 +442,10 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 		d.MarkNewResource()
 		return nil
 	}
+
+	if password != nil {
+		resp.Repository.Password = *password
+	}
 	setRepositoryDetails(d, &resp)
 	return nil
 }
@@ -408,6 +453,7 @@ func resourceGitOpsRepositoryCreate(ctx context.Context, d *schema.ResourceData,
 func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+	var password *string
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -419,6 +465,10 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 	}
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.password"); ok {
+		val := attr.(string)
+		password = &val
 	}
 	resp, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceGet(ctx, agentIdentifier, identifier, c.AccountId, &nextgen.RepositoriesApiAgentRepositoryServiceGetOpts{
 		OrgIdentifier:     optional.NewString(orgIdentifier),
@@ -435,6 +485,11 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 		d.MarkNewResource()
 		return nil
 	}
+
+	if password != nil {
+		resp.Repository.Password = *password
+	}
+
 	setRepositoryDetails(d, &resp)
 	return nil
 
@@ -443,6 +498,7 @@ func resourceGitOpsRepositoryRead(ctx context.Context, d *schema.ResourceData, m
 func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+	var password *string
 
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
@@ -455,6 +511,10 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 	}
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
+	}
+	if attr, ok := d.GetOk("repo.0.password"); ok {
+		val := generateHash(attr.(string))
+		password = &val
 	}
 
 	updateRepoRequest := buildUpdateRepoRequest(d)
@@ -477,6 +537,9 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 		d.MarkNewResource()
 		return nil
 	}
+	if password != nil {
+		resp.Repository.Password = *password
+	}
 	setRepositoryDetails(d, &resp)
 	return nil
 }
@@ -484,6 +547,7 @@ func resourceGitOpsRepositoryUpdate(ctx context.Context, d *schema.ResourceData,
 func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, ctx := meta.(*internal.Session).GetPlatformClientWithContext(ctx)
 	var orgIdentifier, projectIdentifier, agentIdentifier, identifier string
+	var force_delete bool
 	if attr, ok := d.GetOk("org_id"); ok {
 		orgIdentifier = attr.(string)
 	}
@@ -496,10 +560,14 @@ func resourceGitOpsRepositoryDelete(ctx context.Context, d *schema.ResourceData,
 	if attr, ok := d.GetOk("identifier"); ok {
 		identifier = attr.(string)
 	}
+	if attr, ok := d.GetOk("force_delete"); ok {
+		force_delete = attr.(bool)
+	}
 	_, httpResp, err := c.RepositoriesApiService.AgentRepositoryServiceDeleteRepository(ctx, agentIdentifier, identifier, &nextgen.RepositoriesApiAgentRepositoryServiceDeleteRepositoryOpts{
 		AccountIdentifier: optional.NewString(c.AccountId),
 		OrgIdentifier:     optional.NewString(orgIdentifier),
 		ProjectIdentifier: optional.NewString(projectIdentifier),
+		ForceDelete:       optional.NewBool(force_delete),
 	})
 	if err != nil {
 		return helpers.HandleApiError(err, d, httpResp)
@@ -808,4 +876,28 @@ func setRepositoryDetails(d *schema.ResourceData, repo *nextgen.Servicev1Reposit
 		repoList = append(repoList, repoO)
 		d.Set("repo", repoList)
 	}
+}
+
+func generateHash(cred string) string {
+	hasher := sha256.New()
+	hasher.Write([]byte(cred))
+	return fmt.Sprintf("%x", hasher.Sum(nil))
+}
+
+func customizePasswordDiff(diff *schema.ResourceDiff, meta interface{}) error {
+	// Get the new password from the configuration
+	if newPassword, ok := diff.GetOk("repo.0.password"); ok {
+		newHash := generateHash(newPassword.(string))
+
+		// Get the old password hash from the state
+		oldHash, ok := diff.GetOk("repo.0.password_hash")
+		if !ok || oldHash != newHash {
+			// Mark the password as changed if the hashes don't match
+			return nil
+		} else {
+			// If hashes match, clear the diff for password
+			diff.Clear("repo.0.password")
+		}
+	}
+	return nil
 }
