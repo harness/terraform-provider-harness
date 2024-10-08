@@ -2,245 +2,158 @@ package _PreRequisites
 
 import (
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"path/filepath"
 )
 
-func resourceSecretText() *schema.Resource {
-	return &schema.Resource{
-		Create: resourceSecretTextCreate,
-		Read:   resourceSecretTextRead,
+// Helper functions for Creation of Resources
+func createConnectorVault_app_role(id string, name string, vault_secret string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_text" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
 
-		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"secret_manager_identifier": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"value_type": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"value": {
-				Type:      schema.TypeString,
-				Required:  true,
-				Sensitive: true,
-			},
-		},
+		secret_manager_identifier = "harnessSecretManager"
+		value_type = "Inline"
+		value = "%[3]s"
 	}
-}
 
-func resourceSecretTextCreate(d *schema.ResourceData, m interface{}) error {
-	resourceName := "harness_platform_secret_text.resource.tf"
-	identifier := d.Get("identifier").(string)
+	resource "harness_platform_connector_vault" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
 
-	// Mock logic for creating a secret text
-	fmt.Printf("Creating secret with identifier: %s\n", identifier)
+		app_role_id = "570acf09-ef2a-144b-2fb0-14a42e06ffe3"
+		base_path = "vikas-test/"
+		access_type = "APP_ROLE"
+		default = false
+		secret_id = "account.${harness_platform_secret_text.test.id}"
+		read_only = true
+		renewal_interval_minutes = 60
+		secret_engine_manually_configured = true
+		secret_engine_name = "harness-test"
+		secret_engine_version = 2
+		use_aws_iam = false
+		use_k8s_auth = false
+		use_vault_agent = false
+		delegate_selectors = ["harness-delegate"]
+		vault_url = "https://vaultqa.harness.io"
 
-	d.SetId(identifier) // Set the ID to the identifier
-	return resourceSecretTextRead(d, m)
-}
-
-func resourceSecretTextRead(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Id()
-
-	// Mock logic for reading a secret text
-	fmt.Printf("Reading secret with identifier: %s\n", identifier)
-
-	// Simulate reading the resource by setting some data
-	d.Set("identifier", identifier)
-	d.Set("name", "Test Secret")
-	d.Set("secret_manager_identifier", "harnessSecretManager")
-	d.Set("value_type", "Inline")
-	d.Set("value", "super-secret-value") // Sensitive data
-
-	return nil
-}
-
-func resourceProject() *schema.Resource {
-	return &schema.Resource{
-		Create: resourceProjectCreate,
-		Read:   resourceProjectRead,
-
-		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"org_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"color": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-		},
+		depends_on = [time_sleep.wait_8_seconds]
 	}
-}
 
-func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Get("identifier").(string)
-	fmt.Printf("Creating project with identifier: %s\n", identifier)
-	d.SetId(identifier)
-	return resourceProjectRead(d, m)
-}
-
-func resourceProjectRead(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Id()
-	fmt.Printf("Reading project with identifier: %s\n", identifier)
-
-	// Simulate reading the resource by setting some data
-	d.Set("identifier", identifier)
-	d.Set("name", "Test Project")
-	d.Set("org_id", "default")
-	d.Set("color", "#0063F7")
-
-	return nil
-}
-
-func resourceAzureKeyVaultConnector() *schema.Resource {
-	return &schema.Resource{
-		Create: resourceAzureKeyVaultConnectorCreate,
-		Read:   resourceAzureKeyVaultConnectorRead,
-
-		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"client_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"secret_key": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"tenant_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"vault_name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"subscription": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"is_default": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-			"azure_environment_type": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"project_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"org_id": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-		},
+	resource "time_sleep" "wait_8_seconds" {
+		depends_on = [harness_platform_secret_text.test]
+		create_duration = "8s"
 	}
+	`, id, name, vault_secret)
 }
 
-func resourceAzureKeyVaultConnectorCreate(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Get("identifier").(string)
-	fmt.Printf("Creating Azure Key Vault connector with identifier: %s\n", identifier)
-	d.SetId(identifier)
-	return resourceAzureKeyVaultConnectorRead(d, m)
-}
-
-func resourceAzureKeyVaultConnectorRead(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Id()
-	fmt.Printf("Reading Azure Key Vault connector with identifier: %s\n", identifier)
-
-	// Simulate reading the resource by setting some data
-	d.Set("identifier", identifier)
-	d.Set("name", "Test Azure Connector")
-	d.Set("client_id", "test-client-id")
-
-	return nil
-}
-
-func resourceAwsSecretManagerConnector() *schema.Resource {
-	return &schema.Resource{
-		Create: resourceAwsSecretManagerConnectorCreate,
-		Read:   resourceAwsSecretManagerConnectorRead,
-
-		Schema: map[string]*schema.Schema{
-			"identifier": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"region": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"secret_key_ref": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"access_key_ref": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-		},
+func createSecretFile(id string, name string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_secret_file" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		description = "test"
+		tags = ["foo:bar"]
+		file_path = "%[3]s"
+		secret_manager_identifier = "harnessSecretManager"
 	}
+		`, id, name, getAbsFilePath("../../../acctest/secret_files/secret.txt"))
 }
 
-func resourceAwsSecretManagerConnectorCreate(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Get("identifier").(string)
-	fmt.Printf("Creating AWS Secret Manager connector with identifier: %s\n", identifier)
-	d.SetId(identifier)
-	return resourceAwsSecretManagerConnectorRead(d, m)
+func getAbsFilePath(file_path string) string {
+	absPath, _ := filepath.Abs(file_path)
+	return absPath
 }
 
-func resourceAwsSecretManagerConnectorRead(d *schema.ResourceData, m interface{}) error {
-	identifier := d.Id()
-	fmt.Printf("Reading AWS Secret Manager connector with identifier: %s\n", identifier)
-
-	// Simulate reading the resource by setting some data
-	d.Set("identifier", identifier)
-	d.Set("name", "Test AWS Connector")
-	d.Set("region", "us-east-1")
-
-	return nil
+func createServiceAccount(id string, name string, accountId string) string {
+	return fmt.Sprintf(`
+	resource "harness_platform_service_account" "test" {
+		identifier = "%[1]s"
+		name = "%[2]s"
+		email = "email@service.harness.io"
+		description = "test"
+		tags = ["foo:bar"]
+		account_id = "%[3]s"
+	}
+	`, id, name, accountId)
 }
+
+func createUserGroup(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_usergroup" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			linked_sso_id = "linked_sso_id"
+			externally_managed = false
+			users = []
+			notification_configs {
+				type = "SLACK"
+				slack_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "EMAIL"
+				group_email = "email@email.com"
+				send_email_to_all_users = true
+			}
+			notification_configs {
+				type = "MSTEAMS"
+				microsoft_teams_webhook_url = "https://google.com"
+			}
+			notification_configs {
+				type = "PAGERDUTY"
+				pager_duty_key = "pagerDutyKey"
+			}
+			linked_sso_display_name = "linked_sso_display_name"
+			sso_group_id = "sso_group_id"
+			sso_group_name = "sso_group_name"
+			linked_sso_type = "SAML"
+			sso_linked = true
+		}
+`, id, name)
+}
+
+func createProject(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+		}
+
+		resource "harness_platform_project" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			org_id = harness_platform_organization.test.id
+		}
+`, id, name)
+}
+
+func createOrganization(id string, name string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_organization" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar", "baz:qux"]
+		}
+`, id, name)
+}
+
+func createSecretText_inline(id string, name string, secretValue string) string {
+	return fmt.Sprintf(`
+		resource "harness_platform_secret_text" "test" {
+			identifier = "%[1]s"
+			name = "%[2]s"
+			description = "test"
+			tags = ["foo:bar"]
+			secret_manager_identifier = "harnessSecretManager"
+			value_type = "Inline"
+			value = "%[3]s"
+		}
+`, id, name, secretValue)
+}
+
+// Add more similar functions for other resources
