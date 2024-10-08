@@ -170,16 +170,17 @@ func resourceUserGroupRead(ctx context.Context, d *schema.ResourceData, meta int
 		return helpers.HandleReadApiError(err, d, httpResp)
 	}
 
-	if attr, ok := d.GetOk("user_emails"); ok {
-		d.Set("user_emails", attr)
+	emails, emails_present := d.GetOk("user_emails")
+	if emails_present {
+		d.Set("user_emails", emails)
 	}
 
-	attr1 := resp.Data.SsoLinked
+	isSsoLinked := resp.Data.SsoLinked
 
-	attr := resp.Data.Users
-	if attr != nil && !attr1 {
-		d.Set("users", attr)
-	} else if attr1 {
+	users := resp.Data.Users
+	if users != nil && !isSsoLinked && !emails_present {
+		d.Set("users", users)
+	} else if isSsoLinked {
 		d.Set("users", []string{})
 	}
 	readUserGroup(d, resp.Data)
