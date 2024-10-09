@@ -33,6 +33,7 @@ func TestResourceSecretText_inline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "secret_manager_identifier", "harnessSecretManager"),
 					resource.TestCheckResourceAttr(resourceName, "value_type", "Inline"),
 				),
+				Destroy: false,
 			},
 			{
 				// Step to import the created secret and verify the import
@@ -41,6 +42,7 @@ func TestResourceSecretText_inline(t *testing.T) {
 				ImportStateVerify:       true,
 				ImportStateIdFunc:       acctest.ProjectResourceImportStateIdFunc(resourceName),
 				ImportStateVerifyIgnore: []string{"value"},
+				Destroy:                 false,
 			},
 		},
 	})
