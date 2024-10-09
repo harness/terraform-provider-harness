@@ -21,22 +21,22 @@ func ResourceProject() *schema.Resource {
 		Importer:      helpers.GitopsAgentProjectImporter,
 		Schema: map[string]*schema.Schema{
 			"agent_id": {
-				Description: "Agent identifier of the GitOps project.",
+				Description: "Agent identifier of the GitOps project, this must include scope prefix (eg. account.agentId)",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"account_id": {
-				Description: "Account identifier of the GitOps project.",
+				Description: "Account identifier of the GitOps agent where argo project is to be created.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"org_id": {
-				Description: "Org identifier of the GitOps project.",
+				Description: "Org identifier of the GitOps project where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
 			"project_id": {
-				Description: "Project identifier of the GitOps repository.",
+				Description: "Project identifier of the project where argo project is to be created.",
 				Type:        schema.TypeString,
 				Optional:    true,
 			},
@@ -47,7 +47,7 @@ func ResourceProject() *schema.Resource {
 				Computed:    true,
 			},
 			"upsert": {
-				Description: "Indicates if the GitOps repository should be updated if existing and inserted if not.",
+				Description: "Indicates if the argo project should be updated if existing and inserted if not.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 			},
@@ -71,7 +71,7 @@ func ResourceProject() *schema.Resource {
 									"namespace": {
 										Type:        schema.TypeString,
 										Optional:    true,
-										Description: "Namespace of the GitOps project.",
+										Description: "Namespace of the GitOps project. This must be the same as the namespace where the agent is installed",
 									},
 									"resource_version": {
 										Type:        schema.TypeString,
@@ -1389,12 +1389,22 @@ func setProjectDetails(d *schema.ResourceData, projects *nextgen.AppprojectsAppP
 		spec := map[string]interface{}{}
 		var sourceRepoList = projects.Spec.SourceRepos
 		spec["source_repos"] = sourceRepoList
+
 		clusterResourceWhitelist := []interface{}{}
 		clusterResourceWhite := map[string]interface{}{}
 		clusterResourceWhite["group"] = projects.Spec.ClusterResourceWhitelist[0].Group
 		clusterResourceWhite["kind"] = projects.Spec.ClusterResourceWhitelist[0].Kind
 		clusterResourceWhitelist = append(clusterResourceWhitelist, clusterResourceWhite)
+
+		clusterResourceBlackList := []interface{}{}
+		clusterResourceBlack := map[string]interface{}{}
+		clusterResourceBlack["group"] = projects.Spec.ClusterResourceBlacklist[0].Group
+		clusterResourceBlack["kind"] = projects.Spec.ClusterResourceBlacklist[0].Kind
+		clusterResourceBlackList = append(clusterResourceBlackList, clusterResourceBlack)
+
 		spec["cluster_resource_whitelist"] = clusterResourceWhitelist
+		spec["cluster_resource_blacklist"] = clusterResourceBlackList
+
 		destinationList := []interface{}{}
 		destination := map[string]interface{}{}
 		destination["namespace"] = projects.Spec.Destinations[0].Namespace
