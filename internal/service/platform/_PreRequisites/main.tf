@@ -11,7 +11,7 @@ terraform {
 provider "harness" {
   endpoint         = "https://accounts.harness-test.com/gateway"
   account_id       = "MDg5YjI3MDMtYjJmOS00Nj"
-  platform_api_key = "pat.MDg5YjI3MDMtYjJmOS00Nj.6700387e5408f9235dbe72ed.VzCkLKWdTW4uFZv2RFK2"
+  platform_api_key = "pat.MDg5YjI3MDMtYjJmOS00Nj.67065edd0fbed43c4c55ced6.FLqwriMkwBGzLa2FVoka"
 }
 
 resource "harness_platform_secret_text" "my_secret_text" {
